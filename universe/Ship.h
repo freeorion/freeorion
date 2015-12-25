@@ -59,9 +59,9 @@ public:
     float                       CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
     float                       InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the speicified part meter \a type for the specified part name
 
-    float                       TotalWeaponsDamage(float shield_DR = 0.0) const;    ///< versus an enemy with a given shields DR
-    std::vector<float>          AllWeaponsDamage(float shield_DR = 0.0) const;      ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
-    std::vector<float>          AllWeaponsMaxDamage(float shield_DR = 0.0) const;   ///< any nonzero weapons strengths, assuming the shpi has been refueled recently, after adjustment versus an enemy with a given shields DR
+    float                       TotalWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy with a given shields DR
+    std::vector<float>          AllWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const;   ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
+    std::vector<float>          AllWeaponsMaxDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the shpi has been refueled recently, after adjustment versus an enemy with a given shields DR
     //@}
 
     /** \name Mutators */ //@{

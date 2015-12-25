@@ -406,7 +406,8 @@ namespace {
     void AttackShipFighter(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Fighter> target,
                            CombatInfo& combat_info, int bout, int round)
     {
-        target->SetDestroyed();
+        if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f)
+            target->SetDestroyed();
     }
 
     void AttackPlanetShip(TemporaryPtr<Planet> attacker, TemporaryPtr<Ship> target,
@@ -1061,6 +1062,35 @@ namespace {
         } // end for over weapons
     }
 
+    void LaunchFighters(TemporaryPtr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
+                         AutoresolveInfo& combat_state, int bout, int round)
+    {
+        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
+                               GetOptionsDB().Get<bool>("verbose-combat-logging");
+        if (weapons.empty()) {
+            if (verbose_logging)
+                DebugLogger() << "no weapons' can't launch figters!";
+            return;   // no ability to attack!
+        }
+
+        for (std::vector<PartAttackInfo>::const_iterator weapon_it = weapons.begin();
+             weapon_it != weapons.end(); ++weapon_it)
+        {
+            // skip non-fighter weapons
+            // direct fire weapons handled separately
+            if (weapon_it->part_class != PC_FIGHTER_BAY)
+                continue;
+
+            int attacker_owner_id = attacker->Owner();
+
+            if (verbose_logging)
+                DebugLogger() << "Launching " << weapon_it->fighters_launched << " with damage " << weapon_it->fighter_damage << " for empire id: " << attacker_owner_id << " from ship id: " << attacker->ID();
+
+
+
+        } // end for over weapons
+    }
+
     std::vector<PartAttackInfo> GetWeapons(TemporaryPtr<UniverseObject>& attacker) {
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
@@ -1192,7 +1222,7 @@ namespace {
                 }
                 std::vector<PartAttackInfo> weapons = GetWeapons(attacker);  // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
 
-                // TODO:any fighters to launch?
+                LaunchFighters(attacker, weapons, combat_state, bout, round++);
 
                 if (verbose_logging)
                     DebugLogger() << "Attacker: " << attacker->Name();
