@@ -27,6 +27,9 @@ float Fighter::Damage() const
 bool Fighter::Destroyed() const
 { return m_destroyed; }
 
+void Fighter::SetDestroyed(bool destroyed)
+{ m_destroyed = destroyed; }
+
 std::string Fighter::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
