@@ -16,6 +16,7 @@ public:
     virtual std::string         Dump() const;
     float                       Damage() const;
     bool                        Destroyed() const;
+    void                        SetDestroyed(bool destroyed = true);
 
     virtual TemporaryPtr<UniverseObject>    Accept(const UniverseObjectVisitor& visitor) const;
     virtual void                            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
