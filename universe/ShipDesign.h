@@ -465,12 +465,9 @@ public:
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            IsMonster() const       { return m_is_monster; }
 
-    /////// TEMPORARY ///////
-    float  Defense() const;
-    float  Attack() const;
-    float  AdjustedAttack(float shield) const;
-    /////// TEMPORARY ///////
-
+    float                           Attack() const;
+    float                           AdjustedAttack(float shield) const;
+    float                           Defense() const;
 
     const std::string&              Hull() const            { return m_hull; }      ///< returns name of hull on which design is based
     const HullType*                 GetHull() const
