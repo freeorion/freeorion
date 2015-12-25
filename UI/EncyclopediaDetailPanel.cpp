@@ -1961,27 +1961,27 @@ namespace {
         float typical_shot = 3 + 27 * tech_level;
         float typical_shield = 20 * tech_level;
         float typical_strength = std::pow(design->AdjustedAttack(typical_shield) * structure * typical_shot / std::max(typical_shot - shield, 0.0f), 0.6f);
-         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-                    % design->Description()
-                    % hull_link
-                    % parts_list
-                    % static_cast<int>(design->Weapons().size())
-                    % 0
-                    % 0
-                    % 0
-                    % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
-                    % ship->CurrentMeterValue(METER_MAX_SHIELD)
-                    % ship->CurrentMeterValue(METER_DETECTION)
-                    % ship->CurrentMeterValue(METER_STEALTH)
-                    % ship->CurrentMeterValue(METER_SPEED)
-                    % ship->CurrentMeterValue(METER_SPEED)
-        % ship->CurrentMeterValue(METER_MAX_FUEL)
-        % design->ColonyCapacity()
-        % design->TroopCapacity()
-        % design->Attack()
-        % species
-        % strength % (strength / cost)
-        % typical_strength % (typical_strength / cost));
+        return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+                   % design->Description()
+                   % hull_link
+                   % parts_list
+                   % static_cast<int>(design->Weapons().size())
+                   % 0
+                   % 0
+                   % 0
+                   % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
+                   % ship->CurrentMeterValue(METER_MAX_SHIELD)
+                   % ship->CurrentMeterValue(METER_DETECTION)
+                   % ship->CurrentMeterValue(METER_STEALTH)
+                   % ship->CurrentMeterValue(METER_SPEED)
+                   % ship->CurrentMeterValue(METER_SPEED)
+                   % ship->CurrentMeterValue(METER_MAX_FUEL)
+                   % design->ColonyCapacity()
+                   % design->TroopCapacity()
+                   % design->Attack()
+                   % species
+                   % strength % (strength / cost)
+                   % typical_strength % (typical_strength / cost));
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
