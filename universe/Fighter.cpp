@@ -6,12 +6,14 @@
 
 Fighter::Fighter() :
     UniverseObject(),
-    m_damage(0.0f)
+    m_damage(0.0f),
+    m_destroyed(false)
 {}
 
 Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage) :
     UniverseObject(),
-    m_damage(0.0f)
+    m_damage(0.0f),
+    m_destroyed(false)
 {
     UniverseObject::Init();
 }
@@ -19,10 +21,19 @@ Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species
 UniverseObjectType Fighter::ObjectType() const
 { return OBJ_FIGHTER; }
 
+float Fighter::Damage() const
+{ return m_damage; }
+
+bool Fighter::Destroyed() const
+{ return m_destroyed; }
+
 std::string Fighter::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " (Combat Fighter) damage: " << m_damage;
+    if (m_destroyed)
+        os << "  (DESTROYED)";
+    return os.str();
 }
 
 TemporaryPtr<UniverseObject> Fighter::Accept(const UniverseObjectVisitor& visitor) const
@@ -46,4 +57,5 @@ void Fighter::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_
     UniverseObject::Copy(copied_object, VIS_FULL_VISIBILITY, std::set<std::string>());
 
     this->m_damage = copied_fighter->m_damage;
+    this->m_destroyed= copied_fighter->m_destroyed;
 }

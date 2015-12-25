@@ -554,9 +554,11 @@ namespace {
 
     bool ObjectCanAttack(TemporaryPtr<const UniverseObject> obj) {
         if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
-            return ship->IsArmed();
+            return ship->IsArmed(); // has direct fire weapons or fighter bays
         } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0;
+        } else if (TemporaryPtr<const Fighter> fighter = boost::dynamic_pointer_cast<const Fighter>(obj)) {
+            return fighter->Damage() > 0.0f;
         } else {
             return false;
         }
@@ -621,8 +623,14 @@ namespace {
     struct EmpireCombatInfo {
         std::set<int> attacker_ids;
         std::set<int> target_ids;
-        bool HasTargets() const     { return !target_ids.empty(); }
-        bool HasAttackers() const   { return !attacker_ids.empty(); }
+        bool HasTargets() const                 { return !target_ids.empty(); }
+        bool HasAttackers() const               { return !attacker_ids.empty(); }
+
+        bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const  {
+            // TODO: THIS
+
+            return false;
+        }
     };
 
     // Populate lists of things that can attack and be attacked. List attackers also by empire.
@@ -630,7 +638,9 @@ namespace {
                                 std::set<int>& valid_attacker_object_ids,
                                 std::map<int, EmpireCombatInfo>& empire_infos)
     {
-        for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
+        for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
+             it != combat_info.objects.const_end(); ++it)
+        {
             TemporaryPtr<const UniverseObject> obj = *it;
             //DebugLogger() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
             if (ObjectCanAttack(obj)) {
@@ -689,8 +699,11 @@ namespace {
             for (std::map<int, EmpireCombatInfo>::const_iterator attacker_it = empire_infos.begin();
                  attacker_it != empire_infos.end(); ++attacker_it)
             {
-                if (attacker_it->second.HasTargets() && attacker_it->second.HasAttackers())
-                    return true;
+                if (attacker_it->second.HasTargets() && (
+                        attacker_it->second.HasAttackers() ||
+                        attacker_it->second.HasUnlauchedArmedFighters(combat_info)
+                    ))
+                { return true; }
             }
             return false;
         }
@@ -721,8 +734,26 @@ namespace {
             bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
             int target_id = target->ID();
             // check for destruction of target object
-            if (target->ObjectType() == OBJ_SHIP) {
-                if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
+
+            if (target->ObjectType() == OBJ_FIGHTER) {
+                const TemporaryPtr<const Fighter> fighter = boost::dynamic_pointer_cast<const Fighter>(target);
+                if (fighter) {
+                    // remove destroyed fighter's ID from lists of valid attackers and targets
+                    valid_attacker_object_ids.erase(target_id);
+                    valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
+
+                    for (empire_it targeter_it = empire_infos.begin();
+                        targeter_it != empire_infos.end(); ++targeter_it)
+                    { targeter_it->second.target_ids.erase(target_id); }
+
+                    // Remove target from its empire's list of attackers
+                    empire_infos[target->Owner()].attacker_ids.erase(target_id);
+                    CleanEmpires();
+                    return fighter->Destroyed();
+                }
+
+            } else if (target->ObjectType() == OBJ_SHIP) {
+                if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0f) {
                     if (verbose_logging)
                         DebugLogger() << "!! Target Ship " << target_id << " is destroyed!";
                     // object id destroyed
@@ -738,15 +769,15 @@ namespace {
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                         }
                     }
-                    
+
                     // remove destroyed ship's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
-                    
+
                     for (empire_it targeter_it = empire_infos.begin();
                         targeter_it != empire_infos.end(); ++targeter_it)
                     { targeter_it->second.target_ids.erase(target_id); }
-                        
+
                     // Remove target from its empire's list of attackers
                     empire_infos[target->Owner()].attacker_ids.erase(target_id);
                     CleanEmpires();
@@ -762,17 +793,19 @@ namespace {
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
                 }
-                if (target->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
-                    target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
-                    target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
+                if (target->CurrentMeterValue(METER_SHIELD) <= 0.0f &&
+                    target->CurrentMeterValue(METER_DEFENSE) <= 0.0f &&
+                    target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0f)
                 {
-                    // An outpost can enter combat in essentially an incapacitated state, but if it is removed from combat before it has
-                    // been attacked then it can wrongly get regen on the next turn, so check that it has been attacked before excluding
-                    // it from any remaining battle
+                    // An outpost can enter combat in essentially an
+                    // incapacitated state, but if it is removed from combat
+                    // before it has been attacked then it can wrongly get regen
+                    // on the next turn, so check that it has been attacked
+                    // before excluding it from any remaining battle
                     if (combat_info.damaged_object_ids.find(target_id) == combat_info.damaged_object_ids.end()) {
                         if (verbose_logging) {
                             DebugLogger() << "!! Planet " << target_id << "has not yet been attacked, "
-                                        << "so will not yet be removed from battle, despite being essentially incapacitated";
+                                          << "so will not yet be removed from battle, despite being essentially incapacitated";
                         }
                         return false;
                     }
@@ -801,12 +834,16 @@ namespace {
         /// check if any empire has no remaining target or attacker objects.
         /// If so, remove that empire's entry
         void CleanEmpires() {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
+            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
+                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
             std::map<int, EmpireCombatInfo> temp = empire_infos;
             for (empire_it empire_it = empire_infos.begin();
                  empire_it != empire_infos.end(); ++empire_it)
             {
-                if (!empire_it->second.HasTargets() && ! empire_it->second.HasAttackers()) {
+                if (!empire_it->second.HasTargets() &&
+                    !empire_it->second.HasAttackers() &&
+                    !empire_it->second.HasUnlauchedArmedFighters(combat_info))
+                {
                     temp.erase(empire_it->first);
                     if (verbose_logging)
                         DebugLogger() << "No valid attacking objects left for empire with id: " << empire_it->first;
@@ -1008,6 +1045,7 @@ namespace {
 
         TemporaryPtr<Ship> attack_ship = boost::dynamic_pointer_cast<Ship>(attacker);
         TemporaryPtr<Planet> attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
+        TemporaryPtr<Fighter> attack_fighter = boost::dynamic_pointer_cast<Fighter>(attacker);
 
         if (attack_ship) {
             weapons = ShipWeaponsStrengths(attack_ship);
@@ -1015,12 +1053,19 @@ namespace {
                  part_it != weapons.end(); ++part_it)
             {
                 if (verbose_logging) {
-                    DebugLogger() << "weapon: " << part_it->part_type_name
-                                  << " attack: " << part_it->part_attack;
+                    if (part_it->part_class == PC_DIRECT_WEAPON) {
+                        DebugLogger() << "Attacker Ship direct weapon: " << part_it->part_type_name
+                                      << " attack: " << part_it->part_attack;
+                    } else if (part_it->part_class == PC_FIGHTER_BAY) {
+                        DebugLogger() << "Attacker Ship fighter launch: " << part_it->fighters_launched
+                                      << " damage: " << part_it->fighter_damage;
+                    }
                 }
             }
-        } else if (attack_planet) { // treat planet defenses as short range
+        } else if (attack_planet) {     // treat planet defenses as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "", attack_planet->CurrentMeterValue(METER_DEFENSE)));
+        } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "", attack_fighter->Damage()));
         }
         return weapons;
     }
@@ -1097,7 +1142,9 @@ namespace {
 
         // Stealthed attackers have now revealed themselves to their targets.
         // Process this for each new combat event.
-        for (unsigned int event_index = init_event_index; event_index < combat_info.combat_events.size(); event_index++) {
+        for (unsigned int event_index = init_event_index;
+             event_index < combat_info.combat_events.size(); event_index++)
+        {
             // mark attacker as valid target for attacked object's owner, so that regardless
             // of visibility the attacker can be counter-attacked in subsequent rounds if it
             // was not already attackable
@@ -1108,8 +1155,8 @@ namespace {
                 combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
                 // Also ensure that attacker (and their fleet if attacker was a ship) are
                 // revealed with at least BASIC_VISIBILITY to the taget empire
-                combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] = 
-                        std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
+                combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] =
+                    std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
                 if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
                     combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] = 
                             std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
