@@ -251,8 +251,8 @@ NO_EFFECT_WITH_CLOAKS = "NO_EFFECT_WITH_CLOAKS"
 
 BASE_DETECTION = 25
 
-
 TECH_EFFECTS = {
+    # "TECHNAME": { Token1: Value1, Token2: Value2, ...}
     "SHP_REINFORCED_HULL": {STRUCTURE: 5},
     "SHP_BASIC_DAM_CONT": {REPAIR_PER_TURN: 1},
     "SHP_FLEET_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
@@ -262,6 +262,7 @@ TECH_EFFECTS = {
 }
 
 HULL_EFFECTS = {
+    # "HULLNAME": { Token1: Value1, Token2: Value2, ...}
     # Robotic line
     "SH_ROBOTIC": {REPAIR_PER_TURN: 2},
     "SH_SPATIAL_FLUX": {STEALTH_MODIFIER: -30},
@@ -292,6 +293,7 @@ HULL_EFFECTS = {
 }
 
 PART_EFFECTS = {
+    # "PARTNAME": { Token1: Value1, Token2: Value2, ...}
     "SH_MULTISPEC": {SOLAR_STEALTH: 60},
     "FU_TRANSPATIAL_DRIVE": {},  # not supported yet
     "FU_RAMSCOOP": {FUEL_PER_TURN: 0.1},
