@@ -193,13 +193,13 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         case PC_TROOPS:
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
             break;
-        case PC_FIGHTER_HANGAR:
-        case PC_FIGHTER_BAY: {
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
+        case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, true)); // note: stacking allowed for this part
             break;
         }
-        case PC_DIRECT_WEAPON:
-        case PC_FIGHTER_WEAPON: {
+        case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
+        case PC_DIRECT_WEAPON:      // capacity indicates weapon damage per shot
+        case PC_FIGHTER_WEAPON: {   // capacity indiciates fighters' damage (max on a ship is used for launched fighters)
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
             break;
         }

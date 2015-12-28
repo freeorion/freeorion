@@ -7,14 +7,19 @@
 Fighter::Fighter() :
     UniverseObject(),
     m_damage(0.0f),
-    m_destroyed(false)
+    m_destroyed(false),
+    m_launched_from_id(INVALID_OBJECT_ID),
+    m_species_name()
 {}
 
 Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage) :
     UniverseObject(),
-    m_damage(0.0f),
-    m_destroyed(false)
+    m_damage(damage),
+    m_destroyed(false),
+    m_launched_from_id(launched_from_id),
+    m_species_name(species_name)
 {
+    this->SetOwner(empire_id);
     UniverseObject::Init();
 }
 
@@ -26,6 +31,12 @@ float Fighter::Damage() const
 
 bool Fighter::Destroyed() const
 { return m_destroyed; }
+
+int Fighter::LaunchedFrom() const
+{ return m_launched_from_id; }
+
+const std::string& Fighter::SpeciesName() const
+{ return m_species_name; }
 
 void Fighter::SetDestroyed(bool destroyed)
 { m_destroyed = destroyed; }

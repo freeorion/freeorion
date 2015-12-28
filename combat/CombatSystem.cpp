@@ -408,6 +408,7 @@ namespace {
     {
         if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f)
             target->SetDestroyed();
+        attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
     void AttackPlanetShip(TemporaryPtr<Planet> attacker, TemporaryPtr<Ship> target,
@@ -455,24 +456,35 @@ namespace {
     void AttackPlanetFighter(TemporaryPtr<Planet> attacker, TemporaryPtr<Fighter> target,
                              CombatInfo& combat_info, int bout, int round)
     {
+        if (!attacker || ! target) return;
+
         target->SetDestroyed();
+        combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, attacker->ID(), target->Owner()));
     }
 
     void AttackFighterShip(TemporaryPtr<Fighter> attacker, TemporaryPtr<Ship> target,
                            CombatInfo& combat_info, int bout, int round)
-    {}
+    {
+        if (!attacker || ! target) return;
+
+        target->SetLastTurnActiveInCombat(CurrentTurn());
+    }
 
     void AttackFighterPlanet(TemporaryPtr<Fighter> attacker, TemporaryPtr<Planet> target,
                              CombatInfo& combat_info, int bout, int round)
-    {}
+    {
+        if (!attacker || ! target) return;
+    }
 
     void AttackFighterFighter(TemporaryPtr<Fighter> attacker, TemporaryPtr<Fighter> target,
                               CombatInfo& combat_info, int bout, int round)
     {
+        if (!attacker || ! target) return;
+
         if (attacker->Damage() > 0.0f)
             target->SetDestroyed();
+        combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, INVALID_OBJECT_ID, target->Owner()));
     }
-
 
     void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon,
                 TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round)
@@ -587,9 +599,10 @@ namespace {
             return retval;
         const std::vector<std::string>& parts = design->Parts();
 
+        std::set<std::string> seen_hangar_part_types;
         int available_fighters = 0;
         float fighter_attack = 0.0f;
-        std::multimap<std::string, int> part_fighter_launch_capacities;
+        std::map<std::string, int> part_fighter_launch_capacities;
 
         // determine what ship does during combat, based on parts and their meters...
         for (std::vector<std::string>::const_iterator part_it = parts.begin();
@@ -606,10 +619,17 @@ namespace {
                 float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                 if (part_attack > 0.0f)
                     retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
+
             } else if (part_class == PC_FIGHTER_HANGAR) {
-                available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+                // hangar max-capacity-modification effects stack, so only add capacity for each hangar type once
+                if (seen_hangar_part_types.find(part_name) == seen_hangar_part_types.end()) {
+                    available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+                    seen_hangar_part_types.insert(part_name);
+                }
+
             } else if (part_class == PC_FIGHTER_BAY) {
-                part_fighter_launch_capacities.insert(std::make_pair(part_name, ship->CurrentPartMeterValue(METER_CAPACITY, part_name)));
+                part_fighter_launch_capacities[part_name] = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+
             } else if (part_class == PC_FIGHTER_WEAPON) {
                 fighter_attack = std::max(fighter_attack, ship->CurrentPartMeterValue(METER_CAPACITY, part_name));
             }
@@ -621,6 +641,9 @@ namespace {
                  launch_it != part_fighter_launch_capacities.end(); ++launch_it)
             {
                 int to_launch = std::min(launch_it->second, available_fighters);
+
+                DebugLogger() << "Ship " << ship->Name() << " launching " << to_launch << " fighters from bay part " << launch_it->first;
+
                 if (to_launch <= 0)
                     continue;
                 retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch_it->first, to_launch, fighter_attack)); // attack may be 0; that's ok: decoys
@@ -641,7 +664,27 @@ namespace {
         bool HasAttackers() const               { return !attacker_ids.empty(); }
 
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
-            // TODO: THIS
+            // check each ship to see if it has any unlaunched armed fighters...
+            for (std::set<int>::const_iterator it = attacker_ids.begin();
+                 it != attacker_ids.end(); ++it)
+            {
+                if (combat_info.destroyed_object_ids.find(*it) != combat_info.destroyed_object_ids.end())
+                    continue;   // destroyed objects can't launch fighters
+
+                TemporaryPtr<const Ship> ship = combat_info.objects.Object<Ship>(*it);
+                if (!ship)
+                    continue;   // non-ships can't launch fighters
+
+                std::vector<PartAttackInfo> weapons = ShipWeaponsStrengths(ship);
+                for (std::vector<PartAttackInfo>::const_iterator w_it = weapons.begin();
+                     w_it != weapons.end(); ++w_it)
+                {
+                    if (w_it->part_class == PC_FIGHTER_BAY &&
+                        w_it->fighters_launched > 0 &&
+                        w_it->fighter_damage > 0.0f)
+                    { return true; }
+                }
+            }
 
             return false;
         }
@@ -685,27 +728,61 @@ namespace {
     struct AutoresolveInfo {
         typedef std::map<int, EmpireCombatInfo>::iterator empire_it;
 
-        // Describes the state of a single fighter in combat
-        struct FighterInfo {
-            int     id;         // negative number used to refer to a fighter in the target/attacker object ids
-            int     empire_id;  // which empire owns the fighter
-            int     ship_id;    // from which ship was this fighter launched
-            bool    destroyed;  // has this fighter been destroyed?
-        };
-
-        std::map<int, FighterInfo>      fighter_info;               // all fighters involved in battle, indexed by fighter id (which should be negative ints)
         std::set<int>                   valid_target_object_ids;    // all objects that can be attacked
         std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
         std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
         float                           monster_detection;          // monster (non-player combatants) detection strength
         CombatInfo&                     combat_info;                // a reference to the combat info
+        int                             next_fighter_id;
 
         AutoresolveInfo(CombatInfo& combat_info) :
-            combat_info(combat_info)
+            valid_target_object_ids(),
+            valid_attacker_object_ids(),
+            empire_infos(),
+            monster_detection(0.0f),
+            combat_info(combat_info),
+            next_fighter_id(-10001) // give fighters negative ids so as to avoid clashes with any positiv-id of persistent UniverseObjects
         {
             monster_detection = GetMonsterDetection(combat_info);
             PopulateAttackersAndTargets(combat_info);
             PopulateEmpireTargets(combat_info);
+        }
+
+        std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
+                                     int from_ship_id, const std::string& species)
+        {
+            std::vector<int> retval;
+
+            for (int n = 0; n < number; ++n) {
+                // create / insert fighter into combat objectmap
+                Fighter* fighter = new Fighter(owner_empire_id, from_ship_id, species, damage);
+                fighter->SetID(next_fighter_id--);
+                TemporaryPtr<Fighter> fighter_ptr = combat_info.objects.Insert(fighter);
+                if (!fighter_ptr) {
+                    ErrorLogger() << "AddFighters unable to create and insert new Fighter object...";
+                    break;
+                }
+
+                retval.push_back(fighter_ptr->ID());
+
+                // add fighter to valid targets and attackers
+                valid_attacker_object_ids.insert(fighter_ptr->ID());
+                valid_target_object_ids.insert(fighter_ptr->ID());
+
+                // if fighter can attack, add to owner's attacker ids
+                if (damage > 0.0f)
+                    empire_infos[fighter_ptr->Owner()].attacker_ids.insert(fighter_ptr->ID());
+
+                // add fighter to targets ids for any empire that can attack it
+                for (std::map<int, EmpireCombatInfo>::iterator emp_it = empire_infos.begin();
+                     emp_it != empire_infos.end(); ++emp_it)
+                {
+                    if (ObjectAttackableByEmpire(fighter_ptr, emp_it->first))
+                        empire_infos[emp_it->first].target_ids.insert(fighter_ptr->ID());
+                }
+            }
+
+            return retval;
         }
 
         // Return true if some empire that can attack has some targets that it can attack
@@ -869,7 +946,7 @@ namespace {
         }
 
         /// Returns the list of attacker ids in a random order
-        void GiveAttackersShuffled(std::vector<int>& shuffled) {
+        void GetShuffledValidAttackerIDs(std::vector<int>& shuffled) {
             shuffled.clear();
             shuffled.insert(shuffled.begin(), valid_attacker_object_ids.begin(), valid_attacker_object_ids.end());
 
@@ -887,7 +964,9 @@ namespace {
         void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
             bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                    GetOptionsDB().Get<bool>("verbose-combat-logging");
-            for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
+            for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
+                 it != combat_info.objects.const_end(); ++it)
+            {
                 TemporaryPtr<const UniverseObject> obj = *it;
                 std::string obj_status = "Considerting object " + obj->Name() + " owned by " + boost::lexical_cast<std::string>(obj->Owner());
                 if (ObjectCanAttack(obj)) {
@@ -1062,8 +1141,54 @@ namespace {
         } // end for over weapons
     }
 
+    void ReduceStoredFighterCount(TemporaryPtr<Ship>& ship, float launched_fighters) {
+        if (!ship || launched_fighters <= 0)
+            return;
+
+        // get how many fighters are initialy in each part type...
+        // may be multiple hangar part types, each with different capacity (number of stored fighters)
+        std::map<std::string, Meter*> part_type_fighter_hangar_capacities;
+
+        const ShipDesign* design = ship->Design();
+        if (!design) {
+            ErrorLogger() << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
+            return;
+        }
+        const std::vector<std::string>& parts = design->Parts();
+
+        // get hangar part meter values
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+             part_it != parts.end(); ++part_it)
+        {
+            const std::string& part_name = *part_it;
+            const PartType* part = GetPartType(part_name);
+            if (!part)
+                continue;
+            if (part->Class() != PC_FIGHTER_HANGAR)
+                continue;
+            part_type_fighter_hangar_capacities[part_name] = ship->GetPartMeter(METER_CAPACITY, part_name);
+        }
+
+        // reduce meters until requested fighter reduction is achived
+        // doesn't matter which part's capacity meters are reduced, as all
+        // fighters are the same on the ship
+        for (std::map<std::string, Meter*>::iterator part_it = part_type_fighter_hangar_capacities.begin();
+             part_it != part_type_fighter_hangar_capacities.end(); ++part_it)
+        {
+            if (!part_it->second)
+                continue;
+            float reduction = std::min(part_it->second->Current(), launched_fighters);
+            launched_fighters -= reduction;
+            part_it->second->AddToCurrent(-reduction);
+
+            // stop if all fighters launched
+            if (launched_fighters <= 0.0f)
+                break;
+        }
+    }
+
     void LaunchFighters(TemporaryPtr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
-                         AutoresolveInfo& combat_state, int bout, int round)
+                        AutoresolveInfo& combat_state, int bout, int round)
     {
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                GetOptionsDB().Get<bool>("verbose-combat-logging");
@@ -1073,21 +1198,39 @@ namespace {
             return;   // no ability to attack!
         }
 
+        static const std::string EMPTY_STRING;
+        TemporaryPtr<Ship>& attacker_ship = boost::dynamic_pointer_cast<Ship>(attacker);
+        const std::string& species_name = attacker_ship ? attacker_ship->SpeciesName() : EMPTY_STRING;
+
         for (std::vector<PartAttackInfo>::const_iterator weapon_it = weapons.begin();
              weapon_it != weapons.end(); ++weapon_it)
         {
             // skip non-fighter weapons
             // direct fire weapons handled separately
-            if (weapon_it->part_class != PC_FIGHTER_BAY)
+            if (weapon_it->part_class != PC_FIGHTER_BAY)    // passed in weapons container should have already checked for adequate supply of fighters to launch and the available bays, and condensed into a single entry...
                 continue;
 
             int attacker_owner_id = attacker->Owner();
 
             if (verbose_logging)
-                DebugLogger() << "Launching " << weapon_it->fighters_launched << " with damage " << weapon_it->fighter_damage << " for empire id: " << attacker_owner_id << " from ship id: " << attacker->ID();
+                DebugLogger() << "Launching " << weapon_it->fighters_launched
+                              << " with damage " << weapon_it->fighter_damage
+                              << " for empire id: " << attacker_owner_id
+                              << " from ship id: " << attacker->ID();
 
+            std::vector<int> new_fighter_ids =
+                combat_state.AddFighters(weapon_it->fighters_launched, weapon_it->fighter_damage,
+                                         attacker_owner_id, attacker->ID(), species_name);
 
+            // reduce hangar capacity (contents) corresponding to launched fighters
+            int num_launched = new_fighter_ids.size();
+            ReduceStoredFighterCount(attacker_ship, num_launched);
 
+            // launching fighters counts as a ship being active in combat
+            if (!new_fighter_ids.empty())
+                attacker_ship->SetLastTurnActiveInCombat(CurrentTurn());
+
+            break;  // don't need to check any more weapons, as all fighters launched should have been contained in the single PC_FIGHTER_BAY entry
         } // end for over weapons
     }
 
@@ -1117,8 +1260,10 @@ namespace {
                     }
                 }
             }
+
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "", attack_planet->CurrentMeterValue(METER_DEFENSE)));
+
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
             weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "", attack_fighter->Damage()));
         }
@@ -1136,7 +1281,14 @@ namespace {
         }
 
         std::vector<int> shuffled_attackers;
-        combat_state.GiveAttackersShuffled(shuffled_attackers);
+        combat_state.GetShuffledValidAttackerIDs(shuffled_attackers);
+
+        if (verbose_logging) {
+            DebugLogger() << "Attacker IDs:";
+            for (std::vector<int>::const_iterator at_it = shuffled_attackers.begin();
+                 at_it != shuffled_attackers.end(); ++at_it)
+            { DebugLogger() << *at_it; }
+        }
 
         int round = 1;  // counter of events during the current combat bout
         int init_event_index = combat_info.combat_events.size();
@@ -1156,7 +1308,7 @@ namespace {
                 continue;
             }
             if (attacker->ObjectType() != OBJ_PLANET) {
-                continue;
+                continue;   // fighter and ship attacks processed below
             }
             if (!ObjectCanAttack(attacker)) {
                 DebugLogger() << "Planet " << attacker->Name() << " could not attack.";
@@ -1213,8 +1365,7 @@ namespace {
                     continue;
                 }
                 if (attacker->ObjectType() != OBJ_SHIP) {
-                    // currently only ships can launch fighters
-                    continue;
+                    continue;   // currently only ships can launch fighters
                 }
                 if (!ObjectCanAttack(attacker)) {
                     DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
