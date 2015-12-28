@@ -646,7 +646,6 @@ class AIstate(object):
             ship_info = [(ship_id, ship.designID, ship.speciesName) for ship_id, ship in [(ship_id, universe.getShip(ship_id)) for ship_id in fleet.shipIDs] if ship]
         elif not ship_info:
             return {}
-                
         rating = 0
         attack = 0
         health = 0
@@ -662,6 +661,17 @@ class AIstate(object):
                 shields = ship.currentMeterValue(fo.meterType.shield)
                 stats['structure'] = structure
                 stats['shields'] = shields
+                stats['attack'] = 0
+                stats['attacks'] = {}
+                design = ship.design
+                if not design:
+                    print "ERROR: Ship appears to have no valid design..."
+                    continue
+                for partname in design.parts:
+                    if partname and fo.getPartType(partname).partClass == fo.shipPartClass.shortRange:
+                        damage = ship.currentPartMeterValue(fo.meterType.capacity, partname)
+                        stats['attack'] += damage
+                        stats['attacks'][damage] = stats['attacks'].get(damage, 0) + 1
             self.adjust_stats_vs_enemy(stats, enemy_stats)
             rating += stats['attack'] * stats['structure']
             attack += stats['attack']
