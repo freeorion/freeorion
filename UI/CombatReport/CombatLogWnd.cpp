@@ -190,9 +190,9 @@ void CombatLogWnd::SetLog(int log_id) {
         } else if (const FighterDestructionEvent* destruction = dynamic_cast<FighterDestructionEvent*>(it->get())) {
             std::string destroyed_by;
             if (destruction->destroyed_by_object_id >= 0)   // destroyed by ship or planet
-                destroyed_by = PublicNameLink(client_empire_id, destruction->destroyed_by_object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+                destroyed_by = PublicNameLink(client_empire_id, destruction->attacker_owner_empire_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
             else                                            // destroyed by fighter
-                destroyed_by = EmpireColourWrappedText(destruction->destroyed_owner_id, UserString("OBJ_FIGHTER"));
+                destroyed_by = EmpireColourWrappedText(destruction->attacker_owner_empire_id, UserString("OBJ_FIGHTER"));
             std::string empire_coloured_destroyed_fighter = EmpireColourWrappedText(destruction->destroyed_owner_id, UserString("OBJ_FIGHTER"));
 
             const std::string& template_str = UserString("ENC_COMBAT_DESTRUCTION_STR");

@@ -409,7 +409,7 @@ namespace {
     {
         if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), target->Owner(), attacker->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         }
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -468,7 +468,7 @@ namespace {
 
         if (damage > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), target->Owner(), attacker->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         }
     }
 
@@ -506,7 +506,7 @@ namespace {
 
         if (damage > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, INVALID_OBJECT_ID, target->Owner(), attacker->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner()));
         }
     }
 
@@ -781,9 +781,7 @@ namespace {
                 // create / insert fighter into combat objectmap
                 Fighter* fighter = new Fighter(owner_empire_id, from_ship_id, species, damage);
                 fighter->SetID(next_fighter_id--);
-                std::string name_temp = "Empire " + boost::lexical_cast<std::string>(owner_empire_id) +
-                                        UserString(species) + " Fighter " + boost::lexical_cast<std::string>(fighter->ID());
-                fighter->Rename(name_temp);
+                fighter->Rename(UserString("OBJ_FIGHTER"));
                 TemporaryPtr<Fighter> fighter_ptr = combat_info.objects.Insert(fighter);
                 if (!fighter_ptr) {
                     ErrorLogger() << "AddFighters unable to create and insert new Fighter object...";
@@ -792,27 +790,27 @@ namespace {
 
                 retval.push_back(fighter_ptr->ID());
 
-                // add fighter to valid targets and attackers
+                // add fighter to attackers (if it can attack)
                 if (damage > 0.0f) {
                     valid_attacker_object_ids.insert(fighter_ptr->ID());
-                    DebugLogger() << "Added fighter id: " << fighter_ptr->ID() << " to valid attackers set";
-                }
-                valid_target_object_ids.insert(fighter_ptr->ID());
-
-                DebugLogger() << "Added fighter id: " << fighter_ptr->ID() << " to valid targets set";
-
-                // if fighter can attack, add to owner's attacker ids
-                if (damage > 0.0f) {
                     empire_infos[fighter_ptr->Owner()].attacker_ids.insert(fighter_ptr->ID());
+                    DebugLogger() << "Added fighter id: " << fighter_ptr->ID() << " to attackers sets";
                 }
 
+                // and to targets
+                valid_target_object_ids.insert(fighter_ptr->ID());
                 // add fighter to targets ids for any empire that can attack it
                 for (std::map<int, EmpireCombatInfo>::iterator emp_it = empire_infos.begin();
                      emp_it != empire_infos.end(); ++emp_it)
                 {
-                    if (ObjectAttackableByEmpire(fighter_ptr, emp_it->first))
+                    if (ObjectAttackableByEmpire(fighter_ptr, emp_it->first)) {
                         empire_infos[emp_it->first].target_ids.insert(fighter_ptr->ID());
+                        DebugLogger() << "Added fighter " << fighter_ptr->ID()
+                                      << " owned by empire " << fighter_ptr->Owner()
+                                      << " to targets for empire " << emp_it->first;
+                    }
                 }
+                DebugLogger() << "Added fighter id: " << fighter_ptr->ID() << " to valid targets set";
             }
 
             return retval;

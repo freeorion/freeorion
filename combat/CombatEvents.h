@@ -71,7 +71,7 @@ private:
 /// Created when an fighter is destroyed
 struct FO_COMMON_API FighterDestructionEvent : public CombatEvent {
     FighterDestructionEvent();
-    FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_, int attacker_owner_empire_id_, int destroyer_owner_id_);
+    FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_, int attacker_owner_empire_id_, int destroyed_owner_id_);
     virtual ~FighterDestructionEvent() {}
 
     virtual std::string DebugString() const;
