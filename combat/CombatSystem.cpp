@@ -325,7 +325,7 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
@@ -398,7 +398,7 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
@@ -409,7 +409,7 @@ namespace {
     {
         if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, attacker->ID(), target->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), target->Owner(), attacker->Owner()));
         }
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -451,7 +451,7 @@ namespace {
                 DebugLogger() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -468,7 +468,7 @@ namespace {
 
         if (damage > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, attacker->ID(), target->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), target->Owner(), attacker->Owner()));
         }
     }
 
@@ -479,7 +479,7 @@ namespace {
 
         float damage = attacker->Damage();
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -492,7 +492,7 @@ namespace {
         float damage = attacker->Damage();
 
         if (damage > 0.0f) {
-            combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage));
+            combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
             target->SetLastTurnAttackedByShip(CurrentTurn());
         }
     }
@@ -506,7 +506,7 @@ namespace {
 
         if (damage > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, INVALID_OBJECT_ID, target->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, INVALID_OBJECT_ID, target->Owner(), attacker->Owner()));
         }
     }
 
@@ -847,8 +847,8 @@ namespace {
 
                 // Check if the target was destroyed and update lists if yes
                 bool destroyed = CheckDestruction(obj);
-                if (destroyed)
-                    combat_info.combat_events.push_back(boost::make_shared<IncapacitationEvent>(bout, obj->ID()));
+                if (destroyed && obj->ObjectType() != OBJ_FIGHTER)  // don't want / need additional incapacitation events for fighters, as any attack destroys them and their ID isn't known on clients to be displayed anyway
+                    combat_info.combat_events.push_back(boost::make_shared<IncapacitationEvent>(bout, obj->ID(), obj->Owner()));
             }
         }
 

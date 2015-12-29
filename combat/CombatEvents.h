@@ -30,7 +30,7 @@ private:
 /// An event that describes a single attack by one object or fighter against another object or fighter
 struct FO_COMMON_API AttackEvent : public CombatEvent {
     AttackEvent();
-    AttackEvent(int bout, int round, int attacker_id, int target_id, float damage);
+    AttackEvent(int bout, int round, int attacker_id, int target_id, float damage_, int attacker_owner_id_);
 
     virtual ~AttackEvent() {}
 
@@ -41,6 +41,7 @@ struct FO_COMMON_API AttackEvent : public CombatEvent {
     int     attacker_id;
     int     target_id;
     float   damage;
+    int     attacker_owner_id;
 
 private:
     friend class boost::serialization::access;
@@ -52,13 +53,14 @@ private:
 /// eg. a ship is destroyed or a planet loses all defence
 struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     IncapacitationEvent();
-    IncapacitationEvent(int bout, int object_id);
+    IncapacitationEvent(int bout_, int object_id_, int object_owner_id_);
     virtual ~IncapacitationEvent() {}
 
     virtual std::string DebugString() const;
 
     int bout;
     int object_id;
+    int object_owner_id;
 
 private:
     friend class boost::serialization::access;
@@ -69,14 +71,16 @@ private:
 /// Created when an fighter is destroyed
 struct FO_COMMON_API FighterDestructionEvent : public CombatEvent {
     FighterDestructionEvent();
-    FighterDestructionEvent(int bout_, int destroyed_by_object_id_, int fighter_owner_empire_id_);
+    FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_, int attacker_owner_empire_id_, int destroyer_owner_id_);
     virtual ~FighterDestructionEvent() {}
 
     virtual std::string DebugString() const;
 
     int bout;
-    int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
+    int round;
+    int attacker_owner_empire_id;   // may be ALL_EMPIRES if attacking fighter was owned by no empire
     int destroyed_by_object_id;     // may be INVALID_OBJECT_ID if destroyed by another fighter
+    int destroyed_owner_id;         // may be ALL_EMPIRES if destroyed fighter was owned by no empire
 
 private:
     friend class boost::serialization::access;

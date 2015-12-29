@@ -138,7 +138,7 @@ void CombatLogWnd::SetLog(int log_id) {
             if (attack->attacker_id >= 0)   // ship
                 attacker_link = PublicNameLink(client_empire_id, attack->attacker_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
             else                            // fighter
-                attacker_link = UserString("OBJ_FIGHTER");
+                attacker_link = EmpireColourWrappedText(attack->attacker_owner_id, UserString("OBJ_FIGHTER"));
 
             std::string target_link = PublicNameLink(client_empire_id, attack->target_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
 
@@ -188,14 +188,18 @@ void CombatLogWnd::SetLog(int log_id) {
                                         % attack->round) + "\n";
 
         } else if (const FighterDestructionEvent* destruction = dynamic_cast<FighterDestructionEvent*>(it->get())) {
-            std::string destroyed_by = PublicNameLink(client_empire_id, destruction->destroyed_by_object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            std::string empire_coloured_fighter = EmpireColourWrappedText(destruction->fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
+            std::string destroyed_by;
+            if (destruction->destroyed_by_object_id >= 0)   // destroyed by ship or planet
+                destroyed_by = PublicNameLink(client_empire_id, destruction->destroyed_by_object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+            else                                            // destroyed by fighter
+                destroyed_by = EmpireColourWrappedText(destruction->destroyed_owner_id, UserString("OBJ_FIGHTER"));
+            std::string empire_coloured_destroyed_fighter = EmpireColourWrappedText(destruction->destroyed_owner_id, UserString("OBJ_FIGHTER"));
 
             const std::string& template_str = UserString("ENC_COMBAT_DESTRUCTION_STR");
 
             detailed_description << str(FlexibleFormat(template_str)
                                         % destroyed_by
-                                        % empire_coloured_fighter
+                                        % empire_coloured_destroyed_fighter
                                         % attack->bout
                                         % attack->round) + "\n";
 
