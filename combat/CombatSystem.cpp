@@ -17,6 +17,7 @@
 
 #include "../util/Logger.h"
 #include "../util/Random.h"
+#include "../util/i18n.h"
 
 #include "../network/Message.h"
 
@@ -757,6 +758,9 @@ namespace {
                 // create / insert fighter into combat objectmap
                 Fighter* fighter = new Fighter(owner_empire_id, from_ship_id, species, damage);
                 fighter->SetID(next_fighter_id--);
+                std::string name_temp = "Empire " + boost::lexical_cast<std::string>(owner_empire_id) +
+                                        UserString(species) + " Fighter " + boost::lexical_cast<std::string>(fighter->ID());
+                fighter->Rename(name_temp);
                 TemporaryPtr<Fighter> fighter_ptr = combat_info.objects.Insert(fighter);
                 if (!fighter_ptr) {
                     ErrorLogger() << "AddFighters unable to create and insert new Fighter object...";
@@ -766,12 +770,18 @@ namespace {
                 retval.push_back(fighter_ptr->ID());
 
                 // add fighter to valid targets and attackers
-                valid_attacker_object_ids.insert(fighter_ptr->ID());
+                if (damage > 0.0f) {
+                    valid_attacker_object_ids.insert(fighter_ptr->ID());
+                    DebugLogger() << "Added fighter id: " << fighter_ptr->ID() << " to valid attackers set";
+                }
                 valid_target_object_ids.insert(fighter_ptr->ID());
 
+                DebugLogger() << "Added fighter id: " << fighter_ptr->ID() << " to valid targets set";
+
                 // if fighter can attack, add to owner's attacker ids
-                if (damage > 0.0f)
+                if (damage > 0.0f) {
                     empire_infos[fighter_ptr->Owner()].attacker_ids.insert(fighter_ptr->ID());
+                }
 
                 // add fighter to targets ids for any empire that can attack it
                 for (std::map<int, EmpireCombatInfo>::iterator emp_it = empire_infos.begin();
@@ -829,10 +839,11 @@ namespace {
 
             if (target->ObjectType() == OBJ_FIGHTER) {
                 const TemporaryPtr<const Fighter> fighter = boost::dynamic_pointer_cast<const Fighter>(target);
-                if (fighter) {
+                if (fighter && fighter->Destroyed()) {
                     // remove destroyed fighter's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
+                    DebugLogger() << "Removed destroyed fighter id: " << fighter->ID() << " from attackers and targets sets";
 
                     for (empire_it targeter_it = empire_infos.begin();
                         targeter_it != empire_infos.end(); ++targeter_it)
@@ -1120,11 +1131,12 @@ namespace {
 
             // select target object
             int target_idx = RandInt(0, valid_target_ids.size() - 1);
-            if (verbose_logging)
-                DebugLogger() << " ... target index: " << target_idx << " of " << valid_target_ids.size() - 1;
             std::set<int>::const_iterator target_it = valid_target_ids.begin();
             std::advance(target_it, target_idx);
-            assert(target_it != valid_target_ids.end());
+            if (target_it == valid_target_ids.end()) {
+                ErrorLogger() << "AutoResolveCombat couldn't pick a target id";
+                continue;
+            }
             int target_id = *target_it;
 
             TemporaryPtr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
@@ -1398,8 +1410,8 @@ namespace {
                 combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] =
                     std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
                 if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
-                    combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] = 
-                            std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
+                    combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] =
+                        std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
                 }
             }
         }
