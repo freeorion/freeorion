@@ -177,4 +177,62 @@ void FighterDestructionEvent::serialize (Archive& ar, const unsigned int version
 BOOST_CLASS_EXPORT(FighterDestructionEvent)
 
 template
-void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+void FighterDestructionEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void FighterDestructionEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void FighterDestructionEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void FighterDestructionEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+//////////////////////////////////////////
+/////////// FighterLaunchEvent ///////////
+//////////////////////////////////////////
+FighterLaunchEvent::FighterLaunchEvent() :
+    bout(-1),
+    fighter_owner_empire_id(ALL_EMPIRES),
+    launched_from_id(INVALID_OBJECT_ID)
+{}
+
+FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_) :
+    bout(bout_),
+    fighter_owner_empire_id(fighter_owner_empire_id_),
+    launched_from_id(launched_from_id_)
+{}
+
+std::string FighterLaunchEvent::DebugString() const {
+    std::stringstream ss;
+    ss << "FighterLaunchEvent from object " << launched_from_id
+       << " of fighter of empire " << fighter_owner_empire_id
+       << " at bout " << bout;
+    return ss.str();
+}
+
+template <class Archive>
+void FighterLaunchEvent::serialize (Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(bout)
+       & BOOST_SERIALIZATION_NVP(fighter_owner_empire_id)
+       & BOOST_SERIALIZATION_NVP(launched_from_id);
+}
+
+BOOST_CLASS_EXPORT(FighterLaunchEvent)
+
+template
+void FighterLaunchEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void FighterLaunchEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void FighterLaunchEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void FighterLaunchEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+
+
+

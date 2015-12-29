@@ -33,7 +33,7 @@ namespace {
         return objects_per_owner;
     }
 
-    std::string CountsToText(const std::map<int, int>& count_per_empire, std::string delimiter = ", ") {
+    std::string CountsToText(const std::map<int, int>& count_per_empire, const std::string& delimiter = ", ") {
         std::stringstream ss;
         for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
             std::string owner_string = UserString("NEUTRAL");
@@ -73,7 +73,7 @@ namespace {
     /// Creates a link tag of the appropriate type for object_id,
     /// with the content being the public name from the point of view of client_empire_id.
     /// Returns not_found if object_id is not found.
-    std::string PublicNameLink(int client_empire_id, int object_id, std::string not_found) {
+    std::string PublicNameLink(int client_empire_id, int object_id, const std::string& not_found) {
         TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
         if (object) {
             const std::string& name = object->PublicName(client_empire_id);
@@ -83,10 +83,17 @@ namespace {
             return not_found;
         }
     }
+
+    std::string EmpireColourWrappedText(int empire_id, const std::string& text) {
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return text;
+        return GG::RgbaTag(empire->Color()) + text + "</rgba>";
+    }
 }
 
 
-CombatLogWnd::CombatLogWnd():
+CombatLogWnd::CombatLogWnd() :
     CUILinkTextMultiEdit("", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY)
 {
     SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
@@ -119,13 +126,16 @@ void CombatLogWnd::SetLog(int log_id) {
     for (std::vector<CombatEventPtr>::const_iterator it = log.combat_events.begin();
          it != log.combat_events.end(); ++it)
     {
-        const BoutBeginEvent* bout_begin = dynamic_cast<BoutBeginEvent*>(it->get());
-        const AttackEvent* attack = dynamic_cast<AttackEvent*>(it->get());
-        const IncapacitationEvent* incapacitation = dynamic_cast<IncapacitationEvent*>(it->get());
-        if (bout_begin) {
+        if (const BoutBeginEvent* bout_begin = dynamic_cast<BoutBeginEvent*>(it->get())) {
             detailed_description << str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout_begin->bout) + "\n";
-        } else if (attack) {
-            std::string attacker_link = PublicNameLink(client_empire_id, attack->attacker_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+
+        } else if (const AttackEvent* attack = dynamic_cast<AttackEvent*>(it->get())) {
+            std::string attacker_link;
+            if (attack->attacker_id >= 0)   // ship
+                attacker_link = PublicNameLink(client_empire_id, attack->attacker_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+            else                            // fighter
+                attacker_link = UserString("OBJ_FIGHTER");
+
             std::string target_link = PublicNameLink(client_empire_id, attack->target_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
 
             const std::string& template_str = UserString("ENC_COMBAT_ATTACK_STR");
@@ -136,7 +146,8 @@ void CombatLogWnd::SetLog(int log_id) {
                                         % attack->damage
                                         % attack->bout
                                         % attack->round) + "\n";
-        } else if (incapacitation) {
+
+        } else if (const IncapacitationEvent* incapacitation = dynamic_cast<IncapacitationEvent*>(it->get())) {
             TemporaryPtr<const UniverseObject> object = GetUniverseObject(incapacitation->object_id);
             std::string  template_str;
             if (!object) {
@@ -158,6 +169,31 @@ void CombatLogWnd::SetLog(int log_id) {
             }
 
             detailed_description << str(FlexibleFormat(template_str) % owner_string % object_link) + "\n";
+
+        } else if (const FighterLaunchEvent* launch = dynamic_cast<FighterLaunchEvent*>(it->get())) {
+            std::string launched_from_link = PublicNameLink(client_empire_id, launch->launched_from_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+            std::string empire_coloured_fighter = EmpireColourWrappedText(launch->fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
+
+            const std::string& template_str = UserString("ENC_COMBAT_LAUNCH_STR");
+
+            detailed_description << str(FlexibleFormat(template_str)
+                                        % launched_from_link
+                                        % empire_coloured_fighter
+                                        % attack->bout
+                                        % attack->round) + "\n";
+
+        } else if (const FighterDestructionEvent* destruction = dynamic_cast<FighterDestructionEvent*>(it->get())) {
+            std::string destroyed_by = PublicNameLink(client_empire_id, destruction->destroyed_by_object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+            std::string empire_coloured_fighter = EmpireColourWrappedText(destruction->fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
+
+            const std::string& template_str = UserString("ENC_COMBAT_DESTRUCTION_STR");
+
+            detailed_description << str(FlexibleFormat(template_str)
+                                        % destroyed_by
+                                        % empire_coloured_fighter
+                                        % attack->bout
+                                        % attack->round) + "\n";
+
         }
     }
 
