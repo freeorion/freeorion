@@ -57,19 +57,20 @@ AttackEvent::AttackEvent() :
     damage(0.0f)
 {}
 
-AttackEvent::AttackEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_) :
+AttackEvent::AttackEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_, int attacker_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_id(attacker_id_),
     target_id( target_id_),
-    damage(damage_)
+    damage(damage_),
+    attacker_owner_id(attacker_owner_id_)
 {}
 
 std::string AttackEvent::DebugString() const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
        << attacker_id << " -> " << target_id << " : "
-       << damage;
+       << damage << "   attacker owner: " << attacker_owner_id;
     return ss.str();
 }
 
@@ -80,7 +81,8 @@ void AttackEvent::serialize(Archive& ar, const unsigned int version) {
        & BOOST_SERIALIZATION_NVP(round)
        & BOOST_SERIALIZATION_NVP(attacker_id)
        & BOOST_SERIALIZATION_NVP(target_id)
-       & BOOST_SERIALIZATION_NVP(damage);
+       & BOOST_SERIALIZATION_NVP(damage)
+       & BOOST_SERIALIZATION_NVP(attacker_owner_id);
 
     if (version < 3) {
         int target_destroyed = 0;
@@ -88,7 +90,7 @@ void AttackEvent::serialize(Archive& ar, const unsigned int version) {
     }
 }
 
-BOOST_CLASS_VERSION(AttackEvent, 3)
+BOOST_CLASS_VERSION(AttackEvent, 4)
 BOOST_CLASS_EXPORT(AttackEvent)
 
 template
@@ -111,14 +113,15 @@ IncapacitationEvent::IncapacitationEvent() :
     object_id(INVALID_OBJECT_ID)
 {}
 
-IncapacitationEvent::IncapacitationEvent(int bout_, int object_id_) :
+IncapacitationEvent::IncapacitationEvent(int bout_, int object_id_, int object_owner_id_) :
     bout(bout_),
-    object_id(object_id_)
+    object_id(object_id_),
+    object_owner_id(object_owner_id_)
 {}
 
 std::string IncapacitationEvent::DebugString() const {
     std::stringstream ss;
-    ss << "Incapacitation of " << object_id << " at bout " << bout;
+    ss << "incapacitation of " << object_id << " owned by " << object_owner_id << " at bout " << bout;
     return ss.str();
 }
 
@@ -126,7 +129,8 @@ template <class Archive>
 void IncapacitationEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(object_id);
+       & BOOST_SERIALIZATION_NVP(object_id)
+       & BOOST_SERIALIZATION_NVP(object_owner_id);
 }
 
 BOOST_CLASS_EXPORT(IncapacitationEvent)
@@ -148,21 +152,28 @@ void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchi
 //////////////////////////////////////////
 FighterDestructionEvent::FighterDestructionEvent() :
     bout(-1),
-    fighter_owner_empire_id(ALL_EMPIRES),
-    destroyed_by_object_id(INVALID_OBJECT_ID)
+    round(-1),
+    attacker_owner_empire_id(ALL_EMPIRES),
+    destroyed_by_object_id(INVALID_OBJECT_ID),
+    destroyed_owner_id(ALL_EMPIRES)
 {}
 
-FighterDestructionEvent::FighterDestructionEvent(int bout_, int destroyed_by_object_id_, int fighter_owner_empire_id_) :
+FighterDestructionEvent::FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_,
+                                                 int attacker_owner_empire_id_, int destroyer_owner_id_) :
     bout(bout_),
-    fighter_owner_empire_id(fighter_owner_empire_id_),
-    destroyed_by_object_id(destroyed_by_object_id_)
+    round(round_),
+    attacker_owner_empire_id(attacker_owner_empire_id_),
+    destroyed_by_object_id(destroyed_by_object_id_),
+    destroyed_owner_id(destroyer_owner_id_)
 {}
 
 std::string FighterDestructionEvent::DebugString() const {
     std::stringstream ss;
-    ss << "FighterDestruction by object " << destroyed_by_object_id
-       << " of fighter of empire " << fighter_owner_empire_id
-       << " at bout " << bout;
+    ss << "rnd: " << round << " : "
+       << "fighter destruction by object " << destroyed_by_object_id
+       << " of fighter of empire " << destroyed_owner_id
+       << " by object owned by empire " << attacker_owner_empire_id
+       << " at bout " << bout << " round " << round;
     return ss.str();
 }
 
@@ -170,8 +181,10 @@ template <class Archive>
 void FighterDestructionEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(fighter_owner_empire_id)
-       & BOOST_SERIALIZATION_NVP(destroyed_by_object_id);
+       & BOOST_SERIALIZATION_NVP(round)
+       & BOOST_SERIALIZATION_NVP(attacker_owner_empire_id)
+       & BOOST_SERIALIZATION_NVP(destroyed_by_object_id)
+       & BOOST_SERIALIZATION_NVP(destroyed_owner_id);
 }
 
 BOOST_CLASS_EXPORT(FighterDestructionEvent)
@@ -207,7 +220,7 @@ FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_, int fig
 
 std::string FighterLaunchEvent::DebugString() const {
     std::stringstream ss;
-    ss << "FighterLaunchEvent from object " << launched_from_id
+    ss << "launch from object " << launched_from_id
        << " of " << number_launched
        << " fighter(s) of empire " << fighter_owner_empire_id
        << " at bout " << bout;
