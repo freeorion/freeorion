@@ -1257,6 +1257,10 @@ namespace {
                 combat_state.AddFighters(weapon_it->fighters_launched, weapon_it->fighter_damage,
                                          attacker_owner_id, attacker->ID(), species_name);
 
+            // combat event
+            combat_state.combat_info.combat_events.push_back(boost::make_shared<FighterLaunchEvent>(bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size()));
+
+
             // reduce hangar capacity (contents) corresponding to launched fighters
             int num_launched = new_fighter_ids.size();
             ReduceStoredFighterCount(attacker_ship, num_launched);

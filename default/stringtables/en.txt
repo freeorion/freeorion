@@ -3637,7 +3637,7 @@ ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
 
 ENC_COMBAT_LAUNCH_STR
-%1% launches a %2%
+%1% launches %3% %2%
 
 ENC_COMBAT_DESTRUCTION_STR
 %1% destroys a %2%
@@ -3650,7 +3650,7 @@ ENC_ROUND_BEGIN
 Round %1%'''
 
 ENC_COMBAT_UNKNOWN_DESTROYED_STR
-Something %2% was incapacitated one way or another
+%2% was incapacitated
 
 ENC_COMBAT_PLANET_INCAPACITATED_STR
 The%1%planet %2% was incapacitated
