@@ -487,7 +487,6 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
     const int SUMMARY_PTS = PTS*4/3;
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     m_name_text =    new CUILabel("");
     m_cost_text =    new CUILabel("");
