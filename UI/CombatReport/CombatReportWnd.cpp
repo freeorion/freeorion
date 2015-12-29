@@ -22,6 +22,8 @@ public:
         m_log(new CombatLogWnd()),
         m_min_size(GG::X0, GG::Y0)
     {
+        m_log->SetFont(ClientUI::GetFont());
+
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
         m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
@@ -43,6 +45,7 @@ public:
 
     void SetLog(int log_id) {
         m_graphical->SetLog(log_id);
+        m_log->SetFont(ClientUI::GetFont());
         m_log->SetLog(log_id);
     }
 
@@ -50,7 +53,7 @@ public:
         // Leave space for the resize tab.
         m_tabs->SizeMove(GG::Pt(GG::X0, GG::Y0),
                          GG::Pt(m_wnd.ClientWidth(),
-                                m_wnd.ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)) );
+                                m_wnd.ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 
         // Only update the selected window.
         if (GraphicalSummaryWnd* graphical_wnd =
@@ -193,7 +196,7 @@ void CombatReportWnd::CloseClicked()
 
 void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt new_size = GG::Pt(std::max(lr.x - ul.x, m_impl->GetMinSize().x),
-                             std::max(lr.y - ul.y, m_impl->GetMinSize().y) );
+                             std::max(lr.y - ul.y, m_impl->GetMinSize().y));
 
     CUIWnd::SizeMove(ul, ul + new_size);
     m_impl->DoLayout();

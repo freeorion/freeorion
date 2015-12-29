@@ -110,6 +110,8 @@ void CombatLogWnd::SetLog(int log_id) {
     const CombatLog& log = GetCombatLog(log_id);
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
+    DebugLogger() << "Setting log with " << log.combat_events.size() << " events";
+
     std::string name = UserString("ENC_COMBAT_LOG");
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/combat.png", true);
     std::string general_type = UserString("ENC_COMBAT_LOG");
@@ -126,6 +128,8 @@ void CombatLogWnd::SetLog(int log_id) {
     for (std::vector<CombatEventPtr>::const_iterator it = log.combat_events.begin();
          it != log.combat_events.end(); ++it)
     {
+        DebugLogger() << "event debug info: " << it->get()->DebugString();
+
         if (const BoutBeginEvent* bout_begin = dynamic_cast<BoutBeginEvent*>(it->get())) {
             detailed_description << str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout_begin->bout) + "\n";
 
@@ -179,6 +183,7 @@ void CombatLogWnd::SetLog(int log_id) {
             detailed_description << str(FlexibleFormat(template_str)
                                         % launched_from_link
                                         % empire_coloured_fighter
+                                        % launch->number_launched
                                         % attack->bout
                                         % attack->round) + "\n";
 

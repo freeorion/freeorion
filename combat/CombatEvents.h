@@ -87,7 +87,7 @@ private:
 /// Created when an fighter is launched
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     FighterLaunchEvent();
-    FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_);
+    FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_);
     virtual ~FighterLaunchEvent() {}
 
     virtual std::string DebugString() const;
@@ -95,6 +95,7 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     int bout;
     int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
     int launched_from_id;
+    int number_launched;
 
 private:
     friend class boost::serialization::access;

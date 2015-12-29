@@ -194,19 +194,22 @@ void FighterDestructionEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_ia
 FighterLaunchEvent::FighterLaunchEvent() :
     bout(-1),
     fighter_owner_empire_id(ALL_EMPIRES),
-    launched_from_id(INVALID_OBJECT_ID)
+    launched_from_id(INVALID_OBJECT_ID),
+    number_launched(0)
 {}
 
-FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_) :
+FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_) :
     bout(bout_),
     fighter_owner_empire_id(fighter_owner_empire_id_),
-    launched_from_id(launched_from_id_)
+    launched_from_id(launched_from_id_),
+    number_launched(number_launched_)
 {}
 
 std::string FighterLaunchEvent::DebugString() const {
     std::stringstream ss;
     ss << "FighterLaunchEvent from object " << launched_from_id
-       << " of fighter of empire " << fighter_owner_empire_id
+       << " of " << number_launched
+       << " fighter(s) of empire " << fighter_owner_empire_id
        << " at bout " << bout;
     return ss.str();
 }
@@ -216,7 +219,8 @@ void FighterLaunchEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
        & BOOST_SERIALIZATION_NVP(fighter_owner_empire_id)
-       & BOOST_SERIALIZATION_NVP(launched_from_id);
+       & BOOST_SERIALIZATION_NVP(launched_from_id)
+       & BOOST_SERIALIZATION_NVP(number_launched);
 }
 
 BOOST_CLASS_EXPORT(FighterLaunchEvent)

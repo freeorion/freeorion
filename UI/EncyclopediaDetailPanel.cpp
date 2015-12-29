@@ -519,9 +519,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     GG::Connect(m_back_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnBack,                   this);
     GG::Connect(m_next_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnNext,                   this);
 
-    m_description_box = new GG::RichText( GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "", ClientUI::GetFont(), ClientUI::TextColor(),
-                                          GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK, GG::INTERACTIVE);
-    m_description_panel = new GG::ScrollPanel( GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
+    m_description_box = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "", ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK, GG::INTERACTIVE);
+    m_description_panel = new GG::ScrollPanel(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
 
     // Copy default block factory.
     boost::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP> factoryMap( new GG::RichText::BLOCK_FACTORY_MAP( *GG::RichText::DefaultBlockFactoryMap()));
