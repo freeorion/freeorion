@@ -159,12 +159,12 @@ FighterDestructionEvent::FighterDestructionEvent() :
 {}
 
 FighterDestructionEvent::FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_,
-                                                 int attacker_owner_empire_id_, int destroyer_owner_id_) :
+                                                 int attacker_owner_empire_id_, int destroyed_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_owner_empire_id(attacker_owner_empire_id_),
     destroyed_by_object_id(destroyed_by_object_id_),
-    destroyed_owner_id(destroyer_owner_id_)
+    destroyed_owner_id(destroyed_owner_id_)
 {}
 
 std::string FighterDestructionEvent::DebugString() const {
