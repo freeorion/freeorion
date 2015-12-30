@@ -170,8 +170,7 @@ FighterAttackedEvent::FighterAttackedEvent(int bout_, int round_, int attacked_b
 std::string FighterAttackedEvent::DebugString() const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
-       << "fighter destruction by object " << attacked_by_object_id
-       << " of fighter of empire " << attacked_owner_id
+       << attacked_by_object_id << " -> (Fighter of Empire " << attacked_owner_id << ")"
        << " by object owned by empire " << attacker_owner_empire_id
        << " at bout " << bout << " round " << round;
     return ss.str();
