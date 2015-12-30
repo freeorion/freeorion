@@ -148,58 +148,58 @@ template
 void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 //////////////////////////////////////////
-///////// FighterDestructionEvent ////////
+///////// FighterAttackedEvent ////////
 //////////////////////////////////////////
-FighterDestructionEvent::FighterDestructionEvent() :
+FighterAttackedEvent::FighterAttackedEvent() :
     bout(-1),
     round(-1),
     attacker_owner_empire_id(ALL_EMPIRES),
-    destroyed_by_object_id(INVALID_OBJECT_ID),
-    destroyed_owner_id(ALL_EMPIRES)
+    attacked_by_object_id(INVALID_OBJECT_ID),
+    attacked_owner_id(ALL_EMPIRES)
 {}
 
-FighterDestructionEvent::FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_,
-                                                 int attacker_owner_empire_id_, int destroyed_owner_id_) :
+FighterAttackedEvent::FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_,
+                                                 int attacker_owner_empire_id_, int attacked_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_owner_empire_id(attacker_owner_empire_id_),
-    destroyed_by_object_id(destroyed_by_object_id_),
-    destroyed_owner_id(destroyed_owner_id_)
+    attacked_by_object_id(attacked_by_object_id_),
+    attacked_owner_id(attacked_owner_id_)
 {}
 
-std::string FighterDestructionEvent::DebugString() const {
+std::string FighterAttackedEvent::DebugString() const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
-       << "fighter destruction by object " << destroyed_by_object_id
-       << " of fighter of empire " << destroyed_owner_id
+       << "fighter destruction by object " << attacked_by_object_id
+       << " of fighter of empire " << attacked_owner_id
        << " by object owned by empire " << attacker_owner_empire_id
        << " at bout " << bout << " round " << round;
     return ss.str();
 }
 
 template <class Archive>
-void FighterDestructionEvent::serialize (Archive& ar, const unsigned int version) {
+void FighterAttackedEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
        & BOOST_SERIALIZATION_NVP(round)
        & BOOST_SERIALIZATION_NVP(attacker_owner_empire_id)
-       & BOOST_SERIALIZATION_NVP(destroyed_by_object_id)
-       & BOOST_SERIALIZATION_NVP(destroyed_owner_id);
+       & BOOST_SERIALIZATION_NVP(attacked_by_object_id)
+       & BOOST_SERIALIZATION_NVP(attacked_owner_id);
 }
 
-BOOST_CLASS_EXPORT(FighterDestructionEvent)
+BOOST_CLASS_EXPORT(FighterAttackedEvent)
 
 template
-void FighterDestructionEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+void FighterAttackedEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
 
 template
-void FighterDestructionEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+void FighterAttackedEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
 
 template
-void FighterDestructionEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+void FighterAttackedEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 template
-void FighterDestructionEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+void FighterAttackedEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 //////////////////////////////////////////
 /////////// FighterLaunchEvent ///////////

@@ -69,18 +69,18 @@ private:
 };
 
 /// Created when an fighter is destroyed
-struct FO_COMMON_API FighterDestructionEvent : public CombatEvent {
-    FighterDestructionEvent();
-    FighterDestructionEvent(int bout_, int round_, int destroyed_by_object_id_, int attacker_owner_empire_id_, int destroyed_owner_id_);
-    virtual ~FighterDestructionEvent() {}
+struct FO_COMMON_API FighterAttackedEvent : public CombatEvent {
+    FighterAttackedEvent();
+    FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_, int attacker_owner_empire_id_, int attacked_owner_id_);
+    virtual ~FighterAttackedEvent() {}
 
     virtual std::string DebugString() const;
 
     int bout;
     int round;
     int attacker_owner_empire_id;   // may be ALL_EMPIRES if attacking fighter was owned by no empire
-    int destroyed_by_object_id;     // may be INVALID_OBJECT_ID if destroyed by another fighter
-    int destroyed_owner_id;         // may be ALL_EMPIRES if destroyed fighter was owned by no empire
+    int attacked_by_object_id;     // may be INVALID_OBJECT_ID if destroyed by another fighter
+    int attacked_owner_id;         // may be ALL_EMPIRES if destroyed fighter was owned by no empire
 
 private:
     friend class boost::serialization::access;

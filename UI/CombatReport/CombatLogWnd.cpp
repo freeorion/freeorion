@@ -153,26 +153,31 @@ void CombatLogWnd::SetLog(int log_id) {
 
         } else if (const IncapacitationEvent* incapacitation = dynamic_cast<IncapacitationEvent*>(it->get())) {
             TemporaryPtr<const UniverseObject> object = GetUniverseObject(incapacitation->object_id);
-            std::string  template_str;
-            if (!object) {
+            std::string template_str, object_str;
+            int owner_id = incapacitation->object_owner_id;
+
+            if (!object && incapacitation->object_id < 0) {
+                template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_STR");
+                object_str = UserString("OBJ_FIGHTER");
+
+            } else if (!object) {
                 template_str = UserString("ENC_COMBAT_UNKNOWN_DESTROYED_STR");
+                object_str = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+
             } else if (object->ObjectType() == OBJ_PLANET) {
                 template_str = UserString("ENC_COMBAT_PLANET_INCAPACITATED_STR");
-            } else {
+                object_str = PublicNameLink(client_empire_id, incapacitation->object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+
+            } else {    // ships or other to-be-determined objects...
                 template_str = UserString("ENC_COMBAT_DESTROYED_STR");
+                object_str = PublicNameLink(client_empire_id, incapacitation->object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
             }
-            const std::string object_link = PublicNameLink(client_empire_id, incapacitation->object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
 
-            int owner_id = object ? object->Owner() : ALL_EMPIRES;
             std::string owner_string = " ";
-            if (owner_id != ALL_EMPIRES) {
-                const Empire* owner = GetEmpire(owner_id);
-                if (owner) {
-                    owner_string += owner->Name() + " ";
-                }
-            }
+            if (const Empire* owner = GetEmpire(owner_id))
+                owner_string += owner->Name() + " ";
 
-            detailed_description << str(FlexibleFormat(template_str) % owner_string % object_link) + "\n";
+            detailed_description << str(FlexibleFormat(template_str) % owner_string % object_str) + "\n";
 
         } else if (const FighterLaunchEvent* launch = dynamic_cast<FighterLaunchEvent*>(it->get())) {
             std::string launched_from_link = PublicNameLink(client_empire_id, launch->launched_from_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
@@ -187,22 +192,21 @@ void CombatLogWnd::SetLog(int log_id) {
                                         % attack->bout
                                         % attack->round) + "\n";
 
-        } else if (const FighterDestructionEvent* destruction = dynamic_cast<FighterDestructionEvent*>(it->get())) {
-            std::string destroyed_by;
-            if (destruction->destroyed_by_object_id >= 0)   // destroyed by ship or planet
-                destroyed_by = PublicNameLink(client_empire_id, destruction->attacker_owner_empire_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+        } else if (const FighterAttackedEvent* fighter_attack = dynamic_cast<FighterAttackedEvent*>(it->get())) {
+            std::string attacked_by;
+            if (fighter_attack->attacked_by_object_id >= 0)   // destroyed by ship or planet
+                attacked_by = PublicNameLink(client_empire_id, fighter_attack->attacker_owner_empire_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
             else                                            // destroyed by fighter
-                destroyed_by = EmpireColourWrappedText(destruction->attacker_owner_empire_id, UserString("OBJ_FIGHTER"));
-            std::string empire_coloured_destroyed_fighter = EmpireColourWrappedText(destruction->destroyed_owner_id, UserString("OBJ_FIGHTER"));
+                attacked_by = EmpireColourWrappedText(fighter_attack->attacker_owner_empire_id, UserString("OBJ_FIGHTER"));
+            std::string empire_coloured_attacked_fighter = EmpireColourWrappedText(fighter_attack->attacked_owner_id, UserString("OBJ_FIGHTER"));
 
-            const std::string& template_str = UserString("ENC_COMBAT_DESTRUCTION_STR");
+            const std::string& template_str = UserString("ENC_COMBAT_ATTACK_SIMPLE_STR");
 
             detailed_description << str(FlexibleFormat(template_str)
-                                        % destroyed_by
-                                        % empire_coloured_destroyed_fighter
+                                        % attacked_by
+                                        % empire_coloured_attacked_fighter
                                         % attack->bout
                                         % attack->round) + "\n";
-
         }
     }
 
