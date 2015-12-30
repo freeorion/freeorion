@@ -409,7 +409,7 @@ namespace {
     {
         if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         }
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -468,7 +468,7 @@ namespace {
 
         if (damage > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         }
     }
 
@@ -506,7 +506,7 @@ namespace {
 
         if (damage > 0.0f) {
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterDestructionEvent>(bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner()));
+            combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner()));
         }
     }
 
@@ -845,7 +845,7 @@ namespace {
 
                 // Check if the target was destroyed and update lists if yes
                 bool destroyed = CheckDestruction(obj);
-                if (destroyed && obj->ObjectType() != OBJ_FIGHTER)  // don't want / need additional incapacitation events for fighters, as any attack destroys them and their ID isn't known on clients to be displayed anyway
+                if (destroyed)  // don't want / need additional incapacitation events for fighters, as any attack destroys them and their ID isn't known on clients to be displayed anyway
                     combat_info.combat_events.push_back(boost::make_shared<IncapacitationEvent>(bout, obj->ID(), obj->Owner()));
             }
         }
