@@ -1,3 +1,5 @@
+import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
@@ -141,12 +143,16 @@ def get_invasion_fleets():
                 print "The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet
                 continue
             this_score,  p_troops = evaluate_invasion_planet(pid, empire, secure_ai_fleet_missions, False)
-            best_ship, col_design, build_choices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION, loc)
-            if not best_ship:
+            _, col_design, build_choices = ProductionAI.getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION, loc)
+            if not col_design:
                 continue
+            if loc not in build_choices:
+                sys.stderr.write(
+                    'Best troop design %s can not be produces in at planet with id: %s\d' % (col_design, build_choices)
+                )
             n_bases = math.ceil((p_troops+1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
             print "Invasion base planning, need %d troops at %d pership, will build %d ships." % ((p_troops+1), troops_per_ship, n_bases)
-            retval = fo.issueEnqueueShipProductionOrder(best_ship, loc)
+            retval = fo.issueEnqueueShipProductionOrder(col_design.id, loc)
             print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_name_ids([loc]), PlanetUtilsAI.planet_name_ids([pid]))
             if retval != 0:
                 all_invasion_targeted_system_ids.add(planet.systemID)
