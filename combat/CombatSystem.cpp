@@ -399,7 +399,6 @@ namespace {
         }
 
         combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
-
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
@@ -408,9 +407,10 @@ namespace {
                            CombatInfo& combat_info, int bout, int round)
     {
         if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f) {
+            // any damage is enough to kill any fighter
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         }
+        combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
@@ -452,7 +452,6 @@ namespace {
         }
 
         combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
-
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
@@ -467,20 +466,48 @@ namespace {
             damage = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
         if (damage > 0.0f) {
+            // any damage is enough to destroy any fighter
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         }
+
+        combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
     }
 
     void AttackFighterShip(TemporaryPtr<Fighter> attacker, TemporaryPtr<Ship> target,
                            CombatInfo& combat_info, int bout, int round)
     {
         if (!attacker || !target) return;
+        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
         float damage = attacker->Damage();
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
+        Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
+        if (!target_structure) {
+            ErrorLogger() << "couldn't get target structure or shield meter";
+            return;
+        }
+
+        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        float shield = (target_shield ? target_shield->Current() : 0.0f);
+
+        if (verbose_logging) {
+            DebugLogger() << "AttackFighterShip: Fighter of empire " << attacker->Owner() << " damage: " << damage
+                          << "  target: " << target->Name() << " shield: " << target_shield->Current()
+                          << " structure: " << target_structure->Current();
+        }
+
+        damage = std::max(0.0f, damage - shield);
+
+        if (damage > 0.0f) {
+            target_structure->AddToCurrent(-damage);
+            damaged_object_ids.insert(target->ID());
+            if (verbose_logging)
+                DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        }
+
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
@@ -488,13 +515,67 @@ namespace {
                              CombatInfo& combat_info, int bout, int round)
     {
         if (!attacker || !target) return;
+        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
         float damage = attacker->Damage();
 
-        if (damage > 0.0f) {
-            combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
-            target->SetLastTurnAttackedByShip(CurrentTurn());
+        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
+
+        Meter* target_shield = target->GetMeter(METER_SHIELD);
+        Meter* target_defense = target->UniverseObject::GetMeter(METER_DEFENSE);
+        Meter* target_construction = target->UniverseObject::GetMeter(METER_CONSTRUCTION);
+        if (!target_shield) {
+            ErrorLogger() << "couldn't get target shield meter";
+            return;
         }
+        if (!target_defense) {
+            ErrorLogger() << "couldn't get target defense meter";
+            return;
+        }
+        if (!target_construction) {
+            ErrorLogger() << "couldn't get target construction meter";
+            return;
+        }
+
+        if (verbose_logging) {
+            DebugLogger() << "AttackFighterPlanet: Fighter of empire " << attacker->Owner() << " damage: " << damage
+                          << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                          << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
+        }
+
+        // damage shields, limited by shield current value and damage amount.
+        // remaining damage, if any, above shield current value goes to defense.
+        // remaining damage, if any, above defense current value goes to construction
+        float shield_damage = std::min(target_shield->Current(), damage);
+        float defense_damage = 0.0f;
+        float construction_damage = 0.0f;
+        if (shield_damage >= target_shield->Current())
+            defense_damage = std::min(target_defense->Current(), damage - shield_damage);
+
+        if (damage > 0)
+            damaged_object_ids.insert(target->ID());
+
+        if (defense_damage >= target_defense->Current())
+            construction_damage = std::min(target_construction->Current(), damage - shield_damage - defense_damage);
+
+        if (shield_damage >= 0) {
+            target_shield->AddToCurrent(-shield_damage);
+            if (verbose_logging)
+                DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        }
+        if (defense_damage >= 0) {
+            target_defense->AddToCurrent(-defense_damage);
+            if (verbose_logging)
+               DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        }
+        if (construction_damage >= 0) {
+            target_construction->AddToCurrent(-construction_damage);
+            if (verbose_logging)
+                DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        }
+
+        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
     void AttackFighterFighter(TemporaryPtr<Fighter> attacker, TemporaryPtr<Fighter> target,
@@ -505,9 +586,11 @@ namespace {
         float damage = attacker->Damage();
 
         if (damage > 0.0f) {
+            // any damage is enough to destroy any fighter
             target->SetDestroyed();
-            combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner()));
         }
+
+        combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner()));
     }
 
     void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon,
