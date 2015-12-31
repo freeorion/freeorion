@@ -64,16 +64,6 @@ void AIBase::SetAggression(int aggr)
 //////////////////////////////////
 //        AI Interface          //
 //////////////////////////////////
-namespace {
-    // stuff used in AIInterface, but not needed to be visible outside this file
-
-    // start of turn initialization for meters
-    void InitMeterEstimatesAndDiscrepancies() {
-        Universe& universe = AIClientApp::GetApp()->GetUniverse();
-        universe.InitMeterEstimatesAndDiscrepancies();
-    }
-}
-
 namespace AIInterface {
     const std::string& PlayerName()
     { return AIClientApp::GetApp()->PlayerName(); }
@@ -163,13 +153,18 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->GetGalaxySetupData(); }
 
     void InitTurn() {
-        boost::timer turn_init_timer;
+        //boost::timer turn_init_timer;
 
-        InitMeterEstimatesAndDiscrepancies();
-        UpdateMeterEstimates();
-        UpdateResourcePools();
+        //InitMeterEstimatesAndDiscrepancies();
+        //UpdateMeterEstimates();
+        //UpdateResourcePools();
 
-        DebugLogger() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
+        //DebugLogger() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
+    }
+
+    void InitMeterEstimatesAndDiscrepancies() {
+        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        universe.InitMeterEstimatesAndDiscrepancies();
     }
 
     void UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire) {

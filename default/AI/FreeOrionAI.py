@@ -179,6 +179,22 @@ def generateOrders():  # pylint: disable=invalid-name
 
     turn_timer.start("AI planning")
     empire = fo.getEmpire()
+
+    if empire.eliminated:
+        print "This empire has been eliminated. Aborting order generation"
+        try:
+            # early abort if already eliminated. no need to do meter calculations
+            # on last-seen gamestate if nothing can be ordered anyway...
+            fo.doneTurn()
+        except Exception as e:
+            print_error(e)
+        return
+
+    print "Meter / Resource Pool updating..."
+    fo.initMeterEstimatesDiscrepancies()
+    fo.updateMeterEstimates(0)
+    fo.updateResourcePools()
+
     # set the random seed (based on galaxy seed, empire name and current turn)
     # for game-reload consistency.
     random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
