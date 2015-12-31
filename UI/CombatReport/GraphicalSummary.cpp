@@ -716,6 +716,8 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
         const CombatLog& log = GetCombatLog(log_id);
         for (std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
             int object_id = *it;
+            if (object_id < 0)
+                continue;   // fighters and invalid objects
             TemporaryPtr<UniverseObject> object = GetUniverseObject(object_id);
             if (!object) {
                 ErrorLogger() << "GraphicalSummaryWnd::MakeSummaries couldn't find object with id: " << object_id;

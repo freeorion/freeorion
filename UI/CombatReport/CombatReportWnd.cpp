@@ -17,7 +17,8 @@ class CombatReportWnd::CombatReportPrivate {
 public:
     CombatReportPrivate(CombatReportWnd& wnd):
         m_wnd(wnd),
-        m_tabs(new GG::TabWnd(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor())),
+        m_tabs(new GG::TabWnd(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(),
+                              ClientUI::CtrlColor(), ClientUI::TextColor())),
         m_graphical(new GraphicalSummaryWnd()),
         m_log(new CombatLogWnd()),
         m_min_size(GG::X0, GG::Y0)
