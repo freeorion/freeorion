@@ -140,10 +140,11 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("getAIConfigStr",           AIInterface::GetAIConfigStr,    return_value_policy<return_by_value>());
     def("getAIDir",                 AIInterface::GetAIDir,          return_value_policy<return_by_value>());
 
-    def("updateMeterEstimates",     AIInterface::UpdateMeterEstimates);
-    def("updateResourcePools",      AIInterface::UpdateResourcePools);
-    def("updateResearchQueue",      AIInterface::UpdateResearchQueue);
-    def("updateProductionQueue",    AIInterface::UpdateProductionQueue);
+    def("initMeterEstimatesDiscrepancies",      AIInterface::InitMeterEstimatesAndDiscrepancies);
+    def("updateMeterEstimates",                 AIInterface::UpdateMeterEstimates);
+    def("updateResourcePools",                  AIInterface::UpdateResourcePools);
+    def("updateResearchQueue",                  AIInterface::UpdateResearchQueue);
+    def("updateProductionQueue",                AIInterface::UpdateProductionQueue);
 
     def("issueFleetMoveOrder",                  AIInterface::IssueFleetMoveOrder);
     def("issueRenameOrder",                     AIInterface::IssueRenameOrder);
@@ -327,7 +328,7 @@ PythonAI::~PythonAI() {
 
 void PythonAI::GenerateOrders() {
     DebugLogger() << "PythonAI::GenerateOrders : initializing turn";
-    AIInterface::InitTurn();
+    //AIInterface::InitTurn();
 
     boost::timer order_timer;
     try {
