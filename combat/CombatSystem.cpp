@@ -1354,6 +1354,82 @@ namespace {
         } // end for over weapons
     }
 
+    void IncreaseStoredFighterCount(TemporaryPtr<Ship>& ship, float recovered_fighters) {
+        if (!ship || recovered_fighters <= 0)
+            return;
+
+        // get how many fighters are initialy in each part type...
+        // may be multiple hangar part types, each with different capacity (number of stored fighters)
+        std::map<std::string, std::pair<Meter*, Meter*> > part_type_fighter_hangar_capacities;
+
+        const ShipDesign* design = ship->Design();
+        if (!design) {
+            ErrorLogger() << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
+            return;
+        }
+        const std::vector<std::string>& parts = design->Parts();
+
+        // get hangar part meter values
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+             part_it != parts.end(); ++part_it)
+        {
+            const std::string& part_name = *part_it;
+            const PartType* part = GetPartType(part_name);
+            if (!part)
+                continue;
+            if (part->Class() != PC_FIGHTER_HANGAR)
+                continue;
+            part_type_fighter_hangar_capacities[part_name].first = ship->GetPartMeter(METER_CAPACITY, part_name);
+            part_type_fighter_hangar_capacities[part_name].second = ship->GetPartMeter(METER_MAX_CAPACITY, part_name);
+        }
+
+        // increase capacity meters until requested fighter allocation is
+        // achived doesn't matter which part's capacity meters are increased,
+        // as allfighters are the same on the ship
+        for (std::map<std::string, std::pair<Meter*, Meter*> >::iterator part_it = part_type_fighter_hangar_capacities.begin();
+             part_it != part_type_fighter_hangar_capacities.end(); ++part_it)
+        {
+            if (!part_it->second.first || !part_it->second.second)
+                continue;
+            float space = part_it->second.second->Current() - part_it->second.first->Current();
+            float increase = std::min(space, recovered_fighters);
+            recovered_fighters -= increase;
+            part_it->second.first->AddToCurrent(-increase);
+
+            // stop if all fighters launched
+            if (recovered_fighters <= 0.0f)
+                break;
+        }
+    }
+
+    void RecoverFighters(CombatInfo& combat_info, int bout) {
+        std::map<int, float> ships_fighters_to_add_back;
+
+        for (ObjectMap::iterator<> obj_it = combat_info.objects.begin();
+             obj_it != combat_info.objects.end() && obj_it->ID() < 0; ++obj_it)
+        {
+            TemporaryPtr<Fighter> fighter = boost::dynamic_pointer_cast<Fighter>(*obj_it);
+            if (!fighter || fighter->Destroyed())
+                continue;   // destroyed fighters can't return
+            if (combat_info.destroyed_object_ids.find(fighter->LaunchedFrom()) != combat_info.destroyed_object_ids.end())
+                continue;   // can't return to a destroyed ship
+            ships_fighters_to_add_back[fighter->LaunchedFrom()]++;
+        }
+
+        for (std::map<int, float>::const_iterator it = ships_fighters_to_add_back.begin();
+             it != ships_fighters_to_add_back.end(); ++it)
+        {
+            TemporaryPtr<Ship> ship = combat_info.objects.Object<Ship>(it->first);
+            if (!ship) {
+                ErrorLogger() << "Couldn't get ship with id " << it->first << " for fighter to return to...";
+                continue;
+            }
+            IncreaseStoredFighterCount(ship, it->second);
+            // launching negative ships indicates recovery of them
+            combat_info.combat_events.push_back(boost::make_shared<FighterLaunchEvent>(bout, it->first, ship->Owner(), -it->second));
+        }
+    }
+
     std::vector<PartAttackInfo> GetWeapons(TemporaryPtr<UniverseObject>& attacker) {
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
@@ -1554,6 +1630,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     // run multiple combat "bouts" during which each combat object can take
     // action(s) such as shooting at target(s) or launching fighters
+    int last_bout = 1;
     for (int bout = 1; bout <= NUM_COMBAT_BOUTS; ++bout) {
         Seed(base_seed + bout);    // ensure each combat bout produces different results
 
@@ -1569,7 +1646,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             DebugLogger() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Bout " << bout;
 
         CombatRound(bout, combat_info, combat_state);
+        last_bout = bout;
     } // end for over combat arounds
+
+    RecoverFighters(combat_info, last_bout);
 
     // ensure every participant knows what happened.
     // TODO: assemble list of objects to copy for each empire.  this should

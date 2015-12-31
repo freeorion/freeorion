@@ -183,12 +183,15 @@ void CombatLogWnd::SetLog(int log_id) {
             std::string launched_from_link = PublicNameLink(client_empire_id, launch->launched_from_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
             std::string empire_coloured_fighter = EmpireColourWrappedText(launch->fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
 
-            const std::string& template_str = UserString("ENC_COMBAT_LAUNCH_STR");
+            // launching negative fighters indicates recovery of them by the ship
+            const std::string& template_str = (launch->number_launched >= 0 ?
+                                                UserString("ENC_COMBAT_LAUNCH_STR") :
+                                                UserString("ENC_COMBAT_RECOVER_STR"));
 
             detailed_description << str(FlexibleFormat(template_str)
                                         % launched_from_link
                                         % empire_coloured_fighter
-                                        % launch->number_launched
+                                        % std::abs(launch->number_launched)
                                         % attack->bout
                                         % attack->round) + "\n";
 
