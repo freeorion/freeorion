@@ -32,7 +32,7 @@ Part
     name = "FT_WEAPON_1"
     description = "FT_WEAPON_1_DESC"
     class = FighterWeapon
-    capacity = 1
+    capacity = 2
     mountableSlotTypes = [Internal External]
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
