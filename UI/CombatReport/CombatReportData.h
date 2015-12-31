@@ -33,7 +33,7 @@ public:
     // Participant summaries have vectors inside them,
     // so we don't want to have to copy them around while sorting
     // therefore we store them with pointers
-    typedef std::vector< ParticipantSummaryPtr > UnitSummaries;
+    typedef std::vector<ParticipantSummaryPtr> UnitSummaries;
 
     Empire*         empire;
     UnitSummaries   unit_summaries;
