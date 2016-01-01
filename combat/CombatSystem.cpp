@@ -49,8 +49,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
 
 
     // find ships and their owners in system
-    std::vector<TemporaryPtr<Ship> > ships =
-        Objects().FindObjects<Ship>(system->ShipIDs());
+    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(system->ShipIDs());
 
     for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
          ship_it != ships.end(); ++ship_it)
@@ -743,7 +742,6 @@ namespace {
         }
 
         if (available_fighters > 0 && !part_fighter_launch_capacities.empty()) {
-            int launched_fighters = 0;
             for (std::multimap<std::string, int>::iterator launch_it = part_fighter_launch_capacities.begin();
                  launch_it != part_fighter_launch_capacities.end(); ++launch_it)
             {
@@ -1315,7 +1313,7 @@ namespace {
         }
 
         static const std::string EMPTY_STRING;
-        TemporaryPtr<Ship>& attacker_ship = boost::dynamic_pointer_cast<Ship>(attacker);
+        TemporaryPtr<Ship> attacker_ship = boost::dynamic_pointer_cast<Ship>(attacker);
         const std::string& species_name = attacker_ship ? attacker_ship->SpeciesName() : EMPTY_STRING;
 
         for (std::vector<PartAttackInfo>::const_iterator weapon_it = weapons.begin();
