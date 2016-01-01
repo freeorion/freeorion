@@ -349,6 +349,9 @@ WEAPON_UPGRADE_DICT = {
     "SR_WEAPON_2_1": tuple([("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]]),
     "SR_WEAPON_3_1": tuple([("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]]),
     "SR_WEAPON_4_1": tuple([("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]]),
+    "FT_BAY_1": tuple([]),
+    "FT_WEAPON_1": tuple([]),
+    "FT_HANGAR_1": tuple([]),
     "SR_SPINAL_ANTIMATTER": tuple([])
 }
 
