@@ -2088,10 +2088,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             continue;
 
         const ShipDesign* ship_design = ship->Design();
-        if (!ship_design) {
-            ErrorLogger() << "GetEffectsAndTargets couldn't get ShipDesign";
+        if (!ship_design)
             continue;
-        }
         const HullType* hull_type = ship_design->GetHull();
         if (!hull_type) {
             ErrorLogger() << "GetEffectsAndTargets couldn't get HullType";

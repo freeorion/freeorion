@@ -665,7 +665,6 @@ class AIstate(object):
                 stats['attacks'] = {}
                 design = ship.design
                 if not design:
-                    print "ERROR: Ship appears to have no valid design..."
                     continue
                 for partname in design.parts:
                     if partname and fo.getPartType(partname).partClass == fo.shipPartClass.shortRange:
