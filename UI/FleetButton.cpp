@@ -266,7 +266,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
             GG::Pt direction_vector = dest - cur;
 
             if (direction_vector.x != GG::X0 || direction_vector.y != GG::Y0)
-                pointing_angle = 360.0f / TWO_PI * std::atan2(Value(direction_vector.y), Value(direction_vector.x)) + 90;
+                pointing_angle = 360.0f / TWO_PI * std::atan2(static_cast<float>(Value(direction_vector.y)), static_cast<float>(Value(direction_vector.x))) + 90;
         }
     }
 
