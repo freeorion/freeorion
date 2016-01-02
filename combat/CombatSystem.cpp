@@ -742,7 +742,7 @@ namespace {
         }
 
         if (available_fighters > 0 && !part_fighter_launch_capacities.empty()) {
-            for (std::multimap<std::string, int>::iterator launch_it = part_fighter_launch_capacities.begin();
+            for (std::map<std::string, int>::iterator launch_it = part_fighter_launch_capacities.begin();
                  launch_it != part_fighter_launch_capacities.end(); ++launch_it)
             {
                 int to_launch = std::min(launch_it->second, available_fighters);
