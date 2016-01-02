@@ -1392,7 +1392,7 @@ namespace {
             float space = part_it->second.second->Current() - part_it->second.first->Current();
             float increase = std::min(space, recovered_fighters);
             recovered_fighters -= increase;
-            part_it->second.first->AddToCurrent(-increase);
+            part_it->second.first->AddToCurrent(increase);
 
             // stop if all fighters launched
             if (recovered_fighters <= 0.0f)
