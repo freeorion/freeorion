@@ -9902,6 +9902,30 @@ Krill Spawner
 SP_KRILL_SPAWNER_DESC
 Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.  When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[encyclopedia STEALTH_TITLE]] (but will not stack with any other [[encyclopedia STEALTH_TITLE]] - causing  parts).
 
+SP_SOLAR_CONCENTRATOR
+Solar Concentrator
+
+SP_SOLAR_CONCENTRATOR_DESC
+The Solar Concentrator uses the phototropic effect of [[SH_ORGANIC]]s to increase the strength of [[SR_WEAPON_2_1]]s. The effectness depends on the brightness of the star at the current location. It is expected to increase the weapons strength between 1.5 and 4.5. The research of [[SHP_SOLAR_CONNECTION]] suggest to increase the collecting surface to maximize the effect.
+
+SHP_SOLAR_CONNECTION
+Solarweb
+
+SHP_SOLAR_CONNECTION_DESC
+This upgrade for the [[SP_SOLAR_CONCENTRATOR]] is applied by the ships crew. It enables the ship to establish one energy web between ships of the same empire at the same star system. This [[SHP_SOLAR_CONNECTION]] provides an additional surface to collect photons which are evenly distributed among [[SH_ORGANIC]]s. Theoretical gigantic webs can increase the intensity of [[SR_WEAPON_2_1]]s by 130% under ideal conditions. A more realistic approach suggests 100 concentrators to achieve an increase by 80% while 20 concentrators provide an amplification of 50%. The finely woven [[SHP_SOLAR_CONNECTION]] collapse when the ship enters a starlane whereas the effects disappears shortly after.
+
+SHP_SOLAR_CONNECTION_SHORT_DESC
+Establishes an energy web between [[SP_SOLAR_CONCENTRATOR]]
+
+SHP_ORGANIC_WAR_ADAPTION
+Organic War Adaption
+
+SHP_ORGANIC_WAR_ADAPTION_DESC
+It seems [[SHP_ORG_HULL]]s are able collect photonic energy which can be redirected to empower certain ship systems.
+
+SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
+Increases strength of [[SR_WEAPON_2_1]] depending on the star.
+
 RS_AUTOLAB
 Autolab
 
