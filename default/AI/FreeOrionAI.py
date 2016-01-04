@@ -60,6 +60,12 @@ def initFreeOrionAI():  # pylint: disable=invalid-name
 def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
+    empire = fo.getEmpire()
+    if empire.eliminated:
+        print "This empire has been eliminated. Ignoring new game start message."
+        return
+
+
     turn_timer.start("Server Processing")
     print "New game started, AI Aggression level %d" % aggression
 
@@ -132,6 +138,11 @@ def prepareForSave():  # pylint: disable=invalid-name
     """Called by client when the game is about to be saved, to let the Python AI know it should save any AI state
     information, such as plans or knowledge about the game from previous turns,
     in the state string so that they can be restored if the game is loaded."""
+    empire = fo.getEmpire()
+    if empire.eliminated:
+        print "This empire has been eliminated. Save info request"
+        return
+    
     print "Preparing for game save by serializing state"
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
@@ -144,6 +155,11 @@ def prepareForSave():  # pylint: disable=invalid-name
 def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     """Called when this player receives a chat message. sender_id is the player who sent the message, and
     message_text is the text of the sent message."""
+    empire = fo.getEmpire()
+    if empire.eliminated:
+        print "This empire has been eliminated. Ignoring chat message"
+        return
+    
     # print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
     # perhaps it is a debugging interaction
     if handle_debug_chat(sender_id, message_text):
@@ -158,6 +174,11 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
 def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     """Called when this player receives a diplomatic message update from the server,
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
+    empire = fo.getEmpire()
+    if empire.eliminated:
+        print "This empire has been eliminated. Ignoring diplomatic message"
+        return
+        
     diplomatic_corp.handle_diplomatic_message(message)
 
 
@@ -165,6 +186,11 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
 def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     """Called when this player receives an update about the diplomatic status between players, which may
     or may not include this player."""
+    empire = fo.getEmpire()
+    if empire.eliminated:
+        print "This empire has been eliminated. Ignoring diplomatic status update"
+        return
+    
     diplomatic_corp.handle_diplomatic_status_update(status_update)
 
 @chat_on_error
