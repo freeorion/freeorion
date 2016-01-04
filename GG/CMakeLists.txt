@@ -67,7 +67,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 # Dependencies                         #
 ########################################
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem signals system thread log REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex signals system thread log REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
