@@ -27,7 +27,7 @@ ShipDesign
     description = "SM_KRILL_3_DESC"
     hull = "SH_KRILL_3_BODY"
     parts = [
-        "SP_DEATH_SPORE"
+        "SP_DARK_RAY"
         "SR_WEAPON_3_1"
         ""
         ""
@@ -40,7 +40,7 @@ ShipDesign
     description = "SM_KRILL_4_DESC"
     hull = "SH_KRILL_4_BODY"
     parts = [
-        "SP_DEATH_SPORE"
+        "SP_VOID_SHADOW"
         "SR_WEAPON_4_1"
         ""
         ""
@@ -183,7 +183,7 @@ ShipDesign
     hull = "SH_KRAKEN_2_BODY"
     parts = [
         "SR_WEAPON_3_1"
-        "SP_DEATH_SPORE"
+        "SP_SONIC"
         ""
         ""
         ]
@@ -196,7 +196,7 @@ ShipDesign
     hull = "SH_KRAKEN_3_BODY"
     parts = [
         "SR_WEAPON_4_1"
-        "SP_BIOTERM"
+        "SP_GRV"
         ""
         ""
         ]
@@ -235,7 +235,7 @@ ShipDesign
     hull = "SH_SNOWFLAKE_3_BODY"
     parts = [
         "SR_WEAPON_4_1"
-        "SP_DEATH_SPORE"
+        "SP_BIOTERM"
         ""
         ""
         ]
@@ -261,7 +261,7 @@ ShipDesign
     hull = "SH_JUGGERNAUT_2_BODY"
     parts = [
         "SR_WEAPON_3_1"
-        "SP_DEATH_SPORE"
+        "SP_EMP"
         ""
         "SH_DEFLECTOR"
         ]
@@ -274,7 +274,7 @@ ShipDesign
     hull = "SH_JUGGERNAUT_3_BODY"
     parts = [
         "SR_WEAPON_4_1"
-        "SP_BIOTERM"
+        "SP_EMO"
         ""
         "SH_PLASMA"
         ]
@@ -383,7 +383,7 @@ ShipDesign
     hull = "SH_BLACK_KRAKEN_BODY"
     parts = [
         ""
-        "SP_BIOTERM"
+        "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "ST_CLOAK_1"
@@ -397,7 +397,7 @@ ShipDesign
     hull = "SH_BLOATED_JUGGERNAUT_BODY"
     parts = [
         ""
-        "SP_BIOTERM"
+        "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
@@ -412,7 +412,7 @@ ShipDesign
     description = "SM_PSIONIC_SNOWFLAKE_DESC"
     hull = "SH_PSIONIC_SNOWFLAKE_BODY"
     parts = [
-        "SP_BIOTERM"
+        "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
         ""
         "ST_CLOAK_3"
