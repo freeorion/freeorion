@@ -15,6 +15,7 @@ Fleet
     ships = [
         "SD_MARK_1"
         "SD_CARRIER"
+        "SD_FLAK"
     ]
     
 Fleet
