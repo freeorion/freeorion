@@ -510,73 +510,6 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackFighterPlanet(TemporaryPtr<Fighter> attacker, TemporaryPtr<Planet> target,
-                             CombatInfo& combat_info, int bout, int round)
-    {
-        if (!attacker || !target) return;
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
-
-        float damage = attacker->Damage();
-
-        std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
-
-        Meter* target_shield = target->GetMeter(METER_SHIELD);
-        Meter* target_defense = target->UniverseObject::GetMeter(METER_DEFENSE);
-        Meter* target_construction = target->UniverseObject::GetMeter(METER_CONSTRUCTION);
-        if (!target_shield) {
-            ErrorLogger() << "couldn't get target shield meter";
-            return;
-        }
-        if (!target_defense) {
-            ErrorLogger() << "couldn't get target defense meter";
-            return;
-        }
-        if (!target_construction) {
-            ErrorLogger() << "couldn't get target construction meter";
-            return;
-        }
-
-        if (verbose_logging) {
-            DebugLogger() << "AttackFighterPlanet: Fighter of empire " << attacker->Owner() << " damage: " << damage
-                          << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
-                          << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
-        }
-
-        // damage shields, limited by shield current value and damage amount.
-        // remaining damage, if any, above shield current value goes to defense.
-        // remaining damage, if any, above defense current value goes to construction
-        float shield_damage = std::min(target_shield->Current(), damage);
-        float defense_damage = 0.0f;
-        float construction_damage = 0.0f;
-        if (shield_damage >= target_shield->Current())
-            defense_damage = std::min(target_defense->Current(), damage - shield_damage);
-
-        if (damage > 0)
-            damaged_object_ids.insert(target->ID());
-
-        if (defense_damage >= target_defense->Current())
-            construction_damage = std::min(target_construction->Current(), damage - shield_damage - defense_damage);
-
-        if (shield_damage >= 0) {
-            target_shield->AddToCurrent(-shield_damage);
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
-        }
-        if (defense_damage >= 0) {
-            target_defense->AddToCurrent(-defense_damage);
-            if (verbose_logging)
-               DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
-        }
-        if (construction_damage >= 0) {
-            target_construction->AddToCurrent(-construction_damage);
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
-        }
-
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
-        target->SetLastTurnAttackedByShip(CurrentTurn());
-    }
-
     void AttackFighterFighter(TemporaryPtr<Fighter> attacker, TemporaryPtr<Fighter> target,
                               CombatInfo& combat_info, int bout, int round)
     {
@@ -617,7 +550,7 @@ namespace {
         } else if (attack_fighter && target_ship) {
             AttackFighterShip(attack_fighter, target_ship, combat_info, bout, round);
         } else if (attack_fighter && target_planet) {
-            AttackFighterPlanet(attack_fighter, target_planet, combat_info, bout, round);
+            // Fighters can't attack planets
         } else if (attack_fighter && target_fighter) {
             AttackFighterFighter(attack_fighter, target_fighter, combat_info, bout, round);
         }
@@ -1148,29 +1081,43 @@ namespace {
                                                     AutoresolveInfo& combat_state,
                                                     const std::set<int>& potential_target_ids)
     {
-        // currently, only planets are restricted as to what target types they can attack
-        if (attacker->ObjectType() != OBJ_PLANET)
-            return potential_target_ids;
+        if (attacker->ObjectType() == OBJ_SHIP)
+            return potential_target_ids;    // ships can attack anything!
 
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                GetOptionsDB().Get<bool>("verbose-combat-logging");
+
         std::set<int> valid_target_ids;
         std::string invalid_target_ids;
+
         for (std::set<int>::const_iterator target_it = potential_target_ids.begin();
                 target_it != potential_target_ids.end(); ++target_it)
-        { 
+        {
             TemporaryPtr<UniverseObject> target = combat_state.combat_info.objects.Object(*target_it);
             if (!target) {
                 ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << *target_it;
                 continue;
             }
-            if (target->ObjectType() != OBJ_PLANET)
-                valid_target_ids.insert(*target_it);
-            else
-                invalid_target_ids += boost::lexical_cast<std::string>(*target_it) + " ";
+
+            if (attacker->ObjectType() == OBJ_PLANET) {
+                // planets can only attack ships (not other planets or fighters)
+                if (target->ObjectType() == OBJ_SHIP) {
+                    valid_target_ids.insert(*target_it);
+                } else if (verbose_logging) {
+                    invalid_target_ids += boost::lexical_cast<std::string>(*target_it) + " ";
+                }
+            } else if (attacker->ObjectType() == OBJ_FIGHTER) {
+                // fighters can't attack planets
+                if (target->ObjectType() != OBJ_PLANET) {
+                    valid_target_ids.insert(*target_it);
+                } else if (verbose_logging) {
+                    invalid_target_ids += boost::lexical_cast<std::string>(*target_it) + " ";
+                }
+            }
         }
+
         if (verbose_logging && !invalid_target_ids.empty())
-            DebugLogger() << "Planet " << attacker->ID() << " can't attack potential targets: " << invalid_target_ids;
+            DebugLogger() << "Attacker " << attacker->ID() << " can't attack potential targets: " << invalid_target_ids;
 
         return valid_target_ids;
     }
