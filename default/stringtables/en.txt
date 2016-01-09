@@ -218,6 +218,11 @@ Protype Carrier
 SD_CARRIER_DESC
 Prototype design that launches fighters in battle instead of using direct-fire weapons.
 
+SD_FLAK
+Prototype Flak Ship
+SD_FLAK_DESC
+Prototype design that uses flak cannons as a cheap fighter countermeasure.
+
 SD_SCOUT
 Scout
 SD_SCOUT_DESC
@@ -9646,6 +9651,11 @@ FT_HANGAR_1
 Fighter Hangar
 FT_HANGAR_1_DESC
 Prototype storage system for fighters.
+
+SR_WEAPON_0_1
+Flak Cannon
+SR_WEAPON_0_1_DESC
+The flak cannon, does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
 
 SR_WEAPON_1_1
 Mass Driver
