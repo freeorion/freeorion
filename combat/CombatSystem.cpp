@@ -488,12 +488,12 @@ namespace {
             return;
         }
 
-        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
-        float shield = (target_shield ? target_shield->Current() : 0.0f);
+        //Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        float shield = 0.0f; //(target_shield ? target_shield->Current() : 0.0f);
 
         if (verbose_logging) {
             DebugLogger() << "AttackFighterShip: Fighter of empire " << attacker->Owner() << " damage: " << damage
-                          << "  target: " << target->Name() << " shield: " << target_shield->Current()
+                          << "  target: " << target->Name() //<< " shield: " << target_shield->Current()
                           << " structure: " << target_structure->Current();
         }
 
