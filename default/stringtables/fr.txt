@@ -246,68 +246,68 @@ Astronef compact et rapide mais non-armé, conçu pour la reconnaissance et l'ex
 SD_SMALL_MARK_1  # translated
 Corvette (M)
 SD_SMALL_MARK1_DESC
-Petit astronef équipé d'un Canon Mitrailleur basique. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Petit astronef équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SMALL_MARK_2  # translated
 Corvette (L)
 SD_SMALL_MARK2_DESC
-Petit astronef équipé d'un Canon Mitrailleur amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Petit astronef équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_1
 Frégate (M1)
 SD_MARK1_DESC
-Astronef patrouilleur équipé d'un Canon Mitrailleur basique. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef patrouilleur basique équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_2
 Frégate (M2)
 SD_MARK2_DESC
-Astronef patrouilleur équipé d'un Canon Mitrailleur amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef patrouilleur amélioré équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_3
 Frégate (L1)
 SD_MARK3_DESC
-Astronef patrouilleur équipé d'un Canon Laser standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef patrouilleur basique équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_4
 Frégate (L2)
 SD_MARK4_DESC
-Astronef patrouilleur équipé d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef patrouilleur amélioré équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_1  # translated
 Destroyer (M1)
 SD_LARGE_MARK1_DESC
-Chasseur équipé d'un Canon Mitrailleur basique. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Chasseur basique équipé de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_2  # translated
 Destroyer (M2)
 SD_LARGE_MARK2_DESC
-Chasseur équipé d'un Canon Mitrailleur amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Chasseur amélioré équipé de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_3
 Croiseur (L1)
 SD_LARGE_MARK3_DESC
-Chasseur équipé d'un Canon Laser standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Chasseur amélioré équipé de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_4
 Croiseur (L2)
 SD_LARGE_MARK4_DESC
-Chasseur équipé de Blindages améliorés et d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Chasseur amélioré équipé d'un Blindage évolué et de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ROBOTIC_OUTPOST
 Bâtisseur Robotique
 SD_ROBOTIC_OUTPOST_DESC
-Peut établir des avant-postes dans les mondes très lointains
+Peut établir des avant-postes dans les systèmes très lointains.
 
 SD_ROBOTIC_COLONY
 Colonisateur Robotique
 SD_ROBOTIC_COLONY_DESC
-Peut établir des colonies dans les mondes très lointains
+Peut établir des colonies dans les systèmes très lointains.
 
 SD_ROBOTIC_CRYOCOL
 Colonisateur Cryo-Robotique
 
 SD_ROBOTIC_CRYOCOL_DESC
-Peut établir des colonies évoluées dans les mondes très lointains
+Peut établir des colonies évoluées dans les systèmes très lointains.
 
 SD_ROBO_FLUX_SCOUT
 Éclaireur Flux
@@ -330,17 +330,17 @@ Transporteur rapide d'infanterie améliorée
 SD_ROBOTIC1
 Robocroiseur (M1)
 SD_ROBOTIC1_DESC
-Chasseur robotique équipé de Canons Mitrailleurs avancés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Chasseur robotique équipé de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC2
 Robocroiseur (M2)
 SD_ROBOTIC2_DESC
-Chasseur robotique équipé de Blindages améliorés et de Canons Laser standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Chasseur robotique équipé d'un Blindage amélioré et de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC3
 Robocroiseur (L)
 SD_ROBOTIC3_DESC
-Chasseur robotique équipé de Blindages améliorés et de Canons Laser avancés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Chasseur robotique amélioré équipé d'un Blindage évolué et de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_NANOROBOTIC1
 Croiseur Nanobot
@@ -366,72 +366,72 @@ Cuirassé de grand standing équipé des toutes dernières technologies d'armeme
 SD_ORGANIC1
 Frégate Organic (M1)
 SD_ORGANIC1_DESC
-Chasseur organique équipé de Blindages standards et d'un Canon Mitrailleur avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Chasseur organique équipé de technologies basiques d'armement et de défense. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC2
 Frégate Organic (M2)
 SD_ORGANIC2_DESC
-Chasseur organique équipé de Blindages améliorés et d'un Canon Laser standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Chasseur organique équipé de Blindages améliorés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC3
 Frégate Organic (L)
 SD_ORGANIC3_DESC
-Chasseur organique équipé de Blindages améliorés et d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Chasseur organique équipé de Blindages améliorés et d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_1
 Frégate Organic Lourde (M)
 SD_SHIELD_BUG_1_DESC
-Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés, et d'un Canon Mitrailleur avancé. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_2
 Frégate Organic Lourde (L)
 SD_SHIELD_BUG_2_DESC
-Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés, et d'un Canon Laser standard. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_1
 Destroyer Rock (L)
 SD_AST_1_DESC
-Un astronef astéroïdal équipé d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
+Un astronef astéroïdal équipé de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_2
 Destroyer Rock (P1)
 SD_AST_2_DESC
-Un astronef astéroïdal équipé d'un Canon Plasma standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
+Un astronef astéroïdal équipé de Canons Plasma. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_3
 Destroyer Rock (P2)
 SD_AST_3_DESC
-Un astronef astéroïdal équipé d'un Canon Plasma avancé et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
+Un astronef astéroïdal équipé de Canons Plasma et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
 SD_HEAVY_AST_1
 Cuirassé Rock (L)
 SD_HEAVY_AST_1_DESC
-Un astronef astéroïdal massif équipé de Canons Laser standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
+Un astronef astéroïdal massif équipé de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_2
 Cuirassé Rock (P)
 SD_HEAVY_AST_2_DESC
-Un astronef astéroïdal massif équipé de Canons Plasma avancés et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
+Un astronef astéroïdal massif équipé de Canons Plasma et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
 SD_CRYSTAL
 Destroyer Crystal (P)
 SD_CRYSTAL_DESC
-Un astronef astéroïdal cristallisé équipé d'un Canon Plasma avancé et de Blindages Cristal. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
+Un astronef astéroïdal cristallisé équipé de Canons Plasma et d'un Blindage Cristal. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
 SD_ENDO_1
 Croiseur Endomorphic (L)
 SD_ENDO_1_DESC
-Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Laser standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_2
 Croiseur Endomorphic (P1)
 SD_ENDO_2_DESC
-Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Laser avancés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Plasma. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_3
 Croiseur Endomorphic (P2)
 SD_ENDO_3_DESC
-Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]] améliorés, de Blindages avancés et de Canons Plasma standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]] améliorés, de Blindages Diamant et de Canons Plasma. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_FRACTAL_1
 Cuirassé Fractal (P)
@@ -925,7 +925,7 @@ OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
 Le laps de temps, en secondes, au-delà duquel la fenêtre de chat multijoueurs disparaît si rien n'y est ajouté. Une valeur de 0 indique que la fenêtre ne doit jamais disparaître.
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
-'''Liste les colonnes à afficher dans la boîte de dialogue de sauvagarde, séparées par des virgules.
+'''Liste les colonnes à afficher dans la boîte de dialogue de sauvegarde, séparées par des virgules.
 Colonnes valides: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS
@@ -1288,32 +1288,51 @@ Les galaxies générées avec les mêmes options et la même Graine de hasard se
 
 OPTIONS_DB_GAMESETUP_STARS
 '''Le nombre approximatif de systèmes stellaires à générer dans la galaxie.
+
 Pour l'équilibre du jeu, il est conseillé de générer de 15 à 30 systèmes pour chacun des empires se partageant la galaxie.
-Un trop grand nombre de systèmes peut causer un fort ralentissement du jeu, notamment en fin de partie.'''
+
+Un trop grand nombre de systèmes peut causer de forts ralentissements du jeu, notamment en fin de partie.'''
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-La forme de la galaxie à générer.
+'''La forme de la galaxie.
+
+Les stratégies et tactiques à mettre en oeuvre seront différentes selon le type de galaxie choisi.'''
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-L'âge de la galaxie à générer.
+'''L'âge de la galaxie.
+
+Les jeunes galaxies auront davantage d'étoiles lumineuses, les plus âgées auront davantage de trous noirs et d'étoiles à neutrons.'''
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Le nombre moyen de planètes par système dans la galaxie à générer.
+'''Le nombre moyen de planètes par système dans la galaxie.
+'''
 
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Le nombre de Voies spatiales reliant les systèmes stellaires de la galaxie à générer.
+'''Le nombre de Voies spatiales dans la galaxie.
+
+Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Haut, la plupart des systèmes seront reliés entre eux dans un rayon de 120uu.'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-La fréquence d'apparition des événements spéciaux dans la galaxie à générer.
+'''La proportion des planètes et systèmes présentant une Particularité.
+
+Certaines Particularités sont défendues par les Gardiens créés puis abandonnés par l'espèce des Précurseurs. Définir le réglage Fréquence Monstres sur Aucun empêchera l'apparition des Gardiens si la partie contient des Particularités.
+'''
 
 OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
-La fréquence d'apparition de monstres dans la galaxie à générer.
+'''La fréquence d'apparition de monstres errants dans la galaxie.
+
+Ce réglage concerne les monstres errants mais pas les Gardiens générés par certaines Particularités. Toutefois, régler les Monstres sur Aucun désactivera les Gardiens.'''
 
 OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
-La fréquence d'apparition d'indigènes dans la galaxie à générer.
+'''La fréquence d'apparition d'espèces indigènes dans la galaxie.
+
+Certaines espèces indigènes peuvent être technologiquement avancées et créer des astronefs afin de défendre leur planète. Ces dernières apparaîtront même si le réglage Fréquence Monstres est défini sur Aucun.
+'''
 
 OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
-Le niveau maximal d'agressivité des adversaires gérés par l'ordinateur.
+'''Le niveau maximal d'agressivité des adversaires gérés par l'ordinateur.
+
+La plupart des IAs seront réglées sur la valeur définie, certaines pourront se situer à un niveau inférieur. Tous les adversaires se manifesteront dans la Fenêtre Messages lors du premier tour, vous indiquant ainsi leur niveau.'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Le nom de votre empire dans le jeu.
@@ -1325,11 +1344,16 @@ OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 La couleur de votre empire dans le jeu.
 
 OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-'''L'espèce qui habite votre planète d'origine et qui fondera votre empire.
-Ses caractéristiques (compétences en recherche, en industrie, etc.) ne s'appliquent pas aux planètes de votre empire habitées par d'autres espèces.'''
+'''Votre espèce de départ, fondatrice de votre empire.
+
+Définit l'espèce de votre planète d'origine ainsi que celle de votre premier astronef colonisateur. Les caractéristiques de l'espèce (compétences en recherche, en industrie, etc.) ne s'appliquent pas aux planètes de votre empire peuplées par d'autres espèces.'''
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Le nombre d'adversaires gérés par l'ordinateur dans la partie.
+'''Le nombre d'adversaires gérés par l'ordinateur dans la partie.
+
+Il est conseillé d'avoir au moins un joueur pour chaque tranche de 15-30 systèmes. Jouer avec un nombre d'IAs supérieur ou inférieur à cette valeur peut occasionner des problèmes d'équilibrage.
+
+Un trop grand nombre d'IAs peut causer de forts ralentissements du jeu, notamment en fin de partie.'''
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 L'espacement horizontal, dans l'arbre des technologies, des panneaux de technologies relativement à la largeur d'un panneau.
@@ -1690,9 +1714,9 @@ Génère une Graine de hasard aléatoire
 GSETUP_RANDOMIZE
 Aléatoire
 GSETUP_STARS
-Étoiles
+Systèmes
 GSETUP_SHAPE
-Forme de la galaxie
+Type de la galaxie
 GSETUP_AGE
 Âge de la galaxie
 GSETUP_STARLANE_FREQ
@@ -1700,9 +1724,9 @@ Voies spatiales
 GSETUP_PLANET_DENSITY
 Planètes par système
 GSETUP_SPECIALS_FREQ
-Événements spéciaux
+Particularités
 GSETUP_MONSTER_FREQ
-Méga-Faune
+Fréquence Monstres
 GSETUP_NATIVE_FREQ
 Populations indigènes
 GSETUP_AI_AGGR
@@ -1844,7 +1868,7 @@ SAVE_PLANET_FREQ_TITLE
 <u>Fréquence Planètes</u>
 
 SAVE_SPECIALS_FREQ_TITLE
-<u>Fréquence Événements</u>
+<u>Fréquence Particularités</u>
 
 SAVE_STARLANE_FREQ_TITLE
 <u>Fréquence Voies</u>
@@ -1853,7 +1877,7 @@ SAVE_GALAXY_SIZE_TITLE
 <u>Taille Galaxie</u>
 
 SAVE_GALAXY_SHAPE_TITLE
-<u>Forme Galaxie</u>
+<u>Type Galaxie</u>
 
 SAVE_AI_AGGRESSION_TITLE
 <u>Agressivité IA</u>
@@ -1878,10 +1902,10 @@ Empire:   %rawtext:empire%
 Empires:  %rawtext:number_of_empires%
 Joueurs humains: %rawtext:number_of_humans%
 Galaxie
-    Forme: %rawtext:galaxy_shape%
+    Type: %rawtext:galaxy_shape%
     Âge:     %rawtext:galaxy_age%
 Fréquences:
-    Événements: %rawtext:specials_freq%
+    Particularités: %rawtext:specials_freq%
     Monstres:      %rawtext:monster_freq%
     Indigènes:     %rawtext:native_freq%
 '''
@@ -3324,7 +3348,7 @@ Forme: %3%
 Voies spatiales: %5%
 Planètes: %6%
 Événements: %7%
-Méga-Faune: %8%
+Monstres: %8%
 Indigènes: %9%
 Agressivité max de l'IA: %10%
 '''
@@ -4040,7 +4064,7 @@ Fenêtre Carte
 MAP_WINDOW_ARTICLE_TEXT
 '''La Fenêtre Carte peut être considérée comme l'écran de jeu 'principal' de FreeOrion. Ce dernier affiche la carte de la galaxie et permet d'accéder à toutes les autres fenêtres ou menus du jeu.  La barre supérieure réunit les éléments principaux de contrôle.
 
-Dans le coin supérieur gauche se trouve le Bouton Tour, indiquant "Tour n" (n étant le numéro du tour en cours); un clic-gauche sur le Bouton Tour permet de faire avancer la partie d'un tour. Immédiatement à droite se trouve le bouton d'Avance Automatique; lorsque ce dernier affiche une icône poing, la partie n'avancera pas automatiquement; un clic modifie l'icône en flèches circulaires et la partie avancera automatiquement au tour suivant une fois que tous les empires auront donné leurs ordres pour le tour en cours.
+Dans le coin supérieur gauche se trouve le Bouton Tour, indiquant "Tour n" (n étant le numéro du tour en cours); un clic-gauche sur le Bouton Tour permet de faire avancer la partie d'un tour. Immédiatement à droite se trouve le bouton d'Avance Automatique; lorsque ce dernier affiche une icône double flèche, la partie n'avancera pas automatiquement; un clic modifie l'icône en flèches circulaires et la partie avancera automatiquement au tour suivant une fois que tous les empires auront donné leurs ordres pour le tour en cours.
 
 Les icônes suivantes désignent pour l'empire du joueur le total de l'[[encyclopedia INDUSTRY_TITLE]], de la [[encyclopedia RESEARCH_TITLE]], le nombre d'astronefs existants, et la [[encyclopedia DETECTION_TITLE]] de l'empire.
 
@@ -6463,7 +6487,7 @@ DESC_VAR_GALAXYNATIVEFREQUENCY
 valeur de fréquence des indigènes de la galaxie
 
 DESC_VAR_GALAXYSHAPE
-valeur de forme de la galaxie
+valeur de type de la galaxie
 
 DESC_VAR_GALAXYSPECIALFREQUENCY
 valeur de fréquence des particularités de la galaxie
@@ -8333,6 +8357,12 @@ Agression
 SHP_ROOT_AGGRESSION_DESC
 Autorise l'armement de base et le [[shippart GT_TROOP_POD]].
 
+SHP_BOMBARD
+Bombardement
+
+SHP_BOMBARD_DESC
+Permet le développement d'armes de bombardement planétaire.
+
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
 SHP_WEAPON_1_2_DESC
@@ -8739,13 +8769,55 @@ SHP_DEATH_SPORE
 Spores Mortelles
 
 SHP_DEATH_SPORE_DESC
-Débloque l'équipement [[shippart SP_DEATH_SPORE]], permettant aux astronefs de réduire la population des planètes ennemies.
+Débloque l'équipement [[shippart SP_DEATH_SPORE]], permettant aux astronefs de réduire les populations organiques des planètes ennemies.
 
 SHP_BIOTERM
 Bio-Terminateurs
 
 SHP_BIOTERM_DESC
-Débloque l'équipement [[shippart SP_BIOTERM]], permettant aux astronefs de réduire considérablement la population des planètes ennemies.
+Débloque l'équipement [[shippart SP_BIOTERM]], permettant aux astronefs de réduire considérablement les populations organiques des planètes ennemies.
+
+SHP_EMP
+Générateur EMP
+
+SHP_EMP_DESC
+Débloque l'équipement [[shippart SP_EMP]], permettant aux astronefs de réduire les populations robotiques des planètes ennemies.
+
+SHP_EMO
+Générateur EMO
+
+SHP_EMO_DESC
+Débloque l'équipement [[shippart SP_EMO]], permettant aux astronefs de réduire considérablement les populations robotiques des planètes ennemies.
+
+SHP_SONIC
+Onde de Choc Sonique
+
+SHP_SONIC_DESC
+Débloque l'équipement [[shippart SP_SONIC]], permettant aux astronefs de réduire les populations lithiques des planètes ennemies.
+
+SHP_GRV
+Pulsation Gravitationnelle
+
+SHP_GRV_DESC
+Débloque l'équipement [[shippart SP_GRV]], permettant aux astronefs de réduire considérablement les populations lithiques des planètes ennemies.
+
+SHP_DARK_RAY
+Rayon Obscur
+
+SHP_DARK_RAY_DESC
+Débloque l'équipement [[shippart SP_DARK_RAY]], permettant aux astronefs de réduire les populations phototropiques des planètes ennemies.
+
+SHP_VOID_SHADOW
+Ombre du Vide
+
+SHP_VOID_SHADOW_DESC
+Débloque l'équipement [[shippart SP_VOID_SHADOW]], permettant aux astronefs de réduire considérablement les populations phototropiques des planètes ennemies.
+
+SHP_CHAOS_WAVE
+Vague du Chaos
+
+SHP_CHAOS_WAVE_DESC
+Débloque l'équipement [[shippart SP_CHAOS_WAVE]], permettant aux astronefs de réduire considérablement les populations des planètes ennemies.
 
 SPY_PLANET_STEALTH_MOD
 Modificateur de Furtivité Planétaire
@@ -9882,13 +9954,55 @@ SP_DEATH_SPORE
 Spores Mortelles
 
 SP_DEATH_SPORE_DESC
-Une arme biologique réduisant la population des planètes ennemies.
+Une arme biologique réduisant graduellement les populations organiques des planètes ennemies.
 
 SP_BIOTERM
 Bio-Terminateurs
 
 SP_BIOTERM_DESC
-Une puissante arme biologique réduisant rapidement la population des planètes ennemies.
+Une puissante arme biologique réduisant rapidement les populations organiques des planètes ennemies.
+
+SP_EMP
+Générateur de Pulsation Électromagnétique
+
+SP_EMP_DESC
+Une arme électromagnétique réduisant graduellement les populations robotiques des planètes ennemies.
+
+SP_EMO
+Générateur de Surcharge Électromagnétique
+
+SP_EMO_DESC
+Une puissante arme électromagnétique réduisant rapidement les populations robotiques des planètes ennemies.
+
+SP_SONIC
+Onde de Choc Sonique
+
+SP_SONIC_DESC
+Une arme vibratoire brisant graduellement les populations lithiques des planètes ennemies.
+
+SP_GRV
+Générateur de Pulsation Gravitationnelle
+
+SP_GRV_DESC
+Une puissante arme vibratoire brisant rapidement les populations lithiques des planètes ennemies.
+
+SP_DARK_RAY
+Rayon Obscur
+
+SP_DARK_RAY_DESC
+Une arme d'énergie négative réduisant graduellement les populations phototropiques des planètes ennemies.
+
+SP_VOID_SHADOW
+Ombre du Vide
+
+SP_VOID_SHADOW_DESC
+Une puissante arme d'énergie négative réduisant rapidement les populations phototropiques des planètes ennemies.
+
+SP_CHAOS_WAVE
+Vague du Chaos 
+
+SP_CHAOS_WAVE_DESC
+Une puissante arme réduisant rapidement tout type de population. AVERTISSEMENT: Anéantit également les Particularités [[special GAIA_SPECIAL]].
 
 SP_NOVA_BOMB
 Bombe Nova
