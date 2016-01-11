@@ -251,7 +251,7 @@ Small and cheap mass-driver ship. Can only be built at a colony with a [[buildin
 SD_SMALL_MARK_2
 Corvette (L)
 SD_SMALL_MARK2_DESC
-Small and cheap mass-driver ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap laser ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_1
 Frigate (M1)
@@ -296,18 +296,18 @@ Improved fighter with heavy lasers and armor. Can only be built at a colony with
 SD_ROBOTIC_OUTPOST
 Robotic Outpost
 SD_ROBOTIC_OUTPOST_DESC
-Can establish outposts on faraway worlds
+Can establish outposts on faraway worlds.
 
 SD_ROBOTIC_COLONY
 Robotic Colony
 SD_ROBOTIC_COLONY_DESC
-Can establish colonies on faraway worlds
+Can establish colonies on faraway worlds.
 
 SD_ROBOTIC_CRYOCOL
 Robotic CryoColony
 
 SD_ROBOTIC_CRYOCOL_DESC
-Can establish advanced colonies on faraway worlds
+Can establish advanced colonies on faraway worlds.
 
 SD_ROBO_FLUX_SCOUT
 Flux Scout
@@ -496,7 +496,7 @@ Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an unin
 SD_BASE_DECOY
 Comsat
 SD_BASE_DECOY_DESC
-Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a shipyard.
+Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_DROP
 Troop Drop
@@ -1310,7 +1310,7 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 '''The number of starlanes in the galaxy.
 
-When set to Low, most systems will typically have one or two starlanes, when set to High most systems will have starlanes linking them to most nearby systems within 120uu.'''
+When set to Low, most systems will typically have one or two starlanes. When set to High, most systems will have starlanes linking them to most nearby systems within 120uu.'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''The proportion of planets and systems containing Special Features.
@@ -4064,7 +4064,7 @@ Map Window
 MAP_WINDOW_ARTICLE_TEXT
 '''The Map Window can be considered the 'main' game screen, which shows the galaxy and from which nearly all other windows can be accessed. A number of control elements are displayed in the upper bar.
 
-In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a fist the game will not auto-advance; if clicked to toggle to circular arcing arrows the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.
+In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a double arrow, the game will not auto-advance; if clicked to toggle to circular arcing arrows, the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.
 
 Next are icons showing the player empire total [[encyclopedia INDUSTRY_TITLE]], total [[encyclopedia RESEARCH_TITLE]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].
 
@@ -5658,7 +5658,7 @@ SP_MISIORLA_DESC
 A Misiorla is a mollusc with four flexible tentacles and two pairs of four eyes each. Perfectly adapted to their homeworld they were able to swim through seas of acid fluids and float through clouds of thick heavy mists. They were considered to be a fairly mediocre species, barely worth the uplift they were given by a friendly civilization, neither smart nor productive and not talented in any way. That quickly changed when the first Misiorla were given control of a space ship. Word spread like a wildfire through the galaxy about the best combat pilots in the universe. The first Misiorla mercenaries were hired to pilote fighters, the next were given command of cruisers, but their full potential was realized when an outdated battleship manned with only Misiorla single-handily wiped out the whole space fleet of a far superior empire.
 
 Social Structure:
-The whole life of Misiorlas is wrapped around piloting space vessels. Piloting is their job, it's their sport, it's their love. The society is totaly dependend on other species because they become lethargic and unorganized when doing anything else. Misiorla can be hired by almost anyone who offers something interesting to fly and the fuel to do so.
+The whole life of Misiorlas is wrapped around piloting space vessels. Piloting is their job, it's their sport, it's their love. The society is totally dependend on other species because they become lethargic and unorganized when doing anything else. Misiorla can be hired by almost anyone who offers something interesting to fly and the fuel to do so.
 
 Reason for Extinction:
 At one point in history the Final Ones, one of the Precursor civilizations, decided that the Misiorla could be a threat to their ultimate goal.
@@ -5748,19 +5748,19 @@ EXTINCT_BANFORO_SPECIAL
 Banforo Remains
 
 EXTINCT_BANFORO_SPECIAL_DESC
-'''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on supply connected planets.'''
+'''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
 
 EXTINCT_KILANDOW_SPECIAL
 Kilandow Remains
 
 EXTINCT_KILANDOW_SPECIAL_DESC
-'''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on supply connected planets.'''
+'''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
 
 EXTINCT_MISIORLA_SPECIAL
 Misiorla Remains
 
 EXTINCT_MISIORLA_SPECIAL_DESC
-'''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on supply connected planets.'''
+'''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
@@ -8141,7 +8141,7 @@ LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''By manipulating the dimensional properties of a starlane, it would be possible to selectively bend it. Slow incoming ships may be returned to their previous system of departure, and faster ships may be substantially delayed.'''
+By manipulating the dimensional properties of a starlane, it would be possible to selectively bend it. Slow incoming ships may be returned to their previous system of departure, and faster ships may be substantially delayed.
 
 LRN_GATEWAY_VOID
 Gateway to the Void
@@ -8641,7 +8641,7 @@ SHP_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
 
 SHP_SPINAL_ANTIMATTER_DESC
-A huge spinal mount mass driver firing heavy projectiles made of antimatter. Needs a Core slot to install.
+A huge spinal mount mass driver firing heavy projectiles made of antimatter. Needs a Core [[encyclopedia SLOT_TITLE]] to install.
 
 SHP_ROOT_ARMOR
 Armor Plating
@@ -8769,55 +8769,55 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the [[shippart SP_DEATH_SPORE]] which allows ships to reduce the Organic population of enemy planets.
+Unlocks the [[shippart SP_DEATH_SPORE]] ship part, which allows ships to reduce the Organic population of enemy planets.
 
 SHP_BIOTERM
 Bio-Terminators
 
 SHP_BIOTERM_DESC
-Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the Organic population of enemy planets.
+Unlocks the [[shippart SP_BIOTERM]] ship part, which allows ships to greatly reduce the Organic population of enemy planets.
 
 SHP_EMP
 EMP Generator
 
 SHP_EMP_DESC
-Unlocks the EMP Generator ship part, which allows ships to reduce the Robotic populations of enemy planets.
+Unlocks the [[shippart SP_EMP]] ship part, which allows ships to reduce the Robotic populations of enemy planets.
 
 SHP_EMO
 EMO Generator
 
 SHP_EMO_DESC
-Unlocks the EMO Generator ship part, which allows ships to greatly reduce the Robotic population of enemy planets.
+Unlocks the [[shippart SP_EMO]] ship part, which allows ships to greatly reduce the Robotic population of enemy planets.
 
 SHP_SONIC
 Sonic Shockwave
 
 SHP_SONIC_DESC
-Unlocks the Sonic Shockwave ship part, which allows ships to reduce the Lithic population of enemy planets.
+Unlocks the [[shippart SP_SONIC]] ship part, which allows ships to reduce the Lithic population of enemy planets.
 
 SHP_GRV
 Graviton Pulse
 
 SHP_GRV_DESC
-Unlocks the Graviton Pulse ship part, which allows ships to greatly reduce the Lithic populations of enemy planets.
+Unlocks the [[shippart SP_GRV]] ship part, which allows ships to greatly reduce the Lithic populations of enemy planets.
 
 SHP_DARK_RAY
 Dark Ray
 
 SHP_DARK_RAY_DESC
-Unlocks the Dark Ray ship part, which allows ships to reduce the Phototrophic populations of enemy planets.
+Unlocks the [[shippart SP_DARK_RAY]] ship part, which allows ships to reduce the Phototrophic populations of enemy planets.
 
 SHP_VOID_SHADOW
 Void Shadow
 
 SHP_VOID_SHADOW_DESC
-Unlocks the Void Shadow ship part, which allows ships to greatly reduce the Phototrophic populations of enemy planets.
+Unlocks the [[shippart SP_VOID_SHADOW]] ship part, which allows ships to greatly reduce the Phototrophic populations of enemy planets.
 
 SHP_CHAOS_WAVE
 Chaos Wave
 
 SHP_CHAOS_WAVE_DESC
-Unlocks the Chaos Wave ship part, which allows ships to greatly reduce the population of enemy planets.
+Unlocks the [[shippart SP_CHAOS_WAVE]] ship part, which allows ships to greatly reduce the population of enemy planets.
  
 SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
@@ -9106,7 +9106,7 @@ BLD_BLACK_HOLE_COLLAPSER
 Black Hole Collapser
 
 BLD_BLACK_HOLE_COLLAPSER_DESC
-Generates a [[fieldtype FLD_SUBSPACE_RIFT]] with radious 100 uu centred at the building's location.
+Generates a [[fieldtype FLD_SUBSPACE_RIFT]] with radius 100 uu centred at the building's location.
 
 BLD_HYPER_DAM
 Hyperspatial Dam
@@ -9313,7 +9313,7 @@ BLD_XENORESURRECTION_LAB
 Xenoresurrection Lab
 
 BLD_XENORESURRECTION_LAB_DESC
-The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of supply connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
+The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of [[encyclopedia SUPPLY_TITLE]] connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
 
 BLD_COLONY_BASE
 Colony Base
@@ -9972,7 +9972,7 @@ SP_EMO
 Electromagnetic Overcharge Generator
 
 SP_EMO_DESC
-An electronic weapon which quickly reduces the Robotic population of enemy planets.
+A powerful electronic weapon which quickly reduces the Robotic population of enemy planets.
 
 SP_SONIC
 Sonic Shockwave
@@ -9984,7 +9984,7 @@ SP_GRV
 Gravitic Pulse Generator
 
 SP_GRV_DESC
-A vibration weapon which quickly shatters the Lithic population of enemy planets.
+A powerful vibration weapon which quickly shatters the Lithic population of enemy planets.
 
 SP_DARK_RAY
 Dark Ray
@@ -9996,13 +9996,13 @@ SP_VOID_SHADOW
 Void Shadow
 
 SP_VOID_SHADOW_DESC
-A negative energy weapon which quickly reduces the Phototrophic population of enemy planets.
+A powerful negative energy weapon which quickly reduces the Phototrophic population of enemy planets.
 
 SP_CHAOS_WAVE
 Chaos Wave
 
 SP_CHAOS_WAVE_DESC
-A powerful weapon which quickly reduces any population.  WARNING: Also kills Gaia specials.
+A powerful weapon which quickly reduces any population.  WARNING: Also kills [[special GAIA_SPECIAL]] specials.
 
 SP_NOVA_BOMB
 Nova Bomb
@@ -10343,7 +10343,7 @@ Energy Frigate
 SH_ENERGY_FRIGATE_DESC
 '''This fast hull combines compressed energy and warship technology to create a fast but fragile attack ship. 
 
-Structure and [[encyclopedia STEALTH_TITLE]] are low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. 
+[[encyclopedia STRUCTURE_TITLE]] and [[encyclopedia STEALTH_TITLE]] are low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. 
 
 This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
@@ -10639,13 +10639,13 @@ AVERAGE_DEFENSE_TROOPS
 '''	Average Defensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
 GOOD_DEFENSE_TROOPS
-+	Good Defensive Ground [[encyclopedia TROOP_TITLE]]: 150%.
++	Good Defensive Ground [[encyclopedia TROOP_TITLE]]: 150%
 
 GREAT_DEFENSE_TROOPS
-++	Great Defensive Ground [[encyclopedia TROOP_TITLE]]: 200%.
+++	Great Defensive Ground [[encyclopedia TROOP_TITLE]]: 200%
 
 ULTIMATE_DEFENSE_TROOPS
-+++	Ultimate Defensive Ground [[encyclopedia TROOP_TITLE]]: 300%.
++++	Ultimate Defensive Ground [[encyclopedia TROOP_TITLE]]: 300%
 
 NO_OFFENSE_TROOPS
 −−−	No Offensive Ground [[encyclopedia TROOP_TITLE]]
@@ -10657,40 +10657,40 @@ AVERAGE_OFFENSE_TROOPS
 '''	Average Offensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
 GOOD_OFFENSE_TROOPS
-+	Good Offensive Ground [[encyclopedia TROOP_TITLE]]: 150%.
++	Good Offensive Ground [[encyclopedia TROOP_TITLE]]: 150%
 
 GREAT_OFFENSE_TROOPS
-++	Great Offensive Ground [[encyclopedia TROOP_TITLE]]: 200%.
+++	Great Offensive Ground [[encyclopedia TROOP_TITLE]]: 200%
 
 ULTIMATE_OFFENSE_TROOPS
-+++	Ultimate Offensive Ground [[encyclopedia TROOP_TITLE]]: 300%.
++++	Ultimate Offensive Ground [[encyclopedia TROOP_TITLE]]: 300%
 
 BAD_DETECTION
-−	Bad [[encyclopedia DETECTION_RANGE_TITLE]]: −20 malus.
+−	Bad [[encyclopedia DETECTION_RANGE_TITLE]]: −20 malus
 
 GOOD_DETECTION
-+	Good [[encyclopedia DETECTION_RANGE_TITLE]]: +25 bonus.
++	Good [[encyclopedia DETECTION_RANGE_TITLE]]: +25 bonus
 
 GREAT_DETECTION
-++	Great [[encyclopedia DETECTION_RANGE_TITLE]]: +50 bonus.
+++	Great [[encyclopedia DETECTION_RANGE_TITLE]]: +50 bonus
 
 ULTIMATE_DETECTION
-+++	Ultimate [[encyclopedia DETECTION_RANGE_TITLE]]: +100 bonus.
++++	Ultimate [[encyclopedia DETECTION_RANGE_TITLE]]: +100 bonus
 
 BAD_STEALTH
-−	Bad Planetary [[encyclopedia STEALTH_TITLE]]: −20 malus.
+−	Bad Planetary [[encyclopedia STEALTH_TITLE]]: −20 malus
 
 AVERAGE_STEALTH
-'''	Average Planetary [[encyclopedia STEALTH_TITLE]].'''
+'''	Average Planetary [[encyclopedia STEALTH_TITLE]]'''
 
 GOOD_STEALTH
-+	Good Planetary [[encyclopedia STEALTH_TITLE]]: +20 bonus.
++	Good Planetary [[encyclopedia STEALTH_TITLE]]: +20 bonus
 
 GREAT_STEALTH
-++	Great Planetary [[encyclopedia STEALTH_TITLE]]: +40 bonus.
+++	Great Planetary [[encyclopedia STEALTH_TITLE]]: +40 bonus
 
 ULTIMATE_STEALTH
-+++	Ultimate Planetary [[encyclopedia STEALTH_TITLE]]: +60 bonus.
++++	Ultimate Planetary [[encyclopedia STEALTH_TITLE]]: +60 bonus
 
 BAD_WEAPONS
 −	Bad Pilots: Base damage per ship weapon reduced by one level.
@@ -10702,7 +10702,7 @@ GREAT_WEAPONS
 ++	Great Pilots: Base damage per ship weapon increased by two levels.
 
 ULTIMATE_WEAPONS
-+++	Ultimate Pilots: Base damage per ship level increased by three levels.
++++	Ultimate Pilots: Base damage per ship weapon increased by three levels.
 
 BAD_POPULATION
 −	Bad Population 75%
