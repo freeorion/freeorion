@@ -450,7 +450,7 @@ Part
             scope = Source
             activation = Source
             effects = SetFuel value = Target.MaxFuel
-    icon = "icons/tech/zero_point_energy.png"
+    icon = "icons/ship_parts/zero-point-generator.png"
 
 Part
     name = "ST_CLOAK_4"
@@ -926,7 +926,7 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/death-spore.png"
+    icon = "icons/ship_parts/EMP.png"
 
 Part
     name = "SP_EMO"
@@ -988,7 +988,7 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/bioterm.png"
+    icon = "icons/ship_parts/EMO.png"
 
 Part
     name = "SP_SONIC"
