@@ -1312,6 +1312,10 @@ class empire(object):
         return resPoolMap()
 
     @property
+    def won(self):
+        return bool()
+
+    @property
     def availableShipParts(self):
         return StringSet()
 
@@ -1334,6 +1338,10 @@ class empire(object):
     @property
     def researchQueue(self):
         return researchQueue()
+
+    @property
+    def eliminated(self):
+        return bool()
 
     @property
     def empireID(self):
@@ -3824,6 +3832,15 @@ def getUniverse():
     :rtype universe
     """
     return universe()
+
+
+def initMeterEstimatesDiscrepancies():
+    """
+    C++ signature:
+        void initMeterEstimatesDiscrepancies()
+    :rtype None
+    """
+    return None
 
 
 def issueAggressionOrder(number, boolean):
