@@ -516,20 +516,21 @@ void Layout::Add(Wnd* wnd, std::size_t row, std::size_t column, std::size_t num_
 void Layout::Remove(Wnd* wnd)
 {
     std::map<Wnd*, WndPosition>::const_iterator it = m_wnd_positions.find(wnd);
-    if (it != m_wnd_positions.end()) {
-        const WndPosition& wnd_position = it->second;
-        for (std::size_t i = wnd_position.first_row; i < wnd_position.last_row; ++i) {
-            for (std::size_t j = wnd_position.first_column; j < wnd_position.last_column; ++j) {
-                m_cells[i][j] = 0;
-            }
+    if (it == m_wnd_positions.end())
+        return;
+
+    const WndPosition& wnd_position = it->second;
+    for (std::size_t i = wnd_position.first_row; i < wnd_position.last_row; ++i) {
+        for (std::size_t j = wnd_position.first_column; j < wnd_position.last_column; ++j) {
+            m_cells[i][j] = 0;
         }
-        Pt original_ul = it->second.original_ul;
-        Pt original_size = it->second.original_size;
-        m_wnd_positions.erase(wnd);
-        RedoLayout();
-        DetachChild(wnd);
-        wnd->SizeMove(original_ul, original_ul + original_size);
     }
+    Pt original_ul = it->second.original_ul;
+    Pt original_size = it->second.original_size;
+    m_wnd_positions.erase(wnd);
+    RedoLayout();
+    DetachChild(wnd);
+    wnd->SizeMove(original_ul, original_ul + original_size);
 }
 
 void Layout::DetachAndResetChildren()
