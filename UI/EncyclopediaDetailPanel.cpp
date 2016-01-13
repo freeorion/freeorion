@@ -487,7 +487,6 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
     const int SUMMARY_PTS = PTS*4/3;
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     m_name_text =    new CUILabel("");
     m_cost_text =    new CUILabel("");
@@ -520,9 +519,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     GG::Connect(m_back_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnBack,                   this);
     GG::Connect(m_next_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnNext,                   this);
 
-    m_description_box = new GG::RichText( GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "", ClientUI::GetFont(), ClientUI::TextColor(),
-                                          GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK, GG::INTERACTIVE);
-    m_description_panel = new GG::ScrollPanel( GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
+    m_description_box = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "", ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK, GG::INTERACTIVE);
+    m_description_panel = new GG::ScrollPanel(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
 
     // Copy default block factory.
     boost::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP> factoryMap( new GG::RichText::BLOCK_FACTORY_MAP( *GG::RichText::DefaultBlockFactoryMap()));
@@ -1961,27 +1960,27 @@ namespace {
         float typical_shot = 3 + 27 * tech_level;
         float typical_shield = 20 * tech_level;
         float typical_strength = std::pow(design->AdjustedAttack(typical_shield) * structure * typical_shot / std::max(typical_shot - shield, 0.0f), 0.6f);
-         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-                    % design->Description()
-                    % hull_link
-                    % parts_list
-                    % static_cast<int>(design->Weapons().size())
-                    % 0
-                    % 0
-                    % 0
-                    % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
-                    % ship->CurrentMeterValue(METER_MAX_SHIELD)
-                    % ship->CurrentMeterValue(METER_DETECTION)
-                    % ship->CurrentMeterValue(METER_STEALTH)
-                    % ship->CurrentMeterValue(METER_SPEED)
-                    % ship->CurrentMeterValue(METER_SPEED)
-        % ship->CurrentMeterValue(METER_MAX_FUEL)
-        % design->ColonyCapacity()
-        % design->TroopCapacity()
-        % design->Attack()
-        % species
-        % strength % (strength / cost)
-        % typical_strength % (typical_strength / cost));
+        return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+                   % design->Description()
+                   % hull_link
+                   % parts_list
+                   % static_cast<int>(design->Weapons().size())
+                   % 0
+                   % 0
+                   % 0
+                   % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
+                   % ship->CurrentMeterValue(METER_MAX_SHIELD)
+                   % ship->CurrentMeterValue(METER_DETECTION)
+                   % ship->CurrentMeterValue(METER_STEALTH)
+                   % ship->CurrentMeterValue(METER_SPEED)
+                   % ship->CurrentMeterValue(METER_SPEED)
+                   % ship->CurrentMeterValue(METER_MAX_FUEL)
+                   % design->ColonyCapacity()
+                   % design->TroopCapacity()
+                   % design->Attack()
+                   % species
+                   % strength % (strength / cost)
+                   % typical_strength % (typical_strength / cost));
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,

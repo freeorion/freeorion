@@ -10,19 +10,18 @@
 
 /// An abstract base class for combat events
 struct FO_COMMON_API CombatEvent {
-    public:
     CombatEvent();
 
     virtual ~CombatEvent() {}
     virtual std::string DebugString() const = 0;
 
-    private:
+private:
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize ( Archive& ar, const unsigned int version );
+    void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_CLASS_EXPORT_KEY ( CombatEvent )
+BOOST_CLASS_EXPORT_KEY(CombatEvent)
 
 // Should be unique_ptr, but we don't have c++11
 typedef boost::shared_ptr<CombatEvent> CombatEventPtr;

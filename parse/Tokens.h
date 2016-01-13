@@ -112,7 +112,9 @@
 #define TOKEN_SEQ_4                             \
     (Field)                                     \
     (FieldType)                                 \
-    (Fighters)                                  \
+    (FighterBay)                                \
+    (FighterHangar)                             \
+    (FighterWeapon)                             \
     (FinalDestinationID)                        \
     (Fleet)                                     \
     (FleetID)                                   \

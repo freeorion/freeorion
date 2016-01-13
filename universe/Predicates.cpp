@@ -6,6 +6,7 @@
 #include "Ship.h"
 #include "System.h"
 #include "Field.h"
+#include "Fighter.h"
 #include "UniverseObject.h"
 
 ////////////////////////////////////////////////
@@ -34,6 +35,10 @@ TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<System> o
 
 TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Field> obj) const
 { return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
+
+TemporaryPtr<UniverseObject> UniverseObjectVisitor::Visit(TemporaryPtr<Fighter> obj) const
+{ return Visit(boost::static_pointer_cast<UniverseObject>(obj)); }
+
 
 ////////////////////////////////////////////////
 // StationaryFleetVisitor

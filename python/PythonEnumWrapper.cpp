@@ -135,7 +135,9 @@ namespace FreeOrionPython {
         ;
         enum_<ShipPartClass>("shipPartClass")
             .value("shortRange",        PC_DIRECT_WEAPON)
-            .value("fighters",          PC_FIGHTERS)
+            .value("fighterBay",        PC_FIGHTER_BAY)
+            .value("fighterHangar",     PC_FIGHTER_HANGAR)
+            .value("fighterWeapon",     PC_FIGHTER_WEAPON)
             .value("shields",           PC_SHIELD)
             .value("armour",            PC_ARMOUR)
             .value("troops",            PC_TROOPS)

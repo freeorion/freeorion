@@ -488,7 +488,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (!(part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS))
+        if (!(part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY || part_class == PC_FIGHTER_WEAPON))
             continue;
 
         // get the attack power for each weapon part
@@ -509,6 +509,5 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
         top += m_row_height;
-
     }
 }

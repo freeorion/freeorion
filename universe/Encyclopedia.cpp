@@ -14,7 +14,13 @@ const Encyclopedia& GetEncyclopedia() {
 Encyclopedia::Encyclopedia() :
     articles()
 {
-    parse::encyclopedia_articles(GetResourceDir() / "encyclopedia.txt", *this);
+    try {
+        parse::encyclopedia_articles(GetResourceDir() / "encyclopedia.txt", *this);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing encyclopedia.txt: error: " << e.what();
+        throw e;
+    }
+
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "(Category) Encyclopedia Articles:";
         for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator

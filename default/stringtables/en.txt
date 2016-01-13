@@ -213,6 +213,16 @@ Cannot be produced
 ###########################
 # in premade_ship_designs.txt
 
+SD_CARRIER
+Protype Carrier
+SD_CARRIER_DESC
+Prototype design that launches fighters in battle instead of using direct-fire weapons.
+
+SD_FLAK
+Prototype Flak Ship
+SD_FLAK_DESC
+Prototype design that uses flak cannons as a cheap fighter countermeasure.
+
 SD_SCOUT
 Scout
 SD_SCOUT_DESC
@@ -3655,6 +3665,15 @@ Combat at %1% on turn %2%:
 ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
 
+ENC_COMBAT_ATTACK_SIMPLE_STR
+%1% attacks %2%
+
+ENC_COMBAT_LAUNCH_STR
+%1% launches %3% %2%
+
+ENC_COMBAT_RECOVER_STR
+%1% recovers %3% %2%
+
 ENC_COMBAT_UNKNOWN_OBJECT
 Unknown
 
@@ -3663,7 +3682,10 @@ ENC_ROUND_BEGIN
 Round %1%'''
 
 ENC_COMBAT_UNKNOWN_DESTROYED_STR
-Something %2% was incapacitated one way or another
+%2% was incapacitated
+
+ENC_COMBAT_FIGHTER_INCAPACITATED_STR
+A%1%fighter was destroyed
 
 ENC_COMBAT_PLANET_INCAPACITATED_STR
 The%1%planet %2% was incapacitated
@@ -6058,6 +6080,8 @@ OBJ_SYSTEM
 System
 OBJ_FIELD
 Field
+OBJ_FIGHTER
+Fighter
 
 # StarTypes
 
@@ -6371,8 +6395,12 @@ Empty
 
 PC_DIRECT_WEAPON
 Direct Weapon
-PC_FIGHTERS
-Fighters
+PC_FIGHTER_WEAPON
+Fighter Weapon
+PC_FIGHTER_HANGAR
+Fighter Hangar
+PC_FIGHTER_BAY
+Fighter Launch Bay
 PC_SHIELD
 Shields
 PC_ARMOUR
@@ -9534,38 +9562,35 @@ Shield Strength: %1%
 
 PART_DESC_DETECTION
 Detection Range: %1%
-# Detection Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
 Attack Damage: %1%
 
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
 
-PART_DESC_LR_STATS
-'''Damage: %1%
-Rate of Fire: %2% missiles/turn
-Range: %3%
-Missile Speed: %4%
-Missile Structure: %5%
-Missile [[encyclopedia STEALTH_TITLE]]: %6%
-Capacity: %7% missiles'''
-
-PART_DESC_FIGHTER_STATS
-'''Fighter Type: %1%
-Fighter Anti-Fighter Damage: %3%
-Fighter Anti-Ship Damage: %2%
-Fighter Launch Rate: %4% fighters/turn
-Fighter Speed: %5%
-Fighter [[encyclopedia STRUCTURE_TITLE]]: %6%
-Fighter [[encyclopedia STEALTH_TITLE]]: %7%
-Fighter Detection: %8%
-Capacity: %9% fighters'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################
+
+FT_WEAPON_1
+Fighter Weapon
+FT_WEAPON_1_DESC
+Prototype weapon system for use with fighters. Does not function as a ship weapon.
+
+FT_BAY_1
+Fighter Bay
+FT_BAY_1_DESC
+Prototype launch system for fighters.
+
+FT_HANGAR_1
+Fighter Hangar
+FT_HANGAR_1_DESC
+Prototype storage system for fighters.
+
+SR_WEAPON_0_1
+Flak Cannon
+SR_WEAPON_0_1_DESC
+The flak cannon, does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
 
 SR_WEAPON_1_1
 Mass Driver

@@ -61,7 +61,7 @@ FUEL = frozenset({fo.shipPartClass.fuel})
 COLONISATION = frozenset({fo.shipPartClass.colony})
 ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
-WEAPONS = frozenset({fo.shipPartClass.shortRange, fo.shipPartClass.fighters})
+WEAPONS = frozenset({fo.shipPartClass.shortRange, fo.shipPartClass.fighterBay})
 GENERAL = frozenset({fo.shipPartClass.general})
 ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
                               COLONISATION, ENGINES, TROOPS, GENERAL})

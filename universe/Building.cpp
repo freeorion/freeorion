@@ -348,7 +348,13 @@ BuildingTypeManager::BuildingTypeManager() {
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings file.";
     }
-    parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
+
+    try {
+        parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing buildings.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Building Types:";

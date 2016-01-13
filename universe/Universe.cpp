@@ -414,8 +414,14 @@ struct Universe::GraphImpl {
 namespace EmpireStatistics {
     const std::map<std::string, ValueRef::ValueRefBase<double>*>& GetEmpireStats() {
         static std::map<std::string, ValueRef::ValueRefBase<double>*> s_stats;
-        if (s_stats.empty())
-        { parse::statistics(GetResourceDir() / "empire_statistics.txt", s_stats); }
+        if (s_stats.empty()) {
+            try {
+                parse::statistics(GetResourceDir() / "empire_statistics.txt", s_stats);
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Failed parsing empire_statistics.txt: error: " << e.what();
+                throw e;
+            }
+        }
         return s_stats;
     }
 }
@@ -1728,13 +1734,21 @@ namespace {
         return *target_set; 
     }
 
-    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator ()()
+    void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator()()
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
-            DebugLogger() << "StoreTargetsAndCausesOfEffectsGroups(effects group: " << m_effects_group->AccountingLabel() << ", , , specific cause: " << m_specific_cause_name << ", , )";
+            std::string sources_ids;
+            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator source_it = m_sources->begin();
+                 source_it != m_sources->end(); ++source_it)
+            {
+                sources_ids += (*source_it)->Name() + " (" + boost::lexical_cast<std::string>((*source_it)->ID()) + ")  ";
+            }
+            DebugLogger() << "StoreTargetsAndCausesOfEffectsGroups: effects_group: " << m_effects_group->AccountingLabel()
+                          << "  specific_cause: " << m_specific_cause_name
+                          << "  sources: " << sources_ids << ")";
         }
 
         // get objects matched by scope
@@ -1745,7 +1759,7 @@ namespace {
         // create temporary container for concurrent work
         Effect::TargetSet target_objects(*m_target_objects);
         // process all sources in set provided
-        std::vector< TemporaryPtr<const UniverseObject> >::const_iterator source_it;
+        std::vector<TemporaryPtr<const UniverseObject> >::const_iterator source_it;
         for (source_it = m_sources->begin(); source_it != m_sources->end(); ++source_it) {
             TemporaryPtr<const UniverseObject> source = *source_it;
             ScriptingContext source_context(source);
@@ -2324,7 +2338,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 continue;
 
             if (log_verbose)
-                DebugLogger() << " * * * * * * * * * * * (new effects group log entry)";
+                DebugLogger() << "\n * * * * * * * * * * * (new effects group log entry)";
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,

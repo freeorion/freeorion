@@ -715,19 +715,24 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
     } else {
         const CombatLog& log = GetCombatLog(log_id);
         for (std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
-            TemporaryPtr<UniverseObject> object = Objects().Object(*it);
-            if (object) {
-                int owner_id = object->Owner();
-                int object_id = object->ID();
-                if (m_summaries.find(owner_id) == m_summaries.end()) {
-                    m_summaries.insert(std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)));
-                }
-                std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
-                if (map_it != log.participant_states.end()) {
-                    m_summaries[owner_id].AddUnit(object_id, map_it->second);
-                } else {
-                    ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
-                }
+            int object_id = *it;
+            if (object_id < 0)
+                continue;   // fighters and invalid objects
+            TemporaryPtr<UniverseObject> object = GetUniverseObject(object_id);
+            if (!object) {
+                ErrorLogger() << "GraphicalSummaryWnd::MakeSummaries couldn't find object with id: " << object_id;
+                continue;
+            }
+
+            int owner_id = object->Owner();
+            if (m_summaries.find(owner_id) == m_summaries.end())
+                m_summaries[owner_id] = CombatSummary(owner_id);
+
+            std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
+            if (map_it != log.participant_states.end()) {
+                m_summaries[owner_id].AddUnit(object_id, map_it->second);
+            } else {
+                ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
             }
         }
 

@@ -117,7 +117,12 @@ PartTypeManager::PartTypeManager() {
 
     s_instance = this;
 
-    parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
+    try {
+        parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing ship_parts.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Part Types:";
@@ -188,8 +193,13 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         case PC_TROOPS:
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
             break;
-        case PC_DIRECT_WEAPON:
-        case PC_FIGHTERS: {
+        case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, true)); // note: stacking allowed for this part
+            break;
+        }
+        case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
+        case PC_DIRECT_WEAPON:      // capacity indicates weapon damage per shot
+        case PC_FIGHTER_WEAPON: {   // capacity indiciates fighters' damage (max on a ship is used for launched fighters)
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
             break;
         }
@@ -247,7 +257,8 @@ const std::string PartType::CapacityDescription() const {
     case PC_FUEL:
     case PC_TROOPS:
     case PC_COLONY:
-    case PC_FIGHTERS:
+    case PC_FIGHTER_BAY:
+    case PC_FIGHTER_HANGAR:
         desc_string += UserString("PART_DESC_CAPACITY");
         break;
     case PC_SHIELD:
@@ -426,7 +437,12 @@ HullTypeManager::HullTypeManager() {
 
     s_instance = this;
 
-    parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
+    try {
+        parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing ship_hulls.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Hull Types:";
@@ -625,7 +641,6 @@ bool ShipDesign::CanColonize() const {
     return false;
 }
 
-//// TEMPORARY
 float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
     float total_defense = 0.0f;
@@ -645,48 +660,60 @@ float ShipDesign::Attack() const {
 }
 
 float ShipDesign::AdjustedAttack(float shield) const {
-    // total damage against a target with the given shield.
-    // accumulate attack stat from all weapon parts in design
-    const PartTypeManager& manager = GetPartTypeManager();
+    // total damage against a target with the given shield (damage reduction)
+    // assuming full load of fighters that are not destroyed during the battle
+    int available_fighters = 0;
+    int fighter_launch_capacity = 0;
+    float fighter_damage = 0.0f;
+    float direct_attack = 0.0f;
 
-    // TODO: get empire fighter damage, adjusted for specified shield strength
-    float empire_fighter_damage = 4.0f - shield;
-
-    float total_attack = 0.0f;
-    std::vector<std::string> all_parts = Parts();
-    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
-        const PartType* part = manager.GetPartType(*it);
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+        const PartType* part = GetPartType(*it);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
 
-        // get the attack power for each weapon part
+    // direct weapon and fighter-related parts all handled differently...
         if (part_class == PC_DIRECT_WEAPON) {
             float part_attack = part->Capacity();
             if (part_attack > shield)
-                total_attack += part_attack - shield;
-        } else if (part_class == PC_FIGHTERS && empire_fighter_damage > 0.0f) {
-            // each fighter (number determined by capacity) shoots with the empire fighter strength stat
-            float all_fighters_combined_attack = empire_fighter_damage * part->Capacity();
-            total_attack += all_fighters_combined_attack;
+                direct_attack += part_attack - shield;
+        } else if (part_class == PC_FIGHTER_HANGAR) {
+            available_fighters += part->Capacity();
+        } else if (part_class == PC_FIGHTER_BAY) {
+            fighter_launch_capacity += part->Capacity();
+        } else if (part_class == PC_FIGHTER_WEAPON) {
+            fighter_damage = std::max(fighter_damage, part->Capacity());
         }
     }
-    return total_attack;
+
+    // assuming 3 combat "bouts"
+    int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
+    available_fighters -= fighter_shots;
+    fighter_shots *= 2;                                                         // first-bout-launched fighters attack in bouts 2 and 3
+    fighter_shots += std::min(available_fighters, fighter_launch_capacity);     // second-bout-launched fighters attack only in bout 3
+
+    // how much damage does a fighter shot do?
+    fighter_damage = std::max(0.0f, fighter_damage - shield);
+
+    return direct_attack + fighter_shots*fighter_damage;
 }
-//// END TEMPORARY
 
 std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
     std::vector<std::string> retval;
 
     const HullType* hull = GetHull();
-    assert(hull);
+    if (!hull) {
+        ErrorLogger() << "Design hull not found: " << m_hull;
+        return retval;
+    }
     const std::vector<HullType::Slot>& slots = hull->Slots();
 
-    unsigned int size = m_parts.size();
-    assert(size == hull->NumSlots());
+    if (m_parts.empty())
+        return retval;
 
-    // add to output vector each part that is in a slot of the indicated ShipSlotType 
-    for (unsigned int i = 0; i < size; ++i)
+    // add to output vector each part that is in a slot of the indicated ShipSlotType
+    for (unsigned int i = 0; i < m_parts.size(); ++i)
         if (slots[i].type == slot_type)
             retval.push_back(m_parts[i]);
 
@@ -702,7 +729,7 @@ std::vector<std::string> ShipDesign::Weapons() const {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS)
+        if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY)
         { retval.push_back(part_name); }
     }
     return retval;
@@ -847,7 +874,7 @@ void ShipDesign::BuildStatCaches() {
 
         switch (part->Class()) {
         case PC_DIRECT_WEAPON:
-        case PC_FIGHTERS: {
+        case PC_FIGHTER_BAY: {
             m_is_armed = true;
             break;
         }
@@ -959,9 +986,19 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
+    try {
+        parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing premade_ship_designs.txt: error: " << e.what();
+        throw e;
+    }
 
-    parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
+    try {
+        parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing space_monsters.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Predefined Ship Designs:";

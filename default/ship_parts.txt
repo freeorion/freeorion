@@ -29,15 +29,37 @@ Part
     icon = "icons/meter/rebels.png"
 
 Part
-    name = "FT_WEAPON_1_1"
-    description = "FT_WEAPON_1_1_DESC"
-    class = Fighters
+    name = "FT_WEAPON_1"
+    description = "FT_WEAPON_1_DESC"
+    class = FighterWeapon
     capacity = 2
+    mountableSlotTypes = [Internal External]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_BAY_1"
+    description = "FT_BAY_1_DESC"
+    class = FighterBay
+    capacity = 3
+    mountableSlotTypes = External
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_1"
+    description = "FT_HANGAR_1_DESC"
+    class = FighterHangar
+    capacity = 8
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/ion_cannon.png"
+    icon = "icons/ship_parts/fighters-1.png"
 
 Part
     name = "SR_WEAPON_1_1"
@@ -49,6 +71,17 @@ Part
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/mass-driver.png"
+    
+Part
+    name = "SR_WEAPON_0_1"
+    description = "SR_WEAPON_0_1_DESC"
+    class = ShortRange
+    damage = 1
+    mountableSlotTypes = External
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/laser.png"
     
 Part
     name = "SR_WEAPON_2_1"
