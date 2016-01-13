@@ -193,19 +193,14 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     
     diplomatic_corp.handle_diplomatic_status_update(status_update)
 
+
 @chat_on_error
 @listener
 def generateOrders():  # pylint: disable=invalid-name
     """Called once per turn to tell the Python AI to generate and issue orders to control its empire.
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
-    turn = fo.currentTurn()
-    turn_uid = foAIstate.set_turn_uid()
-    print "Start turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid)
-
-    turn_timer.start("AI planning")
     empire = fo.getEmpire()
-
     if empire.eliminated:
         print "This empire has been eliminated. Aborting order generation"
         try:
@@ -216,11 +211,17 @@ def generateOrders():  # pylint: disable=invalid-name
             print_error(e)
         return
 
+    # This code block is required for correct AI work.
     print "Meter / Resource Pool updating..."
     fo.initMeterEstimatesDiscrepancies()
     fo.updateMeterEstimates(0)
     fo.updateResourcePools()
 
+    turn = fo.currentTurn()
+    turn_uid = foAIstate.set_turn_uid()
+    print "Start turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid)
+
+    turn_timer.start("AI planning")
     # set the random seed (based on galaxy seed, empire name and current turn)
     # for game-reload consistency.
     random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
