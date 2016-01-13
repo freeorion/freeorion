@@ -106,7 +106,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         # assigning new state
         foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
-        print_error("Fail to load aiState form saved game: e")
+        print_error("Fail to load aiState form saved game: %s" % e)
 
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
