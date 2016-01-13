@@ -1,4 +1,4 @@
-""" The FreeOrionAI module contains the methods which can be made by the C AIInterface;
+"""The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code."""
 import pickle  # Python object serialization library
 import sys
@@ -22,7 +22,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserString, UserStringList, chat_on_error, print_error
+from freeorion_tools import UserStringList, chat_on_error, print_error
 from freeorion_debug import Timer
 
 main_timer = Timer('timer', write_log=True)
@@ -65,7 +65,6 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
         print "This empire has been eliminated. Ignoring new game start message."
         return
 
-
     turn_timer.start("Server Processing")
     print "New game started, AI Aggression level %d" % aggression
 
@@ -88,7 +87,6 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(aggression, DiplomaticCorp.DiplomaticCorp)()
-
 
 
 @chat_on_error
@@ -130,7 +128,6 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(foAIstate.aggression, DiplomaticCorp.DiplomaticCorp)()
-
 
 
 @chat_on_error
