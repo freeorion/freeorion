@@ -14,7 +14,7 @@ def inspect_FreeOrionAIInterface():
     design = fo.getShipDesign(ship.designID)
     empire = fo.getEmpire()
 
-    tech = fo.getTech('SHP_WEAPON_1_3')
+    tech = fo.getTech('SHP_WEAPON_2_1')
     tech_spec = list(tech.unlockedItems)[0]
 
     part_id = list(empire.availableShipParts)[0]
