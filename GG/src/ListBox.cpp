@@ -654,6 +654,14 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     if (MatchesOrContains(this, destination))
         return;
 
+    std::vector<Row*> initially_selected_rows;
+    if (!(m_style & LIST_NOSEL) && !m_selections.empty()) {
+        // save selections...
+        for (SelectionSet::iterator it = m_selections.begin(); it != m_selections.end(); ++it)
+            initially_selected_rows.push_back(**it);
+        m_selections.clear();
+    }
+
     // remove dragged-away row from this ListBox
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
         Row* row = boost::polymorphic_downcast<Row*>(*it);
@@ -663,6 +671,26 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
             continue;
 
         Erase(row_it, false, true);
+    }
+
+    if (!(m_style & LIST_NOSEL) && !initially_selected_rows.empty()) {
+        // reselect any remaining from old selections
+        SelectionSet new_selections;
+        for (std::vector<Row*>::iterator it = initially_selected_rows.begin();
+             it != initially_selected_rows.end(); ++it)
+        {
+            iterator sel_it = std::find(m_rows.begin(), m_rows.end(), *it);
+            if (sel_it != m_rows.end())
+                new_selections.insert(sel_it);
+        }
+
+        m_selections = new_selections;
+
+        if (m_selections.empty()) {
+            ClearedSignal();
+        } else if (m_selections.size() != initially_selected_rows.size()) {
+            SelChangedSignal(m_selections);
+        }
     }
 }
 
