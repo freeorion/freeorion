@@ -547,22 +547,16 @@ void Wnd::SetMaxSize(const Pt& sz)
 
 void Wnd::AttachChild(Wnd* wnd)
 {
-    if (!wnd)
-        return;
-
-    // remove from previous parent, if any
-    if (wnd->Parent() && wnd->Parent() != this)
-        wnd->Parent()->DetachChild(wnd);
-
-    GUI::GetGUI()->Remove(wnd);
-
-    if (std::find(m_children.begin(), m_children.end(), wnd) == m_children.end())
+    if (wnd) {
+        // remove from previous parent, if any
+        if (wnd->Parent())
+            wnd->Parent()->DetachChild(wnd);
+        GUI::GetGUI()->Remove(wnd);
         m_children.push_back(wnd);
-
-    wnd->SetParent(this);
-
-    if (Layout* this_as_layout = dynamic_cast<Layout*>(this))
-        wnd->m_containing_layout = this_as_layout;
+        wnd->SetParent(this);
+        if (Layout* this_as_layout = dynamic_cast<Layout*>(this))
+            wnd->m_containing_layout = this_as_layout;
+    }
 }
 
 void Wnd::MoveChildUp(Wnd* wnd)
@@ -587,22 +581,16 @@ void Wnd::MoveChildDown(Wnd* wnd)
 
 void Wnd::DetachChild(Wnd* wnd)
 {
-    if (!wnd)
-        return;
-
-    if (wnd->Parent() == this)
-        wnd->SetParent(0);
-
-    std::list<Wnd*>::iterator it = std::find(m_children.begin(), m_children.end(), wnd);
-    if (it == m_children.end())
-        return;
-
-    m_children.erase(it);
-    if (Layout* this_as_layout = dynamic_cast<Layout*>(this)) {
-        this_as_layout->Remove(wnd);
-
-        if (wnd->GetLayout() == this)
-            wnd->m_containing_layout = 0;
+    if (wnd) {
+        std::list<Wnd*>::iterator it = std::find(m_children.begin(), m_children.end(), wnd);
+        if (it != m_children.end()) {
+            m_children.erase(it);
+            wnd->SetParent(0);
+            if (Layout* this_as_layout = dynamic_cast<Layout*>(this)) {
+                this_as_layout->Remove(wnd);
+                wnd->m_containing_layout = 0;
+            }
+        }
     }
 }
 
@@ -617,23 +605,15 @@ void Wnd::DetachChildren()
 
 void Wnd::DeleteChild(Wnd* wnd)
 {
-    if (!wnd)
-        return;
-    if (wnd->Parent() != this)
-        return;
-    if (std::find(m_children.begin(), m_children.end(), wnd) == m_children.end())
-        return;
-    delete wnd;
+    if (wnd && std::find(m_children.begin(), m_children.end(), wnd) != m_children.end()) {
+        delete wnd;
+    }
 }
 
 void Wnd::DeleteChildren()
 {
     for (std::list<Wnd*>::iterator it = m_children.begin(); it != m_children.end();) {
         Wnd* wnd = *it++;
-        if (!wnd)
-            continue;
-        if (wnd->Parent() != this)
-            continue;
         delete wnd;
     }
 }
