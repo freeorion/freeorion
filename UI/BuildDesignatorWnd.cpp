@@ -1053,17 +1053,20 @@ void BuildDesignatorWnd::Update() {
 }
 
 void BuildDesignatorWnd::InitializeWindows() {
+
+    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+
     const GG::X SIDEPANEL_WIDTH = GG::X(384); // Formerly "UI.sidepanel-width" default
     const GG::Y PANEL_HEIGHT    = GG::Y(240);
 
-    const GG::Pt pedia_ul(GG::X0, GG::Y0);
-    const GG::Pt pedia_wh(Width() - SIDEPANEL_WIDTH, PANEL_HEIGHT);
+    const GG::Pt pedia_ul(queue_width, GG::Y0);
+    const GG::Pt pedia_wh(Width() - SIDEPANEL_WIDTH - queue_width, PANEL_HEIGHT);
 
     const GG::Pt sidepanel_ul(Width() - SIDEPANEL_WIDTH, GG::Y0);
     const GG::Pt sidepanel_wh(SIDEPANEL_WIDTH, Height());
 
-    const GG::Pt selector_ul(GG::X0, Height() - PANEL_HEIGHT);
-    const GG::Pt selector_wh(Width() - SIDEPANEL_WIDTH, PANEL_HEIGHT);
+    const GG::Pt selector_ul(queue_width, Height() - PANEL_HEIGHT);
+    const GG::Pt selector_wh(Width() - SIDEPANEL_WIDTH - queue_width, PANEL_HEIGHT);
 
     m_enc_detail_panel->InitSizeMove(pedia_ul,      pedia_ul + pedia_wh);
     m_side_panel->      InitSizeMove(sidepanel_ul,  sidepanel_ul + sidepanel_wh);

@@ -444,8 +444,8 @@ public:
 class ProductionInfoPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    ProductionInfoPanel(const std::string& title, const std::string& point_units_str,
-                        GG::X w = GG::X1, GG::Y h = GG::Y1);
+    ProductionInfoPanel(const std::string& title, const std::string& point_units_str, const GG::X x, const GG::Y y,
+        const GG::X w, const GG::Y h, const std::string& config_name);
     //@}
 
     /** \name Accessors */ //@{
