@@ -400,7 +400,7 @@ def init():
     # if tech already in priority_funcs do nothing
     # if tech starts with prefix add prefix handler
     # otherwise print warning and add DEFAULT_PRIORITY
-    for tech in fo.techs():
+    for tech in [tech for tech in fo.techs() if not tech_is_complete(tech)]:
         if tech in priority_funcs:
             continue
         for prefix, handler in prefixes:
@@ -434,7 +434,7 @@ def generate_research_orders():
     tlist = completed_techs+3*[" "]
     tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
     for tline in tlines:
-        print "%25s %25s %25s" % tline
+        print "%-25s %-25s %-25s" % tline
     print
 
     #
@@ -510,18 +510,18 @@ def generate_research_orders():
 
     missing_prereq_list = []
     print "Research priorities"
-    print "    %25s %8s %8s %8s %25s %s" % ("Name", "Priority", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+    print "    %-25s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
     for idx, tech_name in enumerate(possible[:20]):
         tech_info = research_reqs[tech_name]
-        print "    %25s %8.6f %8.2f %8.2f %25s %s" % (tech_name, priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
+        print "    %-25s %8.6f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
         missing_prereq_list.extend([prereq for prereq in tech_info[0] if prereq not in possible[:idx] and not tech_is_complete(prereq)])
     print
 
     print "Prereqs seeming out of order:"
-    print "    %25s %8s %8s %8s %8s %25s %s" % ("Name", "Priority", "Base Prio",  "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+    print "    %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio",  "Cost", "Time", "As Prereq To", "Missing Prerequisties")
     for tech_name in missing_prereq_list:
         tech_info = research_reqs[tech_name]
-        print "    %25s %8.6f %8.6f %8.2f %8.2f %25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
+        print "    %-25s %8.6f %8.6f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
 
 
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
