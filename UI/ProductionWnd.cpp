@@ -675,8 +675,6 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
     AttachChild(m_build_designator_wnd);
-
-    DoLayout();
 }
 
 ProductionWnd::~ProductionWnd()
@@ -698,8 +696,18 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void ProductionWnd::DoLayout()
-{}
+void ProductionWnd::DoLayout() {
+
+    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+
+    m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
+    m_production_info_panel->Resize(GG::Pt(GG::X(queue_width), GG::Y(100)));
+
+    m_queue_wnd->MoveTo(GG::Pt(GG::X0, GG::Y(100)));
+    m_queue_wnd->Resize(GG::Pt(GG::X(queue_width), GG::Y(ClientSize().y - 100)));
+
+    m_build_designator_wnd->Resize(ClientSize());
+}
 
 void ProductionWnd::Render()
 {}
