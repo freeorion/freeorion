@@ -187,7 +187,7 @@ class AIstate(object):
         nametags = []
         for sys_id in newly_explored:
             newsys = universe.getSystem(sys_id)
-            nametags.append("ID:%4d -- %20s" % (sys_id, (newsys and newsys.name) or"name unknown"))  # an explored system *should* always be able to be gotten
+            nametags.append("ID:%4d -- %-20s" % (sys_id, (newsys and newsys.name) or "name unknown"))  # an explored system *should* always be able to be gotten
         if newly_explored:
             print "-------------------------------------------------"
             print "Newly explored systems:\n"+"\n".join(nametags)
