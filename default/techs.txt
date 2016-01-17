@@ -3272,6 +3272,31 @@ Tech
             effects = SetMaxCapacity partname = "SR_WEAPON_4_1" value = Value + 5
     graphic = "icons/ship_parts/death-ray-4.png"
 
+Tech
+    name = "SHP_ORGANIC_WAR_ADAPTION"
+    description = "SHP_ORGANIC_WAR_ADAPTION_DESC"
+    short_description = "SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_WEAPON_2_2"
+        "SHP_ORG_HULL"
+    ]
+    unlock = Item type = ShipPart name = "SP_SOLAR_CONCENTRATOR"
+    graphic = "icons/ship_parts/solarcollector.png"
+
+Tech
+    name = "SHP_SOLAR_CONNECTION"
+    description = "SHP_SOLAR_CONNECTION_DESC"
+    short_description = "SHP_SOLAR_CONNECTION_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = "SHP_ORGANIC_WAR_ADAPTION"
+    graphic = "icons/ship_parts/solarcollector.png"
 
 Tech
     name = "SPY_PLANET_STEALTH_MOD"
