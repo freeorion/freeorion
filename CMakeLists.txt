@@ -61,7 +61,9 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(
         -DFREEORION_LINUX
         -DENABLE_BINRELOC
+        -DBOOST_ALL_NO_LINK
         -DBOOST_ALL_DYN_LINK
+        -DBOOST_LOG_DYN_LINK
     )
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
