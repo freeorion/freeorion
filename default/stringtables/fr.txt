@@ -10016,6 +10016,30 @@ Générateur de Krill
 SP_KRILL_SPAWNER_DESC
 Génère un [[predefinedshipdesign SM_KRILL_1]] dans les systèmes abritant une ceinture d'astéroïdes n'appartenant à aucun empire et dans laquelle ne réside pas déjà un essaim de krill. Lorsque monté sur un astronef non-armé, le [[SP_KRILL_SPAWNER]] améliore la [[encyclopedia STEALTH_TITLE]] (mais ne s'additionne pas avec les éventuels bonus de Furtivité d'autres équipements d'astronef).
 
+SP_SOLAR_CONCENTRATOR
+Concentrateur Solaire
+
+SP_SOLAR_CONCENTRATOR_DESC
+Le Concentrateur Solaire utilise la capacité phototropique de la [[SH_ORGANIC]] afin d'augmenter la puissance du [[SR_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
+
+SHP_SOLAR_CONNECTION
+Toile Solaire
+
+SHP_SOLAR_CONNECTION_DESC
+Cette amélioration du [[SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre chaque [[SH_ORGANIC]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance d'un [[SR_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
+
+SHP_SOLAR_CONNECTION_SHORT_DESC
+Établit un réseau [[SP_SOLAR_CONCENTRATOR]]
+
+SHP_ORGANIC_WAR_ADAPTION
+Guerre Organique Adaptive
+
+SHP_ORGANIC_WAR_ADAPTION_DESC
+Il semble que les <encyclopedia SHP_ORG_HULL>Coques Organiques</encyclopedia> soient capables de collecter l'énergie photonique, laquelle peut être redirigée afin d'augmenter la puissance de certains équipements d'astronef.
+
+SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
+Augmente la puissance du [[SR_WEAPON_2_1]] selon l'étoile environnante.
+
 RS_AUTOLAB  # translated
 Autolab
 
