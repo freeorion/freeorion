@@ -1,14 +1,58 @@
 #include "Supply.h"
 
 #include "EmpireManager.h"
+#include "../universe/UniverseObject.h"
 
 #include <boost/graph/connected_components.hpp>
-//
-//void Supply::UpdateSupply()
+
+SupplyManager::SupplyManager() :
+    m_supply_starlane_traversals(),
+    m_supply_starlane_obstructed_traversals(),
+    m_fleet_supplyable_system_ids(),
+    m_resource_supply_groups()
+{}
+
+SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
+    m_supply_starlane_traversals =              rhs.m_supply_starlane_traversals;
+    m_supply_starlane_obstructed_traversals =   rhs.m_supply_starlane_obstructed_traversals;
+    m_fleet_supplyable_system_ids =             rhs.m_fleet_supplyable_system_ids;
+    m_resource_supply_groups =                  rhs.m_resource_supply_groups;
+    return *this;
+}
+
+const std::map<int, std::set<std::pair<int, int> > >& SupplyManager::SupplyStarlaneTraversals() const
+{ return m_supply_starlane_traversals; }
+
+const std::map<int, std::set<std::pair<int, int> > >& SupplyManager::SupplyObstructedStarlaneTraversals() const
+{ return m_supply_starlane_obstructed_traversals; }
+
+const std::map<int, std::set<int> >& SupplyManager::FleetSupplyableSystemIDs() const
+{ return m_fleet_supplyable_system_ids; }
+
+const std::map<int, std::set<std::set<int> > >& SupplyManager::ResourceSupplyGroups() const
+{ return m_resource_supply_groups; }
+
+bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
+    if (system_id == INVALID_OBJECT_ID)
+        return false;
+    if (empire_id == ALL_EMPIRES)
+        return false;
+    std::map<int, std::set<int> >::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
+    if (it == m_fleet_supplyable_system_ids.end())
+        return false;
+    const std::set<int>& sys_set = it->second;
+    if (sys_set.find(system_id) != sys_set.end())
+        return true;
+    return false;
+}
+
+
+
+//void SupplyManager::UpdateSupply()
 //{ UpdateSupply(this->KnownStarlanes()); }
 //
-//void Supply::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
-//    //std::cout << "Supply::UpdateSupply for empire " << this->Name() << std::endl;
+//void SupplyManager::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
+//    //std::cout << "SupplyManager::UpdateSupply for empire " << this->Name() << std::endl;
 //
 //    // Please also update PythonEmpireWrapper.cpp:CalculateSupplyUpdate if there is a change to the supply propagation rules: 
 //    // (i) there is a set of supply sources in systems, (ii) propagating supply drops one per starlane jump, (iii) propagation is blocked
@@ -217,22 +261,3 @@
 //    }
 //}
 //
-//const std::set<std::pair<int, int> >& Supply::SupplyStarlaneTraversals() const
-//{ return m_supply_starlane_traversals; }
-//
-//const std::set<std::pair<int, int> >& Supply::SupplyObstructedStarlaneTraversals() const
-//{ return m_supply_starlane_obstructed_traversals; }
-//
-//const std::set<int>& Supply::FleetSupplyableSystemIDs() const
-//{ return m_fleet_supplyable_system_ids; }
-//
-//bool Supply::SystemHasFleetSupply(int system_id) const {
-//    if (system_id == INVALID_OBJECT_ID)
-//        return false;
-//    if (m_fleet_supplyable_system_ids.find(system_id) != m_fleet_supplyable_system_ids.end())
-//        return true;
-//    return false;
-//}
-//
-//const std::set<std::set<int> >& Supply::ResourceSupplyGroups() const
-//{ return m_resource_supply_groups; }

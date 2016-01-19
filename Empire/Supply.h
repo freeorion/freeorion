@@ -2,17 +2,21 @@
 #ifndef _Supply_h_
 #define _Supply_h_
 
-#include "Empire.h"
+#include "../util/Export.h"
+
+#include <boost/serialization/access.hpp>
+
+#include <map>
+#include <set>
 
 /** Used to calcuate all empires' supply distributions. */
-class FO_COMMON_API SupplySystem {
-private:
+class FO_COMMON_API SupplyManager {
+public:
     /** \name Structors */ //@{
-    SupplySystem();
-    ~SupplySystem();
+    SupplyManager();
+    SupplyManager& operator=(const SupplyManager& rhs);
     //@}
 
-public:
     /** \name Accessors */ //@{
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */

@@ -2974,7 +2974,15 @@ void ServerApp::PostCombatProcessTurns() {
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
+    }
+
+    // TODO: uncomment this when implemented
+    //GetSupplyManager().UpdateSupply();              // determines which systems can access fleet supply and which groups of systems can exchange resources for each empire
+
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
