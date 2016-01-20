@@ -697,7 +697,6 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ProductionWnd::DoLayout() {
-
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
 
     m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
@@ -755,6 +754,18 @@ void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_t
 
 void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id); }
+
+void ProductionWnd::ShowPedia()
+{ m_build_designator_wnd->ShowPedia(); }
+
+void ProductionWnd::HidePedia()
+{ m_build_designator_wnd->HidePedia(); }
+
+void ProductionWnd::TogglePedia()
+{ m_build_designator_wnd->TogglePedia(); }
+
+bool ProductionWnd::PediaVisible()
+{ return m_build_designator_wnd->PediaVisible(); }
 
 void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
 { m_build_designator_wnd->CenterOnBuild(queue_idx, open); }

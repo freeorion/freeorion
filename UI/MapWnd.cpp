@@ -5403,6 +5403,12 @@ bool MapWnd::ToggleEmpires() {
 }
 
 void MapWnd::ShowPedia() {
+    // if production screen is visible, toggle the production screen's pedia, not the one of the map screen
+    if (m_in_production_view_mode) {
+        m_production_wnd->TogglePedia();
+        return;
+    }
+
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -5504,6 +5510,11 @@ void MapWnd::ShowProduction() {
     // show the production window
     m_production_wnd->Update();
     m_production_wnd->Show();
+
+    // hide pedia again if it is supposed to be hidden persistently
+    if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
+        m_production_wnd->TogglePedia();
+
     m_in_production_view_mode = true;
     HideAllPopups();
     GG::GUI::GetGUI()->MoveUp(m_production_wnd);
