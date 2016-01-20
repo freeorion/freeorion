@@ -1389,7 +1389,7 @@ namespace {
 }
 
 ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::string& point_units_str, const GG::X x, const GG::Y y,
-    const GG::X w, const GG::Y h, const std::string& config_name) :  
+                                         const GG::X w, const GG::Y h, const std::string& config_name) :  
 
     CUIWnd(title, x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE, config_name),
     m_units_str(point_units_str),

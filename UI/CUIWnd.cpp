@@ -623,7 +623,7 @@ GG::Rect CUIWnd::CalculatePosition() const
 
 void CUIWnd::SaveOptions() const {
     OptionsDB& db = GetOptionsDB();
-   
+
     // The default empty string means 'do not save/load properties'
     // Also do not save while the window is being dragged.
     if (m_config_name.empty() || !m_config_save || GG::GUI::GetGUI()->DragWnd(this, 0)) {
