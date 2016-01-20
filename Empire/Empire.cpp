@@ -426,10 +426,13 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             dpResearchableTechs.insert(i);
         } else if ( dpsim_tech_status_map[ techname  ] == TS_UNRESEARCHABLE ) {
             std::set<std::string> thesePrereqs = tech->Prerequisites();
-            for (std::set<std::string>::iterator ptech_it = thesePrereqs.begin(); ptech_it != thesePrereqs.end(); ++ptech_it){
-                if (dpsim_tech_status_map[ *ptech_it ] == TS_COMPLETE ) {
-                    std::set<std::string>::iterator eraseit = ptech_it--;
-                    thesePrereqs.erase( eraseit);
+            for (std::set<std::string>::iterator ptech_it = thesePrereqs.begin(); ptech_it != thesePrereqs.end(); ) {
+                if (dpsim_tech_status_map[ *ptech_it ] != TS_COMPLETE) {
+                    ++ptech_it;
+                } else {
+                    std::set<std::string>::iterator erase_it = ptech_it;
+                    ++ptech_it;
+                    thesePrereqs.erase( erase_it );
                 }
             }
             waitingForPrereqs[ techname ] = thesePrereqs;
