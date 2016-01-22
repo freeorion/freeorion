@@ -75,6 +75,19 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
+# Need to know if the boost libraries are linked statically or dynamically
+# If dynamically, add some macro definitions to prevent potential link errors
+option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." OFF)
+
+if (NOT FO_LINK_STATIC_BOOST_LIBS)
+    add_definitions(
+        -DBOOST_ALL_NO_LINK
+        -DBOOST_ALL_DYN_LINK
+        -DBOOST_LOG_DYN_LINK
+    )
+endif ()
+
+
 find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
 
 # To run the version generation every compile we need to deferr the
