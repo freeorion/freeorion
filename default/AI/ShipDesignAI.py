@@ -48,6 +48,7 @@ import copy
 import traceback
 import math
 import AIstate
+import EnumsAI
 from collections import Counter, defaultdict
 from freeorion_tools import print_error, UserString
 from ResearchAI import tech_is_complete
@@ -97,10 +98,10 @@ class ShipDesignCache(object):
     design_id_by_name          # {"designname": designid}
     part_by_partname           # {"partname": part object}
     map_reference_design_name  # {"reference_designname": "ingame_designname"}, cf. _build_reference_name()
-    strictly_worse_parts       # strictly worse parts: {"part": ["worsePart1","worsePart2"]}
-    hulls_for_planets          # buildable hulls per planet {planetID: ["buildableHull1","buildableHull2",...]}
-    parts_for_planets          # buildable parts per planet and slot: {planetID: {slottype1: ["part1","part2"]}}
-    best_designs               # {shipclass:{reqTup:{species:{available_parts:{hull:(rating,best_parts)}}}}}
+    strictly_worse_parts       # strictly worse parts: {"part": ["worsePart1", "worsePart2"]}
+    hulls_for_planets          # buildable hulls per planet {planetID: ["buildableHull1", "buildableHull2", ...]}
+    parts_for_planets          # buildable parts per planet and slot: {planetID: {slottype1: ["part1", "part2"]}}
+    best_designs               # {shipclass: {reqTup: {species: {available_parts: {hull: (rating, best_parts)}}}}}
     production_cost            # {planetID: {"partname1": local_production_cost, "hullname1": local_production_cost}}
     production_time            # {planetID: {"partname1": local_production_time, "hullname1": local_production_time}}
 
@@ -334,7 +335,12 @@ class ShipDesignCache(object):
             print_error(e)
 
         corrupted = []
-        for designname in self.design_id_by_name:
+        # create a copy of the dict-keys so we can alter the dict
+        for designname in list(self.design_id_by_name):
+            # dropping invalid designs from cache
+            if self.design_id_by_name[designname] == EnumsAI.AIShipDesignTypes.SHIPDESIGN_INVALID:
+                del self.design_id_by_name[designname]
+                continue
             try:
                 cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name(False)
                 if cached_name != designname:
@@ -462,6 +468,10 @@ class ShipDesignCache(object):
             if res:
                 if verbose:
                     print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
+                # update cache since we just created a new design in fo
+                # the return value is ignored
+                # TODO: better cache management
+                _get_design_by_name(testdesign_name, update_invalid=True)
             else:
                 print "Error: When adding test design %s - got result %s but expected 1" % (testdesign_name, res)
                 continue
@@ -527,6 +537,10 @@ class ShipDesignCache(object):
                     if res:
                         print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
                         testdesign_names_part.append(testdesign_name)
+                        # update cache since we just created a new design in fo
+                        # the return value is ignored
+                        # TODO: better cache management
+                        _get_design_by_name(testdesign_name, update_invalid=True)
                     else:
                         print "Failure: Unknown error when adding test design %s" % testdesign_name,
                         print "got result %d but expected 1" % res
@@ -948,7 +962,7 @@ class ShipDesigner(object):
                 elif token == AIDependencies.STRUCTURE:
                     self.structure += value
                 else:
-                    print "WARNING: Failed to parse token: " % token
+                    print "WARNING: Failed to parse token: %s" % token
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.detection += AIDependencies.BASE_DETECTION
@@ -1006,10 +1020,15 @@ class ShipDesigner(object):
         else:
             print "Failure: Tried to add design %s but returned %s, expected 1" % (design_name, res)
             return None
-        new_id = _get_design_by_name(design_name).id
-        if new_id:
+        # this call to _get_design_by_name also updates the shipdesign cache for design_name
+        # TODO: better cache management
+        new_design = _get_design_by_name(design_name, update_invalid=True)
+        if new_design:
             Cache.map_reference_design_name[reference_name] = design_name
-            return new_id
+            return new_design.id
+        else:
+            print "Failure: Tried to get just created design %s but got None" % design_name
+            return None
 
     def _class_specific_filter(self, partname_dict):
         """Add additional filtering to _filter_parts().
@@ -1905,18 +1924,25 @@ class KrillSpawnerShipDesigner(ShipDesigner):
             ret_val[-1] = num_slots - 1
         return ret_val
 
-
-def _get_design_by_name(design_name, verbose=False):
+def _get_design_by_name(design_name, verbose=False, update_invalid=False):
     """Return the shipDesign object of the design with the name design_name.
 
     Results are cached for performance improvements. The cache is to be
     checked for consistency with check_cache_for_consistency() once per turn
-    as there appears to be a random bug in multiplayer, changing IDs.
+    as there appears to be a random bug in multiplayer, changing IDs. If a
+    new design is created, this function must be called with update_invalid
+    set to True to update its internal cache accordingly.
 
     :param design_name: string
+    :param update_invalid: update a previously invalid design in cache
     :return: shipDesign object
     """
-    if design_name in Cache.design_id_by_name:
+    # get shipdesign from fo if
+    #  * not in cache or
+    #  * if an design is invalid and update_invalid is true
+    # otherwise use cache
+    if design_name in Cache.design_id_by_name and not (
+            update_invalid and (Cache.design_id_by_name[design_name] == EnumsAI.AIShipDesignTypes.SHIPDESIGN_INVALID)):
         design = fo.getShipDesign(Cache.design_id_by_name[design_name])
         return design
     else:
@@ -1929,6 +1955,10 @@ def _get_design_by_name(design_name, verbose=False):
                 break
         if design:
             Cache.design_id_by_name[design_name] = design.id
+        else:
+            # invalid design
+            print "Shipdesign %s seems not to exist: Caching as invalid design." % design_name 
+            Cache.design_id_by_name[design_name] = EnumsAI.AIShipDesignTypes.SHIPDESIGN_INVALID
         return design
 
 
