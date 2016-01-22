@@ -51,7 +51,11 @@ option(BUILD_DEVEL_PACKAGE
        ON)
 
 if (NOT DEFINED USE_STATIC_LIBS)
-    add_definitions(-DBOOST_ALL_DYN_LINK)
+    add_definitions(
+        -DBOOST_ALL_NO_LINK
+        -DBOOST_ALL_DYN_LINK
+        -DBOOST_LOG_DYN_LINK
+    )
 endif ()
 
 if (MSVC)
