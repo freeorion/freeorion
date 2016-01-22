@@ -96,8 +96,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        DebugLogger() << "Universe::serialize : Swapping old/new data, with Encoding Empire "
-                               << EncodingEmpire();
+        DebugLogger() << "Universe::serialize : Swapping old/new data, with Encoding Empire " << EncodingEmpire();
         m_objects.swap(objects);
         m_destroyed_object_ids.swap(destroyed_object_ids);
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
@@ -117,6 +116,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
                 it->second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }
+    DebugLogger() << "Universe::serialize done";
 }
 
 template <class Archive>

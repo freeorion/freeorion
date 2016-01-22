@@ -102,14 +102,15 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
               const CombatLogManager& combat_log_manager, const GalaxySetupData& galaxy_setup_data,
               bool multiplayer)
 {
-    DebugLogger() << "SaveGame:: filename: " << filename;
+    bool use_binary = GetOptionsDB().Get<bool>("binary-serialization");
+    DebugLogger() << "SaveGame(" << (use_binary ? "binary" : "zlib-xml") << ") filename: " << filename;
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
+    DebugLogger() << "Compiling save empire and preview data";
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
     SaveGamePreviewData save_preview_data;
     CompileSaveGamePreviewData(server_save_game_data, player_save_game_data, empire_save_game_data, save_preview_data);
 
-    bool use_binary = GetOptionsDB().Get<bool>("binary-serialization");
 
     try {
         fs::path path = FilenameToPath(filename);
@@ -132,45 +133,59 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         if (use_binary) {
+            DebugLogger() << "Creating binary oarchive";
             freeorion_bin_oarchive boa(ofs);
+            DebugLogger() << "Serializing preview/setup data";
             boa << BOOST_SERIALIZATION_NVP(save_preview_data);
             boa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            DebugLogger() << "Serializing player/server/empire game data";
             boa << BOOST_SERIALIZATION_NVP(server_save_game_data);
             boa << BOOST_SERIALIZATION_NVP(player_save_game_data);
             boa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
+            DebugLogger() << "Serializing empires/species data";
             boa << BOOST_SERIALIZATION_NVP(empire_manager);
             boa << BOOST_SERIALIZATION_NVP(species_manager);
             boa << BOOST_SERIALIZATION_NVP(combat_log_manager);
             Serialize(boa, universe);
-
+            DebugLogger() << "Done serializing";
         } else {
             // save as xml into stringstream
+            DebugLogger() << "Creating xml oarchive";
             std::stringstream ss;
             freeorion_xml_oarchive xoa(ss);
+            DebugLogger() << "Serializing preview/setup data";
             xoa << BOOST_SERIALIZATION_NVP(save_preview_data);
             xoa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            DebugLogger() << "Serializing player/server/empire game data";
             xoa << BOOST_SERIALIZATION_NVP(server_save_game_data);
             xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
             xoa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
+            DebugLogger() << "Serializing empires/species data";
             xoa << BOOST_SERIALIZATION_NVP(empire_manager);
             xoa << BOOST_SERIALIZATION_NVP(species_manager);
             xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
             Serialize(xoa, universe);
 
             // set up filter to compress data before outputting to file
+            DebugLogger() << "Compressing XML data";
             boost::iostreams::filtering_ostreambuf o;
-            o.push(boost::iostreams::zlib_compressor());
+            // following parameters might be useful if there are issues with compression in future...
+            //boost::iostreams::zlib_params zp = boost::iostreams::zlib_params(
+            //    boost::iostreams::zlib::best_compression, boost::iostreams::zlib::deflated,
+            //    15, 9, boost::iostreams::zlib::default_strategy, false, true);
+            o.push(boost::iostreams::zlib_compressor(/*zp*/));
             o.push(ofs);
 
             // pass xml to compressed output file
+            DebugLogger() << "Writing to file";
             boost::iostreams::copy(ss, o);
         }
-
 
     } catch (const std::exception& e) {
         ErrorLogger() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
         throw e;
     }
+    DebugLogger() << "SaveGame : Successfully wrote save file";
 }
 
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
@@ -270,7 +285,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ErrorLogger() << "LoadGame(...) failed!  Error: " << err.what();
         return;
     }
-    DebugLogger() << "LoadGame : Done loading save file";
+    DebugLogger() << "LoadGame : Successfully loaded save file";
 }
 
 void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) {
@@ -352,7 +367,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor());
+            i.push(boost::iostreams::zlib_decompressor(/*15, 8192*/));
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
