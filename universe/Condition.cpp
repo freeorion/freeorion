@@ -18,6 +18,7 @@
 #include "ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/bind.hpp>
@@ -7265,8 +7266,12 @@ namespace {
             if (!empire)
                 return false;
 
-            const std::set<int>& supplyable_systems = empire->FleetSupplyableSystemIDs();
-            return supplyable_systems.find(candidate->SystemID()) != supplyable_systems.end();
+            const SupplyManager& supply = GetSupplyManager();
+            const std::map<int, std::set<int> >& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
+            std::map<int, std::set<int> >::const_iterator it = empire_supplyable_systems.find(m_empire_id);
+            if (it == empire_supplyable_systems.end())
+                return false;
+            return it->second.find(candidate->SystemID()) != it->second.find.end();
         }
 
         int m_empire_id;
