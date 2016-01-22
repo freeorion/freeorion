@@ -76,7 +76,7 @@ namespace {
 
                 // set up filter to decompress data
                 boost::iostreams::filtering_istreambuf i;
-                i.push(boost::iostreams::zlib_decompressor());
+                i.push(boost::iostreams::zlib_decompressor(15, 16384));
                 i.push(ifs);
 
                 // pass decompressed xml into stringstream storage that the iarchve requires...

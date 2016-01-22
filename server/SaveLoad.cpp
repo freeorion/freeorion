@@ -248,7 +248,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor());
+            i.push(boost::iostreams::zlib_decompressor(15, 16384));
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
@@ -313,7 +313,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor());
+            i.push(boost::iostreams::zlib_decompressor(15, 16384));
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
@@ -367,7 +367,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor(/*15, 8192*/));
+            i.push(boost::iostreams::zlib_decompressor(15, 16384));
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
@@ -427,7 +427,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor());
+            i.push(boost::iostreams::zlib_decompressor(15, 16384));
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
