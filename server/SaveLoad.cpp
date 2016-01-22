@@ -326,6 +326,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     GalaxySetupData     ignored_galaxy_setup_data;
 
     try {
+        DebugLogger() << "Reading player save game data from: " << filename;
         fs::path path = FilenameToPath(filename);
         fs::ifstream ifs(path, std::ios_base::binary);
 
@@ -334,6 +335,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
         try {
             // first attempt binary deserialziation
+            DebugLogger() << "Attempting binary deserialization...";
             freeorion_bin_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -343,6 +345,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
         } catch (...) {
             // if binary deserialization failed, try more-portable XML deserialization
+            DebugLogger() << "Trying again with XML deserialization...";
 
             // reset to start of stream (attempted binary serialization will have consumed some input...)
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
@@ -353,19 +356,23 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
+            DebugLogger() << "Decompressing save stream...";
             std::stringstream ss;
             boost::iostreams::copy(i, ss);
 
             // extract xml data from stringstream
+            DebugLogger() << "Extracting XML data from stream...";
             freeorion_xml_iarchive ia(ss);
 
+            DebugLogger() << "Deserializing ignored preview/setup data...";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+            DebugLogger() << "Deserializing player save game data...";
             ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
         }
         // skipping additional deserialization which is not needed for this function
-
+        DebugLogger() << "Done reading player save game data...";
     } catch (const std::exception& e) {
         ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadPlayerSaveGameData exception: " << ": " << e.what();
         throw e;
