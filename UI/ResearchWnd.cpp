@@ -204,9 +204,8 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
 {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
 
-    m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_INFO_PANEL_TITLE"),
-                                                    UserString("RESEARCH_INFO_RP"),
-                                                    queue_width, GG::Y(100));
+    m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
+                                                    GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
 
     m_queue_lb = new QueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
