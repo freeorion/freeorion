@@ -1208,6 +1208,9 @@ void BuildDesignatorWnd::TogglePedia() {
 bool BuildDesignatorWnd::PediaVisible()
 { return m_enc_detail_panel->Visible(); }
 
+void BuildDesignatorWnd::PediaSetPlanet(int planet_id)
+{ m_enc_detail_panel->SetPlanet(planet_id); }
+
 int BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
 

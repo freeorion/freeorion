@@ -767,6 +767,9 @@ void ProductionWnd::TogglePedia()
 bool ProductionWnd::PediaVisible()
 { return m_build_designator_wnd->PediaVisible(); }
 
+void ProductionWnd::PediaSetPlanet(int planet_id)
+{ m_build_designator_wnd->PediaSetPlanet(planet_id); }
+
 void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
 { m_build_designator_wnd->CenterOnBuild(queue_idx, open); }
 

@@ -53,6 +53,9 @@ public:
     /** Returns true if pedia is visible */
     bool            PediaVisible();
 
+    /** Tells pedia to set to a planet */
+    void            PediaSetPlanet(int planet_id);
+
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window.
       * If \a open is true, the location is set as the selected planet. */

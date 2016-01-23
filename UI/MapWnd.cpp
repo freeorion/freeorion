@@ -3445,9 +3445,14 @@ void MapWnd::CenterOnMapCoord(double x, double y) {
 }
 
 void MapWnd::ShowPlanet(int planet_id) {
-    if (!m_pedia_panel->Visible())
-        TogglePedia();
-    m_pedia_panel->SetPlanet(planet_id);
+    if (!m_in_production_view_mode) {
+        ShowPedia();
+        m_pedia_panel->SetPlanet(planet_id);
+    }
+    if (m_in_production_view_mode) {
+        m_production_wnd->ShowPedia();
+        m_production_wnd->PediaSetPlanet(planet_id);
+    }
 }
 
 void MapWnd::ShowCombatLog(int log_id) {
