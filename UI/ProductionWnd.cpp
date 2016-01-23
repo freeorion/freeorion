@@ -410,7 +410,11 @@ namespace {
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {
             graphic = ClientUI::ShipDesignIcon(build.item.design_id);
-            name_text = GetShipDesign(build.item.design_id)->Name();
+            const ShipDesign* design = GetShipDesign(build.item.design_id);
+            if (design)
+                name_text = design->Name();
+            else
+                ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << build.item.design_id;
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
