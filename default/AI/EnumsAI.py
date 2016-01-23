@@ -152,6 +152,7 @@ class AIShipDesignTypes(object):
     outpostBase={"SD_OUTPOST_BASE":"A", "OutpostBase":"B"}
     troopBase={"SpaceInvaders":"A"}
     defenseBase={"Decoy":"A", "OrbitalGrid":"B", "OrbitalShield":"C", "OrbitalMultiShield":"D"}
+    SHIPDESIGN_INVALID = -1
 
 
 class AIShipRoleType(EnumsType):  # this is also used in determining fleetRoles
