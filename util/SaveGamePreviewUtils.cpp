@@ -20,6 +20,9 @@
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
+
 
 #include <fstream>
 
@@ -73,19 +76,27 @@ namespace {
                 // reset to start of stream (attempted binary serialization will have consumed some input...)
                 boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
-
                 // set up filter to decompress data
                 boost::iostreams::filtering_istreambuf i;
                 i.push(boost::iostreams::zlib_decompressor(15, 16384));
                 i.push(ifs);
 
-                // pass decompressed xml into stringstream storage that the iarchve requires...
-                boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
-                boost::iostreams::copy(i, *ss);
+                std::string serial_str;
+                serial_str.reserve(std::pow(2u, 28u));
+                boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+                boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
+
+                boost::iostreams::copy(i, s_sink);
+
+                DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+
+                boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
+                boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
+
 
                 // extract xml data from stringstream
-                DebugLogger() << "Extracting XML data from stream...";
-                freeorion_xml_iarchive ia(*ss);
+                DebugLogger() << "Deserializing XML data";
+                freeorion_xml_iarchive ia(s_source);
 
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
