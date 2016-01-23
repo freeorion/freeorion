@@ -151,20 +151,40 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         } else {
             // save as xml into stringstream
             DebugLogger() << "Creating xml oarchive";
-            std::stringstream ss;
-            freeorion_xml_oarchive xoa(ss);
+            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
+            freeorion_xml_oarchive xoa(*ss);
+            std::string temp = ss->str().c_str();
+
             DebugLogger() << "Serializing preview/setup data";
+            temp = ss->str().c_str();
+            DebugLogger() << "before preview data buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(save_preview_data);
+            temp = ss->str().c_str();
+            DebugLogger() << "before setup data buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             DebugLogger() << "Serializing player/server/empire game data";
+            temp = ss->str().c_str();
+            DebugLogger() << "before server/player buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(server_save_game_data);
             xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
+            temp = ss->str().c_str();
+            DebugLogger() << "before empire save data buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
             DebugLogger() << "Serializing empires/species data";
+            temp = ss->str().c_str();
+            DebugLogger() << "before empire buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(empire_manager);
+            temp = ss->str().c_str();
+            DebugLogger() << "before species buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(species_manager);
+            temp = ss->str().c_str();
+            DebugLogger() << "before combat buffer length: " << temp.length() << "  and size: " << temp.size();
             xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
+            temp = ss->str().c_str();
+            DebugLogger() << "before universe buffer length: " << temp.length() << "  and size: " << temp.size();
             Serialize(xoa, universe);
+            temp = ss->str().c_str();
+            DebugLogger() << " after universe buffer length: " << temp.length() << "  and size: " << temp.size();
 
             // set up filter to compress data before outputting to file
             DebugLogger() << "Compressing XML data";
@@ -178,7 +198,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
 
             // pass xml to compressed output file
             DebugLogger() << "Writing to file";
-            boost::iostreams::copy(ss, o);
+            boost::iostreams::copy(*ss, o);
         }
 
     } catch (const std::exception& e) {
@@ -252,11 +272,11 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
-            std::stringstream ss;
-            boost::iostreams::copy(i, ss);
+            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
+            boost::iostreams::copy(i, *ss);
 
             // extract xml data from stringstream
-            freeorion_xml_iarchive ia(ss);
+            freeorion_xml_iarchive ia(*ss);
 
             DebugLogger() << "LoadGame : Passing Preview Data";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -317,11 +337,12 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
-            std::stringstream ss;
-            boost::iostreams::copy(i, ss);
+            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
+            boost::iostreams::copy(i, *ss);
 
             // extract xml data from stringstream
-            freeorion_xml_iarchive ia(ss);
+            DebugLogger() << "Extracting XML data from stream...";
+            freeorion_xml_iarchive ia(*ss);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -367,17 +388,17 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor(15, 16384));
+            i.push(boost::iostreams::zlib_decompressor(/*15, 1048576*/));   // specifying larger buffer size seems to help reading larger save files...
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
             DebugLogger() << "Decompressing save stream...";
-            std::stringstream ss;
-            boost::iostreams::copy(i, ss);
+            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
+            boost::iostreams::copy(i, *ss);
 
             // extract xml data from stringstream
             DebugLogger() << "Extracting XML data from stream...";
-            freeorion_xml_iarchive ia(ss);
+            freeorion_xml_iarchive ia(*ss);
 
             DebugLogger() << "Deserializing ignored preview/setup data...";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -431,11 +452,12 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
             i.push(ifs);
 
             // pass decompressed xml into stringstream storage that the iarchve requires...
-            std::stringstream ss;
-            boost::iostreams::copy(i, ss);
+            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
+            boost::iostreams::copy(i, *ss);
 
             // extract xml data from stringstream
-            freeorion_xml_iarchive ia(ss);
+            DebugLogger() << "Extracting XML data from stream...";
+            freeorion_xml_iarchive ia(*ss);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);

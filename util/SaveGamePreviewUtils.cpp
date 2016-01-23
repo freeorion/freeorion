@@ -80,11 +80,12 @@ namespace {
                 i.push(ifs);
 
                 // pass decompressed xml into stringstream storage that the iarchve requires...
-                std::stringstream ss;
-                boost::iostreams::copy(i, ss);
+                boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
+                boost::iostreams::copy(i, *ss);
 
                 // extract xml data from stringstream
-                freeorion_xml_iarchive ia(ss);
+                DebugLogger() << "Extracting XML data from stream...";
+                freeorion_xml_iarchive ia(*ss);
 
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
