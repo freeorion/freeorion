@@ -247,6 +247,74 @@ namespace {
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                     int candidate_object_id, int empire_id)
     {
+        std::string title; 
+        std::string main_text;
+        float total_cost;
+        int production_time;
+
+        // production item is a building
+        if (item.build_type == BT_BUILDING) {
+            const BuildingType* building_type = GetBuildingType(item.name);
+            if (!building_type) {
+                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+                return browse_wnd;
+            }
+
+            // create title, description, production time and cost
+            title = UserString(item.name);
+            main_text = UserString(building_type->Description());
+            total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+            production_time = building_type->ProductionTime(empire_id, candidate_object_id);
+
+            main_text += "\n\nProduction cost: " + DoubleToString(total_cost, 3, false);
+            main_text += "\nProduction time: " + boost::lexical_cast<std::string>(production_time);
+
+            // create tooltip
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                ClientUI::BuildingIcon(item.name), title, main_text));
+            return browse_wnd;
+        }
+
+        // production item is a ship
+        if (item.build_type == BT_SHIP) {
+            const ShipDesign* design = GetShipDesign(item.design_id);
+            if (!design) {
+                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+                return browse_wnd;
+            }
+
+            // create title, description, production time and cost
+            title = design->Name(true);
+            main_text = design->Description(true);
+            total_cost = design->ProductionCost(empire_id, candidate_object_id);
+            production_time = design->ProductionTime(empire_id, candidate_object_id);
+
+            main_text += "\n\nProduction cost: " + DoubleToString(total_cost, 3, false);
+            main_text += "\nProduction time: " + boost::lexical_cast<std::string>(production_time);
+
+            // load hull type and ship parts
+            std::string all_ship_parts;
+            std::vector<std::string, std::allocator<std::string>> parts = design->Parts();
+            
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
+                if (UserStringExists(*it))
+                    all_ship_parts += UserString(*it) + ", ";
+            
+            main_text += "\n\nHull: " + UserString(design->Hull());
+            main_text += "\nParts: " + all_ship_parts.substr(0, all_ship_parts.length()-2);
+
+            // create tooltip
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                ClientUI::ShipDesignIcon(item.design_id), title, main_text));
+            return browse_wnd;
+        }
+
+        // other production item (?)
+        else {
+            return boost::shared_ptr<GG::BrowseInfoWnd>();
+        }
+
+        /** old tooltip code
         if (item.build_type == BT_BUILDING) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 ClientUI::BuildingIcon(item.name), UserString(item.name),
@@ -261,7 +329,7 @@ namespace {
             return browse_wnd;
         } else {
             return boost::shared_ptr<GG::BrowseInfoWnd>();
-        }
+        } */
     }
 
     ////////////////////////////////////////////////
