@@ -155,33 +155,50 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             DebugLogger() << "Creating xml oarchive";
 
             std::string serial_str;
-            serial_str.reserve(std::pow(2u, 29u));
-            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
+            //serial_str.reserve(std::pow(2u, 29u));
+            //typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
+            //InsertDevice inserter(serial_str);
+            //boost::iostreams::stream<InsertDevice> s_sink(inserter);
 
-            freeorion_xml_oarchive xoa(s_sink);
+            std::stringstream ss;
+
+            //freeorion_xml_oarchive xoa(s_sink);
+            freeorion_xml_oarchive xoa(ss);
 
             DebugLogger() << "Serializing preview/setup data";
+            serial_str = ss.str();
             DebugLogger() << "before preview data buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(save_preview_data);
+            serial_str = ss.str();
             DebugLogger() << "before setup data buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             DebugLogger() << "Serializing player/server/empire game data";
+            serial_str = ss.str();
             DebugLogger() << "before server/player buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(server_save_game_data);
             xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
+            serial_str = ss.str();
             DebugLogger() << "before empire save data buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
             DebugLogger() << "Serializing empires/species data";
+            serial_str = ss.str();
             DebugLogger() << "before empire buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(empire_manager);
+            serial_str = ss.str();
             DebugLogger() << "before species buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(species_manager);
+            serial_str = ss.str();
             DebugLogger() << "before combat buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
+            serial_str = ss.str();
             DebugLogger() << "before universe buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             Serialize(xoa, universe);
-            DebugLogger() << " after universe buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
+            serial_str = ss.str();
+            DebugLogger() << "after universe buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
+
+            serial_str = ss.str();
+            DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
+
 
             // set up filter to compress data before outputting to file
             DebugLogger() << "Compressing XML data";
@@ -193,14 +210,17 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             o.push(boost::iostreams::zlib_compressor(/*zp*/));
             o.push(ofs);
 
-            // pass xml to compressed output file
+
+            // compression-filter xml into output file
+            DebugLogger() << "SaveGame wrote " << serial_str.size() << " characters to (pre-compression) buffer and has buffer capacity: " << serial_str.capacity();
+
+            //typedef boost::iostreams::basic_array_source<char> SourceDevice;
+            //SourceDevice source(serial_str.data(), serial_str.size());
+            //boost::iostreams::stream<SourceDevice> s_source(source);
+
             DebugLogger() << "Writing to file";
-            DebugLogger() << "SaveGame wrote " << serial_str.size() << " characters and has buffer capacity: " << serial_str.capacity();
-
-            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
-
-            boost::iostreams::copy(s_source, o);
+            //boost::iostreams::copy(s_source, o);
+            boost::iostreams::copy(ss, o);
         }
 
     } catch (const std::exception& e) {
@@ -270,7 +290,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor(15, 16384));
+            i.push(boost::iostreams::zlib_decompressor());
             i.push(ifs);
 
             std::string serial_str;
@@ -281,6 +301,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             boost::iostreams::copy(i, s_sink);
 
             DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+            DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
 
             boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
             boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
