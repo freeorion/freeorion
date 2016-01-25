@@ -64,19 +64,43 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
     }
 
-    DebugLogger() << "Universe::serialize : (de)serializing universe width";
     ar  & BOOST_SERIALIZATION_NVP(m_universe_width);
-    DebugLogger() << "Universe::serialize : (de)serializing ship designs";
+    DebugLogger() << "Universe::serialize : (de)serialized universe width: " << m_universe_width;
+
     ar  & BOOST_SERIALIZATION_NVP(ship_designs);
+    if (Archive::is_loading::value)
+        m_ship_designs.swap(ship_designs);
+    DebugLogger() << "Universe::serialize : (de)serialized " << ship_designs.size() << " ship designs";
+
     ar  & BOOST_SERIALIZATION_NVP(m_empire_known_ship_design_ids);
-    DebugLogger() << "Universe::serialize : (de)serializing empire object visibility";
+
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility);
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns);
     ar  & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids);
     ar  & BOOST_SERIALIZATION_NVP(empire_stale_knowledge_object_ids);
-    DebugLogger() << "Universe::serialize : (de)serializing actual objects";
-    ar  & BOOST_SERIALIZATION_NVP(objects)
-        & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
+    DebugLogger() << "Universe::serialize : (de)serialized empire object visibility for " << empire_object_visibility.size() << ", "
+                                                                                          << empire_object_visibility_turns.size() << ", "
+                                                                                          << empire_known_destroyed_object_ids.size() << ", "
+                                                                                          << empire_stale_knowledge_object_ids.size() <<  " empires";
+    if (Archive::is_loading::value) {
+        m_empire_object_visibility.swap(empire_object_visibility);
+        m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
+        m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
+        m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(objects);
+    DebugLogger() << "Universe::serialize : (de)serialized " << objects.NumObjects() << " objects";
+    if (Archive::is_loading::value) {
+        m_objects.swap(objects);
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
+    DebugLogger() << "Universe::serialize : (de)serialized " << destroyed_object_ids.size() << " destroyed object ids";
+    if (Archive::is_loading::value) {
+        m_destroyed_object_ids.swap(destroyed_object_ids);
+    }
+
     DebugLogger() << "Universe::serialize : (de)serializing empire known objects";
     ar  & BOOST_SERIALIZATION_NVP(empire_latest_known_objects);
     DebugLogger() << "Universe::serialize : (de)serializing last allocated ids";
@@ -96,15 +120,9 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        DebugLogger() << "Universe::serialize : Swapping old/new data, with Encoding Empire " << EncodingEmpire();
-        m_objects.swap(objects);
+        DebugLogger() << "Universe::serialize : Swapping more old/new data, with Encoding Empire " << EncodingEmpire();
         m_destroyed_object_ids.swap(destroyed_object_ids);
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
-        m_empire_object_visibility.swap(empire_object_visibility);
-        m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
-        m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
-        m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
-        m_ship_designs.swap(ship_designs);
         m_objects.UpdateCurrentDestroyedObjects(m_destroyed_object_ids);
 
         for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin();

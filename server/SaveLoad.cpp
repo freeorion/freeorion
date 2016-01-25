@@ -155,7 +155,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             DebugLogger() << "Creating xml oarchive";
 
             std::string serial_str;
-            serial_str.reserve(std::pow(2u, 28u));
+            serial_str.reserve(std::pow(2u, 29u));
             boost::iostreams::back_insert_device<std::string> inserter(serial_str);
             boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
 
@@ -195,6 +195,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
 
             // pass xml to compressed output file
             DebugLogger() << "Writing to file";
+            DebugLogger() << "SaveGame wrote " << serial_str.size() << " characters and has buffer capacity: " << serial_str.capacity();
 
             boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
             boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
@@ -273,7 +274,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             i.push(ifs);
 
             std::string serial_str;
-            serial_str.reserve(std::pow(2u, 28u));
+            serial_str.reserve(std::pow(2u, 29u));
             boost::iostreams::back_insert_device<std::string> inserter(serial_str);
             boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
 
@@ -311,6 +312,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
             DebugLogger() << "LoadGame : Reading Universe Data";
             Deserialize(ia, universe);
+            DebugLogger() << "LoadGame read " << serial_str.size() << " characters and has buffer capacity: " << serial_str.capacity();
         }
 
     } catch (const std::exception& err) {
