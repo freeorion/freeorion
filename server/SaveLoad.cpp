@@ -158,7 +158,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             DebugLogger() << "Allocating buffer for serialization...";
             std::string serial_str;
             try {
-                serial_str.reserve(std::pow(2u, 29u));
+                serial_str.reserve(std::pow(2.0, 29.0));
             } catch (...) {
                 DebugLogger() << "Unable to preallocate full serialization buffer. Attempting serialization with dynamic buffer allocation.";
             }
@@ -311,7 +311,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
             std::string serial_str;
             try {
-                serial_str.reserve(std::pow(2u, 29u));
+                serial_str.reserve(std::pow(2.0, 29.0));
             } catch (...) {
                 DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
             }
@@ -396,7 +396,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
 
             std::string serial_str;
             try {
-                serial_str.reserve(std::pow(2u, 29u));
+                serial_str.reserve(std::pow(2.0, 29.0));
             } catch (...) {
                 DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
             }
@@ -468,7 +468,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
             std::string serial_str;
             try {
-                serial_str.reserve(std::pow(2u, 29u));
+                serial_str.reserve(std::pow(2.0, 29.0));
             } catch (...) {
                 DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
             }
@@ -544,7 +544,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 
             std::string serial_str;
             try {
-                serial_str.reserve(std::pow(2u, 29u));
+                serial_str.reserve(std::pow(2.0, 29.0));
             } catch (...) {
                 DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
             }

@@ -86,7 +86,7 @@ namespace {
 
                 std::string serial_str;
                 try {
-                    serial_str.reserve(std::pow(2u, 29u));
+                    serial_str.reserve(std::pow(2.0, 29.0));
                 } catch (...) {
                     DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
                 }
