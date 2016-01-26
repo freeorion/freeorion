@@ -50,8 +50,6 @@ namespace {
             return false;
         }
 
-        ScopedTimer timer("LoadSaveGamePreviewData: " + path.string(), true);
-
         fs::ifstream ifs(path, std::ios_base::binary);
 
         full.filename = PathString(path.filename());
@@ -67,6 +65,8 @@ namespace {
         DebugLogger() << "LoadSaveGamePreviewData: Loading preview from: " << path.string();
         try {
             try {
+                ScopedTimer timer("LoadSaveGamePreviewData (binary): " + path.string(), true);
+
                 // first attempt binary deserialziation
                 freeorion_bin_iarchive ia(ifs);
 
@@ -94,9 +94,12 @@ namespace {
                 boost::iostreams::back_insert_device<std::string> inserter(serial_str);
                 boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
 
-                boost::iostreams::copy(i, s_sink);
+                {
+                    ScopedTimer timer("LoadSaveGamePreviewData File I/O and decompression: " + path.string(), true);
+                    boost::iostreams::copy(i, s_sink);
 
-                DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+                    DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+                }
                 //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
 
                 boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
@@ -104,11 +107,14 @@ namespace {
 
 
                 // extract xml data from stringstream
-                DebugLogger() << "Deserializing XML data";
-                freeorion_xml_iarchive ia(s_source);
+                {
+                    ScopedTimer timer("LoadSaveGamePreviewData Deserialization: " + path.string(), true);
+                    DebugLogger() << "Deserializing XML data";
+                    freeorion_xml_iarchive ia(s_source);
 
-                ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
-                ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+                    ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
+                    ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+                }
             }
 
             DebugLogger() << "Loaded preview with: " << save_preview_data.number_of_human_players << " human players";
