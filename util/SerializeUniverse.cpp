@@ -99,15 +99,21 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     DebugLogger() << "Universe::serialize : (de)serialized " << destroyed_object_ids.size() << " destroyed object ids";
     if (Archive::is_loading::value) {
         m_destroyed_object_ids.swap(destroyed_object_ids);
+        m_objects.UpdateCurrentDestroyedObjects(m_destroyed_object_ids);
     }
 
-    DebugLogger() << "Universe::serialize : (de)serializing empire known objects";
     ar  & BOOST_SERIALIZATION_NVP(empire_latest_known_objects);
+    DebugLogger() << "Universe::serialize : (de)serializing empire known objects for " << empire_latest_known_objects.size() << " empires";
+    if (Archive::is_loading::value) {
+        m_empire_latest_known_objects.swap(empire_latest_known_objects);
+    }
+
     DebugLogger() << "Universe::serialize : (de)serializing last allocated ids";
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id);
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
-    DebugLogger() << "Universe::serialize : (de)serializing stats";
     ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
+    DebugLogger() << "Universe::serialize : (de)serializing " << m_stat_records.size() << " types of statistic";
+
     DebugLogger() << "Universe::serialize : (de)serializing done";
 
     if (Archive::is_saving::value) {
@@ -120,11 +126,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        DebugLogger() << "Universe::serialize : Swapping more old/new data, with Encoding Empire " << EncodingEmpire();
-        m_destroyed_object_ids.swap(destroyed_object_ids);
-        m_empire_latest_known_objects.swap(empire_latest_known_objects);
-        m_objects.UpdateCurrentDestroyedObjects(m_destroyed_object_ids);
-
+        DebugLogger() << "Universe::serialize : updating empires' latest known object destruction states";
+        // update known destroyed objects state in each empire's latest known objects
         for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin();
              it != m_empire_latest_known_objects.end(); it++)
         {
