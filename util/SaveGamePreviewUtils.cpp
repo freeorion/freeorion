@@ -8,6 +8,7 @@
 #include "EnumText.h"
 #include "Serialize.h"
 #include "Serialize.ipp"
+#include "ScopedTimer.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
@@ -49,6 +50,8 @@ namespace {
             return false;
         }
 
+        ScopedTimer timer("LoadSaveGamePreviewData: " + path.string(), true);
+
         fs::ifstream ifs(path, std::ios_base::binary);
 
         full.filename = PathString(path.filename());
@@ -82,13 +85,19 @@ namespace {
                 i.push(ifs);
 
                 std::string serial_str;
-                serial_str.reserve(std::pow(2u, 28u));
+                try {
+                    serial_str.reserve(std::pow(2u, 29u));
+                } catch (...) {
+                    DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
+                }
+
                 boost::iostreams::back_insert_device<std::string> inserter(serial_str);
                 boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
 
                 boost::iostreams::copy(i, s_sink);
 
                 DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+                //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
 
                 boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
                 boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);

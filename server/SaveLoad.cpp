@@ -19,6 +19,7 @@
 #include "../util/OrderSet.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/Serialize.h"
+#include "../util/ScopedTimer.h"
 #include "../combat/CombatLogManager.h"
 
 #include <GG/utf8/checked.h>
@@ -104,6 +105,8 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
               const CombatLogManager& combat_log_manager, const GalaxySetupData& galaxy_setup_data,
               bool multiplayer)
 {
+    ScopedTimer timer("SaveGame: " + filename, true);
+
     bool use_binary = GetOptionsDB().Get<bool>("binary-serialization");
     DebugLogger() << "SaveGame(" << (use_binary ? "binary" : "zlib-xml") << ") filename: " << filename;
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
@@ -157,7 +160,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             try {
                 serial_str.reserve(std::pow(2u, 29u));
             } catch (...) {
-                DebugLogger() << "Unable to allocate full buffer. Attempting serialization with dynamic buffer allocation.";
+                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting serialization with dynamic buffer allocation.";
             }
 
             // wrap string in iostream::stream to receive serialized data
@@ -248,6 +251,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 {
     //boost::this_thread::sleep(boost::posix_time::seconds(1));
 
+    ScopedTimer timer("LoadGame: " + filename, true);
+
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
         server->Networking().SendMessage(TurnProgressMessage(Message::LOADING_GAME));
@@ -308,7 +313,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             try {
                 serial_str.reserve(std::pow(2u, 29u));
             } catch (...) {
-                DebugLogger() << "Unable to allocate full buffer. Attempting serialization with dynamic buffer allocation.";
+                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
             }
 
             boost::iostreams::back_insert_device<std::string> inserter(serial_str);
@@ -349,7 +354,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
             DebugLogger() << "LoadGame : Reading Universe Data";
             Deserialize(ia, universe);
-            DebugLogger() << "LoadGame read " << serial_str.size() << " characters and has buffer capacity: " << serial_str.capacity();
+            DebugLogger() << "LoadGame deserialized from " << serial_str.size() << " characters and has buffer capacity: " << serial_str.capacity();
         }
 
     } catch (const std::exception& err) {
@@ -361,6 +366,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
 void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) {
     SaveGamePreviewData ignored_save_preview_data;
+
+    ScopedTimer timer("LoadGalaxySetupData: " + filename, true);
 
     try {
         fs::path path = FilenameToPath(filename);
@@ -387,13 +394,28 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
             i.push(boost::iostreams::zlib_decompressor(15, 16384));
             i.push(ifs);
 
-            // pass decompressed xml into stringstream storage that the iarchve requires...
-            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
-            boost::iostreams::copy(i, *ss);
+            std::string serial_str;
+            try {
+                serial_str.reserve(std::pow(2u, 29u));
+            } catch (...) {
+                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
+            }
+
+            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
+
+            boost::iostreams::copy(i, s_sink);
+
+            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
+
+            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
+            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
+
 
             // extract xml data from stringstream
-            DebugLogger() << "Extracting XML data from stream...";
-            freeorion_xml_iarchive ia(*ss);
+            DebugLogger() << "Deserializing XML data";
+            freeorion_xml_iarchive ia(s_source);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -411,6 +433,8 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     SaveGamePreviewData ignored_save_preview_data;
     ServerSaveGameData  ignored_server_save_game_data;
     GalaxySetupData     ignored_galaxy_setup_data;
+
+    ScopedTimer timer("LoadPlayerSaveGameData: " + filename, true);
 
     try {
         DebugLogger() << "Reading player save game data from: " << filename;
@@ -442,14 +466,28 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
             i.push(boost::iostreams::zlib_decompressor(/*15, 1048576*/));   // specifying larger buffer size seems to help reading larger save files...
             i.push(ifs);
 
-            // pass decompressed xml into stringstream storage that the iarchve requires...
-            DebugLogger() << "Decompressing save stream...";
-            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
-            boost::iostreams::copy(i, *ss);
+            std::string serial_str;
+            try {
+                serial_str.reserve(std::pow(2u, 29u));
+            } catch (...) {
+                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
+            }
+
+            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
+
+            boost::iostreams::copy(i, s_sink);
+
+            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
+
+            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
+            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
+
 
             // extract xml data from stringstream
-            DebugLogger() << "Extracting XML data from stream...";
-            freeorion_xml_iarchive ia(*ss);
+            DebugLogger() << "Deserializing XML data";
+            freeorion_xml_iarchive ia(s_source);
 
             DebugLogger() << "Deserializing ignored preview/setup data...";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
@@ -472,6 +510,8 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
     ServerSaveGameData              ignored_server_save_game_data;
     std::vector<PlayerSaveGameData> ignored_player_save_game_data;
     GalaxySetupData                 ignored_galaxy_setup_data;
+
+    ScopedTimer timer("LoadEmpireSaveGameData: " + filename, true);
 
     try {
         fs::path path = FilenameToPath(filename);
@@ -502,13 +542,28 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
             i.push(boost::iostreams::zlib_decompressor(15, 16384));
             i.push(ifs);
 
-            // pass decompressed xml into stringstream storage that the iarchve requires...
-            boost::scoped_ptr<std::stringstream> ss(new std::stringstream());
-            boost::iostreams::copy(i, *ss);
+            std::string serial_str;
+            try {
+                serial_str.reserve(std::pow(2u, 29u));
+            } catch (...) {
+                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
+            }
+
+            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
+
+            boost::iostreams::copy(i, s_sink);
+
+            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
+            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
+
+            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
+            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
+
 
             // extract xml data from stringstream
-            DebugLogger() << "Extracting XML data from stream...";
-            freeorion_xml_iarchive ia(*ss);
+            DebugLogger() << "Deserializing XML data";
+            freeorion_xml_iarchive ia(s_source);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
