@@ -247,7 +247,7 @@ namespace {
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                     int candidate_object_id, int empire_id)
     {
-        std::string title; 
+        std::string title;
         std::string main_text;
         float total_cost;
         int production_time;
@@ -283,7 +283,7 @@ namespace {
                 return browse_wnd;
             }
 
-            // create title, description, production time and cost
+            // create title, description, production time and cost, hull type
             title = design->Name(true);
             main_text = design->Description(true);
             total_cost = design->ProductionCost(empire_id, candidate_object_id);
@@ -292,16 +292,29 @@ namespace {
             main_text += "\n\nProduction cost: " + DoubleToString(total_cost, 3, false);
             main_text += "\nProduction time: " + boost::lexical_cast<std::string>(production_time);
 
-            // load hull type and ship parts
-            std::string all_ship_parts;
-            std::vector<std::string, std::allocator<std::string>> parts = design->Parts();
-            
-            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
-                if (UserStringExists(*it))
-                    all_ship_parts += UserString(*it) + ", ";
-            
             main_text += "\n\nHull: " + UserString(design->Hull());
-            main_text += "\nParts: " + all_ship_parts.substr(0, all_ship_parts.length()-2);
+
+            // load ship parts, stack ship parts that are used multiple times
+            std::string ship_parts_formatted;
+            std::map<std::string, int> ship_part_names;
+            std::vector<std::string, std::allocator<std::string>> parts = design->Parts();
+
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (ship_part_names.find(*it) != ship_part_names.end())
+                    ship_part_names[*it]++;
+                else
+                    ship_part_names.insert(std::pair<std::string, int>(*it, 1));
+            }
+
+            for (std::map<std::string, int>::const_iterator it = ship_part_names.begin(); it != ship_part_names.end(); ++it) {
+                if (!UserStringExists(it->first)) continue;
+                if (ship_part_names[it->first] == 1)
+                    ship_parts_formatted += (UserString(it->first) + ", ");
+                else
+                    ship_parts_formatted += (UserString(it->first) + " x" + boost::lexical_cast<std::string>(it->second) + ", ");
+            }
+
+            main_text += "\nParts: " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
             // create tooltip
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
