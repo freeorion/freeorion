@@ -312,7 +312,7 @@ namespace {
             // load ship parts, stack ship parts that are used multiple times
             std::string ship_parts_formatted;
             std::map<std::string, int> ship_part_names;
-            std::vector<std::string, std::allocator<std::string> > parts = design->Parts();
+            const std::vector<std::string> parts = design->Parts();
 
             for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
                 if (ship_part_names.find(*it) != ship_part_names.end())
