@@ -176,6 +176,27 @@ namespace {
     }
 }
 
+std::string ConditionFailedDescription(const std::vector<Condition::ConditionBase*>& conditions,
+    TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
+    TemporaryPtr<const UniverseObject> source_object/* = 0*/)
+{
+    if (conditions.empty())
+        return UserString("NONE");
+
+    ScriptingContext parent_context(source_object);
+    // test candidate against all input conditions, and store descriptions of each
+    std::map<std::string, bool> condition_description_and_test_results =
+        ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
+    std::string retval;
+
+    for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
+        it != condition_description_and_test_results.end(); ++it)
+            if (!it->second)
+                 retval += UserString("FAILED") + " <rgba 255 0 0 255>" + it->first +"</rgba>\n";
+
+    return retval.substr(0, retval.length()-1);
+}
+
 std::string ConditionDescription(const std::vector<Condition::ConditionBase*>& conditions,
                                  TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
                                  TemporaryPtr<const UniverseObject> source_object/* = 0*/)

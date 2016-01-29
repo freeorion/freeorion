@@ -123,15 +123,21 @@ namespace Condition {
     struct Described;
 }
 
+/** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
+
+FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition::ConditionBase*>& conditions,
+                                               TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
+                                               TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
+
 /** Returns a single string which describes a vector of Conditions. If multiple
-  * conditions are passed, they are treated as if they were contained by an And
-  * condition. Subconditions within an And (or nested And) are listed as
-  * lines in a list, with duplicates removed, titled something like "All of...".
-  * Subconditions within an Or (or nested Ors) are similarly listed as lines in
-  * a list, with duplicates removed, titled something like "One of...". If a
-  * candidate object is provided, the returned string will indicate which 
-  * subconditions the candidate matches, and indicate if the overall combination
-  * of conditions matches the object. */
+* conditions are passed, they are treated as if they were contained by an And
+* condition. Subconditions within an And (or nested And) are listed as
+* lines in a list, with duplicates removed, titled something like "All of...".
+* Subconditions within an Or (or nested Ors) are similarly listed as lines in
+* a list, with duplicates removed, titled something like "One of...". If a
+* candidate object is provided, the returned string will indicate which
+* subconditions the candidate matches, and indicate if the overall combination
+* of conditions matches the object. */
 FO_COMMON_API std::string ConditionDescription(const std::vector<Condition::ConditionBase*>& conditions,
                                                TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
                                                TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());

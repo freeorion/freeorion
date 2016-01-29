@@ -203,7 +203,7 @@ namespace {
     }
 
     std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
-                                                       int empire_id)
+                                                       int empire_id, bool only_failed_conditions)
     {
         std::vector<Condition::ConditionBase*> enqueue_conditions;
         Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
@@ -213,11 +213,14 @@ namespace {
             enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
         }
         TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
-        return ConditionDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
+        if (only_failed_conditions)
+            return ConditionFailedDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
+        else
+            return ConditionDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
-                                             int empire_id)
+                                             int empire_id, bool only_failed_conditions)
     {
         std::vector<Condition::ConditionBase*> location_conditions;
         boost::shared_ptr<Condition::ConditionBase> can_prod_ship_cond(new Condition::CanProduceShips());
@@ -241,7 +244,11 @@ namespace {
             }
         }
         TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
-        return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
+
+        if (only_failed_conditions)
+            return ConditionFailedDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
+        else
+            return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
@@ -268,6 +275,11 @@ namespace {
 
             main_text += "\n\nProduction cost: " + DoubleToString(total_cost, 3, false);
             main_text += "\nProduction time: " + boost::lexical_cast<std::string>(production_time);
+
+            // show build conditions
+            std::string EnqueueAndLocationConditionFailedText = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
+            if (EnqueueAndLocationConditionFailedText.length() != 0)
+                main_text += "\n\n" + EnqueueAndLocationConditionFailedText;
 
             // create tooltip
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
@@ -316,6 +328,11 @@ namespace {
 
             main_text += "\nParts: " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
+            // show build conditions
+            std::string LocationConditionFailedText = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
+            if (LocationConditionFailedText.length() != 0)
+                main_text += ("\n\n" + LocationConditionFailedText);
+
             // create tooltip
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 ClientUI::ShipDesignIcon(item.design_id), title, main_text));
@@ -326,23 +343,6 @@ namespace {
         else {
             return boost::shared_ptr<GG::BrowseInfoWnd>();
         }
-
-        /** old tooltip code
-        if (item.build_type == BT_BUILDING) {
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                ClientUI::BuildingIcon(item.name), UserString(item.name),
-                EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id)));
-            return browse_wnd;
-        } else if (item.build_type == BT_SHIP) {
-            const ShipDesign* ship_design = GetShipDesign(item.design_id);
-            const std::string& name = (ship_design ? ship_design->Name() : UserString("SHIP_DESIGN"));
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                ClientUI::ShipDesignIcon(item.design_id), name,
-                LocationConditionDescription(item.design_id, candidate_object_id, empire_id)));
-            return browse_wnd;
-        } else {
-            return boost::shared_ptr<GG::BrowseInfoWnd>();
-        } */
     }
 
     ////////////////////////////////////////////////
