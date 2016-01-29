@@ -48,6 +48,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     ar.template register_type<System>();
 
+    std::string serializing_label = (Archive::is_loading::value ? "deserializing" : "serializing");
+
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Getting gamestate data";
         GetObjectsToSerialize(              objects,                            m_encoding_empire);
@@ -65,12 +67,12 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_universe_width);
-    DebugLogger() << "Universe::serialize : (de)serialized universe width: " << m_universe_width;
+    DebugLogger() << "Universe::serialize : " << serializing_label << " universe width: " << m_universe_width;
 
     ar  & BOOST_SERIALIZATION_NVP(ship_designs);
     if (Archive::is_loading::value)
         m_ship_designs.swap(ship_designs);
-    DebugLogger() << "Universe::serialize : (de)serialized " << ship_designs.size() << " ship designs";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " " << ship_designs.size() << " ship designs";
 
     ar  & BOOST_SERIALIZATION_NVP(m_empire_known_ship_design_ids);
 
@@ -78,10 +80,11 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns);
     ar  & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids);
     ar  & BOOST_SERIALIZATION_NVP(empire_stale_knowledge_object_ids);
-    DebugLogger() << "Universe::serialize : (de)serialized empire object visibility for " << empire_object_visibility.size() << ", "
-                                                                                          << empire_object_visibility_turns.size() << ", "
-                                                                                          << empire_known_destroyed_object_ids.size() << ", "
-                                                                                          << empire_stale_knowledge_object_ids.size() <<  " empires";
+    DebugLogger() << "Universe::serialize : " << serializing_label
+                  << " empire object visibility for " << empire_object_visibility.size() << ", "
+                  << empire_object_visibility_turns.size() << ", "
+                  << empire_known_destroyed_object_ids.size() << ", "
+                  << empire_stale_knowledge_object_ids.size() <<  " empires";
     if (Archive::is_loading::value) {
         m_empire_object_visibility.swap(empire_object_visibility);
         m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
@@ -90,31 +93,31 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     ar  & BOOST_SERIALIZATION_NVP(objects);
-    DebugLogger() << "Universe::serialize : (de)serialized " << objects.NumObjects() << " objects";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " " << objects.NumObjects() << " objects";
     if (Archive::is_loading::value) {
         m_objects.swap(objects);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(destroyed_object_ids);
-    DebugLogger() << "Universe::serialize : (de)serialized " << destroyed_object_ids.size() << " destroyed object ids";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " " << destroyed_object_ids.size() << " destroyed object ids";
     if (Archive::is_loading::value) {
         m_destroyed_object_ids.swap(destroyed_object_ids);
         m_objects.UpdateCurrentDestroyedObjects(m_destroyed_object_ids);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(empire_latest_known_objects);
-    DebugLogger() << "Universe::serialize : (de)serializing empire known objects for " << empire_latest_known_objects.size() << " empires";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for " << empire_latest_known_objects.size() << " empires";
     if (Archive::is_loading::value) {
         m_empire_latest_known_objects.swap(empire_latest_known_objects);
     }
 
-    DebugLogger() << "Universe::serialize : (de)serializing last allocated ids";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " last allocated ids";
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id);
     ar  & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
     ar  & BOOST_SERIALIZATION_NVP(m_stat_records);
-    DebugLogger() << "Universe::serialize : (de)serializing " << m_stat_records.size() << " types of statistic";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " " << m_stat_records.size() << " types of statistic";
 
-    DebugLogger() << "Universe::serialize : (de)serializing done";
+    DebugLogger() << "Universe::serialize : " << serializing_label << " done";
 
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Cleaning up temporary data";
