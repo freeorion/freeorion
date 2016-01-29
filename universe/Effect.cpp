@@ -408,7 +408,7 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
             return;
     }
 
-    // apply this effect to each source causing it
+    // apply this effect for each source causing it
     for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
         targets_it != targets_causes.end(); ++targets_it)
     {
@@ -527,8 +527,8 @@ void SetMeter::Execute(const ScriptingContext& context) const {
 void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets) const {
     if (targets.empty())
         return;
-    // does meter value depend on target?
     if (m_value->TargetInvariant()) {
+        // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
         for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
             Meter* m = (*it)->GetMeter(m_meter);
@@ -536,8 +536,36 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
             m->SetCurrent(val);
         }
         return;
+    } else if (m_value->SimpleIncrement()) {
+        // meter value is a consistent constant increment for each target, so handle with
+        // deep inspection single ValueRef evaluation
+        ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
+        if (!op) {
+            ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation...";
+            return;
+        }
+        // RHS should be a ConstantExpr
+        float increment = op->RHS()->Eval();
+        if (op->GetOpType() == ValueRef::PLUS) {
+            // do nothing to modify increment
+        } else if (op->GetOpType() == ValueRef::MINUS) {
+            increment = -increment;
+        } else {
+            ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS)";
+            return;
+        }
+        //DebugLogger() << "simple increment: " << increment;
+        // increment all target meters...
+        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+            Meter* m = (*it)->GetMeter(m_meter);
+            if (!m) continue;
+            m->AddToCurrent(increment);
+        }
+        return;
     }
-    // meter value does depend on target, so handle with default case
+
+    //DebugLogger() << "complicated meter adjustment...";
+    // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
     EffectBase::Execute(context, targets);
 }
 
