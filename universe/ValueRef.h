@@ -109,6 +109,7 @@ struct ValueRef::ValueRefBase
     virtual bool        LocalCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return false; }
     virtual bool        SourceInvariant() const { return false; }
+    virtual bool        SimpleIncrement() const { return false; }
 
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
@@ -386,6 +387,7 @@ struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
     virtual bool            LocalCandidateInvariant() const;
     virtual bool            TargetInvariant() const;
     virtual bool            SourceInvariant() const;
+    virtual bool            SimpleIncrement() const;
     virtual std::string     Description() const;
     virtual std::string     Dump() const;
 
@@ -566,9 +568,7 @@ FO_COMMON_API std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceTy
 
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
-{
-    return FormatedDescriptionPropertyNames(m_ref_type, m_property_name);
-}
+{ return FormatedDescriptionPropertyNames(m_ref_type, m_property_name); }
 
 template <class T>
 std::string ValueRef::Variable<T>::Dump() const
@@ -1618,6 +1618,21 @@ bool ValueRef::Operation<T>::SourceInvariant() const
             return false;
     }
     return true;
+}
+
+template <class T>
+bool ValueRef::Operation<T>::SimpleIncrement() const
+{
+    if (m_op_type != PLUS && m_op_type != MINUS)
+        return false;
+    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1])
+        return false;
+    if (!ConstantExpr(m_operands[1]))
+        return false;
+    const Variable<T>* lhs = dynamic_cast<const Variable<T>*>(m_operands[0]);
+    if (!lhs)
+        return false;
+    return lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE;
 }
 
 template <class T>

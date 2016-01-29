@@ -431,7 +431,6 @@ std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
 }
 
 namespace ValueRef {
-
 #define IF_CURRENT_VALUE(T)                                                \
     if (m_ref_type == EFFECT_TARGET_VALUE_REFERENCE) {                     \
         if (context.current_value.empty())                                 \
