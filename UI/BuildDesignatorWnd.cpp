@@ -273,13 +273,16 @@ namespace {
             total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
             production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\nProduction cost: " + DoubleToString(total_cost, 3, false);
-            main_text += "\nProduction time: " + boost::lexical_cast<std::string>(production_time);
+            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
 
             // show build conditions
             std::string EnqueueAndLocationConditionFailedText = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
-            if (EnqueueAndLocationConditionFailedText.length() != 0)
-                main_text += "\n\n" + EnqueueAndLocationConditionFailedText;
+            if (!EnqueueAndLocationConditionFailedText.empty())
+                if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
+                        std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                        main_text += "\n\n" + failed_cond_loc + ":\n" + EnqueueAndLocationConditionFailedText;
+            }
 
             // create tooltip
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
@@ -301,10 +304,10 @@ namespace {
             total_cost = design->ProductionCost(empire_id, candidate_object_id);
             production_time = design->ProductionTime(empire_id, candidate_object_id);
 
-            main_text += "\n\nProduction cost: " + DoubleToString(total_cost, 3, false);
-            main_text += "\nProduction time: " + boost::lexical_cast<std::string>(production_time);
+            main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
 
-            main_text += "\n\nHull: " + UserString(design->Hull());
+            main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
             std::string ship_parts_formatted;
@@ -326,12 +329,15 @@ namespace {
                     ship_parts_formatted += (UserString(it->first) + " x" + boost::lexical_cast<std::string>(it->second) + ", ");
             }
 
-            main_text += "\nParts: " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
             // show build conditions
             std::string LocationConditionFailedText = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
-            if (LocationConditionFailedText.length() != 0)
-                main_text += ("\n\n" + LocationConditionFailedText);
+            if (!LocationConditionFailedText.empty())
+                if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
+                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    main_text += ("\n\n" + failed_cond_loc + ":\n" + LocationConditionFailedText);
+                }
 
             // create tooltip
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
