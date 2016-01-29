@@ -1170,7 +1170,7 @@ bool Universe::DeleteShipDesign(int design_id) {
     } else { return false; }
 }
 
-void Universe::ApplyAllEffectsAndUpdateMeters() {
+void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
 
     // cache all activation and scoping condition results before applying
@@ -1191,14 +1191,14 @@ void Universe::ApplyAllEffectsAndUpdateMeters() {
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->ResetMeters();
 
-    ExecuteEffects(targets_causes, true, false, false, true);
+    ExecuteEffects(targets_causes, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
         it->ClampMeters();
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids) {
+void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, bool do_accounting) {
     if (object_ids.empty())
         return;
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + boost::lexical_cast<std::string>(object_ids.size()) + " objects");
@@ -1222,13 +1222,13 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // recalculated, some targets that lead to empire meters being modified may
     // be missed, and estimated empire meters would be inaccurate
 
-    ExecuteEffects(targets_causes, true, true);
+    ExecuteEffects(targets_causes, do_accounting, true);
 
     for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters() {
+void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
 
     Effect::TargetsCauses targets_causes;
@@ -1240,13 +1240,13 @@ void Universe::ApplyMeterEffectsAndUpdateMeters() {
     }
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->ResetMeters();
-    ExecuteEffects(targets_causes, true, true, false, true);
+    ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
 }
 
-void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters() {
+void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
 
     Effect::TargetsCauses targets_causes;
@@ -1254,7 +1254,7 @@ void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters() {
 
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) 
     { (*it)->ResetTargetMaxUnpairedMeters(); }
-    ExecuteEffects(targets_causes, false, true, false, true);
+    ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
     for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
@@ -3992,7 +3992,22 @@ TemporaryPtr<Field> Universe::CreateField(const std::string& field_type, double 
 
 void Universe::ResetUniverse() {
     m_objects.Clear();  // wipe out anything present in the object map
-    
+
+    m_empire_known_destroyed_object_ids.clear();
+    m_empire_known_ship_design_ids;
+    m_empire_latest_known_objects.clear();
+    m_effect_accounting_map.clear();
+    m_empire_object_visibility.clear();
+    m_empire_object_visibility_turns.clear();
+    m_empire_object_visible_specials.clear();
+    m_effect_accounting_map.clear();
+    m_effect_discrepancy_map.clear();
+    m_marked_destroyed.clear();
+    m_destroyed_object_ids.clear();
+    m_ship_designs.clear();
+    m_stat_records.clear();
+    m_universe_width = 1000.0;
+
     // these happen to be equal to INVALID_OBJECT_ID and INVALID_DESIGN_ID,
     // but the point here is that the latest used ID is incremented before
     // being assigned, so using -1 here means the first assigned ID will be 0,

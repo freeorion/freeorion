@@ -68,7 +68,7 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
 
     // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
-    universe.ApplyMeterEffectsAndUpdateMeters();
+    universe.ApplyMeterEffectsAndUpdateMeters(false);
     // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
     // Set the population of unowned planets to a random fraction of their target values.

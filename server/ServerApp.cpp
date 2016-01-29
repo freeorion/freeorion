@@ -2908,7 +2908,7 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
+    m_universe.ApplyMeterEffectsAndUpdateMeters(false);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";

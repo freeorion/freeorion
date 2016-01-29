@@ -260,19 +260,19 @@ public:
       * executes all effects on all objects.  Then clamps meter values so
       * target and max meters are within a reasonable range and any current
       * meters with associated max meters are limited by their max. */
-    void            ApplyAllEffectsAndUpdateMeters();
+    void            ApplyAllEffectsAndUpdateMeters(bool do_accounting = true);
 
     /** Determines all effectsgroups' target sets, then resets meters and
       * executes only SetMeter effects on all objects whose ids are listed in
       * \a object_ids.  Then clamps meter values so target and max meters are
       * within a reasonable range and any current meters with associated max
       * meters are limited by their max. */
-    void            ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids);
+    void            ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, bool do_accounting = true);
 
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
-    void            ApplyMeterEffectsAndUpdateMeters();
+    void            ApplyMeterEffectsAndUpdateMeters(bool do_accounting = true);
     /** Like ApplyMeterEffectsAndUpdateMeters(), but only target, max and unpaired meters are updated.*/
-    void            ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters();
+    void            ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_accounting = true);
 
     /** Executes effects that modify objects' appearance in the human client. */
     void            ApplyAppearanceEffects(const std::vector<int>& object_ids);
