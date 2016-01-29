@@ -12,6 +12,7 @@ class SpeciesManager;
 class Universe;
 struct GalaxySetupData;
 struct PlayerSaveGameData;
+struct PlayerSaveHeaderData;
 struct SaveGameEmpireData;
 struct ServerSaveGameData;
 
@@ -24,8 +25,7 @@ void SaveGame(const std::string& filename,
               const SpeciesManager& species_manager,
               const CombatLogManager& combat_log_manager,
               const GalaxySetupData& galaxy_setup_data,
-              bool multiplayer
-             );
+              bool multiplayer);
 
 /** Loads the indicated data from savefile \a filename. */
 void LoadGame(const std::string& filename,
@@ -37,15 +37,11 @@ void LoadGame(const std::string& filename,
               CombatLogManager& combat_log_manager,
               GalaxySetupData& galaxy_setup_data);
 
-/** Loads from a savefile \a filename various non-gamestate information that is
-  * needed when resuming a saved game.  This includes some player setup
-  * information so that the server knows how many AI clients to start and which
-  * empire(s) to assign to them and the human player, and also the set of
-  * orders that the player has already issued during the current turn and the
-  * state of the UI or AI state information that needs to be restored when
-  * resuming a game. */
-void LoadPlayerSaveGameData(const std::string& filename,
-                            std::vector<PlayerSaveGameData>& player_save_game_data);
+/** Loads from a savefile \a filename some basic info about players in the save
+  * that is needed when resuming the game. */
+void LoadPlayerSaveHeaderData(const std::string& filename,
+                              std::vector<PlayerSaveHeaderData>& player_save_header_data);
+
 
 /** Loads from a savefile \a filename some basic empire information that is
   * useful when selecting which player will control which empire when reloading

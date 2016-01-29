@@ -76,27 +76,40 @@ namespace {
         }
     }
 };
+
+////////////////////////////////////////////////
+// PlayerSaveHeaderData
+////////////////////////////////////////////////
+PlayerSaveHeaderData::PlayerSaveHeaderData() :
+    m_name(),
+    m_empire_id(ALL_EMPIRES),
+    m_client_type(Networking::INVALID_CLIENT_TYPE)
+{}
+
+PlayerSaveHeaderData::PlayerSaveHeaderData(const std::string& name, int empire_id, Networking::ClientType client_type) :
+    m_name(name),
+    m_empire_id(empire_id),
+    m_client_type(client_type)
+{}
+
+
 ////////////////////////////////////////////////
 // PlayerSaveGameData
 ////////////////////////////////////////////////
 PlayerSaveGameData::PlayerSaveGameData() :
-    m_name(),
-    m_empire_id(ALL_EMPIRES),
+    PlayerSaveHeaderData(),
     m_orders(),
     m_ui_data(),
-    m_save_state_string(),
-    m_client_type(Networking::INVALID_CLIENT_TYPE)
+    m_save_state_string()
 {}
 
 PlayerSaveGameData::PlayerSaveGameData(const std::string& name, int empire_id, const boost::shared_ptr<OrderSet>& orders,
                                        const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
                                        Networking::ClientType client_type) :
-    m_name(name),
-    m_empire_id(empire_id),
+    PlayerSaveHeaderData(name, empire_id, client_type),
     m_orders(orders),
     m_ui_data(ui_data),
-    m_save_state_string(save_state_string),
-    m_client_type(client_type)
+    m_save_state_string(save_state_string)
 {}
 
 

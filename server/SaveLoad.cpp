@@ -117,6 +117,13 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     CompileSaveGamePreviewData(server_save_game_data, player_save_game_data, empire_save_game_data, save_preview_data);
 
 
+    // reinterpret save game data as header data for uncompressed header
+    std::vector<PlayerSaveHeaderData> player_save_header_data;
+    for (std::vector<PlayerSaveGameData>::const_iterator it = player_save_game_data.begin();
+         it != player_save_game_data.end(); ++it)
+    { player_save_header_data.push_back(*it); }
+
+
     try {
         fs::path path = FilenameToPath(filename);
         // A relative path should be relative to the save directory.
@@ -140,101 +147,77 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         if (use_binary) {
             DebugLogger() << "Creating binary oarchive";
             freeorion_bin_oarchive boa(ofs);
-            DebugLogger() << "Serializing preview/setup data";
             boa << BOOST_SERIALIZATION_NVP(save_preview_data);
             boa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-            DebugLogger() << "Serializing player/server/empire game data";
             boa << BOOST_SERIALIZATION_NVP(server_save_game_data);
-            boa << BOOST_SERIALIZATION_NVP(player_save_game_data);
+            boa << BOOST_SERIALIZATION_NVP(player_save_header_data);
             boa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
-            DebugLogger() << "Serializing empires/species data";
+
+            boa << BOOST_SERIALIZATION_NVP(player_save_game_data);
             boa << BOOST_SERIALIZATION_NVP(empire_manager);
             boa << BOOST_SERIALIZATION_NVP(species_manager);
             boa << BOOST_SERIALIZATION_NVP(combat_log_manager);
             Serialize(boa, universe);
             DebugLogger() << "Done serializing";
+
         } else {
-            // save as xml into stringstream
-            DebugLogger() << "Allocating buffer for serialization...";
-            std::string serial_str;
+            // Two-tier serialization:
+            // main archive is uncompressed serialized header data first
+            // then contains a string for compressed second archive
+            // that contains the main gamestate info
+
+
+            // allocate buffers for serialized gamestate
+            DebugLogger() << "Allocating buffers for XML serialization...";
+            std::string serial_str, compressed_str;
             try {
-                serial_str.reserve(std::pow(2.0, 29.0));
+                serial_str.reserve(    std::pow(2.0, 29.0));
+                compressed_str.reserve(std::pow(2.0, 26.0));
             } catch (...) {
-                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting serialization with dynamic buffer allocation.";
+                DebugLogger() << "Unable to preallocate full serialization buffers. Attempting serialization with dynamic buffer allocation.";
             }
 
-            // wrap string in iostream::stream to receive serialized data
+            // wrap buffer string in iostream::stream to receive serialized data
             typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
-            InsertDevice inserter(serial_str);
-            boost::iostreams::stream<InsertDevice> s_sink(inserter);
+            InsertDevice serial_inserter(serial_str);
+            boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
 
-            DebugLogger() << "Creating xml oarchive";
+            // create archive with (preallocated) buffer...
             freeorion_xml_oarchive xoa(s_sink);
-
-            DebugLogger() << "Serializing preview/setup data";
-
-            s_sink.flush();
-            DebugLogger() << "before preview data buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
-            xoa << BOOST_SERIALIZATION_NVP(save_preview_data);
-
-            s_sink.flush();
-            DebugLogger() << "before setup data buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
-            xoa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-            DebugLogger() << "Serializing player/server/empire game data";
-
-            s_sink.flush();
-            DebugLogger() << "before server/player buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
-            xoa << BOOST_SERIALIZATION_NVP(server_save_game_data);
+            // serialize main gamestate info
             xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
-
-            s_sink.flush();
-            DebugLogger() << "before empire save data buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
-            xoa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
-            DebugLogger() << "Serializing empires/species data";
-
-            s_sink.flush();
-            DebugLogger() << "before empire buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(empire_manager);
-
-            s_sink.flush();
-            DebugLogger() << "before species buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(species_manager);
-
-            s_sink.flush();
-            DebugLogger() << "before combat buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
-
-            s_sink.flush();
-            DebugLogger() << "before universe buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
             Serialize(xoa, universe);
-
             s_sink.flush();
-            DebugLogger() << "after universe buffer length: " << serial_str.length() << "  and capacity: " << serial_str.capacity();
 
-
-            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
-
-
-            // set up filter to compress data before outputting to file
-            DebugLogger() << "Compressing XML data";
-            boost::iostreams::filtering_ostreambuf o;
-            // following parameters might be useful if there are issues with compression in future...
-            //boost::iostreams::zlib_params zp = boost::iostreams::zlib_params(
-            //    boost::iostreams::zlib::best_compression, boost::iostreams::zlib::deflated,
-            //    15, 9, boost::iostreams::zlib::default_strategy, false, true);
-            o.push(boost::iostreams::zlib_compressor(/*zp*/));
-            o.push(ofs);
-
-
-            // compression-filter xml into output file
-            DebugLogger() << "SaveGame wrote " << serial_str.size() << " characters to (pre-compression) buffer and has buffer capacity: " << serial_str.capacity();
-
+            // wrap gamestate string in iostream::stream to extract serialized data
             typedef boost::iostreams::basic_array_source<char> SourceDevice;
             SourceDevice source(serial_str.data(), serial_str.size());
             boost::iostreams::stream<SourceDevice> s_source(source);
 
-            DebugLogger() << "Writing to file";
+            // wrap compresed buffer string in iostream::streams to receive compressed string
+            InsertDevice compressed_inserter(compressed_str);
+            boost::iostreams::stream<InsertDevice> c_sink(compressed_inserter);
+
+            // compression-filter gamestate into compressed string
+            boost::iostreams::filtering_ostreambuf o;
+            o.push(boost::iostreams::zlib_compressor());
+            o.push(c_sink);
             boost::iostreams::copy(s_source, o);
+            c_sink.flush();
+
+            // write to save file: uncompressed header serialized data, with compressed main archive string at end...
+            freeorion_xml_oarchive xoa2(ofs);
+            // serialize uncompressed save header info
+            xoa2 << BOOST_SERIALIZATION_NVP(save_preview_data);
+            xoa2 << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            xoa2 << BOOST_SERIALIZATION_NVP(server_save_game_data);
+            xoa2 << BOOST_SERIALIZATION_NVP(player_save_header_data);
+            xoa2 << BOOST_SERIALIZATION_NVP(empire_save_game_data);
+            // append compressed gamestate info
+            xoa2 << BOOST_SERIALIZATION_NVP(compressed_str);
         }
 
     } catch (const std::exception& e) {
@@ -259,8 +242,9 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
-    std::map<int, SaveGameEmpireData> ignored_save_game_empire_data;
-    SaveGamePreviewData ignored_save_preview_data;
+    std::map<int, SaveGameEmpireData>   ignored_save_game_empire_data;
+    SaveGamePreviewData                 ignored_save_preview_data;
+    std::vector<PlayerSaveHeaderData>   ignored_player_save_header_data;
 
     empire_manager.Clear();
     universe.Clear();
@@ -275,86 +259,76 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         try {
             // first attempt binary deserialziation
             freeorion_bin_iarchive ia(ifs);
-
-            DebugLogger() << "LoadGame : Passing Preview Data";
+            DebugLogger() << "Reading binary iarchive";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
-
-            DebugLogger() << "LoadGame : Reading Galaxy Setup Data";
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-
-            DebugLogger() << "LoadGame : Reading Server Save Game Data";
             ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
-            DebugLogger() << "LoadGame : Reading Player Save Game Data";
-            ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
-
-            DebugLogger() << "LoadGame : Reading Empire Save Game Data (Ignored)";
+            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-            DebugLogger() << "LoadGame : Reading Empires Data";
-            ia >> BOOST_SERIALIZATION_NVP(empire_manager);
-            DebugLogger() << "LoadGame : Reading Species Data";
-            ia >> BOOST_SERIALIZATION_NVP(species_manager);
-            DebugLogger() << "LoadGame : Reading Combat Logs";
-            ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-            DebugLogger() << "LoadGame : Reading Universe Data";
-            Deserialize(ia, universe);
 
+            ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(empire_manager);
+            ia >> BOOST_SERIALIZATION_NVP(species_manager);
+            ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+            Deserialize(ia, universe);
+            DebugLogger() << "Done deserializing";
         } catch (...) {
             // if binary deserialization failed, try more-portable XML deserialization
 
             // reset to start of stream (attempted binary serialization will have consumed some input...)
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
+            // allocate buffers for serialized gamestate
+            DebugLogger() << "Allocating buffers for XML deserialization...";
+            std::string serial_str, compressed_str;
+            try {
+                serial_str.reserve(    std::pow(2.0, 29.0));
+                compressed_str.reserve(std::pow(2.0, 26.0));
+            } catch (...) {
+                DebugLogger() << "Unable to preallocate full deserialization buffers. Attempting deserialization with dynamic buffer allocation.";
+            }
+
+            // create archive with (preallocated) buffer...
+            freeorion_xml_iarchive xia(ifs);
+            // read from save file: uncompressed header serialized data, with compressed main archive string at end...
+            // deserialize uncompressed save header info
+            xia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
+            xia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+            xia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
+            xia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
+            xia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
+            // extract compressed gamestate info
+            xia >> BOOST_SERIALIZATION_NVP(compressed_str);
+
+            // wrap compressed string in iostream::stream to extract compressed data
+            typedef boost::iostreams::basic_array_source<char> SourceDevice;
+            SourceDevice compressed_source(compressed_str.data(), compressed_str.size());
+            boost::iostreams::stream<SourceDevice> c_source(compressed_source);
+
+            // wrap uncompressed buffer string in iostream::stream to receive decompressed string
+            typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
+            InsertDevice serial_inserter(serial_str);
+            boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
+
             // set up filter to decompress data
             boost::iostreams::filtering_istreambuf i;
             i.push(boost::iostreams::zlib_decompressor());
-            i.push(ifs);
-
-            std::string serial_str;
-            try {
-                serial_str.reserve(std::pow(2.0, 29.0));
-            } catch (...) {
-                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
-            }
-
-            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
-
+            i.push(c_source);
             boost::iostreams::copy(i, s_sink);
+            s_sink.flush();
 
-            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
-            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
+            // wrap uncompressed buffer string in iostream::stream to extract decompressed string
+            SourceDevice serial_source(serial_str.data(), serial_str.size());
+            boost::iostreams::stream<SourceDevice> s_source(serial_source);
 
-            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
-
-
-            // extract xml data from stringstream
-            DebugLogger() << "Deserializing XML data";
-            freeorion_xml_iarchive ia(s_source);
-
-
-            DebugLogger() << "LoadGame : Passing Preview Data";
-            ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
-
-            DebugLogger() << "LoadGame : Reading Galaxy Setup Data";
-            ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-
-            DebugLogger() << "LoadGame : Reading Server Save Game Data";
-            ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
-            DebugLogger() << "LoadGame : Reading Player Save Game Data";
-            ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
-
-            DebugLogger() << "LoadGame : Reading Empire Save Game Data (Ignored)";
-            ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-            DebugLogger() << "LoadGame : Reading Empires Data";
-            ia >> BOOST_SERIALIZATION_NVP(empire_manager);
-            DebugLogger() << "LoadGame : Reading Species Data";
-            ia >> BOOST_SERIALIZATION_NVP(species_manager);
-            DebugLogger() << "LoadGame : Reading Combat Logs";
-            ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-            DebugLogger() << "LoadGame : Reading Universe Data";
-            Deserialize(ia, universe);
-            DebugLogger() << "LoadGame deserialized from " << serial_str.size() << " characters and has buffer capacity: " << serial_str.capacity();
+            // create archive with (preallocated) buffer...
+            freeorion_xml_iarchive xia2(s_source);
+            // deserialize main gamestate info
+            xia2 >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+            xia2 >> BOOST_SERIALIZATION_NVP(empire_manager);
+            xia2 >> BOOST_SERIALIZATION_NVP(species_manager);
+            xia2 >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+            Deserialize(xia2, universe);
         }
 
     } catch (const std::exception& err) {
@@ -388,34 +362,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
 
             // reset to start of stream (attempted binary serialization will have consumed some input...)
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
-
-            // set up filter to decompress data
-            boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor(15, 16384));
-            i.push(ifs);
-
-            std::string serial_str;
-            try {
-                serial_str.reserve(std::pow(2.0, 29.0));
-            } catch (...) {
-                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
-            }
-
-            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
-
-            boost::iostreams::copy(i, s_sink);
-
-            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
-            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
-
-            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
-
-
-            // extract xml data from stringstream
-            DebugLogger() << "Deserializing XML data";
-            freeorion_xml_iarchive ia(s_source);
+            freeorion_xml_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -428,13 +375,12 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
     }
 }
 
-void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data)
-{
+void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSaveHeaderData>& player_save_header_data) {
     SaveGamePreviewData ignored_save_preview_data;
     ServerSaveGameData  ignored_server_save_game_data;
     GalaxySetupData     ignored_galaxy_setup_data;
 
-    ScopedTimer timer("LoadPlayerSaveGameData: " + filename, true);
+    ScopedTimer timer("LoadPlayerSaveHeaderData: " + filename, true);
 
     try {
         DebugLogger() << "Reading player save game data from: " << filename;
@@ -452,7 +398,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-            ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
 
         } catch (...) {
             // if binary deserialization failed, try more-portable XML deserialization
@@ -460,41 +406,12 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
             // reset to start of stream (attempted binary serialization will have consumed some input...)
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+            freeorion_xml_iarchive ia(ifs);
 
-            // set up filter to decompress data
-            boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor(/*15, 1048576*/));   // specifying larger buffer size seems to help reading larger save files...
-            i.push(ifs);
-
-            std::string serial_str;
-            try {
-                serial_str.reserve(std::pow(2.0, 29.0));
-            } catch (...) {
-                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
-            }
-
-            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
-
-            boost::iostreams::copy(i, s_sink);
-
-            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
-            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
-
-            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
-
-
-            // extract xml data from stringstream
-            DebugLogger() << "Deserializing XML data";
-            freeorion_xml_iarchive ia(s_source);
-
-            DebugLogger() << "Deserializing ignored preview/setup data...";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-            DebugLogger() << "Deserializing player save game data...";
-            ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(player_save_header_data);
         }
         // skipping additional deserialization which is not needed for this function
         DebugLogger() << "Done reading player save game data...";
@@ -504,12 +421,11 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     }
 }
 
-void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data)
-{
-    SaveGamePreviewData             ignored_save_preview_data;
-    ServerSaveGameData              ignored_server_save_game_data;
-    std::vector<PlayerSaveGameData> ignored_player_save_game_data;
-    GalaxySetupData                 ignored_galaxy_setup_data;
+void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data) {
+    SaveGamePreviewData                 ignored_save_preview_data;
+    ServerSaveGameData                  ignored_server_save_game_data;
+    std::vector<PlayerSaveHeaderData>   ignored_player_save_header_data;
+    GalaxySetupData                     ignored_galaxy_setup_data;
 
     ScopedTimer timer("LoadEmpireSaveGameData: " + filename, true);
 
@@ -528,7 +444,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
 
         } catch (...) {
@@ -536,39 +452,12 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 
             // reset to start of stream (attempted binary serialization will have consumed some input...)
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
-
-            // set up filter to decompress data
-            boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor(15, 16384));
-            i.push(ifs);
-
-            std::string serial_str;
-            try {
-                serial_str.reserve(std::pow(2.0, 29.0));
-            } catch (...) {
-                DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
-            }
-
-            boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-            boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
-
-            boost::iostreams::copy(i, s_sink);
-
-            DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
-            //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
-
-            boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
-
-
-            // extract xml data from stringstream
-            DebugLogger() << "Deserializing XML data";
-            freeorion_xml_iarchive ia(s_source);
+            freeorion_xml_iarchive ia(ifs);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);
             ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
+            ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
             ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
         }
         // skipping additional deserialization which is not needed for this function

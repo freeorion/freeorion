@@ -17,19 +17,13 @@ struct GalaxySetupData;
 struct SaveGameUIData;
 struct ServerFSM;
 
-/** contains the data that must be saved for a single player.  Note that the m_empire member is not deallocated by
-    PlayerSaveGameData.  Users of PlayerSaveGameData are resposible for managing its lifetime. */
-struct PlayerSaveGameData {
-    PlayerSaveGameData(); ///< default ctor
-    PlayerSaveGameData(const std::string& name, int empire_id, const boost::shared_ptr<OrderSet>& orders,
-                       const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
-                       Networking::ClientType client_type); ///< ctor
+/** Contains basic data about a player in a game. */
+struct PlayerSaveHeaderData {
+    PlayerSaveHeaderData();
+    PlayerSaveHeaderData(const std::string& name, int empire_id, Networking::ClientType client_type); ///< ctor
 
     std::string                         m_name;
     int                                 m_empire_id;
-    boost::shared_ptr<OrderSet>         m_orders;
-    boost::shared_ptr<SaveGameUIData>   m_ui_data;
-    std::string                         m_save_state_string;
     Networking::ClientType              m_client_type;
 
 private:
@@ -38,8 +32,25 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** contains data that must be retained by the server when saving and loading a game that isn't player data or
-    the universe */
+/** Contains data that must be saved for a single player. */
+struct PlayerSaveGameData : public PlayerSaveHeaderData {
+    PlayerSaveGameData(); ///< default ctor
+    PlayerSaveGameData(const std::string& name, int empire_id, const boost::shared_ptr<OrderSet>& orders,
+                       const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
+                       Networking::ClientType client_type); ///< ctor
+
+    boost::shared_ptr<OrderSet>         m_orders;
+    boost::shared_ptr<SaveGameUIData>   m_ui_data;
+    std::string                         m_save_state_string;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** contains data that must be retained by the server when saving and loading a
+  * game that isn't player data or the universe */
 struct ServerSaveGameData {
     ServerSaveGameData();                               ///< default ctor
     ServerSaveGameData(int current_turn);
@@ -269,6 +280,14 @@ private:
 };
 
 // template implementations
+template <class Archive>
+void PlayerSaveHeaderData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_client_type);
+}
+
 template <class Archive>
 void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
 {

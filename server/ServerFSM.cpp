@@ -84,15 +84,14 @@ namespace {
                 ErrorLogger() << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
 
 
-            std::vector<PlayerSaveGameData> player_save_game_data;
-            LoadPlayerSaveGameData(single_player_setup_data.m_filename,
-                                   player_save_game_data);
+            std::vector<PlayerSaveHeaderData> player_save_header_data;
+            LoadPlayerSaveHeaderData(single_player_setup_data.m_filename, player_save_header_data);
 
             // find which player was the human (and thus the host) in the saved game
-            for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
-                 save_data_it != player_save_game_data.end(); ++save_data_it)
+            for (std::vector<PlayerSaveHeaderData>::const_iterator save_data_it = player_save_header_data.begin();
+                 save_data_it != player_save_header_data.end(); ++save_data_it)
             {
-                const PlayerSaveGameData& psgd = *save_data_it;
+                const PlayerSaveHeaderData& psgd = *save_data_it;
                 if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
                     return psgd.m_name;
             }
@@ -823,10 +822,9 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
             players.clear();
         }
 
-        std::vector<PlayerSaveGameData> player_save_game_data;
+        std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
-            LoadPlayerSaveGameData(m_single_player_setup_data->m_filename,
-                                   player_save_game_data);
+            LoadPlayerSaveHeaderData(m_single_player_setup_data->m_filename, player_save_header_data);
         } catch (const std::exception& e) {
             SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
             post_event(LoadSaveFileFailed());
@@ -834,10 +832,10 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         }
 
         // add player setup data for each player in saved gamed
-        for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
-             save_data_it != player_save_game_data.end(); ++save_data_it)
+        for (std::vector<PlayerSaveHeaderData>::const_iterator save_data_it = player_save_header_data.begin();
+             save_data_it != player_save_header_data.end(); ++save_data_it)
         {
-            const PlayerSaveGameData& psgd = *save_data_it;
+            const PlayerSaveHeaderData& psgd = *save_data_it;
             if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
                 psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             {
