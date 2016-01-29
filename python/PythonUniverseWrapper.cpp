@@ -629,7 +629,7 @@ namespace FreeOrionPython {
         /////////////////
         class_<Special, noncopyable>("special", no_init)
             .add_property("name",               make_function(&Special::Name,           return_value_policy<copy_const_reference>()))
-            .add_property("description",        make_function(&Special::Description,    return_value_policy<copy_const_reference>()))
+            .add_property("description",        &Special::Description)
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      return_value_policy<return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
             .add_property("dump",               &Special::Dump)

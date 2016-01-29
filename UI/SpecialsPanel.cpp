@@ -83,7 +83,7 @@ void SpecialsPanel::Update() {
 
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-        std::string desc = UserString(special->Description());
+        std::string desc = special->Description();
 
         if (it->second.second > 0.0f)
             desc += "\n" + boost::io::str(FlexibleFormat(UserString("SPECIAL_CAPACITY")) % DoubleToString(it->second.second, 2, false));
