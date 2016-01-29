@@ -3885,7 +3885,11 @@ ULTIMATE_STEALTH
 BAD_WEAPONS
 '''EffectsGroup
             description = "BAD_WEAPONS"
-            scope = Source
+            scope = And [
+                Source
+                Ship
+                Armed
+            ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 2
@@ -3897,7 +3901,11 @@ BAD_WEAPONS
 GOOD_WEAPONS
 '''EffectsGroup
             description = "GOOD_WEAPONS"
-            scope = Source
+            scope = And [
+                Source
+                Ship
+                Armed
+            ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 1
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 2
@@ -3909,7 +3917,11 @@ GOOD_WEAPONS
 GREAT_WEAPONS
 '''EffectsGroup
             description = "GREAT_WEAPONS"
-            scope = Source
+            scope = And [
+                Source
+                Ship
+                Armed
+            ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 2
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 4
@@ -3921,7 +3933,11 @@ GREAT_WEAPONS
 ULTIMATE_WEAPONS
 '''EffectsGroup
             description = "ULTIMATE_WEAPONS"
-            scope = Source
+            scope = And [
+                Source
+                Ship
+                Armed
+            ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 3
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 6
