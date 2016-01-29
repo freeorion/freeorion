@@ -9,6 +9,7 @@
 #include "Serialize.h"
 #include "Serialize.ipp"
 #include "ScopedTimer.h"
+#include "Version.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
@@ -31,7 +32,7 @@ namespace fs = boost::filesystem;
 
 namespace {
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
-
+    const std::string SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed, and the main gamestate information is stored as zlib-comprssed XML archive in the last entry in the main archive.");
     /// Splits time and date on separate lines for an ISO datetime string
     std::string split_time(const std::string& time) {
         std::string result = time;
@@ -79,42 +80,10 @@ namespace {
                 // reset to start of stream (attempted binary serialization will have consumed some input...)
                 boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
-                // set up filter to decompress data
-                boost::iostreams::filtering_istreambuf i;
-                i.push(boost::iostreams::zlib_decompressor(15, 16384));
-                i.push(ifs);
-
-                std::string serial_str;
-                try {
-                    serial_str.reserve(std::pow(2.0, 29.0));
-                } catch (...) {
-                    DebugLogger() << "Unable to preallocate full serialization buffer. Attempting deserialization with dynamic buffer allocation.";
-                }
-
-                boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-                boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s_sink(inserter);
-
-                {
-                    ScopedTimer timer("LoadSaveGamePreviewData File I/O and decompression: " + path.string(), true);
-                    boost::iostreams::copy(i, s_sink);
-
-                    DebugLogger() << "Decompressed " << serial_str.length() << " characters of XML";
-                }
-                //DebugLogger() << "Archive text:" << std::endl << std::endl << serial_str << std::endl << std::endl;
-
-                boost::iostreams::basic_array_source<char> device(serial_str.data(), serial_str.size());
-                boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s_source(device);
-
-
-                // extract xml data from stringstream
-                {
-                    ScopedTimer timer("LoadSaveGamePreviewData Deserialization: " + path.string(), true);
-                    DebugLogger() << "Deserializing XML data";
-                    freeorion_xml_iarchive ia(s_source);
-
-                    ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
-                    ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-                }
+                DebugLogger() << "Deserializing XML data";
+                freeorion_xml_iarchive ia(ifs);
+                ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
+                ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             }
 
             DebugLogger() << "Loaded preview with: " << save_preview_data.number_of_human_players << " human players";
@@ -137,6 +106,8 @@ namespace {
 
 SaveGamePreviewData::SaveGamePreviewData() :
     magic_number(PREVIEW_PRESENT_MARKER),
+    description(SAVE_FILE_DESCRIPTION),
+    freeorion_version(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     main_player_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     current_turn(-1),
@@ -150,9 +121,17 @@ bool SaveGamePreviewData::Valid() const
 template<class Archive>
 void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
 {
+    if (version >= 2) {
+        if (Archive::is_saving::value) {
+            description = SAVE_FILE_DESCRIPTION;
+            freeorion_version = FreeOrionVersionString();
+        }
+        ar & BOOST_SERIALIZATION_NVP(description)
+           & BOOST_SERIALIZATION_NVP(freeorion_version);
+    }
     ar & BOOST_SERIALIZATION_NVP(magic_number)
-       & BOOST_SERIALIZATION_NVP(main_player_name)
-       & BOOST_SERIALIZATION_NVP(main_player_empire_name)
+       & BOOST_SERIALIZATION_NVP(main_player_name);
+    ar & BOOST_SERIALIZATION_NVP(main_player_empire_name)
        & BOOST_SERIALIZATION_NVP(main_player_empire_colour)
        & BOOST_SERIALIZATION_NVP(save_time)
        & BOOST_SERIALIZATION_NVP(current_turn);

@@ -17,63 +17,47 @@
 #include "Directories.h"
 
 /** Contains preview information about a savegame.
- *  Stored the beginning of a savefile for quick access.
- */
+  * Stored the beginning of a savefile for quick access. */
 struct FO_COMMON_API SaveGamePreviewData {
-    /// Initialize with unknown markers.
-    SaveGamePreviewData();
+    SaveGamePreviewData();      /// Initialize with unknown markers.
+    bool Valid() const;         /// Checks that this is a valid preview
 
-    /// Checks that this is a valid preview
-    bool Valid() const;
+    static const short  PREVIEW_PRESENT_MARKER = 0xDA;  /// A marker for the presence of the header
+    short               magic_number;                   /// This should always contain PREVIEW_PRESENT_MARKER
 
-    /// A marker for the presence of the header
-    static const short PREVIEW_PRESENT_MARKER = 0xDA;
-    /// This should always contain PREVIEW_PRESENT_MARKER
-    short magic_number;
+    std::string         description;                    /// Bit of text explaining what this file contains as human-readable text
+    std::string         freeorion_version;              /// By what version of FreeOrion was this save generated
 
-    /// The name of the hosting player, or the single human player in single player games
-    std::string main_player_name;
-    /// The name of the empire of the main player
-    std::string main_player_empire_name;
-    /// The colour of the empire of the main player
-    GG::Clr main_player_empire_colour;
-    /// The turn the game as saved one
-    int current_turn;
-    /// The time the game was saved as ISO 8601 YYYY-MM-DD"T"HH:MM:SS±HH:MM or Z
-    std::string save_time;
-    /// The number of empires in the game
-    short number_of_empires;
-    /// The number of human players in the game
-    short number_of_human_players;
+    std::string         main_player_name;               /// The name of the hosting player, or the single human player in single player games
+    std::string         main_player_empire_name;        /// The name of the empire of the main player
+    GG::Clr             main_player_empire_colour;      /// The colour of the empire of the main player
+    int                 current_turn;                   /// The turn the game as saved one
+    std::string         save_time;                      /// The time the game was saved as ISO 8601 YYYY-MM-DD"T"HH:MM:SS±HH:MM or Z
+    short               number_of_empires;              /// The number of empires in the game
+    short               number_of_human_players;        /// The number of human players in the game
 
     template <class Archive>
-    void serialize (Archive& ar, unsigned int version);
+    void serialize(Archive& ar, unsigned int version);
 };
 
-BOOST_CLASS_VERSION(SaveGamePreviewData, 1);
+BOOST_CLASS_VERSION(SaveGamePreviewData, 2);
 
-/// Stores all aggregated information about a save file
+/** Stores all aggregated information about a save file */
 struct FO_COMMON_API FullPreview {
-    /// The name of the file
-    std::string filename;
-    /// The preview data from the file
+    std::string         filename;
     SaveGamePreviewData preview;
-    /// The galaxy setup data from the file
-    GalaxySetupData galaxy;
+    GalaxySetupData     galaxy;
 private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/// The preview information the server sends to the client.
+/** The preview information the server sends to the client. */
 struct FO_COMMON_API PreviewInformation{
-    /// A list of all subfolders of the save game directory, in the format /name1/child1/grandchild
-    std::vector<std::string> subdirectories;
-    /// The directory whose previews are being listed now
-    std::string folder;
-    /// The previews of the saves in this folder
-    std::vector<FullPreview> previews;
+    std::vector<std::string>    subdirectories; /// A list of all subfolders of the save game directory, in the format /name1/child1/grandchild
+    std::string                 folder;         /// The directory whose previews are being listed now
+    std::vector<FullPreview>    previews;       /// The previews of the saves in this folder
 private:
     friend class boost::serialization::access;
     template <class Archive>
