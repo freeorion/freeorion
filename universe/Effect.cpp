@@ -682,13 +682,72 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
 
     // get meter, evaluate new value, assign
     Meter* meter = ship->GetPartMeter(m_meter, part_name);
-    if (!meter) {
-        ErrorLogger() << "SetShipPartMeter::Execute couldn't find meter " << m_meter << " for ship part name: " << part_name;
+    if (!meter)
         return;
-    }
 
     double val = m_value->Eval(ScriptingContext(context, meter->Current()));
     meter->SetCurrent(val);
+}
+
+void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+    if (targets.empty())
+        return;
+    if (!m_part_name || !m_value) {
+        ErrorLogger() << "SetShipPartMeter::Execute missing part name or value ValueRefs";
+        return;
+    }
+    std::string part_name = m_part_name->Eval(context);
+
+    if (m_value->TargetInvariant()) {
+        // meter value does not depend on target, so handle with single ValueRef evaluation
+        float val = m_value->Eval(context);
+        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+            if ((*it)->ObjectType() != OBJ_SHIP)
+                continue;
+            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(*it);
+            if (!ship)
+                continue;
+            Meter* m = ship->GetPartMeter(m_meter, part_name);
+            if (!m) continue;
+            m->SetCurrent(val);
+        }
+        return;
+    } else if (m_value->SimpleIncrement()) {
+        // meter value is a consistent constant increment for each target, so handle with
+        // deep inspection single ValueRef evaluation
+        ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
+        if (!op) {
+            ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation...";
+            return;
+        }
+        // RHS should be a ConstantExpr
+        float increment = op->RHS()->Eval();
+        if (op->GetOpType() == ValueRef::PLUS) {
+            // do nothing to modify increment
+        } else if (op->GetOpType() == ValueRef::MINUS) {
+            increment = -increment;
+        } else {
+            ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS)";
+            return;
+        }
+        //DebugLogger() << "simple increment: " << increment;
+        // increment all target meters...
+        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+            if ((*it)->ObjectType() != OBJ_SHIP)
+                continue;
+            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(*it);
+            if (!ship)
+                continue;
+            Meter* m = ship->GetPartMeter(m_meter, part_name);
+            if (!m) continue;
+            m->AddToCurrent(increment);
+        }
+        return;
+    }
+
+    //DebugLogger() << "complicated meter adjustment...";
+    // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
+    EffectBase::Execute(context, targets);
 }
 
 std::string SetShipPartMeter::Description() const {
