@@ -3461,7 +3461,13 @@ NO_OFFENSE_TROOPS
 '''EffectsGroup
             description = "NO_OFFENSE_TROOPS"
             scope = Source
-            activation = Ship
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                ]
+            ]
             stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "NO_OFFENSIVE_TROOPS_LABEL"
             effects = [
@@ -3474,7 +3480,13 @@ BAD_OFFENSE_TROOPS
 '''EffectsGroup
             description = "BAD_OFFENSE_TROOPS"
             scope = Source
-            activation = Ship
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                ]
+            ]
             stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "BAD_OFFENSIVE_TROOPS_LABEL"
             effects = [
@@ -3495,7 +3507,13 @@ GOOD_OFFENSE_TROOPS
 '''EffectsGroup
             description = "GOOD_OFFENSE_TROOPS"
             scope = Source
-            activation = Ship
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                ]
+            ]
             stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "GOOD_OFFENSIVE_TROOPS_LABEL"
             effects = [
@@ -3508,7 +3526,13 @@ GREAT_OFFENSE_TROOPS
 '''EffectsGroup
             description = "GREAT_OFFENSE_TROOPS"
             scope = Source
-            activation = Ship
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                ]
+            ]
             stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "GREAT_OFFENSIVE_TROOPS_LABEL"
             effects = [
@@ -3521,7 +3545,13 @@ ULTIMATE_OFFENSE_TROOPS
 '''EffectsGroup
             description = "ULTIMATE_OFFENSE_TROOPS"
             scope = Source
-            activation = Ship
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
+                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                ]
+            ]
             stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
             accountinglabel = "ULTIMATE_OFFENSIVE_TROOPS_LABEL"
             effects = [
@@ -3885,10 +3915,13 @@ ULTIMATE_STEALTH
 BAD_WEAPONS
 '''EffectsGroup
             description = "BAD_WEAPONS"
-            scope = And [
-                Source
+            scope = Source
+            activation = And [
                 Ship
-                Armed
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
@@ -3901,10 +3934,13 @@ BAD_WEAPONS
 GOOD_WEAPONS
 '''EffectsGroup
             description = "GOOD_WEAPONS"
-            scope = And [
-                Source
+            scope = Source
+            activation = And [
                 Ship
-                Armed
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 1
@@ -3917,10 +3953,13 @@ GOOD_WEAPONS
 GREAT_WEAPONS
 '''EffectsGroup
             description = "GREAT_WEAPONS"
-            scope = And [
-                Source
+            scope = Source
+            activation = And [
                 Ship
-                Armed
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 2
@@ -3933,10 +3972,13 @@ GREAT_WEAPONS
 ULTIMATE_WEAPONS
 '''EffectsGroup
             description = "ULTIMATE_WEAPONS"
-            scope = And [
-                Source
+            scope = Source
+            activation = And [
                 Ship
-                Armed
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 3
