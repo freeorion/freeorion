@@ -3464,8 +3464,8 @@ NO_OFFENSE_TROOPS
             activation = And [
                 Ship
                 Or [
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
                 ]
             ]
             stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
@@ -3483,8 +3483,8 @@ BAD_OFFENSE_TROOPS
             activation = And [
                 Ship
                 Or [
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
                 ]
             ]
             stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
@@ -3510,8 +3510,8 @@ GOOD_OFFENSE_TROOPS
             activation = And [
                 Ship
                 Or [
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
                 ]
             ]
             stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
@@ -3529,8 +3529,8 @@ GREAT_OFFENSE_TROOPS
             activation = And [
                 Ship
                 Or [
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
                 ]
             ]
             stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
@@ -3548,8 +3548,8 @@ ULTIMATE_OFFENSE_TROOPS
             activation = And [
                 Ship
                 Or [
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD"
-                    DesignHasPart low = 1 high = 999  name = "GT_TROOP_POD_2"
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
                 ]
             ]
             stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
@@ -3918,10 +3918,10 @@ BAD_WEAPONS
             scope = Source
             activation = And [
                 Ship
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+                DesignHasPart name = "SR_WEAPON_1_1"
+                DesignHasPart name = "SR_WEAPON_2_1"
+                DesignHasPart name = "SR_WEAPON_3_1"
+                DesignHasPart name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
@@ -3937,10 +3937,10 @@ GOOD_WEAPONS
             scope = Source
             activation = And [
                 Ship
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+                DesignHasPart name = "SR_WEAPON_1_1"
+                DesignHasPart name = "SR_WEAPON_2_1"
+                DesignHasPart name = "SR_WEAPON_3_1"
+                DesignHasPart name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 1
@@ -3956,10 +3956,10 @@ GREAT_WEAPONS
             scope = Source
             activation = And [
                 Ship
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+                DesignHasPart name = "SR_WEAPON_1_1"
+                DesignHasPart name = "SR_WEAPON_2_1"
+                DesignHasPart name = "SR_WEAPON_3_1"
+                DesignHasPart name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 2
@@ -3975,10 +3975,10 @@ ULTIMATE_WEAPONS
             scope = Source
             activation = And [
                 Ship
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
-                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+                DesignHasPart name = "SR_WEAPON_1_1"
+                DesignHasPart name = "SR_WEAPON_2_1"
+                DesignHasPart name = "SR_WEAPON_3_1"
+                DesignHasPart name = "SR_WEAPON_4_1"
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 3

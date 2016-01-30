@@ -1258,8 +1258,8 @@ private:
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
 struct FO_COMMON_API Condition::DesignHasPart : public Condition::ConditionBase {
-    DesignHasPart(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
-                  ValueRef::ValueRefBase<std::string>* name) :
+    DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low = 0,
+                  ValueRef::ValueRefBase<int>* high = 0) :
         ConditionBase(),
         m_low(low),
         m_high(high),
@@ -1297,8 +1297,8 @@ private:
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
   * the specified \a part_class */
 struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::ConditionBase {
-    DesignHasPartClass(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
-                       ShipPartClass part_class) :
+    DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
+                       ValueRef::ValueRefBase<int>* high) :
         ConditionBase(),
         m_low(low),
         m_high(high),

@@ -84,19 +84,19 @@ namespace {
                 ;
 
             design_has_part
-                =    tok.DesignHasPart_
-                >    parse::label(Low_token)   > flexible_int_ref [ _a = _1 ]
-                >    parse::label(High_token)  > flexible_int_ref [ _b = _1 ]
-                >    parse::label(Name_token)  > string_value_ref
-                [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
+                =   (   tok.DesignHasPart_
+                        > -(parse::label(Low_token)   > flexible_int_ref [ _a = _1 ])
+                        > -(parse::label(High_token)  > flexible_int_ref [ _b = _1 ])
+                    )   >   parse::label(Name_token)  > string_value_ref
+                    [ _val = new_<Condition::DesignHasPart>(_1, _a, _b) ]
                 ;
 
             design_has_part_class
-                =    tok.DesignHasPartClass_
-                >    parse::label(Low_token)   > flexible_int_ref [ _a = _1 ]
-                >    parse::label(High_token)  > flexible_int_ref [ _b = _1 ]
-                >    parse::label(Class_token) > parse::enum_parser<ShipPartClass>()
-                [ _val = new_<Condition::DesignHasPartClass>(_a, _b, _1) ]
+                =   (   tok.DesignHasPartClass_
+                        > -(parse::label(Low_token)   > flexible_int_ref [ _a = _1 ])
+                        > -(parse::label(High_token)  > flexible_int_ref [ _b = _1 ])
+                    )   >   parse::label(Class_token) > parse::enum_parser<ShipPartClass>()
+                    [ _val = new_<Condition::DesignHasPartClass>(_1, _a, _b) ]
                 ;
 
             in_system

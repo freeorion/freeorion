@@ -4667,7 +4667,7 @@ void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context,
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         std::string name = (m_name ? m_name->Eval(local_context) : "");
-        int low =          (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+        int low =          (m_low ? std::max(0, m_low->Eval(local_context)) : 1);
         int high =         (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
         EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, name));
     } else {
@@ -4692,7 +4692,7 @@ bool Condition::DesignHasPart::SourceInvariant() const
            (!m_name || m_name->SourceInvariant()); }
 
 std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const {
-    std::string low_str = "0";
+    std::string low_str = "1";
     if (m_low) {
         low_str = ValueRef::ConstantExpr(m_low) ?
                     boost::lexical_cast<std::string>(m_low->Eval()) :
@@ -4820,14 +4820,15 @@ void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context,
                                          ObjectSet& matches, ObjectSet& non_matches,
                                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    bool simple_eval_safe = (!m_low || m_low->LocalCandidateInvariant()) &&
+                            (!m_high || m_high->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        int low =  std::max(0, m_low->Eval(local_context));
-        int high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+        int low =          (m_low ? std::max(0, m_low->Eval(local_context)) : 1);
+        int high =         (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
         EvalImpl(matches, non_matches, search_domain, DesignHasPartClassSimpleMatch(low, high, m_class));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -4845,7 +4846,7 @@ bool Condition::DesignHasPartClass::SourceInvariant() const
 { return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
 
 std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const {
-    std::string low_str = "0";
+    std::string low_str = "1";
     if (m_low) {
         low_str = ValueRef::ConstantExpr(m_low) ?
                     boost::lexical_cast<std::string>(m_low->Eval()) :
@@ -4865,8 +4866,15 @@ std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/)
                % UserString(boost::lexical_cast<std::string>(m_class)));
 }
 
-std::string Condition::DesignHasPartClass::Dump() const
-{ return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + " high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class)); }
+std::string Condition::DesignHasPartClass::Dump() const {
+    std::string retval = DumpIndent() + "DesignHasPartClass";
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += " class = " + UserString(boost::lexical_cast<std::string>(m_class));
+    return retval;
+}
 
 bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
