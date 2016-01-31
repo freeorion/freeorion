@@ -124,10 +124,9 @@ namespace Condition {
 }
 
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
-
 FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition::ConditionBase*>& conditions,
-                                               TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
-                                               TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
+                                                     TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
+                                                     TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
 
 /** Returns a single string which describes a vector of Conditions. If multiple
 * conditions are passed, they are treated as if they were contained by an And

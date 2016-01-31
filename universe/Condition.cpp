@@ -177,8 +177,8 @@ namespace {
 }
 
 std::string ConditionFailedDescription(const std::vector<Condition::ConditionBase*>& conditions,
-    TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
-    TemporaryPtr<const UniverseObject> source_object/* = 0*/)
+                                       TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
+                                       TemporaryPtr<const UniverseObject> source_object/* = 0*/)
 {
     if (conditions.empty())
         return UserString("NONE");

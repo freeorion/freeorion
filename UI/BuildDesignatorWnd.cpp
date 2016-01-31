@@ -277,11 +277,11 @@ namespace {
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
 
             // show build conditions
-            std::string EnqueueAndLocationConditionFailedText = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
-            if (!EnqueueAndLocationConditionFailedText.empty())
+            std::string enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
+            if (!enqueue_and_location_condition_failed_text.empty())
                 if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
-                        std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
-                        main_text += "\n\n" + failed_cond_loc + ":\n" + EnqueueAndLocationConditionFailedText;
+                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
             }
 
             // create tooltip
@@ -332,11 +332,11 @@ namespace {
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
             // show build conditions
-            std::string LocationConditionFailedText = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
-            if (!LocationConditionFailedText.empty())
+            std::string location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
+            if (!location_condition_failed_text.empty())
                 if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
-                    main_text += ("\n\n" + failed_cond_loc + ":\n" + LocationConditionFailedText);
+                    main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
 
             // create tooltip
