@@ -299,6 +299,65 @@ namespace {
             return;
         }
     }
+
+    std::string GetStatsBase(const ShipDesign* design) {
+        float structure = design->Structure();
+        float attack = design->AdjustedAttack(0.0);
+        float attack3 = design->AdjustedAttack(3.0);
+        float attack5 = design->AdjustedAttack(5.0);
+        float attack10 = design->AdjustedAttack(10.0);
+        float attack15 = design->AdjustedAttack(15.0);
+        float strength = std::pow(attack * structure, 0.6f);
+        float strength3 = std::pow(attack3 * structure, 0.6f);
+        float strength5 = std::pow(attack5 * structure, 0.6f);
+        float strength10 = std::pow(attack10 * structure, 0.6f);
+        float strength15 = std::pow(attack15 * structure, 0.6f);
+        float productioncost = 0.0f;
+        float productiontime = 0.0f;
+        float productionperturn = 0.0f;
+        float strengthperpp = 0.0f;
+
+        // get empire id and location to use for cost and time comparisons
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const Empire* empire = GetEmpire(empire_id);  // may be 0
+        int loc_id = INVALID_OBJECT_ID;
+        if (empire) {
+            TemporaryPtr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
+            loc_id = location ? location->ID() : INVALID_OBJECT_ID;
+            productioncost = design->ProductionCost(empire_id, loc_id);
+            productiontime = design->ProductionTime(empire_id, loc_id);
+            productionperturn = design->PerTurnCost(empire_id, loc_id);
+        }
+
+        if (productioncost > 0) {
+            strengthperpp = strength / productioncost;
+        }
+
+        return str(FlexibleFormat(UserString("DESIGN_SHIP_STATS_BASE_STR"))
+                   % attack
+                   % attack3
+                   % attack5
+                   % attack10
+                   % attack15
+                   % structure
+                   % design->Shields()
+                   % design->Speed()
+                   % design->Fuel()
+                   % design->Detection()
+                   % design->Stealth()
+                   % design->ColonyCapacity()
+                   % design->TroopCapacity()
+                   % strength
+                   % strength3
+                   % strength5
+                   % strength10
+                   % strength15
+                   % productioncost
+                   % productiontime
+                   % productionperturn
+                   % strengthperpp
+                   );
+    }
 }
 
 //////////////////////////////////////////////////
@@ -2586,6 +2645,7 @@ private:
     GG::Edit*           m_design_description;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
+    GG::Label*          m_design_stats;
     bool                m_disabled_by_name; // if the design confirm button is currently disabled due to empty name
 
     boost::signals2::connection             m_empire_designs_changed_signal;
@@ -2610,6 +2670,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_design_description(0),
     m_confirm_button(0),
     m_clear_button(0),
+    m_design_stats(0),
     m_disabled_by_name(false)
 {
     SetChildClippingMode(ClipToClient);
@@ -2620,6 +2681,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"));
     m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
+    m_design_stats = new CUILabel("", GG::FORMAT_LEFT | GG::FORMAT_TOP);
 
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -2629,6 +2691,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     AttachChild(m_design_description);
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
+    AttachChild(m_design_stats);
 
     GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
     GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
@@ -3014,6 +3077,15 @@ void DesignWnd::MainPanel::DoLayout() {
         GG::Y y(background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
     }
+
+    // place design stats above all other doesn't 
+    ul.x = GG::X(PAD);
+    ul.y += m_design_name->Height();
+    // no clipping
+    lr.x = GG::X(100);
+    lr.y = ClientHeight();
+    m_design_stats->SizeMove(ul,lr);
+
 }
 
 void DesignWnd::MainPanel::DesignChanged() {
@@ -3111,8 +3183,11 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     // update stored design
     try {
-        m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                                                 hull, parts, icon, ""));
+        ShipDesign* design = new ShipDesign(name, description, CurrentTurn(),
+                                            ClientApp::GetApp()->EmpireID(),
+                                            hull, parts, icon, "");
+        m_design_stats->SetText(GetStatsBase(design));
+        m_incomplete_design.reset(design);
     } catch (const std::exception& e) {
         // had a weird crash in the above call a few times, but I can't seem to
         // replicate it now.  hopefully catching any exception here will
