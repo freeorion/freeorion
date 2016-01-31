@@ -608,10 +608,13 @@ std::string SetMeter::Dump() const {
     case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
     case METER_TARGET_HAPPINESS:    retval += "TargetHappiness"; break;
 
+    case METER_MAX_CAPACITY:        retval += "MaxCapacity"; break;
+
     case METER_MAX_FUEL:            retval += "MaxFuel"; break;
     case METER_MAX_SHIELD:          retval += "MaxShield"; break;
     case METER_MAX_STRUCTURE:       retval += "MaxStructure"; break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense"; break;
+    case METER_MAX_SUPPLY:          retval += "MaxSupply"; break;
     case METER_MAX_TROOPS:          retval += "MaxTroops"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
@@ -621,14 +624,17 @@ std::string SetMeter::Dump() const {
     case METER_CONSTRUCTION:        retval += "Construction"; break;
     case METER_HAPPINESS:           retval += "Happiness"; break;
 
+    case METER_CAPACITY:            retval += "Capacity"; break;
+
     case METER_FUEL:                retval += "Fuel"; break;
     case METER_SHIELD:              retval += "Shield"; break;
     case METER_STRUCTURE:           retval += "Structure"; break;
     case METER_DEFENSE:             retval += "Defense"; break;
+    case METER_SUPPLY:              retval += "Supply"; break;
     case METER_TROOPS:              retval += "Troops"; break;
 
     case METER_REBEL_TROOPS:        retval += "RebelTroops"; break;
-    case METER_SUPPLY:              retval += "Supply"; break;
+    case METER_SIZE:                retval += "Size"; break;
     case METER_STEALTH:             retval += "Stealth"; break;
     case METER_DETECTION:           retval += "Detection"; break;
     case METER_SPEED:               retval += "Speed"; break;
