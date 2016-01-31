@@ -1630,9 +1630,14 @@ void MultiTurnProgressBar::Render() {
     // draw predicted bar of next turn
     GG::X completed_bar_width(std::max(1.0, Value(Width() * m_turns_completed / m_total_turns)));
     GG::X predicted_bar_width(Value(Width() * (m_turn_spending / m_total_cost)));
+    
     if (predicted_bar_width > 3) {
         GG::Pt predicted_bar_ul(ul.x + completed_bar_width - 1, ul.y);
-        GG::Pt predicted_bar_lr(ul.x + completed_bar_width + predicted_bar_width, lr.y);
+        GG::Pt predicted_bar_lr;
+        if ((completed_bar_width + predicted_bar_width) > Width()) // cut if beyond right border
+            predicted_bar_lr = GG::Pt(ul.x + Width(), lr.y);
+        else
+            predicted_bar_lr = GG::Pt(ul.x + completed_bar_width + predicted_bar_width, lr.y);
         FlatRectangle(predicted_bar_ul, predicted_bar_lr, GG::LightColor(m_bar_color), m_outline_color, 1);
     }
 
