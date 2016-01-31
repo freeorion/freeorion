@@ -193,7 +193,7 @@ namespace {
     //////////////////////////////////////////////////
     class QueueProductionItemPanel : public GG::Control {
     public:
-        QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost,
+        QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost, double total_cost,
                                  int turns, int number, int turns_completed, double partially_complete_turn);
 
         virtual void    Render();
@@ -328,7 +328,7 @@ namespace {
             if (progress == -1.0f)
                 progress = 0.0f;
 
-            m_panel = new QueueProductionItemPanel(w, elem, elem.allocated_pp, minimum_turns, elem.remaining,
+            m_panel = new QueueProductionItemPanel(w, elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
                                                    static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
                                                    std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
             Resize(m_panel->Size());
@@ -381,7 +381,7 @@ namespace {
     const int MARGIN = 2;
 
     QueueProductionItemPanel::QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build,
-                                                       double turn_spending, int turns, int number,
+                                                       double turn_spending, double total_cost, int turns, int number,
                                                        int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
         m_build(build),
@@ -455,7 +455,7 @@ namespace {
             m_location_text->SetTextColor(location_clr);
         }
 
-        m_progress_bar = new MultiTurnProgressBar(turns, turns_completed + partially_complete_turn,
+        m_progress_bar = new MultiTurnProgressBar(turns, turns_completed + partially_complete_turn, total_cost, turn_spending,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
                                                   m_in_progress

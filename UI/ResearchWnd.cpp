@@ -136,7 +136,7 @@ namespace {
         top += m_name_text->Height();
 
         m_progress_bar = new MultiTurnProgressBar(tech ? tech->ResearchTime(m_empire_id) : 1,
-                                                  turns_completed,
+                                                  turns_completed, tech->ResearchCost(m_empire_id), turn_spending,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
                                                   m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );

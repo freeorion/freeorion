@@ -489,7 +489,7 @@ class MultiTurnProgressBar : public GG::Control {
 public:
     /** \name Structors */ //@{
     /** ctor */
-    MultiTurnProgressBar(int total_turns, double turns_completed,
+    MultiTurnProgressBar(int total_turns, double turns_completed, double total_cost, double turn_spending,
                          const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color);
     //@}
 
@@ -500,6 +500,8 @@ public:
 private:
     int     m_total_turns;
     double  m_turns_completed;
+    double  m_total_cost;
+    double  m_turn_spending;
     GG::Clr m_bar_color;
     GG::Clr m_background;
     GG::Clr m_outline_color;
