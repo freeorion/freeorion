@@ -427,7 +427,7 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
         }
 
         // for non-meter effects, can do default batch execute
-        if (!accounting_map || (!set_meter_effect && !set_ship_part_meter_effect)) {
+        if ((!accounting_map && !log_verbose) || (!set_meter_effect && !set_ship_part_meter_effect)) {
             Execute(source_context, targets);
             continue;
         }
@@ -479,7 +479,8 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
             info.running_meter_total = meter->Current();
 
             // add accounting for this effect to end of vector
-            (*accounting_map)[target->ID()][meter_type].push_back(info);
+            if (accounting_map)
+                (*accounting_map)[target->ID()][meter_type].push_back(info);
         }
 
         if (log_verbose) {
