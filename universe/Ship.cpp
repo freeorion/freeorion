@@ -603,14 +603,14 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 }
 
 void Ship::ResetPairedActiveMeters() {
-    UniverseObject::ResetTargetMaxUnpairedMeters();
+    UniverseObject::ResetPairedActiveMeters();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
        if (it->first.first == METER_CAPACITY) {
-            // special case for capacity... if it has an associated max capacity, don't reset it, otherwise do
+            // special case for capacity... if it has no associated max capacity, don't reset it, as it is unpaired
             PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
             if (max_it == m_part_meters.end())
-                it->second.ResetCurrent();
+                it->second.SetCurrent(it->second.Initial());
         }
     }
 }
