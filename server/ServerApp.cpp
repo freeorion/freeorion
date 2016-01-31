@@ -2848,7 +2848,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // execute all effects and update meters prior to production, research, etc.
     Seed(CurrentTurn());
-    m_universe.ApplyAllEffectsAndUpdateMeters();
+    m_universe.ApplyAllEffectsAndUpdateMeters(false);
 
     // regenerate system connectivity graph after executing effects, which may
     // have added or removed starlanes.

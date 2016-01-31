@@ -58,7 +58,7 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     DebugLogger() << "Applying first turn effects and updating meters";
 
     // Apply effects for 1st turn.
-    universe.ApplyAllEffectsAndUpdateMeters();
+    universe.ApplyAllEffectsAndUpdateMeters(false);
     // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
     universe.BackPropegateObjectMeters();
