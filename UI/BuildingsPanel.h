@@ -65,7 +65,7 @@ public:
     /** Constructor for use when building is partially complete, to show
       * progress bar. */
     BuildingIndicator(GG::X w, const std::string& building_type,
-                      double turns_completed, double total_turns);
+                      double turns_completed, double total_turns, double total_cost, double turn_spending);
 
     /** \name Mutators */ //@{
     virtual void    Render();

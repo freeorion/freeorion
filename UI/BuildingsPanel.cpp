@@ -155,12 +155,14 @@ void BuildingsPanel::Update() {
 
         double total_cost;
         int total_turns;
+        double turn_spending = elem.allocated_pp;
         boost::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = total_turns * std::min<double>(1.0, progress / total_cost);
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
-                                                       turns_completed, total_turns);
+                                                       turns_completed, total_turns, total_cost, turn_spending);
+
         m_building_indicators.push_back(ind);
     }
 }
@@ -272,7 +274,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
-                                     double turns_completed, double total_turns) :
+                                     double turns_completed, double total_turns, double total_cost, double turn_spending) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
     m_scrap_indicator(0),
@@ -291,7 +293,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
-    m_progress_bar = new MultiTurnProgressBar(total_turns, turns_completed, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+    m_progress_bar = new MultiTurnProgressBar(total_turns, turns_completed, total_cost, turn_spending, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                               ClientUI::TechWndProgressBarColor(), GG::LightColor(ClientUI::ResearchableTechFillColor()));
     AttachChild(m_progress_bar);
 

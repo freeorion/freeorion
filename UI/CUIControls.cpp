@@ -1605,12 +1605,14 @@ void ProductionInfoPanel::DoLayout() {
 //////////////////////////////////////////////////
 // MultiTurnProgressBar
 //////////////////////////////////////////////////
-MultiTurnProgressBar::MultiTurnProgressBar(int total_turns, double turns_completed,
+MultiTurnProgressBar::MultiTurnProgressBar(int total_turns, double turns_completed, double total_cost, double turn_spending,
                                            const GG::Clr& bar_color, const GG::Clr& background,
                                            const GG::Clr& outline_color) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_total_turns(std::max(1, total_turns)),
     m_turns_completed(std::max(0.0, std::min<double>(turns_completed, m_total_turns))),
+    m_total_cost(total_cost),
+    m_turn_spending(turn_spending),
     m_bar_color(bar_color),
     m_background(background),
     m_outline_color(outline_color)
@@ -1624,12 +1626,27 @@ void MultiTurnProgressBar::Render() {
 
     // draw background over whole area
     FlatRectangle(ul, lr, m_background, m_outline_color, 1);
-    // draw completed portion bar
+
+    // draw predicted bar of next turn
     GG::X completed_bar_width(std::max(1.0, Value(Width() * m_turns_completed / m_total_turns)));
+    GG::X predicted_bar_width(Value(Width() * (m_turn_spending / m_total_cost)));
+    
+    if (predicted_bar_width > 3) {
+        GG::Pt predicted_bar_ul(ul.x + completed_bar_width - 1, ul.y);
+        GG::Pt predicted_bar_lr;
+        if ((completed_bar_width + predicted_bar_width) > Width()) // cut if beyond right border
+            predicted_bar_lr = GG::Pt(ul.x + Width(), lr.y);
+        else
+            predicted_bar_lr = GG::Pt(ul.x + completed_bar_width + predicted_bar_width, lr.y);
+        FlatRectangle(predicted_bar_ul, predicted_bar_lr, GG::LightColor(m_bar_color), m_outline_color, 1);
+    }
+
+    // draw completed portion bar
     if (completed_bar_width > 3) {
         GG::Pt bar_lr(ul.x + completed_bar_width, lr.y);
         FlatRectangle(ul, bar_lr, m_bar_color, m_outline_color, 1);
     }
+
     // draw segment separators
     if (segmented) {
         GG::GL2DVertexBuffer verts;
