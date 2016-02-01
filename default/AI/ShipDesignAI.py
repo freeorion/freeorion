@@ -463,18 +463,8 @@ class ShipDesignCache(object):
                      if "%s_%s" % (TESTDESIGN_NAME_HULL, hullname) not in testdesign_names_hull]:
             partlist = len(hull.slots) * [""]
             testdesign_name = "%s_%s" % (TESTDESIGN_NAME_HULL, hull.name)
-            res = fo.issueCreateShipDesignOrder(testdesign_name, "TESTPURPOSE ONLY", hull.name,
-                                                partlist, "", "fighter", False)
-            if res:
-                if verbose:
-                    print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
-                # update cache since we just created a new design in fo
-                # the return value is ignored
-                # TODO: better cache management
-                _get_design_by_name(testdesign_name, update_invalid=True)
-            else:
-                print "Error: When adding test design %s - got result %s but expected 1" % (testdesign_name, res)
-                continue
+            _create_ship_design(testdesign_name, hull.name, partlist,
+                                description="TESTPURPOSE ONLY", verbose=verbose)
 
         # 2. Cache the list of buildable ship hulls for each planet
         print "Caching buildable hulls per planet..."
@@ -532,18 +522,11 @@ class ShipDesignCache(object):
                     partlist = num_slots * [""]
                     partlist[slot_index] = part.name
                     testdesign_name = "%s_%s_%s" % (TESTDESIGN_NAME_PART, part.name, testhull)
-                    res = fo.issueCreateShipDesignOrder(testdesign_name, "TESTPURPOSE ONLY", testhull,
-                                                        partlist, "", "fighter", False)
+                    res = _create_ship_design(testdesign_name, testhull, partlist,
+                                              description="TESTPURPOSE ONLY", verbose=verbose)
                     if res:
-                        print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
                         testdesign_names_part.append(testdesign_name)
-                        # update cache since we just created a new design in fo
-                        # the return value is ignored
-                        # TODO: better cache management
-                        _get_design_by_name(testdesign_name, update_invalid=True)
                     else:
-                        print "Failure: Unknown error when adding test design %s" % testdesign_name,
-                        print "got result %d but expected 1" % res
                         continue
                     needs_update.remove(part)  # We only need one design per part, not for every possible slot
 
@@ -944,6 +927,9 @@ class ShipDesigner(object):
                     if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, [])
                             and self._partclass_in_design(STEALTH)):
                         self.stealth += value
+                # STACKING_RULES configures NO_EFFECT_WITH_CLOAKS -> ignore
+                elif token == AIDependencies.STACKING_RULES:
+                    continue
                 elif token == AIDependencies.ASTEROID_STEALTH:
                     self.asteroid_stealth += value
                 elif token == AIDependencies.SHIELDS:
@@ -1012,17 +998,11 @@ class ShipDesigner(object):
 
         if verbose:
             print "Trying to add Design... %s" % design_name
-        res = fo.issueCreateShipDesignOrder(design_name, self.description, self.hull.name,
-                                            self.partnames, "", "fighter", False)
-        if res:
-            if verbose:
-                print "Success: Added Design %s, with result %d" % (design_name, res)
-        else:
-            print "Failure: Tried to add design %s but returned %s, expected 1" % (design_name, res)
+        res = _create_ship_design(design_name, self.hull.name, self.partnames,
+                                  description=self.description, verbose=verbose)
+        if not res:
             return None
-        # this call to _get_design_by_name also updates the shipdesign cache for design_name
-        # TODO: better cache management
-        new_design = _get_design_by_name(design_name, update_invalid=True)
+        new_design = _get_design_by_name(design_name)
         if new_design:
             Cache.map_reference_design_name[reference_name] = design_name
             return new_design.id
@@ -1924,6 +1904,81 @@ class KrillSpawnerShipDesigner(ShipDesigner):
             ret_val[-1] = num_slots - 1
         return ret_val
 
+
+def _create_ship_design(design_name, hull_name, part_names, model="fighter",
+                        description="", icon="", name_desc_in_string_table=False,
+                        verbose=False):
+    """This is basically a wrapper around fo.issueCreateShipDesignOrder to 
+    also update the cache.
+
+    :param design_name: the name of the design
+    :type design_name: str
+    :param description: a human readable description of the design
+    :type description: str
+    :param hull_name: the name of the hull to use
+    :type hull_name: str
+    :param part_names: list of partnames (string)
+    :type part_names: list
+    :param icon: an icon that is shown (for instance in the Production dialog)
+    :type icon: str
+    :param model: a modelname
+    :type model: str
+    :param name_desc_in_string_table: lookup the name in the stringstable
+    :type name_desc_in_string_table: bool
+    :param verbose: write some debugging output
+    :type verbose: bool
+
+    :returns: bool (True on success False on error)
+    """
+
+    res = bool(fo.issueCreateShipDesignOrder(design_name, description,
+                                             hull_name, part_names, icon,
+                                             model, name_desc_in_string_table))
+    if res:
+        if verbose:
+            print "Success: Added Design %s, with result %d" % (design_name, res)
+        # update cache
+        design = _update_design_by_name_cache(design_name, verbose=verbose)
+        if design:
+            if verbose:
+                print "Success: Design %s stored in design_by_name_cache" % design_name
+        else:
+            print "Failure: Tried to get just created design %s but got None" % design_name
+    else:
+        print "Failure: Tried to add design %s but returned %s, expected 1" % (design_name, res)
+
+    return res
+
+
+def _update_design_by_name_cache(design_name, verbose=False):
+    """Updates the design by name cache
+
+    :param design_name: the name of the design that needs updating
+    :type design_name: str
+    :param verbose: write some debugging output
+    :type verbose: bool
+
+    :return: shipDesign object or None
+    """
+
+    design = None
+    for design_id in fo.getEmpire().allShipDesigns:
+        if verbose:
+            print "Checking design %s in search for %s" % (fo.getShipDesign(design_id).name(False), design_name)
+        if fo.getShipDesign(design_id).name(False) == design_name:
+            design = fo.getShipDesign(design_id)
+            break
+
+    if design:
+        Cache.design_id_by_name[design_name] = design.id
+    else:
+        # invalid design
+        print "Shipdesign %s seems not to exist: Caching as invalid design." % design_name
+        Cache.design_id_by_name[design_name] = EnumsAI.AIShipDesignTypes.SHIPDESIGN_INVALID
+
+    return design
+
+
 def _get_design_by_name(design_name, verbose=False, update_invalid=False):
     """Return the shipDesign object of the design with the name design_name.
 
@@ -1944,22 +1999,10 @@ def _get_design_by_name(design_name, verbose=False, update_invalid=False):
     if design_name in Cache.design_id_by_name and not (
             update_invalid and (Cache.design_id_by_name[design_name] == EnumsAI.AIShipDesignTypes.SHIPDESIGN_INVALID)):
         design = fo.getShipDesign(Cache.design_id_by_name[design_name])
-        return design
     else:
-        design = None
-        for ID in fo.getEmpire().allShipDesigns:
-            if verbose:
-                print "Checking design %s in search for %s" % (fo.getShipDesign(ID).name(False), design_name)
-            if fo.getShipDesign(ID).name(False) == design_name:
-                design = fo.getShipDesign(ID)
-                break
-        if design:
-            Cache.design_id_by_name[design_name] = design.id
-        else:
-            # invalid design
-            print "Shipdesign %s seems not to exist: Caching as invalid design." % design_name 
-            Cache.design_id_by_name[design_name] = EnumsAI.AIShipDesignTypes.SHIPDESIGN_INVALID
-        return design
+        design = _update_design_by_name_cache(design_name)
+
+    return design
 
 
 def _get_part_type(partname):

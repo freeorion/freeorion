@@ -2255,6 +2255,7 @@ namespace {
 
         // show image of planet environment at the top of the suitability report
         std::string planet_type = boost::lexical_cast<std::string>(planet->Type());
+        boost::algorithm::to_lower(planet_type);
         detailed_description += "<img src=\"encyclopedia/planet_environments/" + planet_type + ".png\"></img>";
 
         std::string original_planet_species = planet->SpeciesName();
