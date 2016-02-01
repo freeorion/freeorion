@@ -8597,21 +8597,43 @@ SPY_STEALTH_1
 Planetary Cloud Cover
 
 SPY_STEALTH_1_DESC
-Unlocks the [[shippart ST_CLOAK_1]] ship part and gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20.
+'''Gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20.
+
+The research cost of this tech is reduced by the cost of researching [[SPY_STEALTH_PART_1]] if it has already been completed.'''
+
+SPY_STEALTH_PART_1
+Electromagnetic Dampening
+
+SPY_STEALTH_PART_1_DESC
+Dampening electromagnetic emissions can make an object completely invisible to passive scans.
 
 SPY_STEALTH_2
 Planetary Ash Clouds
 
 SPY_STEALTH_2_DESC
-'''Unlocks the [[shippart ST_CLOAK_2]] ship part and gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. 
+'''Gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40.
 
-Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
+The research cost of this tech is reduced by the cost of researching [[SPY_STEALTH_PART_2]] if it has already been completed.''' 
+
+SPY_STEALTH_PART_2
+Radiation Absorbing
+
+SPY_STEALTH_PART_2_DESC
+''Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
 
 SPY_STEALTH_3
 Planetary Dimensional Cloak
 
 SPY_STEALTH_3_DESC
-Unlocks the [[shippart ST_CLOAK_3]] ship part and gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60.
+'''Gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60.
+
+The research cost of this tech is reduced by the cost of researching [[SPY_STEALTH_PART_3]] if it has already been completed.'''
+
+SPY_STEALTH_PART_3
+Dimensional Cloaking
+
+SPY_STEALTH_PART_3_DESC
+Advanced techniques make it possible to partially conceal ships within dimensional rifts.
 
 SPY_STEALTH_4
 Planetary Phasing Cloak

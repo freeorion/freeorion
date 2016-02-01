@@ -3532,13 +3532,12 @@ Tech
 Tech
     name = "SPY_STEALTH_1"
     description = "SPY_STEALTH_1_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    short_description = "PLANET_PROTECT_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]] - (50 * [[TECH_COST_MULTIPLIER]] * If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" )
     researchturns = 5
     prerequisites = "SPY_ROOT_DECEPTION"
-    unlock = Item type = ShipPart name = "ST_CLOAK_1"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3554,17 +3553,28 @@ Tech
                 Not OwnerHasTech name = "SPY_STEALTH_4"
             ]
             effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
+           
+Tech
+    name = "SPY_STEALTH_PART_1"
+    description = "SPY_STEALTH_PART_1_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SPY_DETECT_2"
+    unlock = Item type = ShipPart name = "ST_CLOAK_1"
+    graphic = "icons/ship_parts/cloak-1.png"
             
 Tech
     name = "SPY_STEALTH_2"
     description = "SPY_STEALTH_2_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    short_description = "PLANET_PROTECT_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]] - (100 * [[TECH_COST_MULTIPLIER]] * If condition = OwnerHasTech name = "SPY_STEALTH_PART_2" )
     researchturns = 6
     prerequisites = "SPY_STEALTH_1"
-    unlock = Item type = ShipPart name = "ST_CLOAK_2"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3582,17 +3592,28 @@ Tech
                 AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
                 RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
-            
+           
 Tech
-    name = "SPY_STEALTH_3"
-    description = "SPY_STEALTH_3_DESC"
+    name = "SPY_STEALTH_PART_2"
+    description = "SPY_STEALTH_PART_2_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SPY_CATEGORY"
-    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SPY_DETECT_3"
+    unlock = Item type = ShipPart name = "ST_CLOAK_2"
+    graphic = "icons/ship_parts/cloak-2.png"
+                        
+Tech
+    name = "SPY_STEALTH_3"
+    description = "SPY_STEALTH_3_DESC"
+    short_description = "PLANET_PROTECT_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" )
     researchturns = 7
     prerequisites = "SPY_STEALTH_2"
-    unlock = Item type = ShipPart name = "ST_CLOAK_3"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3608,6 +3629,18 @@ Tech
                 RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
                 RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
+           
+Tech
+    name = "SPY_STEALTH_PART_3"
+    description = "SPY_STEALTH_PART_3_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 250 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SPY_DETECT_4"
+    unlock = Item type = ShipPart name = "ST_CLOAK_3"
+    graphic = "icons/ship_parts/cloak-3.png"
             
 Tech
     name = "SPY_STEALTH_4"
@@ -3617,7 +3650,10 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 1000 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
-    prerequisites = "SPY_STEALTH_3"
+    prerequisites = [
+                    "SPY_STEALTH_3"
+                    "SPY_STEALTH_PART_3"
+                    ]
     unlock = Item type = ShipPart name = "ST_CLOAK_4"
     effectsgroups =
         EffectsGroup
