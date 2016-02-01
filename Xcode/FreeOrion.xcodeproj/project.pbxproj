@@ -334,6 +334,7 @@
 		CE6183AA1BB80D2E00952BEA /* TextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A31BB80D2E00952BEA /* TextBlock.cpp */; };
 		CE6183AB1BB80D2E00952BEA /* ScrollPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */; };
 		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
+		CE89D2BD1C5FDA270085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 /* End PBXBuildFile section */
 
@@ -1142,6 +1143,7 @@
 				478417730CF0589200BE4710 /* freeorioncommon.dylib in Frameworks */,
 				82BB623E19BEDF1700A0E281 /* freeorionparse.dylib in Frameworks */,
 				8280AC5E19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */,
+				CE89D2BD1C5FDA270085A4DC /* libz.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2887,6 +2889,10 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dep/lib",
+				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
@@ -3012,6 +3018,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
@@ -3156,6 +3166,10 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
