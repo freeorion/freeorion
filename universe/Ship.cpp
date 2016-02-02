@@ -589,11 +589,11 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
-    UniverseObject::GetMeter(METER_STEALTH)->ResetCurrent();
+    //UniverseObject::GetMeter(METER_STEALTH)->ResetCurrent(); redundant with base class function
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-       if (it->first.first == METER_CAPACITY) {
-            // special case for capacity... if it has an associated max capacity, don't reset it, as it is paired
+        if (it->first.first == METER_CAPACITY) {
+            // special case for capacity... if it HAS AN associated max capacity, DON'T reset it, as it is PAIRED
             PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
             if (max_it != m_part_meters.end())
                 continue;
@@ -607,9 +607,9 @@ void Ship::ResetPairedActiveMeters() {
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
        if (it->first.first == METER_CAPACITY) {
-            // special case for capacity... if it has no associated max capacity, don't reset it, as it is unpaired
+            // special case for capacity... if it HAS AN associated max capacity, DO reset it, as it is PAIRED
             PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
-            if (max_it == m_part_meters.end())
+            if (max_it != m_part_meters.end())
                 it->second.SetCurrent(it->second.Initial());
         }
     }
@@ -666,7 +666,6 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_TRADE)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
 
     // clamp most part meters to basic range limits
