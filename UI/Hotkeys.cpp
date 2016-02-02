@@ -207,14 +207,21 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
             continue;
         }
         std::string option_string = db.Get<std::string>(options_db_name);
-        std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = HotkeyFromString(option_string);
+
+        std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = std::make_pair(GG::GGK_NONE, GG::MOD_KEY_NONE);
+        try {
+            std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = HotkeyFromString(option_string);
+        } catch (...) {
+            ErrorLogger() << "Failed to read hotkey from string: " << option_string;
+            continue;
+        }
 
         if (key_modkey_pair.first == GG::GGK_NONE)
             continue;
 
         if (key_modkey_pair.first == GG::EnumMap<GG::Key>::BAD_VALUE) {
             ErrorLogger() << "Hotkey::ReadFromOptions : Invalid key spec: '"
-                                   << option_string << "' for hotkey " << hotkey.m_name;
+                          << option_string << "' for hotkey " << hotkey.m_name;
             continue;
         }
 
