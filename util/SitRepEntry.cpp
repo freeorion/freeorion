@@ -251,8 +251,15 @@ SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) {
     return sitrep;
 }
 
-SitRepEntry CreatePlanetColonizedSitRep(int planet_id) {
+SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species) {
     SitRepEntry sitrep(UserStringNop("SITREP_PLANET_COLONIZED"), "icons/sitrep/planet_colonized.png");
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,  boost::lexical_cast<std::string>(planet_id));
+    sitrep.AddVariable(VarText::SPECIES_TAG,    species);
+    return sitrep;
+}
+
+SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
+    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_OUTPOSTED"), "icons/sitrep/planet_colonized.png");
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     return sitrep;
 }

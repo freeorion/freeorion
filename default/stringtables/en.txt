@@ -4636,9 +4636,14 @@ SITREP_PLANET_DEPOPULATED_LABEL
 Planet Destroyed
 
 SITREP_PLANET_COLONIZED
-%planet% has been colonized.
+%planet% has been colonized with %species%.
 SITREP_PLANET_COLONIZED_LABEL
 Planet Colonized
+
+SITREP_PLANET_OUTPOSTED
+%planet% had an outpost established.
+SITREP_PLANET_OUTPOSTED_LABEL
+Planet Outposted
 
 SITREP_NEW_COLONY_ESTABLISHED
 On %planet%: A new %species% colony has been established.

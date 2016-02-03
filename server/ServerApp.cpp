@@ -2119,6 +2119,14 @@ namespace {
             if (colonize_blocked)
                 continue;
 
+            // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
+            TemporaryPtr<Ship> ship = GetShip(colonizing_ship_id);
+            if (!ship)
+                ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
+            const std::string& species_name = ship ? ship->SpeciesName() : "";
+            float colonist_capacity = ship ? ship->ColonyCapacity() : 0.0f;
+
+
             // do colonization
             if (!ColonizePlanet(colonizing_ship_id, planet_id))
                 continue;   // skip sitrep if colonization failed
@@ -2126,12 +2134,15 @@ namespace {
             // record successful colonization
             newly_colonize_planet_ids.push_back(planet_id);
 
-            // sitrep about colonization
+            // sitrep about colonization / outposting
             Empire* empire = GetEmpire(colonizing_empire_id);
             if (!empire) {
                 ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
-                empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet_id));
+                if (species_name.empty() || colonist_capacity <= 0.0f)
+                    empire->AddSitRepEntry(CreatePlanetOutpostedSitRep(planet_id));
+                else
+                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet_id, species_name));
             }
         }
     }
