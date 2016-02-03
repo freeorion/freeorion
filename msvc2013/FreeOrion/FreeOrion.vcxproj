@@ -248,7 +248,6 @@
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\binreloc.h" />
     <ClInclude Include="..\..\util\Directories.h" />
-    <ClInclude Include="..\..\util\Math.h" />
     <ClInclude Include="..\..\util\MultiplayerCommon.h" />
     <ClInclude Include="..\..\util\i18n.h" />
     <ClInclude Include="..\..\util\Logger.h" />

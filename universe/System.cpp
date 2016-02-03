@@ -12,7 +12,6 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/Math.h"
 #include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
@@ -645,13 +644,4 @@ double StarlaneEntranceOrbitalPosition(int from_system, int to_system) {
         return 0.0;
     }
     return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());
-}
-
-bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system) {
-    double rads = StarlaneEntranceOrbitalPosition(from_system, to_system);
-    double ellipse_x = StarlaneEntranceOrbitalRadius() * std::cos(rads);
-    double ellipse_y = StarlaneEntranceOrbitalRadius() * std::sin(rads);
-    return PointInEllipse(x, y, ellipse_x, ellipse_y,
-                          StarlaneEntranceRadialAxis(), StarlaneEntranceTangentAxis(),
-                          rads);
 }

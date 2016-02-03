@@ -151,9 +151,6 @@
     <ClInclude Include="..\..\util\Directories.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\Math.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\MultiplayerCommon.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -238,9 +235,6 @@
       <Filter>Source Files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\Directories.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\Math.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\MultiplayerCommon.cpp">

@@ -60,7 +60,6 @@
 		34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BEC0F49CBF90015C864 /* Sound.cpp */; };
 		34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4BE0FFFD2DB00500F40 /* chmain.mm */; };
 		34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C620A98A3F900DA9C21 /* chmain.cpp */; };
-		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
 		34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44957118271590071E09A /* SerializeEmpire.cpp */; };
 		34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */; };
 		34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44959118271590071E09A /* SerializeOrderSet.cpp */; };
@@ -553,8 +552,6 @@
 		34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultFont.h; sourceTree = "<group>"; };
 		34BAB0C20FC5CDC400EF792E /* FontFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFwd.h; sourceTree = "<group>"; };
 		34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiEditFwd.h; sourceTree = "<group>"; };
-		34C44954118271590071E09A /* Math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Math.cpp; sourceTree = "<group>"; };
-		34C44955118271590071E09A /* Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Math.h; sourceTree = "<group>"; };
 		34C44956118271590071E09A /* Serialize.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Serialize.ipp; sourceTree = "<group>"; };
 		34C44957118271590071E09A /* SerializeEmpire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeEmpire.cpp; sourceTree = "<group>"; };
 		34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeMultiplayerCommon.cpp; sourceTree = "<group>"; };
@@ -1813,8 +1810,6 @@
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
 				3A5105561748D6A700DC258B /* Logger.h */,
-				34C44954118271590071E09A /* Math.cpp */,
-				34C44955118271590071E09A /* Math.h */,
 				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
 				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
 				471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */,
@@ -2403,7 +2398,6 @@
 			files = (
 				3A01E1E31749F93500EC9110 /* AppInterface.cpp in Sources */,
 				34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */,
-				34C4495E1182716E0071E09A /* Math.cpp in Sources */,
 				34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */,
 				34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */,
 				34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */,

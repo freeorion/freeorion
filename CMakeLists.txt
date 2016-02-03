@@ -190,7 +190,6 @@ set (freeorioncommon_HEADER
     util/EnumText.h
     util/i18n.h
     util/Logger.h
-    util/Math.h
     util/ModeratorAction.h
     util/MultiplayerCommon.h
     util/OptionsDB.h
@@ -250,7 +249,6 @@ set (freeorioncommon_SOURCE
     util/EnumText.cpp
     util/i18n.cpp
     util/Logger.cpp
-    util/Math.cpp
     util/ModeratorAction.cpp
     util/MultiplayerCommon.cpp
     util/OptionsDB.cpp

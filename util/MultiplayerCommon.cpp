@@ -3,7 +3,6 @@
 #include "Directories.h"
 #include "i18n.h"
 #include "Logger.h"
-#include "Math.h"
 #include "OptionsDB.h"
 #include "Random.h"
 #include "../universe/Fleet.h"

@@ -189,8 +189,4 @@ double StarlaneEntranceRadialAxis();
     starlane entrance ellipses out of a system. */
 double StarlaneEntranceTangentAxis();
 
-/** Returns true iff tactical combat point <i>(x, y)</i> falls inside the
-    indicated starlane ellipse. */
-bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system);
-
 #endif // _System_h_
