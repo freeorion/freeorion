@@ -389,7 +389,7 @@ namespace FreeOrionPython {
 
             .add_property("productionPoints",       make_function(&Empire::ProductionPoints,        return_value_policy<return_by_value>()))
             .def("resourceStockpile",               &Empire::ResourceStockpile)
-            .def("resourceProduction",              &Empire::ResourceProduction)
+            .def("resourceProduction",              &Empire::ResourceOutput)
             .def("resourceAvailable",               &Empire::ResourceAvailable)
             .def("getResourcePool",                 &Empire::GetResourcePool)
 

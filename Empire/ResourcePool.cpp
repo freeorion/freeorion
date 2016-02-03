@@ -31,18 +31,18 @@ int ResourcePool::StockpileObjectID() const
 float ResourcePool::Stockpile() const
 { return m_stockpile; }
 
-float ResourcePool::Production() const {
-    float retval = 0.0;
-    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_production.begin();
-         it != m_connected_object_groups_resource_production.end(); ++it)
+float ResourcePool::Output() const {
+    float retval = 0.0f;
+    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_output.begin();
+         it != m_connected_object_groups_resource_output.end(); ++it)
     { retval += it->second; }
     return retval;
 }
 
-float ResourcePool::GroupProduction(int object_id) const {
+float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
-    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_production.begin();
-         it != m_connected_object_groups_resource_production.end(); ++it)
+    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_output.begin();
+         it != m_connected_object_groups_resource_output.end(); ++it)
     {
         const std::set<int>& group = it->first;
         if (group.find(object_id) != group.end())
@@ -50,20 +50,44 @@ float ResourcePool::GroupProduction(int object_id) const {
     }
 
     // default return case:
-    DebugLogger() << "ResourcePool::GroupProduction passed unknown object id: " << object_id;
-    return 0.0;
+    DebugLogger() << "ResourcePool::GroupOutput passed unknown object id: " << object_id;
+    return 0.0f;
+}
+
+
+float ResourcePool::TargetOutput() const {
+    float retval = 0.0f;
+    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_target_output.begin();
+         it != m_connected_object_groups_resource_target_output.end(); ++it)
+    { retval += it->second; }
+    return retval;
+}
+
+float ResourcePool::GroupTargetOutput(int object_id) const {
+    // find group containing specified object
+    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_target_output.begin();
+         it != m_connected_object_groups_resource_target_output.end(); ++it)
+    {
+        const std::set<int>& group = it->first;
+        if (group.find(object_id) != group.end())
+            return it->second;
+    }
+
+    // default return case:
+    DebugLogger() << "ResourcePool::GroupTargetOutput passed unknown object id: " << object_id;
+    return 0.0f;
 }
 
 float ResourcePool::TotalAvailable() const {
     float retval = m_stockpile;
-    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_production.begin();
-         it != m_connected_object_groups_resource_production.end(); ++it)
+    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_output.begin();
+         it != m_connected_object_groups_resource_output.end(); ++it)
     { retval += it->second; }
     return retval;
 }
 
 std::map<std::set<int>, float> ResourcePool::Available() const {
-    std::map<std::set<int>, float> retval = m_connected_object_groups_resource_production;
+    std::map<std::set<int>, float> retval = m_connected_object_groups_resource_output;
 
     if (INVALID_OBJECT_ID == m_stockpile_object_id)
         return retval;  // early exit for no stockpile
@@ -84,11 +108,11 @@ float ResourcePool::GroupAvailable(int object_id) const {
     // available is stockpile + production in this group
 
     if (m_stockpile_object_id == INVALID_OBJECT_ID)
-        return GroupProduction(object_id);
+        return GroupOutput(object_id);
 
     // need to find if stockpile object is in the requested object's group
-    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_production.begin();
-         it != m_connected_object_groups_resource_production.end(); ++it)
+    for (std::map<std::set<int>, float>::const_iterator it = m_connected_object_groups_resource_output.begin();
+         it != m_connected_object_groups_resource_output.end(); ++it)
     {
         const std::set<int>& group = it->first;
         if (group.find(object_id) != group.end()) {
@@ -131,12 +155,14 @@ void ResourcePool::Update() {
     //DebugLogger() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
+    MeterType target_meter_type = ResourceToTargetMeter(m_type);
 
-    if (INVALID_METER_TYPE == meter_type)
+    if (INVALID_METER_TYPE == meter_type || INVALID_METER_TYPE == target_meter_type)
         ErrorLogger() << "ResourcePool::Update() called when m_type can't be converted to a valid MeterType";
 
     // zero to start...
-    m_connected_object_groups_resource_production.clear();
+    m_connected_object_groups_resource_output.clear();
+    m_connected_object_groups_resource_target_output.clear();
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
@@ -171,13 +197,17 @@ void ResourcePool::Update() {
         }
 
         // if object's system is not in a system group, add it as its
-        // own entry in m_connected_object_groups_resource_production
+        // own entry in m_connected_object_groups_resource_output and m_connected_object_groups_resource_target_output
         // this will allow the object to use its own locally produced
         // resource when, for instance, distributing pp
         if (object_system_group.empty()) {
             object_system_group.insert(object_id);  // just use this already-available set to store the object id, even though it is not likely actually a system
-            float obj_output = obj->GetMeter(meter_type) ? obj->CurrentMeterValue(meter_type) : 0.0;
-            m_connected_object_groups_resource_production[object_system_group] = obj_output;
+
+            float obj_output = obj->GetMeter(meter_type) ? obj->CurrentMeterValue(meter_type) : 0.0f;
+            m_connected_object_groups_resource_output[object_system_group] = obj_output;
+
+            float obj_target_output = obj->GetMeter(target_meter_type) ? obj->CurrentMeterValue(target_meter_type) : 0.0f;
+            m_connected_object_groups_resource_target_output[object_system_group] = obj_target_output;
             continue;
         }
 
@@ -194,16 +224,20 @@ void ResourcePool::Update() {
     {
         const std::set<TemporaryPtr<const UniverseObject> >& object_group = object_group_it->second;
         std::set<int> object_group_ids;
-        float total_group_production = 0.0;
+        float total_group_output = 0.0f;
+        float total_group_target_output = 0.0f;
         for (std::set<TemporaryPtr<const UniverseObject> >::const_iterator obj_it = object_group.begin();
              obj_it != object_group.end(); ++obj_it)
         {
             TemporaryPtr<const UniverseObject> obj = *obj_it;
             if (obj->GetMeter(meter_type))
-                total_group_production += obj->CurrentMeterValue(meter_type);
+                total_group_output += obj->CurrentMeterValue(meter_type);
+            if (obj->GetMeter(target_meter_type))
+                total_group_target_output += obj->CurrentMeterValue(target_meter_type);
             object_group_ids.insert(obj->ID());
         }
-        m_connected_object_groups_resource_production[object_group_ids] = total_group_production;
+        m_connected_object_groups_resource_output[object_group_ids] = total_group_output;
+        m_connected_object_groups_resource_target_output[object_group_ids] = total_group_target_output;
     }
 
     ChangedSignal();
@@ -213,8 +247,8 @@ void ResourcePool::Update() {
 // PopulationPool
 //////////////////////////////////////////////////
 PopulationPool::PopulationPool() :
-    m_population(0.0),
-    m_growth(0.0)
+    m_population(0.0f),
+    m_growth(0.0f)
 {}
 
 float PopulationPool::Population() const
@@ -230,8 +264,8 @@ void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
 }
 
 void PopulationPool::Update() {
-    m_population = 0.0;
-    float future_population = 0.0;
+    m_population = 0.0f;
+    float future_population = 0.0f;
     // sum population from all PopCenters in this pool
     for (std::vector<int>::const_iterator it = m_pop_center_ids.begin(); it != m_pop_center_ids.end(); ++it) {
         if (TemporaryPtr<const PopCenter> center = GetPopCenter(*it)) {

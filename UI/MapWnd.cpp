@@ -5670,26 +5670,26 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Hide();
         return;
     }
-    m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
+    m_research->SetValue(empire->ResourceOutput(RE_RESEARCH));
     m_research->ClearBrowseInfoWnd();
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("MAP_RESEARCH_TEXT"))));
 
-    double totalRPSpent = empire->GetResearchQueue().TotalRPsSpent();
-    double totalProduction = empire->ResourceProduction(RE_RESEARCH);
-    double totalWastedRP = totalProduction - totalRPSpent;
-    if (totalWastedRP > 0.05) {
+    double total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
+    double total_RP_output = empire->ResourceOutput(RE_RESEARCH);
+    double total_RP_wasted = total_RP_output - total_RP_spent;
+    if (total_RP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: "
-                                << totalRPSpent << " and RP Production: " << totalProduction << ", wasting " << totalWastedRP;
+                       << total_RP_spent << " and RP Production: " << total_RP_output << ", wasting " << total_RP_wasted;
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
-                                % DoubleToString(totalProduction, 3, false)
-                                % DoubleToString(totalWastedRP, 3, false)))));
+                                % DoubleToString(total_RP_output, 3, false)
+                                % DoubleToString(total_RP_wasted, 3, false)))));
     } else {
         m_research_wasted->Hide();
     }
@@ -5713,26 +5713,26 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Hide();
         return;
     }
-    m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
+    m_industry->SetValue(empire->ResourceOutput(RE_INDUSTRY));
     m_industry->ClearBrowseInfoWnd();
     m_industry->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("MAP_PRODUCTION_TEXT"))));
 
-    double totalPPSpent = empire->GetProductionQueue().TotalPPsSpent();
-    double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
-    double totalWastedPP = totalProduction - totalPPSpent;
-    if (totalWastedPP > 0.05) {
+    double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
+    double total_PP_output = empire->ResourceOutput(RE_INDUSTRY);
+    double total_PP_wasted = total_PP_output - total_PP_spent;
+    if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
-                                << totalPPSpent << " and Industry Production: " << totalProduction << ", wasting " << totalWastedPP;
+                       << total_PP_spent << " and Industry Production: " << total_PP_output << ", wasting " << total_PP_wasted;
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
-                                % DoubleToString(totalProduction, 3, false)
-                                % DoubleToString(totalWastedPP, 3, false)))));
+                                % DoubleToString(total_PP_output, 3, false)
+                                % DoubleToString(total_PP_wasted, 3, false)))));
     } else {
         m_industry_wasted->Hide();
     }

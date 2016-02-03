@@ -15,6 +15,18 @@ MeterType ResourceToMeter(ResourceType type) {
     }
 }
 
+MeterType ResourceToTargetMeter(ResourceType type) {
+    switch (type) {
+    case RE_INDUSTRY:   return METER_TARGET_INDUSTRY;
+    case RE_RESEARCH:   return METER_TARGET_RESEARCH;
+    case RE_TRADE:      return METER_TARGET_TRADE;
+    default:
+        assert(0);
+        return INVALID_METER_TYPE;
+        break;
+    }
+}
+
 ResourceType MeterToResource(MeterType type) {
     switch (type) {
     case METER_INDUSTRY:    return RE_INDUSTRY;

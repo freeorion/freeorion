@@ -267,6 +267,7 @@ GG_ENUM(ShipSlotType,
 /** Returns the equivalent meter type for the given resource type; if no such
   * meter type exists, returns INVALID_METER_TYPE. */
 FO_COMMON_API MeterType ResourceToMeter(ResourceType type);
+FO_COMMON_API MeterType ResourceToTargetMeter(ResourceType type);
 
 /** Returns the equivalent resource type for the given meter type; if no such
   * resource type exists, returns INVALID_RESOURCE_TYPE. */

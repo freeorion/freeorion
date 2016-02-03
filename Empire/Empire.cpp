@@ -2330,11 +2330,11 @@ float Empire::ResourceStockpile(ResourceType type) const {
     return it->second->Stockpile();
 }
 
-float Empire::ResourceProduction(ResourceType type) const {
+float Empire::ResourceOutput(ResourceType type) const {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
     if (it == m_resource_pools.end())
-        throw std::invalid_argument("Empire::ResourceProduction passed invalid ResourceType");
-    return it->second->Production();
+        throw std::invalid_argument("Empire::ResourceOutput passed invalid ResourceType");
+    return it->second->Output();
 }
 
 float Empire::ResourceAvailable(ResourceType type) const {

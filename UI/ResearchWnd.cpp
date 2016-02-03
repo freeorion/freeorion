@@ -337,7 +337,7 @@ void ResearchWnd::UpdateInfoPanel() {
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
-    float RPs = empire->ResourceProduction(RE_RESEARCH);
+    float RPs = empire->ResourceOutput(RE_RESEARCH);
     float total_queue_cost = queue.TotalRPsSpent();
     m_research_info_panel->SetTotalPointsCost(RPs, total_queue_cost);
 
