@@ -28,6 +28,7 @@ AlignmentEffects effectsgroups = [
     EffectsGroup
         scope = And [
             Ship
+            Armed
             OwnedBy empire = Source.Owner
             Or [
                 DesignHasPartClass low = 1 high = 999 class = ShortRange
