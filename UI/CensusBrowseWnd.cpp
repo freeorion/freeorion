@@ -114,23 +114,20 @@ private:
     bool                    m_show_icon;
 };
 
-CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
-                                 const std::map<std::string, float>& population_counts, const std::map<std::string, float>& tag_counts) :
+CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
+                                 const std::map<std::string, float>& tag_counts) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1),
     m_title_text(0),
     m_species_text(0),
     m_list(0),
     m_tags_text(0),
-    m_tags_list(0)
+    m_tags_list(0),
+    m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
 {
     const GG::Y ROW_HEIGHT(MeterIconSize().y);
     const GG::Y HALF_HEIGHT(GG::Y(int(ClientUI::Pts()/2)));
 
     GG::Y top = GG::Y0;
-
-    m_row_height = GG::Y(MeterIconSize().y);
-
-    m_offset = GG::Pt(GG::X0, ICON_BROWSE_ICON_HEIGHT/2); //lower the window
 
     m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
     m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
@@ -140,9 +137,9 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     top += ROW_HEIGHT;
     m_species_text = new CUILabel(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
     m_species_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
-    m_species_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT+HALF_HEIGHT));
+    m_species_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT));
 
-    top += ROW_HEIGHT+HALF_HEIGHT;
+    top += ROW_HEIGHT + HALF_HEIGHT;
     m_list = new CUIListBox();
     m_list->MoveTo(GG::Pt(m_offset.x, top + m_offset.y));
     m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
@@ -167,7 +164,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
         row->push_back(new CensusRowPanel(m_list->Width(), ROW_HEIGHT, it->second, it->first, true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
-        top += m_row_height;
+        top += ROW_HEIGHT;
     }
     top += (EDGE_PAD*3);
     m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top - 2* ROW_HEIGHT - HALF_HEIGHT));
@@ -212,7 +209,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
             row->push_back(new CensusRowPanel(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
             m_tags_list->Insert(row);
             row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
-            top2 += m_row_height;
+            top2 += ROW_HEIGHT;
         }
     }
 

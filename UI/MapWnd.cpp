@@ -5,6 +5,7 @@
 #include "MapWnd.h"
 
 #include "CensusBrowseWnd.h"
+#include "ResourceBrowseWnd.h"
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
 #include "ClientUI.h"
@@ -5673,12 +5674,16 @@ void MapWnd::RefreshResearchResourceIndicator() {
     m_research->SetValue(empire->ResourceOutput(RE_RESEARCH));
     m_research->ClearBrowseInfoWnd();
     m_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("MAP_RESEARCH_TEXT"))));
 
     double total_RP_spent = empire->GetResearchQueue().TotalRPsSpent();
-    double total_RP_output = empire->ResourceOutput(RE_RESEARCH);
+    double total_RP_output = empire->GetResourcePool(RE_RESEARCH)->Output();
     double total_RP_wasted = total_RP_output - total_RP_spent;
+    double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
+
+    m_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new ResourceBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
+                              total_RP_spent, total_RP_output, total_RP_target_output)));
+
     if (total_RP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: "
                        << total_RP_spent << " and RP Production: " << total_RP_output << ", wasting " << total_RP_wasted;
@@ -5716,12 +5721,16 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     m_industry->SetValue(empire->ResourceOutput(RE_INDUSTRY));
     m_industry->ClearBrowseInfoWnd();
     m_industry->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("MAP_PRODUCTION_TEXT"))));
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
-    double total_PP_output = empire->ResourceOutput(RE_INDUSTRY);
+    double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->Output();
     double total_PP_wasted = total_PP_output - total_PP_spent;
+    double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
+
+    m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new ResourceBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
+                              total_PP_spent, total_PP_output, total_PP_target_output)));
+
     if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
                        << total_PP_spent << " and Industry Production: " << total_PP_output << ", wasting " << total_PP_wasted;

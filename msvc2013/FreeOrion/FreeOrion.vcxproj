@@ -207,6 +207,7 @@
     <ClInclude Include="..\..\UI\ProductionWnd.h" />
     <ClInclude Include="..\..\UI\QueueListBox.h" />
     <ClInclude Include="..\..\UI\ResearchWnd.h" />
+    <ClInclude Include="..\..\UI\ResourceBrowseWnd.h" />
     <ClInclude Include="..\..\UI\ResourcePanel.h" />
     <ClInclude Include="..\..\UI\ServerConnectWnd.h" />
     <ClInclude Include="..\..\UI\ShaderProgram.h" />
@@ -286,8 +287,8 @@
     <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp" />
     <ClCompile Include="..\..\UI\CUIControls.cpp" />
     <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
-	<ClCompile Include="..\..\UI\CUILinkTextBlock.cpp" />
-	<ClInclude Include="..\..\UI\CUILinkTextBlock.h" />
+    <ClCompile Include="..\..\UI\CUILinkTextBlock.cpp" />
+    <ClInclude Include="..\..\UI\CUILinkTextBlock.h" />
     <ClCompile Include="..\..\UI\CUIStyle.cpp" />
     <ClCompile Include="..\..\UI\CUIWnd.cpp" />
     <ClCompile Include="..\..\UI\DesignWnd.cpp" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\..\UI\ProductionWnd.cpp" />
     <ClCompile Include="..\..\UI\QueueListBox.cpp" />
     <ClCompile Include="..\..\UI\ResearchWnd.cpp" />
+    <ClCompile Include="..\..\UI\ResourceBrowseWnd.cpp" />
     <ClCompile Include="..\..\UI\ResourcePanel.cpp" />
     <ClCompile Include="..\..\UI\SaveFileDialog.cpp" />
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp" />

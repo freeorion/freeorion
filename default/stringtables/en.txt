@@ -2452,8 +2452,7 @@ Messages
 MAP_PRODUCTION_TITLE
 Production
 
-MAP_PRODUCTION_TEXT
-Empire total production output
+
 
 MAP_PROD_WASTED_TITLE
 Unused Production
@@ -2464,11 +2463,17 @@ Wasted Production : %2%
 
 Click here to open the production menu'''
 
+RESOURCE_TT_USED
+Used
+
+RESOURCE_TT_OUTPUT
+Current Output
+
+RESOURCE_TT_TARGET_OUTPUT
+Target Output
+
 MAP_RESEARCH_TITLE
 Research
-
-MAP_RESEARCH_TEXT
-Empire total research output
 
 MAP_RES_WASTED_TITLE
 Unused Research

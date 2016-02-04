@@ -662,9 +662,8 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
     m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
         GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "production.InfoPanel");
-    m_queue_wnd = new ProductionQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));    
+    m_queue_wnd = new ProductionQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_build_designator_wnd = new BuildDesignatorWnd(ClientSize().x, ClientSize().y);
-    
 
     SetChildClippingMode(ClipToClient);
 

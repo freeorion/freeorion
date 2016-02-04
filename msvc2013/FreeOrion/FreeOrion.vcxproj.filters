@@ -393,6 +393,9 @@
     <ClInclude Include="..\..\UI\CUILinkTextBlock.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\ResourceBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico">
@@ -593,6 +596,9 @@
       <Filter>Source Files\UI\CombatReport</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\CUILinkTextBlock.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ResourceBrowseWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>

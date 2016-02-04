@@ -94,6 +94,7 @@ set(freeorion_HEADER
     ../../UI/ProductionWnd.h
     ../../UI/QueueListBox.h
     ../../UI/ResearchWnd.h
+    ../../UI/ResourceBrowseWnd.h
     ../../UI/ResourcePanel.h
     ../../UI/SaveFileDialog.h
     ../../UI/ServerConnectWnd.h
@@ -163,6 +164,7 @@ set(freeorion_SOURCES
     ../../UI/ProductionWnd.cpp
     ../../UI/QueueListBox.cpp
     ../../UI/ResearchWnd.cpp
+    ../../UI/ResourceBrowseWnd.cpp
     ../../UI/ResourcePanel.cpp
     ../../UI/SaveFileDialog.cpp
     ../../UI/ServerConnectWnd.cpp
