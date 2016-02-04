@@ -30,11 +30,11 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
 
     GG::Pt top_left =  m_offset;
 
-    m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
+    m_title_text = new CUILabel(title_text, GG::FORMAT_CENTER);
     m_title_text->MoveTo(GG::Pt(top_left.x + EDGE_PAD, top_left.y));
-    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
+    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH - 2*EDGE_PAD, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
-    top_left.y += m_title_text->Height();
+    top_left.y += m_title_text->Height() + EDGE_PAD;
 
     AttachChild(m_title_text);
 
