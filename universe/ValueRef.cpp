@@ -99,7 +99,7 @@ namespace {
         switch(ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:
             retval += " | Non Object Reference |";
-            return retval;   
+            return retval;
             break;
         case ValueRef::SOURCE_REFERENCE:
             retval += " | Source: ";
@@ -254,10 +254,12 @@ std::string ValueRef::ReconstructName(const std::vector<std::string>& property_n
     default:                                            retval = "?????";           break;
     }
 
-    for (std::size_t i = 0; i < property_name.size(); ++i) {
-        if (!retval.empty())
-            retval += '.';
-        retval += property_name[i].c_str();
+    if (ref_type != ValueRef::EFFECT_TARGET_VALUE_REFERENCE) {
+        for (std::size_t i = 0; i < property_name.size(); ++i) {
+            if (!retval.empty())
+                retval += '.';
+            retval += property_name[i].c_str();
+        }
     }
     return retval;
 }
