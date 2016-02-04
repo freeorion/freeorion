@@ -159,34 +159,4 @@ private:
 };
 
 
-// Tactical combat system geometry free functions:
-
-/** Returns the radius, in tactical combat units, of a system.  Note that the
-    tactical combat map is square. */
-FO_COMMON_API double SystemRadius();
-
-/** Returns the radius, in tactical combat units, of the star at the center of
-    a system. */
-FO_COMMON_API double StarRadius();
-
-/** Returns the radius, in tactical combat units, of orbit \a orbit of a
-    system.  \a orbit must be < 10. */
-FO_COMMON_API double OrbitalRadius(unsigned int orbit);
-
-/** Returns the orbital radius, in tactical combat units, of starlane entrance
-    ellipses out of a system. */
-double StarlaneEntranceOrbitalRadius();
-
-/** Returns the angular position, in radians, of a starlane entrance ellipses
-    out of the system with id \a from_system. */
-FO_COMMON_API double StarlaneEntranceOrbitalPosition(int from_system, int to_system);
-
-/** Returns the radius, in tactical combat units, of the star-aligned axes of
-    starlane entrance ellipses out of a system. */
-double StarlaneEntranceRadialAxis();
-
-/** Returns the radius, in tactical combat units, of the non-star-aligned axes
-    starlane entrance ellipses out of a system. */
-double StarlaneEntranceTangentAxis();
-
 #endif // _System_h_

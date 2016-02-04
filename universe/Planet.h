@@ -144,10 +144,6 @@ public:
     void            SetType(PlanetType type);           ///< sets the type of this Planet to \a type
     void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
 
-    /** Sets the orbital period based on the orbit this planet is in. If
-        tidally locked, the rotational period is also adjusted. */
-    void            SetOrbitalPeriod(unsigned int orbit);
-
     void            SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet
     void            SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
 
@@ -228,16 +224,4 @@ private:
 };
 
 
-// Tactical combat planet geometry free functions:
-
-/** Returns the radius, in tactical combat units, of a planet.  Note that 0.0
-    is returned for PlanetSize enumerators that have no size, whereas
-    PlanetRadius(SZ_MEDIUM) is returned for unknown values. */
-FO_COMMON_API float PlanetRadius(PlanetSize size);
-
-/** Returns the radius, in tactical combat units, of the tube in which an
-    asteroid belt lies. */
-FO_COMMON_API float AsteroidBeltRadius();
-
 #endif // _Planet_h_
-

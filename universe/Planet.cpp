@@ -547,18 +547,6 @@ void Planet::SetSize(PlanetSize size) {
     StateChangedSignal();
 }
 
-void Planet::SetOrbitalPeriod(unsigned int orbit) {
-    assert(orbit < 10);
-    const double THIRD_ORBIT_PERIOD = 4;
-    const double THIRD_ORBIT_RADIUS = OrbitalRadius(2);
-    const double ORBIT_RADIUS = OrbitalRadius(orbit);
-    // Kepler's third law.
-    m_orbital_period =
-        std::sqrt(std::pow(THIRD_ORBIT_PERIOD, 2.0) /
-                  std::pow(THIRD_ORBIT_RADIUS, 3.0) *
-                  std::pow(ORBIT_RADIUS, 3.0));
-}
-
 void Planet::SetRotationalPeriod(Day days)
 { m_rotational_period = days; }
 
@@ -874,26 +862,3 @@ void Planet::ClampMeters() {
     UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
 }
-
-// free functions
-
-float PlanetRadius(PlanetSize size) {
-    float retval = 0.0f;
-    switch (size) {
-    case INVALID_PLANET_SIZE: retval = 0.0f; break;
-    case SZ_NOWORLD:          retval = 0.0f; break;
-    case SZ_TINY:             retval = 2.0f; break;
-    case SZ_SMALL:            retval = 3.5f; break;
-    default:
-    case SZ_MEDIUM:           retval = 5.0f; break;
-    case SZ_LARGE:            retval = 7.0f; break;
-    case SZ_HUGE:             retval = 9.0f; break;
-    case SZ_ASTEROIDS:        retval = 0.0f; break;
-    case SZ_GASGIANT:         retval = 11.0f; break; // this one goes to eleven
-    case NUM_PLANET_SIZES:    retval = 0.0f; break;
-    };
-    return retval;
-}
-
-float AsteroidBeltRadius()
-{ return 12.5f; }

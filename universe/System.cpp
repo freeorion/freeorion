@@ -613,35 +613,3 @@ void System::SetOverlayTexture(const std::string& texture, double size) {
     m_overlay_size = size;
     StateChangedSignal();
 }
-
-// free functions
-
-double SystemRadius()
-{ return 1000.0 + 50.0; }
-
-double StarRadius()
-{ return 80.0; }
-
-double OrbitalRadius(unsigned int orbit) {
-    assert(orbit < 10);
-    return (SystemRadius() - 50.0) / 10 * (orbit + 1) - 20.0;
-}
-
-double StarlaneEntranceOrbitalRadius()
-{ return SystemRadius() - StarlaneEntranceRadialAxis(); }
-
-double StarlaneEntranceRadialAxis()
-{ return 40.0; }
-
-double StarlaneEntranceTangentAxis()
-{ return 80.0; }
-
-double StarlaneEntranceOrbitalPosition(int from_system, int to_system) {
-    TemporaryPtr<const System> system_1 = GetSystem(from_system);
-    TemporaryPtr<const System> system_2 = GetSystem(to_system);
-    if (!system_1 || !system_2) {
-        ErrorLogger() << "StarlaneEntranceOrbitalPosition passed invalid system id";
-        return 0.0;
-    }
-    return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());
-}
