@@ -254,11 +254,6 @@ namespace {
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                     int candidate_object_id, int empire_id)
     {
-        std::string title;
-        std::string main_text;
-        float total_cost;
-        int production_time;
-
         // production item is a building
         if (item.build_type == BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(item.name);
@@ -268,10 +263,10 @@ namespace {
             }
 
             // create title, description, production time and cost
-            title = UserString(item.name);
-            main_text = UserString(building_type->Description());
-            total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-            production_time = building_type->ProductionTime(empire_id, candidate_object_id);
+            const std::string title = UserString(item.name);
+            std::string main_text = UserString(building_type->Description());
+            const float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+            const int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
             main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
@@ -299,14 +294,13 @@ namespace {
             }
 
             // create title, description, production time and cost, hull type
-            title = design->Name(true);
-            main_text = design->Description(true);
-            total_cost = design->ProductionCost(empire_id, candidate_object_id);
-            production_time = design->ProductionTime(empire_id, candidate_object_id);
+            const std::string title = design->Name(true);
+            std::string main_text = design->Description(true);
+            const float total_cost = design->ProductionCost(empire_id, candidate_object_id);
+            const int production_time = design->ProductionTime(empire_id, candidate_object_id);
 
             main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
-
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
