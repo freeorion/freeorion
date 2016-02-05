@@ -326,6 +326,7 @@
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
+		CE6098A01C64F8BB0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE60989E1C64F8BB0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839D1BB80D2E00952BEA /* BlockControl.cpp */; };
 		CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */; };
 		CE6183A81BB80D2E00952BEA /* RichText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839F1BB80D2E00952BEA /* RichText.cpp */; };
@@ -1084,6 +1085,8 @@
 		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
 		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
+		CE60989E1C64F8BB0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
+		CE60989F1C64F8BB0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
 		CE6183961BB80D1300952BEA /* GGFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGFwd.h; sourceTree = "<group>"; };
 		CE6183981BB80D1300952BEA /* BlockControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockControl.h; sourceTree = "<group>"; };
 		CE6183991BB80D1300952BEA /* ImageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBlock.h; sourceTree = "<group>"; };
@@ -1683,6 +1686,8 @@
 				343EC6620F3F5C7C00782AD3 /* QueueListBox.h */,
 				471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */,
 				471D5CD30A98A3F900DA9C21 /* ResearchWnd.h */,
+				CE60989E1C64F8BB0085A4DC /* ResourceBrowseWnd.cpp */,
+				CE60989F1C64F8BB0085A4DC /* ResourceBrowseWnd.h */,
 				8275F3EF1AD31381003568FF /* ResourcePanel.cpp */,
 				8275F3F01AD31381003568FF /* ResourcePanel.h */,
 				8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */,
@@ -2619,6 +2624,7 @@
 				34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */,
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
+				CE6098A01C64F8BB0085A4DC /* ResourceBrowseWnd.cpp in Sources */,
 				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
 				82B9AEA21AA71CCC00486B2A /* CombatReportData.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
