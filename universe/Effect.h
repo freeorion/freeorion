@@ -54,6 +54,7 @@ namespace Effect {
     class SetAggression;
     class SetOverlayTexture;
     class SetTexture;
+    class SetVisibility;
     class Conditional;
 }
 namespace ValueRef {
@@ -1013,6 +1014,28 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Sets visibility of an object for an empire, independent of standard
+  * visibility mechanics. */
+class FO_COMMON_API Effect::SetVisibility : public Effect::EffectBase {
+public:
+    explicit SetVisibility(Visibility vis, ValueRef::ValueRefBase<int>* empire_id = 0);
+    virtual ~SetVisibility();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
+private:
+    Visibility                      m_vis;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Executes a set of effects if an execution-time condition is met, or an
   * alterative set of effects if the condition is not met. */
 class FO_COMMON_API Effect::Conditional : public Effect::EffectBase {
@@ -1311,6 +1334,14 @@ void Effect::SetTexture::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_texture);
+}
+
+template <class Archive>
+void Effect::SetVisibility::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_vis)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>

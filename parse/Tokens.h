@@ -29,6 +29,7 @@
     (Asteroids)                                 \
     (Attack)                                    \
     (Barren)                                    \
+    (Basic)                                     \
     (BlackHole)                                 \
     (Blue)                                      \
     (Bombard)                                   \
@@ -121,6 +122,7 @@
     (Focus)                                     \
     (FocusType)                                 \
     (Fuel)                                      \
+    (Full)                                      \
     (GalaxyAge)                                 \
     (GalaxyMaxAIAggression)                     \
     (GalaxyMonsterFrequency)                    \
@@ -165,6 +167,7 @@
     (InSystem)                                  \
     (Interceptor)                               \
     (Internal)                                  \
+    (Invisible)                                 \
     (Item)                                      \
     (Jumps)                                     \
     (JumpsBetween)                              \
@@ -260,6 +263,7 @@
     (PartCapacity)                              \
     (PartDamage)                                \
     (PartClass)                                 \
+    (Partial)                                   \
     (PartName)
 
 #define TOKEN_SEQ_9                             \
@@ -374,6 +378,7 @@
     (SetTexture)                                \
     (SetTrade)                                  \
     (SetTroops)                                 \
+    (SetVisibility)                             \
     (Shield)                                    \
     (ShipDesign)                                \
     (ShipDesignsDestroyed)                      \
@@ -481,6 +486,7 @@
     (Value)                                     \
     (Victory)                                   \
     (VisibleToEmpire)                           \
+    (Visibility)                                \
     (White)                                     \
     (WithinDistance)                            \
     (WithinStarlaneJumps)                       \

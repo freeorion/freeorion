@@ -84,7 +84,7 @@ namespace {
                 > (
                     (   parse::label(Empire_token) >  int_value_ref [ _c = _1 ]
                      >  parse::label(Opinion_token) > double_value_ref
-                        [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ] )
+                        [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
                    |
                     (   parse::label(Species_token) > string_value_ref [ _b = _1 ]
                     >   parse::label(Opinion_token) > double_value_ref
@@ -92,16 +92,29 @@ namespace {
                    )
                 ;
 
+            set_visibility
+                =    tok.SetVisibility_
+                >    parse::label(Visibility_token)
+                > (     tok.Invisible_  [ _c = VIS_NO_VISIBILITY ]
+                    |   tok.Basic_      [ _c = VIS_BASIC_VISIBILITY ]
+                    |   tok.Partial_    [ _c = VIS_PARTIAL_VISIBILITY ]
+                    |   tok.Full_       [ _c = VIS_FULL_VISIBILITY ]
+                  )
+                >   parse::label(Empire_token) > int_value_ref
+                    [ _val = new_<Effect::SetVisibility>(_c, _1) ]
+                ;
+
             start
-                %=   set_ship_part_meter
-                |    set_meter
-                |    set_empire_stockpile
-                |    set_empire_capital
-                |    set_planet_type
-                |    set_planet_size
-                |    set_species
-                |    set_species_opinion
-                |    set_owner
+                %=  set_ship_part_meter
+                |   set_meter
+                |   set_empire_stockpile
+                |   set_empire_capital
+                |   set_planet_type
+                |   set_planet_size
+                |   set_species
+                |   set_species_opinion
+                |   set_owner
+                |   set_visibility
                 ;
 
             set_meter.name("SetMeter");
@@ -113,6 +126,7 @@ namespace {
             set_species.name("SetSpecies");
             set_species_opinion.name("SetSpeciesOpinion");
             set_owner.name("SetOwner");
+            set_visibility.name("SetVisibility");
 
 
 #if DEBUG_EFFECT_PARSERS
@@ -125,6 +139,7 @@ namespace {
             debug(set_species);
             debug(set_species_opinion);
             debug(set_owner);
+            debug(set_visibility);
 #endif
         }
 
@@ -142,7 +157,8 @@ namespace {
             Effect::EffectBase* (),
             qi::locals<
                 ResourceType,
-                ValueRef::ValueRefBase<int>*
+                ValueRef::ValueRefBase<int>*,
+                Visibility
             >,
             parse::skipper_type
         > set_empire_stockpile_rule;
@@ -167,6 +183,7 @@ namespace {
         parse::effect_parser_rule           set_species;
         string_string_int_rule              set_species_opinion;
         parse::effect_parser_rule           set_owner;
+        set_empire_stockpile_rule           set_visibility;
         parse::effect_parser_rule           start;
     };
 }

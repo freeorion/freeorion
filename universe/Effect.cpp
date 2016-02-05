@@ -3740,6 +3740,49 @@ std::string SetTexture::Dump() const
 
 
 ///////////////////////////////////////////////////////////
+// SetVisibility                                            //
+///////////////////////////////////////////////////////////
+SetVisibility::SetVisibility(Visibility vis, ValueRef::ValueRefBase<int>* empire_id) :
+    m_vis(VIS_NO_VISIBILITY),
+    m_empire_id(empire_id)
+{}
+
+SetVisibility::~SetVisibility()
+{ delete m_empire_id; }
+
+void SetVisibility::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+}
+
+std::string SetVisibility::Description() const {
+    return "SetVisibility";
+}
+
+std::string SetVisibility::Dump() const {
+    std::string retval = DumpIndent() + "SetVisibility visibility = ";
+    switch (m_vis) {
+    case VIS_NO_VISIBILITY:     retval += "Invisible";  break;
+    case VIS_BASIC_VISIBILITY:  retval += "Basic";      break;
+    case VIS_PARTIAL_VISIBILITY:retval += "Partial";    break;
+    case VIS_FULL_VISIBILITY:   retval += "Full";       break;
+    case INVALID_VISIBILITY:
+    default:            retval += "?";                  break;
+    }
+
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump();
+    retval += "\n";
+    return retval;
+}
+
+void SetVisibility::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+}
+
+
+///////////////////////////////////////////////////////////
 // Conditional                                           //
 ///////////////////////////////////////////////////////////
 Conditional::Conditional(Condition::ConditionBase* target_condition,
