@@ -530,17 +530,16 @@ def generate_research_orders():
             print "  %-25s %8.4f %8.4f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
 
     print "Enqueuing techs, already spent %.2f RP of %.2f RP" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
-    queued_techs = set(get_research_queue_techs())
+    possible = [x for x in possible if x not in set(get_research_queue_techs())]
     # some floating point issues can cause AI to enqueue every tech......
     while empire.resourceProduction(fo.resourceType.research) - empire.researchQueue.totalSpent > 0.001 and possible:
         to_research = possible.pop(0)  # get tech with highest priority
-        if to_research not in queued_techs:
-            fo.issueEnqueueTechOrder(to_research, -1)
-            queued_techs.add(to_research)
-            print "  %-25s %6.2f RP/turn %6.2f RP" % (to_research,
-                                                      fo.getTech(to_research).perTurnCost(empire.empireID),
-                                                      fo.getTech(to_research).researchCost(empire.empireID))
-            fo.updateResearchQueue()
+        fo.issueEnqueueTechOrder(to_research, -1)
+        fo.updateResearchQueue()
+        print "  %-25s %6.2f RP/turn %6.2f RP" % (to_research,
+                                                  fo.getTech(to_research).perTurnCost(empire.empireID),
+                                                  fo.getTech(to_research).researchCost(empire.empireID))
+
     print "Finish research orders, spent %.2f RP of %.2f RP" % (fo.getEmpire().researchQueue.totalSpent,
                                                                 empire.resourceProduction(fo.resourceType.research))
     print
