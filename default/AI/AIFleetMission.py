@@ -1,4 +1,4 @@
-import freeOrionAIInterface as fo # pylint: disable=import-error
+import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
@@ -13,20 +13,23 @@ from universe_object import System, Fleet, Planet
 from EnumsAI import AIFleetMissionType
 
 ORDERS_FOR_MISSION = {
-        AIFleetMissionType.FLEET_MISSION_EXPLORATION: OrderMove,
-        AIFleetMissionType.FLEET_MISSION_OUTPOST: OrderOutpost,
-        AIFleetMissionType.FLEET_MISSION_COLONISATION: OrderColonize,
-        AIFleetMissionType.FLEET_MISSION_INVASION: OrderInvade,
-        AIFleetMissionType.FLEET_MISSION_MILITARY: OrderMilitary,
-        AIFleetMissionType.FLEET_MISSION_SECURE: OrderMilitary,  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION: OrderInvade,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST: OrderOutpost,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE: OrderDefend
-        }
+    AIFleetMissionType.FLEET_MISSION_EXPLORATION: OrderMove,
+    AIFleetMissionType.FLEET_MISSION_OUTPOST: OrderOutpost,
+    AIFleetMissionType.FLEET_MISSION_COLONISATION: OrderColonize,
+    AIFleetMissionType.FLEET_MISSION_INVASION: OrderInvade,
+    AIFleetMissionType.FLEET_MISSION_MILITARY: OrderMilitary,
+    AIFleetMissionType.FLEET_MISSION_SECURE: OrderMilitary,
+    # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+    AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION: OrderInvade,
+    AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST: OrderOutpost,
+    AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE: OrderDefend
+}
 
-COMBAT_MISSION_TYPES = (AIFleetMissionType.FLEET_MISSION_MILITARY,
-                       AIFleetMissionType.FLEET_MISSION_SECURE
-                       )
+COMBAT_MISSION_TYPES = (
+    AIFleetMissionType.FLEET_MISSION_MILITARY,
+    AIFleetMissionType.FLEET_MISSION_SECURE
+)
+
 
 class AIFleetMission(object):
     """
@@ -69,11 +72,11 @@ class AIFleetMission(object):
             fleet_id = self.fleet.id
 
         if self.type not in (AIFleetMissionType.FLEET_MISSION_MILITARY,
-                            AIFleetMissionType.FLEET_MISSION_INVASION,
-                            AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
-                            AIFleetMissionType.FLEET_MISSION_SECURE,
-                            AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE,
-                            ):
+                             AIFleetMissionType.FLEET_MISSION_INVASION,
+                             AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
+                             AIFleetMissionType.FLEET_MISSION_SECURE,
+                             AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE,
+                             ):
             return
         universe = fo.getUniverse()
         empire_id = fo.empireID()
@@ -123,7 +126,7 @@ class AIFleetMission(object):
                 do_merge = True
             else:
                 if not self.target and (main_fleet.speed > 0 or fleet.speed == 0):
-                    #print "\t\t\t ** Considering merging fleetA (id: %4d) into fleet (id %d) and former has no targets, will take it. FleetA mission was %s "%(fid, fleetID, fleet_mission)
+                    # print "\t\t\t ** Considering merging fleetA (id: %4d) into fleet (id %d) and former has no targets, will take it. FleetA mission was %s "%(fid, fleetID, fleet_mission)
                     do_merge = True
                 else:
                     target = fleet_mission.target.id if fleet_mission.target else None
@@ -134,8 +137,8 @@ class AIFleetMission(object):
                         neighbors = foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', [])
                         if (target == system_id) and m_MT0_id in neighbors:  # consider 'borrowing' for work in neighbor system  # TODO check condition
                             if self.type in (AIFleetMissionType.FLEET_MISSION_MILITARY,
-                                                      AIFleetMissionType.FLEET_MISSION_SECURE):
-                                #continue
+                                             AIFleetMissionType.FLEET_MISSION_SECURE):
+                                # continue
                                 if self.type == AIFleetMissionType.FLEET_MISSION_SECURE:  # actually, currently this is probably the onle one of all four that should really be possibile in this situation
                                     need_left = 1.5 * sum([sysStat.get('fleetThreat', 0) for sysStat in
                                                            [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in
@@ -327,12 +330,12 @@ class AIFleetMission(object):
                 if isinstance(fleet_order, OrderMove):
                     this_system_id = fleet_order.target.id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
-                    if this_status.get('monsterThreat', 0) > fo.currentTurn() * MilitaryAI.cur_best_mil_ship_rating()/4.0:
+                    if this_status.get('monsterThreat', 0) > fo.currentTurn() * MilitaryAI.cur_best_mil_ship_rating() / 4.0:
                         if (self.type not in (AIFleetMissionType.FLEET_MISSION_MILITARY,
                                               AIFleetMissionType.FLEET_MISSION_SECURE) or
                             fleet_order != self.orders[-1]  # if this move order is not this mil fleet's final destination, and blocked by Big Monster, release and hope for more effective reassignment
                             ):
-                            print "Aborting mission due to being blocked by Big Monster at system %d, threat %d"%(this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
+                            print "Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
                             print "Full set of orders were:"
                             for this_order in self.orders:
                                 print "\t\t %s" % this_order
@@ -401,7 +404,7 @@ class AIFleetMission(object):
                     else:  # no orders
                         print "No Current Orders"
                 else:
-                    #TODO: evaluate releasing a smaller portion or none of the ships
+                    # TODO: evaluate releasing a smaller portion or none of the ships
                     system_status = foAI.foAIstate.systemStatus.setdefault(last_sys_target, {})
                     new_fleets = []
                     threat_present = (system_status.get('totalThreat', 0) != 0) or (system_status.get('neighborThreat', 0) != 0)
@@ -443,9 +446,9 @@ class AIFleetMission(object):
         # if fleet doesn't have any mission, then repair if needed or resupply if is current location not in supplyable system
         empire = fo.getEmpire()
         fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
-        #if (not self.hasAnyAIMissionTypes()):
+        # if (not self.hasAnyAIMissionTypes()):
         if not self.target and (system_id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs +
-                                                    AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)):
+                                                     AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)):
             if self._need_repair():
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
                 if repair_fleet_order.is_valid():
@@ -460,7 +463,7 @@ class AIFleetMission(object):
         if self.target:
             system_targets_required_to_visit = [self.target.get_system()]
             orders_to_visit_systems = MoveUtilsAI.get_fleet_orders_from_system_targets(self.fleet, system_targets_required_to_visit)
-            #TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
+            # TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
             for fleet_order in orders_to_visit_systems:
                 self.orders.append(fleet_order)
 
@@ -515,9 +518,9 @@ class AIFleetMission(object):
             fleet_id = self.fleet.id
             fleet = self.fleet.get_object()
             return "%-20s [%10s mission]: %3d ships, total rating: %7d target: %s" % (fleet,
-                                                                                 AIFleetMissionType.name(self.type),
-                                                                                 (fleet and len(fleet.shipIDs)) or 0,
-                                                                                 foAI.foAIstate.get_rating(fleet_id).get('overall', 0),
-                                                                                 self.target)
+                                                                                      AIFleetMissionType.name(self.type),
+                                                                                      (fleet and len(fleet.shipIDs)) or 0,
+                                                                                      foAI.foAIstate.get_rating(fleet_id).get('overall', 0),
+                                                                                      self.target)
         else:
             return 'Mission with out mission types'

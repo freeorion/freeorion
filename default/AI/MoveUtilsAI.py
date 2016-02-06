@@ -30,7 +30,7 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):  # TODO conside
         # determine systems required to visit(with possible return to supplied system)
         ensure_return = target.id not in secure_targets
         system_targets = can_travel_to_system(fleet_target.id, last_system_target, target, ensure_return=ensure_return)
-        #print "making path with %d targets: "%len(system_targets) , ppstring(PlanetUtilsAI.sys_name_ids( [sysTarg.id for sysTarg in system_targets]))
+        # print "making path with %d targets: "%len(system_targets) , ppstring(PlanetUtilsAI.sys_name_ids( [sysTarg.id for sysTarg in system_targets]))
         if system_targets:
             # for every system required to visit create move order
             for system_targer in system_targets:
@@ -80,11 +80,11 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
     else:
         short_path = []
     legs = zip(short_path[:-1], short_path[1:])
-    #suppliedStops = [ sid for sid in short_path if sid in fleet_supplyable_system_ids ]
-    #unsupplied_stops = [sid for sid in short_path if sid not in suppliedStops ]
+    # suppliedStops = [ sid for sid in short_path if sid in fleet_supplyable_system_ids ]
+    # unsupplied_stops = [sid for sid in short_path if sid not in suppliedStops ]
     unsupplied_stops = [sys_b for sys_a, sys_b in legs if ((sys_a not in fleet_supplyable_system_ids) and (sys_b not in fleet_supplyable_system_ids))]
-    #print "getting path from %s to %s "%(ppstring(PlanetUtilsAI.sys_name_ids([ start_sys_id ])), ppstring(PlanetUtilsAI.sys_name_ids([ target_sys_id ])) ),
-    #print " ::: found initial path %s having suppliedStops %s and unsupplied_stops %s ; tot fuel available is %.1f"%( ppstring(PlanetUtilsAI.sys_name_ids( short_path[:])), suppliedStops, unsupplied_stops, fuel)
+    # print "getting path from %s to %s "%(ppstring(PlanetUtilsAI.sys_name_ids([ start_sys_id ])), ppstring(PlanetUtilsAI.sys_name_ids([ target_sys_id ])) ),
+    # print " ::: found initial path %s having suppliedStops %s and unsupplied_stops %s ; tot fuel available is %.1f"%( ppstring(PlanetUtilsAI.sys_name_ids( short_path[:])), suppliedStops, unsupplied_stops, fuel)
     if False:
         if target_sys_id in fleet_supplyable_system_ids:
             print "target has FleetSupply"
@@ -101,7 +101,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
                 foAI.foAIstate.aggression >= fo.aggression.aggressive and target_sys_id in ColonisationAI.annexable_ring3 and len(unsupplied_stops) < fuel - 2):
         return [universe_object.System(sid) for sid in short_path]
     else:
-        #print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
+        # print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
         return can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target)
 
 
@@ -128,14 +128,14 @@ def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to
         fleet = universe.getFleet(fleet_id)
         max_fuel = int(fleet.maxFuel)
         fuel = int(fleet.fuel)
-        #if verbose:
+        # if verbose:
         # print "   fleet ID %d has %.1f fuel to get from %s to %s"%(fleetID, fuel, fromSystemAITarget, toSystemAITarget )
 
         # try to find path without going resupply first
         supply_system_target = get_nearest_supplied_system(to_system_target.id)
         system_targets = __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_system_target, system_targets, fleet_supplyable_system_ids, max_fuel, fuel, supply_system_target)
         # resupply in system first is required to find path
-        if not from_system_target.id in fleet_supplyable_system_ids and not system_targets:
+        if from_system_target.id not in fleet_supplyable_system_ids and not system_targets:
             # add supply system to visit
             from_system_target = get_nearest_supplied_system(from_system_target.id)
             system_targets.append(from_system_target)
@@ -185,7 +185,7 @@ def get_nearest_drydock_system_id(start_system_id):
 def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     start_targ = universe_object.System(start_id)
     dest_targ = universe_object.System(dest_id)
-    #TODO actually get a safe path
+    # TODO actually get a safe path
     this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, ensure_return=False)
     path_ids = [targ.id for targ in this_path if targ.id != start_id] + [start_id]
     start_info = PlanetUtilsAI.sys_name_ids([start_id])
@@ -254,8 +254,8 @@ def __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_
         if min_jumps > fuel:
             # print "fleetID:" + str(fleetID) + " fuel:" + str(fuel) + " required: " + str(min_jumps)
             result = False
-        #else:
-            #resultSystemAITargets.append(toSystemAITarget)
+        # else:
+        #     resultSystemAITargets.append(toSystemAITarget)
 
     if not result:
         return []

@@ -42,30 +42,30 @@ class AIPriorityType(object):
     PRIORITY_PRODUCTION_ORBITAL_COLONISATION = 22
 
     AIPriorityNames = [
-            "RESOURCE_GROWTH",
-            "slot_empty",
-            "RESOURCE_PRODUCTION",
-            "RESOURCE_RESEARCH",
-            "RESOURCE_TRADE",
-            "RESOURCE_CONSTRUCTION",
-            "PRODUCTION_EXPLORATION",
-            "PRODUCTION_OUTPOST",
-            "PRODUCTION_COLONISATION",
-            "PRODUCTION_INVASION",
-            "PRODUCTION_MILITARY",
-            "PRODUCTION_BUILDINGS",
-            "RESEARCH_LEARNING",
-            "RESEARCH_GROWTH",
-            "RESEARCH_PRODUCTION",
-            "RESEARCH_CONSTRUCTION",
-            "RESEARCH_ECONOMICS",
-            "RESEARCH_SHIPS",
-            "RESEARCH_DEFENSE",
-            "PRODUCTION_ORBITAL_DEFENSE",
-            "PRODUCTION_ORBITAL_INVASION",
-            "PRODUCTION_ORBITAL_OUTPOST",
-            "PRODUCTION_ORBITAL_COLONISATION",
-            "INVALID" ]
+        "RESOURCE_GROWTH",
+        "slot_empty",
+        "RESOURCE_PRODUCTION",
+        "RESOURCE_RESEARCH",
+        "RESOURCE_TRADE",
+        "RESOURCE_CONSTRUCTION",
+        "PRODUCTION_EXPLORATION",
+        "PRODUCTION_OUTPOST",
+        "PRODUCTION_COLONISATION",
+        "PRODUCTION_INVASION",
+        "PRODUCTION_MILITARY",
+        "PRODUCTION_BUILDINGS",
+        "RESEARCH_LEARNING",
+        "RESEARCH_GROWTH",
+        "RESEARCH_PRODUCTION",
+        "RESEARCH_CONSTRUCTION",
+        "RESEARCH_ECONOMICS",
+        "RESEARCH_SHIPS",
+        "RESEARCH_DEFENSE",
+        "PRODUCTION_ORBITAL_DEFENSE",
+        "PRODUCTION_ORBITAL_INVASION",
+        "PRODUCTION_ORBITAL_OUTPOST",
+        "PRODUCTION_ORBITAL_COLONISATION",
+        "INVALID"]
 
     def name(self, mtype):
         try:
@@ -120,38 +120,38 @@ class AIFleetMissionType(EnumsType):
     # FLEET_MISSION_ORBITAL_COLONISATION = 15 Not implemented yet
 
     names = ['explore', 'outpost', 'colonize', 'split_fleet', 'mergeFleet', 'hit&Run', 'attack', 'defend', 'last_stand', 'invasion', 'military', 'secure',
-                                                    'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'repair', 'invalid']
+             'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'repair', 'invalid']
 
 
 FLEET_MISSION_TYPES = range(0, 17)
 
 
 class AIShipDesignTypes(object):
-    explorationShip = {"SD_SCOUT":"A", "Scout":"B", "Tracker":"C"}
-    colonyShip = {"SD_COLONY_SHIP":"A", "Seeder":"B", "Nest-Maker":"C", "Den-Maker":"D"}
-    outpostShip = {"SD_OUTPOST_SHIP":"A", "Outposter":"B"}
-    troopShip = {"SD_TROOP_SHIP":"A", "Basic-Troopers":"B", "Medium-Troopers":"C", "Heavy-Troopers":"D", "Very-Heavy-Troopers":"E"}
+    explorationShip = {"SD_SCOUT": "A", "Scout": "B", "Tracker": "C"}
+    colonyShip = {"SD_COLONY_SHIP": "A", "Seeder": "B", "Nest-Maker": "C", "Den-Maker": "D"}
+    outpostShip = {"SD_OUTPOST_SHIP": "A", "Outposter": "B"}
+    troopShip = {"SD_TROOP_SHIP": "A", "Basic-Troopers": "B", "Medium-Troopers": "C", "Heavy-Troopers": "D", "Very-Heavy-Troopers": "E"}
     # [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')),
     # (5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
-    attackShip= {"SD_MARK":"A", 
-                        "Lynx":"B",
-                        "Griffon":"C",
-                        "Bolo": "CA",
-                        "Comet":"CB",
-                        "Wyvern":"D", 
-                        "Manticore":"E",
-                        "Atlas":"EA",
-                        "Pele":"EB",
-                        "Xena":"EC",
-                        "Devil":"F",
-                        "Reaver":"G",
-                        "Obliterator":"H",
-                                    }
+    attackShip = {"SD_MARK": "A",
+                  "Lynx": "B",
+                  "Griffon": "C",
+                  "Bolo": "CA",
+                  "Comet": "CB",
+                  "Wyvern": "D",
+                  "Manticore": "E",
+                  "Atlas": "EA",
+                  "Pele": "EB",
+                  "Xena": "EC",
+                  "Devil": "F",
+                  "Reaver": "G",
+                  "Obliterator": "H",
+                  }
 
-    colonyBase={"SD_COLONY_BASE":"A", "NestBase":"B"}
-    outpostBase={"SD_OUTPOST_BASE":"A", "OutpostBase":"B"}
-    troopBase={"SpaceInvaders":"A"}
-    defenseBase={"Decoy":"A", "OrbitalGrid":"B", "OrbitalShield":"C", "OrbitalMultiShield":"D"}
+    colonyBase = {"SD_COLONY_BASE": "A", "NestBase": "B"}
+    outpostBase = {"SD_OUTPOST_BASE": "A", "OutpostBase": "B"}
+    troopBase = {"SpaceInvaders": "A"}
+    defenseBase = {"Decoy": "A", "OrbitalGrid": "B", "OrbitalShield": "C", "OrbitalMultiShield": "D"}
     SHIPDESIGN_INVALID = -1
 
 

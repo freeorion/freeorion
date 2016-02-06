@@ -146,9 +146,9 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     if handle_debug_chat(sender_id, message_text):
         return
     if not diplomatic_corp:
-        DiplomaticCorp.handle_pregame_chat(sender_id,message_text)
+        DiplomaticCorp.handle_pregame_chat(sender_id, message_text)
     else:
-        diplomatic_corp.handle_midgame_chat(sender_id,message_text)
+        diplomatic_corp.handle_midgame_chat(sender_id, message_text)
 
 
 @chat_on_error

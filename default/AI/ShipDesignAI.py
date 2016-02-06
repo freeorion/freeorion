@@ -69,8 +69,8 @@ ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS
 
 # Prefixes for the test ship designs
 TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
-TESTDESIGN_NAME_HULL = TESTDESIGN_NAME_BASE+"_HULL"
-TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE+"_PART"
+TESTDESIGN_NAME_HULL = TESTDESIGN_NAME_BASE + "_HULL"
+TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE + "_PART"
 
 # Hardcoded preferred hullname for testdesigns, should be a hull without conditions but with maximum different slottypes
 TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
@@ -922,7 +922,7 @@ class ShipDesigner(object):
                 if token == AIDependencies.REPAIR_PER_TURN:
                     self.repair_per_turn += min(value, self.structure)
                 elif token == AIDependencies.FUEL_PER_TURN:
-                    self.fuel_per_turn = max(self.fuel_per_turn+value, self.fuel)
+                    self.fuel_per_turn = max(self.fuel_per_turn + value, self.fuel)
                 elif token == AIDependencies.STEALTH_MODIFIER:
                     if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, [])
                             and self._partclass_in_design(STEALTH)):
@@ -1225,7 +1225,7 @@ class ShipDesigner(object):
         :param num_slots: number of slots to fill
         :return: list of int: the number of parts used in the design (indexed in order as in available_parts)
         """
-        return len(available_parts)*[0]+[num_slots]  # corresponds to an entirely empty design
+        return len(available_parts)*[0] + [num_slots]  # corresponds to an entirely empty design
 
     def _combinatorial_filling(self, available_parts):
         """Fill the design using a combinatorial approach.
@@ -1292,7 +1292,7 @@ class ShipDesigner(object):
                     else:
                         for j in xrange(len(total_filling[s])):
                             other_parts += total_filling[s][j] * [parts[s][j]]
-                self.update_parts(other_parts+current_parts)
+                self.update_parts(other_parts + current_parts)
                 current_rating = self.evaluate()
                 last_changed = None
                 exit_loop = False
@@ -1310,7 +1310,7 @@ class ShipDesigner(object):
                                 continue
                             while current_filling[j] > 0:
                                 current_parts[current_parts.index(parts[slot][j])] = parts[slot][i]  # exchange parts
-                                self.update_parts(other_parts+current_parts)
+                                self.update_parts(other_parts + current_parts)
                                 new_rating = self.evaluate()
                                 if new_rating > current_rating:  # keep the new config as it is better.
                                     current_filling[j] -= 1
@@ -1351,7 +1351,7 @@ class ShipDesigner(object):
         """
         total_dmg = 0
         for dmg, count in self.attacks.items():
-            total_dmg += max(0, dmg - self.additional_specifications.enemy_shields)*count
+            total_dmg += max(0, dmg - self.additional_specifications.enemy_shields) * count
         return total_dmg
 
     def _total_dmg(self):
@@ -1361,7 +1361,7 @@ class ShipDesigner(object):
         """
         total_dmg = 0
         for dmg, count in self.attacks.items():
-            total_dmg += dmg*count
+            total_dmg += dmg * count
         return total_dmg
 
     def _build_design_name(self):
@@ -1421,13 +1421,13 @@ class ShipDesigner(object):
         # TODO: Consider total pp production output as additional factor
         # TODO: Rethink about math and maybe work out a more accurate formula
         if self.consider_fleet_count:
-            return self.production_cost**(1/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+            return self.production_cost**(1 / (1 + foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
         else:
-            return self.production_cost/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)  # base cost
+            return self.production_cost / (1 + foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)  # base cost
 
     def _effective_fuel(self):
         """Return the number of turns the ship can move without refueling."""
-        return min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)
+        return min(self.fuel / max(1 - self.fuel_per_turn, 0.001), 10)
 
     def _effective_mine_damage(self):
         return self.additional_specifications.enemy_mine_dmg - self.repair_per_turn
@@ -1502,7 +1502,7 @@ class MilitaryShipDesigner(ShipDesigner):
         # cw, ca, ch = cost of weapon, armour, hull respectively
         # As this is a simple rational function in n, the maximizing problem can be solved analytically.
         # The analytical solution (after rounding to the nearest integer)is a good starting guess for our best design.
-        ret_val = (len(available_parts)+1)*[0]
+        ret_val = (len(available_parts) + 1) * [0]
         parts = [_get_part_type(part) for part in available_parts]
         weapons = [part for part in parts if part.partClass in WEAPONS]
         armours = [part for part in parts if part.partClass in ARMOUR]

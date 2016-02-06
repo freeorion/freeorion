@@ -49,6 +49,7 @@ def UserString(label, default=None):  # this name left with C naming style for c
     else:
         return table_string
 
+
 def UserStringList(label):  # this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
     '''
     A translation assistance tool is intended to search for this method to identify translatable strings.
@@ -57,6 +58,7 @@ def UserStringList(label):  # this name left with C naming style for compatibili
     '''
 
     return fo.userStringList(label)
+
 
 def tech_is_complete(tech):
     """
@@ -128,6 +130,7 @@ def chat_human(message):
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     fo.sendChatMessage(human_id, message)
     print "\nChat Message to human: %s\n" % remove_tags(message)
+
 
 def cache_by_turn(function):
     """

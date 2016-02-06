@@ -21,7 +21,7 @@ def charting_text():
     print ("Generating Orders")
     print ("EmpireID: {empire.empireID}"
            " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
-           " Turn: {turn}").format(empire=empire,  p_id=fo.playerID(), p_name=fo.playerName(),
+           " Turn: {turn}").format(empire=empire, p_id=fo.playerID(), p_name=fo.playerName(),
                                    res_idx=get_research_index(), turn=fo.currentTurn(),
                                    aggression=aggression_name.capitalize())
     print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)

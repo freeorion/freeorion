@@ -57,7 +57,7 @@ def inspect_instance(instance):
                 attrs={},
                 parents=[str(parent.__name__) for parent in parents])
     for name, member in getmembers(instance):
-        if not name in parent_attrs + ['__module__']:
+        if name not in parent_attrs + ['__module__']:
             info['attrs'][name] = get_member_info(member)
     return info
 
@@ -73,7 +73,7 @@ def inspect_boost_class(name, obj):
             'parents': [str(parent.__name__) for parent in parents]
             }
     for name, member in getmembers(obj):
-        if not name in parent_attrs + ['__module__', '__instance_size__']:
+        if name not in parent_attrs + ['__module__', '__instance_size__']:
             info['attrs'][name] = get_member_info(member)
     return info
 
@@ -86,14 +86,13 @@ def inspect_boost_function(name, value):
     }
 
 
-
 def inspect_type(name, obj):
     enum_dict = {}
     for k, v in obj.names.items():
         enum_dict.setdefault(v, [None, None])[1] = k
 
     for k, v in obj.values.items():
-         enum_dict.setdefault(v, [None, None])[0] = k
+        enum_dict.setdefault(v, [None, None])[0] = k
     return {'type': "enum",
             'name': name,
             'enum_dicts': enum_dict,

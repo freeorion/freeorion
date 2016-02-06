@@ -72,6 +72,7 @@ def system_to_string(system):
 
 fo.system.__repr__ = system_to_string
 
+
 def design_to_string(design):
     return to_str(SHIP_DESIGN, design.id, design.name)
 fo.shipDesign.__repr__ = design_to_string

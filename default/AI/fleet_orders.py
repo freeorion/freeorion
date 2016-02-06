@@ -192,8 +192,8 @@ class OrderResupply(AIFleetOrder):
             start_id = [fleet.systemID, fleet.nextSystemID][fleet.systemID == -1]
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
             print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s" % (fleet_id, self.ORDER_NAME,
-                                                                                                PlanetUtilsAI.sys_name_ids([dest_id]),
-                                                                                                PlanetUtilsAI.sys_name_ids([system_id]))
+                                                                                                  PlanetUtilsAI.sys_name_ids([dest_id]),
+                                                                                                  PlanetUtilsAI.sys_name_ids([system_id]))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
 
@@ -457,8 +457,8 @@ class OrderRepair(AIFleetOrder):
             start_id = [fleet.systemID, fleet.nextSystemID][fleet.systemID == -1]
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
             print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s" % (fleet_id, self.ORDER_NAME,
-                                                                                                PlanetUtilsAI.sys_name_ids([dest_id]),
-                                                                                                PlanetUtilsAI.sys_name_ids([system_id]))
+                                                                                                  PlanetUtilsAI.sys_name_ids([dest_id]),
+                                                                                                  PlanetUtilsAI.sys_name_ids([system_id]))
             fo.issueFleetMoveOrder(fleet_id, dest_id)
             print "Order issued: %s fleet: %s target: %s" % (self.ORDER_NAME, self.fleet, self.target)
 

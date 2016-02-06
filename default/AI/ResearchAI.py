@@ -84,8 +84,6 @@ def conditional_priority(func_if_true, func_if_false, cond_func):
     return get_priority
 
 
-
-
 def get_main_ship_designer_list():
     if not MAIN_SHIP_DESIGNER_LIST:
         MAIN_SHIP_DESIGNER_LIST.extend([ShipDesignAI.MilitaryShipDesigner(), ShipDesignAI.StandardTroopShipDesigner(),
@@ -483,7 +481,7 @@ def generate_research_orders():
     for tech_name, priority in base_priorities.iteritems():
         if priority >= 0:
             turns_needed = max(research_reqs[tech_name][REQS_TIME_IDX], math.ceil(float(research_reqs[tech_name][REQS_COST_IDX]) / total_rp))
-            time_attenuation = 2**(-max(0.0, turns_needed-5)/TIMESCALE_PERIOD)
+            time_attenuation = 2**(-max(0.0, turns_needed - 5) / TIMESCALE_PERIOD)
             attenuated_priority = priority * time_attenuation
             for prereq in research_reqs.get(tech_name, ([], 0, 0, 0))[REQS_PREREQS_IDX]:
                 if prereq in priorities and attenuated_priority > priorities[prereq]:  # checking like this to keep finished techs out of priorities
@@ -518,11 +516,10 @@ def generate_research_orders():
     print
 
     print "Prereqs seeming out of order:"
-    print "    %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio",  "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+    print "    %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
     for tech_name in missing_prereq_list:
         tech_info = research_reqs[tech_name]
         print "    %-25s %8.6f %8.6f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
-
 
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
 
@@ -540,7 +537,6 @@ def generate_research_orders():
                 print "    enqueued tech " + to_research + "  : cost: " + str(fo.getTech(to_research).researchCost(empire.empireID)) + "RP"
                 fo.updateResearchQueue()
         print
-
 
 
 def generate_default_research_order():
@@ -593,7 +589,7 @@ def get_possible_projects():
     for tech_name in fo.techs():
         if empire.getTechStatus(tech_name) == fo.techStatus.researchable:
             preliminary_projects.append(tech_name)
-    return set(preliminary_projects)-set(TechsListsAI.unusable_techs())
+    return set(preliminary_projects) - set(TechsListsAI.unusable_techs())
 
 
 def get_completed_techs():
@@ -604,6 +600,7 @@ def get_completed_techs():
 def get_research_queue_techs():
     """Get list of techs in research queue."""
     return [element.tech for element in fo.getEmpire().researchQueue]
+
 
 def exclude_tech(tech_name):
     return ((foAI.foAIstate.aggression < AIDependencies.TECH_EXCLUSION_MAP_1.get(tech_name, fo.aggression.invalid)) or
@@ -623,7 +620,7 @@ def generate_classic_research_orders():
     print "\nTotal Current Research Points: %.2f\n" % resource_production
     print "Techs researched and available for use:"
     completed_techs = sorted(list(get_completed_techs()))
-    tlist = completed_techs+3*[" "]
+    tlist = completed_techs + 3*[" "]
     tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
     for tline in tlines:
         print "%25s %25s %25s" % tline
@@ -669,7 +666,7 @@ def generate_classic_research_orders():
         print "Empire %s (%d) is selecting research index %d" % (empire.name, empire_id, research_index)
         # techs_to_enqueue = (set(new_tech)-(set(completed_techs)|set(research_queue_list)))
         techs_to_enqueue = new_tech[:]
-        tech_base = set(completed_techs+research_queue_list)
+        tech_base = set(completed_techs + research_queue_list)
         techs_to_add = []
         for tech in techs_to_enqueue:
             if tech not in tech_base:
@@ -679,7 +676,7 @@ def generate_classic_research_orders():
                     continue
                 missing_prereqs = [preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in tech_base]
                 techs_to_add.extend(missing_prereqs + [tech])
-                tech_base.update(missing_prereqs+[tech])
+                tech_base.update(missing_prereqs + [tech])
         cum_cost = 0
         print "  Enqueued Tech: %20s \t\t %8s \t %s" % ("Name", "Cost", "CumulativeCost")
         for name in techs_to_add:
@@ -697,7 +694,6 @@ def generate_classic_research_orders():
             except:
                 print "    Error: failed attempt to enqueued Tech: " + name
                 print "    Error: exception triggered and caught: ", traceback.format_exc()
-
 
         print "\n\nAll techs:"
         alltechs = fo.techs()  # returns names of all techs
@@ -722,7 +718,7 @@ def generate_classic_research_orders():
             if "CON_CONC_CAMP" in research_queue_list:
                 insert_idx = min(40, research_queue_list.index("CON_CONC_CAMP"))
             else:
-                insert_idx = max(0, min(40, len(research_queue_list)-10))
+                insert_idx = max(0, min(40, len(research_queue_list) - 10))
             if "SHP_DEFLECTOR_SHIELD" in research_queue_list:
                 insert_idx = min(insert_idx, research_queue_list.index("SHP_DEFLECTOR_SHIELD"))
             for cc_tech in ["CON_ARCH_PSYCH", "CON_CONC_CAMP"]:
@@ -1004,7 +1000,7 @@ def generate_classic_research_orders():
             sing_tech_list = [pre_req for pre_req in sing_gen_tech.recursivePrerequisites(empire_id) if not tech_is_complete(pre_req)]
             sing_tech_list += [AIDependencies.PRO_SINGULAR_GEN]
             for singTech in sing_tech_list:
-                if singTech not in research_queue_list[:num_techs_accelerated+1]:
+                if singTech not in research_queue_list[:num_techs_accelerated + 1]:
                     res = fo.issueEnqueueTechOrder(singTech, num_techs_accelerated)
                     num_techs_accelerated += 1
                     msg = "have a black hole star outpost/colony, so attempted to fast-track %s, got result %d" % (singTech, res)
@@ -1027,7 +1023,7 @@ def generate_classic_research_orders():
                     research_queue_list = get_research_queue_techs()
                     if "SHP_WEAPON_4_2" in research_queue_list:  # (should be)
                         idx = research_queue_list.index("SHP_WEAPON_4_2")
-                        fo.issueEnqueueTechOrder("SHP_WEAPON_4_2", max(0, idx-18))
+                        fo.issueEnqueueTechOrder("SHP_WEAPON_4_2", max(0, idx - 18))
 
     # TODO: Remove the following example code
     # Example/Test code for the new ShipDesigner functionality
