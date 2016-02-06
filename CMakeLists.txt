@@ -157,8 +157,8 @@ set (freeorioncommon_HEADER
     network/Message.h
     network/MessageQueue.h
     network/Networking.h
-    python/PythonSetWrapper.h
-    python/PythonWrappers.h
+    python/SetWrapper.h
+    python/CommonWrappers.h
     universe/Building.h
     universe/Condition.h
     universe/EffectAccounting.h

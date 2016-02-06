@@ -39,16 +39,18 @@ set (freeorionca_HEADER
 set (freeorionca_SOURCE
     ../../AI/AIInterface.cpp
     AIClientApp.cpp
-    ../../AI/PythonAI.cpp
     camain.cpp
     ../ClientApp.cpp
     ../ClientFSMEvents.cpp
     ../../combat/CombatSystem.cpp
     ../../network/ClientNetworking.cpp
-    ../../python/PythonEmpireWrapper.cpp
-    ../../python/PythonEnumWrapper.cpp
-    ../../python/PythonLoggingWrapper.cpp
-    ../../python/PythonUniverseWrapper.cpp
+    ../../python/CommonFramework.cpp
+    ../../python/AI/AIFramework.cpp
+    ../../python/EmpireWrapper.cpp
+    ../../python/EnumWrapper.cpp
+    ../../python/LoggingWrapper.cpp
+    ../../python/UniverseWrapper.cpp
+    ../../python/AI/AIWrapper.cpp
 )
 
 add_executable(freeorionca

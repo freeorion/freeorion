@@ -44,12 +44,13 @@ set (freeoriond_SOURCE
     ServerFSM.cpp
     ../combat/CombatSystem.cpp
     ../network/ServerNetworking.cpp
-    ../python/PythonEnumWrapper.cpp
-    ../python/PythonLoggingWrapper.cpp
-    ../python/PythonUniverseWrapper.cpp
-    ../python/server/PythonServerWrapper.cpp
-    ../python/server/PythonServerFramework.cpp
-    ../python/server/PythonServer.cpp
+    ../python/CommonFramework.cpp
+    ../python/EmpireWrapper.cpp
+    ../python/EnumWrapper.cpp
+    ../python/LoggingWrapper.cpp
+    ../python/UniverseWrapper.cpp
+    ../python/server/ServerWrapper.cpp
+    ../python/server/ServerFramework.cpp
     ../universe/UniverseGenerator.cpp
 )
 
