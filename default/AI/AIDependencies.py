@@ -30,15 +30,15 @@ TROOPS_PER_POP = 0.2
 
 TECH_COST_MULTIPLIER = 2.0
 
-
 #
 # Specials details (some specials are instead covered in the section they most directly affect
 #
-metabolismBoostMap = {"ORGANIC": ["FRUIT_SPECIAL", "PROBIOTIC_SPECIAL", "SPICE_SPECIAL"],
-                      "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
-                      "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
-                      "SELF_SUSTAINING": []
-                      }
+metabolismBoostMap = {
+    "ORGANIC": ["FRUIT_SPECIAL", "PROBIOTIC_SPECIAL", "SPICE_SPECIAL"],
+    "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
+    "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
+    "SELF_SUSTAINING": []
+}
 
 metabolismBoosts = {}
 for metab, boosts in metabolismBoostMap.items():
@@ -61,8 +61,9 @@ OUTPOSTING_TECH = "SHP_GAL_EXPLO"
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
 # value will be applied as a *fixed-size mod* to the max population
-POP_FIXED_MOD_SPECIALS = {'DIM_RIFT_MASTER_SPECIAL': {-1: -4},
-                          }
+POP_FIXED_MOD_SPECIALS = {
+    'DIM_RIFT_MASTER_SPECIAL': {-1: -4},
+}
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # The return value from the respective sub-dictionary will be applied as a
@@ -73,39 +74,43 @@ POP_FIXED_MOD_SPECIALS = {'DIM_RIFT_MASTER_SPECIAL': {-1: -4},
 # PlanetSize keys here for a more complex interaction.
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
 # value will be applied as a fixed-size mod to the max population
-POP_PROPORTIONAL_MOD_SPECIALS = {'TIDAL_LOCK_SPECIAL': {-1: -1},
-                                 'TEMPORAL_ANOMALY_SPECIAL': {-1: -5},
-                                 }
-
+POP_PROPORTIONAL_MOD_SPECIALS = {
+    'TIDAL_LOCK_SPECIAL': {-1: -1},
+    'TEMPORAL_ANOMALY_SPECIAL': {-1: -5},
+}
 
 #
 #  Supply details
 #
 supply_range_techs = {"CON_ORBITAL_CON": 1, "CON_CONTGRAV_ARCH": 1, "CON_GAL_INFRA": 1}
-supply_by_size = {fo.planetSize.tiny: 2,
-                  fo.planetSize.small: 1,
-                  fo.planetSize.large: -1,
-                  fo.planetSize.huge: -2,
-                  fo.planetSize.gasGiant: -1
-                  }
+supply_by_size = {
+    fo.planetSize.tiny: 2,
+    fo.planetSize.small: 1,
+    fo.planetSize.large: -1,
+    fo.planetSize.huge: -2,
+    fo.planetSize.gasGiant: -1
+}
 
-SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1},
-                       'ECCENTRIC_ORBIT_SPECIAL': {-1: -2},
-                       'ACCRETION_DISC_SPECIAL': {-1: -1},
-                       }
+SUPPLY_MOD_SPECIALS = {
+    'WORLDTREE_SPECIAL': {-1: 1},
+    'ECCENTRIC_ORBIT_SPECIAL': {-1: -2},
+    'ACCRETION_DISC_SPECIAL': {-1: -1},
+}
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # building supply bonuses are keyed by planet size; key -1 stands for any planet size
-building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
-                   "BLD_MEGALITH": {-1: 2},
-                   "BLD_SPACE_ELEVATOR": {fo.planetSize.tiny: 1,
-                                          fo.planetSize.small: 2,
-                                          fo.planetSize.medium: 3,
-                                          fo.planetSize.large: 4,
-                                          fo.planetSize.huge: 5,
-                                          fo.planetSize.gasGiant: 4,
-                                          },
-                   }
+building_supply = {
+    "BLD_IMPERIAL_PALACE": {-1: 2},
+    "BLD_MEGALITH": {-1: 2},
+    "BLD_SPACE_ELEVATOR": {
+        fo.planetSize.tiny: 1,
+        fo.planetSize.small: 2,
+        fo.planetSize.medium: 3,
+        fo.planetSize.large: 4,
+        fo.planetSize.huge: 5,
+        fo.planetSize.gasGiant: 4,
+    },
+}
 
 #
 # tech names etc.
@@ -137,79 +142,112 @@ DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
 DEFENSE_DEFENSE_NET_TECHS = ["DEF_DEFENSE_NET_1", "DEF_DEFENSE_NET_2", "DEF_DEFENSE_NET_3"]
 DEFENSE_REGEN_TECHS = ["DEF_DEFENSE_NET_REGEN_1", "DEF_DEFENSE_NET_REGEN_2"]
 DEFENSE_GARRISON_TECHS = ["DEF_GARRISON_1", "DEF_GARRISON_2", "DEF_GARRISON_3", "DEF_GARRISON_4"]
-DEFENSE_SHIELDS_TECHS = ["LRN_FORCE_FIELD", "DEF_PLAN_BARRIER_SHLD_1", "DEF_PLAN_BARRIER_SHLD_2",
-                         "DEF_PLAN_BARRIER_SHLD_3", "DEF_PLAN_BARRIER_SHLD_4", "DEF_PLAN_BARRIER_SHLD_5"]
+DEFENSE_SHIELDS_TECHS = [
+    "LRN_FORCE_FIELD", "DEF_PLAN_BARRIER_SHLD_1", "DEF_PLAN_BARRIER_SHLD_2",
+    "DEF_PLAN_BARRIER_SHLD_3", "DEF_PLAN_BARRIER_SHLD_4", "DEF_PLAN_BARRIER_SHLD_5"]
 
 PROT_FOCUS_MULTIPLIER = 2.0
 
 # TODO obtain this information from techs.txt
-UNRESEARCHABLE_TECHS = ["SHP_KRILL_SPAWN", "DEF_PLANET_CLOAK"]
+UNRESEARCHABLE_TECHS = ("SHP_KRILL_SPAWN", "DEF_PLANET_CLOAK")
 
-UNUSED_TECHS = ["LRN_SPATIAL_DISTORT_GEN", "LRN_GATEWAY_VOID", "LRN_PSY_DOM",
-                "GRO_TERRAFORM", "GRO_BIOTERROR", "GRO_GAIA_TRANS",
-                "PRO_NDIM_ASSMB",
-                "CON_ORGANIC_STRC", "CON_PLANET_DRIVE", "CON_STARGATE",
-                "CON_ART_HEAVENLY", "CON_ART_PLANET",
-                "SHP_NOVA_BOMB",
-                "SHP_BOMBARD",
-                "SHP_DEATH_SPORE", "SHP_BIOTERM",
-                "SHP_EMP", "SHP_EMO",
-                "SHP_SONIC", "SHP_GRV",
-                "SHP_DARK_RAY", "SHP_VOID_SHADOW",
-                "SHP_CHAOS_WAVE"]
+UNUSED_TECHS = (
+    "LRN_SPATIAL_DISTORT_GEN", "LRN_GATEWAY_VOID", "LRN_PSY_DOM",
+    "GRO_TERRAFORM", "GRO_BIOTERROR", "GRO_GAIA_TRANS",
+    "PRO_NDIM_ASSMB",
+    "CON_ORGANIC_STRC", "CON_PLANET_DRIVE", "CON_STARGATE",
+    "CON_ART_HEAVENLY", "CON_ART_PLANET",
+    "SHP_NOVA_BOMB",
+    "SHP_BOMBARD",
+    "SHP_DEATH_SPORE", "SHP_BIOTERM",
+    "SHP_EMP", "SHP_EMO",
+    "SHP_SONIC", "SHP_GRV",
+    "SHP_DARK_RAY", "SHP_VOID_SHADOW",
+    "SHP_CHAOS_WAVE"
+)
 
-THEORY_TECHS = ["LRN_PHYS_BRAIN", "LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_GRAVITONICS", "LRN_EVERYTHING", "LRN_MIND_VOID", "LRN_NDIM_SUBSPACE", "LRN_TIME_MECH",
-                "GRO_GENETIC_ENG", "GRO_ADV_ECOMAN", "GRO_NANOTECH_MED", "GRO_TRANSORG_SENT",
-                "PRO_NANOTECH_PROD", "PRO_ZERO_GEN",
-                "CON_ASYMP_MATS", "CON_ARCH_PSYCH",
-                "SHP_GAL_EXPLO"]
+THEORY_TECHS = (
+    "LRN_PHYS_BRAIN", "LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_GRAVITONICS", "LRN_EVERYTHING", "LRN_MIND_VOID",
+    "LRN_NDIM_SUBSPACE", "LRN_TIME_MECH",
+    "GRO_GENETIC_ENG", "GRO_ADV_ECOMAN", "GRO_NANOTECH_MED", "GRO_TRANSORG_SENT",
+    "PRO_NANOTECH_PROD", "PRO_ZERO_GEN",
+    "CON_ASYMP_MATS", "CON_ARCH_PSYCH",
+    "SHP_GAL_EXPLO"
+)
 
 DEFENSE_TECHS_PREFIX = "DEF"
 
-PRODUCTION_BOOST_TECHS = ["PRO_ROBOTIC_PROD", "PRO_FUSION_GEN", "PRO_SENTIENT_AUTOMATION",
-                          "PRO_INDUSTRY_CENTER_I", "PRO_INDUSTRY_CENTER_II", "PRO_INDUSTRY_CENTER_III",
-                          "PRO_SOL_ORB_GEN"]
+PRODUCTION_BOOST_TECHS = (
+    "PRO_ROBOTIC_PROD", "PRO_FUSION_GEN", "PRO_SENTIENT_AUTOMATION",
+    "PRO_INDUSTRY_CENTER_I", "PRO_INDUSTRY_CENTER_II", "PRO_INDUSTRY_CENTER_III",
+    "PRO_SOL_ORB_GEN"
+)
 
-RESEARCH_BOOST_TECHS = ["LRN_ALGO_ELEGANCE", "LRN_ARTIF_MINDS", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "LRN_STELLAR_TOMOGRAPHY",
-                        "LRN_ENCLAVE_VOID"]
+RESEARCH_BOOST_TECHS = (
+    "LRN_ALGO_ELEGANCE", "LRN_ARTIF_MINDS", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "LRN_STELLAR_TOMOGRAPHY",
+    "LRN_ENCLAVE_VOID"
+)
 
-PRODUCTION_AND_RESEARCH_BOOST_TECHS = ["LRN_UNIF_CONC", "GRO_ENERGY_META"]
+PRODUCTION_AND_RESEARCH_BOOST_TECHS = ("LRN_UNIF_CONC", "GRO_ENERGY_META")
 
-POPULATION_BOOST_TECHS = ["GRO_PLANET_ECOL", "GRO_SYMBIOTIC_BIO", "GRO_XENO_HYBRIDS", "GRO_CYBORG", "GRO_SUBTER_HAB",
-                          "CON_ORBITAL_HAB", "CON_NDIM_STRC", "PRO_EXOBOTS"]
+POPULATION_BOOST_TECHS = (
+    "GRO_PLANET_ECOL", "GRO_SYMBIOTIC_BIO", "GRO_XENO_HYBRIDS", "GRO_CYBORG", "GRO_SUBTER_HAB",
+    "CON_ORBITAL_HAB", "CON_NDIM_STRC", "PRO_EXOBOTS"
+)
 
 # important that the easiest-to-reach supply tech be listed first
-SUPPLY_BOOST_TECHS = ["CON_ORBITAL_CON", "CON_ARCH_MONOFILS", "CON_GAL_INFRA", "CON_CONTGRAV_ARCH"]
+SUPPLY_BOOST_TECHS = ("CON_ORBITAL_CON", "CON_ARCH_MONOFILS", "CON_GAL_INFRA", "CON_CONTGRAV_ARCH")
 
-METER_CHANGE_BOOST_TECHS = ["CON_FRC_ENRG_STRC", "CON_TRANS_ARCH"]
+METER_CHANGE_BOOST_TECHS = ("CON_FRC_ENRG_STRC", "CON_TRANS_ARCH")
 
-DETECTION_TECHS = ["SPY_DETECT_1", "SPY_DETECT_2", "SPY_DETECT_3", "SPY_DETECT_4", "SPY_DETECT_5", "SPY_DIST_MOD", "SPY_LIGHTHOUSE"]
-STEALTH_TECHS = ["SPY_STEALTH_1", "SPY_STEALTH_2", "SPY_STEALTH_3", "SPY_STEALTH_4", "CON_FRC_ENRG_CAMO"]
+DETECTION_TECHS = (
+    "SPY_DETECT_1", "SPY_DETECT_2", "SPY_DETECT_3", "SPY_DETECT_4",
+    "SPY_DETECT_5", "SPY_DIST_MOD", "SPY_LIGHTHOUSE"
+)
 
-ROBOTIC_HULL_TECHS = ["SHP_MIL_ROBO_CONT", "SHP_SPACE_FLUX_DRIVE", "SHP_TRANSSPACE_DRIVE", "SHP_CONTGRAV_MAINT", "SHP_MASSPROP_SPEC",
-                      "SHP_NANOROBO_MAINT", "SHP_MIDCOMB_LOG"]
-ASTEROID_HULL_TECHS = ["SHP_ASTEROID_HULLS", "SHP_SCAT_AST_HULL",
-                       "SHP_HEAVY_AST_HULL", "SHP_CAMO_AST_HULL", "SHP_MINIAST_SWARM"]
-ORGANIC_HULL_TECHS = ["SHP_ORG_HULL", "SHP_MULTICELL_CAST", "SHP_ENDOCRINE_SYSTEMS", "SHP_CONT_BIOADAPT",
-                      "SHP_MONOCELL_EXP", "SHP_CONT_SYMB", "SHP_BIOADAPTIVE_SPEC", "SHP_ENDOSYMB_HULL", "SHP_SENT_HULL"]
-ENERGY_HULL_TECHS = ["SHP_FRC_ENRG_COMP", "SHP_QUANT_ENRG_MAG", "SHP_ENRG_BOUND_MAN", "SHP_SOLAR_CONT"]
-MISC_HULL_TECHS = ["SHP_XENTRONIUM_HULL"]
+STEALTH_TECHS = ("SPY_STEALTH_1", "SPY_STEALTH_2", "SPY_STEALTH_3", "SPY_STEALTH_4", "CON_FRC_ENRG_CAMO")
 
-HULL_TECHS = ROBOTIC_HULL_TECHS + ASTEROID_HULL_TECHS + ORGANIC_HULL_TECHS + ENERGY_HULL_TECHS + MISC_HULL_TECHS
+ROBOTIC_HULL_TECHS = (
+    "SHP_MIL_ROBO_CONT", "SHP_SPACE_FLUX_DRIVE", "SHP_TRANSSPACE_DRIVE", "SHP_CONTGRAV_MAINT",
+    "SHP_MASSPROP_SPEC", "SHP_NANOROBO_MAINT", "SHP_MIDCOMB_LOG"
+)
 
-DAMAGE_CONTROL_TECHS = ["SHP_BASIC_DAM_CONT", "SHP_FLEET_REPAIR", "SHP_ADV_DAM_CONT"]
+ASTEROID_HULL_TECHS = (
+    "SHP_ASTEROID_HULLS", "SHP_SCAT_AST_HULL",
+    "SHP_HEAVY_AST_HULL", "SHP_CAMO_AST_HULL", "SHP_MINIAST_SWARM"
+)
+
+ORGANIC_HULL_TECHS = (
+    "SHP_ORG_HULL", "SHP_MULTICELL_CAST", "SHP_ENDOCRINE_SYSTEMS", "SHP_CONT_BIOADAPT",
+    "SHP_MONOCELL_EXP", "SHP_CONT_SYMB", "SHP_BIOADAPTIVE_SPEC", "SHP_ENDOSYMB_HULL", "SHP_SENT_HULL"
+)
+
+ENERGY_HULL_TECHS = ("SHP_FRC_ENRG_COMP", "SHP_QUANT_ENRG_MAG", "SHP_ENRG_BOUND_MAN", "SHP_SOLAR_CONT")
+
+MISC_HULL_TECHS = ("SHP_XENTRONIUM_HULL",)
+
+HULL_TECHS = tuple(hull for hulls in (ROBOTIC_HULL_TECHS,
+                                      ASTEROID_HULL_TECHS,
+                                      ORGANIC_HULL_TECHS,
+                                      ENERGY_HULL_TECHS,
+                                      MISC_HULL_TECHS) for hull in hulls)
+
+DAMAGE_CONTROL_TECHS = ("SHP_BASIC_DAM_CONT", "SHP_FLEET_REPAIR", "SHP_ADV_DAM_CONT")
 
 WEAPON_PREFIX = "SHP_WEAPON"
-ARMOR_TECHS = ["SHP_ZORTRIUM_PLATE", "SHP_DIAMOND_PLATE", "SHP_XENTRONIUM_PLATE",
-               "SHP_ASTEROID_REFORM", "SHP_MONOMOLEC_LATTICE", "PRO_NEUTRONIUM_EXTRACTION", "SHP_REINFORCED_HULL"]
-ENGINE_TECHS = ["SHP_IMPROVED_ENGINE_COUPLINGS", "SHP_N_DIMENSIONAL_ENGINE_MATRIX", "SHP_SINGULARITY_ENGINE_CORE"]
-FUEL_TECHS = ["SHP_DEUTERIUM_TANK", "SHP_ANTIMATTER_TANK", "SHP_ZERO_POINT"]
-SHIELD_TECHS = ["LRN_FORCE_FIELD", "SHP_DEFLECTOR_SHIELD", "SHP_PLASMA_SHIELD", "SHP_BLACKSHIELD", "SHP_MULTISPEC_SHIELD"]
-COLONY_POD_TECHS = ["GRO_LIFECYCLE_MAN"]
-TROOP_POD_TECHS = ["GRO_NANO_CYBERNET"]
+ARMOR_TECHS = (
+    "SHP_ZORTRIUM_PLATE", "SHP_DIAMOND_PLATE", "SHP_XENTRONIUM_PLATE",
+    "SHP_ASTEROID_REFORM", "SHP_MONOMOLEC_LATTICE", "PRO_NEUTRONIUM_EXTRACTION", "SHP_REINFORCED_HULL"
+)
+ENGINE_TECHS = ("SHP_IMPROVED_ENGINE_COUPLINGS", "SHP_N_DIMENSIONAL_ENGINE_MATRIX", "SHP_SINGULARITY_ENGINE_CORE")
+FUEL_TECHS = ("SHP_DEUTERIUM_TANK", "SHP_ANTIMATTER_TANK", "SHP_ZERO_POINT")
+SHIELD_TECHS = (
+    "LRN_FORCE_FIELD", "SHP_DEFLECTOR_SHIELD", "SHP_PLASMA_SHIELD", "SHP_BLACKSHIELD", "SHP_MULTISPEC_SHIELD"
+)
+COLONY_POD_TECHS = ("GRO_LIFECYCLE_MAN",)
+TROOP_POD_TECHS = ("GRO_NANO_CYBERNET",)
 
-SHIP_TECHS_REQUIRING_BLACK_HOLE = ["SHP_SOLAR_CONT"]
-
+SHIP_TECHS_REQUIRING_BLACK_HOLE = ("SHP_SOLAR_CONT",)
 
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
@@ -231,11 +269,7 @@ SHIP_FACILITIES = {
 }
 
 # those facilities that need merely be in-system
-SYSTEM_SHIP_FACILITIES = {
-    "BLD_SHIPYARD_AST",
-    "BLD_SHIPYARD_AST_REF",
-}
-
+SYSTEM_SHIP_FACILITIES = frozenset(("BLD_SHIPYARD_AST", "BLD_SHIPYARD_AST_REF"))
 
 PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 
@@ -249,9 +283,9 @@ SPEED = "SPEED"
 FUEL = "FUEL"
 SHIELDS = "SHIELDS"
 STRUCTURE = "STRUCTURE"
-DETECTION = "DETECTION"                 # do only specify for hulls if irregular detection
-ORGANIC_GROWTH = "ORGANIC_GROWTH"       # structure for value is (per_turn, maximum)
-STACKING_RULES = "STACKING_RULES"       # expects a list of stacking rules
+DETECTION = "DETECTION"  # do only specify for hulls if irregular detection
+ORGANIC_GROWTH = "ORGANIC_GROWTH"  # structure for value is (per_turn, maximum)
+STACKING_RULES = "STACKING_RULES"  # expects a list of stacking rules
 # stacking rules
 NO_EFFECT_WITH_CLOAKS = "NO_EFFECT_WITH_CLOAKS"
 
