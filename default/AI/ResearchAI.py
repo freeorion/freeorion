@@ -414,8 +414,11 @@ def generate_research_orders():
     """Generate research orders."""
 
     if use_classic_research_approach():
+        print "Classical research approach is used"
         generate_classic_research_orders()
         return
+    else:
+        print 'New research approach is used'
     
     # initializing priority functions here within generate_research_orders() to avoid import race
     if not priority_funcs:
