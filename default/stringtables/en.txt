@@ -14636,7 +14636,26 @@ MONSTER_NAMES
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
 
+AI_FIRST_TURN_GREETING_BEGINNER
+'''Ave, Human, morituri te salutant!
+Get out of our universe!
+Prepare to die.'''
 
+AI_FIRST_TURN_GREETING_MANIACAL
+'''To do battle with you will be an honor.
+Alien scum! We shall cleanse the galaxy of your filthy presence!
+Worthless insects, you dare to challenge our mighty empire?!
+Exterminating you shall be a genuine pleasure!
+Welcome, dear enemy, our fearless warriors are waiting for you...
+Don't bother to look for mercy to us, for you will find none here.
+A meek lamb who wants to dance with lions is always welcome at our table - as the entrée of course...
+Ha! You think you can stand up to us? Well, bring it on!
+A bunch of foolish aliens stumbling right into our arms - a day can't start better!
+Despair and defeat is what you're going to find at our hands.
+Greetings strangers! We hope you are worthy doing battle with.
+Surrender now, and we might consider letting you live... as our slaves forever.
+Enjoy yourself as long as you can, for the last thing you'll see is the cleansing fire of our powerful weapons!
+Sending you to your ancestors is our sacred duty!'''
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
