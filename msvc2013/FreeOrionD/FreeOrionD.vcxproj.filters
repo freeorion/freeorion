@@ -203,23 +203,23 @@
     <ClInclude Include="..\..\universe\EffectAccounting.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\PythonWrappers.h">
-      <Filter>Header Files\python</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\UniverseGenerator.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\server\PythonServerWrapper.h">
+    <ClInclude Include="..\..\python\server\ServerFramework.h">
       <Filter>Header Files\python\server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\server\PythonServer.h">
+    <ClInclude Include="..\..\python\server\ServerWrapper.h">
       <Filter>Header Files\python\server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\server\PythonServerFramework.h">
-      <Filter>Header Files\python\server</Filter>
+    <ClInclude Include="..\..\python\CommonFramework.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\SetWrapper.h">
+      <Filter>Header Files\python</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -244,26 +244,29 @@
     <ClCompile Include="..\..\combat\CombatSystem.cpp">
       <Filter>Source Files\combat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\UniverseGenerator.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp">
+    <ClCompile Include="..\..\python\server\ServerFramework.cpp">
+      <Filter>Source Files\python\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\server\ServerWrapper.cpp">
+      <Filter>Source Files\python\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\CommonFramework.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\server\PythonServerWrapper.cpp">
-      <Filter>Source Files\python\server</Filter>
+    <ClCompile Include="..\..\python\EmpireWrapper.cpp">
+      <Filter>Source Files\python</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\server\PythonServer.cpp">
-      <Filter>Source Files\python\server</Filter>
+    <ClCompile Include="..\..\python\EnumWrapper.cpp">
+      <Filter>Source Files\python</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\server\PythonServerFramework.cpp">
-      <Filter>Source Files\python\server</Filter>
+    <ClCompile Include="..\..\python\LoggingWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\UniverseWrapper.cpp">
+      <Filter>Source Files\python</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

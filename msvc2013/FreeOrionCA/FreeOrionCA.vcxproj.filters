@@ -54,12 +54,15 @@
     <Filter Include="Header Files\GG">
       <UniqueIdentifier>{7e48aed2-0a7f-45a6-8c82-c1d7a143dfa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\python\AI">
+      <UniqueIdentifier>{5559c554-27b1-4449-94e3-f1bb8b3374d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\python\AI">
+      <UniqueIdentifier>{840c46ce-8edc-4578-83d0-a181cbe74a7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AI\AIInterface.h">
-      <Filter>Header Files\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\AI\PythonAI.h">
       <Filter>Header Files\AI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\client\ClientApp.h">
@@ -203,12 +206,6 @@
     <ClInclude Include="..\..\universe\Meter.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\PythonSetWrapper.h">
-      <Filter>Header Files\python</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\python\PythonWrappers.h">
-      <Filter>Header Files\python</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\GG\GG\Exception.h">
       <Filter>Header Files\GG</Filter>
     </ClInclude>
@@ -224,6 +221,21 @@
     <ClInclude Include="..\..\universe\EffectAccounting.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\python\CommonWrappers.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\SetWrapper.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\AI\AIFramework.h">
+      <Filter>Header Files\python\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\AI\AIWrapper.h">
+      <Filter>Header Files\python\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\CommonFramework.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp">
@@ -235,29 +247,35 @@
     <ClCompile Include="..\..\network\ClientNetworking.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\client\AI\camain.cpp">
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp">
       <Filter>Source Files\client\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\AI\PythonAI.cpp">
-      <Filter>Source Files\AI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\AI\AIInterface.cpp">
       <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\AI\AIFramework.cpp">
+      <Filter>Source Files\python\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\AI\AIWrapper.cpp">
+      <Filter>Source Files\python\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\CommonFramework.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\EmpireWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\EnumWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\LoggingWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\UniverseWrapper.cpp">
+      <Filter>Source Files\python</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

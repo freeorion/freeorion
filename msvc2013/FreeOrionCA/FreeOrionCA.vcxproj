@@ -146,7 +146,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AI\AIInterface.h" />
-    <ClInclude Include="..\..\AI\PythonAI.h" />
     <ClInclude Include="..\..\client\AI\AIClientApp.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
@@ -159,8 +158,11 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\python\PythonSetWrapper.h" />
-    <ClInclude Include="..\..\python\PythonWrappers.h" />
+    <ClInclude Include="..\..\python\AI\AIFramework.h" />
+    <ClInclude Include="..\..\python\AI\AIWrapper.h" />
+    <ClInclude Include="..\..\python\CommonFramework.h" />
+    <ClInclude Include="..\..\python\CommonWrappers.h" />
+    <ClInclude Include="..\..\python\SetWrapper.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
@@ -204,16 +206,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\AI\AIInterface.cpp" />
-    <ClCompile Include="..\..\AI\PythonAI.cpp" />
     <ClCompile Include="..\..\client\AI\AIClientApp.cpp" />
     <ClCompile Include="..\..\client\AI\camain.cpp" />
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp" />
-    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
-    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
-    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
+    <ClCompile Include="..\..\python\AI\AIFramework.cpp" />
+    <ClCompile Include="..\..\python\AI\AIWrapper.cpp" />
+    <ClCompile Include="..\..\python\CommonFramework.cpp" />
+    <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
+    <ClCompile Include="..\..\python\EnumWrapper.cpp" />
+    <ClCompile Include="..\..\python\LoggingWrapper.cpp" />
+    <ClCompile Include="..\..\python\UniverseWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
