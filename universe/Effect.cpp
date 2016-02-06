@@ -3740,11 +3740,14 @@ std::string SetTexture::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// SetVisibility                                            //
+// SetVisibility                                         //
 ///////////////////////////////////////////////////////////
-SetVisibility::SetVisibility(Visibility vis, ValueRef::ValueRefBase<int>* empire_id) :
-    m_vis(VIS_NO_VISIBILITY),
-    m_empire_id(empire_id)
+SetVisibility::SetVisibility(Visibility vis, EmpireAffiliationType affiliation, bool upgrade_only,
+                             ValueRef::ValueRefBase<int>* empire_id) :
+    m_vis(vis),
+    m_empire_id(empire_id),
+    m_affiliation(affiliation),
+    m_upgrade_only(upgrade_only)
 {}
 
 SetVisibility::~SetVisibility()
@@ -3753,14 +3756,125 @@ SetVisibility::~SetVisibility()
 void SetVisibility::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
+    int empire_id = ALL_EMPIRES;
+    if (m_empire_id)
+        empire_id = m_empire_id->Eval(context);
+
+    // whom to set visbility for?
+    std::set<int> empire_ids;
+    switch (m_affiliation) {
+    case AFFIL_SELF: {
+        // add just specified empire
+        if (empire_id != ALL_EMPIRES)
+            empire_ids.insert(empire_id);
+        break;
+    }
+
+    case AFFIL_ALLY: {
+        // add allies of specified empire
+        for (EmpireManager::const_iterator emp_it = Empires().begin();
+             emp_it != Empires().end(); ++emp_it)
+        {
+            if (emp_it->first == empire_id || empire_id == ALL_EMPIRES)
+                continue;
+
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, emp_it->first);
+            if (status == DIPLO_PEACE)
+                empire_ids.insert(emp_it->first);
+        }
+        break;
+    }
+
+    case AFFIL_ENEMY: {
+        // add enemies of specified empire
+        for (EmpireManager::const_iterator emp_it = Empires().begin();
+             emp_it != Empires().end(); ++emp_it)
+        {
+            if (emp_it->first == empire_id || empire_id == ALL_EMPIRES)
+                continue;
+
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, emp_it->first);
+            if (status == DIPLO_WAR)
+                empire_ids.insert(emp_it->first);
+        }
+        break;
+    }
+
+    case AFFIL_CAN_SEE:
+        // unsupported so far...
+    case AFFIL_NONE:
+        // add no empires
+        break;
+
+    case AFFIL_ANY:
+    default: {
+        // add all empires
+        for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
+            empire_ids.insert(empire_it->first);
+        break;
+    }
+    }
+
+    for (std::set<int>::const_iterator emp_it = empire_ids.begin();
+         emp_it != empire_ids.end(); ++emp_it)
+    {
+        Empire* empire = GetEmpire(*emp_it);
+        if (!empire)
+            continue;
+
+        // TODO: DO IT
+    }
 }
 
 std::string SetVisibility::Description() const {
-    return "SetVisibility";
+    std::string empire_str;
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = GetEmpire(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
+
+    std::string vis_str = UserString("ERROR");
+    vis_str = UserString(boost::lexical_cast<std::string>(m_vis));
+
+    // pick appropriate sitrep text...
+    std::string desc_template;
+    if (m_upgrade_only) {
+        switch (m_affiliation) {
+        case AFFIL_ALLY:    desc_template = UserString("DESC_UPGRADE_VIS_ALLIES");  break;
+        case AFFIL_ENEMY:   desc_template = UserString("DESC_UPGRADE_VIS_ENEMIES"); break;
+        case AFFIL_NONE:    desc_template = UserString("DESC_UPGRADE_VIS_NONE");    break;
+        case AFFIL_ANY:     desc_template = UserString("DESC_UPGRADE_VIS_ALL");     break;
+        case AFFIL_SELF:
+        case AFFIL_CAN_SEE:
+        default:            desc_template = UserString("DESC_UPGRADE_VIS");
+        }
+    } else {
+        switch (m_affiliation) {
+        case AFFIL_ALLY:    desc_template = UserString("DESC_SET_VIS_ALLIES");  break;
+        case AFFIL_ENEMY:   desc_template = UserString("DESC_SET_VIS_ENEMIES"); break;
+        case AFFIL_NONE:    desc_template = UserString("DESC_SET_VIS_NONE");    break;
+        case AFFIL_ANY:     desc_template = UserString("DESC_SET_VIS_ALL");     break;
+        case AFFIL_SELF:
+        case AFFIL_CAN_SEE:
+        default:            desc_template = UserString("DESC_SET_VIS");
+        }
+    }
+
+    return str(FlexibleFormat(desc_template) % vis_str % empire_str);
 }
 
 std::string SetVisibility::Dump() const {
-    std::string retval = DumpIndent() + "SetVisibility visibility = ";
+    std::string retval = DumpIndent();
+    if (m_upgrade_only)
+        retval += "UpgradeVisibility visibility = ";
+    else
+        retval += "SetVisibility visibility = ";
+
     switch (m_vis) {
     case VIS_NO_VISIBILITY:     retval += "Invisible";  break;
     case VIS_BASIC_VISIBILITY:  retval += "Basic";      break;
@@ -3768,6 +3882,16 @@ std::string SetVisibility::Dump() const {
     case VIS_FULL_VISIBILITY:   retval += "Full";       break;
     case INVALID_VISIBILITY:
     default:            retval += "?";                  break;
+    }
+
+    retval += DumpIndent() + "affiliation = ";
+    switch (m_affiliation) {
+    case AFFIL_SELF:    retval += "TheEmpire";  break;
+    case AFFIL_ENEMY:   retval += "EnemyOf";    break;
+    case AFFIL_ALLY:    retval += "AllyOf";     break;
+    case AFFIL_ANY:     retval += "AnyEmpire";  break;
+    case AFFIL_CAN_SEE: retval += "CanSee";     break;
+    default:            retval += "?";          break;
     }
 
     if (m_empire_id)

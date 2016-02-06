@@ -1018,18 +1018,26 @@ private:
   * visibility mechanics. */
 class FO_COMMON_API Effect::SetVisibility : public Effect::EffectBase {
 public:
-    explicit SetVisibility(Visibility vis, ValueRef::ValueRefBase<int>* empire_id = 0);
+    SetVisibility(Visibility vis, EmpireAffiliationType affiliation, bool upgrade_only = false,
+                  ValueRef::ValueRefBase<int>* empire_id = 0);
     virtual ~SetVisibility();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    Visibility                      GetVisibility() const   { return m_vis; }
+    ValueRef::ValueRefBase<int>*    EmpireID() const        { return m_empire_id; }
+    EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
+    bool                            UpgradeOnly() const     { return m_upgrade_only; }
+
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     Visibility                      m_vis;
     ValueRef::ValueRefBase<int>*    m_empire_id;
+    EmpireAffiliationType           m_affiliation;
+    bool                            m_upgrade_only;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1341,7 +1349,9 @@ void Effect::SetVisibility::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_vis)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_affiliation)
+        & BOOST_SERIALIZATION_NVP(m_upgrade_only);
 }
 
 template <class Archive>

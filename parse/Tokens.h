@@ -482,6 +482,7 @@
     (Unowned)                                   \
     (Unproducible)                              \
     (Unresearchable)                            \
+    (UpgradeVisibility)                         \
     (UserString)                                \
     (Value)                                     \
     (Victory)                                   \

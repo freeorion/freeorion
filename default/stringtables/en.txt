@@ -6385,6 +6385,21 @@ Trade
 PC_PRODICTION_LOCATION
 Production
 
+# Visibility levels
+
+VIS_NO_VISIBILITY
+Invisible
+
+VIS_BASIC_VISIBILITY
+Basic
+
+VIS_PARTIAL_VISIBILITY
+Partial
+
+VIS_FULL_VISIBILITY
+Full
+
+
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
@@ -6783,6 +6798,27 @@ Modifies the appearance of the object
 
 DESC_SET_TEXTURE
 Modifies the appearance of the object
+
+DESC_UPGRADE_VIS_ALLIES
+Sets the visibility of the object to at least %1% for allies of empire %2%
+DESC_UPGRADE_VIS_ENEMIES
+Sets the visibility of the object to at least %1% for enemies of empire %2%
+DESC_UPGRADE_VIS_NONE
+Sets the visibility of the object for no empires
+DESC_UPGRADE_VIS_ALL
+Sets the visibility of the object to at least %1% for all empires
+DESC_UPGRADE_VIS
+Sets the visibility of the object to at least %1% for empire %2%
+DESC_SET_VIS_ALLIES
+Sets the visibility of the object to %1% for allies of empire %2%
+DESC_SET_VIS_ENEMIES
+Sets the visibility of the object to %1% for enemies of empire %2%
+DESC_SET_VIS_NONE
+[[DESC_UPGRADE_VIS_NONE]]
+DESC_SET_VIS_ALL
+Sets the visibility of the object to %1% for all empires
+DESC_SET_VIS
+Sets the visibility of the object to %1% for empire %2%
 
 DESC_CONDITIONAL
 Applies various effects depending on whether or not the target is an object %1%

@@ -17,6 +17,8 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -93,15 +95,33 @@ namespace {
                 ;
 
             set_visibility
-                =    tok.SetVisibility_
+                = (     tok.SetVisibility_      [ _e = false ]
+                    |   tok.UpgradeVisibility_  [ _e = true ]
+                  )
                 >    parse::label(Visibility_token)
                 > (     tok.Invisible_  [ _c = VIS_NO_VISIBILITY ]
                     |   tok.Basic_      [ _c = VIS_BASIC_VISIBILITY ]
                     |   tok.Partial_    [ _c = VIS_PARTIAL_VISIBILITY ]
                     |   tok.Full_       [ _c = VIS_FULL_VISIBILITY ]
                   )
-                >   parse::label(Empire_token) > int_value_ref
-                    [ _val = new_<Effect::SetVisibility>(_c, _1) ]
+                >  (
+                        (   // empire id specified, optionally with an affiliation type:
+                            // useful to specify a single recipient empire, or the allies
+                            // or enemies of a single empire
+                            (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                            |   eps [ _d = AFFIL_SELF ]
+                            )
+                        >>  parse::label(Empire_token) > int_value_ref
+                            [ _val = new_<Effect::SetVisibility>(_c, _d, _e, _1) ]
+                        )
+                   |    (   // no empire id or condition specified, with or without an
+                            // affiliation type: useful to specify no or all empires
+                            (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                            |   eps [ _d = AFFIL_ANY ]
+                            )
+                            [ _val = new_<Effect::SetVisibility>(_c, _d, _e, _b) ]
+                        )
+                   )
                 ;
 
             start
@@ -146,8 +166,9 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Effect::EffectBase* (),
-            qi::locals<MeterType,
-                       ValueRef::ValueRefBase<std::string>*
+            qi::locals<
+                MeterType,
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
         > set_meter_rule;
@@ -158,10 +179,12 @@ namespace {
             qi::locals<
                 ResourceType,
                 ValueRef::ValueRefBase<int>*,
-                Visibility
+                Visibility,
+                EmpireAffiliationType,
+                bool
             >,
             parse::skipper_type
-        > set_empire_stockpile_rule;
+        > set_stockpile_or_vis_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -176,14 +199,14 @@ namespace {
 
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
-        set_empire_stockpile_rule           set_empire_stockpile;
+        set_stockpile_or_vis_rule           set_empire_stockpile;
         parse::effect_parser_rule           set_empire_capital;
         parse::effect_parser_rule           set_planet_type;
         parse::effect_parser_rule           set_planet_size;
         parse::effect_parser_rule           set_species;
         string_string_int_rule              set_species_opinion;
         parse::effect_parser_rule           set_owner;
-        set_empire_stockpile_rule           set_visibility;
+        set_stockpile_or_vis_rule           set_visibility;
         parse::effect_parser_rule           start;
     };
 }
