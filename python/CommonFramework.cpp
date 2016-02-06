@@ -20,8 +20,10 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
 
 PythonBase::PythonBase() :
     m_python_interpreter_initialized(false),
+#if defined(FREEORION_MACOSX)
     m_home_dir(""),
     m_program_name(""),
+#endif
     m_python_module_error(NULL)
 {}
 
