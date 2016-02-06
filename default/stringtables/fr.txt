@@ -2452,8 +2452,7 @@ Messages
 MAP_PRODUCTION_TITLE  # translated
 Production
 
-MAP_PRODUCTION_TEXT
-Capacité totale de production de l'empire
+
 
 MAP_PROD_WASTED_TITLE
 Production inutilisée
@@ -2464,11 +2463,17 @@ Production gaspillée : %2%
 
 Cliquer pour ouvrir le menu de production'''
 
+RESOURCE_TT_USED
+Utilisée
+
+RESOURCE_TT_OUTPUT
+Capacité actuelle
+
+RESOURCE_TT_TARGET_OUTPUT
+Capacité Planète Cible
+
 MAP_RESEARCH_TITLE
 Recherche
-
-MAP_RESEARCH_TEXT
-Capacité totale de recherche de l'empire
 
 MAP_RES_WASTED_TITLE
 Recherche inutilisée
@@ -3310,10 +3315,10 @@ Planètes envahies
 #############################################################
 
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-'''%1% : '''
+'''%1% :	'''
 
-#ENC_SPECIES_PLANET_TYPE_SUITABILITY
-#%1% %2% (%3%)
+ENC_SPECIES_PLANET_TYPE_SUITABILITY  # translated
+%1%	%2% (%3%)
 
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 '''%1% est propice à la colonisation par les espèces suivantes :
@@ -4636,9 +4641,14 @@ SITREP_PLANET_DEPOPULATED_LABEL
 Planète détruite
 
 SITREP_PLANET_COLONIZED
-La planète %planet% a été colonisée.
+La planète %planet% a été colonisée par l'espèce %species%.
 SITREP_PLANET_COLONIZED_LABEL
 Planète colonisée
+
+SITREP_PLANET_OUTPOSTED
+La planète %planet% dispose à présent d'un avant-poste.
+SITREP_PLANET_OUTPOSTED_LABEL
+Planète Avant-Poste
 
 SITREP_NEW_COLONY_ESTABLISHED
 Sur %planet% : une nouvelle colonie %species% s'est établie.
@@ -9990,13 +10000,13 @@ SP_SOLAR_CONCENTRATOR
 Concentrateur Solaire
 
 SP_SOLAR_CONCENTRATOR_DESC
-Le Concentrateur Solaire utilise la capacité phototropique de la [[SH_ORGANIC]] afin d'augmenter la puissance du [[SR_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
+Le Concentrateur Solaire utilise la capacité phototropique des coques de type [[tech SHP_ORG_HULL]] afin d'augmenter la puissance du [[tech SHP_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[tech SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
 
 SHP_SOLAR_CONNECTION
 Toile Solaire
 
 SHP_SOLAR_CONNECTION_DESC
-Cette amélioration du [[SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre chaque [[SH_ORGANIC]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance d'un [[SR_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
+Cette amélioration du [[shippart SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre chaque coque de type [[tech SHP_ORG_HULL]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance d'un [[tech SHP_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
 
 SHP_SOLAR_CONNECTION_SHORT_DESC
 Établit un réseau [[SP_SOLAR_CONCENTRATOR]]
@@ -10005,7 +10015,7 @@ SHP_ORGANIC_WAR_ADAPTION
 Guerre Organique Adaptive
 
 SHP_ORGANIC_WAR_ADAPTION_DESC
-Il semble que les <encyclopedia SHP_ORG_HULL>Coques Organiques</encyclopedia> soient capables de collecter l'énergie photonique, laquelle peut être redirigée afin d'augmenter la puissance de certains équipements d'astronef.
+Il semble que les coques de type [[tech SHP_ORG_HULL]] soient capables de collecter l'énergie photonique, laquelle peut être redirigée afin d'augmenter la puissance de certains équipements d'astronef.
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
 Augmente la puissance du [[SR_WEAPON_2_1]] selon l'étoile environnante.
