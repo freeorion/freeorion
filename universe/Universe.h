@@ -312,6 +312,13 @@ public:
       * level, based on  */
     void            UpdateEmpireObjectVisibilities();
 
+    /** Sets a special record of visibility that overrides the standard
+      * empire-object visibility after the latter is processed. */
+    void            SetEffectDerivedVisibility(int empire_id, int object_id, Visibility vis);
+
+    /** Applies empire-object visibilities set by effects. */
+    void            ApplyEffectDerivedVisibilities();
+
     /** Sets visibility for indicated \a empire_id of object with \a object_id
       * a vis */
     void            SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
@@ -518,6 +525,8 @@ private:
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
+    EmpireObjectVisibilityMap       m_effect_specified_empire_object_visibilities;
+
     EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
 
     ObjectKnowledgeMap              m_empire_known_destroyed_object_ids;///< map from empire id to (set of object ids that the empire knows have been destroyed)
@@ -526,10 +535,9 @@ private:
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
-    mutable distance_matrix_storage<short>
-                                    m_system_jumps;                     ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    boost::shared_ptr<GraphImpl>    m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
-    boost::unordered_map<int, size_t>  m_system_id_to_graph_index;
+    mutable distance_matrix_storage<short>  m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
+    boost::shared_ptr<GraphImpl>            m_graph_impl;               ///< a graph in which the systems are vertices and the starlanes are edges
+    boost::unordered_map<int, size_t>       m_system_id_to_graph_index;
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter

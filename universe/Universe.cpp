@@ -1173,6 +1173,8 @@ bool Universe::DeleteShipDesign(int design_id) {
 void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
 
+    m_effect_specified_empire_object_visibilities.clear();
+
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
@@ -2441,6 +2443,34 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
     }
 }
 
+void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, Visibility vis) {
+    if (empire_id == ALL_EMPIRES)
+        return;
+    if (object_id <= INVALID_OBJECT_ID)
+        return;
+    if (vis == INVALID_VISIBILITY)
+        return;
+    m_effect_specified_empire_object_visibilities[empire_id][object_id] = vis;
+}
+
+void Universe::ApplyEffectDerivedVisibilities() {
+    // for each empire with a visibility map
+    for (Universe::EmpireObjectVisibilityMap::const_iterator empire_it = m_effect_specified_empire_object_visibilities.begin();
+         empire_it != m_effect_specified_empire_object_visibilities.end(); ++empire_it)
+    {
+        if (empire_it->first == ALL_EMPIRES)
+            continue;   // can't set a non-empire's visibility
+        const Universe::ObjectVisibilityMap& empire_vis_map = empire_it->second;
+        for (Universe::ObjectVisibilityMap::const_iterator obj_it = empire_vis_map.begin();
+             obj_it != empire_vis_map.end(); ++obj_it)
+        {
+            if (obj_it->first <= INVALID_OBJECT_ID)
+                continue;
+            m_empire_object_visibility[empire_it->first][obj_it->first] = obj_it->second;
+        }
+    }
+}
+
 void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
     if (empire_id == ALL_EMPIRES || object_id == INVALID_OBJECT_ID)
         return;
@@ -3144,6 +3174,8 @@ void Universe::UpdateEmpireObjectVisibilities() {
     SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, Objects());
 
     SetSameSystemPlanetsVisible(Objects());
+
+    ApplyEffectDerivedVisibilities();
 
     PropegateVisibilityToContainerObjects(Objects(), m_empire_object_visibility);
 

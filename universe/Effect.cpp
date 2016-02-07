@@ -3756,6 +3756,10 @@ SetVisibility::~SetVisibility()
 void SetVisibility::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
+
+    if (m_vis == INVALID_VISIBILITY)
+        return;
+
     int empire_id = ALL_EMPIRES;
     if (m_empire_id)
         empire_id = m_empire_id->Eval(context);
@@ -3821,8 +3825,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
         Empire* empire = GetEmpire(*emp_it);
         if (!empire)
             continue;
-
-        // TODO: DO IT
+        GetUniverse().SetEffectDerivedVisibility(*emp_it, context.effect_target->ID(), m_vis);
     }
 }
 
