@@ -26,6 +26,7 @@
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/locale.hpp>
 
 #include <sstream>
 
@@ -106,7 +107,7 @@ namespace {
             col_types[UserStringNop("AGE")] =                       StringCastedValueRef<int>("Age");
             col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
             col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
-            col_types[UserStringNop("SYSTEM_ID")] =                 ObjectNameValueRef("SystemID");
+            col_types[UserStringNop("SYSTEM")] =                    ObjectNameValueRef("SystemID");
             col_types[UserStringNop("DESIGN_ID")] =                 StringCastedValueRef<int>("DesignID");
             col_types[UserStringNop("FINAL_DEST")] =                ObjectNameValueRef("FinalDestinationID");
             col_types[UserStringNop("NEXT_SYSTEM")] =               ObjectNameValueRef("NextSystemID");
@@ -1675,6 +1676,13 @@ private:
 };
 
 namespace {
+
+    const std::locale& GetLocale() {
+        static boost::locale::generator gen;
+        static std::locale loc = gen("en_US.UTF-8");    // should sort accented latin letters reasonably
+        return loc;
+    }
+
     struct CustomRowCmp {
         bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
             const std::string& lhs_key = lhs.SortKey(column);
@@ -1686,7 +1694,8 @@ namespace {
                 float rhs_val = rhs_key.empty() ? 0.0f : boost::lexical_cast<float>(rhs_key);
                 return lhs_val < rhs_val;
             } catch (...) {
-                return static_cast<const ObjectRow&>(lhs).SortKey(column) < static_cast<const ObjectRow&>(rhs).SortKey(column);
+                return GetLocale().operator()(static_cast<const ObjectRow&>(lhs).SortKey(column),
+                                              static_cast<const ObjectRow&>(rhs).SortKey(column));
             }
         }
     };
