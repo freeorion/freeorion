@@ -520,6 +520,7 @@ void Ship::Resupply() {
     }
 
     fuel_meter->SetCurrent(max_fuel_meter->Current());
+    fuel_meter->BackPropegate();
 
     // set all part capacities equal to any associated max capacity
     // this "upgrades" any direct-fire weapon parts to their latest-allowed
@@ -535,6 +536,7 @@ void Ship::Resupply() {
         const Meter& max_meter = max_it->second;
 
         it->second.SetCurrent(max_meter.Current());
+        it->second.BackPropegate();
     }
 }
 

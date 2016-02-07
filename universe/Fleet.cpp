@@ -846,8 +846,6 @@ void Fleet::MovementPhase() {
         {
             TemporaryPtr<Ship> ship = *ship_it;
             ship->Resupply();
-            if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
-                fuel_meter->BackPropegate();
         }
     }
 
