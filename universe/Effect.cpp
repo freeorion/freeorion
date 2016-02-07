@@ -3757,6 +3757,8 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
 
+    // Note: currently ignoring upgrade-only flag
+
     if (m_vis == INVALID_VISIBILITY)
         return;
 
