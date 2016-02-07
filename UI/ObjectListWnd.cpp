@@ -84,6 +84,12 @@ namespace {
                     ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token))));
     }
 
+    ValueRef::Variable<std::string>* ObjectNameValueRef(const std::string& token) {
+        return new ValueRef::ObjectNameLookup(
+            new ValueRef::Variable<int>(
+                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+    }
+
     const std::map<std::string, ValueRef::ValueRefBase<std::string>*>& AvailableColumnTypes() {
         static std::map<std::string, ValueRef::ValueRefBase<std::string>*> col_types;
         if (col_types.empty()) {
@@ -100,11 +106,11 @@ namespace {
             col_types[UserStringNop("AGE")] =                       StringCastedValueRef<int>("Age");
             col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
             col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
-            col_types[UserStringNop("SYSTEM_ID")] =                 StringCastedValueRef<int>("SystemID");
+            col_types[UserStringNop("SYSTEM_ID")] =                 ObjectNameValueRef("SystemID");
             col_types[UserStringNop("DESIGN_ID")] =                 StringCastedValueRef<int>("DesignID");
-            col_types[UserStringNop("FINAL_DEST")] =                StringCastedValueRef<int>("FinalDestinationID");
-            col_types[UserStringNop("NEXT_SYSTEM")] =               StringCastedValueRef<int>("NextSystemID");
-            col_types[UserStringNop("PREV_SYSTEM")] =               StringCastedValueRef<int>("PreviousSystemID");
+            col_types[UserStringNop("FINAL_DEST")] =                ObjectNameValueRef("FinalDestinationID");
+            col_types[UserStringNop("NEXT_SYSTEM")] =               ObjectNameValueRef("NextSystemID");
+            col_types[UserStringNop("PREV_SYSTEM")] =               ObjectNameValueRef("PreviousSystemID");
             col_types[UserStringNop("LAST_TURN_BATTLE_HERE")] =     StringCastedValueRef<int>("LastTurnBattleHere");
             col_types[UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE")] =StringCastedValueRef<int>("LastTurnActiveInBattle");
 
