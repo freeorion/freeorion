@@ -2083,7 +2083,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
     // been ordered
 
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
-    if (!planet || !planet->CurrentMeterValue(METER_POPULATION) == 0.0 || !m_order_issuing_enabled)
+    if (!planet || planet->CurrentMeterValue(METER_POPULATION) != 0.0 || !m_order_issuing_enabled)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
