@@ -2025,6 +2025,70 @@ void ValueRef::UserStringLookup::SetTopLevelContent(const std::string& content_n
 }
 
 ///////////////////////////////////////////////////////////
+// ObjectNameLookup                                      //
+///////////////////////////////////////////////////////////
+ValueRef::ObjectNameLookup::ObjectNameLookup(ValueRef::ValueRefBase<int>* value_ref) :
+    ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
+    m_value_ref(value_ref)
+{}
+
+ValueRef::ObjectNameLookup::~ObjectNameLookup()
+{ delete m_value_ref; }
+
+bool ValueRef::ObjectNameLookup::operator==(const ValueRef::ValueRefBase<std::string>& rhs) const {
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const ValueRef::ObjectNameLookup& rhs_ =
+        static_cast<const ValueRef::ObjectNameLookup&>(rhs);
+
+    if (m_value_ref == rhs_.m_value_ref) {
+        // check next member
+    } else if (!m_value_ref || !rhs_.m_value_ref) {
+        return false;
+    } else {
+        if (*m_value_ref != *(rhs_.m_value_ref))
+            return false;
+    }
+
+    return true;
+}
+
+std::string ValueRef::ObjectNameLookup::Eval(const ScriptingContext& context) const {
+    if (!m_value_ref)
+        return "";
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_value_ref->Eval(context));
+    if (obj)
+        return obj->Name();
+    return "";
+}
+
+bool ValueRef::ObjectNameLookup::RootCandidateInvariant() const
+{ return m_value_ref->RootCandidateInvariant(); }
+
+bool ValueRef::ObjectNameLookup::LocalCandidateInvariant() const
+{ return !m_value_ref || m_value_ref->LocalCandidateInvariant(); }
+
+bool ValueRef::ObjectNameLookup::TargetInvariant() const
+{ return !m_value_ref || m_value_ref->TargetInvariant(); }
+
+bool ValueRef::ObjectNameLookup::SourceInvariant() const
+{ return !m_value_ref || m_value_ref->SourceInvariant(); }
+
+std::string ValueRef::ObjectNameLookup::Description() const
+{ return m_value_ref->Description(); }
+
+std::string ValueRef::ObjectNameLookup::Dump() const
+{ return m_value_ref->Dump(); }
+
+void ValueRef::ObjectNameLookup::SetTopLevelContent(const std::string& content_name) {
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
+
+
+///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 namespace ValueRef {

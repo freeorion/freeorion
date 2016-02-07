@@ -364,6 +364,31 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Returns the in-game name of the object with a specified id. */
+struct FO_COMMON_API ValueRef::ObjectNameLookup : public ValueRef::Variable<std::string> {
+    ObjectNameLookup(ValueRef::ValueRefBase<int>* value_ref);
+    ~ObjectNameLookup();
+
+    virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
+    virtual std::string Eval(const ScriptingContext& context) const;
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        LocalCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+    const ValueRefBase<int>*    GetValueRef() const { return m_value_ref; }
+
+    virtual void                SetTopLevelContent(const std::string& content_name);
+
+private:
+    ValueRefBase<int>*  m_value_ref;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** An arithmetic operation node ValueRef class.  One of addition, subtraction,
   * mutiplication, division, or unary negation is performed on the child(ren)
   * of this node, and the result is returned. */
@@ -1416,6 +1441,16 @@ void ValueRef::StringCast<FromType>::serialize(Archive& ar, const unsigned int v
 ///////////////////////////////////////////////////////////
 template <class Archive>
 void ValueRef::UserStringLookup::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
+        & BOOST_SERIALIZATION_NVP(m_value_ref);
+}
+
+///////////////////////////////////////////////////////////
+// ObjectNameLookup                                      //
+///////////////////////////////////////////////////////////
+template <class Archive>
+void ValueRef::ObjectNameLookup::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
         & BOOST_SERIALIZATION_NVP(m_value_ref);
