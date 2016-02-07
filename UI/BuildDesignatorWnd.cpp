@@ -263,19 +263,19 @@ namespace {
             }
 
             // create title, description, production time and cost
-            const std::string title = UserString(item.name);
+            const std::string& title = UserString(item.name);
             std::string main_text = UserString(building_type->Description());
-            const float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
-            const int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
+            float total_cost = building_type->ProductionCost(empire_id, candidate_object_id);
+            int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
             main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
 
             // show build conditions
-            std::string enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
+            const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
             if (!enqueue_and_location_condition_failed_text.empty())
                 if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
-                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    const std::string& failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
             }
 
@@ -294,10 +294,10 @@ namespace {
             }
 
             // create title, description, production time and cost, hull type
-            const std::string title = design->Name(true);
+            const std::string& title = design->Name(true);
             std::string main_text = design->Description(true);
-            const float total_cost = design->ProductionCost(empire_id, candidate_object_id);
-            const int production_time = design->ProductionTime(empire_id, candidate_object_id);
+            float total_cost = design->ProductionCost(empire_id, candidate_object_id);
+            int production_time = design->ProductionTime(empire_id, candidate_object_id);
 
             main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
@@ -326,10 +326,10 @@ namespace {
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
 
             // show build conditions
-            std::string location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
+            const std::string& location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
             if (!location_condition_failed_text.empty())
                 if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
-                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    const std::string& failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
 
