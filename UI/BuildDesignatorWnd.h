@@ -81,6 +81,17 @@ public:
 
     void            ShowBuildingTypeInEncyclopedia(const std::string& building_type);
     void            ShowShipDesignInEncyclopedia(int design_id);
+
+    /** Show or hide the encyclopedia detail panel */
+    void            ShowPedia();
+    void            HidePedia();
+    void            TogglePedia();
+
+    /** returns true if the encyclopedia detail panel is visible */
+    bool            PediaVisible();
+
+    /** sets the encyclopedia detail panel to the specified planet */
+    void            PediaSetPlanet(int planet_id);
     //@}
 
     /** emitted when the indicated build is indicated by the user */

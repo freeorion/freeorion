@@ -628,7 +628,6 @@ void CUIWnd::SaveOptions() const {
         return;
     } else if (!db.Get<bool>("UI.windows."+m_config_name+".initialized")) {
         // Don't save until the window has been given its proper default values
-        ErrorLogger() << "CUIWnd::SaveOptions() : \"" << m_config_name << "\" has not been initialized.";
         return;
     }
 

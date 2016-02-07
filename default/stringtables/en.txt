@@ -1481,6 +1481,9 @@ Causes windows to use their default properties instead of remembering their prev
 OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC
 Hidden sitrep templates
 
+OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN
+True if the player has manually closed the production window's pedia.
+
 OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY
 Tooltip delay for save dialog
 

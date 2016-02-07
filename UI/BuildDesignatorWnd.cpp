@@ -30,6 +30,10 @@ namespace {
     const std::string PROD_SELECTOR_WND_NAME = "production.selector";
     const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
+    void    AddOptions(OptionsDB& db)
+    { db.Add("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false, Validator<bool>()); }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
     //////////////////////////////////
     // ProductionItemPanel
     //////////////////////////////////
@@ -875,7 +879,6 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),   2, false, false));
 
-
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
@@ -904,7 +907,9 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_build_selector(0),
     m_side_panel(0)
 {
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, PROD_PEDIA_WND_NAME);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
+    GG::Connect(m_enc_detail_panel->ClosingSignal, boost::bind(&BuildDesignatorWnd::HidePedia, this));     // Wnd is manually closed by user
+
     m_side_panel = new SidePanel(PROD_SIDEPANEL_WND_NAME);
     m_build_selector = new BuildSelector(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
@@ -912,14 +917,13 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 
     m_side_panel->EnableSelection();
 
-    GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),                 m_enc_detail_panel);
-    GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),                   m_enc_detail_panel);
+    GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),  m_enc_detail_panel);
+    GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),    m_enc_detail_panel);
 
     GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
 
     GG::Connect(m_side_panel->PlanetSelectedSignal, PlanetSelectedSignal);
     GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
-
 
     // connect build type button clicks to update display
     GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->LeftClickedSignal, ToggleBuildTypeFunctor(this, BT_BUILDING));
@@ -946,7 +950,7 @@ const std::pair<bool, bool>& BuildDesignatorWnd::GetAvailabilitiesShown() const
 { return m_build_selector->GetAvailabilitiesShown(); }
 
 bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
-{ return m_enc_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt); }
+{ return (m_enc_detail_panel->InWindow(pt) && m_enc_detail_panel->Visible()) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt); }
 
 bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 { return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
@@ -1178,6 +1182,34 @@ void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(const std::string& build
 
 void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_enc_detail_panel->SetDesign(design_id); }
+
+void BuildDesignatorWnd::ShowPedia() {
+    m_enc_detail_panel->Refresh();
+    m_enc_detail_panel->Show();
+
+    OptionsDB& db = GetOptionsDB();
+    db.Set("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", false);
+}
+
+void BuildDesignatorWnd::HidePedia() {
+    m_enc_detail_panel->Hide();
+
+    OptionsDB& db = GetOptionsDB();
+    db.Set("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", true);
+}
+
+void BuildDesignatorWnd::TogglePedia() {
+    if (!m_enc_detail_panel->Visible())
+        ShowPedia();
+    else
+        HidePedia();
+}
+
+bool BuildDesignatorWnd::PediaVisible()
+{ return m_enc_detail_panel->Visible(); }
+
+void BuildDesignatorWnd::PediaSetPlanet(int planet_id)
+{ m_enc_detail_panel->SetPlanet(planet_id); }
 
 int BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
