@@ -292,7 +292,7 @@ void UniverseObject::AddMeter(MeterType meter_type) {
 bool UniverseObject::Unowned() const
 { return m_owner_empire_id == ALL_EMPIRES; }
 
-bool UniverseObject::OwnedBy(int empire) const 
+bool UniverseObject::OwnedBy(int empire) const
 { return empire != ALL_EMPIRES && empire == m_owner_empire_id; }
 
 Visibility UniverseObject::GetVisibility(int empire_id) const

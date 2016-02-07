@@ -1676,7 +1676,6 @@ private:
 };
 
 namespace {
-
     const std::locale& GetLocale() {
         static boost::locale::generator gen;
         static std::locale loc = gen("en_US.UTF-8");    // should sort accented latin letters reasonably
