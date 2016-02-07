@@ -4330,20 +4330,20 @@ Turns Since Focus Change
 PRODUCED_BY
 Produced By Empire ID
 
-SYSTEM_ID
-System ID
+SYSTEM
+Current System
 
 DESIGN_ID
 Design ID
 
 FINAL_DEST
-Final Destination ID
+Final Destination System
 
 NEXT_SYSTEM
-Next System ID
+Next System
 
 PREV_SYSTEM
-Previous System ID
+Previous System
 
 LAST_TURN_BATTLE_HERE
 Last Turn Battle Here
