@@ -4333,6 +4333,9 @@ Produced By Empire ID
 SYSTEM
 Current System
 
+NEAREST_SYSTEM
+Nearest System
+
 DESIGN_ID
 Design ID
 

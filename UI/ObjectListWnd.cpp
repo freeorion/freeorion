@@ -108,6 +108,7 @@ namespace {
             col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
             col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
             col_types[UserStringNop("SYSTEM")] =                    ObjectNameValueRef("SystemID");
+            col_types[UserStringNop("NEAREST_SYSTEM")] =            ObjectNameValueRef("NearestSystemID");
             col_types[UserStringNop("DESIGN_ID")] =                 StringCastedValueRef<int>("DesignID");
             col_types[UserStringNop("FINAL_DEST")] =                ObjectNameValueRef("FinalDestinationID");
             col_types[UserStringNop("NEXT_SYSTEM")] =               ObjectNameValueRef("NextSystemID");
