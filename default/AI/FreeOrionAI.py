@@ -53,6 +53,8 @@ def initFreeOrionAI():  # pylint: disable=invalid-name
     """Called by client when Python AI starts, before any game new game starts or saved game is resumed."""
     ai_config = fo.getAIConfigStr()
     print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
+    user_dir = fo.getUserDir()
+    print "Path to folder for user specific data: %s" % user_dir
     print(sys.path)
 
 

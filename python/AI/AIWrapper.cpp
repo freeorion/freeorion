@@ -82,6 +82,10 @@ namespace {
             ret_list.append(*it);
         return ret_list;
     }
+
+    boost::python::str GetUserDirWrapper()
+    { return boost::python::str(PathString(GetUserDir())); }
+
 }
 
 namespace FreeOrionPython {
@@ -131,6 +135,7 @@ namespace FreeOrionPython {
 
         def("getAIConfigStr",           AIInterface::GetAIConfigStr,    return_value_policy<return_by_value>());
         def("getAIDir",                 AIInterface::GetAIDir,          return_value_policy<return_by_value>());
+        def("getUserDir",               GetUserDirWrapper,              /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).");
 
         def("initMeterEstimatesDiscrepancies",      AIInterface::InitMeterEstimatesAndDiscrepancies);
         def("updateMeterEstimates",                 AIInterface::UpdateMeterEstimates);
