@@ -656,7 +656,7 @@ def get_colony_fleets():
                 EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
                 print "Error: can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
-                outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name(False)]
+                outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
                 if outpost_base_design_ids:
                     print "trying fallback outpost base design SD_OUTPOST_BASE"
                     best_ship = outpost_base_design_ids.pop()

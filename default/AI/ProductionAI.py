@@ -1124,7 +1124,7 @@ def generateProductionOrders():
         if homeworld:
             for shipDesignID in empire.availableShipDesigns:
                 shipDesign = fo.getShipDesign(shipDesignID)
-                print "    " + str(shipDesign.name(True)) + " cost:" + str(shipDesign.productionCost(empire.empireID, homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID, homeworld.id))
+                print "    " + shipDesign.name + " cost:" + str(shipDesign.productionCost(empire.empireID, homeworld.id) )+ " time:" + str(shipDesign.productionTime(empire.empireID, homeworld.id))
 
     print
     print "Projects already in Production Queue:"
@@ -1192,7 +1192,7 @@ def generateProductionOrders():
             if troopersNeededForcing>0 and totalPP > 3*perTurnCost*queuedTroopShips and foAI.foAIstate.aggression >= fo.aggression.typical:
                 retval = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
                 if retval !=0:
-                    print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f"%(numShips, bestDesign.name(True), numShips*perTurnCost)
+                    print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f"%(numShips, bestDesign.name, numShips*perTurnCost)
                     print
                     if numShips>1:
                         fo.issueChangeProductionQuantityOrder(productionQueue.size -1, 1, numShips)
@@ -1308,7 +1308,7 @@ def generateProductionOrders():
                 del localPriorities[priority] #must be missing a shipyard -- TODO build a shipyard if necessary
                 continue
             bestShips[priority] = [bestDesignID, bestDesign, buildChoices ]
-            print "bestShips[%s] = %s \t locs are %s from %s"%( EnumsAI.AIPriorityNames[priority], bestDesign.name(False) , buildChoices, pSet)
+            print "bestShips[%s] = %s \t locs are %s from %s"%( EnumsAI.AIPriorityNames[priority], bestDesign.name, buildChoices, pSet)
 
         if len(localPriorities)==0:
             print "Alert!! need shipyards in systemSet ", ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( sorted(pSet)))))
@@ -1387,7 +1387,7 @@ def generateProductionOrders():
             retval = fo.issueEnqueueShipProductionOrder(bestDesignID, loc)
             if retval !=0:
                 prioritized = False
-                print "adding %d new ship(s) at location %s to production queue: %s; per turn production cost %.1f"%(numShips, ppstring(PlanetUtilsAI.planet_name_ids([loc])), bestDesign.name(True), perTurnCost)
+                print "adding %d new ship(s) at location %s to production queue: %s; per turn production cost %.1f"%(numShips, ppstring(PlanetUtilsAI.planet_name_ids([loc])), bestDesign.name, perTurnCost)
                 print
                 if numShips>1:
                     fo.issueChangeProductionQuantityOrder(productionQueue.size -1, 1, numShips)

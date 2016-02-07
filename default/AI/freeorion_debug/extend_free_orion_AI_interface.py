@@ -51,6 +51,18 @@ SHIP_DESIGN = 'D'
 EMPIRE = 'E'
 
 
+# TODO remove this block after c++ support
+# Change shipdesign.name function to property
+fo.shipDesign.get_name = fo.shipDesign.name
+
+
+def get_design_name(self):
+    return self.get_name(False)
+
+fo.shipDesign.name = property(get_design_name)
+# end of remove block
+
+
 def to_dict(method):
     @wraps(method)
     def wrapper(*args):
@@ -73,7 +85,7 @@ def system_to_string(system):
 fo.system.__repr__ = system_to_string
 
 def design_to_string(design):
-    return to_str(SHIP_DESIGN, design.id, design.name(True))
+    return to_str(SHIP_DESIGN, design.id, design.name)
 fo.shipDesign.__repr__ = design_to_string
 
 
