@@ -125,7 +125,7 @@ set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
 ########################################
 # Dependencies                         #
 ########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem iostreams regex serialization signals system thread log REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem locale iostreams regex serialization signals system thread log REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(Freetype REQUIRED)
 
