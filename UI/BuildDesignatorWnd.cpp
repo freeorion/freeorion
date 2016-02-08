@@ -329,7 +329,7 @@ namespace {
             const std::string& location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
             if (!location_condition_failed_text.empty())
                 if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
-                    const std::string& failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
+                    std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
 

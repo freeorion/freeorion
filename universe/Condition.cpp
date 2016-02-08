@@ -194,7 +194,10 @@ std::string ConditionFailedDescription(const std::vector<Condition::ConditionBas
             if (!it->second)
                  retval += UserString("FAILED") + " <rgba 255 0 0 255>" + it->first +"</rgba>\n";
 
-    return retval.substr(0, retval.length()-1);
+    // remove empty line from the end of the string
+    retval = retval.substr(0, retval.length() - 1);
+
+    return retval;
 }
 
 std::string ConditionDescription(const std::vector<Condition::ConditionBase*>& conditions,
