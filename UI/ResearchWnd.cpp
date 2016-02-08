@@ -146,7 +146,10 @@ namespace {
 
         using boost::io::str;
 
-        std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
+        double max_spending_per_turn = tech->ResearchCost(m_empire_id) / m_total_turns;
+        std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
+            % DoubleToString(turn_spending, 3, false)
+            % DoubleToString(max_spending_per_turn, 3, false));
         m_RPs_and_turns_text = new CUILabel(turns_cost_text, GG::FORMAT_LEFT);
         m_RPs_and_turns_text->MoveTo(GG::Pt(left, top));
         m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));

@@ -466,7 +466,10 @@ namespace {
                                                     ? ClientUI::ResearchableTechFillColor()
                                                     : GG::LightColor(ClientUI::ResearchableTechFillColor()));
 
-        std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
+        double max_spending_per_turn = total_cost / m_total_turns;
+        std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))
+            % DoubleToString(turn_spending, 3, false)
+            % DoubleToString(max_spending_per_turn, 3, false));
         m_PPs_and_turns_text = new CUILabel(turn_spending_text, GG::FORMAT_LEFT);
         m_PPs_and_turns_text->SetTextColor(clr);
 
