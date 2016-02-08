@@ -228,13 +228,13 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords/
     position_data[3] = pt2;
 
     glEnable(GL_TEXTURE_2D);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glVertexPointer(2, GL_INT, sizeof (GLint)*2, &position_data);
     glTexCoordPointer(2, GL_FLOAT, 0, &texture_coordinate_data);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glPopClientAttrib();
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     if (need_min_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
