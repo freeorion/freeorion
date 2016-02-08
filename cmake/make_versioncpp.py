@@ -16,6 +16,7 @@ required_boost_libraries = [
     "boost_date_time",
     "boost_filesystem",
     "boost_iostreams",
+    "boost_locale"
     "boost_log",
     "boost_python",
     "boost_regex",
