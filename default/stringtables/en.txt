@@ -9353,6 +9353,12 @@ Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all [[shippart SP_NOVA_BOMB]]s within one starlane jump.
 
+BLD_SCRYING_SPHERE
+Scrying Sphere
+
+BLD_SCRYING_SPHERE_DESC
+Grants visibility to all other planets that have a Scrying Sphere.
+
 BLD_COL_PART_1
 This building can only build at an [[encyclopedia OUTPOSTS_TITLE]], and will upgrade that outpost to a new
 

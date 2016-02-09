@@ -631,7 +631,10 @@ Tech
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "LRN_FORCE_FIELD"
-    unlock = Item type = Building name = "BLD_STARLANE_BORE"
+    unlock = [
+        Item type = Building name = "BLD_STARLANE_BORE"
+        Item type = Building name = "BLD_SCRYING_SPHERE"
+    ]
     graphic = "icons/tech/gravitonics.png"
 
 Tech
