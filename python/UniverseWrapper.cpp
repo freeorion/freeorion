@@ -171,6 +171,14 @@ namespace {
     const Ship::PartMeterMap&
                             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
 
+    const std::string&      ShipDesignName(const ShipDesign& ship_design)
+    { return ship_design.Name(false); }
+    boost::function<const std::string& (const ShipDesign&)> ShipDesignNameFunc =                &ShipDesignName;
+
+    const std::string&      ShipDesignDescription(const ShipDesign& ship_design)
+    { return ship_design.Description(false); }
+    boost::function<const std::string& (const ShipDesign&)> ShipDesignDescriptionFunc =         &ShipDesignDescription;
+
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
     bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
@@ -446,8 +454,16 @@ namespace FreeOrionPython {
         //////////////////
         class_<ShipDesign, noncopyable>("shipDesign", no_init)
             .add_property("id",                 make_function(&ShipDesign::ID,              return_value_policy<return_by_value>()))
-            .def("name",                        make_function(&ShipDesign::Name,            return_value_policy<copy_const_reference>()))
-            .def("description",                 make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
+            .add_property("name",               make_function(
+                                                    ShipDesignNameFunc,
+                                                    return_value_policy<copy_const_reference>(),
+                                                    boost::mpl::vector<const std::string&, const ShipDesign&>()
+                                                ))
+            .add_property("description",        make_function(
+                                                    ShipDesignDescriptionFunc,
+                                                    return_value_policy<copy_const_reference>(),
+                                                    boost::mpl::vector<const std::string&, const ShipDesign&>()
+                                                ))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
             .add_property("speed",              make_function(&ShipDesign::Speed,           return_value_policy<return_by_value>()))
             .add_property("structure",          make_function(&ShipDesign::Structure,       return_value_policy<return_by_value>()))

@@ -310,11 +310,11 @@ class ShipDesignCache(object):
             print "WARNING: In ShipDesignAI.py: Cache._build_cache_after_load() called but cache is not empty."
         for design_id in fo.getEmpire().allShipDesigns:
             design = fo.getShipDesign(design_id)
-            if TESTDESIGN_NAME_BASE in design.name(False):
+            if TESTDESIGN_NAME_BASE in design.name:
                 continue
             reference_name = _build_reference_name(design.hull, design.parts)
-            self.map_reference_design_name[reference_name] = design.name(False)
-            self.design_id_by_name[design.name(False)] = design_id
+            self.map_reference_design_name[reference_name] = design.name
+            self.design_id_by_name[design.name] = design_id
 
     def _check_cache_for_consistency(self):
         """Check if the persistent cache is consistent with the gamestate and fix it if not.
@@ -342,12 +342,12 @@ class ShipDesignCache(object):
                 del self.design_id_by_name[designname]
                 continue
             try:
-                cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name(False)
+                cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name
                 if cached_name != designname:
                     print "WARNING: ShipID cache corrupted."
                     print "Expected: %s, got: %s. Repairing cache." % (designname, cached_name)
                     design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
-                                          if designname == fo.getShipDesign(shipDesignID).name(False)]), None)
+                                          if designname == fo.getShipDesign(shipDesignID).name]), None)
                     if design_id is not None:
                         self.design_id_by_name[designname] = design_id
                     else:
@@ -356,7 +356,7 @@ class ShipDesignCache(object):
                 print "WARNING: ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache."
                 print traceback.format_exc()  # do not print to stderr as this is an "expected" exception.
                 design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
-                                      if designname == fo.getShipDesign(shipDesignID).name(False)]), None)
+                                      if designname == fo.getShipDesign(shipDesignID).name]), None)
                 if design_id is not None:
                     self.design_id_by_name[designname] = design_id
                 else:
@@ -404,8 +404,8 @@ class ShipDesignCache(object):
             print "WARNING: Tried to use '%s' as testhull but not in available_hulls." % TESTDESIGN_PREFERRED_HULL,
             print "Please update ShipDesignAI.py according to the new content."
             traceback.print_exc()
-        testdesign_names = [get_shipdesign(design_id).name(False) for design_id in empire.allShipDesigns
-                            if get_shipdesign(design_id).name(False).startswith(TESTDESIGN_NAME_BASE)]
+        testdesign_names = [get_shipdesign(design_id).name for design_id in empire.allShipDesigns
+                            if get_shipdesign(design_id).name.startswith(TESTDESIGN_NAME_BASE)]
         testdesign_names_hull = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_HULL)]
         testdesign_names_part = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_PART)]
         available_slot_types = {slottype for slotlist in [get_hulltype(hull).slots for hull in available_hulls]
@@ -1964,8 +1964,8 @@ def _update_design_by_name_cache(design_name, verbose=False):
     design = None
     for design_id in fo.getEmpire().allShipDesigns:
         if verbose:
-            print "Checking design %s in search for %s" % (fo.getShipDesign(design_id).name(False), design_name)
-        if fo.getShipDesign(design_id).name(False) == design_name:
+            print "Checking design %s in search for %s" % (fo.getShipDesign(design_id).name, design_name)
+        if fo.getShipDesign(design_id).name == design_name:
             design = fo.getShipDesign(design_id)
             break
 
