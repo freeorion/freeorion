@@ -315,7 +315,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             i.push(boost::iostreams::zlib_decompressor());
             i.push(c_source);
             boost::iostreams::copy(i, s_sink);
-            s_sink.flush();
+            // The following line has been commented out because it caused an assertion in boost iostreams to fail
+            // s_sink.flush();
 
             // wrap uncompressed buffer string in iostream::stream to extract decompressed string
             SourceDevice serial_source(serial_str.data(), serial_str.size());
