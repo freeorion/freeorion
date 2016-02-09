@@ -924,7 +924,7 @@ void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
 
     // pass each utf-8 character as a separate event
     while (current != last)
-    { HandleGGEvent(TEXTINPUT, GGK_UNKNOWN, utf8::next(current, last), Flags<ModKey>(), mouse_pos, Pt (X0, Y0), &text_string); }
+    { HandleGGEvent(TEXTINPUT, GGK_UNKNOWN, utf8::next(current, last), Flags<ModKey>(), mouse_pos, Pt(X0, Y0), &text_string); }
 }
 
 void SDLGUI::ResetFramebuffer()

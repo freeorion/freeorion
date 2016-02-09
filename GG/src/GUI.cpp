@@ -683,13 +683,12 @@ void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<Mo
             WndEvent::KeyRelease, key, key_code_point, mod_keys));
 }
 
-void GUIImpl::HandleTextInput (const std::string* text) {
+void GUIImpl::HandleTextInput(const std::string* text) {
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = 0;
     if (GUI::s_gui->FocusWnd())
-        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
-            WndEvent::TextInput, text));
+        GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::TextInput, text));
 }
 
 void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)

@@ -197,27 +197,24 @@ void TextLinker::SetDecorator ( const std::string& link_type, LinkDecorator* dec
     MarkLinks();
 }
 
-std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string& content) const{
-    
+std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string& content) const {
     const LinkDecorator* decorator = &DEFAULT_DECORATOR;
-    
+
     std::map<std::string, LinkDecoratorPtr>::const_iterator it = m_decorators.find(link.type);
     if (it != m_decorators.end()){
         decorator = it->second.get();
     }
-    
+
     return decorator->Decorate(link.data, content);
 }
 
-std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const{
-    
+std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const {
     const LinkDecorator* decorator = &DEFAULT_DECORATOR;
-    
+
     std::map<std::string, LinkDecoratorPtr>::const_iterator it = m_decorators.find(link.type);
-    if (it != m_decorators.end()){
+    if (it != m_decorators.end())
         decorator = it->second.get();
-    }
-    
+
     return decorator->DecorateRollover(link.data, content);
 }
 
@@ -381,7 +378,8 @@ void TextLinker::LocateLinks() {
             // The link text_posn is at the beginning of the tag, whereas
             // char_data jumps over tags. That is why we cannot test for precise equality
             if (!inside_link && curr_line.char_data[i].string_index >= current_link->real_text_posn.first &&
-                curr_line.char_data[i].string_index < current_link->real_text_posn.second){
+                curr_line.char_data[i].string_index < current_link->real_text_posn.second)
+            {
                 inside_link = true;
                 // Clear out the old rectangles
                 current_link->rects.clear();
