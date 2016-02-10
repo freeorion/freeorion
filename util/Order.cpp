@@ -981,19 +981,25 @@ void ProductionQueueOrder::ExecuteImpl() const {
     try {
         if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP) {
             empire->PlaceBuildInQueue(m_item, m_number, m_location, m_new_index);
+
         } else if (m_new_blocksize != INVALID_QUANTITY) {
             DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
             empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
+
         } else if (m_new_quantity != INVALID_QUANTITY) {
             empire->SetBuildQuantity(m_index, m_new_quantity);
+
         } else if (m_new_index != INVALID_INDEX) {
             empire->MoveBuildWithinQueue(m_index, m_new_index);
+
+        } else if (m_rally_point_id != INVALID_OBJECT_ID) {
+            DebugLogger() << "ProductionQueueOrder setting rally point to id: " << m_rally_point_id;
+            empire->SetBuildRallyPoint(m_index, m_rally_point_id);
+
         } else if (m_index != INVALID_INDEX) {
             DebugLogger() << "ProductionQueueOrder removing build from index " << m_index;
             empire->RemoveBuildFromQueue(m_index);
-        } else if (m_rally_point_id != INVALID_OBJECT_ID) {
-            DebugLogger() << "ProductionQueueOrder setting rally point to id: " << m_rally_point_id;
-            empire->SetBuildRallyPoint(m_rally_point_id);
+
         } else {
             ErrorLogger() << "Malformed ProductionQueueOrder.";
         }
