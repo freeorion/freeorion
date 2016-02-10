@@ -20,8 +20,63 @@
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/algorithm/string.hpp>
+#include <boost/spirit/include/classic.hpp>
 #include <GG/GUI.h>
 
+
+namespace {
+    const std::string OPEN_TAG = "[[";
+    const std::string CLOSE_TAG = "]]";
+
+    /** Converts (first, last) to a string, looks it up as a key in the
+      * stringtable, then then appends this to the end of a string. */
+    struct UserStringSubstituteAndAppend {
+        UserStringSubstituteAndAppend(std::string& str) :
+            m_str(str)
+        {}
+
+        void operator()(const char* first, const char* last) const {
+            std::string token(first, last);
+            if (token.empty() || !UserStringExists(token))
+                return;
+            m_str += UserString(token);
+        }
+
+        std::string&    m_str;
+    };
+
+    // sticks a sequence of characters onto the end of a string
+    struct StringAppend {
+        StringAppend(std::string& str) :
+            m_str(str)
+        {}
+
+        void operator()(const char* first, const char* last) const
+        { m_str += std::string(first, last); }
+
+        std::string&    m_str;
+    };
+
+
+    std::string StringtableTextSubstitute(const std::string& input) {
+        std::string retval;
+
+        // set up parser
+        using namespace boost::spirit::classic;
+        rule<> token = *(anychar_p - space_p - CLOSE_TAG.c_str());
+        rule<> var = OPEN_TAG.c_str() >> token[UserStringSubstituteAndAppend(retval)] >> CLOSE_TAG.c_str();
+        rule<> non_var = anychar_p - OPEN_TAG.c_str();
+
+        // parse and substitute variables
+        try {
+            parse(input.c_str(), *(non_var[StringAppend(retval)] | var));
+        } catch (const std::exception&) {
+            ErrorLogger() << "StringtableTextSubstitute caught exception when parsing input: " << input;
+        }
+
+        return retval;
+    }
+}
 
 class MessageWndEdit : public CUIEdit {
 public:
@@ -54,9 +109,9 @@ private:
 
     // Repeated tabs variables
      std::vector<std::string>   m_auto_complete_choices;
-     unsigned int               m_repeatedTabCount;
-     std::string                m_lastLineRead;
-     std::string                m_lastGameWord;
+     unsigned int               m_repeated_tab_count;
+     std::string                m_last_line_read;
+     std::string                m_last_game_word;
 };
 
 ////////////////////
@@ -65,9 +120,9 @@ private:
 MessageWndEdit::MessageWndEdit() :
     CUIEdit(""),
     m_auto_complete_choices(),
-    m_repeatedTabCount(0),
-    m_lastLineRead(),
-    m_lastGameWord()
+    m_repeated_tab_count(0),
+    m_last_line_read(),
+    m_last_game_word()
 {}
 
 void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
@@ -165,24 +220,24 @@ void MessageWndEdit::AutoComplete() {
 
     // Check for repeated tab
     // if current line is same as the last read line
-    if (m_lastLineRead != "" && boost::equals(fullLine, m_lastLineRead)){
-        if (m_repeatedTabCount >= m_auto_complete_choices.size())
-            m_repeatedTabCount = 0;
+    if (m_last_line_read != "" && boost::equals(fullLine, m_last_line_read)){
+        if (m_repeated_tab_count >= m_auto_complete_choices.size())
+            m_repeated_tab_count = 0;
 
-        std::string nextWord = m_auto_complete_choices.at(m_repeatedTabCount);
+        std::string nextWord = m_auto_complete_choices.at(m_repeated_tab_count);
 
         if (nextWord != "") {
              // Remove the old choice from the line
             // and replace it with the next choice
-            fullLine = fullLine.substr(0, fullLine.size() - (m_lastGameWord.size() + 1));
+            fullLine = fullLine.substr(0, fullLine.size() - (m_last_game_word.size() + 1));
             fullLine.insert(fullLine.size(), nextWord + " ");
             this->SetText(fullLine);
             GG::CPSize move_cursor_to = fullLine.size() + GG::CP1;
             this->SelectRange(move_cursor_to, move_cursor_to);
-            m_lastGameWord = nextWord;
-            m_lastLineRead = this->Text();
+            m_last_game_word = nextWord;
+            m_last_line_read = this->Text();
         }
-        ++m_repeatedTabCount;
+        ++m_repeated_tab_count;
     }
     else {
         bool exactMatch = false;
@@ -226,7 +281,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
 {
     // clear repeated tab variables
     m_auto_complete_choices.clear();
-    m_repeatedTabCount = 0;
+    m_repeated_tab_count = 0;
 
     bool partialWordMatch = false;
     std::string gameWord;
@@ -252,15 +307,15 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
         return false;
 
     // Grab first autocomplete choice
-    gameWord = m_auto_complete_choices.at(m_repeatedTabCount++);
-    m_lastGameWord = gameWord;
+    gameWord = m_auto_complete_choices.at(m_repeated_tab_count++);
+    m_last_game_word = gameWord;
 
     // Remove the partial_word from the line
     // and replace it with the properly formated game word
     fullLine = fullLine.substr(0, fullLine.size() - partial_word.size());
     fullLine.insert(fullLine.size(), gameWord + " ");
     this->SetText(fullLine);
-    m_lastLineRead = this->Text();
+    m_last_line_read = this->Text();
     GG::CPSize move_cursor_to = fullLine.size() + GG::CP1;
     this->SelectRange(move_cursor_to, move_cursor_to);
     return true;
@@ -336,7 +391,8 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_pla
     if (const Empire* sender_empire = GetEmpire(sender_empire_id))
         sender_colour = sender_empire->Color();
 
-    std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + text + "</rgba>";
+    std::string filtered_message = StringtableTextSubstitute(text);
+    std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + filtered_message + "</rgba>";
 
     *m_display += wrapped_text + "\n";
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
