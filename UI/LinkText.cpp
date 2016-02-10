@@ -192,7 +192,7 @@ TextLinker::TextLinker() :
 TextLinker::~TextLinker()
 {}
 
-void TextLinker::SetDecorator ( const std::string& link_type, LinkDecorator* decorator ) {
+void TextLinker::SetDecorator(const std::string& link_type, LinkDecorator* decorator) {
     m_decorators[link_type] = boost::shared_ptr<LinkDecorator>(decorator);
     MarkLinks();
 }
