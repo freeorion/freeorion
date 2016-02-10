@@ -2884,7 +2884,8 @@ void Empire::CheckProductionProgress() {
 
     Universe& universe = GetUniverse();
 
-    std::map<int, std::vector<TemporaryPtr<Ship> > >  system_new_ships;
+    std::map<int, std::vector<TemporaryPtr<Ship> > >    system_new_ships;
+    std::map<int, int>                                  new_ship_rally_point_ids;
 
     // preprocess the queue to get all the costs and times of all items
     // at every location at which they are being produced,
@@ -3067,6 +3068,10 @@ void Empire::CheckProductionProgress() {
 
                     // store ships to put into fleets later
                     system_new_ships[system->ID()].push_back(ship);
+
+                    // store ship rally points
+                    if (elem.rally_point_id != INVALID_OBJECT_ID)
+                        new_ship_rally_point_ids[ship->ID()] = elem.rally_point_id;
                 }
                 // add sitrep
                 if (elem.blocksize == 1) {
@@ -3105,39 +3110,65 @@ void Empire::CheckProductionProgress() {
         if (new_ships.empty())
             continue;
 
-        // group ships into fleets, by design
-        std::map<int,std::vector<TemporaryPtr<Ship> > > new_ships_by_design;
+        // group ships into fleets by rally point and design
+        std::map<int, std::map<int, std::vector<TemporaryPtr<Ship> > > > new_ships_by_rally_point_id_and_design_id;
         for (std::vector<TemporaryPtr<Ship> >::iterator it = new_ships.begin(); it != new_ships.end(); ++it) {
             TemporaryPtr<Ship> ship = *it;
-            new_ships_by_design[ship->DesignID()].push_back(ship);
+            int rally_point_id = INVALID_OBJECT_ID;
+
+            std::map<int, int>::const_iterator rally_it = new_ship_rally_point_ids.find(ship->ID());
+            if (rally_it != new_ship_rally_point_ids.end())
+                rally_point_id = rally_it->second;
+
+            new_ships_by_rally_point_id_and_design_id[rally_point_id][ship->DesignID()].push_back(ship);
         }
 
-        for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator design_it = new_ships_by_design.begin();
-             design_it != new_ships_by_design.end(); ++design_it)
+        // create fleets for ships with the same rally point, grouped by ship design
+        for (std::map<int, std::map<int, std::vector<TemporaryPtr<Ship> > > >::iterator
+                rally_it = new_ships_by_rally_point_id_and_design_id.begin();
+             rally_it != new_ships_by_rally_point_id_and_design_id.end(); ++rally_it)
         {
-            std::vector<int> ship_ids;
+            int rally_point_id = rally_it->first;
+            std::map<int, std::vector<TemporaryPtr<Ship> > >& new_ships_by_design = rally_it->second;
 
-            std::vector<TemporaryPtr<Ship> >& ships = design_it->second;
-            if (ships.empty())
-                continue;
+            for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator design_it = new_ships_by_design.begin();
+                 design_it != new_ships_by_design.end(); ++design_it)
+            {
+                std::vector<int> ship_ids;
 
-            // create new fleet for ships
-            TemporaryPtr<Fleet> fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+                std::vector<TemporaryPtr<Ship> >& ships = design_it->second;
+                if (ships.empty())
+                    continue;
 
-            system->Insert(fleet);
+                // create new fleet for ships
+                TemporaryPtr<Fleet> fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
 
-            for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
-                TemporaryPtr<Ship> ship = *it;
-                ship_ids.push_back(ship->ID());
-                fleet->AddShip(ship->ID());
-                ship->SetFleetID(fleet->ID());
+                system->Insert(fleet);
+
+                for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
+                    TemporaryPtr<Ship> ship = *it;
+                    ship_ids.push_back(ship->ID());
+                    fleet->AddShip(ship->ID());
+                    ship->SetFleetID(fleet->ID());
+                }
+
+                // rename fleet, given its id and the ship that is in it
+                fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet->ID()));
+                fleet->SetAggressive(fleet->HasArmedShips());
+
+                if (rally_point_id != INVALID_OBJECT_ID) {
+                    if (GetSystem(rally_point_id)) {
+                        fleet->CalculateRouteTo(rally_point_id);
+                    } else if (TemporaryPtr<const UniverseObject> rally_obj = GetUniverseObject(rally_point_id)) {
+                        if (GetSystem(rally_obj->SystemID()))
+                            fleet->CalculateRouteTo(rally_obj->SystemID());
+                    } else {
+                        ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;
+                    }
+                }
+
+                DebugLogger() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
             }
-
-            // rename fleet, given its id and the ship that is in it
-            fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet->ID()));
-            fleet->SetAggressive(fleet->HasArmedShips());
-
-            DebugLogger() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
         }
     }
 
