@@ -614,10 +614,15 @@ namespace {
             menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
             menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
 
-            TemporaryPtr<const System> system = GetSystem(SidePanel::SystemID());
-            if (system) {
-                std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,                   4, false, false));
+            // inspect clicked item: was it a ship?
+            GG::ListBox::Row* row = *it;
+            QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : 0;
+            BuildType build_type = queue_row ? queue_row->m_build.item.build_type : INVALID_BUILD_TYPE;
+            if (build_type == BT_SHIP) {
+                if (TemporaryPtr<const System> system = GetSystem(SidePanel::SystemID())) {
+                    std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
+                    menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,                   4, false, false));
+                }
             }
 
             GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
