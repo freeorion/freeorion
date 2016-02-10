@@ -4345,6 +4345,9 @@ Age
 TURNS_SINCE_FOCUS_CHANGE
 Turns Since Focus Change
 
+ETA
+Turns To Destination
+
 PRODUCED_BY
 Produced By Empire ID
 

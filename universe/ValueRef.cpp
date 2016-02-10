@@ -788,6 +788,11 @@ namespace ValueRef {
             if (TemporaryPtr<const System> system = GetSystem(object->SystemID()))
                 return system->OrbitOfPlanet(object->ID());
             return -1;
+        } else if (property_name == "ETA") {
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+                return fleet->ETA().first;
+            else
+                return 0;
         }
 
         ErrorLogger() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);

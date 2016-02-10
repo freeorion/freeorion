@@ -107,6 +107,7 @@
     (EnqueueLocation)                           \
     (Environment)                               \
     (Environments)                              \
+    (ETA)                                       \
     (ExploredByEmpire)                          \
     (External)
 

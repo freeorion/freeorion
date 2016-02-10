@@ -33,6 +33,7 @@ namespace {
                 |   tok.Orbit_
                 |   tok.Species_
                 |   tok.TurnsSinceFocusChange_
+                |   tok.ETA_
                 ;
 
             constant
