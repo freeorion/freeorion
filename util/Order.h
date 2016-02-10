@@ -467,6 +467,7 @@ public:
     ProductionQueueOrder();
     ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
+    ProductionQueueOrder(int empire, int index, int rally_point_id, bool dummy1, bool dummy2);
     ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
     ProductionQueueOrder(int empire, int index, int new_index);
     ProductionQueueOrder(int empire, int index);
@@ -482,6 +483,7 @@ private:
     int         m_new_quantity;
     int         m_new_blocksize;
     int         m_new_index;
+    int         m_rally_point_id;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;

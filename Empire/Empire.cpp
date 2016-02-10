@@ -640,7 +640,8 @@ ProductionQueue::Element::Element() :
     progress_memory(0.0),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
-    turns_left_to_completion(-1)
+    turns_left_to_completion(-1),
+    rally_point_id(INVALID_OBJECT_ID)
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
@@ -656,7 +657,8 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     progress_memory(0.0),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
-    turns_left_to_completion(-1)
+    turns_left_to_completion(-1),
+    rally_point_id(INVALID_OBJECT_ID)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
@@ -672,7 +674,8 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int em
     progress_memory(0.0),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
-    turns_left_to_completion(-1)
+    turns_left_to_completion(-1),
+    rally_point_id(INVALID_OBJECT_ID)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
@@ -688,7 +691,8 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int empir
     progress_memory(0.0),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
-    turns_left_to_completion(-1)
+    turns_left_to_completion(-1),
+    rally_point_id(INVALID_OBJECT_ID)
 {}
 
 /////////////////////
@@ -2478,6 +2482,12 @@ void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize
     m_production_queue[index].blocksize = blocksize;
     if (blocksize !=original_blocksize) // if reducing, may lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed; if increasing, may be able to claim credit if undoing a recent decrease
         m_production_queue[index].progress = (m_production_queue[index].progress_memory / m_production_queue[index].blocksize_memory ) * std::min( m_production_queue[index].blocksize_memory, blocksize);
+}
+
+void Empire::SetBuildRallyPoint(int index, int rally_point_id) {
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
+        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+    m_production_queue[index].rally_point_id = rally_point_id;
 }
 
 void Empire::SetBuildQuantity(int index, int quantity) {

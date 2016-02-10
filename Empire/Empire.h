@@ -15,6 +15,7 @@ struct ItemSpec;
 class ShipDesign;
 class SitRepEntry;
 extern const int INVALID_GAME_TURN;
+extern const int INVALID_OBJECT_ID;
 
 class Alignment {
 public:
@@ -177,6 +178,7 @@ struct FO_COMMON_API ProductionQueue {
         int             blocksize_memory;           ///< used along with progress_memory
         int             turns_left_to_next_item;
         int             turns_left_to_completion;
+        int             rally_point_id;
 
     private:
         friend class boost::serialization::access;
@@ -444,7 +446,8 @@ public:
       * placed at the end of the queue. */
     void        PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
     void        SetBuildQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
-    void        SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize);  ///< Changes the remaining number and blocksize to build for queue item \a index to \a quantity and \a blocksize 
+    void        SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to build for queue item \a index to \a quantity and \a blocksize 
+    void        SetBuildRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this build, to which they are automatically ordered to move after they are produced.
     void        MoveBuildWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
     void        RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
 
