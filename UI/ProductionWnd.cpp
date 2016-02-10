@@ -606,7 +606,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
 
     protected:
-        void ProdQueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+        void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
             // mostly duplicated equivalent in QueueListBox, but with an extra command...
 
             GG::MenuItem menu_contents;
