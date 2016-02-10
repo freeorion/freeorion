@@ -3101,19 +3101,19 @@ void Empire::CheckProductionProgress() {
             continue;
         }
 
-        std::vector<TemporaryPtr<Ship> >& allShips = it->second;
-        if (allShips.empty())
+        std::vector<TemporaryPtr<Ship> >& new_ships = it->second;
+        if (new_ships.empty())
             continue;
 
         // group ships into fleets, by design
-        std::map<int,std::vector<TemporaryPtr<Ship> > > shipsByDesign;
-        for (std::vector<TemporaryPtr<Ship> >::iterator it = allShips.begin(); it != allShips.end(); ++it) {
+        std::map<int,std::vector<TemporaryPtr<Ship> > > new_ships_by_design;
+        for (std::vector<TemporaryPtr<Ship> >::iterator it = new_ships.begin(); it != new_ships.end(); ++it) {
             TemporaryPtr<Ship> ship = *it;
-            shipsByDesign[ship->DesignID()].push_back(ship);
+            new_ships_by_design[ship->DesignID()].push_back(ship);
         }
 
-        for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator design_it = shipsByDesign.begin();
-             design_it != shipsByDesign.end(); ++design_it)
+        for (std::map<int, std::vector<TemporaryPtr<Ship> > >::iterator design_it = new_ships_by_design.begin();
+             design_it != new_ships_by_design.end(); ++design_it)
         {
             std::vector<int> ship_ids;
 
