@@ -504,19 +504,19 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
     if (lines[row].Empty() && row == 0)
         return CP0; // empty first line
 
-    // if selecting into an empty line, revert to the end of the previous line
+    // if selecting into an empty line, return one past the end of the previous line
     if (lines[row].Empty())
-        return CPSize(lines[row-1].char_data.back().code_point_index);
+        return lines[row-1].char_data.back().code_point_index + 1;
 
     // if at start of (non-empty) line, return first character of that line
     if (char_idx == CP0)
-        return CPSize(lines[row].char_data.front().code_point_index);
+        return lines[row].char_data.front().code_point_index;
 
     const Font::LineData& line = lines[row];
 
-    // if at end of line, just go with that
+    // if at end of line, go with one past the last character of the line
     if (char_idx >= line.char_data.size())
-        return line.char_data.back().code_point_index;
+        return line.char_data.back().code_point_index + 1;
 
     // "rewind" the first position to encompass all tag text that is
     // associated with that position
@@ -576,6 +576,7 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
         return CPSize(GetLineData().back().char_data.size());
     }
 
+    //std::cout << "CharAt row: " << row << " X: " << x << std::endl;
     const Font::LineData& line = GetLineData()[row];
     // empty line?
     if (line.char_data.empty())
@@ -584,8 +585,16 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
     x -= RowStartX(row);
 
     // past end of line?
-    if (x > line.char_data.back().extent)
-        return CPSize(line.char_data.size());
+    if (x > line.char_data.back().extent) {
+        //std::cout << "past line right edge at: " << line.char_data.back().extent << std::endl;
+        //std::cout << "row: " << "  last row: " << GetLineData().size() - 1 << std::endl;
+        if (row < GetLineData().size() - 1) {
+            // know this row is not empty due to above check
+            return CPSize(line.char_data.size()-1); // last character should be a newline if this is not the last row
+        } else {
+            return CPSize(line.char_data.size());   // want one past the last actual character
+        }
+    }
 
     // in middle of line. advance characters until within or left of position x
     CPSize retval(0);
@@ -703,10 +712,12 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     // cursor, and remove any previous selection range
     std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
+    //std::cout << "click pos: " << click_pos.first << " / " << click_pos.second << std::endl;
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    //std::cout << "cursor pos: " << this->m_cursor_pos.first << std::endl;
 }
 
 void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
@@ -787,6 +798,7 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
         return;
 
     bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+    bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
     bool emit_signal = false;
     switch (key) {
     case GGK_RETURN:
@@ -870,6 +882,8 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
 
     case GGK_HOME: {
         m_cursor_end.second = CP0;
+        if (ctrl_down)
+            m_cursor_end.first = 0;
         if (!shift_down)
             m_cursor_begin = m_cursor_end;
         break;
@@ -935,42 +949,25 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
             ClearSelected();
             emit_signal = true;
         } else if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
+            // cursor is not at the end of its current line
             Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
             emit_signal = true;
         } else if (m_cursor_begin.first < GetLineData().size() - 1) {
-            Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
+            // cursor is not on the last line, but is at the end of its line
+            size_t next_line = m_cursor_begin.first + 1;
+            CPSize start_of_line = CP0;
+            Erase(m_cursor_begin.first, m_cursor_begin.second, next_line, start_of_line);
             emit_signal = true;
         }
         break;
     }
 
     default: {
-        std::string translated_code_point;
-        GetTranslatedCodePoint(key, key_code_point, mod_keys, translated_code_point);
-        if (!translated_code_point.empty() &&
-            !(mod_keys & (MOD_KEY_CTRL | MOD_KEY_ALT | MOD_KEY_META))) {
-            if (MultiSelected())
-                ClearSelected();
-            // insert the character to the right of the caret
-            Insert(m_cursor_begin.first, m_cursor_begin.second, translated_code_point);
-            // then move the caret fwd one.
-            if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
-                ++m_cursor_begin.second;
-            } else {
-                ++m_cursor_begin.first;
-                m_cursor_begin.second = CP1;
-            }
-            // the cursor might be off the bottom if the bottom row was just
-            // chopped off to satisfy m_max_lines_history
-            if (GetLineData().size() - 1 < m_cursor_begin.first) {
-                m_cursor_begin.first = GetLineData().size() - 1;
-                m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
-            }
-            m_cursor_end = m_cursor_begin;
-            emit_signal = true;
-        } else {
-            TextControl::KeyPress(key, key_code_point, mod_keys);
-        }
+        // When text is typed, first a KeyPress event arrives here, where
+        // nothing happens. Then a separate TextInput event happens, which leads
+        // to a call to the TextInput function below, which will handle actual
+        // typing / text input
+        return;
         break;
     }
     }
@@ -985,6 +982,8 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
 }
 
 void MultiEdit::TextInput(const std::string* text) {
+    // Typed or pasted text. If typed, this function is called from a TextInput event after the
+    // KeyPress event leads to a call to MultiEdit::KeyPress, which should itself do nothing.
     if (Disabled()) {
         TextControl::TextInput(text);
         return;
@@ -993,7 +992,7 @@ void MultiEdit::TextInput(const std::string* text) {
     if (!text || !Interactive() || m_style & MULTI_READ_ONLY)
         return;
 
-    Edit::TextInput(text);
+    Edit::TextInput(text);  // will call AcceptPastedText, which should be the class' override
 }
 
 void MultiEdit::RecreateScrolls()
@@ -1033,15 +1032,25 @@ void MultiEdit::ValidateStyle()
 
 void MultiEdit::ClearSelected()
 {
-    CPSize idx_1 = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    CPSize idx_2 = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-    m_cursor_begin = m_cursor_end = LowCursorPos();
-    Erase(m_cursor_begin.first, m_cursor_begin.second,
-          idx_1 < idx_2 ?
-              idx_2 - idx_1 :
-              idx_1 - idx_2);
+    //std::cout << "ClearSelected" << std::endl;
+    //std::cout << "initial cursor begin: line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
+    //std::cout << "initial cursor end:   line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+    //std::cout << "text before erase:" << Text() << std::endl;
+
+    // predetermine post-erase cursor position because erasing can mess up state of cursor position members
+    std::pair<size_t, CPSize> low_pos = LowCursorPos();
+    std::pair<size_t, CPSize> high_pos = HighCursorPos();
+
+    Erase(low_pos.first, low_pos.second, high_pos.first, high_pos.second);
+    //std::cout << "text after  erase:" << Text() << std::endl;
+    //std::cout << "after erase cursor begin: line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
+    //std::cout << "after erase cursor end:   line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+
+    m_cursor_end = m_cursor_begin = low_pos;
+    //std::cout << "low of cursor begin/end:  line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
 
     CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    //std::cout << "got cursor pos: " << cursor_pos << std::endl;
     this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
 }
 
@@ -1281,6 +1290,68 @@ void MultiEdit::AcceptPastedText(const std::string& text)
     // encoded, so check it here before passing to the default behaviour
     if (m_style & MULTI_READ_ONLY)
         return;
-    Edit::AcceptPastedText(text);
+
+    bool modified_text = false;
+
+    //std::cout << "before modifying text, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
+    //std::cout << "before modifying text, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+    //std::cout << "before modifying text, cursor pos: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
+
+    if (MultiSelected()) {
+        ClearSelected();
+        modified_text = true;
+        //std::cout << "right after clearing, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
+        //std::cout << "right after clearing, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+        //std::cout << "right after clearing, cursor pose: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
+        m_cursor_pos.second = m_cursor_pos.first;
+    }
+
+    if (!text.empty()) {
+        Insert(m_cursor_pos.first, text);
+        modified_text = true;
+        //std::cout << "Accepted and Inserted, new text:" << Text() << std::endl;
+        //std::cout << "right after inserting, cursor begin at line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
+        //std::cout << "right after inserting, cursor end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+        //std::cout << "right after inserting, cursor pose: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
+
+    }
+
+    if (modified_text) {
+        // moves cursor to end of pasted text
+        //std::cout << "initial cursor pos: " << m_cursor_pos.first << " - " << m_cursor_pos.second << std::endl;
+        CPSize text_span(utf8::distance(text.begin(), text.end()));
+        //std::cout << "text span: " << text_span << std::endl;
+        CPSize new_cursor_pos = std::max(CP0, std::min(Length(), m_cursor_pos.second + text_span));
+        //std::cout << "new cursor pos: " << new_cursor_pos << std::endl;
+
+        // place cursor start and end after text (at same place so nothing is selected)
+        m_cursor_pos.second = new_cursor_pos;
+        m_cursor_pos.first = m_cursor_pos.second;
+
+        // convert Edit::m_cursor_pos to equivalent MultiEdit::m_cursor_begin and MultiEdit::m_cursor_end
+        m_cursor_begin = CharAt(m_cursor_pos.first);
+        m_cursor_end = m_cursor_begin;
+        //std::cout << "after positioning at cursor pos, cursor begin/end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+
+        // the cursor might be off the bottom if the bottom row was just
+        // chopped off to satisfy m_max_lines_history
+        if (GetLineData().size() - 1 < m_cursor_begin.first) {
+            m_cursor_begin.first = GetLineData().size() - 1;
+            m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
+        }
+        m_cursor_end = m_cursor_begin;
+
+        //std::cout << "after newline checks, cursor begin/end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
+    }
+
+    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+
+    //std::cout << "after converting cursor begin/end to cursor pos, cursor pos: " << m_cursor_pos.first << " - " << m_cursor_pos.second << std::endl;
+
+    AdjustView();
+    if (modified_text)
+        EditedSignal(Text());
 }
 

@@ -210,7 +210,7 @@ public:
     void  Insert(CPSize pos, const std::string& s);
 
     /** Erases \a num code points from the text starting at position \a
-        pos. */
+        pos up to the end of the line that pos is on. */
     void  Erase(CPSize pos, CPSize num = CP1);
 
     /** Inserts \a c at text position \a pos within line \a line.  \note Just
@@ -222,8 +222,12 @@ public:
     void  Insert(std::size_t line, CPSize pos, const std::string& s);
 
     /** Erases \a num code points from the text starting at position \a
-        pos within line \a line. */
+        pos within line \a line up to the end of the line \a line. */
     void  Erase(std::size_t line, CPSize pos, CPSize num = CP1);
+
+    /** Erases code points from the text between the specified starting and
+      * ending line and character positions. */
+    void  Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSize pos2);
     //@}
 
 protected:

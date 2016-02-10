@@ -381,6 +381,7 @@ void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_k
     }
 
     bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+    bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
     bool emit_signal = false;
     bool numlock_on = mod_keys & MOD_KEY_NUM;
 
@@ -579,9 +580,7 @@ void Edit::AdjustView()
 ////////////////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////////////////
-void GG::GetTranslatedCodePoint(Key key,
-                                boost::uint32_t key_code_point,
-                                Flags<ModKey> mod_keys,
+void GG::GetTranslatedCodePoint(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys,
                                 std::string& translated_code_point)
 {
     // only process it if it's a valid code point or a known printable
