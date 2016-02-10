@@ -833,7 +833,7 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
                                 linear_distance, m_system_id_to_graph_index);
     } catch (const std::out_of_range&) {
         ErrorLogger() << "Universe::ShortestPath passed invalid system id(s): "
-                               << system1_id << " & " << system2_id;
+                      << system1_id << " & " << system2_id;
         throw;
     }
 }

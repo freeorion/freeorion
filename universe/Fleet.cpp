@@ -1174,7 +1174,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             path = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
-                                   << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
+                          << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
         SetRoute(path.first);
     }
