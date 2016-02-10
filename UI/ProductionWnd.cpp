@@ -596,15 +596,71 @@ namespace {
     }
 }
 
+namespace {
+    class ProdQueueListBox : public QueueListBox {
+    public:
+        ProdQueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+            QueueListBox(drop_type_str, prompt_str)
+        {}
+
+        boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
+
+    protected:
+        void ProdQueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+            // mostly duplicated equivalent in QueueListBox, but with an extra command...
+
+            GG::MenuItem menu_contents;
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
+
+            TemporaryPtr<const System> system = GetSystem(SidePanel::SystemID());
+            if (system) {
+                std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
+                menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,                   4, false, false));
+            }
+
+            GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                                ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+            if (popup.Run()) {
+                switch (popup.MenuID()) {
+                case 1: { // move item to top
+                    if (GG::ListBox::Row* row = *it)
+                        this->QueueItemMovedSignal(row, 0);
+                    break;
+                }
+                case 2: { // move item to bottom
+                    if (GG::ListBox::Row* row = *it)
+                        this->QueueItemMovedSignal(row, NumRows());
+                    break;
+                }
+                case 3: { // delete item
+                    this->QueueItemDeletedSignal(it);
+                    break;
+                }
+
+                case 4: { // rally to
+                    this->QueueItemRalliedToSignal(it, SidePanel::SystemID());
+                    break;
+                }
+
+                default:
+                    break;
+                }
+            }
+        }
+    };
+}
+
 //////////////////////////////////////////////////
 // ProductionQueueWnd                           //
 //////////////////////////////////////////////////
 class ProductionQueueWnd : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    explicit ProductionQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-        CUIWnd("", x, y, w, h,
-               GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
+    ProductionQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
+        CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
                "production.ProductionQueueWnd"),
         m_queue_lb(0)
     {
@@ -613,18 +669,17 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
         if (Size() != sz)
             DoLayout();
     }
 
-    QueueListBox*   GetQueueListBox() { return m_queue_lb; }
+    ProdQueueListBox*   GetQueueListBox() { return m_queue_lb; }
 
-    void            SetEmpire(int id) {
-        const Empire* empire = GetEmpire(id);
-        if (empire)
+    void                SetEmpire(int id) {
+        if (const Empire* empire = GetEmpire(id))
             SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
         else
             SetName("");
@@ -638,7 +693,7 @@ private:
     }
 
     void Init(int empire_id) {
-        m_queue_lb = new QueueListBox("PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
+        m_queue_lb = new ProdQueueListBox("PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
 
@@ -648,7 +703,7 @@ private:
         DoLayout();
     }
 
-    QueueListBox*   m_queue_lb;
+    ProdQueueListBox*   m_queue_lb;
 };
 
 
@@ -675,13 +730,14 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
     SetChildClippingMode(ClipToClient);
 
-    GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal,          &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
-    GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ProductionWnd::QueueItemMoved, this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal, &ProductionWnd::DeleteQueueItem, this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ProductionWnd::QueueItemClickedSlot, this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ProductionWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal,              &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,         &ProductionWnd::ChangeBuildQuantitySlot, this);
+    GG::Connect(m_build_designator_wnd->SystemSelectedSignal,               SystemSelectedSignal);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,       &ProductionWnd::QueueItemMoved, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal,     &ProductionWnd::DeleteQueueItem, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,          &ProductionWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,        &ProductionWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal,   &ProductionWnd::QueueItemRallied, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
@@ -973,6 +1029,29 @@ void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const G
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it), true);
     }
+}
+
+void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    int rally_point_id = object_id;
+    if (rally_point_id == INVALID_OBJECT_ID) {
+        // get rally point from selected system
+        rally_point_id = SidePanel::SystemID();
+    }
+    if (rally_point_id == INVALID_OBJECT_ID)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          rally_point_id, false, false)));
+
+    empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/) {

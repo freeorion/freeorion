@@ -34,13 +34,13 @@ public:
 protected:
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                     const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    virtual void    ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
 private:
-    void    ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-
-    void    EnsurePromptHiddenSlot(iterator it);
-    void    ShowPromptSlot();
-    void    ShowPromptConditionallySlot(iterator it);
+    void            ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            EnsurePromptHiddenSlot(iterator it);
+    void            ShowPromptSlot();
+    void            ShowPromptConditionallySlot(iterator it);
 
     iterator    m_drop_point;
     bool        m_show_drop_point;

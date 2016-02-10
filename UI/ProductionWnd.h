@@ -104,6 +104,7 @@ private:
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    QueueItemRallied(GG::ListBox::iterator it, int object_id);
 
     ProductionInfoPanel*    m_production_info_panel;
     ProductionQueueWnd*     m_queue_wnd;

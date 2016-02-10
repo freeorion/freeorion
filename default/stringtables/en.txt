@@ -3159,6 +3159,9 @@ CANNOT be produced here
 PRODUCTION_QUEUE_RALLIED_TO
 Rallied to %1%
 
+RALLY_QUEUE_ITEM
+Rally to %1%
+
 DELETE_QUEUE_ITEM
 <rgba 255 0 0 255>Remove from Queue</rgba>
 
