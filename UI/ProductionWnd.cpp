@@ -273,9 +273,14 @@ namespace {
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
         }
 
+        if (TemporaryPtr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
+            main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_RALLIED_TO"))
+                                        % rally_object->Name()) + "\n";
+        }
+
         if (TemporaryPtr<UniverseObject> location = GetUniverseObject(elem.location))
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
-                            % location->Name()) + "\n";
+                                        % location->Name()) + "\n";
 
         if (location_ok)
             main_text += UserString("PRODUCTION_LOCATION_OK") + "\n";
@@ -295,7 +300,7 @@ namespace {
         int ETA = elem.turns_left_to_completion;
         if (ETA != -1)
             main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_ETA"))
-                            % ETA);
+                                        % ETA);
 
         std::string title_text;
         if (elem.blocksize > 1)

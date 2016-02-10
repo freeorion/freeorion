@@ -3156,6 +3156,9 @@ Can be produced here
 PRODUCTION_LOCATION_INVALID
 CANNOT be produced here
 
+PRODUCTION_QUEUE_RALLIED_TO
+Rallied to %1%
+
 DELETE_QUEUE_ITEM
 <rgba 255 0 0 255>Remove from Queue</rgba>
 
