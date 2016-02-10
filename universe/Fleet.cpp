@@ -1123,7 +1123,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             path1 = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
-                                   << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
+                          << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
         const std::list<int>& sys_list1 = path1.first;
         if (sys_list1.empty()) {
@@ -1144,7 +1144,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             path2 = GetUniverse().ShortestPath(m_prev_system, dest_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
-                                   << " fleet's previous: " << m_prev_system << " or destination: " << dest_system_id;
+                          << " fleet's previous: " << m_prev_system << " or destination: " << dest_system_id;
         }
         const std::list<int>& sys_list2 = path2.first;
         if (sys_list2.empty()) {
