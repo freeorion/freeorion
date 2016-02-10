@@ -3144,6 +3144,7 @@ void Empire::CheckProductionProgress() {
                 TemporaryPtr<Fleet> fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
 
                 system->Insert(fleet);
+                fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
 
                 for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
                     TemporaryPtr<Ship> ship = *it;
