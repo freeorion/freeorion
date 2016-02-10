@@ -29,7 +29,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         // queue width used also on research screen. prevent double-adding...
         if (!db.OptionExists("UI.queue-width"))
-            db.Add("UI.queue-width",                    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"),         300,    RangedValidator<int>(200, 500));
+            db.Add("UI.queue-width",                    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"),         350,    RangedValidator<int>(200, 500));
         db.Add("UI.show-production-location-on-queue",  UserStringNop("OPTIONS_DB_UI_PROD_QUEUE_LOCATION"), true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
