@@ -1072,7 +1072,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     if (m_prev_system != INVALID_OBJECT_ID && SystemID() == m_prev_system) {
         // if we haven't actually left yet, we have to move from whichever system we are at now
 
-        if (!GetSystem(target_system_id)){
+        if (!GetSystem(target_system_id)) {
             // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
             SetRoute(route);
             return;
@@ -1083,7 +1083,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             path = GetUniverse().ShortestPath(m_prev_system, target_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
-            << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
+                          << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
         }
         SetRoute(path.first);
         return;
@@ -1096,7 +1096,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     // have visibility of the destination system, since this was preventing the
     // human client's attempts to find routes for enemy fleets, for which the
     // player's client doesn't know which systems are visible, and since
-    // visibility of a system on the current turn isn't necessary to plot 
+    // visibility of a system on the current turn isn't necessary to plot
     // route to it now that empire's can remember systems they've seen on
     // previous turns.
     //if (universe.GetObjectVisibilityByEmpire(dest_system_id, this->Owner()) <= VIS_NO_VISIBILITY) {
@@ -1118,7 +1118,6 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 
     // if we're between systems, the shortest route may be through either one
     if (this->CanChangeDirectionEnRoute()) {
-
         std::pair<std::list<int>, double> path1;
         try {
             path1 = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
