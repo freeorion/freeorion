@@ -3171,6 +3171,18 @@ Move to Queue Top
 MOVE_DOWN_QUEUE_ITEM
 Move to Queue Bottom
 
+PRODUCTION_WND_TOOLTIP_PROD_COST
+Production cost
+
+PRODUCTION_WND_TOOLTIP_PROD_TIME
+Production time
+
+PRODUCTION_WND_TOOLTIP_PARTS
+Ship Parts
+
+PRODUCTION_WND_TOOLTIP_FAILED_COND
+Unmet requirements to produce at %1%
+
 ###############
 #  DesignWnd  #
 ###############
