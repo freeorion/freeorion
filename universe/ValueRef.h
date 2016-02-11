@@ -1396,6 +1396,9 @@ std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context
 namespace ValueRef {
     template <>
     std::string StringCast<double>::Eval(const ScriptingContext& context) const;
+
+    template <>
+    std::string StringCast<int>::Eval(const ScriptingContext& context) const;
 }
 
 template <class FromType>

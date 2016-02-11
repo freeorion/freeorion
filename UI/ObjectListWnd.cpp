@@ -603,7 +603,7 @@ private:
     GG::Y   DropListHeight() const
     { return GG::Y(ClientUI::Pts() + 4); }
 
-    int   DropListDropHeight() const
+    int     DropListDropHeight() const
     { return 12; }
 
     void    Init(const Condition::ConditionBase* init_condition) {

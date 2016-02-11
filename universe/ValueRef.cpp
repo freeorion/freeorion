@@ -1956,8 +1956,33 @@ namespace ValueRef {
     template <>
     std::string StringCast<double>::Eval(const ScriptingContext& context) const
     {
+        if (!m_value_ref)
+            return "";
         double temp = m_value_ref->Eval(context);
         return DoubleToString(temp, 3, false);
+    }
+
+    template <>
+    std::string StringCast<int>::Eval(const ScriptingContext& context) const
+    {
+        if (!m_value_ref)
+            return "";
+        int temp = m_value_ref->Eval(context);
+
+        // special case for a few sub-value-refs to help with UI representation
+        if (Variable<int>* int_var = dynamic_cast<Variable<int>*>(m_value_ref)) {
+            if (int_var->PropertyName().back() == "ETA") {
+                if (temp == Fleet::ETA_UNKNOWN) {
+                    return UserString("FW_FLEET_ETA_UNKNOWN");
+                } else if (temp == Fleet::ETA_NEVER) {
+                    return UserString("FW_FLEET_ETA_NEVER");
+                } else if (temp == Fleet::ETA_OUT_OF_RANGE) {
+                    return UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+                }
+            }
+        }
+
+        return boost::lexical_cast<std::string>(temp);
     }
 }
 
