@@ -17,7 +17,7 @@ ShipDesign
     description = "SD_CARRIER_DESC"
     hull = "SH_STANDARD"
     parts = [
-        "FT_WEAPON_1"
+        "FT_BAY_1"
         "FT_BAY_1"
         "FT_BAY_1"
         "FT_HANGAR_1"

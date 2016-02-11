@@ -63,6 +63,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
+            qi::_h_type _h;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
@@ -101,28 +102,32 @@ namespace {
                 ;
 
             common_params
-                =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
-                >   parse::label(BuildTime_token)    > flexible_int_ref  [ _b = _1 ]
-                >   producible                                           [ _c = _1 ]
+                =   parse::label(BuildCost_token)   > double_value_ref  [ _a = _1 ]
+                >   parse::label(BuildTime_token)   > flexible_int_ref  [ _b = _1 ]
+                >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
-                > -(parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ])
+                > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 >   parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
             ;
 
             part_type
                 =   part_type_prefix(_a, _b, _c)
-                > (  (parse::label(Capacity_token)  >> parse::double_ [ _d = _1 ])
-                   | (parse::label(Damage_token)    >> parse::double_ [ _d = _1 ])
+                > (  (parse::label(Capacity_token)  > parse::double_ [ _d = _1 ])
+                   | (parse::label(Damage_token)    > parse::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
+                  )
+                > (  (parse::label(Damage_token)    > parse::double_ [ _h = _1 ])   // damage is secondary for fighters
+                   | (parse::label(Shots_token)     > parse::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
+                   |  eps [ _h = 1.0 ]
                   )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
                 >   common_params [ _e = _1 ]
-                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f, _g)) ]
+                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _g)) ]
                 ;
 
             start
@@ -196,7 +201,8 @@ namespace {
                 double,
                 PartHullCommonParams,
                 std::vector<ShipSlotType>,
-                bool
+                bool,
+                double
             >,
             parse::skipper_type
         > part_type_rule;

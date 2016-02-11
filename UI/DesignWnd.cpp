@@ -90,7 +90,6 @@ namespace {
             case PC_DIRECT_WEAPON:
             case PC_FIGHTER_BAY:
             case PC_FIGHTER_HANGAR:
-            case PC_FIGHTER_WEAPON:
             case PC_SHIELD:
             case PC_DETECTION:
             case PC_STEALTH:

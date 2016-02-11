@@ -198,8 +198,7 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
             break;
         }
         case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
-        case PC_DIRECT_WEAPON:      // capacity indicates weapon damage per shot
-        case PC_FIGHTER_WEAPON: {   // capacity indiciates fighters' damage (max on a ship is used for launched fighters)
+        case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
             break;
         }
@@ -249,7 +248,7 @@ PartType::~PartType()
 float PartType::Capacity() const
 { return m_capacity; }
 
-const std::string PartType::CapacityDescription() const {
+std::string PartType::CapacityDescription() const {
     std::string desc_string;
     float d = Capacity();
 
@@ -673,17 +672,16 @@ float ShipDesign::AdjustedAttack(float shield) const {
             continue;
         ShipPartClass part_class = part->Class();
 
-    // direct weapon and fighter-related parts all handled differently...
+        // direct weapon and fighter-related parts all handled differently...
         if (part_class == PC_DIRECT_WEAPON) {
             float part_attack = part->Capacity();
             if (part_attack > shield)
-                direct_attack += part_attack - shield;
+                direct_attack += (part_attack - shield)*part->SecondaryStat();  // here, secondary stat is number of shots per round
         } else if (part_class == PC_FIGHTER_HANGAR) {
             available_fighters += part->Capacity();
         } else if (part_class == PC_FIGHTER_BAY) {
             fighter_launch_capacity += part->Capacity();
-        } else if (part_class == PC_FIGHTER_WEAPON) {
-            fighter_damage = std::max(fighter_damage, part->Capacity());
+            fighter_damage = part->SecondaryStat();                             // here, secondary stat is fighter damage per shot
         }
     }
 

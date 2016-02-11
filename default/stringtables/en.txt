@@ -6402,8 +6402,6 @@ Empty
 
 PC_DIRECT_WEAPON
 Direct Weapon
-PC_FIGHTER_WEAPON
-Fighter Weapon
 PC_FIGHTER_HANGAR
 Fighter Hangar
 PC_FIGHTER_BAY
@@ -9629,8 +9627,8 @@ PART_DESC_DETECTION
 Detection Range: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-Attack Damage: %1%
-
+'''Shot Damage: %1%
+Shots per Attack: %2%'''
 
 
 #############################################################

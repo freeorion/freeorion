@@ -147,11 +147,11 @@ GG_ENUM(Shape,
 GG_ENUM(Aggression,
     INVALID_AGGRESSION = -1,
     BEGINNER,
-    TURTLE,        ///< very defensive
-    CAUTIOUS,      ///< Somewhat Defensive
-    TYPICAL,       ///< Typical
-    AGGRESSIVE,    ///< Aggressive
-    MANIACAL,     ///< Very Aggressive
+    TURTLE,         ///< Very Defensive
+    CAUTIOUS,       ///< Somewhat Defensive
+    TYPICAL,        ///< Typical
+    AGGRESSIVE,     ///< Aggressive
+    MANIACAL,       ///< Very Aggressive
     NUM_AI_AGGRESSION_LEVELS
 )
 
@@ -238,8 +238,7 @@ GG_ENUM(ShipPartClass,
     INVALID_SHIP_PART_CLASS = -1,
     PC_DIRECT_WEAPON,       ///< direct-fire weapons
     PC_FIGHTER_BAY,         ///< launch aparatus for fighters, which are self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
-    PC_FIGHTER_HANGAR,      ///< storage for fighters
-    PC_FIGHTER_WEAPON,      ///< weapon used on fighters launched from this ship; does not fire itself
+    PC_FIGHTER_HANGAR,      ///< storage for fighters, also determines their weapon strength stat
     PC_SHIELD,              ///< energy-based defense
     PC_ARMOUR,              ///< defensive material on hull of ship
     PC_TROOPS,              ///< ground troops, used to conquer planets

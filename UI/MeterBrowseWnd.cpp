@@ -488,14 +488,12 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (!(part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY || part_class == PC_FIGHTER_WEAPON))
+        if (!(part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY))
             continue;
 
         // get the attack power for each weapon part
         float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
-        std::string text = boost::io::str(FlexibleFormat(label_template)
-                                % name
-                                % UserString(part_name));
+        std::string text = boost::io::str(FlexibleFormat(label_template) % name % UserString(part_name));
 
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));

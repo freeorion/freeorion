@@ -397,6 +397,7 @@
     (Short_Description)                         \
     (ShortestPath)                              \
     (ShortRange)                                \
+    (Shots)                                     \
     (Sin)                                       \
     (Size)                                      \
     (SizeAsDouble)

@@ -668,9 +668,7 @@ namespace {
 
             } else if (part_class == PC_FIGHTER_BAY) {
                 part_fighter_launch_capacities[part_name] += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
-
-            } else if (part_class == PC_FIGHTER_WEAPON) {
-                fighter_attack = std::max(fighter_attack, ship->CurrentPartMeterValue(METER_CAPACITY, part_name));
+                fighter_attack = part->SecondaryStat();
             }
         }
 

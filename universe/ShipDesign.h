@@ -76,6 +76,7 @@ public:
         m_description("indescribable"),
         m_class(INVALID_SHIP_PART_CLASS),
         m_capacity(0.0f),
+        m_secondary_stat(1.0f),
         m_production_cost(0),
         m_production_time(0),
         m_mountable_slot_types(),
@@ -87,7 +88,7 @@ public:
     {}
 
     PartType(const std::string& name, const std::string& description,
-             ShipPartClass part_class, double capacity,
+             ShipPartClass part_class, double capacity, double stat2,
              const PartHullCommonParams& common_params,
              std::vector<ShipSlotType> mountable_slot_types,
              bool add_standard_capacity_effect = true) :
@@ -95,6 +96,7 @@ public:
         m_description(description),
         m_class(part_class),
         m_capacity(capacity),
+        m_secondary_stat(stat2),
         m_production_cost(common_params.production_cost),
         m_production_time(common_params.production_time),
         m_producible(common_params.producible),
@@ -118,7 +120,9 @@ public:
     const std::string&      Description() const     { return m_description; }       ///< returns description string, generally a UserString key.
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     float                   Capacity() const;
-    const std::string       CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
+    std::string             CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
+    float                   SecondaryStat() const   { return m_secondary_stat; }
+
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
@@ -142,6 +146,7 @@ private:
     std::string                                             m_description;
     ShipPartClass                                           m_class;
     float                                                   m_capacity;
+    float                                                   m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
     ValueRef::ValueRefBase<double>*                         m_production_cost;
     ValueRef::ValueRefBase<int>*                            m_production_time;
     bool                                                    m_producible;
@@ -630,6 +635,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_class)
         & BOOST_SERIALIZATION_NVP(m_capacity)
+        & BOOST_SERIALIZATION_NVP(m_secondary_stat)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
         & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)

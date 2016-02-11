@@ -84,8 +84,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
             }
             case PC_DIRECT_WEAPON:
             case PC_FIGHTER_BAY:
-            case PC_FIGHTER_HANGAR:
-            case PC_FIGHTER_WEAPON: {
+            case PC_FIGHTER_HANGAR: {
                 m_part_meters[std::make_pair(METER_CAPACITY,    part->Name())];
                 m_part_meters[std::make_pair(METER_MAX_CAPACITY,part->Name())];
                 break;
@@ -469,15 +468,9 @@ namespace {
             if (part_class == PC_DIRECT_WEAPON) {
                 float part_attack = ship->CurrentPartMeterValue(METER, part_name);
                 if (part_attack > DR)
-                    retval.push_back(part_attack - DR);
-            } else if (part_class == PC_FIGHTER_WEAPON && include_fighters) {
-                // attack strength of a ship's fighters is the max of the
-                // fighter weapon part strengths on the ship
-                float part_strength = ship->CurrentPartMeterValue(METER, part_name);
-                if (part_strength > DR)
-                    fighter_weapon_strength = std::max(fighter_weapon_strength, part_strength - DR);
+                    retval.push_back((part_attack - DR)*part->SecondaryStat());
             } else if (part_class == PC_FIGHTER_BAY && include_fighters) {
-                // number of fighters a ship can launch is one per combat round,
+                // number of fighters a fighter bay can launch is one per combat round,
                 // and fighters cannot attack on the round they are launched,
                 // but can attack any round after they are launched but have not
                 // been destroyed, so the optimal / ideal number of fighter
@@ -485,6 +478,12 @@ namespace {
                 // the carrier has (the same as a normal weapon)
                 int part_fighter_attacks = static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)*3);
                 fighter_attacks += part_fighter_attacks;
+
+                // attack strength of a ship's fighters is the max of the
+                // fighter weapon part strengths on the ship
+                float part_strength = part->SecondaryStat();
+                if (part_strength > DR)
+                    fighter_weapon_strength = std::max(fighter_weapon_strength, part_strength - DR);
             }
         }
         // add attacks for fighter bays

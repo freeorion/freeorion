@@ -228,7 +228,6 @@ namespace parse {
             =   tok.ShortRange_         [ _val = PC_DIRECT_WEAPON ]
             |   tok.FighterBay_         [ _val = PC_FIGHTER_BAY ]
             |   tok.FighterHangar_      [ _val = PC_FIGHTER_HANGAR ]
-            |   tok.FighterWeapon_      [ _val = PC_FIGHTER_WEAPON ]
             |   tok.Shield_             [ _val = PC_SHIELD ]
             |   tok.Armour_             [ _val = PC_ARMOUR ]
             |   tok.Troops_             [ _val = PC_TROOPS ]
