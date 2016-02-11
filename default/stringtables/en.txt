@@ -9630,6 +9630,10 @@ PART_DESC_DIRECT_FIRE_STATS
 '''Shot Damage: %1%
 Shots per Attack: %2%'''
 
+PART_DESC_HANGAR_STATS
+'''Shot Damage: %2%
+Fighter Capacity: %1%'''
+
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -9643,12 +9647,32 @@ Prototype weapon system for use with fighters. Does not function as a ship weapo
 FT_BAY_1
 Fighter Bay
 FT_BAY_1_DESC
-Prototype launch system for fighters.
+Launch system for fighters.
+
+FT_HANGAR_0
+Fighter Hangar 0
+FT_HANGAR_0_DESC
+Storage system for unarmed decoy craft.
 
 FT_HANGAR_1
-Fighter Hangar
+Fighter Hangar 1
 FT_HANGAR_1_DESC
-Prototype storage system for fighters.
+Storage system for minimally armed fighters.
+
+FT_HANGAR_2
+Fighter Hangar 2
+FT_HANGAR_2_DESC
+Storage system for lightly armed fighters.
+
+FT_HANGAR_3
+Fighter Hangar 3
+FT_HANGAR_3_DESC
+Storage system for moderately armed fighters.
+
+FT_HANGAR_4
+Fighter Hangar 4
+FT_HANGAR_4_DESC
+Storage system for heavily armed fighters.
 
 SR_WEAPON_0_1
 Flak Cannon

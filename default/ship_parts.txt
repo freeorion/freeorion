@@ -77,7 +77,7 @@ Part
 
 Part
     name = "FT_HANGAR_3"
-    description = "FT_HANGAR_1_DESC"
+    description = "FT_HANGAR_3_DESC"
     class = FighterHangar
     capacity = 2
     damage = 6
@@ -89,7 +89,7 @@ Part
 
 Part
     name = "FT_HANGAR_4"
-    description = "FT_HANGAR_1_DESC"
+    description = "FT_HANGAR_4_DESC"
     class = FighterHangar
     capacity = 1
     damage = 10

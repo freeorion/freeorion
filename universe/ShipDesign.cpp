@@ -250,27 +250,33 @@ float PartType::Capacity() const
 
 std::string PartType::CapacityDescription() const {
     std::string desc_string;
-    float d = Capacity();
+    float main_stat = Capacity();
+    float sdry_stat = SecondaryStat();
 
     switch (m_class) {
     case PC_FUEL:
     case PC_TROOPS:
     case PC_COLONY:
     case PC_FIGHTER_BAY:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_CAPACITY")) % main_stat);
+        break;
+    case PC_DIRECT_WEAPON:
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS")) % main_stat % sdry_stat);
+        break;
     case PC_FIGHTER_HANGAR:
-        desc_string += UserString("PART_DESC_CAPACITY");
+        desc_string += str(FlexibleFormat(UserString("PART_DESC_HANGAR_STATS")) % main_stat % sdry_stat);
         break;
     case PC_SHIELD:
-        desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
+        desc_string = str(FlexibleFormat(UserString("PART_DESC_SHIELD_STRENGTH")) % main_stat);
         break;
     case PC_DETECTION:
-        desc_string = UserString("PART_DESC_DETECTION");
+        desc_string = str(FlexibleFormat(UserString("PART_DESC_DETECTION")) % main_stat);
         break;
     default:
-        desc_string = UserString("PART_DESC_STRENGTH");
+        desc_string = str(FlexibleFormat(UserString("PART_DESC_STRENGTH")) % main_stat);
         break;
     }
-    return str(FlexibleFormat(desc_string) % d);
+    return desc_string;
 }
 
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
