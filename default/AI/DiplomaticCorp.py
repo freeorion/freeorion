@@ -74,7 +74,7 @@ class DiplomaticCorp(object):
         # no such entry
         if len(greets) == 1 and greets[0] == 'ERROR: %s' % key:
             greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
-        return '%s %s' % (len(greets), random.choice(greets))
+        return random.choice(greets)
 
     @chat_on_error
     def handle_diplomatic_status_update(self, status_update):
