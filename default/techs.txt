@@ -2689,7 +2689,7 @@ Tech
         "PRO_ZERO_GEN"
     ]
     unlock = Item type = ShipPart name = "FU_ZERO_FUEL"
-    graphic = "icons/tech/zero_point_energy.png"
+    graphic = "icons/ship_parts/zero-point-generator.png"
 
 Tech
     name = "SHP_SPINAL_ANTIMATTER"
@@ -2766,7 +2766,7 @@ Tech
         "LRN_FORCE_FIELD"
     ]
     unlock = Item type = ShipPart name = "SP_EMP"
-    graphic = "icons/ship_parts/death-spore.png"
+    graphic = "icons/ship_parts/EMP.png"
 
 Tech
     name = "SHP_EMO"
@@ -2781,7 +2781,7 @@ Tech
         "SHP_FRC_ENRG_COMP"
     ]
     unlock = Item type = ShipPart name = "SP_EMO"
-    graphic = "icons/ship_parts/bioterm.png"
+    graphic = "icons/ship_parts/EMO.png"
 
 Tech
     name = "SHP_SONIC"
@@ -3553,6 +3553,7 @@ Tech
                 Not OwnerHasTech name = "SPY_STEALTH_4"
             ]
             effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
+    graphic = "icons/specials_huge/cloud_cover.png"
            
 Tech
     name = "SPY_STEALTH_PART_1"
@@ -3592,6 +3593,7 @@ Tech
                 AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
                 RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
+    graphic = "icons/specials_huge/volcanic_ash.png"
            
 Tech
     name = "SPY_STEALTH_PART_2"
@@ -3629,6 +3631,7 @@ Tech
                 RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
                 RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
+    graphic = "icons/specials_huge/dim_rift.png"
            
 Tech
     name = "SPY_STEALTH_PART_3"
@@ -3670,6 +3673,7 @@ Tech
                 RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
                 RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
+    graphic = "icons/specials_huge/void.png"
 
 //#     Spy Other
 
