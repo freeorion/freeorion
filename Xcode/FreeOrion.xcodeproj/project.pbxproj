@@ -338,6 +338,7 @@
 		CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */; };
+		CED6E5521C6DDC0F0085A4DC /* Fighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CED6E5501C6DDC0F0085A4DC /* Fighter.cpp */; };
 		CEDABCF01C688D050085A4DC /* libboost_locale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEDABCEF1C688D050085A4DC /* libboost_locale.a */; };
 		CEDABCF31C688E290085A4DC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CEDABCF21C688E290085A4DC /* libiconv.dylib */; };
 		CEDC4AEF1BD3E361009BB38D /* EmpireWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */; };
@@ -1111,6 +1112,8 @@
 		CEC4ADC01BC13741000DFA9B /* AIFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFramework.h; sourceTree = "<group>"; };
 		CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonFramework.cpp; sourceTree = "<group>"; };
 		CEC4ADC31BC15195000DFA9B /* CommonFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonFramework.h; sourceTree = "<group>"; };
+		CED6E5501C6DDC0F0085A4DC /* Fighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fighter.cpp; sourceTree = "<group>"; };
+		CED6E5511C6DDC0F0085A4DC /* Fighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fighter.h; sourceTree = "<group>"; };
 		CEDABCEF1C688D050085A4DC /* libboost_locale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_locale.a; sourceTree = "<group>"; };
 		CEDABCF21C688E290085A4DC /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -1760,6 +1763,8 @@
 				471D5CF30A98A3F900DA9C21 /* Enums.h */,
 				8250FDE315FCEFDD00523C1C /* Field.cpp */,
 				8250FDE415FCEFDE00523C1C /* Field.h */,
+				CED6E5501C6DDC0F0085A4DC /* Fighter.cpp */,
+				CED6E5511C6DDC0F0085A4DC /* Fighter.h */,
 				471D5CF40A98A3F900DA9C21 /* Fleet.cpp */,
 				471D5CF50A98A3F900DA9C21 /* Fleet.h */,
 				471D5CF70A98A3F900DA9C21 /* Meter.cpp */,
@@ -2459,6 +2464,7 @@
 				47103C080CF04E5900A7DF2B /* ResourceCenter.cpp in Sources */,
 				47103C090CF04E5900A7DF2B /* Ship.cpp in Sources */,
 				47103C0A0CF04E5900A7DF2B /* ShipDesign.cpp in Sources */,
+				CED6E5521C6DDC0F0085A4DC /* Fighter.cpp in Sources */,
 				47103C0B0CF04E5900A7DF2B /* Special.cpp in Sources */,
 				47103C0C0CF04E5900A7DF2B /* System.cpp in Sources */,
 				3ABEAB871749C72000E34912 /* Universe.cpp in Sources */,
