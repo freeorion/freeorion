@@ -1,7 +1,6 @@
 """Handle diplomatic messages and response determination."""
 
 import random
-
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from freeorion_tools import UserStringList, chat_on_error
@@ -46,7 +45,8 @@ class DiplomaticCorp(object):
             attitude = self.evaluate_diplomatic_attitude(message.sender)
             if attitude > 0:
                 reply_text = random.choice(UserStringList("AI_PEACE_PROPOSAL_RESPONSES_YES_" + suffix + "_LIST"))
-                diplo_reply = fo.diplomaticMessage(message.recipient, message.sender, fo.diplomaticMessageType.acceptProposal)
+                diplo_reply = fo.diplomaticMessage(message.recipient, message.sender,
+                                                   fo.diplomaticMessageType.acceptProposal)
                 print "Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type)
                 fo.sendDiplomaticMessage(diplo_reply)
             else:
@@ -58,6 +58,23 @@ class DiplomaticCorp(object):
             # note: apparently this is currently (normally?) sent not as a warDeclaration,
             # but as a simple diplomatic_status_update to war
             foAI.foAIstate.log_war_declaration(message.sender, message.recipient)
+
+    @staticmethod
+    def get_first_turn_greet_message():
+        greet_lists = {
+            fo.aggression.beginner: "BEGINNER",
+            fo.aggression.turtle: "TURTLE",
+            fo.aggression.cautious: "CAUTIOUS",
+            fo.aggression.typical: "TYPICAL",
+            fo.aggression.aggressive: "AGGRESSIVE",
+            fo.aggression.maniacal: "MANIACAL",
+        }
+        key = "AI_FIRST_TURN_GREETING_%s" % greet_lists[foAI.foAIstate.aggression]
+        greets = UserStringList(key)
+        # no such entry
+        if len(greets) == 1 and greets[0] == 'ERROR: %s' % key:
+            greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
+        return random.choice(greets)
 
     @chat_on_error
     def handle_diplomatic_status_update(self, status_update):
@@ -81,7 +98,7 @@ class DiplomaticCorp(object):
         num_peace_requests = len(foAI.foAIstate.diplomatic_logs.get('peace_requests', {}).get(log_index, []))
         num_war_declarations = len(foAI.foAIstate.diplomatic_logs.get('war_declarations', {}).get(log_index, []))
         # Too many requests for peace irritate the AI, as do any war declarations
-        irritation = (foAI.foAIstate.aggression * (2.0 + num_peace_requests/10.0 + 2.0 * num_war_declarations) + 0.5)
+        irritation = (foAI.foAIstate.aggression * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
         attitude = 10 * random.random() - irritation
         return min(10, max(-10, attitude))
 
@@ -93,7 +110,7 @@ class DiplomaticCorp(object):
             possible_acknowledgments = UserStringList("AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST")
             acknowledgement = random.choice(possible_acknowledgments)
             print "Acknowledging 'Be Quiet' chat request with initial message (from %d choices): '%s'" % (
-                  len(possible_acknowledgments), acknowledgement)
+                len(possible_acknowledgments), acknowledgement)
             fo.sendChatMessage(sender_player_id, acknowledgement)
             self.be_chatty = False
             return
@@ -102,7 +119,7 @@ class DiplomaticCorp(object):
         possible_acknowledgments = UserStringList("AI_MIDGAME_ACKNOWLEDGEMENTS__LIST")
         acknowledgement = random.choice(possible_acknowledgments)
         print "Acknowledging midgame chat with initial message (from %d choices): '%s'" % (
-              len(possible_acknowledgments), acknowledgement)
+            len(possible_acknowledgments), acknowledgement)
         fo.sendChatMessage(sender_player_id, acknowledgement)
         self.be_chatty = False
 
