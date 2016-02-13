@@ -121,7 +121,7 @@ public:
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     float                   Capacity() const;
     std::string             CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
-    float                   SecondaryStat() const   { return m_secondary_stat; }
+    float                   SecondaryStat() const;
 
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&

@@ -89,6 +89,10 @@ namespace FreeOrionPython {
             .value("maxTroops",         METER_MAX_TROOPS)
             .value("maxSupply",         METER_MAX_SUPPLY)
 
+            .value("maxDamage",         METER_MAX_CAPACITY)
+            .value("maxCapacity",       METER_MAX_CAPACITY)
+            .value("maxSecondaryStat",  METER_MAX_SECONDARY_STAT)
+
             .value("population",        METER_POPULATION)
             .value("industry",          METER_INDUSTRY)
             .value("research",          METER_RESEARCH)
@@ -111,6 +115,7 @@ namespace FreeOrionPython {
 
             .value("damage",            METER_CAPACITY)
             .value("capacity",          METER_CAPACITY)
+            .value("secondaryStat",     METER_SECONDARY_STAT)
         ;
         enum_<DiplomaticStatus>("diplomaticStatus")
             .value("war",               DIPLO_WAR)

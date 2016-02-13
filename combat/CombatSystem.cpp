@@ -655,7 +655,8 @@ namespace {
 
             // direct weapon and fighter-related parts all handled differently...
             if (part_class == PC_DIRECT_WEAPON) {
-                float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+                float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name) *
+                                    ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);   // secondary stat is shots per attack
                 if (part_attack > 0.0f)
                     retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
 
@@ -664,11 +665,13 @@ namespace {
                 if (seen_hangar_part_types.find(part_name) == seen_hangar_part_types.end()) {
                     available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                     seen_hangar_part_types.insert(part_name);
+
+                    // should only be one type of fighter per ship as of this writing
+                    fighter_attack = ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);  // secondary stat is fighter damage
                 }
 
             } else if (part_class == PC_FIGHTER_BAY) {
                 part_fighter_launch_capacities[part_name] += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
-                fighter_attack = part->SecondaryStat();
             }
         }
 

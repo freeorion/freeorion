@@ -535,20 +535,21 @@ void Ship::Resupply() {
     const Meter* max_fuel_meter = UniverseObject::GetMeter(METER_MAX_FUEL);
     if (!fuel_meter || !max_fuel_meter) {
         ErrorLogger() << "Ship::Resupply couldn't get fuel meters!";
-        return;
+    } else {
+        fuel_meter->SetCurrent(max_fuel_meter->Current());
+        fuel_meter->BackPropegate();
     }
-
-    fuel_meter->SetCurrent(max_fuel_meter->Current());
-    fuel_meter->BackPropegate();
 
     // set all part capacities equal to any associated max capacity
     // this "upgrades" any direct-fire weapon parts to their latest-allowed
     // strengths, and replaces any lost fighters
-
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-        if (it->first.first != METER_CAPACITY)
-            continue;
-        PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        PartMeterMap::iterator max_it = m_part_meters.end();
+        if (it->first.first == METER_CAPACITY) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        } else if (it->first.first == METER_SECONDARY_STAT) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_SECONDARY_STAT, it->first.second));
+        }
         if (max_it == m_part_meters.end())
             continue;
 
@@ -613,12 +614,14 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     //UniverseObject::GetMeter(METER_STEALTH)->ResetCurrent(); redundant with base class function
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
+        PartMeterMap::iterator max_it = m_part_meters.end();
         if (it->first.first == METER_CAPACITY) {
-            // special case for capacity... if it HAS AN associated max capacity, DON'T reset it, as it is PAIRED
-            PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
-            if (max_it != m_part_meters.end())
-                continue;
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        } else if (it->first.first == METER_SECONDARY_STAT) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_SECONDARY_STAT, it->first.second));
         }
+        if (max_it != m_part_meters.end())
+            continue;
         it->second.ResetCurrent();
     }
 }
@@ -627,12 +630,14 @@ void Ship::ResetPairedActiveMeters() {
     UniverseObject::ResetPairedActiveMeters();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-       if (it->first.first == METER_CAPACITY) {
-            // special case for capacity... if it HAS AN associated max capacity, DO reset it, as it is PAIRED
-            PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
-            if (max_it != m_part_meters.end())
-                it->second.SetCurrent(it->second.Initial());
+        PartMeterMap::iterator max_it = m_part_meters.end();
+        if (it->first.first == METER_CAPACITY) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        } else if (it->first.first == METER_SECONDARY_STAT) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_SECONDARY_STAT, it->first.second));
         }
+        if (max_it != m_part_meters.end())
+            it->second.SetCurrent(it->second.Initial());
     }
 }
 
@@ -646,12 +651,14 @@ void Ship::SetShipMetersToMax() {
 
     // some part capacity meters may have an associated max capacity...
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-        if (it->first.first != METER_CAPACITY)
-            continue;
-        PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        PartMeterMap::iterator max_it = m_part_meters.end();
+        if (it->first.first == METER_CAPACITY) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        } else if (it->first.first == METER_SECONDARY_STAT) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_SECONDARY_STAT, it->first.second));
+        }
         if (max_it == m_part_meters.end())
             continue;
-
         max_it->second.SetCurrent(Meter::LARGE_VALUE);
         it->second.SetCurrent(Meter::LARGE_VALUE);
     }
@@ -691,21 +698,26 @@ void Ship::ClampMeters() {
 
     // clamp most part meters to basic range limits
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-        if (it->first.first == METER_CAPACITY)
+        if (it->first.first == METER_CAPACITY || it->first.first == METER_SECONDARY_STAT)
             continue;
         it->second.ClampCurrentToRange();
     }
 
     // special case extra clamping for paired CAPACTY meters dependent on their associated MAX_CAPACITY meter...
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-        if (it->first.first != METER_CAPACITY)
-            continue;
-        PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        PartMeterMap::iterator max_it = m_part_meters.end();
+        if (it->first.first == METER_CAPACITY) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
+        } else if (it->first.first == METER_SECONDARY_STAT) {
+            max_it = m_part_meters.find(std::make_pair(METER_MAX_SECONDARY_STAT, it->first.second));
+        }
+
         if (max_it == m_part_meters.end()) {
-            // no found max capacity meter, revert to normal clamping for this capacity meter
+            // no found max meter, revert to normal clamping for this meter
             it->second.ClampCurrentToRange();
             continue;
         }
+
         const Meter& max_meter = max_it->second;
         it->second.ClampCurrentToRange(Meter::DEFAULT_VALUE, max_meter.Current());
     }

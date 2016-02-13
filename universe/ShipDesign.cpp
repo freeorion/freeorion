@@ -194,12 +194,14 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
             break;
         case PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, true)); // note: stacking allowed for this part
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
             break;
         }
         case PC_FIGHTER_BAY:        // capacity indicates how many fighters each instance of the part can launch per combat bout...
         case PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
-            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,       m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, false));
             break;
         }
         case PC_SHIELD:
@@ -247,6 +249,9 @@ PartType::~PartType()
 
 float PartType::Capacity() const
 { return m_capacity; }
+
+float PartType::SecondaryStat() const
+{ return m_secondary_stat; }
 
 std::string PartType::CapacityDescription() const {
     std::string desc_string;
