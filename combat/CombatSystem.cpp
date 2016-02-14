@@ -655,10 +655,13 @@ namespace {
 
             // direct weapon and fighter-related parts all handled differently...
             if (part_class == PC_DIRECT_WEAPON) {
-                float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name) *
-                                    ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name);   // secondary stat is shots per attack
-                if (part_attack > 0.0f)
-                    retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
+                float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+                int shots = static_cast<int>(ship->CurrentPartMeterValue(METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
+                if (part_attack > 0.0f && shots > 0) {
+                    // attack for each shot...
+                    for (int shot_count = 0; shot_count < shots; ++shot_count)
+                        retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
+                }
 
             } else if (part_class == PC_FIGHTER_HANGAR) {
                 // hangar max-capacity-modification effects stack, so only add capacity for each hangar type once
