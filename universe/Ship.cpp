@@ -82,11 +82,15 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
                 break;
             }
-            case PC_DIRECT_WEAPON:
-            case PC_FIGHTER_BAY:
-            case PC_FIGHTER_HANGAR: {
-                m_part_meters[std::make_pair(METER_CAPACITY,    part->Name())];
-                m_part_meters[std::make_pair(METER_MAX_CAPACITY,part->Name())];
+            case PC_DIRECT_WEAPON:      // capacity is damage, secondary stat is shots per attack
+            case PC_FIGHTER_HANGAR: {   // capacity is how many fighters contained, secondary stat is damage per fighter attack
+                m_part_meters[std::make_pair(METER_SECONDARY_STAT,      part->Name())];
+                m_part_meters[std::make_pair(METER_MAX_SECONDARY_STAT,  part->Name())];
+                // intentionally no break here
+            }
+            case PC_FIGHTER_BAY: {      // capacity is how many fighters launched per combat round
+                m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
+                m_part_meters[std::make_pair(METER_MAX_CAPACITY,        part->Name())];
                 break;
             }
             default:
