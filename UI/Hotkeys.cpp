@@ -113,10 +113,10 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
     copy = std::string(copy.begin(), std::remove_if(copy.begin(), copy.end(), isspace));
 
     size_t plus = copy.find('+');
-    bool hasModifier = plus != std::string::npos;
+    bool has_modifier = plus != std::string::npos;
 
     GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE;
-    if (hasModifier) {
+    if (has_modifier) {
         // We have a modifier. Things get a little complex, since we need
         // to handle the |-separated flags:
         std::string m = copy.substr(0, plus);
@@ -134,7 +134,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
         }
     }
 
-    std::string v = hasModifier ? copy.substr(plus+1) : copy;
+    std::string v = has_modifier ? copy.substr(plus+1) : copy;
     std::istringstream s(v);
     GG::Key key;
     s >> key;
@@ -240,8 +240,8 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         hotkey.m_key = key_modkey_pair.first;
         hotkey.m_mod_keys = key_modkey_pair.second;
 
-        DebugLogger()  <<__func__ << "Added hotkey '" << hotkey.m_key  << "' with modifiers '"
-                       <<hotkey.m_mod_keys << "' for hotkey '" << hotkey.m_name<<"'";
+        DebugLogger() << "Added hotkey '" << hotkey.m_key << "' with modifiers '"
+                       << hotkey.m_mod_keys << "' for hotkey '" << hotkey.m_name << "'";
     }
 }
 
@@ -284,7 +284,7 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
             size_t j = hk_name.find('.');
             if (j != std::string::npos) {
                 section = "HOTKEYS_" + hk_name.substr(0, j);
-                std::transform(section.begin(), section.end(), 
+                std::transform(section.begin(), section.end(),
                                section.begin(), ::toupper);
                 if (section == "HOTKEYS_COMBAT")
                     section = "HOTKEYS_Z_COMBAT"; // make combat the
