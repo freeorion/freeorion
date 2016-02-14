@@ -2080,6 +2080,10 @@ class shipDesign(object):
         return float()
 
     @property
+    def description(self):
+        return str()
+
+    @property
     def isArmed(self):
         return bool()
 
@@ -2106,6 +2110,10 @@ class shipDesign(object):
     @property
     def canInvade(self):
         return bool()
+
+    @property
+    def name(self):
+        return str()
 
     @property
     def attackStats(self):
@@ -2170,28 +2178,6 @@ class shipDesign(object):
         :rtype float
         """
         return float()
-
-    def description(self, boolean):
-        """
-        C++ signature:
-            std::string description(ShipDesign {lvalue},bool)
-        
-        :param boolean:
-        :type boolean: bool
-        :rtype str
-        """
-        return str()
-
-    def name(self, boolean):
-        """
-        C++ signature:
-            std::string name(ShipDesign {lvalue},bool)
-        
-        :param boolean:
-        :type boolean: bool
-        :rtype str
-        """
-        return str()
 
 
 class sitrep(object):
@@ -3832,6 +3818,17 @@ def getUniverse():
     :rtype universe
     """
     return universe()
+
+
+def getUserDir():
+    """
+    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).
+    
+    C++ signature:
+        boost::python::str getUserDir()
+    :rtype str
+    """
+    return str()
 
 
 def initMeterEstimatesDiscrepancies():
