@@ -79,8 +79,16 @@ public:
     void            HideAvailability(bool available, bool refresh_list = true);
     void            ToggleAvailabilitly(bool available, bool refresh_list = true);
 
+    /** Open a pedia entry on the encyclopedia */
     void            ShowBuildingTypeInEncyclopedia(const std::string& building_type);
     void            ShowShipDesignInEncyclopedia(int design_id);
+    void            ShowPlanetInEncyclopedia(int planet_id);
+    void            ShowTechInEncyclopedia(const std::string& tech_name);
+    void            ShowPartTypeInEncyclopedia(const std::string& part_type_name);
+    void            ShowSpeciesInEncyclopedia(const std::string& species_name);
+    void            ShowEmpireInEncyclopedia(int empire_id);
+    void            ShowSpecialInEncyclopedia(const std::string& special_name);
+    void            ShowFieldTypeInEncyclopedia(const std::string& field_type_name);
 
     /** Show or hide the encyclopedia detail panel */
     void            ShowPedia();
@@ -89,9 +97,6 @@ public:
 
     /** returns true if the encyclopedia detail panel is visible */
     bool            PediaVisible();
-
-    /** sets the encyclopedia detail panel to the specified planet */
-    void            PediaSetPlanet(int planet_id);
     //@}
 
     /** emitted when the indicated build is indicated by the user */

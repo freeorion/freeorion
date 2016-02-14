@@ -45,6 +45,27 @@ public:
     /** Shows ShipDesign with id \a design_id in production encyclopedia window */
     void            ShowShipDesignInEncyclopedia(int design_id);
 
+    /** Shows \a planet in production encyclopedia window */
+    void            ShowPlanetInEncyclopedia(int planet_id);
+
+    /** Shows \a tech in production encyclopedia window */
+    void            ShowTechInEncyclopedia(const std::string& tech_name);
+
+    /** Shows \a ship_part in production encyclopedia window */
+    void            ShowPartTypeInEncyclopedia(const std::string& part_type_name);
+
+    /** Shows \a species in production encyclopedia window */
+    void            ShowSpeciesInEncyclopedia(const std::string& species_name);
+
+    /** Shows \a empire in production encyclopedia window */
+    void            ShowEmpireInEncyclopedia(int empire_id);
+
+    /** Shows \a special in production encyclopedia window */
+    void            ShowSpecialInEncyclopedia(const std::string& special_name);
+
+    /** Shows \a field_type in production encyclopedia window */
+    void            ShowFieldTypeInEncyclopedia(const std::string& field_type_name);
+
     /** Change visibility of production encyclopdia panel */
     void            ShowPedia();
     void            HidePedia();
@@ -53,8 +74,6 @@ public:
     /** Returns true if pedia is visible */
     bool            PediaVisible();
 
-    /** Tells pedia to set to a planet */
-    void            PediaSetPlanet(int planet_id);
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window.

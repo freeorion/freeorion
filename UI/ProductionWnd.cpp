@@ -827,6 +827,27 @@ void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_t
 void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id); }
 
+void ProductionWnd::ShowPlanetInEncyclopedia(int planet_id)
+{ m_build_designator_wnd->ShowPlanetInEncyclopedia(planet_id); }
+
+void ProductionWnd::ShowTechInEncyclopedia(const std::string& tech_name)
+{ m_build_designator_wnd->ShowTechInEncyclopedia(tech_name); }
+
+void ProductionWnd::ShowPartTypeInEncyclopedia(const std::string& part_type_name)
+{ m_build_designator_wnd->ShowPartTypeInEncyclopedia(part_type_name); }
+
+void ProductionWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
+{ m_build_designator_wnd->ShowSpeciesInEncyclopedia(species_name); }
+
+void ProductionWnd::ShowEmpireInEncyclopedia(int empire_id)
+{ m_build_designator_wnd->ShowEmpireInEncyclopedia(empire_id); }
+
+void ProductionWnd::ShowSpecialInEncyclopedia(const std::string& special_name)
+{ m_build_designator_wnd->ShowSpecialInEncyclopedia(special_name); }
+
+void ProductionWnd::ShowFieldTypeInEncyclopedia(const std::string& field_type_name)
+{ m_build_designator_wnd->ShowFieldTypeInEncyclopedia(field_type_name); }
+
 void ProductionWnd::ShowPedia()
 { m_build_designator_wnd->ShowPedia(); }
 
@@ -838,9 +859,6 @@ void ProductionWnd::TogglePedia()
 
 bool ProductionWnd::PediaVisible()
 { return m_build_designator_wnd->PediaVisible(); }
-
-void ProductionWnd::PediaSetPlanet(int planet_id)
-{ m_build_designator_wnd->PediaSetPlanet(planet_id); }
 
 void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
 { m_build_designator_wnd->CenterOnBuild(queue_idx, open); }
