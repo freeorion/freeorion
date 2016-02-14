@@ -6247,6 +6247,8 @@ METER_MAX_SUPPLY
 Max Supply
 METER_MAX_CAPACITY
 Max Capacity
+METER_MAX_SECONDARY_STAT
+Max Secondary Stat
 METER_POPULATION
 Population
 METER_HEALTH
@@ -6287,6 +6289,8 @@ METER_SPEED
 Speed
 METER_CAPACITY
 Capacity
+METER_SECONDARY_STAT
+Secondary Stat
 METER_SIZE
 Size
 
@@ -6572,6 +6576,8 @@ DESC_VAR_MAXTROOPS
 [[METER_MAX_TROOPS]]
 DESC_VAR_MAXCAPACITY
 [[METER_MAX_CAPACITY]]
+DESC_VAR_MAX_SECONDARY_STAT
+[[METER_MAX_SECONDARY_STAT]]
 DESC_VAR_POPULATION
 [[METER_POPULATION]]
 DESC_VAR_HEALTH
@@ -6606,6 +6612,8 @@ DESC_VAR_SPEED
 [[METER_SPEED]]
 DESC_VAR_CAPACITY
 [[METER_CAPACITY]]
+DESC_VAR_SECONDARY_STAT
+[[METER_SECONDARY_STAT]]
 DESC_VAR_SIZE
 [[METER_SIZE]]
 
@@ -9650,27 +9658,27 @@ FT_BAY_1_DESC
 Launch system for fighters.
 
 FT_HANGAR_0
-Fighter Hangar 0
+Hangar 0
 FT_HANGAR_0_DESC
 Storage system for unarmed decoy craft.
 
 FT_HANGAR_1
-Fighter Hangar 1
+Hangar 1
 FT_HANGAR_1_DESC
 Storage system for minimally armed fighters.
 
 FT_HANGAR_2
-Fighter Hangar 2
+Hangar 2
 FT_HANGAR_2_DESC
 Storage system for lightly armed fighters.
 
 FT_HANGAR_3
-Fighter Hangar 3
+Hangar 3
 FT_HANGAR_3_DESC
 Storage system for moderately armed fighters.
 
 FT_HANGAR_4
-Fighter Hangar 4
+Hangar 4
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
