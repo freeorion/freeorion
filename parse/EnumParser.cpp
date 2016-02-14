@@ -426,8 +426,10 @@ namespace parse {
         static enum_parser_rule<MeterType>::type retval
             =   tok.SetMaxCapacity_         [ _val = METER_MAX_CAPACITY ]
             |   tok.SetMaxDamage_           [ _val = METER_MAX_CAPACITY ]
+            |   tok.SetMaxSecondaryStat_    [ _val = METER_MAX_SECONDARY_STAT ]
             |   tok.SetCapacity_            [ _val = METER_CAPACITY ]
             |   tok.SetDamage_              [ _val = METER_CAPACITY ]
+            |   tok.SetSecondaryStat_       [ _val = METER_SECONDARY_STAT ]
             ;
         static bool once = true;
         if (once) {

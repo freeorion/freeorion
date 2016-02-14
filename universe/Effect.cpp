@@ -784,8 +784,10 @@ std::string SetShipPartMeter::Description() const {
 std::string SetShipPartMeter::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
-        case METER_CAPACITY:    retval += "SetCapacity";    break;
-        case METER_MAX_CAPACITY:retval += "SetMaxCapacity";    break;
+        case METER_CAPACITY:            retval += "SetCapacity";        break;
+        case METER_MAX_CAPACITY:        retval += "SetMaxCapacity";     break;
+        case METER_SECONDARY_STAT:      retval += "SetSecondaryStat";   break;
+        case METER_MAX_SECONDARY_STAT:  retval += "SetMaxSecondaryStat";break;
         default:                retval += "Set???";         break;
     }
 

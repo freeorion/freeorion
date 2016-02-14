@@ -347,6 +347,7 @@
     (SetMaxDamage)                              \
     (SetMaxDefense)                             \
     (SetMaxFuel)                                \
+    (SetMaxSecondaryStat)                       \
     (SetMaxShield)                              \
     (SetMaxStructure)                           \
     (SetMaxSupply)                              \
@@ -362,6 +363,7 @@
     (SetRange)                                  \
     (SetRebelTroops)                            \
     (SetResearch)                               \
+    (SetSecondaryStat)                          \
     (SetShield)                                 \
     (SetSize)                                   \
     (SetSpecialCapacity)                        \
