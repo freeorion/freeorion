@@ -33,6 +33,7 @@
 #include "../util/Logger.h"
 
 #include <sstream>
+#include <cctype>
 
 /// A helper class that stores both a connection and the
 /// conditions in which it should be on.
@@ -107,28 +108,33 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
     if (str.empty())
         return std::make_pair(GG::GGK_NONE, GG::Flags<GG::ModKey>());
 
-    size_t plus = str.find_first_of("+");
-    std::string v = str;
+    // Strip whitespace
+    std::string copy = str;
+    copy = std::string(copy.begin(), std::remove_if(copy.begin(), copy.end(), isspace));
+
+    size_t plus = copy.find('+');
+    bool hasModifier = plus != std::string::npos;
+
     GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE;
-    if (plus != std::string::npos) {
+    if (hasModifier) {
         // We have a modifier. Things get a little complex, since we need
         // to handle the |-separated flags:
-        std::string m = str.substr(0, plus);
-        v = str.substr(plus);
+        std::string m = copy.substr(0, plus);
 
         size_t found = 0;
         size_t prev = 0;
         while (true) {
-            found = m.find(" | ", prev);
-            std::string sub = m.substr(prev, found);
+            found = m.find('|', prev);
+            std::string sub = m.substr(prev, found-prev);
             GG::ModKey cm = GG::FlagSpec<GG::ModKey>::instance().FromString(sub);
             mod |= cm;
             if (found == std::string::npos)
                 break;
-            prev = found + 3;
+            prev = found + 1;
         }
-        v = str.substr(plus+1);
     }
+
+    std::string v = hasModifier ? copy.substr(plus+1) : copy;
     std::istringstream s(v);
     GG::Key key;
     s >> key;
@@ -210,7 +216,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
 
         std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = std::make_pair(GG::GGK_NONE, GG::MOD_KEY_NONE);
         try {
-            std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = HotkeyFromString(option_string);
+            key_modkey_pair = HotkeyFromString(option_string);
         } catch (...) {
             ErrorLogger() << "Failed to read hotkey from string: " << option_string;
             continue;
@@ -233,6 +239,9 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
 
         hotkey.m_key = key_modkey_pair.first;
         hotkey.m_mod_keys = key_modkey_pair.second;
+
+        DebugLogger()  <<__func__ << "Added hotkey '" << hotkey.m_key  << "' with modifiers '"
+                       <<hotkey.m_mod_keys << "' for hotkey '" << hotkey.m_name<<"'";
     }
 }
 
