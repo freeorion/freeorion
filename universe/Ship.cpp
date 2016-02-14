@@ -431,7 +431,7 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
 
 float Ship::TotalWeaponsDamage(float shield_DR, bool include_fighters) const {
     // sum up all individual weapons' attack strengths
-    float total_attack = 0.0;
+    float total_attack = 0.0f;
     std::vector<float> all_weapons_damage = AllWeaponsDamage(shield_DR, include_fighters);
     for (std::vector<float>::iterator it = all_weapons_damage.begin(); it != all_weapons_damage.end(); ++it)
         total_attack += *it;
@@ -444,19 +444,18 @@ namespace {
     {
         std::vector<float> retval;
 
-        if (!ship)
-            return retval;
-        if (!design)
+        if (!ship || !design)
             return retval;
         const std::vector<std::string>& parts = design->Parts();
         if (parts.empty())
             return retval;
 
         MeterType METER = max ? METER_MAX_CAPACITY : METER_CAPACITY;
+        MeterType SECONDARY_METER = max ? METER_MAX_SECONDARY_STAT : METER_SECONDARY_STAT;
 
-        int fighter_attacks = 0;
-        float fighter_weapon_strength = 0.0f;
-
+        float fighter_damage = 0.0f;
+        int fighter_launch_capacity = 0;
+        int available_fighters = 0;
 
         // for each weapon part, get its damage meter value
         for (std::vector<std::string>::const_iterator part_it = parts.begin();
@@ -471,28 +470,35 @@ namespace {
             // get the attack power for each weapon part
             if (part_class == PC_DIRECT_WEAPON) {
                 float part_attack = ship->CurrentPartMeterValue(METER, part_name);
+                float part_shots = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                 if (part_attack > DR)
-                    retval.push_back((part_attack - DR)*part->SecondaryStat());
-            } else if (part_class == PC_FIGHTER_BAY && include_fighters) {
-                // number of fighters a fighter bay can launch is one per combat round,
-                // and fighters cannot attack on the round they are launched,
-                // but can attack any round after they are launched but have not
-                // been destroyed, so the optimal / ideal number of fighter
-                // attacks a carrier can make is 3x the number of launch bays
-                // the carrier has (the same as a normal weapon)
-                int part_fighter_attacks = static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)*3);
-                fighter_attacks += part_fighter_attacks;
+                    retval.push_back((part_attack - DR)*part_shots);
 
-                // attack strength of a ship's fighters is the max of the
-                // fighter weapon part strengths on the ship
-                float part_strength = part->SecondaryStat();
-                if (part_strength > DR)
-                    fighter_weapon_strength = std::max(fighter_weapon_strength, part_strength - DR);
+            } else if (part_class == PC_FIGHTER_BAY && include_fighters) {
+                // launch capacity determined by capacity of bay
+                fighter_launch_capacity += static_cast<int>(ship->CurrentPartMeterValue(METER, part_name));
+
+            } else if (part_class == PC_FIGHTER_HANGAR && include_fighters) {
+                // attack strength of a ship's fighters determined by the hangar...
+                fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name) - DR;  // assuming all hangars have the same damage...
+                available_fighters += std::max(0, static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)));
             }
         }
-        // add attacks for fighter bays
-        if (include_fighters && fighter_attacks > 0 && fighter_weapon_strength > 0.0f)
-            retval.push_back(fighter_attacks * fighter_weapon_strength);
+
+        if (!include_fighters || fighter_damage <= 0.0f || available_fighters <= 0 || fighter_launch_capacity <= 0)
+            return retval;
+
+        // assuming 3 combat "bouts"
+        int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
+        available_fighters -= fighter_shots;
+        fighter_shots *= 2;                                                         // first-bout-launched fighters attack in bouts 2 and 3
+        fighter_shots += std::min(available_fighters, fighter_launch_capacity);     // second-bout-launched fighters attack only in bout 3
+
+        // how much damage does a fighter shot do?
+        fighter_damage = std::max(0.0f, fighter_damage);
+
+        retval.push_back(fighter_damage * fighter_shots);
+
         return retval;
     }
 }
