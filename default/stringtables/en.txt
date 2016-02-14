@@ -11401,7 +11401,7 @@ Sending you to your ancestors is our sacred duty!
 
 # NOTE TO TRANSLATORS:
 # The following lists group the AI turn 1 greetings by AI agression level.
-# These are functional lists that must no ne translated!
+# These are functional lists that must not be translated!
  
 AI_FIRST_TURN_GREETING_LIST_BEGINNER
 '''AI_FIRST_TURN_GREETING_MSG101
