@@ -213,6 +213,16 @@ Ne peut pas être produit
 ###########################
 # in premade_ship_designs.txt
 
+SD_CARRIER
+Prototype Porteur
+SD_CARRIER_DESC
+Modèle prototype propulsant des chasseurs en cours de bataille en lieu et place d'une puissance de feu directe.
+
+SD_FLAK
+Prototype Antiaérien 
+SD_FLAK_DESC
+Modèle prototype équipé de canons antiaériens comme moyen de riposte contre les chasseurs.
+
 SD_SCOUT
 Éclaireur
 SD_SCOUT_DESC
@@ -1480,6 +1490,9 @@ Les fenêtres utilisent leurs propriétés par défaut plutôt que les dernière
 
 OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC
 Modèles cachés de Sitreps
+
+OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN
+Vrai si le joueur a fermé manuellement le panneau Encyclopédie dans la fenêtre de Production.
 
 OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY
 Délai avant infobulle Fenêtre de sauvegarde
@@ -2956,7 +2969,7 @@ TECH_TOTAL_COST_STR
 %1% pts & %2% tours
 
 TECH_TURN_COST_STR
-+%1% pts
++%1% / %2% pts
 
 TECH_TURNS_LEFT_STR
 %1% tour(s)
@@ -3085,7 +3098,7 @@ PRODUCTION_TOTAL_COST_STR
 %1% pts & %2% tours
 
 PRODUCTION_TURN_COST_STR
-+%1% pts
++%1% / %2% pts
 
 PRODUCTION_TURNS_LEFT_STR
 %1% tours restant(s)
@@ -3153,6 +3166,12 @@ Peut être construit ici
 PRODUCTION_LOCATION_INVALID
 NE PEUT PAS être construit ici
 
+PRODUCTION_QUEUE_RALLIED_TO
+Rallié à %1%
+
+RALLY_QUEUE_ITEM
+Rallier à %1%
+
 DELETE_QUEUE_ITEM
 <rgba 255 0 0 255>Retirer le projet de la file d'attente</rgba>
 
@@ -3161,6 +3180,18 @@ Déplacer en haut de la file
 
 MOVE_DOWN_QUEUE_ITEM
 Déplacer en bas de la file
+
+PRODUCTION_WND_TOOLTIP_PROD_COST
+Coût production
+
+PRODUCTION_WND_TOOLTIP_PROD_TIME
+Temps production
+
+PRODUCTION_WND_TOOLTIP_PARTS
+Équipements Astronef
+
+PRODUCTION_WND_TOOLTIP_FAILED_COND
+Conditions non remplies pour produire sur %1%
 
 ###############
 #  DesignWnd  #
@@ -3660,6 +3691,15 @@ Bataille à %1% au %2%° tour :
 ENC_COMBAT_ATTACK_STR
 %1% attaque %2% et inflige %3% de dégâts
 
+ENC_COMBAT_ATTACK_SIMPLE_STR
+%1% attaque %2%
+
+ENC_COMBAT_LAUNCH_STR
+%1% lance %3% %2%
+
+ENC_COMBAT_RECOVER_STR
+%1% récupère %3% %2%
+
 ENC_COMBAT_UNKNOWN_OBJECT
 Inconnu
 
@@ -3667,8 +3707,11 @@ ENC_ROUND_BEGIN
 '''
 Passe %1%'''
 
-#ENC_COMBAT_UNKNOWN_DESTROYED_STR
-#Something %2% was incapacitated one way or another
+ENC_COMBAT_UNKNOWN_DESTROYED_STR
+%2% a été neutralisé
+
+ENC_COMBAT_FIGHTER_INCAPACITATED_STR
+Un%1%chasseur a été détruit
 
 ENC_COMBAT_PLANET_INCAPACITATED_STR
 La planète %2% de l'empire %1% a été mise en déroute
@@ -4324,23 +4367,29 @@ AGE
 TURNS_SINCE_FOCUS_CHANGE
 Tours depuis Modif. Focus
 
+ETA
+Tours avant Destination
+
 PRODUCED_BY
 Produit par Empire ID
 
-SYSTEM_ID
-ID Système
+SYSTEM
+Système Actuel
+
+NEAREST_SYSTEM
+Système Adjacent
 
 DESIGN_ID
-ID Conception
+ID Modèle
 
 FINAL_DEST
-ID Destination Finale
+Système Destination Finale
 
 NEXT_SYSTEM
-ID Système Suiv.
+Système Suiv.
 
 PREV_SYSTEM
-ID Système Préc.
+Système Préc.
 
 LAST_TURN_BATTLE_HERE
 Dern. Tour Bataille ici
@@ -6038,6 +6087,8 @@ OBJ_SYSTEM
 Système
 OBJ_FIELD
 Région
+OBJ_FIGHTER
+Chasseur
 
 # StarTypes
 
@@ -6196,6 +6247,8 @@ METER_MAX_SUPPLY
 Max Approvisionnement
 METER_MAX_CAPACITY
 Max Capacité
+METER_MAX_SECONDARY_STAT
+Max Stat Secondaire
 METER_POPULATION  # translated
 Population
 METER_HEALTH
@@ -6236,6 +6289,8 @@ METER_SPEED
 Vitesse
 METER_CAPACITY
 Capacité
+METER_SECONDARY_STAT
+Stat Secondaire
 METER_SIZE
 Taille
 
@@ -6351,8 +6406,10 @@ Vide
 
 PC_DIRECT_WEAPON
 Armement
-PC_FIGHTERS
-Chasseurs
+PC_FIGHTER_HANGAR
+Hangar
+PC_FIGHTER_BAY
+Rampe Lancement
 PC_SHIELD
 Bouclier
 PC_ARMOUR
@@ -6381,6 +6438,21 @@ PC_TRADE
 Commerce
 PC_PRODICTION_LOCATION  # translated
 Production
+
+# Visibility levels
+
+VIS_NO_VISIBILITY  # translated
+Invisible
+
+VIS_BASIC_VISIBILITY
+Basique
+
+VIS_PARTIAL_VISIBILITY
+Partielle
+
+VIS_FULL_VISIBILITY
+Complète
+
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -6504,6 +6576,8 @@ une variable libre
 #[[METER_MAX_TROOPS]]
 #DESC_VAR_MAXCAPACITY
 #[[METER_MAX_CAPACITY]]
+#DESC_VAR_MAX_SECONDARY_STAT
+#[[METER_MAX_SECONDARY_STAT]]
 #DESC_VAR_POPULATION
 #[[METER_POPULATION]]
 #DESC_VAR_HEALTH
@@ -6538,6 +6612,8 @@ une variable libre
 #[[METER_SPEED]]
 #DESC_VAR_CAPACITY
 #[[METER_CAPACITY]]
+#DESC_VAR_SECONDARY_STAT
+#[[METER_SECONDARY_STAT]]
 #DESC_VAR_SIZE
 #[[METER_SIZE]]
 
@@ -6780,6 +6856,27 @@ Modifie l'apparence de l'objet
 
 DESC_SET_TEXTURE
 Modifie l'apparence de l'objet
+
+DESC_UPGRADE_VIS_ALLIES
+Définit la visibilité de l'objet à au moins %1% pour les alliés de l'empire %2%
+DESC_UPGRADE_VIS_ENEMIES
+Définit la visibilité de l'objet à au moins %1% pour les ennemis de l'empire %2%
+DESC_UPGRADE_VIS_NONE
+Définit la visibilité de l'objet pour aucun empire
+DESC_UPGRADE_VIS_ALL
+Définit la visibilité de l'objet à au moins %1% pour tous les empires
+DESC_UPGRADE_VIS
+Définit la visibilité de l'objet à au moins %1% pour l'empire %2%
+DESC_SET_VIS_ALLIES
+Définit la visibilité de l'objet à %1% pour les alliés de l'empire %2%
+DESC_SET_VIS_ENEMIES
+Définit la visibilité de l'objet à %1% pour les ennemis de l'empire %2%
+DESC_SET_VIS_NONE  # translated
+[[DESC_UPGRADE_VIS_NONE]]
+DESC_SET_VIS_ALL
+Définit la visibilité de l'objet à %1% pour tous les empires
+DESC_SET_VIS
+Définit la visibilité de l'objet à %1% pour l'empire %2%
 
 DESC_CONDITIONAL
 Applique divers effets selon si la cible est ou n'est pas un objet %1%
@@ -8359,7 +8456,7 @@ SHP_WEAPON_1_4_DESC
 Améliore le Canon Mitrailleur de trois niveaux, augmentant sa Puissance de 3.
 
 SHP_WEAPON_2_1
-Canon Laser
+Canons Laser
 SHP_WEAPON_2_1_DESC
 Débloque le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
@@ -8379,7 +8476,7 @@ SHP_WEAPON_2_4_DESC
 Améliore le Canon Laser de trois niveaux, augmentant sa Puissance de 6.
 
 SHP_WEAPON_3_1
-Canon Plasma
+Canons Plasma
 SHP_WEAPON_3_1_DESC
 Débloque le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
@@ -8399,7 +8496,7 @@ SHP_WEAPON_3_4_DESC
 Améliore le Canon Plasma de trois niveaux, augmentant sa Puissance de 9.
 
 SHP_WEAPON_4_1
-Rayon Gamma
+Rayons Gamma
 SHP_WEAPON_4_1_DESC
 Débloque le Rayon Gamma, l'armement ultime des astronefs.
 
@@ -8534,21 +8631,43 @@ SPY_STEALTH_1
 Couverture Nuageuse Planétaire
 
 SPY_STEALTH_1_DESC
-Débloque l'équipement [[shippart ST_CLOAK_1]] pour les astronefs et confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
+'''Confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
+
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[SPY_STEALTH_PART_1]], si cette dernière a été déjà effectuée.'''
+
+SPY_STEALTH_PART_1
+Affaiblissement Électromagnétique
+
+SPY_STEALTH_PART_1_DESC
+Atténuer les émissions électromagnétiques peut rendre un objet complètement invisible pour les dispositifs passifs de détection.
 
 SPY_STEALTH_2
 Cendres Volcaniques Planétaires
 
 SPY_STEALTH_2_DESC
-'''Débloque l'équipement [[shippart ST_CLOAK_2]] pour les astronefs et confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
+'''Confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
 
-Un simple affaiblissement des ondes électromagnétiques émises par un objet peut rendre ce dernier totalement invisible pour les dispositifs passifs de détection. Cependant, cette technique de dissimulation d'un objet est quasiment inutile face à des radars actifs. En absorbant plutôt qu'en réfléchissant les ondes émises par les dispositifs actifs de détection, la [[encyclopedia STEALTH_TITLE]] d'un astronef peut être considérablement accrue.'''
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.''' 
+
+SPY_STEALTH_PART_2
+Absorption Radiative
+
+SPY_STEALTH_PART_2_DESC
+Un simple affaiblissement des ondes électromagnétiques émises par un objet peut rendre ce dernier totalement invisible pour les dispositifs passifs de détection. Cependant, cette technique de dissimulation d'un objet est quasiment inutile face à des radars actifs. En absorbant plutôt qu'en réfléchissant les ondes émises par les dispositifs actifs de détection, la [[encyclopedia STEALTH_TITLE]] d'un astronef peut être considérablement accrue.
 
 SPY_STEALTH_3
 Camouflage Dimensionnel Planétaire
 
 SPY_STEALTH_3_DESC
-Débloque l'équipement [[shippart ST_CLOAK_3]] pour les astronefs et confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
+'''Confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
+
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche du [[SPY_STEALTH_PART_3]], si cette dernière a été déjà effectuée.'''
+
+SPY_STEALTH_PART_3
+Camouflage Dimensionnel
+
+SPY_STEALTH_PART_3_DESC
+Des techniques avancées rendent possible la dissimulation partielle d'astronefs à l'intérieur de failles dimensionnelles.
 
 SPY_STEALTH_4
 Camouflage de Phase Planétaire
@@ -9514,38 +9633,59 @@ Solidité Bouclier : %1%
 
 PART_DESC_DETECTION
 Portée Détection : %1%
-# Detection Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-Dommages à l'attaque : %1%
+'''Dommages par tir : %1%
+Tirs par Attaque : %2%'''
 
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
+PART_DESC_HANGAR_STATS
+'''Dommages par tir : %2%
+Capacité Chasseurs : %1%'''
 
-PART_DESC_LR_STATS
-'''Dommages : %1%
-Cadence de tir : %2% missiles/tour
-Portée : %3%
-Missile Vélocité : %4%
-Missile Robustesse : %5%
-Missile [[encyclopedia STEALTH_TITLE]]: %6%
-Capacité : %7% missiles'''
-
-PART_DESC_FIGHTER_STATS
-'''Chasseur Type: %1%
-Chasseur Anti-Chasseur Dommages : %3%
-Chasseur Anti-Astronefs Dommages : %2%
-Chasseur Cadence de lancement : %4% fighters/turn
-Chasseur Vitesse : %5%
-Chasseur [[encyclopedia STRUCTURE_TITLE]] : %6%
-Chasseur [[encyclopedia STEALTH_TITLE]] : %7%
-Chasseur Détection : %8%
-Capacité: %9% chasseurs'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################
+
+FT_WEAPON_1
+Arme Chasseur
+FT_WEAPON_1_DESC
+Prototype d'un système d'armement destiné aux chasseurs. N'est pas compatible comme armement d'astronef.
+
+FT_BAY_1
+Rampe de Lancement
+FT_BAY_1_DESC
+Système de lancement pour chasseurs.
+
+FT_HANGAR_0
+Hangar 0
+FT_HANGAR_0_DESC
+Système de stockage pour vaisseau leurre non-armé.
+
+FT_HANGAR_1
+Hangar 1
+FT_HANGAR_1_DESC
+Système de stockage pour chasseurs faiblement armés.
+
+FT_HANGAR_2
+Hangar 2
+FT_HANGAR_2_DESC
+Système de stockage pour chasseurs moyennement armés.
+
+FT_HANGAR_3
+Hangar 3
+FT_HANGAR_3_DESC
+Système de stockage pour chasseurs correctement armés.
+
+FT_HANGAR_4
+Hangar 4
+FT_HANGAR_4_DESC
+Système de stockage pour chasseurs lourdement armés.
+
+SR_WEAPON_0_1
+Canon Antiaérien
+SR_WEAPON_0_1_DESC
+Le Canon Antiaérien inflige des dommages négligeables à la plupart des astronefs, mais reste bon marché et efficace pour contrer les chasseurs.
 
 SR_WEAPON_1_1
 Canon Mitrailleur
@@ -9762,7 +9902,7 @@ ST_CLOAK_2_DESC
 Augmente de 40 la [[encyclopedia STEALTH_TITLE]] d'un astronef en créant un champ d'absorption autour de ce dernier, le transformant en corps noir parfait. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
 
 ST_CLOAK_3
-Camouflage Dimensionnel
+Voile Dimensionnel
 
 ST_CLOAK_3_DESC
 '''Camouflage Puissant (+60)
@@ -10000,13 +10140,13 @@ SP_SOLAR_CONCENTRATOR
 Concentrateur Solaire
 
 SP_SOLAR_CONCENTRATOR_DESC
-Le Concentrateur Solaire utilise la capacité phototropique des coques de type [[tech SHP_ORG_HULL]] afin d'augmenter la puissance du [[tech SHP_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[tech SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
+Le Concentrateur Solaire utilise la capacité phototropique des coques de type [[tech SHP_ORG_HULL]] afin d'augmenter la puissance des [[tech SHP_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[tech SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
 
 SHP_SOLAR_CONNECTION
 Toile Solaire
 
 SHP_SOLAR_CONNECTION_DESC
-Cette amélioration du [[shippart SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre chaque coque de type [[tech SHP_ORG_HULL]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance d'un [[tech SHP_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
+Cette amélioration du [[shippart SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre chaque coque de type [[tech SHP_ORG_HULL]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance des [[tech SHP_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
 
 SHP_SOLAR_CONNECTION_SHORT_DESC
 Établit un réseau [[SP_SOLAR_CONCENTRATOR]]
@@ -11192,8 +11332,120 @@ Ne me dérangez pas, je mange... des étrangers!
 AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST
 '''Nous ne voulions plus discuter avec vous de toute manière!
 OK, Salut.
-Nous ne sommes même pas certains que vous existiez, de toute façon.
+Nous n'étions même pas certains de votre existence, de toute façon.
 '''
+
+AI_FIRST_TURN_GREETING_MSG101
+Qu'avons-nous donc fait pour provoquer votre courroux, Ô Tout Puissant?
+
+AI_FIRST_TURN_GREETING_MSG102
+Ne vous préoccupez pas de nous, nous n'avons strictement rien à offrir qui puisse avoir un quelconque intérêt à vos yeux.
+
+AI_FIRST_TURN_GREETING_MSG103
+De grâce, épargnez vos humbles serviteurs, et notre gratitude sera éternelle!
+
+AI_FIRST_TURN_GREETING_MSG201
+Laissez-nous en paix!
+
+AI_FIRST_TURN_GREETING_MSG203
+Laissez-nous en paix, et nous ferons de même!
+
+AI_FIRST_TURN_GREETING_MSG301
+Nous ne vous chercherons pas querelle, mais si vous cherchez à nous nuire, préparez-vous à en subir les conséquences!
+
+AI_FIRST_TURN_GREETING_MSG302
+Dans un commun intérêt, nous ferions mieux de ne pas nous nuire.
+
+AI_FIRST_TURN_GREETING_MSG401
+Guerroyer contre vous serait un honneur.
+
+AI_FIRST_TURN_GREETING_MSG402
+Ave, Human, morituri te salutant!
+
+AI_FIRST_TURN_GREETING_MSG403
+Saluations, Étranger! Nous espérons de tout coeur avoir affaire à un adversaire de valeur.
+
+AI_FIRST_TURN_GREETING_MSG501
+Bienvenue cher ennemi, nos vaillants et puissants guerriers vous attendent...
+
+AI_FIRST_TURN_GREETING_MSG502
+Ah! Vous pensez sérieusement nous tenir tête? Et bien, on vous attend!
+
+AI_FIRST_TURN_GREETING_MSG503
+Un ramassis de stupides ennemis se fracassant contre notre toute puissance - voilà une journée qui commence bien!
+
+AI_FIRST_TURN_GREETING_MSG504
+Profitez bien du spectacle, car la dernière chose dont vous serez témoin est la dévastation causée par nos armes surpuissantes!
+
+AI_FIRST_TURN_GREETING_MSG505
+Un conseil: fichez le camp de notre galaxie!
+
+AI_FIRST_TURN_GREETING_MSG506
+Préparez-vous à mourir.
+
+AI_FIRST_TURN_GREETING_MSG601
+Parasites! Nous allons nettoyer la galaxie de votre espèce répugnante!
+
+AI_FIRST_TURN_GREETING_MSG602
+Insignifiants insectes, vous osez défier notre tout puissant empire?!
+
+AI_FIRST_TURN_GREETING_MSG603
+Vous exterminer sera un véritable plaisir!
+
+AI_FIRST_TURN_GREETING_MSG604
+N'implorez pas notre pitié l'heure venue, ce sera tout simplement inutile.
+
+AI_FIRST_TURN_GREETING_MSG605
+Un doux agneau voulant partager la table des féroces lions est une très bonne idée - en guise d'apéritif évidemment...
+
+AI_FIRST_TURN_GREETING_MSG606
+La défaite et la souffrance sont les seules choses que vous récolterez une fois que nous aurons croisé votre chemin.
+
+AI_FIRST_TURN_GREETING_MSG607
+Déposez les armes dès à présent, et peut-être nous laisserons la vie sauve à votre espèce... en tant qu'esclave pour l'éternité.
+
+AI_FIRST_TURN_GREETING_MSG608
+Annihilez votre espèce est pour nous un devoir sacré!
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI agression level.
+# These are functional lists that must not be translated!
+ 
+AI_FIRST_TURN_GREETING_LIST_BEGINNER
+'''AI_FIRST_TURN_GREETING_MSG101
+AI_FIRST_TURN_GREETING_MSG102
+AI_FIRST_TURN_GREETING_MSG103'''
+
+AI_FIRST_TURN_GREETING_LIST_TURTLE
+'''AI_FIRST_TURN_GREETING_MSG201
+AI_FIRST_TURN_GREETING_MSG202'''
+
+AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
+'''AI_FIRST_TURN_GREETING_MSG301
+AI_FIRST_TURN_GREETING_MSG302'''
+
+AI_FIRST_TURN_GREETING_LIST_TYPICAL
+'''AI_FIRST_TURN_GREETING_MSG401
+AI_FIRST_TURN_GREETING_MSG402
+AI_FIRST_TURN_GREETING_MSG403'''
+
+AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
+'''AI_FIRST_TURN_GREETING_MSG501
+AI_FIRST_TURN_GREETING_MSG502
+AI_FIRST_TURN_GREETING_MSG503
+AI_FIRST_TURN_GREETING_MSG504
+AI_FIRST_TURN_GREETING_MSG505
+AI_FIRST_TURN_GREETING_MSG506'''
+
+AI_FIRST_TURN_GREETING_LIST_MANIACAL
+'''AI_FIRST_TURN_GREETING_MSG601
+AI_FIRST_TURN_GREETING_MSG602
+AI_FIRST_TURN_GREETING_MSG603
+AI_FIRST_TURN_GREETING_MSG604
+AI_FIRST_TURN_GREETING_MSG605
+AI_FIRST_TURN_GREETING_MSG606
+AI_FIRST_TURN_GREETING_MSG607
+AI_FIRST_TURN_GREETING_MSG608'''
 
 ### End of AI Diplomacy Message Lists
 
