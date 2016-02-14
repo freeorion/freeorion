@@ -6403,9 +6403,9 @@ Empty
 PC_DIRECT_WEAPON
 Direct Weapon
 PC_FIGHTER_HANGAR
-Fighter Hangar
+Hangar
 PC_FIGHTER_BAY
-Fighter Launch Bay
+Launch Bay
 PC_SHIELD
 Shields
 PC_ARMOUR
