@@ -3932,6 +3932,35 @@ BAD_WEAPONS
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 3
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 5
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value - 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value - 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value - 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value - 4
+            ]
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects =
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value - 1 
 '''
 
 GOOD_WEAPONS
@@ -3954,6 +3983,35 @@ GOOD_WEAPONS
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 3
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 5
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 4
+            ]
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects =
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 1            
 '''
 
 GREAT_WEAPONS
@@ -3976,6 +4034,35 @@ GREAT_WEAPONS
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 6
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 10
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 4
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 6
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 8
+            ]
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects =
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 2
 '''
 
 ULTIMATE_WEAPONS
@@ -3998,6 +4085,37 @@ ULTIMATE_WEAPONS
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 9
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 6
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 9
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 12
+            ]
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 1
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 3
+            ]            
 '''
 
 //#####      P L A N E T   S I Z E     #####//
