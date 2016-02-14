@@ -171,7 +171,7 @@ void InGameMenu::Save() {
             CloseClicked();
             DebugLogger() << "... save done";
         }
-    
+
     } catch (const std::exception& e) {
         ErrorLogger() << "Exception thrown attempting save: " << e.what();
         ClientUI::MessageBox(e.what(), true);

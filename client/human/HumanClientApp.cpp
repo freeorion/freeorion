@@ -653,9 +653,12 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_fsm->process_event(HostSPGameRequested());
 }
 
-void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews){
-    std::string  generic_directory = fs::path(directory).generic_string();
-    if(!m_networking.Connected()){
+void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews) {
+    //std::cout << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end()) << std::endl;
+    DebugLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
+
+    std::string  generic_directory = directory;//PathString(fs::path(directory));
+    if (!m_networking.Connected()) {
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
         StartServer();
 

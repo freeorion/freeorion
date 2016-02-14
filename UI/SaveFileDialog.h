@@ -11,6 +11,8 @@
 
 #include "CUIWnd.h"
 
+#include <boost/filesystem/path.hpp>
+
 class SaveFileRow;
 class SaveFileListBox;
 struct PreviewInformation;
@@ -61,8 +63,8 @@ private:
     void FileNameEdited(const std::string& filename);   //!< Called when the filename changes
     void DirectoryEdited(const std::string& filename);  //!< Called when the directory text changes
 
-    std::string GetDirPath() const;         //!< Gets the current directory path string clean of display decorations
-    void        SetDirPath(const std::string& path); //!< Sets the shown directory path, applying decorations if applicable
+    std::string GetDirPath() const;                     //!< Gets the current directory path string clean of display decorations
+    void        SetDirPath(const std::string& path);    //!< Sets the shown directory path, applying decorations if applicable
 
     GG::Layout*         m_layout;           //!< The layout of the dialog
 

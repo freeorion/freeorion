@@ -599,6 +599,8 @@ void SaveFileDialog::Init() {
     m_name_edit = new CUIEdit("");
     GG::Label* filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     GG::Label* directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
+    //std::cout << "pathstrnig: " << PathString(GetSaveDir()) << std::endl;
+    DebugLogger() << "pathstring: " << PathString(GetSaveDir());
     m_current_dir_edit = new CUIEdit(PathString(GetSaveDir()));
 
     m_layout->Add(directory_label, 0, 0);
@@ -687,7 +689,7 @@ void SaveFileDialog::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::F
 
     // Update list on enter if directory changed by hand
     if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
-        if (m_loaded_dir != GetDirPath() ) {
+        if (m_loaded_dir != GetDirPath()) {
             UpdatePreviewList();
         } else {
             if (GG::GUI::GetGUI()->FocusWnd() == m_name_edit) {
@@ -718,7 +720,7 @@ void SaveFileDialog::Confirm() {
 
     /// Check if we chose a directory
     std::string choice = m_name_edit->Text();
-    fs::path current_dir(GetDirPath());
+    fs::path current_dir(FilenameToPath(GetDirPath()));
     if (!choice.empty()) {
         fs::path chosen = current_dir / choice;
         if (fs::is_directory(chosen)) {
@@ -727,13 +729,15 @@ void SaveFileDialog::Confirm() {
             return;
         } else {
             DebugLogger() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
-            // If not loading and file exists, ask to confirm override
-            // Use Result() to ensure we are using the extension.
-            if ( !m_load_only && fs::exists(fs::path(Result())) ) {
-                boost::format templ( UserString("SAVE_REALLY_OVERRIDE") );
-                std::string question = (templ % choice).str();
-                if(!Prompt(question)){
-                    return;
+            if (!m_load_only) {
+                // If not loading and file exists, ask to confirm override
+                // Use Result() to ensure we are using the extension.
+                if (fs::exists(FilenameToPath(Result()))) {
+                    boost::format templ(UserString("SAVE_REALLY_OVERRIDE"));
+                    std::string question = (templ % choice).str();
+                    if (!Prompt(question)) {
+                        return;
+                    }
                 }
             }
         }
@@ -799,6 +803,7 @@ void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selection
 }
 
 void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
+    //std::cout << "SaveFileDialog::UpdateDirectory newdir: " << newdir << std::endl;
     SetDirPath(newdir);
     UpdatePreviewList();
 }
@@ -824,7 +829,7 @@ void SaveFileDialog::UpdatePreviewList() {
 
     // If no browsing, no reloading
     if (!m_server_previews) {
-        m_file_list->LoadSaveGamePreviews(GetDirPath(), m_extension);
+        m_file_list->LoadSaveGamePreviews(FilenameToPath(GetDirPath()), m_extension);
     } else {
         PreviewInformation preview_information;
         HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath(), preview_information);
@@ -858,15 +863,15 @@ void SaveFileDialog::UpdatePreviewList() {
     m_file_list->BringRowIntoView(m_file_list->begin());
 
     // Remember which directory we are showing
-    m_loaded_dir = GetDirPath();
+    //m_loaded_dir = GetDirPath();
 
     CheckChoiceValidity();
 }
 
 bool SaveFileDialog::CheckChoiceValidity() {
     // Check folder validity
-    if ( !m_server_previews ) {
-        fs::path dir ( GetDirPath() );
+    if (!m_server_previews) {
+        fs::path dir(FilenameToPath(GetDirPath()));
         if (fs::exists (dir) && fs::is_directory (dir)) {
             m_current_dir_edit->SetColor(ClientUI::TextColor());
         } else {
@@ -881,15 +886,15 @@ bool SaveFileDialog::CheckChoiceValidity() {
     }
 
     // Check file name validity
-    if ( m_load_only ) {
-        if ( !m_file_list->HasFile ( m_name_edit->Text() ) ) {
+    if (m_load_only) {
+        if (!m_file_list->HasFile(m_name_edit->Text())) {
             m_confirm_btn->Disable();
             return false;
         } else {
-            m_confirm_btn->Disable ( false );
+            m_confirm_btn->Disable(false);
             return true;
         }
-    }else{
+    } else {
         return true;
     }
 }
@@ -900,39 +905,47 @@ void SaveFileDialog::FileNameEdited(const std::string& filename)
 void SaveFileDialog::DirectoryEdited(const string& filename)
 { CheckChoiceValidity(); }
 
-std::string SaveFileDialog::GetDirPath() const{
-    std::string dir = m_current_dir_edit->Text();
+std::string SaveFileDialog::GetDirPath() const {
+    const std::string& path_edit_text = m_current_dir_edit->Text();
 
-    if (m_server_previews) {
-        // We want to indicate at all times that the saves are on the server.
-        if (dir.find(SERVER_LABEL) != 0) {
-            if (dir.find("/") != 0)
-                dir = "/" + dir;
+    //std::cout << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end()) << std::endl;
+    DebugLogger() << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end());
+    if (!m_server_previews) {
+        return path_edit_text;
+    }
 
-            dir = SERVER_LABEL + dir;
-        }
+    std::string dir = path_edit_text;
 
-        // We should now be sure that the path is SERVER/whatever
-        if (dir.length() < SERVER_LABEL.size()) {
-            ErrorLogger() << "SaveFileDialog::GetDirPath: Error decorating directory for server: not long enough";
-            return ".";
-        } else {
-            // Translate the server label into the standard relative path marker the server understands
-            return std::string(".") + dir.substr(SERVER_LABEL.size());
-        }
+    // We want to indicate at all times that the saves are on the server.
+    if (dir.find(SERVER_LABEL) != 0) {
+        if (dir.find("/") != 0)
+            dir = "/" + dir;
+
+        dir = SERVER_LABEL + dir;
+    }
+
+    // We should now be sure that the path is SERVER/whatever
+    if (dir.length() < SERVER_LABEL.size()) {
+        ErrorLogger() << "SaveFileDialog::GetDirPath: Error decorating directory for server: not long enough";
+        return ".";
     } else {
-        return dir;
+        // Translate the server label into the standard relative path marker the server understands
+        std::string retval = "." + dir.substr(SERVER_LABEL.size());
+        //std::cout << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end()) << std::endl;
+        DebugLogger() << "SaveFileDialog::GetDirPath retval: " << retval << " valid UTF-8: " << utf8::is_valid(retval.begin(), retval.end());
+        return retval;
     }
 }
 
 void SaveFileDialog::SetDirPath(const string& path) {
     std::string dirname = path;
     if (m_server_previews) {
-        // Change the format into the generic one
+        // convert the path string into the boost filesystem "generic" format
+        // to allow scanning for delimeters like "/"
         dirname = GenericPathString(fs::path(path));
         // Indicate that the path is on the server
         if (path.find("./") == 0) {
-            dirname = SERVER_LABEL + path.substr(1); 
+            dirname = SERVER_LABEL + path.substr(1);
         } else if (path.find(SERVER_LABEL) == 0) {
             // Already has label. No need to change
         } else {
@@ -951,17 +964,18 @@ void SaveFileDialog::SetDirPath(const string& path) {
 
 std::string SaveFileDialog::Result() const {
     std::string filename = m_name_edit->Text();
-    if ( filename.empty() ) {
+    if (filename.empty()) {
         return "";
-    } else {
-        // Ensure the file has an extension
-        std::string::size_type end = filename.length();
-        std::size_t ext_length = m_extension.length();
-        if ( filename.length() < ext_length || filename.substr ( end-ext_length, ext_length ) != m_extension ) {
-            filename.append ( m_extension );
-        }
-        // Convert to a path to create a generic string representation.
-        fs::path current_dir ( GetDirPath() );
-        return ( current_dir / filename ).generic_string();
     }
+
+    // Ensure the file has an extension
+    std::string::size_type end = filename.length();
+    std::size_t ext_length = m_extension.length();
+    if (filename.length() < ext_length || filename.substr(end-ext_length, ext_length) != m_extension) {
+        filename.append(m_extension);
+    }
+
+    // Convert to a path to concatenate directory and filename, then convert back to UTF-8 string representation
+    fs::path current_dir(FilenameToPath(GetDirPath()));
+    return PathString(current_dir / filename);
 }

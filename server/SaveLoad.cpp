@@ -128,7 +128,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         fs::path path = FilenameToPath(filename);
         // A relative path should be relative to the save directory.
         if (path.is_relative()) {
-            path = GetSaveDir()/path;
+            path = GetSaveDir() / path;
             DebugLogger() << "Made save path relative to save dir. Is now: " << path;
         }
 

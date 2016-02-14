@@ -812,9 +812,9 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     // Do not allow a relative path to lead outside the save directory.
     if(!IsInside(directory, GetSaveDir())) {
         ErrorLogger() << "ServerApp::UpdateSavePreviews: Tried to load previews from "
-                               << directory_name
-                               << " which is outside the allowed save directory. Defaulted to the save directory, "
-                               << directory;
+                      << directory_name
+                      << " which is outside the allowed save directory. Defaulted to the save directory, "
+                      << directory;
         directory = GetSaveDir();
         directory_name = ".";
     }
