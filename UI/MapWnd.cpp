@@ -5536,6 +5536,7 @@ void MapWnd::ShowProduction() {
     HideResearch();
     HideDesign();
     HideSidePanel();
+    HidePedia();
     if (GetOptionsDB().Get<bool>("UI.hide-map-panels")) {
         RemoveWindows();
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetMessageWnd());
