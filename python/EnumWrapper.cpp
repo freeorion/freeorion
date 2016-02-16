@@ -181,6 +181,7 @@ namespace FreeOrionPython {
             .value("low",           GALAXY_SETUP_LOW)
             .value("medium",        GALAXY_SETUP_MEDIUM)
             .value("high",          GALAXY_SETUP_HIGH)
+            .value("random",        GALAXY_SETUP_RANDOM)
         ;
         enum_<Shape>("galaxyShape")
             .value("invalid",       INVALID_SHAPE)
