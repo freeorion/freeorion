@@ -653,6 +653,9 @@ namespace ValueRef {
         return 0.0;
     }
 
+    GalaxySetupOption RandGSO(bool allow_none = true)
+    { return GalaxySetupOption(static_cast<int>(RandSmallInt(allow_none ? 0 : 1, 3))); }
+
     template <>
     int Variable<int>::Eval(const ScriptingContext& context) const
     {
@@ -667,18 +670,36 @@ namespace ValueRef {
                 return GetGalaxySetupData().m_size;
             if (property_name == "GalaxyShape")
                 return static_cast<int>(GetGalaxySetupData().m_shape);
-            if (property_name == "GalaxyAge")
-                return static_cast<int>(GetGalaxySetupData().m_age);
-            if (property_name == "GalaxyStarlaneFrequency")
-                return static_cast<int>(GetGalaxySetupData().m_starlane_freq);
-            if (property_name == "GalaxyPlanetDensity")
-                return static_cast<int>(GetGalaxySetupData().m_planet_density);
-            if (property_name == "GalaxySpecialFrequency")
-                return static_cast<int>(GetGalaxySetupData().m_specials_freq);
-            if (property_name == "GalaxyMonsterFrequency")
-                return static_cast<int>(GetGalaxySetupData().m_monster_freq);
-            if (property_name == "GalaxyNativeFrequency")
-                return static_cast<int>(GetGalaxySetupData().m_native_freq);
+            if (property_name == "GalaxyAge") {
+                if (GetGalaxySetupData().m_age != GALAXY_SETUP_RANDOM)
+                    return static_cast<int>(GetGalaxySetupData().m_age);
+                return RandGSO(false);
+            }
+            if (property_name == "GalaxyStarlaneFrequency") {
+                if (GetGalaxySetupData().m_starlane_freq != GALAXY_SETUP_RANDOM)
+                    return static_cast<int>(GetGalaxySetupData().m_starlane_freq);
+                return RandGSO(false);
+            }
+            if (property_name == "GalaxyPlanetDensity") {
+                if (GetGalaxySetupData().m_planet_density != GALAXY_SETUP_RANDOM)
+                    return static_cast<int>(GetGalaxySetupData().m_planet_density);
+                return RandGSO(false);
+            }
+            if (property_name == "GalaxySpecialFrequency") {
+                if (GetGalaxySetupData().m_specials_freq != GALAXY_SETUP_RANDOM)
+                    return static_cast<int>(GetGalaxySetupData().m_specials_freq);
+                return RandGSO(true);
+            }
+            if (property_name == "GalaxyMonsterFrequency") {
+                if (GetGalaxySetupData().m_monster_freq != GALAXY_SETUP_RANDOM)
+                    return static_cast<int>(GetGalaxySetupData().m_monster_freq);
+                return RandGSO(true);
+            }
+            if (property_name == "GalaxyNativeFrequency") {
+                if (GetGalaxySetupData().m_native_freq != GALAXY_SETUP_RANDOM)
+                    return static_cast<int>(GetGalaxySetupData().m_native_freq);
+                return RandGSO(true);
+            }
             if (property_name == "GalaxyMaxAIAggression")
                 return static_cast<int>(GetGalaxySetupData().m_ai_aggr);
 
