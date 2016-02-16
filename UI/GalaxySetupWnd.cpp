@@ -226,31 +226,37 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_YOUNG")));
     m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MATURE")));
     m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ANCIENT")));
+    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     if (ALLOW_NO_STARLANES)
         m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
     m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
     m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BEGINNER")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TURTLE")));

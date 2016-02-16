@@ -6,6 +6,66 @@ import freeorion as fo
 from universe_tables import MONSTER_FREQUENCY
 
 
+
+# tuples of galaxy setup options to pick from randomly
+low_to_high =  (fo.galaxySetupOption.low, fo.galaxySetupOption.medium, fo.galaxySetupOption.high)
+none_to_high = (fo.galaxySetupOption.low, fo.galaxySetupOption.medium, fo.galaxySetupOption.high, fo.galaxySetupOption.none)
+
+class PyGalaxySetupData:
+    """
+    Class used to store and manage a copy of the galaxy setup data provided by the FreeOrion interface.
+    This data can then be modified when needed during the universe generation process, without having to
+    change the original data structure.
+    """
+    def __init__(self, galaxy_setup_data):
+        self.seed = galaxy_setup_data.seed
+        self.size = galaxy_setup_data.size
+        self.shape = galaxy_setup_data.shape
+        self.__age = galaxy_setup_data.age
+        self.__starlane_frequency = galaxy_setup_data.starlaneFrequency
+        self.__planet_density = galaxy_setup_data.planetDensity
+        self.__specials_frequency = galaxy_setup_data.specialsFrequency
+        self.__monster_frequency = galaxy_setup_data.monsterFrequency
+        self.__native_frequency = galaxy_setup_data.nativeFrequency
+        self.max_ai_aggression = galaxy_setup_data.maxAIAggression
+    
+    def age(self):
+        #print("stored age: " + str(self.__age))
+        if (self.__age != fo.galaxySetupOption.random):
+            return self.__age
+        return choice(low_to_high)
+
+    def starlaneFrequency(self):
+        #print("stored starlaneFrequency: " + str(self.__starlane_frequency))
+        if (self.__starlane_frequency != fo.galaxySetupOption.random):
+            return self.__starlane_frequency
+        return choice(low_to_high)
+
+    def planetDensity(self):
+        #print("stored planetDensity: " + str(self.__planet_density))
+        if (self.__planet_density != fo.galaxySetupOption.random):
+            return self.__planet_density
+        return choice(low_to_high)
+
+    def specialsFrequency(self):
+        #print("stored specialsFrequency: " + str(self.__specials_frequency))
+        if (self.__specials_frequency != fo.galaxySetupOption.random):
+            return self.__specials_frequency
+        return choice(none_to_high)
+
+    def monsterFrequency(self):
+        #print("stored monsterFrequency: " + str(self.__monster_frequency))
+        if (self.__monster_frequency != fo.galaxySetupOption.random):
+            return self.__monster_frequency
+        return choice(none_to_high)
+
+    def nativeFrequency(self):
+        #print("stored nativeFrequency: " + str(self.__native_frequency))
+        if (self.__native_frequency != fo.galaxySetupOption.random):
+            return self.__native_frequency
+        return choice(none_to_high)
+
+
 def execute_turn_events():
     print "Executing turn events for turn", fo.current_turn()
 
@@ -33,8 +93,8 @@ def execute_turn_events():
             print >> sys.stderr, "Turn events: couldn't create new field"
 
     # creating monsters
-    gsd = fo.get_galaxy_setup_data()
-    monster_freq = MONSTER_FREQUENCY[gsd.monsterFrequency]
+    gsd = PyGalaxySetupData(fo.get_galaxy_setup_data())
+    monster_freq = MONSTER_FREQUENCY[gsd.monsterFrequency()]
     # monster freq ranges from 1/30 (= one monster per 30 systems) to 1/3 (= one monster per 3 systems)
     # (example: low monsters and 150 Systems results in 150 / 30 * 0.01 = 0.05)
     if monster_freq > 0 and random() < len(systems) * monster_freq * 0.01:
