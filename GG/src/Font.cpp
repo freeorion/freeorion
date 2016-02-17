@@ -700,7 +700,7 @@ namespace {
     }
 
     // Registers the default action and known tags.
-    int RegisterDefaultTags(){
+    int RegisterDefaultTags() {
         ActionTags().insert("i");
         ActionTags().insert("s");
         ActionTags().insert("u");
@@ -1006,9 +1006,8 @@ Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X bo
                               const_cast<std::vector<boost::shared_ptr<TextElement> >*>(&text_elements));
 }
 
-std::string Font::StripTags(const std::string& text)
+std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
 {
-    // BEGIN slightly modified code from DetermineLinesImpl
     using namespace boost::xpressive;
 
     bool temp_bool = false;
@@ -1032,12 +1031,18 @@ std::string Font::StripTags(const std::string& text)
     const sregex TEXT =
         ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
     const sregex PRINTABLE_TEXT = WHITESPACE | TEXT;
-    const sregex EVERYTHING =
-        ('<' >> (tag_name_tag = OPEN_TAG_NAME) >> repeat<0, 9>(+blank >> TAG_PARAM) >> (open_bracket_tag.proto_base() = '>'))
-        [Push(boost::xpressive::ref(text), boost::xpressive::ref(tag_stack), ref(temp_bool), tag_name_tag)] |
-        ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
-        (printable_text_tag = PRINTABLE_TEXT);
-    // END code from DetermineLinesImpl
+    sregex EVERYTHING;
+    if (!strip_unpaired_tags)
+        EVERYTHING =    // push open tag matches to the tag stack, and make sure close tags match the top open tag on the stack
+            ('<' >> (tag_name_tag = OPEN_TAG_NAME) >> repeat<0, 9>(+blank >> TAG_PARAM) >> (open_bracket_tag.proto_base() = '>'))
+            [Push(boost::xpressive::ref(text), boost::xpressive::ref(tag_stack), ref(temp_bool), tag_name_tag)] |
+            ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
+            (printable_text_tag = PRINTABLE_TEXT);
+    else
+        EVERYTHING =    // don't care about matching with tag stack when matching close tags, or updating the stack when matching open tags
+            ('<' >> OPEN_TAG_NAME >> repeat<0, 9>(+blank >> TAG_PARAM) >> '>') |
+            ("</" >> OPEN_TAG_NAME >> '>') |
+            (printable_text_tag = PRINTABLE_TEXT);
 
     std::string retval;
 

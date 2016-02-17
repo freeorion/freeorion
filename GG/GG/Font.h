@@ -506,7 +506,7 @@ public:
     static void ClearKnownTags();
 
     /** Returns the input \a text, stripped of any formatting tags. */
-    static std::string StripTags(const std::string& text);
+    static std::string StripTags(const std::string& text, bool strip_unpaired_tags = true);
 
     /** \name Exceptions */ ///@{
     /** The base class for Font exceptions. */
