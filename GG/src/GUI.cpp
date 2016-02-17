@@ -1382,7 +1382,7 @@ bool GUI::CopyWndText(const Wnd* wnd)
             // is selected, revert to copying the full text of the TextControl.
             std::string selected_text = edit_control->SelectedText();
             if (!selected_text.empty()) {
-                SetClipboardText(selected_text);
+                SetClipboardText(GG::Font::StripTags(selected_text));
                 return true;
             }
         }
