@@ -505,6 +505,9 @@ public:
         in tags: \<i>, \<u>, \<rgba r g b a>, and \<pre>. */
     static void ClearKnownTags();
 
+    /** Returns the input \a text, stripped of any formatting tags. */
+    static std::string StripTags(const std::string& text);
+
     /** \name Exceptions */ ///@{
     /** The base class for Font exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

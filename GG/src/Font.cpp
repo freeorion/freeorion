@@ -685,7 +685,6 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
 {}
 
 namespace {
-
     // Global set of tags requiring action fron Font. Wrapped in a function for deterministic static initialization order.
     std::set<std::string>& ActionTags()
     {
@@ -1005,6 +1004,51 @@ Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X bo
                               box_width,
                               line_data,
                               const_cast<std::vector<boost::shared_ptr<TextElement> >*>(&text_elements));
+}
+
+std::string Font::StripTags(const std::string& text)
+{
+    // BEGIN slightly modified code from DetermineLinesImpl
+    using namespace boost::xpressive;
+
+    bool temp_bool = false;
+    std::stack<Substring> tag_stack;
+    MatchesKnownTag matches_known_tag(KnownTags(), temp_bool);
+    MatchesTopOfStack matches_tag_stack(tag_stack, temp_bool);
+
+    mark_tag tag_name_tag(1);
+    mark_tag open_bracket_tag(2);
+    mark_tag close_bracket_tag(3);
+    mark_tag printable_text_tag(4);
+
+    const sregex TAG_PARAM =
+    -+~set[_s | '<'];
+    const sregex OPEN_TAG_NAME =
+        (+_w)[check(matches_known_tag)];
+    const sregex CLOSE_TAG_NAME =
+        (+_w)[check(matches_tag_stack)];
+    const sregex WHITESPACE =
+        (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
+    const sregex TEXT =
+        ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
+    const sregex PRINTABLE_TEXT = WHITESPACE | TEXT;
+    const sregex EVERYTHING =
+        ('<' >> (tag_name_tag = OPEN_TAG_NAME) >> repeat<0, 9>(+blank >> TAG_PARAM) >> (open_bracket_tag.proto_base() = '>'))
+        [Push(boost::xpressive::ref(text), boost::xpressive::ref(tag_stack), ref(temp_bool), tag_name_tag)] |
+        ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
+        (printable_text_tag = PRINTABLE_TEXT);
+    // END code from DetermineLinesImpl
+
+    std::string retval;
+
+    // scan through matched markup and text, saving only the non-tag-text
+    sregex_iterator it(text.begin(), text.end(), EVERYTHING);
+    sregex_iterator end_it;
+    for (; it != end_it; ++it) {
+        retval += Substring(text, (*it)[printable_text_tag]);
+    }
+
+    return retval;
 }
 
 Pt Font::TextExtent(const std::string& text, Flags<TextFormat> format/* = FORMAT_NONE*/, X box_width/* = X0*/) const
