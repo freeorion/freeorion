@@ -1264,6 +1264,27 @@ void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(const std::string& build
 void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_enc_detail_panel->SetDesign(design_id); }
 
+void BuildDesignatorWnd::ShowPlanetInEncyclopedia(int planet_id)
+{ m_enc_detail_panel->SetPlanet(planet_id); }
+
+void BuildDesignatorWnd::ShowTechInEncyclopedia(const std::string& tech_name)
+{ m_enc_detail_panel->SetTech(tech_name); }
+
+void BuildDesignatorWnd::ShowPartTypeInEncyclopedia(const std::string& part_type_name)
+{ m_enc_detail_panel->SetPartType(part_type_name); }
+
+void BuildDesignatorWnd::ShowSpeciesInEncyclopedia(const std::string& species_name)
+{ m_enc_detail_panel->SetSpecies(species_name); }
+
+void BuildDesignatorWnd::ShowEmpireInEncyclopedia(int empire_id)
+{ m_enc_detail_panel->SetEmpire(empire_id); }
+
+void BuildDesignatorWnd::ShowSpecialInEncyclopedia(const std::string& special_name)
+{ m_enc_detail_panel->SetSpecial(special_name); }
+
+void BuildDesignatorWnd::ShowFieldTypeInEncyclopedia(const std::string& field_type_name)
+{ m_enc_detail_panel->SetFieldType(field_type_name); }
+
 void BuildDesignatorWnd::ShowPedia() {
     m_enc_detail_panel->Refresh();
     m_enc_detail_panel->Show();
@@ -1288,9 +1309,6 @@ void BuildDesignatorWnd::TogglePedia() {
 
 bool BuildDesignatorWnd::PediaVisible()
 { return m_enc_detail_panel->Visible(); }
-
-void BuildDesignatorWnd::PediaSetPlanet(int planet_id)
-{ m_enc_detail_panel->SetPlanet(planet_id); }
 
 int BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
