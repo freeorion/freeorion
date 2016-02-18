@@ -219,9 +219,8 @@ const std::string& Fleet::PublicName(int empire_id) const {
         return UserString("OBJ_FLEET");
 }
 
-const std::list<int>& Fleet::TravelRoute() const {
-    return m_travel_route;
-}
+const std::list<int>& Fleet::TravelRoute() const
+{ return m_travel_route; }
 
 std::list<MovePathNode> Fleet::MovePath(bool flag_blockades /*= false*/) const
 { return MovePath(TravelRoute(), flag_blockades); }
