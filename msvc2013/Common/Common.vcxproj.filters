@@ -229,8 +229,6 @@
     <ClInclude Include="..\..\universe\Fighter.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\Empire\Supply.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
@@ -409,12 +407,6 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\Fighter.cpp">
       <Filter>Source Files\universe</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    </ClCompile>
-    <ClCompile Include="..\..\util\DependencyVersions.cpp">
-      <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Empire\Supply.cpp">
       <Filter>Source Files\Empire</Filter>
