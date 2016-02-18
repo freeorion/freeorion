@@ -29,8 +29,6 @@
 #include <GG/WndEvent.h>
 #include <GG/utf8/checked.h>
 
-#include <boost/xpressive/xpressive.hpp>
-#include <boost/xpressive/regex_actions.hpp>
 
 using namespace GG;
 

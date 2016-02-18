@@ -651,7 +651,7 @@ private:
     std::map<int, int>              m_empire_ships_destroyed;   ///< how many ships of each empire has this empire destroyed?
     std::map<int, int>              m_ship_designs_destroyed;   ///< how many ships of each design has this empire destroyed?
     std::map<std::string, int>      m_species_ships_destroyed;  ///< how many ships crewed by each species has this empire destroyed?
-    std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire destroyed?
+    std::map<std::string, int>      m_species_planets_invaded;  ///< how many planets populated by each species has this empire captured?
 
     std::map<std::string, int>      m_species_ships_produced;   ///< how many ships crewed by each species has this empire produced?
     std::map<int, int>              m_ship_designs_produced;    ///< how many ships of each design has this empire produced?
