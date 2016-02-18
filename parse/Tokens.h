@@ -24,6 +24,7 @@
     (AnyEmpire)                                 \
     (Armed)                                     \
     (Armour)                                    \
+    (ArrivedOnTurn)                             \
     (Article)                                   \
     (Application)                               \
     (Asteroids)                                 \

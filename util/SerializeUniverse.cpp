@@ -239,7 +239,8 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_ordered_bombard_planet_id)
         & BOOST_SERIALIZATION_NVP(m_part_meters)
         & BOOST_SERIALIZATION_NVP(m_species_name)
-        & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
+        & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_arrived_on_turn);
     if (version >= 1) {
         ar  & BOOST_SERIALIZATION_NVP(m_last_turn_active_in_combat);
     }

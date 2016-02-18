@@ -368,9 +368,12 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
     // if not a planet, don't need to put into an orbit
 
     switch (obj->ObjectType()) {
-    case OBJ_SHIP:
+    case OBJ_SHIP: {
         m_ships.insert(obj->ID());
+        if (TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(obj))
+            ship->SetArrivedOnTurn(CurrentTurn());
         break;
+    }
     case OBJ_FLEET: {
         m_fleets.insert(obj->ID());
         std::vector<TemporaryPtr<Fleet> > fleets;

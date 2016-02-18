@@ -18,6 +18,7 @@ namespace {
                 |   tok.CreationTurn_
                 |   tok.Age_
                 |   tok.ProducedByEmpireID_
+                |   tok.ArrivedOnTurn_
                 |   tok.DesignID_
                 |   tok.FleetID_
                 |   tok.PlanetID_

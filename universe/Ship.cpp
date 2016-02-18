@@ -26,7 +26,8 @@ Ship::Ship() :
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
     m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
     m_last_turn_active_in_combat(INVALID_GAME_TURN),
-    m_produced_by_empire_id(ALL_EMPIRES)
+    m_produced_by_empire_id(ALL_EMPIRES),
+    m_arrived_on_turn(INVALID_GAME_TURN)
 {}
 
 Ship::Ship(int empire_id, int design_id, const std::string& species_name,
@@ -40,7 +41,8 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
     m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_species_name(species_name),
-    m_produced_by_empire_id(produced_by_empire_id)
+    m_produced_by_empire_id(produced_by_empire_id),
+    m_arrived_on_turn(CurrentTurn())
 {
     if (!GetShipDesign(design_id))
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
@@ -221,10 +223,10 @@ std::string Ship::Dump() const {
        << " fleet id: " << m_fleet_id
        << " species name: " << m_species_name
        << " produced by empire id: " << m_produced_by_empire_id
-       << " fighters: ";
-    //typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
-    os << " part meters: ";
-    for (PartMeterMap::const_iterator it = m_part_meters.begin(); it != m_part_meters.end();) {
+       << " arrived on turn: " << m_arrived_on_turn;
+    if (!m_part_meters.empty()) {
+        os << " part meters: ";
+        for (PartMeterMap::const_iterator it = m_part_meters.begin(); it != m_part_meters.end();) {
         const std::string part_name = it->first.second;
         MeterType meter_type = it->first.first;
         const Meter& meter = it->second;
@@ -232,6 +234,7 @@ std::string Ship::Dump() const {
         os << UserString(part_name) << " "
            << UserString(EnumToString(meter_type))
            << ": " << meter.Current() << "  ";
+    }
     }
     return os.str();
 }
@@ -528,6 +531,13 @@ std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR , bool include_figh
 void Ship::SetFleetID(int fleet_id) {
     if (m_fleet_id != fleet_id) {
         m_fleet_id = fleet_id;
+        StateChangedSignal();
+    }
+}
+
+void Ship::SetArrivedOnTurn(int turn) {
+    if (m_arrived_on_turn != turn) {
+        m_arrived_on_turn = turn;
         StateChangedSignal();
     }
 }

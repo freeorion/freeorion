@@ -25,11 +25,12 @@ public:
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
 
-    virtual int                 ContainerObjectID() const   { return m_fleet_id; }             ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
+    virtual int                 ContainerObjectID() const   { return m_fleet_id; }              ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
     virtual bool                ContainedBy(int object_id) const;                               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
     int                         FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
 
     int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
+    int                         ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
 
     virtual const std::string&  PublicName(int empire_id) const;
 
@@ -70,6 +71,7 @@ public:
     virtual void    BackPropegateMeters();                                      ///< back propegates part meters (which UniverseObject equivalent doesn't)
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
+    void            SetArrivedOnTurn(int turn);
 
     void            Resupply();
 
@@ -121,6 +123,7 @@ private:
     PartMeterMap    m_part_meters;
     std::string     m_species_name;
     int             m_produced_by_empire_id;
+    int             m_arrived_on_turn;
 
     friend class boost::serialization::access;
     template <class Archive>
