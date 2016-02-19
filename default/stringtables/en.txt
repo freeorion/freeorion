@@ -214,7 +214,7 @@ Cannot be produced
 # in premade_ship_designs.txt
 
 SD_CARRIER
-Protype Carrier
+Prototype Carrier
 SD_CARRIER_DESC
 Prototype design that launches fighters in battle instead of using direct-fire weapons.
 
@@ -8633,7 +8633,7 @@ Planetary Cloud Cover
 SPY_STEALTH_1_DESC
 '''Gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20.
 
-The research cost of this tech is reduced by the cost of researching [[SPY_STEALTH_PART_1]] if it has already been completed.'''
+The research cost of this tech is reduced by the cost of researching [[tech SPY_STEALTH_PART_1]] if it has already been completed.'''
 
 SPY_STEALTH_PART_1
 Electromagnetic Dampening
@@ -8647,13 +8647,13 @@ Planetary Ash Clouds
 SPY_STEALTH_2_DESC
 '''Gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40.
 
-The research cost of this tech is reduced by the cost of researching [[SPY_STEALTH_PART_2]] if it has already been completed.''' 
+The research cost of this tech is reduced by the cost of researching [[tech SPY_STEALTH_PART_2]] if it has already been completed.'''
 
 SPY_STEALTH_PART_2
 Radiation Absorbing
 
 SPY_STEALTH_PART_2_DESC
-''Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
+Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.
 
 SPY_STEALTH_3
 Planetary Dimensional Cloak
@@ -8661,7 +8661,7 @@ Planetary Dimensional Cloak
 SPY_STEALTH_3_DESC
 '''Gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60.
 
-The research cost of this tech is reduced by the cost of researching [[SPY_STEALTH_PART_3]] if it has already been completed.'''
+The research cost of this tech is reduced by the cost of researching [[tech SPY_STEALTH_PART_3]] if it has already been completed.'''
 
 SPY_STEALTH_PART_3
 Dimensional Cloaking
@@ -9632,14 +9632,14 @@ PART_DESC_SHIELD_STRENGTH
 Shield Strength: %1%
 
 PART_DESC_DETECTION
-Detection Range: %1%
+[[encyclopedia DETECTION_RANGE_TITLE]]: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Shot Damage: %1%
+'''Shot [[encyclopedia DAMAGE_TITLE]]: %1%
 Shots per Attack: %2%'''
 
 PART_DESC_HANGAR_STATS
-'''Shot Damage: %2%
+'''Shot [[encyclopedia DAMAGE_TITLE]]: %2%
 Fighter Capacity: %1%'''
 
 
@@ -9685,7 +9685,7 @@ Storage system for heavily armed fighters.
 SR_WEAPON_0_1
 Flak Cannon
 SR_WEAPON_0_1_DESC
-The flak cannon, does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
+The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
 
 SR_WEAPON_1_1
 Mass Driver
