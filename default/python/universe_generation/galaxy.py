@@ -7,12 +7,6 @@ import util
 import universe_tables
 
 
-# tuple of galaxy shapes to randomly choose from when shape is "random"
-shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galaxyShape.spiral4,
-          fo.galaxyShape.cluster,    fo.galaxyShape.elliptical,  fo.galaxyShape.disc,
-          fo.galaxyShape.ring,       fo.galaxyShape.box,         fo.galaxyShape.irregular)
-
-
 class AdjacencyGrid:
     def __init__(self, universe_width):
         self.min_dist = universe_tables.MIN_SYSTEM_SEPARATION
