@@ -264,22 +264,22 @@ SD_SMALL_MARK2_DESC
 Petit astronef équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_1
-Frégate (M1)
+Escorteur (M1)
 SD_MARK1_DESC
 Astronef patrouilleur basique équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_2
-Frégate (M2)
+Escorteur (M2)
 SD_MARK2_DESC
 Astronef patrouilleur amélioré équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_3
-Frégate (L1)
+Escorteur (L1)
 SD_MARK3_DESC
 Astronef patrouilleur basique équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_4
-Frégate (L2)
+Escorteur (L2)
 SD_MARK4_DESC
 Astronef patrouilleur amélioré équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
@@ -309,12 +309,12 @@ SD_ROBOTIC_OUTPOST_DESC
 Peut établir des avant-postes dans les systèmes très lointains.
 
 SD_ROBOTIC_COLONY
-Colonisateur Robotique
+Colon Robotique
 SD_ROBOTIC_COLONY_DESC
 Peut établir des colonies dans les systèmes très lointains.
 
 SD_ROBOTIC_CRYOCOL
-Colonisateur Cryo-Robotique
+Colon Cryo-Robotique
 
 SD_ROBOTIC_CRYOCOL_DESC
 Peut établir des colonies évoluées dans les systèmes très lointains.
@@ -326,13 +326,13 @@ SD_ROBO_FLUX_SCOUT_DESC
 Équipé d'une coque d'éclaireur rapide
 
 SD_ROBO_FLUX_TROOPS
-Transporteur Flux d'Infanterie
+Transport Flux d'Infanterie
 
 SD_ROBO_FLUX_TROOPS_DESC
 Transporteur d'infanterie rapide
 
 SD_ROBO_FLUX_TROOPS_HVY
-Transporteur Flux d'Infanterie Lourde
+Transport Flux d'Infanterie Lourde
 
 SD_ROBO_FLUX_TROOPS_HVY_DESC
 Transporteur rapide d'infanterie améliorée
@@ -374,27 +374,27 @@ SD_ROBO_TITAN1_DESC
 Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_ORGANIC1
-Frégate Organic (M1)
+Escorteur Organic (M1)
 SD_ORGANIC1_DESC
 Chasseur organique équipé de technologies basiques d'armement et de défense. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC2
-Frégate Organic (M2)
+Escorteur Organic (M2)
 SD_ORGANIC2_DESC
 Chasseur organique équipé de Blindages améliorés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC3
-Frégate Organic (L)
+Escorteur Organic (L)
 SD_ORGANIC3_DESC
 Chasseur organique équipé de Blindages améliorés et d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_1
-Frégate Organic Lourde (M)
+Escorteur Organic Lourd (M)
 SD_SHIELD_BUG_1_DESC
 Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_2
-Frégate Organic Lourde (L)
+Escorteur Organic Lourd (L)
 SD_SHIELD_BUG_2_DESC
 Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
@@ -454,27 +454,27 @@ SD_FRACTAL_2_DESC
 Un bâtiment de guerre exotique, basé sur l'énergie fractale. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_COLONY_SHIP
-Colonisateur Galactique
+Colon Galactique
 SD_COLONY_SHIP_DESC
 Astronef non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
-Colonisateur Galactique Organic
+Colon Galactique Organic
 SD_ORG_COLONY_SHIP_DESC
 Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
-Colonisateur Galactique Cryogenic
+Colon Galactique Cryogenic
 SD_CRYONIC_COLONY_SHIP_DESC
 Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
-Colonisateur Galactique Cryo-Organic
+Colon Galactique Cryo-Organic
 SD_ORG_CRYOCOL_SHIP_DESC
 Astronef organique non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
-Colonisateur Galactique Cryo-Astéroïdal
+Colon Galactique Cryo-Astéroïdal
 SD_AST_CRYOCOL_SHIP_DESC
 Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, possédant un [[buildingtype BLD_SHIPYARD_BASE]], et dans un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
@@ -489,12 +489,12 @@ SD_ORG_OUTPOST_SHIP_DESC
 Astronef organique non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
-Colonisateur Stellaire
+Colon Stellaire
 SD_COLONY_BASE_DESC
 Astronef non-armé pouvant créer une colonie sur une planète habitable, seulement dans le système où il a été construit. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3.
 
 SD_CRYONIC_COLONY_BASE
-Colonisateur Stellaire Cryogenic
+Colon Stellaire Cryogenic
 SD_CRYONIC_COLONY_BASE_DESC
 Astronef non-armé pouvant créer une large colonie sur une planète habitable, dans le système où il a été construit. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3.
 
@@ -511,32 +511,32 @@ Satellite non-armé pouvant engager les défenses planétaires contre tout ennem
 SD_TROOP_DROP
 Largueur d'Infanterie
 SD_TROOP_DROP_DESC
-Transporte une brigade d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
+Transporte un régiment d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_TROOP_DROP_HVY
 Largueur d'Infanterie Lourde
 SD_TROOP_DROP_HVY_DESC
-Transporte une brigade d'[[encyclopedia TROOP_TITLE]] améliorée et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
+Transporte un régiment d'[[encyclopedia TROOP_TITLE]] améliorée et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_SMALL_TROOP_SHIP
-Petit Transporteur d'Infanterie
+Mini-Transport d'Infanterie
 SD_SMALL_TROOP_SHIP_DESC
-Transporte une brigade d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Transporte un régiment d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_SHIP
-Transporteur d'Infanterie
+Transport d'Infanterie
 SD_TROOP_SHIP_DESC
-Transporte 3 brigades d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Transporte 3 régiments d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_TROOP_SHIP
-Transporteur Organic d'Infanterie
+Transport Organic d'Infanterie
 SD_ORG_TROOP_SHIP_DESC
-Transporte 4 brigades d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Transporte 4 régiments d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
-Transporteur Energy d'Infanterie
+Transport Energy d'Infanterie
 SD_ENG_TROOP_SHIP_DESC
-Transporte une brigade d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
+Transporte un régiment d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_ENG1
 Corvette Energy (L)
@@ -993,10 +993,10 @@ OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Fixe la vitesse de défilement des points indiquant la trajectoire des flottes.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
-Afficher/Cacher, sur la carte galactique, les zones circulaires autour des objets figurant leur Rayon de Détection.
+Afficher/Cacher, sur la carte galactique, les zones circulaires autour des objets figurant leur Champ de Détection.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY
-Fixe la transparence des disques figurant le Rayon de Détection des objets.
+Fixe la transparence des disques figurant le Champ de Détection des objets.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Interdit au client le lancement d'un serveur, même en cas d'hébergement local d'une partie, d'une partie solo, etc.
@@ -1263,7 +1263,7 @@ OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 Active/Désactive le repositionnement automatique des fenêtres lorsque la taille d'affichage de l'application est modifiée.
 
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
-Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus par le joueur à la liste des modèles connus de l'Empire du joueur.
+Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus et sauvegardés par le joueur à la liste des modèles connus de l'Empire du joueur.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 Dans la Fenêtre Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
@@ -1320,7 +1320,7 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 '''Le nombre de Voies spatiales dans la galaxie.
 
-Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Haut, la plupart des systèmes seront reliés entre eux dans un rayon de 120uu.'''
+Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Haut, la plupart des systèmes seront reliés entre eux dans un périmètre de 120uu.'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''La proportion des planètes et systèmes présentant une Particularité.
@@ -2483,7 +2483,7 @@ RESOURCE_TT_OUTPUT
 Capacité actuelle
 
 RESOURCE_TT_TARGET_OUTPUT
-Capacité Planète Cible
+Capacité prévue
 
 MAP_RESEARCH_TITLE
 Recherche
@@ -3775,7 +3775,7 @@ COMBAT_SUMMARY_BAR_HEIGHT_EQUAL
 Hauteur Barre:Égale
 
 COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL_TIP
-Les barres des combattants seront adaptées pour afficher la santé max, relative aux autres bâtiments de la flotte.
+Les barres des participants au combat sont adaptées pour afficher leur santé max par rapport aux autres bâtiments de la flotte.
 
 COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP
 Les barres des combattants sont égales.
@@ -3826,8 +3826,8 @@ COMBAT_FLEET_HEALTH_AXIS_LABEL
 %1% Santé Flotte: %2%/%3%
 
 COMBAT_UNIT_HEALTH_AXIS_LABEL
-'''Unité
-santé'''
+'''Santé
+Unité'''
 
 COMBAT_DESTROYED_LABEL
 Perdues: %1%
@@ -3981,11 +3981,11 @@ DETECTION_TEXT
 Chaque empire présente un indicateur 'Capacité de détection'.'''
 
 DETECTION_RANGE_TITLE
-Rayon de Détection
+Champ de Détection
 DETECTION_RANGE_TEXT
-'''L'indicateur 'Rayon de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Rayon de Détection d'un astronef ou d'une planète qu'il contrôle.
+'''L'indicateur 'Champ de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Rayon de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné.  Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
+Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné.  Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
 
 TROOP_TITLE
 Infanterie
@@ -4585,11 +4585,11 @@ SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Structure débloquée
 
 SITREP_COMBAT_SYSTEM
-Un %combat% s'est déroulé dans le système %system%.
+Dans %system% : un %combat% a eu lieu.
 SITREP_COMBAT_SYSTEM_LABEL
 Combat dans système
 SITREP_COMBAT_SYSTEM_ENEMY
-Un %combat% contre %empire% s'est déroulé dans %system%.
+Dans %system% : un %combat% contre %empire% a eu lieu.
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
 Combat dans système
 COMBAT  # translated
@@ -4601,17 +4601,17 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
-Dans %system% : un %shipdesign% ('%ship%' appartenant à %empire%) a été détruit.
+Dans %system% : un %shipdesign% ('%ship%' de %empire%) a été détruit.
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-Dans %system% : un %shipdesign% ('%ship%' appartenant à %empire%) a été détruit.
+Dans %system% : un %shipdesign% ('%ship%' de %empire%) a été détruit.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef impérial détruit
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-Dans %system% : un astronef %shipdesign% a été détruit.
+Dans %system% : un %shipdesign% a été détruit.
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef libre détruit
 
@@ -4651,17 +4651,17 @@ SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-Dans %system% : l'astronef %shipdesign% '%ship%' de %empire% a été endommagé.
+Dans %system% : un %shipdesign% de %empire%, le '%ship%', a été endommagé.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef impérial endommagé
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-Dans %system% : un astronef %shipdesign% a été endommagé.
+Dans %system% : un %shipdesign% a été endommagé.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef libre endommagé
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
-Dans %system% : la planète %planet% appartenant à %empire% a été bombardée.
+Dans %system% : la planète %planet% de %empire% a été bombardée.
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète impériale bombardée
 
@@ -4720,7 +4720,7 @@ SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monstres arrivés à destination
 
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
-Un %shipdesign% ('%ship%' appartenant à %empire%) a atteint le système %system%.
+Un %shipdesign% ('%ship%' de %empire%) a atteint le système %system%.
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef arrivé à destination
 
@@ -4735,7 +4735,7 @@ SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte impériale arrivée à destination
 
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
-Un %shipdesign% ('%ship%' appartenant à %empire%) a atteint le système %system%.
+Un %shipdesign% ('%ship%' de %empire%) a atteint le système %system%.
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef étranger arrivé à destination
 
@@ -6216,21 +6216,21 @@ Contrôle psychique des astronefs ennemis.
 INVALID_METER_TYPE
 Type d'indicateur invalide
 METER_TARGET_POPULATION
-Population sur Planète Cible
+Cible Population
 METER_TARGET_HEALTH
-Santé sur Planète Cible
+Cible Santé
 METER_TARGET_INDUSTRY
-Industrie sur Planète Cible
+Cible Industrie
 METER_TARGET_RESEARCH
-Recherche sur Planète Cible
+Cible Recherche
 METER_TARGET_TRADE
-Commerce sur Planète Cible
+Cible Commerce
 METER_TARGET_MINING
-Extraction sur Planète Cible
+Cible Extraction
 METER_TARGET_CONSTRUCTION
-Infrastructure sur Planète Cible
+Cible Infrastructure
 METER_TARGET_HAPPINESS
-Bonheur sur Planète Cible
+Cible Bonheur
 METER_MAX_FUEL
 Max Carburant
 METER_MAX_SHIELD
@@ -6284,7 +6284,7 @@ Approvisionnement
 METER_STEALTH
 Furtivité
 METER_DETECTION
-Rayon de Détection
+Champ de Détection
 METER_SPEED
 Vitesse
 METER_CAPACITY
@@ -6409,7 +6409,7 @@ Armement
 PC_FIGHTER_HANGAR
 Hangar
 PC_FIGHTER_BAY
-Rampe Lancement
+Rampe Lanc.
 PC_SHIELD
 Bouclier
 PC_ARMOUR
@@ -8633,7 +8633,7 @@ Couverture Nuageuse Planétaire
 SPY_STEALTH_1_DESC
 '''Confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[SPY_STEALTH_PART_1]], si cette dernière a été déjà effectuée.'''
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_1]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_1
 Affaiblissement Électromagnétique
@@ -8647,7 +8647,7 @@ Cendres Volcaniques Planétaires
 SPY_STEALTH_2_DESC
 '''Confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.''' 
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.''' 
 
 SPY_STEALTH_PART_2
 Absorption Radiative
@@ -8661,7 +8661,7 @@ Camouflage Dimensionnel Planétaire
 SPY_STEALTH_3_DESC
 '''Confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche du [[SPY_STEALTH_PART_3]], si cette dernière a été déjà effectuée.'''
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche du [[tech SPY_STEALTH_PART_3]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_3
 Camouflage Dimensionnel
@@ -9110,7 +9110,7 @@ BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets situés dans le même système et augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]] des astronefs alliés se trouvant dans un rayon de 50 uu au début du tour. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
+Diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets situés dans le même système et augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]] des astronefs alliés se trouvant dans un périmètre de 50 uu au début du tour. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Complexe de Détection
@@ -9173,7 +9173,7 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche. Tout trajet sur Voies spatiales dans un rayon de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche. Tout trajet sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
@@ -9632,14 +9632,14 @@ PART_DESC_SHIELD_STRENGTH
 Solidité Bouclier : %1%
 
 PART_DESC_DETECTION
-Portée Détection : %1%
+[[encyclopedia DETECTION_RANGE_TITLE]] : %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Dommages par tir : %1%
+'''[[encyclopedia DAMAGE_TITLE]] par tir : %1%
 Tirs par Attaque : %2%'''
 
 PART_DESC_HANGAR_STATS
-'''Dommages par tir : %2%
+'''[[encyclopedia DAMAGE_TITLE]] par tir : %2%
 Capacité Chasseurs : %1%'''
 
 
@@ -10351,7 +10351,7 @@ Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale �
 
 Sa [[encyclopedia STEALTH_TITLE]] est normale, son [[encyclopedia DETECTION_RANGE_TITLE]] est faible et sa [[encyclopedia STARLANE_SPEED_TITLE]] bonne. 
 
-Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte, mais qui tend à devenir obsolète à mesure que la technologie évolue. Son faible Rayon de Détection la rend peu adaptée pour la reconnaissance mais ses autres attributs en font un bon astronef de guerre. Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
+Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte, mais qui tend à devenir obsolète à mesure que la technologie évolue. Son faible Champ de Détection la rend peu adaptée pour la reconnaissance mais ses autres attributs en font un bon astronef de guerre. Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] est requis sur la planète où la coque sera produite.'''
 
@@ -10391,7 +10391,7 @@ Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale �
 
 Sa [[encyclopedia STEALTH_TITLE]] est normale, son [[encyclopedia DETECTION_RANGE_TITLE]] est bon et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée. 
 
-Le nombre réduit de niches externes rend cette coque inadaptée au combat en première ligne, mais ses niches internes, son Rayon de Détection et sa Furtivité lui confèrent un bon potentiel pour la reconnaissance ou le piratage commercial.
+Le nombre réduit de niches externes rend cette coque inadaptée au combat en première ligne, mais ses niches internes, son Champ de Détection et sa Furtivité lui confèrent un bon potentiel pour la reconnaissance ou le piratage commercial.
 
 Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
 
@@ -10406,7 +10406,7 @@ Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale �
 
 Sa [[encyclopedia STEALTH_TITLE]] est élevée, son [[encyclopedia DETECTION_RANGE_TITLE]] est bon et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée. 
 
-Le nombre réduit de niches externes rend cette coque inadaptée au combat en première ligne, mais ses niches internes, son Rayon de Détection et sa Furtivité lui confèrent un bon potentiel pour la reconnaissance ou le piratage commercial.
+Le nombre réduit de niches externes rend cette coque inadaptée au combat en première ligne, mais ses niches internes, son Champ de Détection et sa Furtivité lui confèrent un bon potentiel pour la reconnaissance ou le piratage commercial.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] sur la planète où la coque sera produite.'''
 
@@ -10559,7 +10559,7 @@ SH_XENTRONIUM_DESC
 Une coque conçue principalement à partir de xentronium. Bien que petite, sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement élevée en comparaison. Elle dispose de quatre niches externes et d'une niche centrale.
 
 SH_COLONY_BASE
-Coque Colonisateur Stellaire
+Coque Colon Stellaire
 
 SH_COLONY_BASE_DESC
 Une coque conçue pour le transport de colons et la création d'une colonie sur une autre planète du système où elle a été produite. Elle ne peut pas voyager sur les Voies spatiales entre les systèmes stellaires, pas plus qu'elle n'est rapide dans son propre système. Étant donné son rôle, elle dispose seulement d'une niche interne.
@@ -11411,41 +11411,41 @@ Annihilez votre espèce est pour nous un devoir sacré!
 # The following lists group the AI turn 1 greetings by AI agression level.
 # These are functional lists that must not be translated!
  
-AI_FIRST_TURN_GREETING_LIST_BEGINNER
-'''AI_FIRST_TURN_GREETING_MSG101
-AI_FIRST_TURN_GREETING_MSG102
-AI_FIRST_TURN_GREETING_MSG103'''
+#AI_FIRST_TURN_GREETING_LIST_BEGINNER
+#'''AI_FIRST_TURN_GREETING_MSG101
+#AI_FIRST_TURN_GREETING_MSG102
+#AI_FIRST_TURN_GREETING_MSG103'''
 
-AI_FIRST_TURN_GREETING_LIST_TURTLE
-'''AI_FIRST_TURN_GREETING_MSG201
-AI_FIRST_TURN_GREETING_MSG202'''
+#AI_FIRST_TURN_GREETING_LIST_TURTLE
+#'''AI_FIRST_TURN_GREETING_MSG201
+#AI_FIRST_TURN_GREETING_MSG202'''
 
-AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
-'''AI_FIRST_TURN_GREETING_MSG301
-AI_FIRST_TURN_GREETING_MSG302'''
+#AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
+#'''AI_FIRST_TURN_GREETING_MSG301
+#AI_FIRST_TURN_GREETING_MSG302'''
 
-AI_FIRST_TURN_GREETING_LIST_TYPICAL
-'''AI_FIRST_TURN_GREETING_MSG401
-AI_FIRST_TURN_GREETING_MSG402
-AI_FIRST_TURN_GREETING_MSG403'''
+#AI_FIRST_TURN_GREETING_LIST_TYPICAL
+#'''AI_FIRST_TURN_GREETING_MSG401
+#AI_FIRST_TURN_GREETING_MSG402
+#AI_FIRST_TURN_GREETING_MSG403'''
 
-AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
-'''AI_FIRST_TURN_GREETING_MSG501
-AI_FIRST_TURN_GREETING_MSG502
-AI_FIRST_TURN_GREETING_MSG503
-AI_FIRST_TURN_GREETING_MSG504
-AI_FIRST_TURN_GREETING_MSG505
-AI_FIRST_TURN_GREETING_MSG506'''
+#AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
+#'''AI_FIRST_TURN_GREETING_MSG501
+#AI_FIRST_TURN_GREETING_MSG502
+#AI_FIRST_TURN_GREETING_MSG503
+#AI_FIRST_TURN_GREETING_MSG504
+#AI_FIRST_TURN_GREETING_MSG505
+#AI_FIRST_TURN_GREETING_MSG506'''
 
-AI_FIRST_TURN_GREETING_LIST_MANIACAL
-'''AI_FIRST_TURN_GREETING_MSG601
-AI_FIRST_TURN_GREETING_MSG602
-AI_FIRST_TURN_GREETING_MSG603
-AI_FIRST_TURN_GREETING_MSG604
-AI_FIRST_TURN_GREETING_MSG605
-AI_FIRST_TURN_GREETING_MSG606
-AI_FIRST_TURN_GREETING_MSG607
-AI_FIRST_TURN_GREETING_MSG608'''
+#AI_FIRST_TURN_GREETING_LIST_MANIACAL
+#'''AI_FIRST_TURN_GREETING_MSG601
+#AI_FIRST_TURN_GREETING_MSG602
+#AI_FIRST_TURN_GREETING_MSG603
+#AI_FIRST_TURN_GREETING_MSG604
+#AI_FIRST_TURN_GREETING_MSG605
+#AI_FIRST_TURN_GREETING_MSG606
+#AI_FIRST_TURN_GREETING_MSG607
+#AI_FIRST_TURN_GREETING_MSG608'''
 
 ### End of AI Diplomacy Message Lists
 
