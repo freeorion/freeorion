@@ -17,7 +17,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
-#include <boost/functional/hash.hpp>
 
 #include <GG/utf8/checked.h>
 
@@ -120,11 +119,21 @@ GG::Clr XMLToClr(const XMLElement& clr) {
 namespace {
     // returns number in range 0 to one less than the interger representation of
     // enum_vals_count, determined by the random seed
-    template <typename T1, typename T2>
-    int GetIdx(const T1& enum_vals_count, const T2& seed) {
-        static boost::hash<T2> T2_hasher;
-        size_t hashed_seed = T2_hasher(seed);
-        return hashed_seed % static_cast<int>(enum_vals_count);
+    template <typename T1>
+    int GetIdx(const T1& enum_vals_count, const std::string& seed) {
+        DebugLogger() << "hashing seed: " << seed;
+        // use probably-bad but adequate for this purpose hash function to
+        // convert seed into a hash value
+        int hash_value = 223;
+        for (size_t i = 0; i < seed.length(); ++i) {
+            //DebugLogger() << "hash value: " << hash_value << " char: " << static_cast<int>(seed[i]);
+            hash_value += (seed[i] * 61);
+            hash_value %= 191;
+        }
+        DebugLogger() << "final hash value: " << hash_value
+                      << " and returning: " << hash_value % static_cast<int>(enum_vals_count)
+                      << " from 0 to " << static_cast<int>(enum_vals_count) - 1;
+        return hash_value % static_cast<int>(enum_vals_count);
     }
 }
 
