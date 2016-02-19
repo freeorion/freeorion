@@ -118,13 +118,11 @@ GG::Clr XMLToClr(const XMLElement& clr) {
 // GalaxySetupData
 /////////////////////////////////////////////////////
 namespace {
-    // returns number in range 0 to one less than the interger representation of
-    // enum_vals_count, determined by the random seed
-    template <typename T1, typename T2>
-    int GetIdx(const T1& enum_vals_count, const T2& seed) {
-        static boost::hash<T2> T2_hasher;
-        size_t hashed_seed = T2_hasher(seed);
-        return hashed_seed % static_cast<int>(enum_vals_count);
+    // returns randomly picked galaxy setup option in range min_option to one less than GALAXY_SETUP_RANDOM
+    // (so that the random option itself is excluded)
+    GalaxySetupOption PickRandomOption(const GalaxySetupOption min_option) {
+        return static_cast<GalaxySetupOption>(RandSmallInt(static_cast<int>(min_option),
+                                                           static_cast<int>(GALAXY_SETUP_RANDOM) - 1));
     }
 }
 
@@ -134,51 +132,39 @@ const std::string& GalaxySetupData::GetSeed() const
 int GalaxySetupData::GetSize() const
 { return m_size; }
 
-Shape GalaxySetupData::GetShape() const {
-    if (m_shape != RANDOM)
-        return m_shape;
-    size_t num_shapes = static_cast<size_t>(GALAXY_SHAPES) - 1; // -1 so that RANDOM isn't counted
-    return static_cast<Shape>(GetIdx(num_shapes, m_seed));
-}
+Shape GalaxySetupData::GetShape() const
+{ return (m_shape == RANDOM ? m_picked_shape : m_shape); }
 
-GalaxySetupOption GalaxySetupData::GetAge() const {
-    if (m_age != GALAXY_SETUP_RANDOM)
-        return m_age;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for age
-}
+GalaxySetupOption GalaxySetupData::GetAge() const
+{ return (m_age == GALAXY_SETUP_RANDOM ? m_picked_age : m_age); }
 
-GalaxySetupOption GalaxySetupData::GetStarlaneFreq() const {
-    if (m_starlane_freq != GALAXY_SETUP_RANDOM)
-        return m_starlane_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for starlane freq
-}
+GalaxySetupOption GalaxySetupData::GetStarlaneFreq() const
+{ return (m_starlane_freq == GALAXY_SETUP_RANDOM ? m_picked_starlane_freq : m_starlane_freq); }
 
-GalaxySetupOption GalaxySetupData::GetPlanetDensity() const {
-    if (m_planet_density != GALAXY_SETUP_RANDOM)
-        return m_planet_density;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for planet density
-}
+GalaxySetupOption GalaxySetupData::GetPlanetDensity() const
+{ return (m_planet_density == GALAXY_SETUP_RANDOM ? m_picked_planet_density : m_planet_density); }
 
-GalaxySetupOption GalaxySetupData::GetSpecialsFreq() const {
-    if (m_specials_freq != GALAXY_SETUP_RANDOM)
-        return m_specials_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for planet density
-}
+GalaxySetupOption GalaxySetupData::GetSpecialsFreq() const
+{ return (m_specials_freq == GALAXY_SETUP_RANDOM ? m_picked_specials_freq : m_specials_freq); }
 
-GalaxySetupOption GalaxySetupData::GetMonsterFreq() const {
-    if (m_monster_freq != GALAXY_SETUP_RANDOM)
-        return m_monster_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for monster frequency
-}
+GalaxySetupOption GalaxySetupData::GetMonsterFreq() const
+{ return (m_monster_freq == GALAXY_SETUP_RANDOM ? m_picked_monster_freq : m_monster_freq); }
 
-GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
-    if (m_native_freq != GALAXY_SETUP_RANDOM)
-        return m_native_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for native frequency
-}
+GalaxySetupOption GalaxySetupData::GetNativeFreq() const
+{ return (m_native_freq == GALAXY_SETUP_RANDOM ? m_picked_native_freq : m_native_freq); }
 
 Aggression GalaxySetupData::GetAggression() const
 { return m_ai_aggr; }
+
+void GalaxySetupData::DoRandomPicks() {
+    m_picked_shape = static_cast<Shape>(RandSmallInt(0, static_cast<int>(RANDOM) - 1));  // -1 so that RANDOM isn't counted
+    m_picked_age = PickRandomOption(GALAXY_SETUP_LOW);  // need range LOW to HIGH for age
+    m_picked_starlane_freq = PickRandomOption(GALAXY_SETUP_LOW);  // need range LOW to HIGH for starlane frequency
+    m_picked_planet_density = PickRandomOption(GALAXY_SETUP_LOW);  // need range LOW to HIGH for planet density
+    m_picked_specials_freq = PickRandomOption(GALAXY_SETUP_NONE);  // need range NONE to HIGH for specials frequency
+    m_picked_monster_freq = PickRandomOption(GALAXY_SETUP_NONE);  // need range NONE to HIGH for monster frequency
+    m_picked_native_freq = PickRandomOption(GALAXY_SETUP_NONE);  // need range NONE to HIGH for native frequency
+}
 
 
 /////////////////////////////////////////////////////

@@ -18,7 +18,14 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_specials_freq)
         & BOOST_SERIALIZATION_NVP(m_monster_freq)
         & BOOST_SERIALIZATION_NVP(m_native_freq)
-        & BOOST_SERIALIZATION_NVP(m_ai_aggr);
+        & BOOST_SERIALIZATION_NVP(m_ai_aggr)
+        & BOOST_SERIALIZATION_NVP(m_picked_shape)
+        & BOOST_SERIALIZATION_NVP(m_picked_age)
+        & BOOST_SERIALIZATION_NVP(m_picked_starlane_freq)
+        & BOOST_SERIALIZATION_NVP(m_picked_planet_density)
+        & BOOST_SERIALIZATION_NVP(m_picked_specials_freq)
+        & BOOST_SERIALIZATION_NVP(m_picked_monster_freq)
+        & BOOST_SERIALIZATION_NVP(m_picked_native_freq);
 }
 
 template void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

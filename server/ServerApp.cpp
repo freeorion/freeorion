@@ -1222,6 +1222,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     Seed(seed);
     DebugLogger() << "GenerateUniverse with seed: " << seed;
 
+    // Do the random picking for all setup options that have been set to their respective "random" values
+    GetGalaxySetupData().DoRandomPicks();
     // Reset the universe object for a new universe
     universe.ResetUniverse();
     // Add predefined ship designs to universe

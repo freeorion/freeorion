@@ -39,7 +39,14 @@ struct FO_COMMON_API GalaxySetupData {
         m_specials_freq(GALAXY_SETUP_MEDIUM),
         m_monster_freq(GALAXY_SETUP_MEDIUM),
         m_native_freq(GALAXY_SETUP_MEDIUM),
-        m_ai_aggr(MANIACAL)
+        m_ai_aggr(MANIACAL),
+        m_picked_shape(INVALID_SHAPE),
+        m_picked_age(INVALID_GALAXY_SETUP_OPTION),
+        m_picked_starlane_freq(INVALID_GALAXY_SETUP_OPTION),
+        m_picked_planet_density(INVALID_GALAXY_SETUP_OPTION),
+        m_picked_specials_freq(INVALID_GALAXY_SETUP_OPTION),
+        m_picked_monster_freq(INVALID_GALAXY_SETUP_OPTION),
+        m_picked_native_freq(INVALID_GALAXY_SETUP_OPTION)
     {}
     //@}
     /** \name Accessors */ //@{
@@ -55,6 +62,11 @@ struct FO_COMMON_API GalaxySetupData {
     Aggression          GetAggression() const;
     //@}
 
+    /** \name Mutators */ //@{
+    // Picks the random options for all galaxy setup options that are set to their respective "random" values
+    void                DoRandomPicks();
+    //@}
+
     std::string         m_seed;
     int                 m_size;
     Shape               m_shape;
@@ -67,6 +79,14 @@ struct FO_COMMON_API GalaxySetupData {
     Aggression          m_ai_aggr;
 
 private:
+    Shape               m_picked_shape;
+    GalaxySetupOption   m_picked_age;
+    GalaxySetupOption   m_picked_starlane_freq;
+    GalaxySetupOption   m_picked_planet_density;
+    GalaxySetupOption   m_picked_specials_freq;
+    GalaxySetupOption   m_picked_monster_freq;
+    GalaxySetupOption   m_picked_native_freq;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
