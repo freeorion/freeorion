@@ -138,43 +138,43 @@ Shape GalaxySetupData::GetShape() const {
     if (m_shape != RANDOM)
         return m_shape;
     size_t num_shapes = static_cast<size_t>(GALAXY_SHAPES) - 1; // -1 so that RANDOM isn't counted
-    return static_cast<Shape>(GetIdx(num_shapes, m_seed));
+    return static_cast<Shape>(GetIdx(num_shapes, m_seed + "shape"));
 }
 
 GalaxySetupOption GalaxySetupData::GetAge() const {
     if (m_age != GALAXY_SETUP_RANDOM)
         return m_age;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for age
+    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed + "age") + 1);       // need range 1-3 for age
 }
 
 GalaxySetupOption GalaxySetupData::GetStarlaneFreq() const {
     if (m_starlane_freq != GALAXY_SETUP_RANDOM)
         return m_starlane_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for starlane freq
+    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed + "lanes") + 1);     // need range 1-3 for starlane freq
 }
 
 GalaxySetupOption GalaxySetupData::GetPlanetDensity() const {
     if (m_planet_density != GALAXY_SETUP_RANDOM)
         return m_planet_density;
-    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for planet density
+    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed + "planets") + 1);   // need range 1-3 for planet density
 }
 
 GalaxySetupOption GalaxySetupData::GetSpecialsFreq() const {
     if (m_specials_freq != GALAXY_SETUP_RANDOM)
         return m_specials_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for planet density
+    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "specials"));      // need range 0-3 for planet density
 }
 
 GalaxySetupOption GalaxySetupData::GetMonsterFreq() const {
     if (m_monster_freq != GALAXY_SETUP_RANDOM)
         return m_monster_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for monster frequency
+    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "monsters"));      // need range 0-3 for monster frequency
 }
 
 GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
     if (m_native_freq != GALAXY_SETUP_RANDOM)
         return m_native_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for native frequency
+    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed + "natives"));       // need range 0-3 for native frequency
 }
 
 Aggression GalaxySetupData::GetAggression() const
