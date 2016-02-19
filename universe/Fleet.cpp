@@ -247,7 +247,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     const Empire* empire = GetEmpire(this->Owner());
-    const std::set<int>& fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemID(this->Owner());
+    const std::set<int>& fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemIDs(this->Owner());
     const std::set<int>& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move

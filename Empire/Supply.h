@@ -21,17 +21,19 @@ public:
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */
     const std::map<int, std::set<std::pair<int, int> > >&   SupplyStarlaneTraversals() const;
+    const std::set<std::pair<int, int> >&                   SupplyStarlaneTraversals(int empire_id) const;
 
     /** Returns set of directed starlane traversals along which supply could
       * flow for this empire, but which can't due to some obstruction in one
       * of the systems. */
     const std::map<int, std::set<std::pair<int, int> > >&   SupplyObstructedStarlaneTraversals() const;
+    const std::set<std::pair<int, int> >&                   SupplyObstructedStarlaneTraversals(int empire_id) const;
 
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
     const std::map<int, std::set<int> >&                    FleetSupplyableSystemIDs() const;
-    const std::set<int>&                                    FleetSupplyableSystemID(int empire_id);
+    const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id);
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */

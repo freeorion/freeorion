@@ -1,5 +1,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
@@ -82,14 +83,12 @@ namespace {
 
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
-    std::vector<IntPair>   obstructedStarlanesP(const Empire& empire) {
-        std::set<IntPair > laneset;
-        std::vector<IntPair>  retval;
+    std::vector<IntPair> obstructedStarlanesP(const Empire& empire) {
+        const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        std::vector<IntPair> retval;
         try {
-            laneset = empire.SupplyObstructedStarlaneTraversals();
             for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
             {retval.push_back(*it); }
-            return retval;
         } catch (...) {
         }
         return retval;
@@ -187,11 +186,11 @@ namespace {
         // taking the following sleet_supplyable info into account is necessary to reliably make negative
         // supply projections for an enemy empire into the client empire's territory
         if (min_tracked_supply < 0) {
-            std::set<int> supplyable_systems = empire.FleetSupplyableSystemIDs();
+            const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID());
             for (std::set<int>::iterator sys_it = supplyable_systems.begin();
                  sys_it != supplyable_systems.end(); sys_it++)
             {
-                supply_system_ranges[*sys_it];  // simply ensures  that at least the default value of zero is entered
+                supply_system_ranges[*sys_it];  // ensures that at least the default value of zero is entered
             }
         }
         // Note: must be called with min_tracked_supply = 0 to give the standard result
@@ -200,6 +199,10 @@ namespace {
         return propegating_supply_ranges;
     }
     boost::function<std::map<int,int>(const Empire&, int min_tracked_supply, bool obstructed)> supplyProjectionsFunc =      &supplyProjectionsP;
+
+    const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
+    { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
+    boost::function<const std::set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =      &EmpireFleetSupplyableSystemIDsP;
 
     typedef std::pair<float, int> FloatIntPair;
 
@@ -395,7 +398,11 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
-            .add_property("fleetSupplyableSystemIDs",   make_function(&Empire::FleetSupplyableSystemIDs,    return_internal_reference<>()))
+            .add_property("fleetSupplyableSystemIDs",   make_function(
+                                                            empireFleetSupplyableSystemIDsFunc,
+                                                            return_value_policy<copy_const_reference>(),
+                                                            boost::mpl::vector<const std::set<int>&, const Empire& >()
+                                                        ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          return_internal_reference<>()))
 
@@ -406,13 +413,15 @@ namespace FreeOrionPython {
                                                         boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
                                                     ))
             //.add_property("obstructedStarlanes",  make_function(&Empire::SupplyObstructedStarlaneTraversals,   return_value_policy<return_by_value>()))
-            .def("obstructedStarlanes",             make_function(obstructedStarlanesFunc,
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<IntPair>, const Empire&>()
+            .def("obstructedStarlanes",             make_function(
+                                                        obstructedStarlanesFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::vector<IntPair>, const Empire&>()
                                                     ))
-            .def("supplyProjections",               make_function(supplyProjectionsFunc,
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::map<int, int>, const Empire&, int, bool>()
+            .def("supplyProjections",               make_function(
+                                                        supplyProjectionsFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::map<int, int>, const Empire&, int, bool>()
                                                     ))
         ;
 

@@ -20,21 +20,36 @@ SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
     return *this;
 }
 
+namespace {
+    static const std::set<int> EMPTY_INT_SET;
+    static const std::set<std::set<int> > EMPTY_INT_SET_SET;
+    static const std::set<std::pair<int, int> > EMPTY_INT_PAIR_SET;
+}
+
 const std::map<int, std::set<std::pair<int, int> > >& SupplyManager::SupplyStarlaneTraversals() const
 { return m_supply_starlane_traversals; }
+
+const std::set<std::pair<int, int> >& SupplyManager::SupplyStarlaneTraversals(int empire_id) const {
+    std::map<int, std::set<std::pair<int, int> > >::const_iterator it = m_supply_starlane_traversals.find(empire_id);
+    if (it != m_supply_starlane_traversals.end())
+        return it->second;
+    return EMPTY_INT_PAIR_SET;
+}
 
 const std::map<int, std::set<std::pair<int, int> > >& SupplyManager::SupplyObstructedStarlaneTraversals() const
 { return m_supply_starlane_obstructed_traversals; }
 
+const std::set<std::pair<int, int> >& SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const {
+    std::map<int, std::set<std::pair<int, int> > >::const_iterator it = m_supply_starlane_obstructed_traversals.find(empire_id);
+    if (it != m_supply_starlane_obstructed_traversals.end())
+        return it->second;
+    return EMPTY_INT_PAIR_SET;
+}
+
 const std::map<int, std::set<int> >& SupplyManager::FleetSupplyableSystemIDs() const
 { return m_fleet_supplyable_system_ids; }
 
-namespace {
-    static const std::set<int> EMPTY_INT_SET;
-    static const std::set<std::set<int> > EMPTY_INT_SET_SET;
-}
-
-const std::set<int>& SupplyManager::FleetSupplyableSystemID(int empire_id) {
+const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) {
     std::map<int, std::set<int> >::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it != m_fleet_supplyable_system_ids.end())
         return it->second;
