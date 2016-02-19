@@ -37,6 +37,13 @@ except:
     pass
 
 
+_aggression_names = {fo.aggression.beginner: "GSETUP_BEGINNER",
+                     fo.aggression.turtle: "GSETUP_TURTLE",
+                     fo.aggression.cautious: "GSETUP_CAUTIOUS",
+                     fo.aggression.typical: "GSETUP_TYPICAL",
+                     fo.aggression.aggressive: "GSETUP_AGGRESSIVE",
+                     fo.aggression.maniacal: "GSETUP_MANIACAL"}
+
 _capitals = {fo.aggression.beginner: UserStringList("AI_CAPITOL_NAMES_BEGINNER"),
              fo.aggression.turtle: UserStringList("AI_CAPITOL_NAMES_TURTLE"),
              fo.aggression.cautious: UserStringList("AI_CAPITOL_NAMES_CAUTIOUS"),
@@ -207,12 +214,11 @@ def generateOrders():  # pylint: disable=invalid-name
     # for game-reload consistency.
     random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
     random.seed(random_seed)
-    aggression_name = fo.aggression.values[foAIstate.aggression].name
     if turn == 1:
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s (%s): [[%s]]' % (empire.name, aggression_name, greet))
+        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, _aggression_names[foAIstate.aggression], greet))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()
