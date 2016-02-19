@@ -1,7 +1,6 @@
 #include "Empire.h"
 
 #include "../parse/Parse.h"
-#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/ScopedTimer.h"
@@ -1219,9 +1218,9 @@ namespace {
         DebugLogger() << "Initializing AlignmentManager";
 
         try {
-            parse::alignments(GetResourceDir() / "alignments.txt", m_alignments, m_effects_groups);
+            parse::alignments(m_alignments, m_effects_groups);
         } catch (const std::exception& e) {
-            ErrorLogger() << "Failed parsing alignments.txt: error: " << e.what();
+            ErrorLogger() << "Failed parsing alignments: error: " << e.what();
             throw e;
         }
 

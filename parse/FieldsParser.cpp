@@ -102,6 +102,16 @@ namespace {
 }
 
 namespace parse {
-    bool fields(const boost::filesystem::path& path, std::map<std::string, FieldType*>& field_types)
-    { return detail::parse_file<rules, std::map<std::string, FieldType*> >(path, field_types); }
+    bool fields(std::map<std::string, FieldType*>& field_types) {
+        bool result = true;
+
+        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/fields");
+
+        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin(); file_it != file_list.end(); ++file_it)
+        {
+            result &= detail::parse_file<rules, std::map<std::string, FieldType*> >(*file_it, field_types);
+        }
+
+        return result;
+    }
 }

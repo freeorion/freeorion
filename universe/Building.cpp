@@ -11,7 +11,6 @@
 #include "../Empire/EmpireManager.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 
@@ -346,13 +345,13 @@ BuildingTypeManager::BuildingTypeManager() {
     s_instance = this;
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings file.";
+        DebugLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
     }
 
     try {
-        parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
+        parse::buildings(m_building_types);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing buildings.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing buildings: error: " << e.what();
         throw e;
     }
 

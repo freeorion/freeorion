@@ -3,7 +3,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../parse/Parse.h"
 
 const Encyclopedia& GetEncyclopedia() {
@@ -15,9 +14,9 @@ Encyclopedia::Encyclopedia() :
     articles()
 {
     try {
-        parse::encyclopedia_articles(GetResourceDir() / "encyclopedia.txt", *this);
+        parse::encyclopedia_articles(*this);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing encyclopedia.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing encyclopedia articles: error: " << e.what();
         throw e;
     }
 

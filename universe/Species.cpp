@@ -8,7 +8,6 @@
 #include "ValueRef.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
@@ -328,9 +327,9 @@ SpeciesManager::SpeciesManager() {
     s_instance = this;
 
     try {
-        parse::species(GetResourceDir() / "species.txt", m_species);
+        parse::species(m_species);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing species.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing species: error: " << e.what();
         throw e;
     }
 

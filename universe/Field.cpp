@@ -10,7 +10,6 @@
 #include "../parse/Parse.h"
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -231,9 +230,9 @@ FieldTypeManager::FieldTypeManager() {
     s_instance = this;
 
     try {
-        parse::fields(GetResourceDir() / "fields.txt", m_field_types);
+        parse::fields(m_field_types);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing encyclopedia.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing fields: error: " << e.what();
         throw e;
     }
 

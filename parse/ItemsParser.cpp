@@ -1,6 +1,7 @@
 #include "Label.h"
 #include "Parse.h"
 #include "ParseImpl.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -42,6 +43,8 @@ namespace {
 }
 
 namespace parse {
-    bool items(const boost::filesystem::path& path, std::vector<ItemSpec>& items_)
-    { return detail::parse_file<rules, std::vector<ItemSpec> >(path, items_); }
+    bool items(std::vector<ItemSpec>& items_) {
+        const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/items.inf";
+        return detail::parse_file<rules, std::vector<ItemSpec> >(path, items_);
+    }
 }

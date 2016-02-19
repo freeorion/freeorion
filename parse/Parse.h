@@ -28,56 +28,48 @@ struct Encyclopedia;
 namespace parse {
     FO_PARSE_API void init();
 
-    FO_PARSE_API bool buildings(const boost::filesystem::path& path,
-                                std::map<std::string,
+    FO_PARSE_API bool buildings(std::map<std::string,
                                 BuildingType*>& building_types);
 
-    FO_PARSE_API bool fields(const boost::filesystem::path& path,
-                             std::map<std::string, FieldType*>& field_types);
+    FO_PARSE_API bool fields(std::map<std::string, FieldType*>& field_types);
 
-    FO_PARSE_API bool specials(const boost::filesystem::path& path,
-                               std::map<std::string, Special*>& specials_);
+    FO_PARSE_API bool specials(std::map<std::string, Special*>& specials_);
 
-    FO_PARSE_API bool species(const boost::filesystem::path& path,
-                              std::map<std::string, Species*>& species_);
+    FO_PARSE_API bool species(std::map<std::string, Species*>& species_);
 
-    FO_PARSE_API bool techs(const boost::filesystem::path& path,
-                            TechManager::TechContainer& techs_,
+    FO_PARSE_API bool techs(TechManager::TechContainer& techs_,
                             std::map<std::string, TechCategory*>& tech_categories,
                             std::set<std::string>& categories_seen);
 
-    FO_PARSE_API bool items(const boost::filesystem::path& path,
-                            std::vector<ItemSpec>& items_);
+    FO_PARSE_API bool items(std::vector<ItemSpec>& items_);
 
-    FO_PARSE_API bool ship_parts(const boost::filesystem::path& path,
-                                 std::map<std::string, PartType*>& parts);
+    FO_PARSE_API bool ship_parts(std::map<std::string, PartType*>& parts);
 
-    FO_PARSE_API bool ship_hulls(const boost::filesystem::path& path,
-                                 std::map<std::string, HullType*>& hulls);
+    FO_PARSE_API bool ship_hulls(std::map<std::string, HullType*>& hulls);
 
     FO_PARSE_API bool ship_designs(const boost::filesystem::path& path,
                                    std::map<std::string, ShipDesign*>& designs);
 
-    FO_PARSE_API bool fleet_plans(const boost::filesystem::path& path,
-                                  std::vector<FleetPlan*>& fleet_plans_);
+    FO_PARSE_API bool ship_designs(std::map<std::string, ShipDesign*>& designs);
 
-    FO_PARSE_API bool monster_fleet_plans(const boost::filesystem::path& path,
-                                          std::vector<MonsterFleetPlan*>& monster_fleet_plans_);
+    FO_PARSE_API bool monster_designs(std::map<std::string, ShipDesign*>& designs);
 
-    FO_PARSE_API bool alignments(const boost::filesystem::path& path,
-                                 std::vector<Alignment>& alignments_,
+    FO_PARSE_API bool fleet_plans(std::vector<FleetPlan*>& fleet_plans_);
+
+    FO_PARSE_API bool monster_fleet_plans(std::vector<MonsterFleetPlan*>& monster_fleet_plans_);
+
+    FO_PARSE_API bool alignments(std::vector<Alignment>& alignments_,
                                  std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups);
 
-    FO_PARSE_API bool statistics(const boost::filesystem::path& path,
-                                 std::map<std::string, ValueRef::ValueRefBase<double>*>& stats_);
+    FO_PARSE_API bool statistics(std::map<std::string, ValueRef::ValueRefBase<double>*>& stats_);
 
-    FO_PARSE_API bool encyclopedia_articles(const boost::filesystem::path& path,
-                                            Encyclopedia& enc);
+    FO_PARSE_API bool encyclopedia_articles(Encyclopedia& enc);
 
-    FO_PARSE_API bool keymaps(const boost::filesystem::path& path,
-                              std::map<std::string, std::map<int, int> >& nkm);
+    FO_PARSE_API bool keymaps(std::map<std::string, std::map<int, int> >& nkm);
 
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
+
+    FO_PARSE_API std::vector< boost::filesystem::path > ListScripts(const boost::filesystem::path& path);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
 }

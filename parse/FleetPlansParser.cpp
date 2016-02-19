@@ -4,6 +4,7 @@
 
 #include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -77,6 +78,8 @@ namespace {
 }
 
 namespace parse {
-    bool fleet_plans(const boost::filesystem::path& path, std::vector<FleetPlan*>& fleet_plans_)
-    { return detail::parse_file<rules, std::vector<FleetPlan*> >(path, fleet_plans_); }
+    bool fleet_plans(std::vector<FleetPlan*>& fleet_plans_) {
+        const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/fleets.inf";
+        return detail::parse_file<rules, std::vector<FleetPlan*> >(path, fleet_plans_);
+    }
 }

@@ -2,6 +2,8 @@
 #include "Parse.h"
 #include "ParseImpl.h"
 
+#include "../util/Directories.h"
+
 #include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
@@ -117,6 +119,8 @@ namespace {
 }
 
 namespace parse {
-    bool keymaps(const boost::filesystem::path& path, NamedKeymaps& nkm)
-    { return detail::parse_file<rules, NamedKeymaps>(path, nkm); }
+    bool keymaps(NamedKeymaps& nkm) {
+        boost::filesystem::path path = GetResourceDir() / "scripting/keymaps.inf";
+        return detail::parse_file<rules, NamedKeymaps>(path, nkm);
+    }
 }

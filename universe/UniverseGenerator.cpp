@@ -307,7 +307,7 @@ namespace {
 
         DebugLogger() << "Initializing FleetPlanManager";
 
-        parse::fleet_plans(GetResourceDir() / "starting_fleets.txt", m_plans);
+        parse::fleet_plans(m_plans);
 
 #ifdef OUTPUT_PLANS_LIST
         DebugLogger() << "Starting Fleet Plans:";
@@ -358,7 +358,7 @@ namespace {
 
         DebugLogger() << "Initializing MonsterFleetPlanManager";
 
-        parse::monster_fleet_plans(GetResourceDir() / "space_monster_spawn_fleets.txt", m_plans);
+        parse::monster_fleet_plans(m_plans);
 
 //#ifdef OUTPUT_PLANS_LIST
         DebugLogger() << "Starting Monster Fleet Plans:";

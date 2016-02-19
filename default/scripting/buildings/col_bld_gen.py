@@ -203,7 +203,7 @@ t_buildtime_extinct = string.Template('''${t_factor} * max(5.0, 1.0 +
 outpath = os.getcwd()
 print ("Output folder: %s" % outpath)
 
-with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
+with open(os.path.join(outpath, "col_buildings.fos"), "w") as f:
     for species in species_list:
         sp_id = species[0]
         sp_name = sp_id.split("_", 1)[1]

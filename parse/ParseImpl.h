@@ -4,9 +4,11 @@
 
 #include "ReportParseError.h"
 #include "../universe/Tech.h"
+#include "../util/Logger.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include <boost/timer.hpp>
 
 #include <GG/Clr.h>
 
@@ -68,15 +70,21 @@ namespace parse { namespace detail {
         text_iterator first;
         token_iterator it;
 
+        boost::timer timer;
+
         const lexer& l = lexer::instance();
 
         parse_file_common(path, l, filename, file_contents, first, it);
+
+        //TraceLogger() << "Parse: parsed contents for " << path.string() << " : \n" << file_contents;
 
         boost::spirit::qi::in_state_type in_state;
 
         static Rules rules;
 
         bool success = boost::spirit::qi::phrase_parse(it, l.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[l.self]);
+
+        TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
 
         std::ptrdiff_t distance = std::distance(first, parse::detail::s_end);
 

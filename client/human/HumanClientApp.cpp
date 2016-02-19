@@ -249,7 +249,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
 
     std::map<std::string, std::map<int, int> > named_key_maps;
-    parse::keymaps(GetResourceDir() / "keymaps.txt", named_key_maps);
+    parse::keymaps(named_key_maps);
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Keymaps:";
         for (std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.begin();

@@ -1,4 +1,4 @@
-#include "shared_macros.txt"
+#include "../common/shared.macros"
 
 Category
     name = "LEARNING_CATEGORY"
@@ -3509,4 +3509,4 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 1
     researchturns = 1
-#include "customizations/custom_sitreps.txt"
+#include "../../customizations/custom_sitreps.txt"

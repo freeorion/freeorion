@@ -10,6 +10,7 @@
 
 #include "../universe/Effect.h"
 #include "../util/Logger.h"
+#include "../util/Directories.h"
 
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -427,6 +428,33 @@ namespace parse {
         return true;
     }
 
+    /**  \brief Return a vector of absolute paths to script files in the given path
+     * 
+     * @param[in] path relative or absolute directory (searched recursively)
+     * @return Any *.focs.txt files in path or 'GetResourceDir() / path'.
+     */
+    std::vector<boost::filesystem::path> ListScripts(const boost::filesystem::path& path) {
+        std::vector<boost::filesystem::path> retval;
+        std::vector<boost::filesystem::path> fn_list = ListDir(path);
+
+        try {
+            for (std::vector<boost::filesystem::path>::iterator fn_it = fn_list.begin(); fn_it != fn_list.end(); ++fn_it) {
+                std::string fn_ext = fn_it->extension().string();
+                std::string fn_stem_ext = fn_it->stem().extension().string();
+                if (fn_ext == ".txt" && fn_stem_ext == ".focs") {
+                    retval.push_back(*fn_it);
+                }
+                else {
+                    TraceLogger() << "Parse: Skipping file " << fn_it->string() << " due to extension (" << fn_stem_ext << fn_ext << ")";
+                }
+            }
+        } catch (const boost::filesystem::filesystem_error ec) {
+            ErrorLogger() << "Error accessing file " << ec.path1() << " (" << ec.what() << ")";
+        }
+
+        return retval;
+    }
+
     const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
     const sregex FILENAME_INSERTION = bol >> "#include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
 
@@ -434,7 +462,7 @@ namespace parse {
 
     void file_substitution(std::string& text, const boost::filesystem::path& file_search_path) {
         if (!boost::filesystem::is_directory(file_search_path)) {
-            ErrorLogger() << "File parsing include substitution given search path that is not a director: " << file_search_path.string();
+            ErrorLogger() << "File parsing include substitution given search path that is not a directory: " << file_search_path.string();
             return;
         }
         try {
@@ -491,6 +519,15 @@ namespace parse {
             return rules.start;
         }
 
+        /** \brief Load and parse script file(s) from given path
+         * 
+         * @param[in] path absolute path to a regular file
+         * @param[in] l lexer instance to use
+         * @param[out] filename filename of the given path
+         * @param[out] file_contents parsed contents of file(s)
+         * @param[out] first content iterator
+         * @param[out] it lexer iterator
+         */
         void parse_file_common(const boost::filesystem::path& path, const parse::lexer& l,
                                std::string& filename, std::string& file_contents,
                                parse::text_iterator& first, parse::token_iterator& it)

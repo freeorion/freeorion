@@ -140,7 +140,16 @@ namespace {
 }
 
 namespace parse {
-    bool buildings(const boost::filesystem::path& path,
-                   std::map<std::string, BuildingType*>& building_types)
-    { return detail::parse_file<rules, std::map<std::string, BuildingType*> >(path, building_types); }
+    bool buildings(std::map<std::string, BuildingType*>& building_types) {
+        bool result = true;
+
+        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/buildings");
+
+        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin(); file_it != file_list.end(); ++file_it)
+        {
+            result &= detail::parse_file<rules, std::map<std::string, BuildingType*> >(*file_it, building_types);
+        }
+
+        return result;
+    }
 }

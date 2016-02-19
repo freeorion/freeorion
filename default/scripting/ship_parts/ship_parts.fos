@@ -1745,4 +1745,4 @@ max(
 '''
 
 // keep this entry at bottom, to best preserve line numbering for debugging
-#include "shared_macros.txt"
+#include "../common/shared.macros"

@@ -419,15 +419,15 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         print "Player", player_name, ": no available foci on homeworld for starting species", starting_species
 
     # give homeworld starting buildings
-    # use the list provided in starting_buildings.txt
+    # use the list provided in scripting/starting_unlocks/buildings.inf
     print "Player", player_name, ": add starting buildings to homeworld"
-    for building in load_string_list(os.path.join(fo.get_resource_dir(), "starting_buildings.txt")):
+    for building in load_string_list(os.path.join(fo.get_resource_dir(), "scripting/starting_unlocks/buildings.inf")):
         fo.create_building(building, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.
-    # use content file preunlocked_items.txt
+    # use default content file
     print "Player", player_name, ": add unlocked items"
-    for item in fo.load_item_spec_list("preunlocked_items.txt"):
+    for item in fo.load_item_spec_list():
         fo.empire_unlock_item(empire, item.type, item.name)
 
     # add premade ship designs to empire
@@ -436,9 +436,9 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         fo.empire_add_ship_design(empire, ship_design)
 
     # add starting fleets to empire
-    # use content file starting_fleets.txt
+    # use default content file
     print "Player", player_name, ": add starting fleets"
-    fleet_plans = fo.load_fleet_plan_list("starting_fleets.txt")
+    fleet_plans = fo.load_fleet_plan_list()
     for fleet_plan in fleet_plans:
         # first, create the fleet
         fleet = fo.create_fleet(fleet_plan.name(), home_system, empire)
