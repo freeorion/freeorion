@@ -443,9 +443,6 @@ def calc_star_system_positions(gsd):
     number of systems and width
     Uses universe generator helper functions provided by the API
     """
-    # if shape is "random", randomly pick a galaxy shape
-    if gsd.shape == fo.galaxyShape.random:
-        gsd.shape = choice(shapes)
 
     # calculate typical width for universe based on number of systems
     width = calc_universe_width(gsd.shape, gsd.size)
