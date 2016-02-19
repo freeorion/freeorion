@@ -17,6 +17,7 @@
 #include <vector>
 
 class EmpireManager;
+class SupplyManager;
 class SpeciesManager;
 class CombatLogManager;
 class Message;

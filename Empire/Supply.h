@@ -31,6 +31,7 @@ public:
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
     const std::map<int, std::set<int> >&                    FleetSupplyableSystemIDs() const;
+    const std::set<int>&                                    FleetSupplyableSystemID(int empire_id);
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */

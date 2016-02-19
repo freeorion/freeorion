@@ -17,8 +17,7 @@ ClientApp::ClientApp() :
     m_universe(),
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
-{
-}
+{}
 
 ClientApp::~ClientApp()
 {}
@@ -49,6 +48,9 @@ EmpireManager& ClientApp::Empires()
 
 Empire* ClientApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id); }
+
+SupplyManager& ClientApp::GetSupplyManager()
+{ return m_supply_manager; }
 
 TemporaryPtr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
 { return GetUniverse().Objects().Object(object_id); }

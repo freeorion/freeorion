@@ -29,6 +29,17 @@ const std::map<int, std::set<std::pair<int, int> > >& SupplyManager::SupplyObstr
 const std::map<int, std::set<int> >& SupplyManager::FleetSupplyableSystemIDs() const
 { return m_fleet_supplyable_system_ids; }
 
+namespace {
+    static const std::set<int> EMPTY_INT_SET;
+}
+
+const std::set<int>& SupplyManager::FleetSupplyableSystemID(int empire_id) {
+    std::map<int, std::set<int> >::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
+    if (it != m_fleet_supplyable_system_ids.end())
+        return it->second;
+    return EMPTY_INT_SET;
+}
+
 const std::map<int, std::set<std::set<int> > >& SupplyManager::ResourceSupplyGroups() const
 { return m_resource_supply_groups; }
 

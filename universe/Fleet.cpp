@@ -10,6 +10,7 @@
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
@@ -18,6 +19,7 @@
 #include <cmath>
 
 namespace {
+    const std::set<int> EMPTY_SET;
     const double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
     const double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
 
@@ -33,7 +35,7 @@ namespace {
             for (std::list<int>::const_iterator it = begin; it != end; ++it) {
                 std::list<int>::const_iterator next_it = it;    ++next_it;
                 //DebugLogger() << "Fleet::SetRoute() new route has system id " << *it;
-                
+
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
 
@@ -67,7 +69,7 @@ namespace {
             ship->MoveTo(x, y);
         }
     }
-    
+
     void InsertFleetWithShips(TemporaryPtr<Fleet>& fleet, TemporaryPtr<System>& system){
         system->Insert(fleet);
         std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
@@ -78,7 +80,6 @@ namespace {
             system->Insert(ship);
         }
     }
-    
 }
 
 // static(s)
@@ -245,14 +246,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     //DebugLogger() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
-    int owner = this->Owner();
-    const Empire* empire = GetEmpire(owner);
-    std::set<int> fleet_supplied_systems;
-    std::set<int> unobstructed_systems;
-    if (empire) {
-        fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
-        unobstructed_systems = empire->SupplyUnobstructedSystems();
-    }
+    const Empire* empire = GetEmpire(this->Owner());
+    const std::set<int>& fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemID(this->Owner());
+    const std::set<int>& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
@@ -455,7 +451,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             ++route_it;
             if (route_it != route.end()) {
                 // update next system on route and distance to it from current position
-                next_system = GetEmpireKnownSystem(*route_it, owner);
+                next_system = GetEmpireKnownSystem(*route_it, this->Owner());
                 if (next_system) {
                     //DebugLogger() << "Fleet::MovePath checking unrestriced lane travel";
                     clear_exit = clear_exit || (next_system && next_system->ID() == m_arrival_starlane) ||
@@ -839,7 +835,7 @@ void Fleet::MovementPhase() {
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
-    if (empire && empire->SystemHasFleetSupply(fleet->SystemID())) {
+    if (GetSupplyManager().SystemHasFleetSupply(fleet->SystemID(), fleet->Owner())) {
         for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
              ship_it != ships.end(); ++ship_it)
         {
@@ -969,7 +965,7 @@ void Fleet::MovementPhase() {
                 // TODO: Notify the suer with a sitrep?
             }
 
-            bool resupply_here = empire ? empire->SystemHasFleetSupply(system->ID()) : false;
+            bool resupply_here = GetSupplyManager().SystemHasFleetSupply(system->ID(), this->Owner());
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {

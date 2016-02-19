@@ -286,6 +286,9 @@ EmpireManager& ServerApp::Empires()
 Empire* ServerApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id); }
 
+SupplyManager& ServerApp::GetSupplyManager()
+{ return m_supply_manager; }
+
 TemporaryPtr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
 { return m_universe.Objects().Object(object_id); }
 

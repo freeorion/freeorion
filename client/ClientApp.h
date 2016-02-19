@@ -3,6 +3,7 @@
 #define _ClientApp_h_
 
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 #include "../network/ClientNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
@@ -51,6 +52,7 @@ public:
     GalaxySetupData&            GetGalaxySetupData();
     EmpireManager&              Empires();      ///< returns the set of known Empires
     Empire*                     GetEmpire(int id);
+    SupplyManager&              GetSupplyManager();
     TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
     TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
