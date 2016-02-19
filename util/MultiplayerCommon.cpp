@@ -17,6 +17,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
+#include <boost/functional/hash.hpp>
+
 #include <GG/utf8/checked.h>
 
 
@@ -110,6 +112,73 @@ GG::Clr XMLToClr(const XMLElement& clr) {
     }
     return retval;
 }
+
+
+/////////////////////////////////////////////////////
+// GalaxySetupData
+/////////////////////////////////////////////////////
+namespace {
+    // returns number in range 0 to one less than the interger representation of
+    // enum_vals_count, determined by the random seed
+    template <typename T1, typename T2>
+    int GetIdx(const T1& enum_vals_count, const T2& seed) {
+        static boost::hash<T2> T2_hasher;
+        size_t hashed_seed = T2_hasher(seed);
+        return hashed_seed % static_cast<int>(enum_vals_count);
+    }
+}
+
+const std::string& GalaxySetupData::GetSeed() const
+{ return m_seed; }
+
+int GalaxySetupData::GetSize() const
+{ return m_size; }
+
+Shape GalaxySetupData::GetShape() const {
+    if (m_shape != RANDOM)
+        return m_shape;
+    size_t num_shapes = static_cast<size_t>(GALAXY_SHAPES) - 1; // -1 so that RANDOM isn't counted
+    return static_cast<Shape>(GetIdx(num_shapes, m_seed));
+}
+
+GalaxySetupOption GalaxySetupData::GetAge() const {
+    if (m_age != GALAXY_SETUP_RANDOM)
+        return m_age;
+    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for age
+}
+
+GalaxySetupOption GalaxySetupData::GetStarlaneFreq() const {
+    if (m_starlane_freq != GALAXY_SETUP_RANDOM)
+        return m_starlane_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for starlane freq
+}
+
+GalaxySetupOption GalaxySetupData::GetPlanetDensity() const {
+    if (m_planet_density != GALAXY_SETUP_RANDOM)
+        return m_planet_density;
+    return static_cast<GalaxySetupOption>(GetIdx(3, m_seed) + 1);   // need range 1-3 for planet density
+}
+
+GalaxySetupOption GalaxySetupData::GetSpecialsFreq() const {
+    if (m_specials_freq != GALAXY_SETUP_RANDOM)
+        return m_specials_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for planet density
+}
+
+GalaxySetupOption GalaxySetupData::GetMonsterFreq() const {
+    if (m_monster_freq != GALAXY_SETUP_RANDOM)
+        return m_monster_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for monster frequency
+}
+
+GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
+    if (m_native_freq != GALAXY_SETUP_RANDOM)
+        return m_native_freq;
+    return static_cast<GalaxySetupOption>(GetIdx(4, m_seed));       // need range 0-3 for native frequency
+}
+
+Aggression GalaxySetupData::GetAggression() const
+{ return m_ai_aggr; }
 
 
 /////////////////////////////////////////////////////

@@ -42,6 +42,18 @@ struct FO_COMMON_API GalaxySetupData {
         m_ai_aggr(MANIACAL)
     {}
     //@}
+    /** \name Accessors */ //@{
+    const std::string&  GetSeed() const;
+    int                 GetSize() const;
+    Shape               GetShape() const;
+    GalaxySetupOption   GetAge() const;
+    GalaxySetupOption   GetStarlaneFreq() const;
+    GalaxySetupOption   GetPlanetDensity() const;
+    GalaxySetupOption   GetSpecialsFreq() const;
+    GalaxySetupOption   GetMonsterFreq() const;
+    GalaxySetupOption   GetNativeFreq() const;
+    Aggression          GetAggression() const;
+    //@}
 
     std::string         m_seed;
     int                 m_size;

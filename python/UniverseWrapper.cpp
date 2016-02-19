@@ -674,15 +674,15 @@ namespace FreeOrionPython {
 
     void WrapGalaxySetupData() {
         class_<GalaxySetupData>("GalaxySetupData")
-            .def_readonly("seed",               &GalaxySetupData::m_seed)
-            .def_readonly("size",               &GalaxySetupData::m_size)
-            .def_readonly("shape",              &GalaxySetupData::m_shape)
-            .def_readonly("age",                &GalaxySetupData::m_age)
-            .def_readonly("starlaneFrequency",  &GalaxySetupData::m_starlane_freq)
-            .def_readonly("planetDensity",      &GalaxySetupData::m_planet_density)
-            .def_readonly("specialsFrequency",  &GalaxySetupData::m_specials_freq)
-            .def_readonly("monsterFrequency",   &GalaxySetupData::m_monster_freq)
-            .def_readonly("nativeFrequency",    &GalaxySetupData::m_native_freq)
-            .def_readonly("maxAIAggression",    &GalaxySetupData::m_ai_aggr);
+            .add_property("seed",               make_function(&GalaxySetupData::GetSeed,            return_value_policy<return_by_value>()))
+            .add_property("size",               make_function(&GalaxySetupData::GetSize,            return_value_policy<return_by_value>()))
+            .add_property("shape",              make_function(&GalaxySetupData::GetShape,           return_value_policy<return_by_value>()))
+            .add_property("age",                make_function(&GalaxySetupData::GetAge,             return_value_policy<return_by_value>()))
+            .add_property("starlaneFrequency",  make_function(&GalaxySetupData::GetStarlaneFreq,    return_value_policy<return_by_value>()))
+            .add_property("planetDensity",      make_function(&GalaxySetupData::GetPlanetDensity,   return_value_policy<return_by_value>()))
+            .add_property("specialsFrequency",  make_function(&GalaxySetupData::GetSpecialsFreq,    return_value_policy<return_by_value>()))
+            .add_property("monsterFrequency",   make_function(&GalaxySetupData::GetMonsterFreq,     return_value_policy<return_by_value>()))
+            .add_property("nativeFrequency",    make_function(&GalaxySetupData::GetNativeFreq,      return_value_policy<return_by_value>()))
+            .add_property("maxAIAggression",    make_function(&GalaxySetupData::GetAggression,      return_value_policy<return_by_value>()));
     }
 }

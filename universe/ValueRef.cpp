@@ -653,9 +653,6 @@ namespace ValueRef {
         return 0.0;
     }
 
-    GalaxySetupOption RandGSO(bool allow_none = true)
-    { return GalaxySetupOption(static_cast<int>(RandSmallInt(allow_none ? 0 : 1, 3))); }
-
     template <>
     int Variable<int>::Eval(const ScriptingContext& context) const
     {
@@ -667,41 +664,23 @@ namespace ValueRef {
             if (property_name == "CurrentTurn")
                 return CurrentTurn();
             if (property_name == "GalaxySize")
-                return GetGalaxySetupData().m_size;
+                return GetGalaxySetupData().GetSize();
             if (property_name == "GalaxyShape")
-                return static_cast<int>(GetGalaxySetupData().m_shape);
-            if (property_name == "GalaxyAge") {
-                if (GetGalaxySetupData().m_age != GALAXY_SETUP_RANDOM)
-                    return static_cast<int>(GetGalaxySetupData().m_age);
-                return RandGSO(false);
-            }
-            if (property_name == "GalaxyStarlaneFrequency") {
-                if (GetGalaxySetupData().m_starlane_freq != GALAXY_SETUP_RANDOM)
-                    return static_cast<int>(GetGalaxySetupData().m_starlane_freq);
-                return RandGSO(false);
-            }
-            if (property_name == "GalaxyPlanetDensity") {
-                if (GetGalaxySetupData().m_planet_density != GALAXY_SETUP_RANDOM)
-                    return static_cast<int>(GetGalaxySetupData().m_planet_density);
-                return RandGSO(false);
-            }
-            if (property_name == "GalaxySpecialFrequency") {
-                if (GetGalaxySetupData().m_specials_freq != GALAXY_SETUP_RANDOM)
-                    return static_cast<int>(GetGalaxySetupData().m_specials_freq);
-                return RandGSO(true);
-            }
-            if (property_name == "GalaxyMonsterFrequency") {
-                if (GetGalaxySetupData().m_monster_freq != GALAXY_SETUP_RANDOM)
-                    return static_cast<int>(GetGalaxySetupData().m_monster_freq);
-                return RandGSO(true);
-            }
-            if (property_name == "GalaxyNativeFrequency") {
-                if (GetGalaxySetupData().m_native_freq != GALAXY_SETUP_RANDOM)
-                    return static_cast<int>(GetGalaxySetupData().m_native_freq);
-                return RandGSO(true);
-            }
+                return static_cast<int>(GetGalaxySetupData().GetShape());
+            if (property_name == "GalaxyAge")
+                return static_cast<int>(GetGalaxySetupData().GetAge());
+            if (property_name == "GalaxyStarlaneFrequency")
+                return static_cast<int>(GetGalaxySetupData().GetStarlaneFreq());
+            if (property_name == "GalaxyPlanetDensity")
+                return static_cast<int>(GetGalaxySetupData().GetPlanetDensity());
+            if (property_name == "GalaxySpecialFrequency")
+                return static_cast<int>(GetGalaxySetupData().GetSpecialsFreq());
+            if (property_name == "GalaxyMonsterFrequency")
+                return static_cast<int>(GetGalaxySetupData().GetMonsterFreq());
+            if (property_name == "GalaxyNativeFrequency")
+                return static_cast<int>(GetGalaxySetupData().GetNativeFreq());
             if (property_name == "GalaxyMaxAIAggression")
-                return static_cast<int>(GetGalaxySetupData().m_ai_aggr);
+                return static_cast<int>(GetGalaxySetupData().GetAggression());
 
             // add more non-object reference int functions here
             ErrorLogger() << "Variable<int>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -831,7 +810,7 @@ namespace ValueRef {
 
         if (m_ref_type == ValueRef::NON_OBJECT_REFERENCE) {
             if (property_name == "GalaxySeed")
-                return GetGalaxySetupData().m_seed;
+                return GetGalaxySetupData().GetSeed();
 
             ErrorLogger() << "Variable<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
             return "";
