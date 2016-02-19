@@ -33,6 +33,20 @@ class PyGalaxySetupData:
         self.native_frequency = galaxy_setup_data.nativeFrequency
         self.max_ai_aggression = galaxy_setup_data.maxAIAggression
 
+    def dump(self):
+        print "Galaxy Setup Data:"
+        print "...Seed:", self.seed
+        print "...Size:", self.size
+        print "...Shape:", self.shape
+        print "...Age:", self.age
+        print "...Starlane Frequency:", self.starlane_frequency
+        print "...Planet Density:", self.planet_density
+        print "...Specials Frequency:", self.specials_frequency
+        print "...Monster Frequency:", self.monster_frequency
+        print "...Native Frequency:", self.native_frequency
+        print "...Max AI Aggression:", self.max_ai_aggression
+
+
 
 def error_report():
     """
@@ -49,6 +63,7 @@ def create_universe(psd_map):
 
     # fetch universe and player setup data
     gsd = PyGalaxySetupData(fo.get_galaxy_setup_data())
+    gsd.dump()
     total_players = len(psd_map)
 
     # initialize RNG
