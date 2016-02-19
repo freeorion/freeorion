@@ -31,6 +31,7 @@ const std::map<int, std::set<int> >& SupplyManager::FleetSupplyableSystemIDs() c
 
 namespace {
     static const std::set<int> EMPTY_INT_SET;
+    static const std::set<std::set<int> > EMPTY_INT_SET_SET;
 }
 
 const std::set<int>& SupplyManager::FleetSupplyableSystemID(int empire_id) {
@@ -42,6 +43,13 @@ const std::set<int>& SupplyManager::FleetSupplyableSystemID(int empire_id) {
 
 const std::map<int, std::set<std::set<int> > >& SupplyManager::ResourceSupplyGroups() const
 { return m_resource_supply_groups; }
+
+const std::set<std::set<int> >& SupplyManager::ResourceSupplyGroups(int empire_id) const {
+    std::map<int, std::set<std::set<int> > >::const_iterator it = m_resource_supply_groups.find(empire_id);
+    if (it != m_resource_supply_groups.end())
+        return it->second;
+    return EMPTY_INT_SET_SET;
+}
 
 bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     if (system_id == INVALID_OBJECT_ID)

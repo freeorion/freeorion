@@ -81,6 +81,7 @@ protected:
     Universe                    m_universe;
     GalaxySetupData             m_galaxy_setup_data;
     EmpireManager               m_empires;
+    SupplyManager               m_supply_manager;
     OrderSet                    m_orders;
     ClientNetworking            m_networking;
     int                         m_empire_id;

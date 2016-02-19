@@ -36,6 +36,7 @@ public:
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
     const std::map<int, std::set<std::set<int> > >&         ResourceSupplyGroups() const;
+    const std::set<std::set<int> >&                         ResourceSupplyGroups(int empire_id) const;
 
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */

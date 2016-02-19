@@ -7271,7 +7271,7 @@ namespace {
             std::map<int, std::set<int> >::const_iterator it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
-            return it->second.find(candidate->SystemID()) != it->second.find.end();
+            return it->second.find(candidate->SystemID()) != it->second.end();
         }
 
         int m_empire_id;
@@ -7376,10 +7376,9 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const Empire* empire = GetEmpire(m_empire_id);
-            if (!empire)
+            const std::set<std::set<int> >& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
+            if (groups.empty())
                 return false;
-            const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
 
             // is candidate object connected to a subcondition matching object by resource supply?
             for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
