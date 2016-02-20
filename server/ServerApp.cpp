@@ -765,8 +765,8 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
                                                         empire_id,              m_current_turn,
                                                         m_empires,              m_universe,
                                                         GetSpeciesManager(),    GetCombatLogManager(),
-                                                        player_info_map,        m_galaxy_setup_data,
-                                                        use_binary_serialization));
+                                                        GetSupplyManager(),     player_info_map,
+                                                        m_galaxy_setup_data,    use_binary_serialization));
     }
 }
 
@@ -1185,15 +1185,16 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, *orders, sss,
+                                                            GetSupplyManager(), player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, *orders, psgd.m_ui_data.get(),
-                                                            m_galaxy_setup_data, use_binary_serialization));
+                                                            GetSupplyManager(),  player_info_map, *orders,
+                                                            psgd.m_ui_data.get(), m_galaxy_setup_data,
+                                                            use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
                    client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -1202,8 +1203,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, m_galaxy_setup_data,
-                                                            use_binary_serialization));
+                                                            GetSupplyManager(), player_info_map,
+                                                            m_galaxy_setup_data, use_binary_serialization));
         } else {
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
@@ -3152,8 +3153,8 @@ void ServerApp::PostCombatProcessTurns() {
         player->SendMessage(TurnUpdateMessage(player_id,                PlayerEmpireID(player_id),
                                               m_current_turn,           m_empires,
                                               m_universe,               GetSpeciesManager(),
-                                              GetCombatLogManager(),    players,
-                                              use_binary_serialization));
+                                              GetCombatLogManager(),    GetSupplyManager(),
+                                              players,                  use_binary_serialization));
     }
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }

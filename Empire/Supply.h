@@ -70,6 +70,10 @@ private:
         share resources between systems or between objects in systems. indexed
         by empire id. */
     std::map<int, std::set<std::set<int> > >        m_resource_supply_groups;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 #endif // _Supply_h_
