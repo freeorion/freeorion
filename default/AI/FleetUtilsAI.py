@@ -181,13 +181,13 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
     try:
         return get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check,
                                       systems_checked, fleet_pool_set, fleet_list, take_any=take_any,
-                                      extend_search=extend_search, verbose=verbose, depth=depth+1)
+                                      extend_search=extend_search, verbose=verbose, depth=depth + 1)
     except:
         s1 = len(systems_to_check)
         s2 = len(systems_checked)
         s3 = len(set(systems_to_check + systems_checked))
         print "Error: exception triggered in 'getFleetsForMissions' and caught at depth %d w/s1/s2/s3 (%d/%d/%d): " % (
-            depth+2, s1, s2, s3)
+            depth + 2, s1, s2, s3)
         print traceback.format_exc()
         return []
 
@@ -270,13 +270,13 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
             print "  *** attempted transfer of ship %4d, formerly of fleet %4d, into fleet %4d with result %d; %s" % (
                 ship_id, fleet_a_id, fleet_b_id, transferred, [" context is %s" % context, ""][context == ""])
         success = success and transferred
-        if need_rating != 0 and need_rating <= transferred_attack*transferred_health:  # transferred_rating:
+        if need_rating != 0 and need_rating <= transferred_attack * transferred_health:  # transferred_rating:
             break
     fleet_a = universe.getFleet(fleet_a_id)
     if not fleet_a or fleet_a.empty or fleet_a_id in universe.destroyedObjectIDs(fo.empireID()):
         foAI.foAIstate.delete_fleet_info(fleet_a_id)
     foAI.foAIstate.update_fleet_rating(fleet_b_id)
-    return transferred_attack*transferred_health, transferred_attack, transferred_health
+    return transferred_attack * transferred_health, transferred_attack, transferred_health
 
 
 def fleet_has_ship_with_role(fleet_id, ship_role):

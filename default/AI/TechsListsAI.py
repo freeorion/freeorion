@@ -13,6 +13,7 @@ researched next.
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
+
 def unusable_techs():
     """
     Returns a list of technologies that shouldn't be researched by the AI.
@@ -40,344 +41,350 @@ def defense_techs_2():
     return []
 
 
-def tech_group_1a(): # early org_hull
+def tech_group_1a():  # early org_hull
     result = [
-            "GRO_PLANET_ECOL",
-            "LRN_ALGO_ELEGANCE",
-            "GRO_SUBTER_HAB",
-            "DEF_GARRISON_1",
-            "SHP_WEAPON_1_2",
-            "LRN_ARTIF_MINDS",
-            "SHP_WEAPON_1_3",
-            "SHP_WEAPON_1_4",
-            "CON_ORBITAL_CON",
+        "GRO_PLANET_ECOL",
+        "LRN_ALGO_ELEGANCE",
+        "GRO_SUBTER_HAB",
+        "DEF_GARRISON_1",
+        "SHP_WEAPON_1_2",
+        "LRN_ARTIF_MINDS",
+        "SHP_WEAPON_1_3",
+        "SHP_WEAPON_1_4",
+        "CON_ORBITAL_CON",
     ]
     return result
 
 
 def tech_group_1b():  # early _lrn_artif_minds and SHP_MIL_ROBO_CONT
     result = [
-            "GRO_PLANET_ECOL",
-            "LRN_ALGO_ELEGANCE",
-            "DEF_GARRISON_1",
-            "LRN_ARTIF_MINDS",
-            "SHP_WEAPON_1_2",
-            "GRO_SUBTER_HAB",
-            "SHP_WEAPON_1_3",
-            "PRO_ROBOTIC_PROD",
-            "SHP_MIL_ROBO_CONT",
-            "CON_ORBITAL_CON",
-            "SHP_WEAPON_1_4",
+        "GRO_PLANET_ECOL",
+        "LRN_ALGO_ELEGANCE",
+        "DEF_GARRISON_1",
+        "LRN_ARTIF_MINDS",
+        "SHP_WEAPON_1_2",
+        "GRO_SUBTER_HAB",
+        "SHP_WEAPON_1_3",
+        "PRO_ROBOTIC_PROD",
+        "SHP_MIL_ROBO_CONT",
+        "CON_ORBITAL_CON",
+        "SHP_WEAPON_1_4",
     ]
     return result
 
 
-def tech_group_1_sparse(): # 
+def tech_group_1_sparse():
     result = [
-            "GRO_PLANET_ECOL",
-            "LRN_ALGO_ELEGANCE",
-            "GRO_SUBTER_HAB",
-            "DEF_GARRISON_1",
-            "LRN_ARTIF_MINDS",
-            "SHP_WEAPON_1_2",
-            "PRO_ROBOTIC_PROD",
-            "SHP_WEAPON_1_3",
-            "SHP_MIL_ROBO_CONT",
-            "SHP_WEAPON_1_4",
-            "SHP_SPACE_FLUX_DRIVE",
+        "GRO_PLANET_ECOL",
+        "LRN_ALGO_ELEGANCE",
+        "GRO_SUBTER_HAB",
+        "DEF_GARRISON_1",
+        "LRN_ARTIF_MINDS",
+        "SHP_WEAPON_1_2",
+        "PRO_ROBOTIC_PROD",
+        "SHP_WEAPON_1_3",
+        "SHP_MIL_ROBO_CONT",
+        "SHP_WEAPON_1_4",
+        "SHP_SPACE_FLUX_DRIVE",
     ]
     return result
 
-def tech_group_1_sparse_b(): # 
+
+def tech_group_1_sparse_b():
     result = [
-            "GRO_PLANET_ECOL",
-            "LRN_ALGO_ELEGANCE",
-            "GRO_SUBTER_HAB",
-            "DEF_GARRISON_1",
-            "LRN_ARTIF_MINDS",
-            "SHP_WEAPON_1_2",
-            "CON_ORBITAL_CON",
-            "PRO_ROBOTIC_PROD",
-            "PRO_FUSION_GEN",
-            "PRO_ORBITAL_GEN",
-            "GRO_SYMBIOTIC_BIO",
-            "SHP_WEAPON_1_3",
-            "SHP_MIL_ROBO_CONT",
-            "SHP_WEAPON_1_4",
-            "SHP_ZORTRIUM_PLATE",
-            "SHP_SPACE_FLUX_DRIVE",
+        "GRO_PLANET_ECOL",
+        "LRN_ALGO_ELEGANCE",
+        "GRO_SUBTER_HAB",
+        "DEF_GARRISON_1",
+        "LRN_ARTIF_MINDS",
+        "SHP_WEAPON_1_2",
+        "CON_ORBITAL_CON",
+        "PRO_ROBOTIC_PROD",
+        "PRO_FUSION_GEN",
+        "PRO_ORBITAL_GEN",
+        "GRO_SYMBIOTIC_BIO",
+        "SHP_WEAPON_1_3",
+        "SHP_MIL_ROBO_CONT",
+        "SHP_WEAPON_1_4",
+        "SHP_ZORTRIUM_PLATE",
+        "SHP_SPACE_FLUX_DRIVE",
     ]
     return result
 
 
 def tech_group_2a():  # prioritizes growth & spy over weapons
     result = [
-            "SHP_ZORTRIUM_PLATE",
-            "DEF_DEFENSE_NET_1",
-            "PRO_ROBOTIC_PROD",
-            "SHP_SPACE_FLUX_DRIVE",
-            "PRO_FUSION_GEN",
-            "DEF_GARRISON_2",
-            "LRN_FORCE_FIELD",
-            "GRO_SYMBIOTIC_BIO",
-            "SPY_DETECT_2",
-            "SHP_WEAPON_2_1",
-            "SHP_WEAPON_2_2",
-            "SHP_WEAPON_2_3",
-            "SHP_WEAPON_2_4",
-            "PRO_INDUSTRY_CENTER_I",
+        "SHP_ZORTRIUM_PLATE",
+        "DEF_DEFENSE_NET_1",
+        "PRO_ROBOTIC_PROD",
+        "SHP_SPACE_FLUX_DRIVE",
+        "PRO_FUSION_GEN",
+        "DEF_GARRISON_2",
+        "LRN_FORCE_FIELD",
+        "GRO_SYMBIOTIC_BIO",
+        "SPY_DETECT_2",
+        "SHP_WEAPON_2_1",
+        "SHP_WEAPON_2_2",
+        "SHP_WEAPON_2_3",
+        "SHP_WEAPON_2_4",
+        "PRO_INDUSTRY_CENTER_I",
     ]
     return result
 
 
 def tech_group_2b():  # prioritizes weapons over growth & spy
     result = [
-            "SHP_ZORTRIUM_PLATE",
-            "PRO_ROBOTIC_PROD",
-            "SHP_SPACE_FLUX_DRIVE",
-            "PRO_FUSION_GEN",
-            "DEF_GARRISON_2",
-            "LRN_FORCE_FIELD",
-            "DEF_DEFENSE_NET_1",
-            "SHP_WEAPON_2_1",
-            "SHP_WEAPON_2_2",
-            "SHP_WEAPON_2_3",
-            "SHP_WEAPON_2_4",
-            "GRO_SYMBIOTIC_BIO",
-            "PRO_INDUSTRY_CENTER_I",
-            "SPY_DETECT_2",
+        "SHP_ZORTRIUM_PLATE",
+        "PRO_ROBOTIC_PROD",
+        "SHP_SPACE_FLUX_DRIVE",
+        "PRO_FUSION_GEN",
+        "DEF_GARRISON_2",
+        "LRN_FORCE_FIELD",
+        "DEF_DEFENSE_NET_1",
+        "SHP_WEAPON_2_1",
+        "SHP_WEAPON_2_2",
+        "SHP_WEAPON_2_3",
+        "SHP_WEAPON_2_4",
+        "GRO_SYMBIOTIC_BIO",
+        "PRO_INDUSTRY_CENTER_I",
+        "SPY_DETECT_2",
     ]
     return result
 
 
 def tech_group_2_sparse():  # prioritizes growth & defense over weapons
     result = [
-            "CON_ORBITAL_CON",
-            "PRO_FUSION_GEN",
-            "SHP_ZORTRIUM_PLATE",
-            "DEF_GARRISON_2",
-            "GRO_SYMBIOTIC_BIO",
-            "LRN_FORCE_FIELD",
-            "DEF_DEFENSE_NET_1",
-            "PRO_INDUSTRY_CENTER_I",
-            "PRO_ORBITAL_GEN",
-            "PRO_MICROGRAV_MAN",
-            "SHP_ASTEROID_HULLS",
-            "SPY_DETECT_2",
-            "SHP_WEAPON_2_1",
-            "SHP_WEAPON_2_2",
-            "SHP_WEAPON_2_3",
-            "SHP_WEAPON_2_4",
-            "SHP_DOMESTIC_MONSTER",
+        "CON_ORBITAL_CON",
+        "PRO_FUSION_GEN",
+        "SHP_ZORTRIUM_PLATE",
+        "DEF_GARRISON_2",
+        "GRO_SYMBIOTIC_BIO",
+        "LRN_FORCE_FIELD",
+        "DEF_DEFENSE_NET_1",
+        "PRO_INDUSTRY_CENTER_I",
+        "PRO_ORBITAL_GEN",
+        "PRO_MICROGRAV_MAN",
+        "SHP_ASTEROID_HULLS",
+        "SPY_DETECT_2",
+        "SHP_WEAPON_2_1",
+        "SHP_WEAPON_2_2",
+        "SHP_WEAPON_2_3",
+        "SHP_WEAPON_2_4",
+        "SHP_DOMESTIC_MONSTER",
     ]
     return result
+
 
 def tech_group_2_sparse_b():  # prioritizes growth & defense over weapons
     result = [
-            "DEF_GARRISON_2",
-            "DEF_DEFENSE_NET_1",
-            "PRO_INDUSTRY_CENTER_I",
-            "SHP_WEAPON_2_1",
-            "LRN_FORCE_FIELD",
-            "SHP_WEAPON_2_2",
-            "SHP_WEAPON_2_3",
-            "SHP_WEAPON_2_4",
-            "SPY_DETECT_2",
-            "PRO_MICROGRAV_MAN",
-            "SHP_ASTEROID_HULLS",
-            "SHP_DOMESTIC_MONSTER",
+        "DEF_GARRISON_2",
+        "DEF_DEFENSE_NET_1",
+        "PRO_INDUSTRY_CENTER_I",
+        "SHP_WEAPON_2_1",
+        "LRN_FORCE_FIELD",
+        "SHP_WEAPON_2_2",
+        "SHP_WEAPON_2_3",
+        "SHP_WEAPON_2_4",
+        "SPY_DETECT_2",
+        "PRO_MICROGRAV_MAN",
+        "SHP_ASTEROID_HULLS",
+        "SHP_DOMESTIC_MONSTER",
     ]
     return result
 
-def tech_group_3a(): # no plasma weaps yet
+
+def tech_group_3a():  # no plasma weaps yet
     result = [
-            "SHP_DOMESTIC_MONSTER",
-            "SHP_ORG_HULL",
-            "GRO_GENETIC_ENG",
-            "GRO_GENETIC_MED",
-            "DEF_DEFENSE_NET_2",
-            "DEF_DEFENSE_NET_REGEN_1",
-            "PRO_SENTIENT_AUTOMATION",
-            "DEF_PLAN_BARRIER_SHLD_1",
-            "PRO_EXOBOTS",
-            "GRO_XENO_GENETICS",
-            "LRN_PHYS_BRAIN",
-            "LRN_TRANSLING_THT",
-            "SHP_BASIC_DAM_CONT",
-            "DEF_GARRISON_3",
-            "PRO_INDUSTRY_CENTER_II",
-            "SHP_INTSTEL_LOG",
-            "SHP_FLEET_REPAIR",
-            "PRO_ORBITAL_GEN",
-            "PRO_SOL_ORB_GEN",
-            "GRO_NANO_CYBERNET",
-            "PRO_MICROGRAV_MAN",
-            "SHP_ASTEROID_HULLS",
-            "SHP_IMPROVED_ENGINE_COUPLINGS",
-            "SHP_ASTEROID_REFORM",
-            "SHP_HEAVY_AST_HULL",
-            "SHP_DEFLECTOR_SHIELD",
-            "LRN_QUANT_NET",
-            "SHP_CONTGRAV_MAINT",
-            "GRO_XENO_HYBRIDS",
-            "SHP_DEUTERIUM_TANK",
-            "SPY_DETECT_3",
-            "SHP_REINFORCED_HULL",
-            "SHP_DIAMOND_PLATE",
-            "DEF_DEFENSE_NET_REGEN_2",
-            "DEF_PLAN_BARRIER_SHLD_2",
-            "DEF_DEFENSE_NET_3",
-            "CON_CONTGRAV_ARCH",
-            "CON_ORBITAL_HAB",
-            "CON_FRC_ENRG_STRC", 
-            "DEF_SYST_DEF_MINE_1",
-            "DEF_PLAN_BARRIER_SHLD_3",
-            "CON_NDIM_STRC", 
-            "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
-            "GRO_LIFECYCLE_MAN",
-            "SHP_MULTICELL_CAST",
-            "SHP_ENDOCRINE_SYSTEMS",
-            "SHP_CONT_BIOADAPT",
-            "SPY_STEALTH_1",
+        "SHP_DOMESTIC_MONSTER",
+        "SHP_ORG_HULL",
+        "GRO_GENETIC_ENG",
+        "GRO_GENETIC_MED",
+        "DEF_DEFENSE_NET_2",
+        "DEF_DEFENSE_NET_REGEN_1",
+        "PRO_SENTIENT_AUTOMATION",
+        "DEF_PLAN_BARRIER_SHLD_1",
+        "PRO_EXOBOTS",
+        "GRO_XENO_GENETICS",
+        "LRN_PHYS_BRAIN",
+        "LRN_TRANSLING_THT",
+        "SHP_BASIC_DAM_CONT",
+        "DEF_GARRISON_3",
+        "PRO_INDUSTRY_CENTER_II",
+        "SHP_INTSTEL_LOG",
+        "SHP_FLEET_REPAIR",
+        "PRO_ORBITAL_GEN",
+        "PRO_SOL_ORB_GEN",
+        "GRO_NANO_CYBERNET",
+        "PRO_MICROGRAV_MAN",
+        "SHP_ASTEROID_HULLS",
+        "SHP_IMPROVED_ENGINE_COUPLINGS",
+        "SHP_ASTEROID_REFORM",
+        "SHP_HEAVY_AST_HULL",
+        "SHP_DEFLECTOR_SHIELD",
+        "LRN_QUANT_NET",
+        "SHP_CONTGRAV_MAINT",
+        "GRO_XENO_HYBRIDS",
+        "SHP_DEUTERIUM_TANK",
+        "SPY_DETECT_3",
+        "SHP_REINFORCED_HULL",
+        "SHP_DIAMOND_PLATE",
+        "DEF_DEFENSE_NET_REGEN_2",
+        "DEF_PLAN_BARRIER_SHLD_2",
+        "DEF_DEFENSE_NET_3",
+        "CON_CONTGRAV_ARCH",
+        "CON_ORBITAL_HAB",
+        "CON_FRC_ENRG_STRC",
+        "DEF_SYST_DEF_MINE_1",
+        "DEF_PLAN_BARRIER_SHLD_3",
+        "CON_NDIM_STRC",
+        "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
+        "GRO_LIFECYCLE_MAN",
+        "SHP_MULTICELL_CAST",
+        "SHP_ENDOCRINE_SYSTEMS",
+        "SHP_CONT_BIOADAPT",
+        "SPY_STEALTH_1",
     ]
     return result
 
 
 def tech_group_3b():  # with plasma weaps
     result = tech_group_3a()
-    insert_idx = min(30, len(result)//2) if "GRO_XENO_HYBRIDS" not in result else 1 + result.index("GRO_XENO_HYBRIDS")
+    insert_idx = min(30, len(result) // 2) if "GRO_XENO_HYBRIDS" not in result else 1 + result.index("GRO_XENO_HYBRIDS")
     result.insert(insert_idx, "SHP_WEAPON_3_4")
     return result
 
-def tech_group_3_sparse(): # no plasma weaps yet
+
+def tech_group_3_sparse():  # no plasma weaps yet
     result = [
-            "SHP_DOMESTIC_MONSTER",
-            "SHP_ORG_HULL",
-            "GRO_GENETIC_ENG",
-            "GRO_GENETIC_MED",
-            "DEF_DEFENSE_NET_2",
-            "DEF_DEFENSE_NET_REGEN_1",
-            "PRO_SENTIENT_AUTOMATION",
-            "DEF_PLAN_BARRIER_SHLD_1",
-            "PRO_EXOBOTS",
-            "GRO_XENO_GENETICS",
-            "LRN_PHYS_BRAIN",
-            "LRN_TRANSLING_THT",
-            "SHP_BASIC_DAM_CONT",
-            "PRO_INDUSTRY_CENTER_II",
-            "SHP_INTSTEL_LOG",
-            "SHP_FLEET_REPAIR",
-            "PRO_ORBITAL_GEN",
-            "PRO_SOL_ORB_GEN",
-            "GRO_NANO_CYBERNET",
-            "PRO_MICROGRAV_MAN",
-            "SHP_ASTEROID_HULLS",
-            "SHP_IMPROVED_ENGINE_COUPLINGS",
-            "LRN_QUANT_NET",
-            "SHP_ASTEROID_REFORM",
-            "SHP_HEAVY_AST_HULL",
-            "SHP_CONTGRAV_MAINT",
-            "SHP_DEFLECTOR_SHIELD",
-            "SHP_WEAPON_3_1",
-            "SHP_WEAPON_3_2",
-            "SHP_WEAPON_3_3",
-            "SHP_WEAPON_3_4",
-            "GRO_XENO_HYBRIDS",
-            "SHP_DEUTERIUM_TANK",
-            "SPY_DETECT_3",
-            "SHP_REINFORCED_HULL",
-            "SHP_DIAMOND_PLATE",
-            "DEF_DEFENSE_NET_REGEN_2",
-            "DEF_PLAN_BARRIER_SHLD_2",
-            "DEF_DEFENSE_NET_3",
-            "CON_CONTGRAV_ARCH",
-            "CON_ORBITAL_HAB",
-            "CON_FRC_ENRG_STRC", 
-            "DEF_SYST_DEF_MINE_1",
-            "DEF_GARRISON_3",
-            "DEF_PLAN_BARRIER_SHLD_3",
-            "CON_NDIM_STRC", 
-            "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
-            "GRO_LIFECYCLE_MAN",
-            "SHP_MULTICELL_CAST",
-            "SHP_ENDOCRINE_SYSTEMS",
-            "SHP_CONT_BIOADAPT",
-            "SPY_STEALTH_1",
+        "SHP_DOMESTIC_MONSTER",
+        "SHP_ORG_HULL",
+        "GRO_GENETIC_ENG",
+        "GRO_GENETIC_MED",
+        "DEF_DEFENSE_NET_2",
+        "DEF_DEFENSE_NET_REGEN_1",
+        "PRO_SENTIENT_AUTOMATION",
+        "DEF_PLAN_BARRIER_SHLD_1",
+        "PRO_EXOBOTS",
+        "GRO_XENO_GENETICS",
+        "LRN_PHYS_BRAIN",
+        "LRN_TRANSLING_THT",
+        "SHP_BASIC_DAM_CONT",
+        "PRO_INDUSTRY_CENTER_II",
+        "SHP_INTSTEL_LOG",
+        "SHP_FLEET_REPAIR",
+        "PRO_ORBITAL_GEN",
+        "PRO_SOL_ORB_GEN",
+        "GRO_NANO_CYBERNET",
+        "PRO_MICROGRAV_MAN",
+        "SHP_ASTEROID_HULLS",
+        "SHP_IMPROVED_ENGINE_COUPLINGS",
+        "LRN_QUANT_NET",
+        "SHP_ASTEROID_REFORM",
+        "SHP_HEAVY_AST_HULL",
+        "SHP_CONTGRAV_MAINT",
+        "SHP_DEFLECTOR_SHIELD",
+        "SHP_WEAPON_3_1",
+        "SHP_WEAPON_3_2",
+        "SHP_WEAPON_3_3",
+        "SHP_WEAPON_3_4",
+        "GRO_XENO_HYBRIDS",
+        "SHP_DEUTERIUM_TANK",
+        "SPY_DETECT_3",
+        "SHP_REINFORCED_HULL",
+        "SHP_DIAMOND_PLATE",
+        "DEF_DEFENSE_NET_REGEN_2",
+        "DEF_PLAN_BARRIER_SHLD_2",
+        "DEF_DEFENSE_NET_3",
+        "CON_CONTGRAV_ARCH",
+        "CON_ORBITAL_HAB",
+        "CON_FRC_ENRG_STRC",
+        "DEF_SYST_DEF_MINE_1",
+        "DEF_GARRISON_3",
+        "DEF_PLAN_BARRIER_SHLD_3",
+        "CON_NDIM_STRC",
+        "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
+        "GRO_LIFECYCLE_MAN",
+        "SHP_MULTICELL_CAST",
+        "SHP_ENDOCRINE_SYSTEMS",
+        "SHP_CONT_BIOADAPT",
+        "SPY_STEALTH_1",
     ]
     return result
 
+
 def tech_group_4a():  # later plasma weaps
     result = [
-            "SHP_WEAPON_3_1",
-            "SHP_WEAPON_3_2",
-            "SHP_WEAPON_3_3",
-            "SHP_FRC_ENRG_COMP",
-            "SHP_WEAPON_3_4",
-            "SHP_MASSPROP_SPEC",
+        "SHP_WEAPON_3_1",
+        "SHP_WEAPON_3_2",
+        "SHP_WEAPON_3_3",
+        "SHP_FRC_ENRG_COMP",
+        "SHP_WEAPON_3_4",
+        "SHP_MASSPROP_SPEC",
     ]
     return result
 
 
 def tech_group_4b():
     result = [
-            "SHP_FRC_ENRG_COMP",
-            "SHP_WEAPON_3_4",
-            "SHP_MASSPROP_SPEC",
-            ]
+        "SHP_FRC_ENRG_COMP",
+        "SHP_WEAPON_3_4",
+        "SHP_MASSPROP_SPEC",
+    ]
     return result
 
 
 def tech_group_5():
     result = [
-            "DEF_GARRISON_4",
-            "DEF_PLAN_BARRIER_SHLD_4",
-            "LRN_XENOARCH",
-            "LRN_GRAVITONICS",
-            "LRN_ENCLAVE_VOID",
-            "SHP_MONOMOLEC_LATTICE",
-            "SHP_SCAT_AST_HULL",
-            "SHP_ADV_DAM_CONT",
-            "LRN_STELLAR_TOMOGRAPHY",
-            "LRN_TIME_MECH",
-            "SPY_DETECT_4",
-            "SHP_CONT_SYMB",
-            "SHP_MONOCELL_EXP",
-            "SHP_BIOADAPTIVE_SPEC",
-            "SHP_SENT_HULL",
-            "SHP_XENTRONIUM_PLATE",
-            "GRO_CYBORG",
-            "GRO_TERRAFORM",
-            "GRO_ENERGY_META",
-            "SHP_WEAPON_4_1",
-            "SHP_WEAPON_4_2",
-            "SHP_WEAPON_4_3",
-            "LRN_DISTRIB_THOUGHT",
-            "PRO_INDUSTRY_CENTER_III",
-            "PRO_SINGULAR_GEN",
-            "SHP_QUANT_ENRG_MAG",
-            "SHP_PLASMA_SHIELD",
-            "SHP_ENRG_BOUND_MAN",
-            "PRO_NEUTRONIUM_EXTRACTION",
-            "SHP_SOLAR_CONT",
-            "CON_CONC_CAMP",
-            "LRN_ART_BLACK_HOLE",
-            "SPY_STEALTH_2",
-            "DEF_SYST_DEF_MINE_2",
-            "DEF_SYST_DEF_MINE_3",
-            "LRN_PSY_DOM",
-            "SPY_STEALTH_3",
-            "SHP_WEAPON_4_4",
-            "SHP_BLACKSHIELD",
-            "SPY_STEALTH_4",
-            "DEF_PLAN_BARRIER_SHLD_5",
-            "SPY_DETECT_5",
-            "GRO_GAIA_TRANS",
-            "CON_ART_PLANET",
+        "DEF_GARRISON_4",
+        "DEF_PLAN_BARRIER_SHLD_4",
+        "LRN_XENOARCH",
+        "LRN_GRAVITONICS",
+        "LRN_ENCLAVE_VOID",
+        "SHP_MONOMOLEC_LATTICE",
+        "SHP_SCAT_AST_HULL",
+        "SHP_ADV_DAM_CONT",
+        "LRN_STELLAR_TOMOGRAPHY",
+        "LRN_TIME_MECH",
+        "SPY_DETECT_4",
+        "SHP_CONT_SYMB",
+        "SHP_MONOCELL_EXP",
+        "SHP_BIOADAPTIVE_SPEC",
+        "SHP_SENT_HULL",
+        "SHP_XENTRONIUM_PLATE",
+        "GRO_CYBORG",
+        "GRO_TERRAFORM",
+        "GRO_ENERGY_META",
+        "SHP_WEAPON_4_1",
+        "SHP_WEAPON_4_2",
+        "SHP_WEAPON_4_3",
+        "LRN_DISTRIB_THOUGHT",
+        "PRO_INDUSTRY_CENTER_III",
+        "PRO_SINGULAR_GEN",
+        "SHP_QUANT_ENRG_MAG",
+        "SHP_PLASMA_SHIELD",
+        "SHP_ENRG_BOUND_MAN",
+        "PRO_NEUTRONIUM_EXTRACTION",
+        "SHP_SOLAR_CONT",
+        "CON_CONC_CAMP",
+        "LRN_ART_BLACK_HOLE",
+        "SPY_STEALTH_2",
+        "DEF_SYST_DEF_MINE_2",
+        "DEF_SYST_DEF_MINE_3",
+        "LRN_PSY_DOM",
+        "SPY_STEALTH_3",
+        "SHP_WEAPON_4_4",
+        "SHP_BLACKSHIELD",
+        "SPY_STEALTH_4",
+        "DEF_PLAN_BARRIER_SHLD_5",
+        "SPY_DETECT_5",
+        "GRO_GAIA_TRANS",
+        "CON_ART_PLANET",
     ]
     return result
 
+
 def sparse_galaxy_techs(index):
-    #return primary_meta_techs()
+    # return primary_meta_techs()
     result = []
     print "Choosing Research Techlist Index %d" % index
     if index == 0:
@@ -400,26 +407,26 @@ def sparse_galaxy_techs(index):
         result += tech_group_5()  #
     elif index == 3:
         result = tech_group_1_sparse_b()  # early org_hull
-        result += tech_group_2_sparse_b() 
+        result += tech_group_2_sparse_b()
         result += tech_group_3a()
         result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 4:
         result = tech_group_1_sparse_b()  # early _lrn_artif_minds
-        result += tech_group_2_sparse_b() 
+        result += tech_group_2_sparse_b()
         result += tech_group_3b()  # faster plasma weaps
         result += tech_group_4b()
         result += tech_group_5()  #
     return result
 
-def primary_meta_techs(index = 0):
+
+def primary_meta_techs(index=0):
     """
     Primary techs for all categories.
     """
-    
-    #index = 1 - index
+    # index = 1 - index
     result = []
-    
+
     print "Choosing Research Techlist Index %d" % index
     if index == 0:
         result = tech_group_1a()  # early org_hull
@@ -451,10 +458,9 @@ def primary_meta_techs(index = 0):
         result += tech_group_3b()  # 3a plus early plasma weaps
         result += tech_group_4b()
         result += tech_group_5()  #
-
     return result
 
-#the following is just for reference
+# the following is just for reference
 # "CON_ARCH_MONOFILS",
 # "CON_ARCH_PSYCH",
 # "CON_ART_HEAVENLY",

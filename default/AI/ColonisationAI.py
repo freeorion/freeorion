@@ -1,4 +1,3 @@
-# get these declared first to help avoid import circularities
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
@@ -88,9 +87,7 @@ def have_ruins():
 def have_nest():
     return got_nest
 
-
-
-# mods per environ uninhab hostile poor adequate good
+#  mods per environ uninhab hostile poor adequate good
 POP_SIZE_MOD_MAP = {
     "environment_bonus": [0, -4, -2, 0, 3],
     "GRO_SUBTER_HAB": [0, 1, 1, 1, 1],
@@ -189,9 +186,11 @@ def rate_planetary_piloting(pid):
         return 0.0
     return rate_piloting_tag(this_spec.tags)
 
+
 @cache_by_turn
 def get_supply_tech_range():
-    return sum( _range for _tech, _range in AIDependencies.supply_range_techs.iteritems() if tech_is_complete(_tech))
+    return sum(_range for _tech, _range in AIDependencies.supply_range_techs.iteritems() if tech_is_complete(_tech))
+
 
 def check_supply():
     # get suppliable systems and planets
@@ -259,7 +258,7 @@ def check_supply():
     # Note: empire.supplyProjections supply projection has one major difference from standard supply calculations-- if
     # the final parameter (obstructed) is False then it intentionally ignores existing obstructions/blockades, so
     # a Sentinel or somesuch might throw it off, That is an area for future improvement
-    system_supply.update(empire.supplyProjections(-1-supply_distance, False))
+    system_supply.update(empire.supplyProjections(-1 - supply_distance, False))
     for sys_id, supply_val in system_supply.items():
         # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
@@ -322,12 +321,12 @@ def survey_universe():
 
         # empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
         # print "Empire Owned PlanetIDs: " + str(empire_owned_planet_ids)
-        ##allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(explored_planet_ids) #working with Explored systems not all 'visible' because might not have a path to the latter
+        # #allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(explored_planet_ids) #working with Explored systems not all 'visible' because might not have a path to the latter
         # allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(annexablePlanetIDs) #
-        #print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empire_owned_planet_ids))
-        ##unowned_empty_planet_ids = list(set(explored_planet_ids) -set(allOwnedPlanetIDs))
-        #unowned_empty_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-        #print "UnOwned annexable PlanetIDs: ", ", ".join(PlanetUtilsAI.planet_name_ids(unowned_empty_planet_ids))
+        # print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empire_owned_planet_ids))
+        # #unowned_empty_planet_ids = list(set(explored_planet_ids) -set(allOwnedPlanetIDs))
+        # unowned_empty_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
+        # print "UnOwned annexable PlanetIDs: ", ", ".join(PlanetUtilsAI.planet_name_ids(unowned_empty_planet_ids))
         empire_owned_planet_ids = []
         empire_pop_ctrs = set()
         empire_outpost_ids.clear()
@@ -378,7 +377,6 @@ def survey_universe():
         local_ast = False
         local_gg = False
         empire_has_qualifying_planet = False
-        this_system_facilities = set()
         best_local_pilot_val = 0
         if sys_id in AIstate.colonyTargetedSystemIDs:
             empire_has_qualifying_planet = True
@@ -424,7 +422,7 @@ def survey_universe():
                         pilot_val = rate_piloting_tag(list(this_spec.tags))
                         if spec_name == "SP_ACIREMA":
                             pilot_val += 1
-                        weapons_grade = "WEAPONS_%.1f"%pilot_val
+                        weapons_grade = "WEAPONS_%.1f" % pilot_val
                         pilot_ratings[pid] = pilot_val
                         best_local_pilot_val = max(best_local_pilot_val, pilot_val)
                         yard_here = []
@@ -487,7 +485,7 @@ def survey_universe():
             if sys_status.get('neighborThreat', 0) > 0:
                 colony_status['colonies_under_threat'].append(sys_id)
 
-    #system_facilities[''] = {'systems': set().union(sys_id for key, val in system_facilities.items()
+    # system_facilities[''] = {'systems': set().union(sys_id for key, val in system_facilities.items()
     #                                                for sys_id in val.get('systems', {}))}
     if empire_species != old_emp_spec:
         print "Old empire species: %s ; new empire species: %s" % (old_emp_spec, empire_species)
@@ -516,11 +514,11 @@ def survey_universe():
         # for making/invading a colony
         # claimedStars = {}
         # for sType in AIstate.empireStars:
-        #claimedStars[sType] = list( AIstate.empireStars[sType] )
-        #for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-        #tSys = universe.getSystem(sysID)
-        #if not tSys: continue
-        #claimedStars.setdefault( tSys.starType, []).append(sysID)
+        # claimedStars[sType] = list( AIstate.empireStars[sType] )
+        # for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+        # tSys = universe.getSystem(sysID)
+        # if not tSys: continue
+        # claimedStars.setdefault( tSys.starType, []).append(sysID)
     # foAI.foAIstate.misc['claimedStars'] = claimedStars
     colonization_timer.stop()
     return univ_stats
@@ -558,7 +556,7 @@ def get_colony_fleets():
     num_colony_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colony_fleet_ids))
     print "Colony Fleets Without Missions: %s" % num_colony_fleets
     outpost_targeted_planet_ids = FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs,
-                                                                  AIFleetMissionType.FLEET_MISSION_OUTPOST)
+                                                                       AIFleetMissionType.FLEET_MISSION_OUTPOST)
     outpost_targeted_planet_ids.extend(
         FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
     all_outpost_targeted_system_ids = PlanetUtilsAI.get_systems(outpost_targeted_planet_ids)
@@ -724,7 +722,7 @@ def get_colony_fleets():
                                                            AIFleetMissionType.FLEET_MISSION_OUTPOST, None, empire)
     # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
     for pid in set(evaluated_outpost_planets).intersection(evaluated_colony_planets):
-        if planet_supply_cache.get(pid, -99) >=0:
+        if planet_supply_cache.get(pid, -99) >= 0:
             evaluated_outpost_planets[pid] = (
                 max(evaluated_colony_planets[pid][0], evaluated_outpost_planets[pid][0]), '')
 
@@ -749,7 +747,7 @@ def get_colony_fleets():
 
 def assign_colonisation_values(planet_ids, mission_type, species, empire, detail=None,
                                return_all=False):  # TODO: clean up suppliable versus annexable
-    """creates a dictionary that takes planetIDs as key and their colonisation score as value"""
+    """Creates a dictionary that takes planetIDs as key and their colonisation score as value."""
     if detail is None:
         detail = []
     orig_detail = detail
@@ -811,13 +809,14 @@ def project_ind_val(init_pop, max_pop_size, init_industry, max_ind_factor, flat_
         ind_val += val_factor * cur_ind
     return ind_val
 
+
 @cache_by_turn
 def get_base_outpost_defense_value():
     """
     :return:planet defenses contribution towards planet evaluations
     :rtype float
     """
-    #TODO: assess current AI defense technology, compare the resulting planetary rating to the current
+    # TODO: assess current AI defense technology, compare the resulting planetary rating to the current
     # best military ship design, derive a planet defenses value related to the cost of such a ship
 
     net_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_DEFENSE_NET_TECHS)
@@ -829,9 +828,10 @@ def get_base_outpost_defense_value():
     # for now, just combing these for rough composite factor
     # since outposts have no infrastructure (until late game at least), many of these have less weight
     # than for colonies
-    result = 3 * (0.1 + net_count) * (1 + regen_count/3.0) * ( 1+ garrison_count/6.0) * (1 + shield_count/3.0)
+    result = 3 * (0.1 + net_count) * (1 + regen_count/3.0) * (1 + garrison_count/6.0) * (1 + shield_count/3.0)
 
     return result
+
 
 @cache_by_turn
 def get_base_colony_defense_value():
@@ -839,7 +839,7 @@ def get_base_colony_defense_value():
     :return:planet defenses contribution towards planet evaluations
     :rtype float
     """
-    #TODO: assess current AI defense technology, compare the resulting planetary rating to the current
+    # TODO: assess current AI defense technology, compare the resulting planetary rating to the current
     # best military ship design, derive a planet defenses value related to the cost of such a ship
 
     net_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_DEFENSE_NET_TECHS)
@@ -849,9 +849,9 @@ def get_base_colony_defense_value():
     # not counting mine techs because their effects are per-system, not per-planet
 
     # for now, just combing these for rough composite factor
-    result = 4 * (0.1 + net_count) * (1 + regen_count/2.0) * ( 1+ garrison_count/4.0) * (1 + shield_count/2.0)
-
+    result = 4 * (0.1 + net_count) * (1 + regen_count/2.0) * (1 + garrison_count/4.0) * (1 + shield_count/2.0)
     return result
+
 
 def get_defense_value(species_name):
     """
@@ -860,11 +860,12 @@ def get_defense_value(species_name):
     :return:planet defenses contribution towards planet evaluations
     :rtype float
     """
-    #TODO: assess species defense characteristics
+    # TODO: assess species defense characteristics
     if species_name:
         return get_base_colony_defense_value()
     else:
         return get_base_outpost_defense_value()
+
 
 def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     """returns the colonisation value of a planet"""
@@ -1010,10 +1011,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             detail.append("PHOTOTROPHIC popMod %.1f" % star_pop_mod)
         elif pilot_rating >= get_best_pilot_rating():
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
-                star_bonus += 40 * discount_multiplier # can be used for artif'l black hole and solar hull
+                star_bonus += 40 * discount_multiplier  # can be used for artif'l black hole and solar hull
                 detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
             elif system.starType == fo.starType.blackHole and tech_is_complete("SHP_FRC_ENRG_COMP"):
-                star_bonus += 100 * discount_multiplier # can be used for solar hull
+                star_bonus += 100 * discount_multiplier  # can be used for solar hull
                 detail.append("Black Hole for solar hull %.1f" % (100 * discount_multiplier))
 
         if tech_is_complete("PRO_SOL_ORB_GEN") or "PRO_SOL_ORB_GEN" in empire_research_list[:5]:
@@ -1050,10 +1051,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN):  # start valuing as soon as PRO_SOL_ORB_GEN done
             if system.starType in [fo.starType.blackHole]:
                 this_val = 0.5 * max(empire_status.get('industrialists', 0),
-                                     20)  * discount_multiplier  # pretty rare planets, good for generator
+                                     20) * discount_multiplier  # pretty rare planets, good for generator
                 if not claimed_stars.get(fo.starType.blackHole, []):
                     star_bonus += this_val
-                    detail.append("PRO_SINGULAR_GEN %.1f" % (this_val))
+                    detail.append("PRO_SINGULAR_GEN %.1f" % this_val)
                 elif this_sysid not in claimed_stars.get(fo.starType.blackHole, []):
                     # still has extra value as an alternate location for generators & for blocking enemies generators
                     star_bonus += this_val * backup_factor
@@ -1109,7 +1110,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3*(AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                             empire_status['industrialists'] * discount_multiplier)
+                                 empire_status['industrialists'] * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -1205,7 +1206,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
                          empire_status['industrialists'] * discount_multiplier)
-            if not AIFocusType.FOCUS_INDUSTRY in species_foci:
+            if AIFocusType.FOCUS_INDUSTRY not in species_foci:
                 honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
             retval += honey_val
             detail.append("%s %.1f" % ("HONEYCOMB_SPECIAL", honey_val))
@@ -1359,7 +1360,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         # used to give preference to closest worlds
 
         for special in [spec for spec in planet_specials if spec in AIDependencies.metabolismBoosts]:
-            #TODO: also consider potential future benefit re currently unpopulated planets
+            # TODO: also consider potential future benefit re currently unpopulated planets
             gbonus = discount_multiplier * base_pop_ind * ind_mult * empire_metabolisms.get(
                 AIDependencies.metabolismBoosts[special], 0)  # due to growth applicability to other planets
             growth_val += gbonus

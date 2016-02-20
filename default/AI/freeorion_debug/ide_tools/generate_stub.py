@@ -121,7 +121,7 @@ def make_stub(data, result_path):
     enums = sorted(groups['enum'], key=itemgetter('name'))
     enums_names = [x['name'] for x in enums]
 
-    excludes = ([u'IntSet', u'StringSet', u'IntIntMap', u'ShipSlotVec',  u'VisibilityIntMap', u'IntDblMap',
+    excludes = ([u'IntSet', u'StringSet', u'IntIntMap', u'ShipSlotVec', u'VisibilityIntMap', u'IntDblMap',
                  u'IntBoolMap', u'ItemSpecVec', u'PairIntInt_IntMap', u'IntSetSet', u'StringVec',
                  u'IntPairVec'])
 
@@ -149,8 +149,8 @@ def make_stub(data, result_path):
                 print "Unknown class attribute type", v['type']
 
     res = []
-    classes = sorted(classes, key=lambda x:len(x['parents']))  # put classes with no parents on first place
-    class_groups = groupby(classes, key=lambda x:  x['parents'] and x['parents'][0] or '')
+    classes = sorted(classes, key=lambda x: len(x['parents']))  # put classes with no parents on first place
+    class_groups = groupby(classes, key=lambda x: x['parents'] and x['parents'][0] or '')
 
     for name, group in class_groups:
         for cls in sorted(group, key=itemgetter('name')):

@@ -261,7 +261,7 @@ class AIstate(object):
         max_defense = planet.currentMeterValue(fo.meterType.maxDefense)
         shields = min(max_shields, current_shields + 2 * sighting_age)  # TODO: base off regen tech
         defense = min(max_defense, current_defense + 2 * sighting_age)  # TODO: base off regen tech
-        return {'overall': defense*(defense + shields), 'attack': defense, 'health': (defense + shields)}
+        return {'overall': defense * (defense + shields), 'attack': defense, 'health': (defense + shields)}
 
     def assess_enemy_supply(self):
         """
@@ -433,11 +433,11 @@ class AIstate(object):
                     myphealth += prating['health']
                 else:
                     if [special for special in planet.specials if "_NEST_" in special]:
-                        sys_status['nest_threat'] = 100;
+                        sys_status['nest_threat'] = 100
                     pattack += prating['attack']
                     phealth += prating['health']
-            sys_status['planetThreat'] = pattack*phealth
-            sys_status['mydefenses'] = {'overall': mypattack*myphealth, 'attack': mypattack, 'health': myphealth}
+            sys_status['planetThreat'] = pattack * phealth
+            sys_status['mydefenses'] = {'overall': mypattack * myphealth, 'attack': mypattack, 'health': myphealth}
 
             if max(sys_status.get('totalThreat', 0), pattack*phealth) >= 0.6 * lost_fleet_rating:  # previous threat assessment could account for losses, ignore the losses now
                 lost_fleet_rating = 0
@@ -460,7 +460,7 @@ class AIstate(object):
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating))  # includes mobile monsters
                 if verbose:
-                    print "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (enemy_rating, lost_fleet_rating,  monster_rating)
+                    print "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (enemy_rating, lost_fleet_rating, monster_rating)
                 sys_status['enemy_threat'] = int(max(enemy_rating, 2*lost_fleet_rating - monster_rating))  # does NOT include mobile monsters
                 sys_status['monsterThreat'] = monster_rating
                 sys_status['totalThreat'] = FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth])
@@ -509,12 +509,12 @@ class AIstate(object):
             sys_status['3jump_ring'] = jump3ring
             sys_status['4jump_ring'] = jump4ring
             threat, max_threat, myrating, j1_threats = self.area_ratings(neighbors,
-                         ref_sys_name = "neighbors " + str(this_system)) if verbose else self.area_ratings(neighbors)
+                         ref_sys_name="neighbors " + str(this_system)) if verbose else self.area_ratings(neighbors)
             sys_status['neighborThreat'] = threat
             sys_status['max_neighbor_threat'] = max_threat
             sys_status['my_neighbor_rating'] = myrating
             threat, max_threat, myrating, j2_threats = self.area_ratings(jump2ring,
-                         ref_sys_name = "jump2 " + str(this_system)) if verbose else self.area_ratings(jump2ring)
+                         ref_sys_name="jump2 " + str(this_system)) if verbose else self.area_ratings(jump2ring)
             sys_status['jump2_threat'] = threat
             sys_status['my_jump2_rating'] = myrating
             threat, max_threat, myrating, j3_threats = self.area_ratings(jump3ring)
@@ -529,7 +529,7 @@ class AIstate(object):
             # sys_status['jump4_threat'] = threat
             # sys_status['my_jump4_rating'] = myrating
 
-    def area_ratings(self, system_ids, ref_sys_name = None):
+    def area_ratings(self, system_ids, ref_sys_name=None):
         """Returns (fleet_threat, max_threat, myFleetRating, threat_fleets) compiled over a group of systems."""
         max_threat = 0
         threat = 0
@@ -550,7 +550,7 @@ class AIstate(object):
         if ref_sys_name:
             print "Area ratings for %s  ; calc1 %.1f  calc2 %.1f" % (ref_sys_name, threat)
             for sys_id, fthreat, lft in threat_detail:
-                print "\t %20s: fleet threat %6.1f, fleets: %s" %(str(fo.getUniverse().getSystem(sys_id)), fthreat, lft)
+                print "\t %20s: fleet threat %6.1f, fleets: %s" % (str(fo.getUniverse().getSystem(sys_id)), fthreat, lft)
         return threat, max_threat, myrating, threat_fleets
 
     def after_turn_cleanup(self):
@@ -679,7 +679,7 @@ class AIstate(object):
             summary.setdefault(ship_summary, [0])[0] += 1  # increment tally of ships with this summary profile
             nships += 1
         fleet_summary_tuples = [(v[0], k) for k, v in summary.items()]
-        return {'overall': attack*health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships, 'summary': fleet_summary_tuples}
+        return {'overall': attack * health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships, 'summary': fleet_summary_tuples}
 
     def old_rate_fleet(self, fleet_id):
         universe = fo.getUniverse()
@@ -702,7 +702,7 @@ class AIstate(object):
             attack += stats['attack']
             health += (stats['structure'] + stats['shields'])
             nships += 1
-        return {'overall': attack*health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships}
+        return {'overall': attack * health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships}
 
     def get_rating(self, fleet_id, force_new=False, enemy_stats=None):
         """Returns a dict with various rating info."""
@@ -744,7 +744,6 @@ class AIstate(object):
         """
         weight = {'NO': 0.0, 'BAD': 0.5, '': 1.0, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}.get(grade, 1.0)
         return troops * weight
-
 
     def weight_attacks(self, attacks, grade):
         """Re-weights attacks based on species piloting grade."""
@@ -797,7 +796,7 @@ class AIstate(object):
                 attack_net = max(sum([num * max(0, a_key - myshields) for a_key, num in myattacks.items()]), 0.1 * attack_total)  # TODO: reconsider capping at 10-fold boost
                 # attack_diff = attack_total - attack_net
                 if attack_net > 0:  # will be unless no attacks at all, due to above calc
-                    shield_boost = mystructure * ((attack_total / attack_net)-1)
+                    shield_boost = mystructure * ((attack_total / attack_net) - 1)
                 else:
                     shield_boost = 0
                 structure_tally += count * (mystructure + shield_boost)  # uses num of my attacks for proxy calc of structure help from shield
@@ -814,7 +813,7 @@ class AIstate(object):
             attack_net = max(sum([num * max(0, a_key - myshields) for a_key, num in e_attacks.items()]), 0.1 * attack_total)  # TODO: reconsider approach
             # attack_diff = attack_total - attack_net
             if attack_net > 0:  # will be unless no attacks at all, due to above calc
-                shield_boost = mystructure * ((attack_total / attack_net)-1)
+                shield_boost = mystructure * ((attack_total / attack_net) - 1)
             else:
                 shield_boost = 0
             structure_tally += thisweight * (mystructure + shield_boost) 
@@ -916,7 +915,7 @@ class AIstate(object):
                           AIFleetMissionType.FLEET_MISSION_INVASION
                           ]:
                 this_rating = self.get_rating(fleet_id)
-                if float(this_rating.get('overall', 0))/this_rating.get('nships', 1) >= 0.5 * MilitaryAI.cur_best_mil_ship_rating():
+                if float(this_rating.get('overall', 0)) / this_rating.get('nships', 1) >= 0.5 * MilitaryAI.cur_best_mil_ship_rating():
                     make_aggressive = True
             else:
                 make_aggressive = True
@@ -1052,7 +1051,7 @@ class AIstate(object):
                     if main_mission_type != -1:
                         targets = main_missin.getAITargets(main_mission_type)
                         if targets:
-                            mMT0=targets[0]
+                            mMT0 = targets[0]
                             if isinstance(mMT0.target_type, System):
                                 status['sysID'] = mMT0.target.id  # hmm, but might still be a fair ways from here
         self.shipCount = ship_count

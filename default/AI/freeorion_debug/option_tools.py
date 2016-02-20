@@ -64,7 +64,7 @@ def _parse_options():
             config = _create_default_config_file("")
 
     option_path = _get_option_file_path()
-    #if not os.path.exists(option_path):
+    # if not os.path.exists(option_path):
     #    raise Exception('Error, option path "%s" does not exists.' % option_path)
 
     # read the defaults and then the specified config path

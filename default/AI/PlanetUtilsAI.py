@@ -7,6 +7,7 @@ from freeorion_tools import print_error
 def safe_name(univ_object):
     return (univ_object and univ_object.name) or "?"
 
+
 def sys_name_ids(sys_ids):
     """
     Get list of text representing pairs system name and system id.
@@ -25,6 +26,7 @@ def planet_name_ids(planet_ids):
     """
     universe = fo.getUniverse()
     return [fo.to_str('P', planet_id, safe_name(universe.getPlanet(planet_id))) for planet_id in planet_ids]
+
 
 def get_capital():
     """

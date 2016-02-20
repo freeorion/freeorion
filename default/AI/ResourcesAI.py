@@ -138,7 +138,7 @@ def assess_protection_focus(pid):
     sys_status = foAI.foAIstate.systemStatus.get(this_planet.systemID, {})
     threat_from_supply = (0.25 * foAI.foAIstate.empire_standard_enemy_rating *
                           min(2, len(sys_status.get('enemies_nearly_supplied', []))))
-    print "Planet %s has regional+supply threat of %.1f" % ('P_%d<%s>'%(pid, this_planet.name), threat_from_supply)
+    print "Planet %s has regional+supply threat of %.1f" % ('P_%d<%s>' % (pid, this_planet.name), threat_from_supply)
     regional_threat = sys_status.get('regional_threat', 0) + threat_from_supply
     if not regional_threat:  # no need for protection
         if currentFocus[pid] == PFocus:
@@ -154,7 +154,7 @@ def assess_protection_focus(pid):
         if currentFocus[pid] == PFocus:
             print "Advising dropping Protection Focus at %s due to excessive productivity loss" % this_planet
         return False
-    local_p_defenses = sys_status.get('mydefenses', {}).get('overall',0)
+    local_p_defenses = sys_status.get('mydefenses', {}).get('overall', 0)
     # TODO have adjusted_p_defenses take other in-system planets into account
     adjusted_p_defenses = local_p_defenses * (1.0 if currentFocus[pid] != PFocus else 0.5)
     local_fleet_rating = sys_status.get('myFleetRating', 0)
@@ -174,7 +174,7 @@ def assess_protection_focus(pid):
     if (fleet_threat and  # i.e., an enemy is sitting on us
               (currentFocus[pid] != PFocus or  # too late to start protection TODO: but maybe regen worth it
               # protection forcus only useful here if it maintains an elevated level
-              all([AIDependencies.PROT_FOCUS_MULTIPLIER * a <= b for a,b in def_meter_pairs]))):
+              all([AIDependencies.PROT_FOCUS_MULTIPLIER * a <= b for a, b in def_meter_pairs]))):
         use_protection = False
         reason = "A"
     elif ((currentFocus[pid] != PFocus and cur_shield < max_shield - 2 and
@@ -207,9 +207,9 @@ def assess_protection_focus(pid):
         use_protection = False
         reason = "F"
     elif (regional_threat <= FleetUtilsAI.combine_ratings(local_fleet_rating, adjusted_p_defenses) and
-              safety_factor * regional_threat <=
-              FleetUtilsAI.combine_ratings_list([my_neighbor_rating, local_fleet_rating, adjusted_p_defenses])  and
-              local_production_diff > 5):
+          safety_factor * regional_threat <=
+          FleetUtilsAI.combine_ratings_list([my_neighbor_rating, local_fleet_rating, adjusted_p_defenses]) and
+          local_production_diff > 5):
         use_protection = False
         reason = "G"
     if use_protection or currentFocus[pid] == PFocus:
@@ -218,6 +218,7 @@ def assess_protection_focus(pid):
             ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
             local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
     return use_protection
+
 
 def set_planet_resource_foci():
     """set resource focus of planets """
@@ -250,7 +251,7 @@ def set_planet_resource_foci():
         planetMap.clear()
         planetMap.update(zip(empirePlanetIDs, planets))
         if useGrowth:
-            #TODO: also consider potential future benefit re currently unpopulated planets
+            # TODO: also consider potential future benefit re currently unpopulated planets
             for metab, metabIncPop in ColonisationAI.empire_metabolisms.items():
                 for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.available_growth_specials]:
                     rankedPlanets = []

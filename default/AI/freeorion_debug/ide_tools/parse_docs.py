@@ -48,7 +48,7 @@ normalization_dict = {'empire': 'empire_object',
 
 
 def normalize_name(tp):
-    if not tp in normalization_dict:
+    if tp not in normalization_dict:
         return 'arg'
     else:
         return normalization_dict[tp]
