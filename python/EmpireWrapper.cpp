@@ -179,10 +179,11 @@ namespace {
     }
 
     std::map<int,int> supplyProjectionsP(const Empire& empire, int min_tracked_supply, bool obstructed) {
-        std::map< int, std::set< int > >    starlanes = empire.KnownStarlanes();
-        std::map<int, int>                  supply_system_ranges(empire.SystemSupplyRanges());
-        std::map<int, int>                  propegating_supply_ranges;
-        const std::set<int>&                supply_unobstructed_systems = empire.SupplyUnobstructedSystems();
+        std::map<int, std::set<int> >   starlanes = empire.KnownStarlanes();
+        std::map<int, float>            supply_system_ranges(empire.SystemSupplyRanges());
+        std::map<int, int>              propegating_supply_ranges;
+        const std::set<int>&            supply_unobstructed_systems = empire.SupplyUnobstructedSystems();
+
         // taking the following sleet_supplyable info into account is necessary to reliably make negative
         // supply projections for an enemy empire into the client empire's territory
         if (min_tracked_supply < 0) {

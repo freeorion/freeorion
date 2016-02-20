@@ -48,10 +48,7 @@ public:
     /** \name Mutators */ //@{
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane
-      * traversals used to do so, using the indicated \a starlanes but subject
-      * to obstruction of supply by various factors. */
-    void    Update(const std::map<int, std::set<int> >& starlanes);
-    /** Updates supply using this empire's set of known starlanes. */
+      * traversals used to do so. */
     void    Update();
     //@}
 
@@ -66,11 +63,12 @@ private:
         by range, but by something blocking its flow. */
     std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_obstructed_traversals;
 
-    /** ids of systems where fleets can be resupplied. */
+    /** ids of systems where fleets can be resupplied. indexed by empire id. */
     std::map<int, std::set<int> >                   m_fleet_supplyable_system_ids;
 
     /** sets of system ids that are connected by supply lines and are able to
-        share resources between systems or between objects in systems. */
+        share resources between systems or between objects in systems. indexed
+        by empire id. */
     std::map<int, std::set<std::set<int> > >        m_resource_supply_groups;
 };
 

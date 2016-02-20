@@ -363,7 +363,7 @@ public:
 
     /** Returns distance in jumps away from each system that this empire can
       * propegate supply. */
-    const std::map<int, int>&               SystemSupplyRanges() const;
+    const std::map<int, float>&             SystemSupplyRanges() const;
 
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
@@ -645,10 +645,10 @@ private:
     std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
     // cached calculation results, returned by reference
-    std::map<int, int>              m_supply_system_ranges;                 ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
-    std::set<int>                   m_supply_unobstructed_systems;          ///< ids of system that don't block supply from flowing
-    std::map<int, std::set<int> >   m_available_system_exit_lanes;          ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
-    std::map<int, std::set<int> >   m_pending_system_exit_lanes;            ///< pending updates to m_available_system_exit_lanes
+    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
+    std::map<int, std::set<int> >   m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
+    std::map<int, std::set<int> >   m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes
 
     friend class boost::serialization::access;
     Empire();
