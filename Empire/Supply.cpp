@@ -7,6 +7,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../util/AppInterface.h"
+#include "../util/Logger.h"
 
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -232,11 +233,8 @@ void SupplyManager::Update() {
         }
     }
 
-    // spread supply out from sources by "diffusion" like process, along unobjstructed
-    // starlanes, until the range is exhausted or spreading supply bumps into other
-    // empires' spreading supply. when multiple empires' supply spreads meet up, the
-    // higher-ranged supply takes precendence for a system. if two empires are evenly
-    // matched in a system, then neither supplies (to) it.
+    // spread supply out from sources by "diffusion" like process, along unobstructed
+    // starlanes, until the range is exhausted.
     std::set<int> systems_with_supply_in_them;
     for (int iteration = 0; iteration <= static_cast<int>(max_range); ++iteration) {
         // initialize next iteration with current supply distribution
@@ -295,15 +293,28 @@ void SupplyManager::Update() {
         empire_propegating_supply_ranges = empire_propegating_supply_ranges_next;
     }
 
-    // pass over all empire-supplied systems, removing supply and traversals for all
+    // pass over all empire-supplied systems, removing supply for all
     // but the empire with the highest supply range in each system
     for (std::set<int>::const_iterator sys_it = systems_with_supply_in_them.begin();
          sys_it != systems_with_supply_in_them.end(); ++sys_it)
     {
         int sys_id = *sys_it;
-        std::map<float, std::set<int> > empire_ranges_here;
+
+        // DEBUG
+        DebugLogger() << "initial empires ranges at system " << sys_id << ":";
+        for (std::map<int, std::map<int, float> >::iterator empire_it = empire_propegating_supply_ranges.begin();
+             empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
+        {
+            std::map<int, float>& system_ranges = empire_it->second;
+            std::map<int, float>::iterator range_it = system_ranges.find(sys_id);
+            if (range_it != system_ranges.end())
+                DebugLogger() << empire_it->first << " : " << range_it->second;
+        }
+        // END DEBUG
+
 
         // sort empires by range in this system
+        std::map<float, std::set<int> > empire_ranges_here;
         for (std::map<int, std::map<int, float> >::const_iterator empire_it = empire_propegating_supply_ranges.begin();
              empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
         {
@@ -368,15 +379,15 @@ void SupplyManager::Update() {
         if (empire_ranges_here.size() == 1 && empire_ranges_here.begin()->second.size() < 2)
             continue;   // only one empire has supply here
 
-        // set to zero the range for all empires except the top-ranged empire here
-        // if there is a tie, set all to zero
+        // remove supply for all empires except the top-ranged empire here
+        // if there is a tie for top-ranged, remove all
         std::map<float, std::set<int> >::reverse_iterator range_empire_it = empire_ranges_here.rbegin();
-
         int top_range_empire_id = ALL_EMPIRES;
         if (range_empire_it->second.size() == 1)
             top_range_empire_id = *(range_empire_it->second.begin());
+        DebugLogger() << "top ranged empire here: " << top_range_empire_id;
 
-        // remove range entries and traversals for all but top empire
+        // remove range entries and traversals for all but the top empire
         // (or all empires if there is no single top empire)
         for (std::map<int, std::map<int, float> >::iterator empire_it = empire_propegating_supply_ranges.begin();
              empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
@@ -387,14 +398,18 @@ void SupplyManager::Update() {
 
             // remove from range entry...
             std::map<int, float>& empire_ranges = empire_it->second;
-            empire_ranges.erase(empire_id);
+            empire_ranges.erase(sys_id);
 
-            // remove from traversals involving this system for this empire
+            // DEBUG
+            DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
+            // DEBUG
+
             std::set<std::pair<int, int> >& lane_traversals = m_supply_starlane_traversals[empire_id];
             std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;
-
             std::set<std::pair<int, int> >& obstructed_traversals = m_supply_starlane_obstructed_traversals[empire_id];
             std::set<std::pair<int, int> > obstrcuted_traversals_initial = obstructed_traversals;
+
+            // remove from traversals involving this system for this empire
             for (std::set<std::pair<int, int> >::iterator traversals_it = lane_traversals_initial.begin();
                  traversals_it != lane_traversals_initial.end(); ++traversals_it)
             {
@@ -412,7 +427,35 @@ void SupplyManager::Update() {
                     obstructed_traversals.erase(std::make_pair(traversals_it->first, traversals_it->second));
             }
         }
+
+        // DEBUG
+        DebugLogger() << "after culling empires ranges at system " << sys_id << ":";
+        for (std::map<int, std::map<int, float> >::iterator empire_it = empire_propegating_supply_ranges.begin();
+             empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
+        {
+            std::map<int, float>& system_ranges = empire_it->second;
+            std::map<int, float>::iterator range_it = system_ranges.find(sys_id);
+            if (range_it != system_ranges.end())
+                DebugLogger() << empire_it->first << " : " << range_it->second;
+        }
+        // END DEBUG
     }
+
+    // DEBUG
+    DebugLogger() << "SuppolyManager::Update: after removing conflicts, empires can provide supply to the following system ids:";
+    for (std::map<int, std::map<int, float> >::iterator empire_it = empire_propegating_supply_ranges.begin();
+         empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
+    {
+        int empire_id = empire_it->first;
+        std::stringstream ss;
+        for (std::map<int, float>::iterator sys_it = empire_it->second.begin();
+             sys_it != empire_it->second.end(); ++sys_it)
+        {
+            ss << sys_it->first << " (" << sys_it->second << "),  ";
+        }
+        DebugLogger() << "empire: " << empire_id << ":  " << ss.str();
+    }
+    // END DEBUG
 
     // record which systems are fleet supplyable by each empire (after resolving conflicts in each system)
     for (std::map<int, std::map<int, float> >::const_iterator empire_it = empire_propegating_supply_ranges.begin();
