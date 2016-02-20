@@ -276,15 +276,19 @@ void SupplyManager::Update() {
                         m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
                         continue;
                     }
-                    // propegation can occur, get adjacent system's current range
+                    // propegation not obstructed.
+
+                    // add traversal (regardless of whether it is needed to
+                    // increase the adjacent system's range
+                    m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+
+                    // get adjacent system's current range
                     float adj_sys_existing_range = empire_propegating_supply_ranges[empire_id][lane_end_sys_id];
 
-                    // is the supply at the adjacent system equal to or bigger than (the source after propegating)
-                    if (range_after_one_more_jump >= adj_sys_existing_range) {  // allow = to fill in equipotential transversals
+                    // if propegating supply would increase the range of the
+                    // adjacent system, do so.
+                    if (range_after_one_more_jump > adj_sys_existing_range)
                         empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_after_one_more_jump;
-                        m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-                        // done later: remove traversals blocked by opposing supply
-                    }
                 }
             }
         }
