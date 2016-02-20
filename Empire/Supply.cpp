@@ -409,21 +409,25 @@ void SupplyManager::Update() {
             std::set<std::pair<int, int> >& obstructed_traversals = m_supply_starlane_obstructed_traversals[empire_id];
             std::set<std::pair<int, int> > obstrcuted_traversals_initial = obstructed_traversals;
 
-            // remove from traversals involving this system for this empire
+            // remove from traversals departing from or going to this system for this empire,
+            // and set any traversals going to this system as obstructed
             for (std::set<std::pair<int, int> >::iterator traversals_it = lane_traversals_initial.begin();
                  traversals_it != lane_traversals_initial.end(); ++traversals_it)
             {
-                if (traversals_it->first == sys_id || traversals_it->second == sys_id) {
-                    lane_traversals.erase(std::make_pair(traversals_it->first, traversals_it->second));
-                    obstructed_traversals.insert(std::make_pair(traversals_it->first, traversals_it->second));
+                if (traversals_it->first == sys_id) {
+                    lane_traversals.erase(std::make_pair(sys_id, traversals_it->second));
+                }
+                if (traversals_it->second == sys_id) {
+                    lane_traversals.erase(std::make_pair(traversals_it->first, sys_id));
+                    obstructed_traversals.insert(std::make_pair(traversals_it->first, sys_id));
                 }
             }
 
-            // remove from obstructed traverals involving this system for this empire
+            // remove from obstructed traverals departing from this system
             for (std::set<std::pair<int, int> >::iterator traversals_it = obstrcuted_traversals_initial.begin();
                  traversals_it != obstrcuted_traversals_initial.end(); ++traversals_it)
             {
-                if (traversals_it->first == sys_id /*|| traversals_it->second == sys_id*/)
+                if (traversals_it->first == sys_id)
                     obstructed_traversals.erase(std::make_pair(traversals_it->first, traversals_it->second));
             }
         }
