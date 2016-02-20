@@ -1731,9 +1731,19 @@ void MapWnd::RenderSystems() {
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (TemporaryPtr<const System> system = GetSystem(it->first))
-                    if (system->NumStarlanes() > 0)
+                if (TemporaryPtr<const System> system = GetSystem(it->first)) {
+                    if (system->NumStarlanes() > 0) {
+                        glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
+
+                        int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(it->first);
+                        if (empire_id != ALL_EMPIRES) {
+                            if (Empire* empire = GetEmpire(empire_id)) {
+                                glColor(empire->Color());
+                            }
+                        }
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+                    }
+                }
             }
         }
 

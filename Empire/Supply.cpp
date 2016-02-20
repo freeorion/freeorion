@@ -56,11 +56,21 @@ const std::set<std::pair<int, int> >& SupplyManager::SupplyObstructedStarlaneTra
 const std::map<int, std::set<int> >& SupplyManager::FleetSupplyableSystemIDs() const
 { return m_fleet_supplyable_system_ids; }
 
-const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) {
+const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) const {
     std::map<int, std::set<int> >::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it != m_fleet_supplyable_system_ids.end())
         return it->second;
     return EMPTY_INT_SET;
+}
+
+int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
+    for (std::map<int, std::set<int> >::const_iterator it = m_fleet_supplyable_system_ids.begin();
+         it != m_fleet_supplyable_system_ids.end(); ++it)
+    {
+        if (it->second.find(system_id) != it->second.end())
+            return it->first;
+    }
+    return ALL_EMPIRES;
 }
 
 const std::map<int, std::set<std::set<int> > >& SupplyManager::ResourceSupplyGroups() const
