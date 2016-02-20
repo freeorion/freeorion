@@ -247,18 +247,6 @@ namespace {
             parse::skipper_type
         > create_field_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Effect::EffectBase* (),
-            qi::locals<
-                std::string,
-                std::string,
-                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >,
-                EmpireAffiliationType
-            >,
-            parse::skipper_type
-        > generate_sitrep_message_rule;
-
         create_planet_rule              create_planet;
         create_building_rule            create_building;
         create_ship_rule                create_ship_1;
