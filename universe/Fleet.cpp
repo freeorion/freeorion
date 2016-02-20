@@ -23,7 +23,7 @@ namespace {
 
     bool SystemHasNoVisibleStarlanes(int system_id, int empire_id)
     { return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id); }
-    
+
     template<typename IT>
     double PathLength (const IT& begin, const IT& end) {
         if (begin == end) {
@@ -36,19 +36,19 @@ namespace {
                 
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
-                    
+
                     TemporaryPtr<const System> cur_sys = GetSystem(*it);
                 if (!cur_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *it;
                     return distance;
                 }
-                
+
                 TemporaryPtr<const System> next_sys = GetSystem(*next_it);
                 if (!next_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
                     return distance;
                 }
-                
+
                 double dist_x = next_sys->X() - cur_sys->X();
                 double dist_y = next_sys->Y() - cur_sys->Y();
                 distance += std::sqrt(dist_x*dist_x + dist_y*dist_y);

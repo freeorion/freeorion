@@ -12,6 +12,7 @@ const std::string& TextForGalaxySetupSetting(GalaxySetupOption gso) {
         case GALAXY_SETUP_LOW:      return UserString("GSETUP_LOW");
         case GALAXY_SETUP_MEDIUM:   return UserString("GSETUP_MEDIUM");
         case GALAXY_SETUP_HIGH:     return UserString("GSETUP_HIGH");
+        case GALAXY_SETUP_RANDOM:   return UserString("GSETUP_RANDOM");
         default:                    return EMPTY_STRING;
     }
 }

@@ -141,7 +141,7 @@ GG_ENUM(Shape,
     BOX,            ///< a rectangular shaped galaxy
     IRREGULAR,      ///< an irregular galaxy
     RING,           ///< a ring galaxy
-    RANDOM,         ///< a random one of the above
+    RANDOM,         ///< a random one of the other shapes
     GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
 )
 
@@ -164,6 +164,7 @@ GG_ENUM(GalaxySetupOption,
     GALAXY_SETUP_LOW,
     GALAXY_SETUP_MEDIUM,
     GALAXY_SETUP_HIGH,
+    GALAXY_SETUP_RANDOM,
     NUM_GALAXY_SETUP_OPTIONS
 )
 

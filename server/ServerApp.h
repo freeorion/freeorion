@@ -76,7 +76,7 @@ public:
     int     CurrentTurn() const {return m_current_turn;}   ///< returns current turn of the server
 
     /** Returns the galaxy setup data used for the current game */
-    const GalaxySetupData&  GetGalaxySetupData() const {return m_galaxy_setup_data; }
+    const GalaxySetupData&  GetGalaxySetupData() const { return m_galaxy_setup_data; }
 
     /** Returns the empire ID for the player with ID \a player_id */
     int     PlayerEmpireID(int player_id) const;

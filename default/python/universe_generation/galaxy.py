@@ -7,12 +7,6 @@ import util
 import universe_tables
 
 
-# tuple of galaxy shapes to randomly choose from when shape is "random"
-shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galaxyShape.spiral4,
-          fo.galaxyShape.cluster,    fo.galaxyShape.elliptical,  fo.galaxyShape.disc,
-          fo.galaxyShape.ring,       fo.galaxyShape.box,         fo.galaxyShape.irregular)
-
-
 class AdjacencyGrid:
     def __init__(self, universe_width):
         self.min_dist = universe_tables.MIN_SYSTEM_SEPARATION
@@ -443,9 +437,6 @@ def calc_star_system_positions(gsd):
     number of systems and width
     Uses universe generator helper functions provided by the API
     """
-    # if shape is "random", randomly pick a galaxy shape
-    if gsd.shape == fo.galaxyShape.random:
-        gsd.shape = choice(shapes)
 
     # calculate typical width for universe based on number of systems
     width = calc_universe_width(gsd.shape, gsd.size)
