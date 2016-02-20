@@ -257,10 +257,13 @@ namespace FreeOrionPython {
         // Container Wrappers //
         ////////////////////////
         class_<std::map<int, int> >("IntIntMap")
-            .def(boost::python::map_indexing_suite<std::map<int, int>, true >())
+            .def(boost::python::map_indexing_suite<std::map<int, int>, true>())
         ;
         class_<std::map<int, double> >("IntDblMap")
-            .def(boost::python::map_indexing_suite<std::map<int, double>,true >())
+            .def(boost::python::map_indexing_suite<std::map<int, double>, true>())
+        ;
+        class_<std::map<int, float> >("IntFltMap")
+            .def(boost::python::map_indexing_suite<std::map<int, float>, true>())
         ;
         class_<std::map<Visibility,int> >("VisibilityIntMap")
             .def(boost::python::map_indexing_suite<std::map<Visibility, int>, true>())
