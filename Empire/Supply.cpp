@@ -176,7 +176,7 @@ void SupplyManager::Update() {
                 float range = prev_sys_it->second;
                 if (range < 1.0f)
                     continue;   // need at least 1.0 range to propegate further.
-                float range_at_adj_sys = range - 1.0f;  // what to set adjacent systems' ranges to (at least)
+                float range_after_one_more_jump = range - 1.0f; // what to set adjacent systems' ranges to (at least)
 
                 // what starlanes can be used to propegate supply?
                 int system_id = prev_sys_it->first;
@@ -187,20 +187,20 @@ void SupplyManager::Update() {
                      lane_it != adjacent_systems.end(); ++lane_it)
                 {
                     int lane_end_sys_id = *lane_it;
-                    float adj_sys_rng = empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id];
+                    // is propegation to the adjacent system obstructed?
+                    if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) {
+                        // propegation obstructed!
+                        m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                        continue;
+                    }
+                    // propegation can occur, get adjacent system's current range
+                    float adj_sys_existing_range = empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id];
 
-                    // is the supply at the adjacent system bigger than the source?
-                    if (range_at_adj_sys > adj_sys_rng) {
-                        // is this system obstructed?
-                        if (unobstructed_systems.find(lane_end_sys_id) != unobstructed_systems.end()) {
-                            // propegation obstructed!
-                            m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-                            continue;
-                        }
-                        // system not obstructed, record updated supply and the traversal
-                        empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_at_adj_sys;
+                    // is the supply at the adjacent system bigger than (the source after propegating)
+                    if (range_after_one_more_jump > adj_sys_existing_range) {
+                        empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_after_one_more_jump;
                         m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-                        // todo later: remove traversals blocked by opposing supply
+                        // done later: remove traversals blocked by opposing supply
                     }
                 }
             }
@@ -232,7 +232,7 @@ void SupplyManager::Update() {
         // set to zero the range for all empires except the top, or all if there are
         // multiple empires tied for top range in this system
         std::map<float, std::set<int> >::reverse_iterator range_empire_it = empire_ranges_here.rbegin();
-        if (range_empire_it == empire_ranges_here.rend())
+        if (range_empire_it == empire_ranges_here.rend())   // todo: test for empty or size one maps, abort early
             continue;   // nothing to do...
         int top_range_empire_id = ALL_EMPIRES;
         if (range_empire_it->second.size() == 1)
