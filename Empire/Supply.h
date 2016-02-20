@@ -9,6 +9,8 @@
 #include <map>
 #include <set>
 
+extern const int ALL_EMPIRES;
+
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
 public:
@@ -43,7 +45,9 @@ public:
 
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
-    bool    SystemHasFleetSupply(int system_id, int empire_id) const;
+    bool        SystemHasFleetSupply(int system_id, int empire_id) const;
+
+    std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}
 
     /** \name Mutators */ //@{

@@ -2307,6 +2307,8 @@ void MapWnd::InitTurn() {
     DebugLogger() << "Initializing turn " << turn_number;
     ScopedTimer init_timer("MapWnd::InitTurn", true);
 
+    DebugLogger() << GetSupplyManager().Dump();
+
     Universe& universe = GetUniverse();
     const ObjectMap& objects = Objects();
 
