@@ -2755,7 +2755,7 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_circle_vertices.clear();
 }
 
-std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
+std::vector<int> MapWnd::GetLeastJumps(int start_sys_it, int end_sys_it, const std::set<int>& resGroup,
                                        const std::set<std::pair<int, int> >& supplylanes,
                                        const ObjectMap& objMap)
 {
@@ -2763,14 +2763,14 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
     std::map<int,int> ancestor;
     std::deque<int> tryNext;
     std::vector<int> path;
-    path.push_back(startSys);
-    if (startSys==endSys)
+    path.push_back(start_sys_it);
+    if (start_sys_it==end_sys_it)
         return path;
 
     for (std::set<int>::const_iterator sysIt = resGroup.begin(); sysIt!=resGroup.end(); sysIt++)
         ancestor[*sysIt] = -1;
-    ancestor[startSys] = startSys;
-    tryNext.push_back(startSys);
+    ancestor[start_sys_it] = start_sys_it;
+    tryNext.push_back(start_sys_it);
 
     while (!tryNext.empty() ) {
         int sysID = tryNext.front();
@@ -2790,7 +2790,7 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
                 continue;
             if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
                 ancestor[newSys] = sysID;
-                if (newSys==endSys) {
+                if (newSys==end_sys_it) {
                     int iSys = newSys;
                     while ((ancestor[iSys] !=-1)&&( ancestor[iSys] != iSys )) {
                         path.push_back(iSys);
@@ -2824,17 +2824,17 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const Empire* this_client_empire = GetEmpire(client_empire_id);
-    std::set<int> underAllocResSys;
+    std::set<int> under_alloc_res_sys;
 
-    std::map<std::set<int>, std::set<int> > resPoolSystems;//map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
-    std::map<std::set<int>, std::set<int> > resPoolToGroupMap;//map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
-    std::map<std::set<int>, std::set<int> > resGroupCores;// map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-    std::set<int> resGrpCoreMembers;
-    std::map<int, std::set<int> > memberToPool;
-    std::set<int> underAllocResGrpCoreMembers;
+    std::map<std::set<int>, std::set<int> > res_pool_systems;       // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
+    std::map<std::set<int>, std::set<int> > res_pool_to_group_map;  // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
+    std::map<std::set<int>, std::set<int> > res_group_cores;        // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    std::set<int>                           res_group_core_members;
+    std::map<int, std::set<int> >           member_to_pool;
+    std::set<int>                           under_alloc_res_grp_core_members;
 
     if (this_client_empire) {
-        const std::set<std::set<int> >& resGroups = this_client_empire->ResourceSupplyGroups();
+        const std::set<std::set<int> >& res_groups = GetSupplyManager().ResourceSupplyGroups(client_empire_id);
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
         std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
         std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
@@ -2844,10 +2844,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             if (group_pp < 1e-4f)
                 continue;
 
-            std::string thisPool = "( ";
-            for (std::set<int>::const_iterator objIt = it->first.begin(); objIt != it->first.end(); ++objIt) {
-                int object_id = *objIt;
-                thisPool += boost::lexical_cast<std::string>(object_id) +", ";
+            std::string this_pool = "( ";
+            for (std::set<int>::const_iterator obj_it = it->first.begin(); obj_it != it->first.end(); ++obj_it) {
+                int object_id = *obj_it;
+                this_pool += boost::lexical_cast<std::string>(object_id) +", ";
 
                 TemporaryPtr<const Planet> planet = GetPlanet(object_id);
                 if (!planet)
@@ -2856,63 +2856,81 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                resPoolSystems[it->first].insert(system_id);
+                res_pool_systems[it->first].insert(system_id);
 
                 if (group_pp > allocatedPP[it->first] + 0.05)
-                    underAllocResSys.insert(system_id);
+                    under_alloc_res_sys.insert(system_id);
             }
-            thisPool += ")";
-            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << it->second << " PP available";
-            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << allocatedPP[it->first] << " PP allocated";
+            this_pool += ")";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocatedPP[it->first] << " PP allocated";
         }
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
-        for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
-            for (std::set<std::set<int> >::const_iterator rgIt = resGroups.begin(); rgIt != resGroups.end(); ++rgIt) {
-                bool placedPool = false;
-                for (std::set<int>::iterator sysIt=resPoolSysIt->second.begin(); sysIt!=resPoolSysIt->second.end(); sysIt++) {
-                    if (rgIt->find(*sysIt) != rgIt->end()) {
-                        resPoolToGroupMap[resPoolSysIt->first] = *rgIt;
-                        placedPool = true;
+        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
+        {
+            for (std::set<std::set<int> >::const_iterator rg_it = res_groups.begin(); rg_it != res_groups.end(); ++rg_it) {
+                bool placed_pool = false;
+                for (std::set<int>::iterator sysIt=res_pool_sys_it->second.begin(); sysIt!=res_pool_sys_it->second.end(); sysIt++) {
+                    if (rg_it->find(*sysIt) != rg_it->end()) {
+                        res_pool_to_group_map[res_pool_sys_it->first] = *rg_it;
+                        placed_pool = true;
                         break;
                     }
                 }
-                if (placedPool)
+                if (placed_pool)
                     break;
             }
-        }//TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
-        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
+        }
+        // TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
+        // DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
 
-        std::set<std::pair<int, int> > resource_supply_lanes (this_client_empire->SupplyStarlaneTraversals()) ;
-        for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
-            std::string thisPoolCtrs = "( ";
-            for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != resPoolSysIt->second.end(); startSys++)
-                thisPoolCtrs += boost::lexical_cast<std::string>(*startSys) +", ";
-            thisPoolCtrs += ")";
-            //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << thisPoolCtrs << ")";
+        std::set<std::pair<int, int> > resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
+        {
+            std::string this_pool_ctrs = "( ";
+            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
+                 start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
+            {
+                this_pool_ctrs += boost::lexical_cast<std::string>(*start_sys_it) +", ";
+            }
+            this_pool_ctrs += ")";
+            //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
 
-            resGroupCores[ resPoolSysIt->first ].insert(*(resPoolSysIt->second.begin())); // if pool only has one sys, ensure it is added to core
-            resGrpCoreMembers.insert(*(resPoolSysIt->second.begin()));
-            std::set<int>::iterator lastSys = resPoolSysIt->second.end();
+            res_group_cores[res_pool_sys_it->first].insert(*(res_pool_sys_it->second.begin())); // if pool only has one sys, ensure it is added to core
+            res_group_core_members.insert(*(res_pool_sys_it->second.begin()));
+            std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
             lastSys--;
-            for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != lastSys; startSys++) {//ok since resPoolSysIt->second cannot be empty
-                std::set<int>::iterator nextSys = startSys;
-                for (std::set<int>::iterator endSys=++nextSys; endSys!=resPoolSysIt->second.end(); endSys++) {
-                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*startSys) << " to "<< (*endSys) ;
-                    std::vector<int> path = GetLeastJumps(*startSys, *endSys, resPoolToGroupMap[resPoolSysIt->first], resource_supply_lanes, Objects());
+            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
+                 start_sys_it != lastSys; start_sys_it++)
+            {
+                // since res_pool_sys_it->second cannot be empty
+                std::set<int>::iterator next_sys_it = start_sys_it;
+                for (std::set<int>::iterator end_sys_it = ++next_sys_it;
+                     end_sys_it != res_pool_sys_it->second.end(); end_sys_it++)
+                {
+                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
+                    std::vector<int> path = GetLeastJumps(*start_sys_it, *end_sys_it, res_pool_to_group_map[res_pool_sys_it->first],
+                                                          resource_supply_lanes, Objects());
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
-                    for (std::vector<int>::iterator pathSys = path.begin(); pathSys!= path.end(); pathSys++) {
-                        resGroupCores[ resPoolSysIt->first ].insert(*pathSys);
-                        resGrpCoreMembers.insert(*pathSys);
-                        memberToPool[*pathSys] = resPoolSysIt->first;
+                    for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
+                        res_group_cores[ res_pool_sys_it->first ].insert(*path_sys_it);
+                        res_group_core_members.insert(*path_sys_it);
+                        member_to_pool[*path_sys_it] = res_pool_sys_it->first;
                     }
                 }
             }
         }
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
-        for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++)
-            if (underAllocResSys.find( *(resPoolSysIt->second.begin())  ) != underAllocResSys.end())
-                underAllocResGrpCoreMembers.insert( resGroupCores[ resPoolSysIt->first ].begin(), resGroupCores[ resPoolSysIt->first ].end() );
+        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
+        {
+            if (under_alloc_res_sys.find(*(res_pool_sys_it->second.begin())) != under_alloc_res_sys.end())
+                under_alloc_res_grp_core_members.insert(res_group_cores[ res_pool_sys_it->first].begin(),
+                                                        res_group_cores[ res_pool_sys_it->first].end());
+        }
     }
     //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
 
@@ -2977,7 +2995,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
                 for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
                     Empire* empire = empire_it->second;
-                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->SupplyStarlaneTraversals();
+                    const std::set<std::pair<int, int> >& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(empire_it->first);
 
                     //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
 
@@ -3003,7 +3021,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // render half-starlane from the current start_system to the current dest_system?
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
-            if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
+            if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) ==
+                rendered_half_starlanes.end())
+            {
                 // NOTE: this will never find a preexisting half lane   NOTE LATER: I probably wrote that comment, but have no idea what it means...
                 //std::cout << "half lane not found... considering possible half lanes to add" << std::endl;
 
@@ -3012,18 +3032,18 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
                 GG::Clr lane_colour;
-                if ( (this_client_empire) &&(resGrpCoreMembers.find(start_system->ID()) != resGrpCoreMembers.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
+                if ( (this_client_empire) &&(res_group_core_members.find(start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
                     lane_colour = this_client_empire->Color();
                     float indicatorExtent = 0.5f;
-                    if (underAllocResGrpCoreMembers.find(start_system->ID()) != underAllocResGrpCoreMembers.end() ) {
+                    if (under_alloc_res_grp_core_members.find(start_system->ID()) != under_alloc_res_grp_core_members.end() ) {
                         GG::Clr eclr= this_client_empire->Color();
-                        lane_colour = GG::DarkColor( GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
+                        lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
                     /*if ((this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    if (resGroupCores[ memberToPool[start_system->ID()]] != resGroupCores[ memberToPool[dest_system->ID()]])
+                    if (res_group_cores[ member_to_pool[start_system->ID()]] != res_group_cores[ member_to_pool[dest_system->ID()]])
                         indicatorExtent = 0.2f;
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
                                                  lane_endpoints.Y1);
@@ -3034,9 +3054,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     m_RC_starlane_colors.store(lane_colour);
                 }
 
-                for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
+                for (EmpireManager::iterator empire_it = Empires().begin();
+                     empire_it != Empires().end(); ++empire_it)
+                {
                     Empire* empire = empire_it->second;
-                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->SupplyObstructedStarlaneTraversals();
+                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes =
+                        GetSupplyManager().SupplyObstructedStarlaneTraversals(empire_it->first);
 
                     // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
@@ -6159,8 +6182,11 @@ namespace { //helper function for DispatchFleetsExploring
     }
 
     //return the pair (systemID, dist) of the closest supply point.
-    std::pair<int, int> GetNearestSupplyPoint(const Empire *empire, int system_id){
-        std::set<int> supplyable_systems = empire->FleetSupplyableSystemIDs();
+    std::pair<int, int> GetNearestSupplyPoint(const Empire* empire, int system_id) {
+        if (!empire)
+            return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
+
+        std::set<int> supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID());
         std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
         std::set<int> frontier;
         frontier.insert(system_id);
@@ -6215,14 +6241,14 @@ void MapWnd::DispatchFleetsExploring() {
 
     //list all unexplored systems by taking the neighboors of explored systems because ObjectMap does not list them all.
     std::set<int> candidates_unknown_systems;
-    std::set<int> explored_systems = empire->ExploredSystems();
+    const std::set<int>& explored_systems = empire->ExploredSystems();
     candidates_unknown_systems = AddNeighboorsToSet(empire, explored_systems);
     std::set<int> neighboors = AddNeighboorsToSet(empire, candidates_unknown_systems);
     candidates_unknown_systems.insert(neighboors.begin(), neighboors.end());
 
     //list all unknow systems with the distance to the nearest supply available
     std::map<int, int> unknown_systems;
-    std::set<int> supplyable_systems = empire->FleetSupplyableSystemIDs();
+    const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
     for (std::set<int>::iterator it = candidates_unknown_systems.begin();
          it != candidates_unknown_systems.end(); it ++)
     {

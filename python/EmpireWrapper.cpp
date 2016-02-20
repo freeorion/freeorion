@@ -102,102 +102,12 @@ namespace {
                                int                                  min_tracked_supply = 0,
                                bool                                 obstructed = true) // Note: must be called with min_tracked_supply = 0 to give the standard result
     {
-        // store supply range in jumps of all unobstructed systems before
-        // propegation, and add to list of systems to propegate from.
-        std::list<int> propegating_systems_list;
-        for (std::map<int, int>::const_iterator it = supply_system_ranges.begin();
-             it != supply_system_ranges.end(); ++it)
-        {
-            if (!obstructed || (supply_unobstructed_systems.find(it->first) != supply_unobstructed_systems.end()))
-                propegating_supply_ranges.insert(*it);
-            else
-                propegating_supply_ranges[it->first] = min_tracked_supply;
-
-            // add system to list of systems to popegate supply from
-            propegating_systems_list.push_back(it->first);
-        }
-
-        // iterate through list of accessible systems, processing each in order it
-        // was added (like breadth first search) until no systems are left able to
-        // further propregate
-        std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
-        std::list<int>::iterator sys_list_end = propegating_systems_list.end();
-        while (sys_list_it != sys_list_end) {
-            int cur_sys_id = *sys_list_it;
-            int cur_sys_range = propegating_supply_ranges[cur_sys_id];    // range away from this system that supplies can be transported
-
-            if (cur_sys_range <= min_tracked_supply) {
-                // can't propegate supply out a system that has no range if min_tracked_supply is zero;
-                // if min_tracked_supply is negative, then may be able to continue propagating. A negative supply 
-                // number indicates number of jumps to nearest supply
-                ++sys_list_it;
-                continue;
-            }
-
-            // can propegate further, if adjacent systems have smaller supply range
-            // than one less than this system's range
-            std::map<int, std::set<int> >::const_iterator system_it = starlanes.find(cur_sys_id);
-            if (system_it == starlanes.end()) {
-                // no starlanes out of this system
-                ++sys_list_it;
-                continue;
-            }
-
-            const std::set<int>& starlane_ends = system_it->second;
-            for (std::set<int>::const_iterator lane_it = starlane_ends.begin();
-                 lane_it != starlane_ends.end(); ++lane_it)
-            {
-                int lane_end_sys_id = *lane_it;
-
-                if (obstructed && (supply_unobstructed_systems.find(lane_end_sys_id) == supply_unobstructed_systems.end())) {
-                    // can't propegate here
-                    continue;
-                }
-
-                // compare next system's supply range to this system's supply range.  propegate if necessary.
-                std::map<int, int>::const_iterator lane_end_sys_it =
-                    propegating_supply_ranges.find(lane_end_sys_id);
-                if (lane_end_sys_it == propegating_supply_ranges.end() ||
-                    lane_end_sys_it->second <= cur_sys_range)
-                {
-                    // next system has no supply yet, or its range equal to or smaller than this system's
-
-                    // update next system's range, if propegating from this system would make it larger
-                    if (lane_end_sys_it == propegating_supply_ranges.end() ||
-                        lane_end_sys_it->second < cur_sys_range - 1)
-                    {
-                        // update with new range
-                        propegating_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
-                        // add next system to list of systems to propegate further
-                        propegating_systems_list.push_back(lane_end_sys_id);
-                    }
-                }
-            }
-            ++sys_list_it;
-            sys_list_end = propegating_systems_list.end();
-        }
+        // TODO
     }
 
     std::map<int,int> supplyProjectionsP(const Empire& empire, int min_tracked_supply, bool obstructed) {
-        std::map<int, std::set<int> >   starlanes = empire.KnownStarlanes();
-        std::map<int, float>            supply_system_ranges(empire.SystemSupplyRanges());
-        std::map<int, int>              propegating_supply_ranges;
-        const std::set<int>&            supply_unobstructed_systems = empire.SupplyUnobstructedSystems();
-
-        // taking the following sleet_supplyable info into account is necessary to reliably make negative
-        // supply projections for an enemy empire into the client empire's territory
-        if (min_tracked_supply < 0) {
-            const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID());
-            for (std::set<int>::iterator sys_it = supplyable_systems.begin();
-                 sys_it != supplyable_systems.end(); sys_it++)
-            {
-                supply_system_ranges[*sys_it];  // ensures that at least the default value of zero is entered
-            }
-        }
-        // Note: must be called with min_tracked_supply = 0 to give the standard result
-        CalculateSupplyUpdate(starlanes, supply_system_ranges, supply_unobstructed_systems,
-                              propegating_supply_ranges, min_tracked_supply, obstructed);
-        return propegating_supply_ranges;
+        // TODO
+        return std::map<int,int>();
     }
     boost::function<std::map<int,int>(const Empire&, int min_tracked_supply, bool obstructed)> supplyProjectionsFunc =      &supplyProjectionsP;
 
