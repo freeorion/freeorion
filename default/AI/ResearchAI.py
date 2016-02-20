@@ -51,6 +51,7 @@ COLONY_IDX = 2
 ZERO = 0.0
 LOW = 0.1
 DEFAULT_PRIORITY = 0.5
+HIGH = 42
 
 
 # TODO research AI no longer use this method, rename and move this method elsewhere
@@ -215,7 +216,7 @@ def get_population_boost_priority(tech_name=""):
 def get_stealth_priority(tech_name=""):
     max_stealth_species = get_max_stealth_species()
     if max_stealth_species[1] > 0:
-        print "Has a stealthy species %s. Increase stealth tech priority" % max_stealth_species[0]
+        print "Has a stealthy species %s. Increase stealth tech priority for %s" % (max_stealth_species[0], tech_name)
         return 1.5
     else:
         return 0.1
@@ -385,7 +386,10 @@ def init():
         (Dep.FUEL_TECHS, ship_usefulness(1.0 if choices.fuel else 0.1, None)),
         (Dep.SHIELD_TECHS, ship_usefulness(if_enemies(1.0, 0.1), MIL_IDX)),
         (Dep.TROOP_POD_TECHS, ship_usefulness(if_enemies(0.3, 0.1), TROOP_IDX)),
-        (Dep.COLONY_POD_TECHS, ship_usefulness(0.5, COLONY_IDX))
+        (Dep.COLONY_POD_TECHS, ship_usefulness(0.5, COLONY_IDX)),
+        # first priority techs add last to override previous values
+        (Dep.GRO_PLANET_ECOL, HIGH),
+        (Dep.LRN_ALGO_ELEGANCE, HIGH)
     )
 
     for k, v in tech_handlers:
@@ -414,8 +418,11 @@ def generate_research_orders():
     """Generate research orders."""
 
     if use_classic_research_approach():
+        print "Classical research approach is used"
         generate_classic_research_orders()
         return
+    else:
+        print 'New research approach is used'
     
     # initializing priority functions here within generate_research_orders() to avoid import race
     if not priority_funcs:
@@ -453,9 +460,9 @@ def generate_research_orders():
             # unlocked_items = [(uli.name, uli.type) for uli in this_tech.unlocked_items]
             unlocked_items = [uli.name for uli in this_tech.unlockedItems]
             if not missing_prereqs:
-                print "    %25s allocated %6.2f RP -- unlockable items: %s " % (element.tech, element.allocation, unlocked_items)
+                print "  %25s allocated %6.2f RP -- unlockable items: %s " % (element.tech, element.allocation, unlocked_items)
             else:
-                print "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s " % (element.tech, element.allocation, missing_prereqs, unlocked_items)
+                print "  %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s " % (element.tech, element.allocation, missing_prereqs, unlocked_items)
         print
 
     #
@@ -508,35 +515,34 @@ def generate_research_orders():
 
     missing_prereq_list = []
     print "Research priorities"
-    print "    %-25s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+    print "  %-25s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
     for idx, tech_name in enumerate(possible[:20]):
         tech_info = research_reqs[tech_name]
-        print "    %-25s %8.6f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
+        print "  %-25s %8.4f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
         missing_prereq_list.extend([prereq for prereq in tech_info[0] if prereq not in possible[:idx] and not tech_is_complete(prereq)])
     print
 
-    print "Prereqs seeming out of order:"
-    print "    %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
-    for tech_name in missing_prereq_list:
-        tech_info = research_reqs[tech_name]
-        print "    %-25s %8.6f %8.6f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
+    if missing_prereq_list:
+        print 'Prerequirements seeming out of order:'
+        print "  %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio",  "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+        for tech_name in missing_prereq_list:
+            tech_info = research_reqs[tech_name]
+            print "  %-25s %8.4f %8.4f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
 
-    print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
+    print "Enqueuing techs, already spent %.2f RP of %.2f RP" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
+    possible = [x for x in possible if x not in set(get_research_queue_techs())]
+    # some floating point issues can cause AI to enqueue every tech......
+    while empire.resourceProduction(fo.resourceType.research) - empire.researchQueue.totalSpent > 0.001 and possible:
+        to_research = possible.pop(0)  # get tech with highest priority
+        fo.issueEnqueueTechOrder(to_research, -1)
+        fo.updateResearchQueue()
+        print "  %-25s %6.2f RP/turn %6.2f RP" % (to_research,
+                                                  fo.getTech(to_research).perTurnCost(empire.empireID),
+                                                  fo.getTech(to_research).researchCost(empire.empireID))
 
-    if fo.currentTurn() == 1 and not research_queue_list:
-        fo.issueEnqueueTechOrder("GRO_PLANET_ECOL", -1)
-        fo.issueEnqueueTechOrder("LRN_ALGO_ELEGANCE", -1)
-    else:
-        # some floating point issues can cause AI to enqueue every tech......
-        queued_techs = set(get_research_queue_techs())
-        while empire.resourceProduction(fo.resourceType.research) - empire.researchQueue.totalSpent > 0.001 and possible:
-            to_research = possible.pop(0)  # get tech with highest priority
-            if to_research not in queued_techs:
-                fo.issueEnqueueTechOrder(to_research, -1)
-                queued_techs.add(to_research)
-                print "    enqueued tech " + to_research + "  : cost: " + str(fo.getTech(to_research).researchCost(empire.empireID)) + "RP"
-                fo.updateResearchQueue()
-        print
+    print "Finish research orders, spent %.2f RP of %.2f RP" % (fo.getEmpire().researchQueue.totalSpent,
+                                                                empire.resourceProduction(fo.resourceType.research))
+    print
 
 
 def generate_default_research_order():
@@ -572,7 +578,7 @@ def generate_default_research_order():
     # iterate through techs in order of cost
     fo.updateResearchQueue()
     total_spent = fo.getEmpire().researchQueue.totalSpent
-    print "enqueuing techs. already spent RP: %s total RP: %s" % (total_spent, total_rp)
+    print "Enqueuing techs. already spent RP: %s total RP: %s" % (total_spent, total_rp)
 
     while total_rp > 0 and possible:
         cost, name = possible.pop()  # get chipest
