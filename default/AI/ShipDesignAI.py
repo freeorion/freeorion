@@ -1272,7 +1272,7 @@ class ShipDesigner(object):
         exit_outer_loop = False
         while True:
             # Try to optimize each slottype iteratively until no more improvement.
-            if exit_outer_loop:
+            if exit_outer_loop or not number_of_slots_by_slottype:
                 break
             for slot in number_of_slots_by_slottype:
                 if last_changed_slottype is None:  # first run of the loop
