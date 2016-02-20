@@ -294,7 +294,7 @@ namespace { // file-scope constants and functions
     void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
                    unsigned int bevel_thick, double theta1, double theta2)
     {
-        std::cout << "GG::CircleArc ul: " << ul << "  lr: " << lr << " bevel thick: " << bevel_thick << "  theta1: " << theta1 << "  theta2: " << theta2 << std::flush << std::endl;
+        //std::cout << "GG::CircleArc ul: " << ul << "  lr: " << lr << " bevel thick: " << bevel_thick << "  theta1: " << theta1 << "  theta2: " << theta2 << std::flush << std::endl;
         X wd = lr.x - ul.x;
         Y ht = lr.y - ul.y;
         glDisable(GL_TEXTURE_2D);
