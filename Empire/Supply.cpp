@@ -5,6 +5,7 @@
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
+#include "../universe/Planet.h"
 #include "../util/AppInterface.h"
 
 #include <boost/graph/connected_components.hpp>
@@ -121,7 +122,7 @@ void SupplyManager::Update() {
     std::map<int, std::map<int, std::set<int> > > empire_visible_starlanes;
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
-        empire_visible_starlanes[it->first] = empire->VisibleStarlanes();
+        empire_visible_starlanes[it->first] = empire->KnownStarlanes();//  VisibleStarlanes();
     }
 
     // store supply range in jumps of all unobstructed systems before
@@ -222,22 +223,77 @@ void SupplyManager::Update() {
         for (std::map<int, std::map<int, float> >::const_iterator empire_it = empire_propegating_supply_ranges.begin();
              empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
         {
+            int empire_id = empire_it->first;
             std::map<int, float>::const_iterator empire_supply_it = empire_it->second.find(sys_id);
             // does this empire have any range in this system? if so, store it
             if (empire_supply_it != empire_it->second.end()) {
-                empire_ranges_here[empire_supply_it->second].insert(empire_it->first);
+                // stuff to break ties...
+                float bonus = 0.0f;
+
+                // empires with visibility into system
+                Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
+                if (vis >= VIS_PARTIAL_VISIBILITY)
+                    bonus += 0.02f;
+                else if (vis == VIS_BASIC_VISIBILITY)
+                    bonus += 0.01f;
+
+                // empires with ships / planets in system (that haven't already made it obstructed for another empire)
+                bool has_ship = false, has_outpost = false, has_colony = false;
+                if (TemporaryPtr<const System> sys = GetSystem(sys_id)) {
+                    std::vector<int> obj_ids;
+                    std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
+                    std::vector<TemporaryPtr<UniverseObject> > sys_objs = Objects().FindObjects(obj_ids);
+                    for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = sys_objs.begin();
+                         obj_it != sys_objs.end(); ++obj_it)
+                    {
+                        TemporaryPtr<UniverseObject> obj = *obj_it;
+                        if (!obj)
+                            continue;
+                        if (!obj->OwnedBy(empire_id))
+                            continue;
+                        if (obj->ObjectType() == OBJ_SHIP) {
+                            has_ship = true;
+                            continue;
+                        }
+                        if (obj->ObjectType() == OBJ_PLANET) {
+                            if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(obj)) {
+                                if (!planet->SpeciesName().empty())
+                                    has_colony = true;
+                                else
+                                    has_outpost = true;
+                                continue;
+                            }
+                        }
+                    }
+                }
+                if (has_ship)
+                    bonus += 0.1f;
+                if (has_colony)
+                    bonus += 0.5f;
+                else if (has_outpost)
+                    bonus += 0.3f;
+
+                // todo: other bonuses?
+
+                empire_ranges_here[empire_supply_it->second].insert(empire_it->first + bonus);
             }
         }
 
-        // set to zero the range for all empires except the top, or all if there are
-        // multiple empires tied for top range in this system
+        if (empire_ranges_here.empty())
+            continue;   // no empire has supply here?
+        if (empire_ranges_here.size() == 1 && empire_ranges_here.begin()->second.size() < 2)
+            continue;   // only one empire has supply here
+
+        // set to zero the range for all empires except the top-ranged empire here
+        // if there is a tie, set all to zero
         std::map<float, std::set<int> >::reverse_iterator range_empire_it = empire_ranges_here.rbegin();
-        if (range_empire_it == empire_ranges_here.rend())   // todo: test for empty or size one maps, abort early
-            continue;   // nothing to do...
+
         int top_range_empire_id = ALL_EMPIRES;
         if (range_empire_it->second.size() == 1)
             top_range_empire_id = *(range_empire_it->second.begin());
+
         // remove range entries and traversals for all but top empire
+        // (or all empires if there is no single top empire)
         for (std::map<int, std::map<int, float> >::iterator empire_it = empire_propegating_supply_ranges.begin();
              empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
         {
@@ -249,14 +305,27 @@ void SupplyManager::Update() {
             std::map<int, float>& empire_ranges = empire_it->second;
             empire_ranges.erase(empire_id);
 
-            // remove from traversals anything involving this system for this empire
+            // remove from traversals involving this system for this empire
             std::set<std::pair<int, int> >& lane_traversals = m_supply_starlane_traversals[empire_id];
             std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;
+
+            std::set<std::pair<int, int> >& obstructed_traversals = m_supply_starlane_obstructed_traversals[empire_id];
+            std::set<std::pair<int, int> > obstrcuted_traversals_initial = obstructed_traversals;
             for (std::set<std::pair<int, int> >::iterator traversals_it = lane_traversals_initial.begin();
                  traversals_it != lane_traversals_initial.end(); ++traversals_it)
             {
-                if (traversals_it->first == sys_id || traversals_it->second == sys_id)
+                if (traversals_it->first == sys_id || traversals_it->second == sys_id) {
                     lane_traversals.erase(std::make_pair(traversals_it->first, traversals_it->second));
+                    obstructed_traversals.insert(std::make_pair(traversals_it->first, traversals_it->second));
+                }
+            }
+
+            // remove from obstructed traverals involving this system for this empire
+            for (std::set<std::pair<int, int> >::iterator traversals_it = obstrcuted_traversals_initial.begin();
+                 traversals_it != obstrcuted_traversals_initial.end(); ++traversals_it)
+            {
+                if (traversals_it->first == sys_id /*|| traversals_it->second == sys_id*/)
+                    obstructed_traversals.erase(std::make_pair(traversals_it->first, traversals_it->second));
             }
         }
     }
