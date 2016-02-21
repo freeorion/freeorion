@@ -8,6 +8,7 @@
 
 #include <map>
 #include <set>
+#include <string>
 
 extern const int ALL_EMPIRES;
 
