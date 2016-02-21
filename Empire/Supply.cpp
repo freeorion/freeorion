@@ -227,6 +227,12 @@ void SupplyManager::Update() {
         const Empire* empire = it->second;
         empire_system_supply_ranges[it->first] = empire->SystemSupplyRanges();
         empire_supply_unobstructed_systems[it->first] = empire->SupplyUnobstructedSystems();
+
+        std::stringstream ss;
+        for (std::set<int>::const_iterator sys_it = empire_supply_unobstructed_systems[it->first].begin();
+             sys_it != empire_supply_unobstructed_systems[it->first].end(); ++sys_it)
+        { ss << *sys_it << ", "; }
+        DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
     }
 
     // system connections each empire can see / use for supply propegation
@@ -264,7 +270,7 @@ void SupplyManager::Update() {
 
     // spread supply out from sources by "diffusion" like process, along unobstructed
     // starlanes, until the range is exhausted.
-    for (float range_to_spread = max_range; range_to_spread >= 1;
+    for (float range_to_spread = max_range; range_to_spread >= 0;
          range_to_spread -= 1.0f)
     {
         DebugLogger() << "!!!! Reduced spreading range to " << range_to_spread;
@@ -360,7 +366,7 @@ void SupplyManager::Update() {
             int top_range_empire_id = ALL_EMPIRES;
             if (range_empire_it->second.size() == 1)
                 top_range_empire_id = *(range_empire_it->second.begin());
-            /*DebugLogger() << "top ranged empire here: " << top_range_empire_id;*/
+            DebugLogger() << "top ranged empire here: " << top_range_empire_id;
 
             // remove range entries and traversals for all but the top empire
             // (or all empires if there is no single top empire)
@@ -376,7 +382,7 @@ void SupplyManager::Update() {
                 empire_ranges.erase(sys_id);
 
                 //// DEBUG
-                //DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
+                DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
                 //// DEBUG
 
                 std::set<std::pair<int, int> >& lane_traversals = m_supply_starlane_traversals[empire_id];
@@ -420,6 +426,9 @@ void SupplyManager::Update() {
             //// END DEBUG
         }
 
+        if (range_to_spread <= 0)
+            break;
+
         // initialize next iteration with current supply distribution
         std::map<int, std::map<int, float> > empire_propegating_supply_ranges_next = empire_propegating_supply_ranges;
 
@@ -432,6 +441,7 @@ void SupplyManager::Update() {
              prev_empire_it != empire_propegating_supply_ranges.end(); ++prev_empire_it)
         {
             int empire_id = prev_empire_it->first;
+            DebugLogger() << ">-< Doing supply propegation for empire " << empire_id << " >-<";
             const std::map<int, float>& prev_sys_ranges = prev_empire_it->second;
             const std::set<int>& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
@@ -465,7 +475,7 @@ void SupplyManager::Update() {
                     // propegation not obstructed.
 
 
-                    // does another empire have as much or more supply here?
+                    // does another empire already have as much or more supply here from a previous iteration?
                     float other_empire_biggest_range = -10000.0f;   // arbitrary big numbeer
                     for (std::map<int, std::map<int, float> >::const_iterator prev_other_empire_it = empire_propegating_supply_ranges.begin();
                          prev_other_empire_it != empire_propegating_supply_ranges.end(); ++prev_other_empire_it)
@@ -491,7 +501,8 @@ void SupplyManager::Update() {
                     // otherwise, propegate into system...
 
                     // if propegating supply would increase the range of the adjacent system, do so.
-                    if (range_after_one_more_jump > empire_propegating_supply_ranges[empire_id][lane_end_sys_id]) {
+                    std::map<int, float>::const_iterator prev_range_it = prev_sys_ranges.find(lane_end_sys_id);
+                    if (prev_range_it == prev_sys_ranges.end() || range_after_one_more_jump > prev_range_it->second) {
                         empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_after_one_more_jump;
                         DebugLogger() << "Set system " << lane_end_sys_id << " range to: " << range_after_one_more_jump;
                     }
