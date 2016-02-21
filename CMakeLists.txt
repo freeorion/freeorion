@@ -154,6 +154,7 @@ set (freeorioncommon_HEADER
     Empire/Empire.h
     Empire/EmpireManager.h
     Empire/ResourcePool.h
+    Empire/Supply.h
     network/Message.h
     network/MessageQueue.h
     network/Networking.h
@@ -218,6 +219,7 @@ set (freeorioncommon_SOURCE
     Empire/Empire.cpp
     Empire/EmpireManager.cpp
     Empire/ResourcePool.cpp
+    Empire/Supply.cpp
     network/Message.cpp
     network/MessageQueue.cpp
     network/Networking.cpp
