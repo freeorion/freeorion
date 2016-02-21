@@ -232,7 +232,7 @@ void SupplyManager::Update() {
         for (std::set<int>::const_iterator sys_it = empire_supply_unobstructed_systems[it->first].begin();
              sys_it != empire_supply_unobstructed_systems[it->first].end(); ++sys_it)
         { ss << *sys_it << ", "; }
-        DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
+        //DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
     }
 
     // system connections each empire can see / use for supply propegation
@@ -273,7 +273,7 @@ void SupplyManager::Update() {
     for (float range_to_spread = max_range; range_to_spread >= 0;
          range_to_spread -= 1.0f)
     {
-        DebugLogger() << "!!!! Reduced spreading range to " << range_to_spread;
+        //DebugLogger() << "!!!! Reduced spreading range to " << range_to_spread;
 
         // update systems that have supply in them
         for (std::map<int, std::map<int, float> >::const_iterator empire_it = empire_propegating_supply_ranges.begin();
@@ -366,7 +366,7 @@ void SupplyManager::Update() {
             int top_range_empire_id = ALL_EMPIRES;
             if (range_empire_it->second.size() == 1)
                 top_range_empire_id = *(range_empire_it->second.begin());
-            DebugLogger() << "top ranged empire here: " << top_range_empire_id;
+            //DebugLogger() << "top ranged empire here: " << top_range_empire_id;
 
             // remove range entries and traversals for all but the top empire
             // (or all empires if there is no single top empire)
@@ -381,9 +381,7 @@ void SupplyManager::Update() {
                 std::map<int, float>& empire_ranges = empire_it->second;
                 empire_ranges.erase(sys_id);
 
-                //// DEBUG
-                DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
-                //// DEBUG
+                //DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
 
                 std::set<std::pair<int, int> >& lane_traversals = m_supply_starlane_traversals[empire_id];
                 std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;
@@ -441,7 +439,7 @@ void SupplyManager::Update() {
              prev_empire_it != empire_propegating_supply_ranges.end(); ++prev_empire_it)
         {
             int empire_id = prev_empire_it->first;
-            DebugLogger() << ">-< Doing supply propegation for empire " << empire_id << " >-<";
+            //DebugLogger() << ">-< Doing supply propegation for empire " << empire_id << " >-<";
             const std::map<int, float>& prev_sys_ranges = prev_empire_it->second;
             const std::set<int>& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
@@ -458,7 +456,7 @@ void SupplyManager::Update() {
                 int system_id = prev_sys_it->first;
                 const std::set<int>& adjacent_systems = empire_visible_starlanes[empire_id][system_id];
 
-                DebugLogger() << "propegating from system " << system_id << " which has range: " << range;
+                //DebugLogger() << "propegating from system " << system_id << " which has range: " << range;
 
                 // attempt to propegate to all adjacent systems...
                 for (std::set<int>::const_iterator lane_it = adjacent_systems.begin();
@@ -468,7 +466,7 @@ void SupplyManager::Update() {
                     // is propegation to the adjacent system obstructed?
                     if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) {
                         // propegation obstructed!
-                        DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to not being on unobstructed systems";
+                        //DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to not being on unobstructed systems";
                         m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
                         continue;
                     }
@@ -494,7 +492,7 @@ void SupplyManager::Update() {
                     // if so, add a blocked traversal and continue
                     if (range_after_one_more_jump <= other_empire_biggest_range) {
                         m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-                        DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to other empire biggest range being " << other_empire_biggest_range;
+                        //DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to other empire biggest range being " << other_empire_biggest_range;
                         continue;
                     }
 
@@ -504,23 +502,23 @@ void SupplyManager::Update() {
                     std::map<int, float>::const_iterator prev_range_it = prev_sys_ranges.find(lane_end_sys_id);
                     if (prev_range_it == prev_sys_ranges.end() || range_after_one_more_jump > prev_range_it->second) {
                         empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_after_one_more_jump;
-                        DebugLogger() << "Set system " << lane_end_sys_id << " range to: " << range_after_one_more_jump;
+                        //DebugLogger() << "Set system " << lane_end_sys_id << " range to: " << range_after_one_more_jump;
                     }
                     // always record a traversal, so connectivity is calculated properly
                     m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-                    DebugLogger() << "Added traversal from " << system_id << " to " << lane_end_sys_id;
+                    //DebugLogger() << "Added traversal from " << system_id << " to " << lane_end_sys_id;
 
                     // erase any previous obstructed traversal that just succeeded
                     if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(system_id, lane_end_sys_id)) !=
                         m_supply_starlane_obstructed_traversals[empire_id].end())
                     {
-                        DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
+                        //DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(system_id, lane_end_sys_id));
                     }
                     if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(lane_end_sys_id, system_id)) !=
                         m_supply_starlane_obstructed_traversals[empire_id].end())
                     {
-                        DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
+                        //DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
                         m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(lane_end_sys_id, system_id));
                     }
                 }

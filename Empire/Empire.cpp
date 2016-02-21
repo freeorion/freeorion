@@ -1878,7 +1878,7 @@ void Empire::UpdateSupplyUnobstructedSystems() {
 }
 
 void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems) {
-    DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
+    //DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
     // get systems with historically at least partial visibility
@@ -1917,7 +1917,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
         int fleet_id = fleet->ID();
-        DebugLogger() << "Fleet " << fleet_id << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
+        //DebugLogger() << "Fleet " << fleet_id << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
         if (fleet->HasArmedShips() && fleet->Aggressive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
@@ -1938,11 +1938,11 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         }
     }
 
-    std::stringstream ss;
-    for (std::set<int>::iterator it = systems_containing_obstructing_objects.begin();
-         it != systems_containing_obstructing_objects.end(); ++it)
-    { ss << *it << ", "; }
-    DebugLogger() << "systems with obstructing objects for empire " << m_id << " : " << ss.str();
+    //std::stringstream ss;
+    //for (std::set<int>::iterator it = systems_containing_obstructing_objects.begin();
+    //     it != systems_containing_obstructing_objects.end(); ++it)
+    //{ ss << *it << ", "; }
+    //DebugLogger() << "systems with obstructing objects for empire " << m_id << " : " << ss.str();
 
 
     // check each potential supplyable system for whether it can propagate supply.
@@ -1950,7 +1950,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
          known_systems_it != known_systems.end(); ++known_systems_it)
     {
         int sys_id = *known_systems_it;
-        DebugLogger() << "deciding unobstructedness for system " << sys_id;
+        //DebugLogger() << "deciding unobstructedness for system " << sys_id;
 
         // has empire ever seen this system with partial or better visibility?
         if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) ==
