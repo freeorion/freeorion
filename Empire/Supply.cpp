@@ -470,17 +470,12 @@ void SupplyManager::Update() {
 
                     // otherwise, propegate into system...
 
-                    // add traversal (regardless of whether it is needed to
-                    // increase the adjacent system's range for this empire
-                    m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-
-                    // get adjacent system's current range
-                    float adj_sys_existing_range = empire_propegating_supply_ranges[empire_id][lane_end_sys_id];
-
-                    // if propegating supply would increase the range of the
-                    // adjacent system, do so.
-                    if (range_after_one_more_jump > adj_sys_existing_range)
+                    // if propegating supply would increase or equal the range
+                    // of the adjacent system, do so.
+                    if (range_after_one_more_jump >= empire_propegating_supply_ranges[empire_id][lane_end_sys_id]) {
                         empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_after_one_more_jump;
+                        m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                    }
                 }
             }
         }
