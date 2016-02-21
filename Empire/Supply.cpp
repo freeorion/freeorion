@@ -264,9 +264,21 @@ void SupplyManager::Update() {
 
     // spread supply out from sources by "diffusion" like process, along unobstructed
     // starlanes, until the range is exhausted.
-    for (float mimium_range_to_spread = max_range; mimium_range_to_spread >= 1;
-         mimium_range_to_spread -= 1.0f)
+    for (float range_to_spread = max_range; range_to_spread >= 1;
+         range_to_spread -= 1.0f)
     {
+        DebugLogger() << "!!!! Reduced spreading range to " << range_to_spread;
+
+        // update systems that have supply in them
+        for (std::map<int, std::map<int, float> >::const_iterator empire_it = empire_propegating_supply_ranges.begin();
+             empire_it != empire_propegating_supply_ranges.end(); ++empire_it)
+        {
+            for (std::map<int, float>::const_iterator sys_it = empire_it->second.begin();
+                 sys_it != empire_it->second.end(); ++sys_it)
+            { systems_with_supply_in_them.insert(sys_it->first); }
+        }
+
+
         // resolve supply fights between multiple empires in one system.
         // pass over all empire-supplied systems, removing supply for all
         // but the empire with the highest supply range in each system
@@ -386,7 +398,7 @@ void SupplyManager::Update() {
                     }
                 }
 
-                // remove from obstructed traverals departing from this system
+                // remove obstructed traverals departing from this system
                 for (std::set<std::pair<int, int> >::iterator traversals_it = obstrcuted_traversals_initial.begin();
                      traversals_it != obstrcuted_traversals_initial.end(); ++traversals_it)
                 {
@@ -426,18 +438,17 @@ void SupplyManager::Update() {
             for (std::map<int, float>::const_iterator prev_sys_it = prev_sys_ranges.begin();
                  prev_sys_it != prev_sys_ranges.end(); ++prev_sys_it)
             {
-                // record that each system has some supply in it for later use...
-                systems_with_supply_in_them.insert(prev_sys_it->first);
-
                 // does the source system has enough supply range to propegate outwards?
                 float range = prev_sys_it->second;
-                if (range < mimium_range_to_spread)
-                    continue;   // need at least 1.0 range to propegate further.
+                if (range != range_to_spread)
+                    continue;
                 float range_after_one_more_jump = range - 1.0f; // what to set adjacent systems' ranges to (at least)
 
                 // what starlanes can be used to propegate supply?
                 int system_id = prev_sys_it->first;
                 const std::set<int>& adjacent_systems = empire_visible_starlanes[empire_id][system_id];
+
+                DebugLogger() << "propegating from system " << system_id << " which has range: " << range;
 
                 // attempt to propegate to all adjacent systems...
                 for (std::set<int>::const_iterator lane_it = adjacent_systems.begin();
@@ -447,6 +458,7 @@ void SupplyManager::Update() {
                     // is propegation to the adjacent system obstructed?
                     if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) {
                         // propegation obstructed!
+                        DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to not being on unobstructed systems";
                         m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
                         continue;
                     }
@@ -468,19 +480,37 @@ void SupplyManager::Update() {
                         if (prev_other_empire_range_it->second > other_empire_biggest_range)
                             other_empire_biggest_range = prev_other_empire_range_it->second;
                     }
+
                     // if so, add a blocked traversal and continue
                     if (range_after_one_more_jump <= other_empire_biggest_range) {
                         m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                        DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to other empire biggest range being " << other_empire_biggest_range;
                         continue;
                     }
 
                     // otherwise, propegate into system...
 
-                    // if propegating supply would increase or equal the range
-                    // of the adjacent system, do so.
-                    if (range_after_one_more_jump >= empire_propegating_supply_ranges[empire_id][lane_end_sys_id]) {
+                    // if propegating supply would increase the range of the adjacent system, do so.
+                    if (range_after_one_more_jump > empire_propegating_supply_ranges[empire_id][lane_end_sys_id]) {
                         empire_propegating_supply_ranges_next[empire_id][lane_end_sys_id] = range_after_one_more_jump;
-                        m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                        DebugLogger() << "Set system " << lane_end_sys_id << " range to: " << range_after_one_more_jump;
+                    }
+                    // always record a traversal, so connectivity is calculated properly
+                    m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                    DebugLogger() << "Added traversal from " << system_id << " to " << lane_end_sys_id;
+
+                    // erase any previous obstructed traversal that just succeeded
+                    if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(system_id, lane_end_sys_id)) !=
+                        m_supply_starlane_obstructed_traversals[empire_id].end())
+                    {
+                        DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
+                        m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(system_id, lane_end_sys_id));
+                    }
+                    if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(lane_end_sys_id, system_id)) !=
+                        m_supply_starlane_obstructed_traversals[empire_id].end())
+                    {
+                        DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
+                        m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(lane_end_sys_id, system_id));
                     }
                 }
             }
