@@ -247,9 +247,9 @@ def check_supply():
         annexable_ring3.difference_update(annexable_system_ids)
         annexable_system_ids.update(annexable_ring3)
     annexable_planet_ids.update(PlanetUtilsAI.get_planets_in__systems_ids(annexable_system_ids))
-    print "First Ring of annexable systems:", ppstring(PlanetUtilsAI.sys_name_ids(annexable_ring1))
-    print "Second Ring of annexable systems:", ppstring(PlanetUtilsAI.sys_name_ids(annexable_ring2))
-    print "Third Ring of annexable systems:", ppstring(PlanetUtilsAI.sys_name_ids(annexable_ring3))
+    print "First Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring1))
+    print "Second Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring2))
+    print "Third Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring3))
     # print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
     print
     print "New Supply Calc:"
@@ -262,10 +262,10 @@ def check_supply():
     for sys_id, supply_val in system_supply.items():
         # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
-    print "New Supply connected systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
-    print "New First Ring of annexable systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
-    print "New Second Ring of annexable systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
-    print "New Third Ring of annexable systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
+    print "New Supply connected systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
+    print "New First Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
+    print "New Second Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
+    print "New Third Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
     # print "new supply calc took ", new_time-supp_timing[0][-1]
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexable_ring1.clear()
@@ -628,11 +628,11 @@ def get_colony_fleets():
 
     reserved_outpost_base_targets = foAI.foAIstate.qualifyingOutpostBaseTargets.keys()
     max_queued_outpost_bases = max(1, int(2 * empire.productionPoints / outpost_cost))
-    print "considering possible outpost bases at %s" % reserved_outpost_base_targets
+    print "Considering possible outpost bases at %s" % reserved_outpost_base_targets
     if tech_is_complete(AIDependencies.OUTPOSTING_TECH):
         for pid in (set(reserved_outpost_base_targets) - set(outpost_targeted_planet_ids)):
             if len(queued_outpost_bases) >= max_queued_outpost_bases:
-                print "too many queued outpost bases to build any more now"
+                print "Too many queued outpost bases to build any more now"
                 break
             if pid not in unowned_empty_planet_ids:
                 continue
@@ -1457,10 +1457,10 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     potential_targets = [(pid, (score, specName)) for (pid, (score, specName)) in evaluated_planets if
                          score > (0.8 * cost)]
 
-    print "colony/outpost ship matching -- fleets %s to planets %s" % (fleet_pool, evaluated_planets)
+    print "Colony/outpost ship matching: fleets %s to planets %s" % (fleet_pool, evaluated_planets)
 
     if try_all:
-        print "trying best matches to current colony ships"
+        print "Trying best matches to current colony ships"
         best_scores = dict(evaluated_planets)
         potential_targets = []
         for pid, ratings in all_colony_opportunities.items():

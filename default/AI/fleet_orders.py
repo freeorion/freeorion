@@ -60,14 +60,14 @@ class AIFleetOrder(object):
         if verbose:
             sys1 = self.fleet.get_system()
             main_fleet_mission = foAI.foAIstate.get_fleet_mission(self.fleet.id)
-            print "** %s -- Mission Type %s (%s) , current loc sys %d - %s" % (
+            print "  Can issue %s - Mission Type %s (%s), current loc sys %d - %s" % (
                                                                 self, AIFleetMissionType.name(main_fleet_mission.type),
                                                                 main_fleet_mission.type, self.fleet.id, sys1)
         return True
 
     def issue_order(self):
         if not self.can_issue_order():  # appears to be redundant with check in IAFleetMission?
-            print "\tcan't issue %s" % self
+            print "  can't issue %s" % self
             return False
         else:
             self.executed = True  # TODO check that it is really executed
@@ -79,7 +79,7 @@ class AIFleetOrder(object):
             execute_status = 'executed'
         elif self.order_issued:
             execute_status = 'order issued'
-        return "Fleet order[%s] source:%26s | target %26s %s" % (self.ORDER_NAME, self.fleet, self.target, execute_status)
+        return "[%s] of %s to %s %s" % (self.ORDER_NAME, self.fleet.get_object(), self.target.get_object(), execute_status)
 
     def __eq__(self, other):
         return type(self) == type(other) and self.fleet == other.fleet and self.target == other.target
