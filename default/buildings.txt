@@ -1996,10 +1996,19 @@ BuildingType
     location = Not WithinStarlaneJumps jumps = 5 condition = Building name = "BLD_SCRYING_SPHERE"
     effectsgroups =
         EffectsGroup
-            scope = And [
-                Planet
-                Contains Building name = "BLD_SCRYING_SPHERE"
-                Not OwnedBy empire = Source.Planet.Owner    // would be redundant to re-assign ownership to own planets
+            scope = Or [
+                And [
+                    Or [
+                        Planet
+                        Building
+                    ]
+                    ContainedBy condition = Contains Building name = "BLD_SCRYING_SPHERE"
+                    Not OwnedBy empire = Source.Planet.Owner    // would be redundant to re-assign ownership to own planets
+                ]
+                And [
+                    System
+                    Contains Building name = "BLD_SCRYING_SPHERE"
+                ]
             ]
             activation = And [
                 ContainedBy condition = And [
@@ -2007,7 +2016,7 @@ BuildingType
                     Not Unowned
                 ]
             ]
-            effects = SetVisibility visibility = Full empire = Source.Owner
+            effects = SetVisibility visibility = Partial empire = Source.Owner
     icon = "icons/specials_huge/ancient_ruins_excavated.png"
 
 BuildingType
