@@ -270,7 +270,7 @@ public:
                           DoubleToString(participant.max_health, 3, false)
             );
         }
-        SetBrowseModeTime(300);
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
         OptionsDB& options = GetOptionsDB();
         m_dead_color = options.Get<StreamableColor>("UI.combat.summary.dead-color").ToClr();
