@@ -21,6 +21,7 @@
 #include "../universe/UniverseObject.h"
 #include "ResourcePool.h"
 #include "EmpireManager.h"
+#include "Supply.h"
 
 #include <algorithm>
 
@@ -3009,12 +3010,7 @@ void Empire::InitResourcePools() {
 
 
     // inform the blockadeable resource pools about systems that can share
-    // TODO: Uncomment when implemented...
-    //const std::map<int, std::set<std::set<int> > >& empires_resource_supply_groups = GetSupplyManager().ResourceSupplyGroups();
-    //std::map<int, std::set<std::set<int> > >::const_iterator it = empires_resource_supply_groups.find(m_id);
-    //if (it != empires_resource_supply_groups.end())
-    //    m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(it->second);
-
+    m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(GetSupplyManager().ResourceSupplyGroups(m_id));
 
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
