@@ -169,6 +169,26 @@ std::string SupplyManager::Dump(int empire_id) const {
         retval += "\n\n";
     }
 
+    for (std::map<int, std::set<std::set<int> > >::const_iterator empire_it = m_resource_supply_groups.begin();
+         empire_it != m_resource_supply_groups.end(); ++empire_it)
+    {
+        retval += "Supply groups for empire " + boost::lexical_cast<std::string>(empire_it->first) + "\n";
+        for (std::set<std::set<int> >::const_iterator set_set_it = empire_it->second.begin();
+             set_set_it != empire_it->second.end(); ++set_set_it)
+        {
+            retval += "group: ";
+            for (std::set<int>::const_iterator set_it = set_set_it->begin();
+                 set_it != set_set_it->end(); ++set_it)
+            {
+                TemporaryPtr<const System> sys = GetSystem(*set_it);
+                if (!sys)
+                    continue;
+                retval += "\n" + sys->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(sys->ID()) + ") ";
+            }
+            retval += "\n";
+        }
+        retval += "\n\n";
+    }
     return retval;
 }
 
