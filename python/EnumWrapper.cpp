@@ -81,41 +81,42 @@ namespace FreeOrionPython {
             .value("targetResearch",    METER_TARGET_RESEARCH)
             .value("targetTrade",       METER_TARGET_TRADE)
             .value("targetConstruction",METER_TARGET_CONSTRUCTION)
+            .value("targetHappiness",   METER_TARGET_HAPPINESS)
+
+            .value("maxDamage",         METER_MAX_CAPACITY)
+            .value("maxCapacity",       METER_MAX_CAPACITY)
+            .value("maxSecondaryStat",  METER_MAX_SECONDARY_STAT)
 
             .value("maxFuel",           METER_MAX_FUEL)
             .value("maxShield",         METER_MAX_SHIELD)
             .value("maxStructure",      METER_MAX_STRUCTURE)
             .value("maxDefense",        METER_MAX_DEFENSE)
-            .value("maxTroops",         METER_MAX_TROOPS)
             .value("maxSupply",         METER_MAX_SUPPLY)
-
-            .value("maxDamage",         METER_MAX_CAPACITY)
-            .value("maxCapacity",       METER_MAX_CAPACITY)
-            .value("maxSecondaryStat",  METER_MAX_SECONDARY_STAT)
+            .value("maxTroops",         METER_MAX_TROOPS)
 
             .value("population",        METER_POPULATION)
             .value("industry",          METER_INDUSTRY)
             .value("research",          METER_RESEARCH)
             .value("trade",             METER_TRADE)
             .value("construction",      METER_CONSTRUCTION)
+            .value("happiness",         METER_HAPPINESS)
+
+            .value("damage",            METER_CAPACITY)
+            .value("capacity",          METER_CAPACITY)
+            .value("secondaryStat",     METER_SECONDARY_STAT)
 
             .value("fuel",              METER_FUEL)
             .value("shield",            METER_SHIELD)
             .value("structure",         METER_STRUCTURE)
             .value("defense",           METER_DEFENSE)
-            .value("troops",            METER_TROOPS)
             .value("supply",            METER_SUPPLY)
+            .value("troops",            METER_TROOPS)
 
             .value("rebels",            METER_REBEL_TROOPS)
             .value("size",              METER_SIZE)
             .value("stealth",           METER_STEALTH)
             .value("detection",         METER_DETECTION)
-            .value("starlaneSpeed",     METER_SPEED) // TODO: Remove this after some transition period
             .value("speed",             METER_SPEED)
-
-            .value("damage",            METER_CAPACITY)
-            .value("capacity",          METER_CAPACITY)
-            .value("secondaryStat",     METER_SECONDARY_STAT)
         ;
         enum_<DiplomaticStatus>("diplomaticStatus")
             .value("war",               DIPLO_WAR)
@@ -149,12 +150,11 @@ namespace FreeOrionPython {
             .value("stealth",           PC_STEALTH)
             .value("fuel",              PC_FUEL)
             .value("colony",            PC_COLONY)
-            .value("starlaneSpeed",     PC_SPEED) // TODO: Remove this after some transition period
             .value("speed",             PC_SPEED)
             .value("general",           PC_GENERAL)
             .value("bombard",           PC_BOMBARD)
-            .value("research",          PC_RESEARCH)
             .value("industry",          PC_INDUSTRY)
+            .value("research",          PC_RESEARCH)
             .value("trade",             PC_TRADE)
             .value("productionLocation",PC_PRODICTION_LOCATION)
         ;
