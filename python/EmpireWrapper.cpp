@@ -501,18 +501,18 @@ namespace FreeOrionPython {
                                                         boost::mpl::vector<std::vector<std::string>, const Tech&, int>()
                                                     ))
         ;
-        def("getTech",                              &GetTech,                               return_value_policy<reference_existing_object>());
-        def("getTechCategories",                    &TechManager::CategoryNames,            return_value_policy<return_by_value>());
+        def("getTech",                              &GetTech,                               return_value_policy<reference_existing_object>(), "Returns the tech (Tech) with the indicated name (string).");
+        def("getTechCategories",                    &TechManager::CategoryNames,            return_value_policy<return_by_value>(), "Returns the names of all tech categories (StringVec).");
         def("techs",                                make_function(
                                                         boost::bind(TechNamesMemberFunc, &(GetTechManager())),
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string> >()
-                                                    ));
+                                                    ), "Returns the names of all techs (StringVec).");
         def("techsInCategory",                      make_function(
                                                         boost::bind(TechNamesCategoryMemberFunc, &(GetTechManager()), _1),
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<std::vector<std::string>, const std::string&>()
-                                                    ));
+                                                    ), "Returns the names of all techs (StringVec) in the indicated tech category name (string).");
         class_<ItemSpec>("itemSpec")
             .add_property("type",               &ItemSpec::type)
             .add_property("name",               &ItemSpec::name)
