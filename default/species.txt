@@ -29,6 +29,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -149,6 +151,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -205,6 +209,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[GREAT_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -242,6 +248,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -282,6 +290,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -358,6 +368,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -397,6 +409,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -440,6 +454,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[ULTIMATE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -574,6 +590,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
@@ -612,6 +630,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[NO_INDUSTRY]]
         [[ULTIMATE_RESEARCH]]
@@ -649,6 +669,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_GROWTH"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -689,6 +711,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -726,6 +750,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[GOOD_RESEARCH]]
@@ -848,6 +874,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -931,6 +959,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[GREAT_RESEARCH]]
@@ -985,6 +1015,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[GREAT_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1023,6 +1055,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1188,6 +1222,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1227,6 +1263,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -1263,6 +1301,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_PROTECTION"
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[NO_RESEARCH]]
@@ -1340,6 +1380,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_PROTECTION"
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1380,6 +1422,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[NO_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1418,6 +1462,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1509,6 +1555,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1583,6 +1631,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_RESEARCH"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
@@ -1629,6 +1679,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_INDUSTRY"
+
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
@@ -1666,6 +1718,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
     
+    preferredfocus = "FOCUS_PROTECTION"
+
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
         [[AVERAGE_RESEARCH]]
