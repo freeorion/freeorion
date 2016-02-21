@@ -101,94 +101,100 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
 
 std::string SupplyManager::Dump(int empire_id) const {
     std::string retval;
-    for (std::map<int, std::set<int> >::const_iterator empire_it = m_fleet_supplyable_system_ids.begin();
-         empire_it != m_fleet_supplyable_system_ids.end(); ++empire_it)
-    {
-        if (empire_id != ALL_EMPIRES && empire_it->first != empire_id)
-            continue;
-        retval += "Supplyable systems for empire " + boost::lexical_cast<std::string>(empire_it->first) + "\n";
-        for (std::set<int>::const_iterator set_it = empire_it->second.begin();
-             set_it != empire_it->second.end(); ++set_it)
+
+    try {
+        for (std::map<int, std::set<int> >::const_iterator empire_it = m_fleet_supplyable_system_ids.begin();
+             empire_it != m_fleet_supplyable_system_ids.end(); ++empire_it)
         {
-            TemporaryPtr<const System> sys = GetSystem(*set_it);
-            if (!sys)
+            if (empire_id != ALL_EMPIRES && empire_it->first != empire_id)
                 continue;
-            retval += "\n" + sys->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(sys->ID()) + ") ";
-
-            retval += "\nTraversals from here to: ";
-            const std::set<std::pair<int, int> >& traversals = m_supply_starlane_traversals.at(empire_it->first);
-            for (std::set<std::pair<int, int> >::const_iterator trav_it = traversals.begin();
-                 trav_it != traversals.end(); ++trav_it)
-            {
-                if (trav_it->first == sys->ID()) {
-                    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->second);
-                    if (obj)
-                        retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
-                }
-            }
-            retval += "\n";
-
-            retval += "Traversals to here from: ";
-            for (std::set<std::pair<int, int> >::const_iterator trav_it = traversals.begin();
-                 trav_it != traversals.end(); ++trav_it)
-            {
-                if (trav_it->second == sys->ID()) {
-                    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->first);
-                    if (obj)
-                        retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
-                }
-            }
-            retval += "\n";
-
-            retval += "Blocked Traversals from here to: ";
-            const std::set<std::pair<int, int> >& otraversals = m_supply_starlane_obstructed_traversals.at(empire_it->first);
-            for (std::set<std::pair<int, int> >::const_iterator trav_it = otraversals.begin();
-                 trav_it != otraversals.end(); ++trav_it)
-            {
-                if (trav_it->first == sys->ID()) {
-                    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->second);
-                    if (obj)
-                        retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
-                }
-            }
-            retval += "\n";
-
-            retval += "Blocked Traversals to here from: ";
-            for (std::set<std::pair<int, int> >::const_iterator trav_it = otraversals.begin();
-                 trav_it != otraversals.end(); ++trav_it)
-            {
-                if (trav_it->second == sys->ID()) {
-                    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->first);
-                    if (obj)
-                        retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
-                }
-            }
-            retval += "\n";
-
-        }
-        retval += "\n\n";
-    }
-
-    for (std::map<int, std::set<std::set<int> > >::const_iterator empire_it = m_resource_supply_groups.begin();
-         empire_it != m_resource_supply_groups.end(); ++empire_it)
-    {
-        retval += "Supply groups for empire " + boost::lexical_cast<std::string>(empire_it->first) + "\n";
-        for (std::set<std::set<int> >::const_iterator set_set_it = empire_it->second.begin();
-             set_set_it != empire_it->second.end(); ++set_set_it)
-        {
-            retval += "group: ";
-            for (std::set<int>::const_iterator set_it = set_set_it->begin();
-                 set_it != set_set_it->end(); ++set_it)
+            retval += "Supplyable systems for empire " + boost::lexical_cast<std::string>(empire_it->first) + "\n";
+            for (std::set<int>::const_iterator set_it = empire_it->second.begin();
+                 set_it != empire_it->second.end(); ++set_it)
             {
                 TemporaryPtr<const System> sys = GetSystem(*set_it);
                 if (!sys)
                     continue;
                 retval += "\n" + sys->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(sys->ID()) + ") ";
+
+                retval += "\nTraversals from here to: ";
+                const std::set<std::pair<int, int> >& traversals = m_supply_starlane_traversals.at(empire_it->first);
+                for (std::set<std::pair<int, int> >::const_iterator trav_it = traversals.begin();
+                     trav_it != traversals.end(); ++trav_it)
+                {
+                    if (trav_it->first == sys->ID()) {
+                        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->second);
+                        if (obj)
+                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                    }
+                }
+                retval += "\n";
+
+                retval += "Traversals to here from: ";
+                for (std::set<std::pair<int, int> >::const_iterator trav_it = traversals.begin();
+                     trav_it != traversals.end(); ++trav_it)
+                {
+                    if (trav_it->second == sys->ID()) {
+                        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->first);
+                        if (obj)
+                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                    }
+                }
+                retval += "\n";
+
+                retval += "Blocked Traversals from here to: ";
+                const std::set<std::pair<int, int> >& otraversals = m_supply_starlane_obstructed_traversals.at(empire_it->first);
+                for (std::set<std::pair<int, int> >::const_iterator trav_it = otraversals.begin();
+                     trav_it != otraversals.end(); ++trav_it)
+                {
+                    if (trav_it->first == sys->ID()) {
+                        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->second);
+                        if (obj)
+                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                    }
+                }
+                retval += "\n";
+
+                retval += "Blocked Traversals to here from: ";
+                for (std::set<std::pair<int, int> >::const_iterator trav_it = otraversals.begin();
+                     trav_it != otraversals.end(); ++trav_it)
+                {
+                    if (trav_it->second == sys->ID()) {
+                        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(trav_it->first);
+                        if (obj)
+                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                    }
+                }
+                retval += "\n";
+
             }
-            retval += "\n";
+            retval += "\n\n";
         }
-        retval += "\n\n";
+
+        for (std::map<int, std::set<std::set<int> > >::const_iterator empire_it = m_resource_supply_groups.begin();
+             empire_it != m_resource_supply_groups.end(); ++empire_it)
+        {
+            retval += "Supply groups for empire " + boost::lexical_cast<std::string>(empire_it->first) + "\n";
+            for (std::set<std::set<int> >::const_iterator set_set_it = empire_it->second.begin();
+                 set_set_it != empire_it->second.end(); ++set_set_it)
+            {
+                retval += "group: ";
+                for (std::set<int>::const_iterator set_it = set_set_it->begin();
+                     set_it != set_set_it->end(); ++set_it)
+                {
+                    TemporaryPtr<const System> sys = GetSystem(*set_it);
+                    if (!sys)
+                        continue;
+                    retval += "\n" + sys->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(sys->ID()) + ") ";
+                }
+                retval += "\n";
+            }
+            retval += "\n\n";
+        }
+    } catch (const std::exception& e) {
+        ErrorLogger() << "SupplyManager::Dump caught exception: " << e.what();
     }
+
     return retval;
 }
 
