@@ -448,7 +448,7 @@ void SupplyManager::Update() {
 
 
                     // does another empire have as much or more supply here?
-                    float other_empire_biggest_range = 0.0f;
+                    float other_empire_biggest_range = -10000.0f;   // arbitrary big numbeer
                     for (std::map<int, std::map<int, float> >::const_iterator prev_other_empire_it = empire_propegating_supply_ranges.begin();
                          prev_other_empire_it != empire_propegating_supply_ranges.end(); ++prev_other_empire_it)
                     {
