@@ -1878,6 +1878,7 @@ void Empire::UpdateSupplyUnobstructedSystems() {
 }
 
 void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems) {
+    DebugLogger() << "UpdateSupplyUnobstructedSystems for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
     // get systems with historically at least partial visibility
@@ -1915,16 +1916,18 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
+        int fleet_id = fleet->ID();
+        DebugLogger() << "Fleet " << fleet_id << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
         if (fleet->HasArmedShips() && fleet->Aggressive()) {
             if (fleet->OwnedBy(m_id)) {
-                if (fleet->NextSystemID()==INVALID_OBJECT_ID) {
+                if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
                     if (fleet->ArrivalStarlane()==system_id)
                         unrestricted_friendly_systems.insert(system_id);
                     else
                         systems_with_lane_preserving_fleets.insert(system_id);
                 }
-            } else if (fleet->NextSystemID()==INVALID_OBJECT_ID) {
+            } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                 int fleet_owner = fleet->Owner();
                 if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR) {
                     systems_containing_obstructing_objects.insert(system_id);
@@ -1935,34 +1938,47 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         }
     }
 
+    std::stringstream ss;
+    for (std::set<int>::iterator it = systems_containing_obstructing_objects.begin();
+         it != systems_containing_obstructing_objects.end(); ++it)
+    { ss << *it << ", "; }
+    DebugLogger() << "systems with obstructing objects for empire " << m_id << " : " << ss.str();
+
+
     // check each potential supplyable system for whether it can propagate supply.
-    for (std::set<int>::const_iterator known_systems_it = known_systems.begin(); known_systems_it != known_systems.end(); ++known_systems_it) {
+    for (std::set<int>::const_iterator known_systems_it = known_systems.begin();
+         known_systems_it != known_systems.end(); ++known_systems_it)
+    {
         int sys_id = *known_systems_it;
+        DebugLogger() << "deciding unobstructedness for system " << sys_id;
 
         // has empire ever seen this system with partial or better visibility?
-        if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) == systems_with_at_least_partial_visibility_at_some_point.end())
-            continue;
+        if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) ==
+            systems_with_at_least_partial_visibility_at_some_point.end())
+        { continue; }
 
         // if system is explored, then whether it can propagate supply depends
         // on what friendly / enemy ships are in the system
 
-        if (unrestricted_friendly_systems.find(sys_id) != unrestricted_friendly_systems.end()) 
-        {
+        if (unrestricted_friendly_systems.find(sys_id) != unrestricted_friendly_systems.end()) {
             // if there are unrestricted friendly ships, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
+
         } else if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end()) {
             if (unrestricted_obstruction_systems.find(sys_id) == unrestricted_obstruction_systems.end()) {
                 // if there are (previously) restricted friendly ships, and no unrestricted enemy fleets, supply can propagate
                 m_supply_unobstructed_systems.insert(sys_id);
             }
+
         } else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end()) {
             // if there are no friendly ships and no enemy ships, supply can propegate
             m_supply_unobstructed_systems.insert(sys_id);
+
         } else if (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()) {
-        // otherwise, if system contains no friendly fleets capable of maintaining lane access but does contain an
-        // unfriendly fleet, so it is obstructed, so isn't included in the
-        // unobstructed systems set.  Furthermore, this empire's available 
-        // system exit lanes for this system are cleared
+            // otherwise, if system contains no friendly fleets capable of maintaining lane access but does contain an
+            // unfriendly fleet, so it is obstructed, so isn't included in the
+            // unobstructed systems set.  Furthermore, this empire's available 
+            // system exit lanes for this system are cleared
             if (!m_available_system_exit_lanes[sys_id].empty()) {
                 //DebugLogger() << "Empire::UpdateSupplyUnobstructedSystems clearing available lanes for system ("<<sys_id<<"); available lanes were:";
                 //for (std::set<int>::iterator lane_it = m_available_system_exit_lanes[sys_id].begin(); lane_it != m_available_system_exit_lanes[sys_id].end(); lane_it++)
