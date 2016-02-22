@@ -4,6 +4,8 @@
 #include "../util/Logger.h"
 #include "CommonWrappers.h"
 
+#include <boost/python/docstring_options.hpp>
+
 using boost::python::object;
 using boost::python::import;
 using boost::python::error_already_set;
@@ -15,6 +17,7 @@ using boost::python::extract;
 
 // Python module for logging functions
 BOOST_PYTHON_MODULE(freeorion_logger) {
+    boost::python::docstring_options doc_options(true, true, false);
     FreeOrionPython::WrapLogger();
 }
 

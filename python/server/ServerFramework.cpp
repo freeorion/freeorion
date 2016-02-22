@@ -9,6 +9,8 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/python.hpp>
+#include <boost/python/docstring_options.hpp>
+
 
 #include <stdexcept>
 
@@ -20,6 +22,7 @@ using boost::python::dict;
 namespace fs = boost::filesystem;
 
 BOOST_PYTHON_MODULE(freeorion) {
+    boost::python::docstring_options doc_options(true, true, false);
     FreeOrionPython::WrapServer();
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();

@@ -17,6 +17,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <boost/python/docstring_options.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>
@@ -49,6 +50,8 @@ namespace fs = boost::filesystem;
 
 BOOST_PYTHON_MODULE(freeOrionAIInterface)
 {
+    boost::python::docstring_options doc_options(true, true, false);
+
     ///////////////////
     //  AIInterface  //
     ///////////////////
