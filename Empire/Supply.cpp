@@ -85,6 +85,9 @@ const std::set<std::set<int> >& SupplyManager::ResourceSupplyGroups(int empire_i
     return EMPTY_INT_SET_SET;
 }
 
+const std::map<int, float>& SupplyManager::PropegatedSupplyRanges() const
+{ return m_propegated_supply_ranges; }
+
 bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     if (system_id == INVALID_OBJECT_ID)
         return false;
@@ -203,6 +206,7 @@ void SupplyManager::Update() {
     m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();
     m_resource_supply_groups.clear();
+    m_propegated_supply_ranges.clear();
 
     // for each empire, need to get a set of sets of systems that can exchange
     // resources.  some sets may be just one system, in which resources can be
@@ -557,6 +561,8 @@ void SupplyManager::Update() {
             if (sys_it->second < 0.0f)
                 continue;   // negative supply doesn't count... zero does (it just reaches)
             m_fleet_supplyable_system_ids[empire_id].insert(sys_it->first);
+            // should be only one empire per system at this point, but use max just to be safe...
+            m_propegated_supply_ranges[sys_it->first] = std::max(sys_it->second, m_propegated_supply_ranges[sys_it->first]);
         }
     }
 

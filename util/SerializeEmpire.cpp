@@ -197,7 +197,8 @@ void SupplyManager::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
         & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
         & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
-        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups);
+        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups)
+        & BOOST_SERIALIZATION_NVP(m_propegated_supply_ranges);
 }
 
 template void SupplyManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

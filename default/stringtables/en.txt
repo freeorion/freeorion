@@ -4376,6 +4376,9 @@ Age
 TURNS_SINCE_FOCUS_CHANGE
 Turns Since Focus Change
 
+SUPPLY_RANGE
+Supply Range
+
 ETA
 Turns To Destination
 

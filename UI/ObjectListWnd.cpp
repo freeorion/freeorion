@@ -106,6 +106,7 @@ namespace {
             col_types[UserStringNop("CREATION_TURN")] =             StringCastedValueRef<int>("CreationTurn");
             col_types[UserStringNop("AGE")] =                       StringCastedValueRef<int>("Age");
             col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
+            col_types[UserStringNop("SUPPLY_RANGE")] =              StringCastedValueRef<double>("PropegatedSupplyRange");
             col_types[UserStringNop("ETA")] =                       StringCastedValueRef<int>("ETA");
             col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
             col_types[UserStringNop("SYSTEM")] =                    ObjectNameValueRef("SystemID");

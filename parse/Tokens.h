@@ -298,8 +298,9 @@
     (Product)                                   \
     (ProductionCenter)                          \
     (ProductionLocation)                        \
-    (Progress)                                  \
-    (Property)
+    (PropegatedSupplyRange)                     \
+    (Property)                                  \
+    (Progress)
 
 #define TOKEN_SEQ_10                            \
     (Radiated)                                  \

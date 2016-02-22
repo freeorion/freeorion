@@ -16,6 +16,7 @@
 #include "Tech.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
+#include "../Empire/Supply.h"
 #include "../util/Random.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
@@ -646,6 +647,13 @@ namespace ValueRef {
                 return fleet->Damage();
             if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->TotalWeaponsDamage();
+
+        } else if (property_name == "PropegatedSupplyRange") {
+            const std::map<int, float>& ranges = GetSupplyManager().PropegatedSupplyRanges();
+            std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
+            if (range_it == ranges.end())
+                return 0.0;
+            return range_it->second;
         }
 
         ErrorLogger() << "Variable<double>::Eval unrecognized object property: "
