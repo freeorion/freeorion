@@ -704,17 +704,21 @@ namespace ValueRef {
 
         if (property_name == "Owner") {
             return object->Owner();
+        } else if (property_name == "SupplyingEmpire") {
+            return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID());
         } else if (property_name == "ID") {
             return object->ID();
         } else if (property_name == "CreationTurn") {
             return object->CreationTurn();
         } else if (property_name == "Age") {
             return object->AgeInTurns();
+
         } else if (property_name == "TurnsSinceFocusChange") {
             if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return planet->TurnsSinceFocusChange();
             else
                 return 0;
+
         } else if (property_name == "ProducedByEmpireID") {
             if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->ProducedByEmpireID();
@@ -722,16 +726,19 @@ namespace ValueRef {
                 return building->ProducedByEmpireID();
             else
                 return ALL_EMPIRES;
+
         } else if (property_name == "ArrivedOnTurn") {
             if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->ArrivedOnTurn();
             else
                 return INVALID_GAME_TURN;
+
         } else if (property_name == "DesignID") {
             if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->DesignID();
             else
                 return ShipDesign::INVALID_DESIGN_ID;
+
         } else if (property_name == "Species") {
             if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
                 return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
@@ -739,6 +746,7 @@ namespace ValueRef {
                 return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
             else
                 return -1;
+
         } else if (property_name == "FleetID") {
             if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
                 return ship->FleetID();
@@ -746,6 +754,7 @@ namespace ValueRef {
                 return fleet->ID();
             else
                 return INVALID_OBJECT_ID;
+
         } else if (property_name == "PlanetID") {
             if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
                 return building->PlanetID();
@@ -753,18 +762,22 @@ namespace ValueRef {
                 return planet->ID();
             else
                 return INVALID_OBJECT_ID;
+
         } else if (property_name == "SystemID") {
             return object->SystemID();
+
         } else if (property_name == "FinalDestinationID") {
             if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->FinalDestinationID();
             else
                 return INVALID_OBJECT_ID;
+
         } else if (property_name == "NextSystemID") {
             if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->NextSystemID();
             else
                 return INVALID_OBJECT_ID;
+
         } else if (property_name == "PreviousSystemID") {
             if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->PreviousSystemID();
@@ -2069,24 +2082,31 @@ void ValueRef::UserStringLookup::SetTopLevelContent(const std::string& content_n
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-///////////////////////////////////////////////////////////
-// ObjectNameLookup                                      //
-///////////////////////////////////////////////////////////
-ValueRef::ObjectNameLookup::ObjectNameLookup(ValueRef::ValueRefBase<int>* value_ref) :
+/////////////////////////////////////////////////////
+// NameLookup                                      //
+/////////////////////////////////////////////////////
+ValueRef::NameLookup::NameLookup(ValueRef::ValueRefBase<int>* value_ref, LookupType lookup_type) :
     ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
+    m_value_ref(value_ref),
+    m_lookup_type(lookup_type)
 {}
 
-ValueRef::ObjectNameLookup::~ObjectNameLookup()
+ValueRef::NameLookup::~NameLookup()
 { delete m_value_ref; }
 
-bool ValueRef::ObjectNameLookup::operator==(const ValueRef::ValueRefBase<std::string>& rhs) const {
+bool ValueRef::NameLookup::operator==(const ValueRef::ValueRefBase<std::string>& rhs) const {
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
-    const ValueRef::ObjectNameLookup& rhs_ =
-        static_cast<const ValueRef::ObjectNameLookup&>(rhs);
+    const ValueRef::NameLookup& rhs_ =
+        static_cast<const ValueRef::NameLookup&>(rhs);
+
+    if (m_lookup_type == rhs_.m_lookup_type) {
+        // check next member
+    } else {
+        return false;
+    }
 
     if (m_value_ref == rhs_.m_value_ref) {
         // check next member
@@ -2100,34 +2120,50 @@ bool ValueRef::ObjectNameLookup::operator==(const ValueRef::ValueRefBase<std::st
     return true;
 }
 
-std::string ValueRef::ObjectNameLookup::Eval(const ScriptingContext& context) const {
-    if (!m_value_ref)
+std::string ValueRef::NameLookup::Eval(const ScriptingContext& context) const {
+    if (!m_value_ref || m_lookup_type == INVALID_LOOKUP)
         return "";
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_value_ref->Eval(context));
-    if (obj)
-        return obj->Name();
-    return "";
+
+    switch (m_lookup_type) {
+    case OBJECT_NAME: {
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_value_ref->Eval(context));
+        return obj ? obj->Name() : "";
+        break;
+    }
+    case EMPIRE_NAME: {
+        const Empire* empire = GetEmpire(m_value_ref->Eval(context));
+        return empire ? empire->Name() : "";
+        break;
+    }
+    case SHIP_DESIGN_NAME: {
+        const ShipDesign* design = GetShipDesign(m_value_ref->Eval(context));
+        return design ? design->Name() : "";
+        break;
+    }
+    default:
+        return "";
+    }
 }
 
-bool ValueRef::ObjectNameLookup::RootCandidateInvariant() const
+bool ValueRef::NameLookup::RootCandidateInvariant() const
 { return m_value_ref->RootCandidateInvariant(); }
 
-bool ValueRef::ObjectNameLookup::LocalCandidateInvariant() const
+bool ValueRef::NameLookup::LocalCandidateInvariant() const
 { return !m_value_ref || m_value_ref->LocalCandidateInvariant(); }
 
-bool ValueRef::ObjectNameLookup::TargetInvariant() const
+bool ValueRef::NameLookup::TargetInvariant() const
 { return !m_value_ref || m_value_ref->TargetInvariant(); }
 
-bool ValueRef::ObjectNameLookup::SourceInvariant() const
+bool ValueRef::NameLookup::SourceInvariant() const
 { return !m_value_ref || m_value_ref->SourceInvariant(); }
 
-std::string ValueRef::ObjectNameLookup::Description() const
+std::string ValueRef::NameLookup::Description() const
 { return m_value_ref->Description(); }
 
-std::string ValueRef::ObjectNameLookup::Dump() const
+std::string ValueRef::NameLookup::Dump() const
 { return m_value_ref->Dump(); }
 
-void ValueRef::ObjectNameLookup::SetTopLevelContent(const std::string& content_name) {
+void ValueRef::NameLookup::SetTopLevelContent(const std::string& content_name) {
     if (m_value_ref)
         m_value_ref->SetTopLevelContent(content_name);
 }

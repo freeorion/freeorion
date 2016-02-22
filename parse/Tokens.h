@@ -444,6 +444,7 @@
     (Structure)                                 \
     (Sum)                                       \
     (Supply)                                    \
+    (SupplyingEmpire)                           \
     (Swamp)                                     \
     (System)                                    \
     (SystemID)

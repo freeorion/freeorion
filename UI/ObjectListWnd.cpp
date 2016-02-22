@@ -86,16 +86,24 @@ namespace {
     }
 
     ValueRef::Variable<std::string>* ObjectNameValueRef(const std::string& token) {
-        return new ValueRef::ObjectNameLookup(
+        return new ValueRef::NameLookup(
             new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)),
+            ValueRef::NameLookup::OBJECT_NAME);
+    }
+
+    ValueRef::Variable<std::string>* EmpireNameValueRef(const std::string& token) {
+        return new ValueRef::NameLookup(
+            new ValueRef::Variable<int>(
+                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)),
+            ValueRef::NameLookup::EMPIRE_NAME);
     }
 
     const std::map<std::string, ValueRef::ValueRefBase<std::string>*>& AvailableColumnTypes() {
         static std::map<std::string, ValueRef::ValueRefBase<std::string>*> col_types;
         if (col_types.empty()) {
             col_types[UserStringNop("NAME")] =                      StringValueRef("Name");
-            col_types[UserStringNop("OWNER")] =                     StringValueRef("OwnerName");
+            col_types[UserStringNop("OWNER")] =                     EmpireNameValueRef("Owner");
             col_types[UserStringNop("OBJECT_TYPE")] =               UserStringValueRef("TypeName");
             col_types[UserStringNop("SPECIES")] =                   UserStringValueRef("Species");
             col_types[UserStringNop("BUILDING_TYPE")] =             UserStringValueRef("BuildingType");
@@ -107,8 +115,9 @@ namespace {
             col_types[UserStringNop("AGE")] =                       StringCastedValueRef<int>("Age");
             col_types[UserStringNop("TURNS_SINCE_FOCUS_CHANGE")] =  StringCastedValueRef<int>("TurnsSinceFocusChange");
             col_types[UserStringNop("SUPPLY_RANGE")] =              StringCastedValueRef<double>("PropegatedSupplyRange");
+            col_types[UserStringNop("SUPPLYING_EMPIRE")] =          EmpireNameValueRef("SupplyingEmpire");
             col_types[UserStringNop("ETA")] =                       StringCastedValueRef<int>("ETA");
-            col_types[UserStringNop("PRODUCED_BY")] =               StringCastedValueRef<int>("ProducedByEmpireID");
+            col_types[UserStringNop("PRODUCED_BY")] =               EmpireNameValueRef("ProducedByEmpireID");
             col_types[UserStringNop("SYSTEM")] =                    ObjectNameValueRef("SystemID");
             col_types[UserStringNop("NEAREST_SYSTEM")] =            ObjectNameValueRef("NearestSystemID");
             col_types[UserStringNop("DESIGN_ID")] =                 StringCastedValueRef<int>("DesignID");
