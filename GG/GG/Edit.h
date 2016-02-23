@@ -239,6 +239,11 @@ void GG_API GetTranslatedCodePoint(Key key,
                                    Flags<ModKey> mod_keys,
                                    std::string& translated_code_point);
 
+CPSize GG_API NextWordEdgeFrom(const std::string& text,
+                               CPSize from_position,
+                               bool search_right = true);
+
+
 } // namespace GG
 
 #endif
