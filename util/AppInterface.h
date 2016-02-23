@@ -4,6 +4,7 @@
 
 #include "Export.h"
 #include "../universe/Universe.h"
+#include "../network/Networking.h"
 
 class EmpireManager;
 class Empire;
@@ -52,6 +53,10 @@ public:
     virtual int CurrentTurn() const = 0;        ///< returns the current game turn
 
     virtual const GalaxySetupData& GetGalaxySetupData() const = 0;
+
+    virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;///< returns the networking client type for the given empire_id
+    virtual Networking::ClientType GetPlayerClientType(int player_id) const = 0;///< returns the networking client type for the given player_id
+
 
 protected:
     IApp();
@@ -159,6 +164,12 @@ inline int CurrentTurn()
 /** Returns the galaxy setup settings used in the current game. */
 inline const GalaxySetupData& GetGalaxySetupData()
 { return IApp::GetApp()->GetGalaxySetupData(); }
+
+inline Networking::ClientType GetEmpireClientType(int empire_id)
+{ return IApp::GetApp()->GetEmpireClientType(empire_id); }
+
+inline Networking::ClientType GetPlayerClientType(int player_id)
+{ return IApp::GetApp()->GetPlayerClientType(player_id); }
 
 
 // sentinel values returned by CurrentTurn().  Can't be an enum since

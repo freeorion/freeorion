@@ -33,15 +33,15 @@ public:
     const std::map<int, Message::PlayerStatus>&
                                     PlayerStatus() const;       ///< returns the map, indexed by player ID, of the latest known PlayerStatus for each player in the game
 
-    const Universe&                 GetUniverse() const;        ///< returns client's local copy of Universe
-    const GalaxySetupData&          GetGalaxySetupData() const; ///< returns the settings used in creating the current Universe
-    const OrderSet&                 Orders() const;             ///< returns Order set for this client's player
-    const ClientNetworking&         Networking() const;         ///< returns the networking object for this client's player
-    const Networking::ClientType    GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
-    const Networking::ClientType    GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
-    const Networking::ClientType    GetClientType() const;                      ///< returns the networking client type for this client's player
+    const Universe&             GetUniverse() const;        ///< returns client's local copy of Universe
+    const GalaxySetupData&      GetGalaxySetupData() const; ///< returns the settings used in creating the current Universe
+    const OrderSet&             Orders() const;             ///< returns Order set for this client's player
+    const ClientNetworking&     Networking() const;         ///< returns the networking object for this client's player
+    Networking::ClientType      GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
+    Networking::ClientType      GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
+    Networking::ClientType      GetClientType() const;                      ///< returns the networking client type for this client's player
 
-    std::string                     GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
+    std::string                 GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
     //@}
 
     /** \name Mutators */ //@{

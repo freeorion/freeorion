@@ -79,10 +79,10 @@ int ClientApp::EmpirePlayerID(int empire_id) const {
     return Networking::INVALID_PLAYER_ID;
 }
 
-const Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const
+Networking::ClientType ClientApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ClientApp::EmpirePlayerID(empire_id)); }
 
-const Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
+Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return Networking::INVALID_CLIENT_TYPE;
     std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
@@ -91,7 +91,7 @@ const Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const
     return Networking::INVALID_CLIENT_TYPE;
 }
 
-const Networking::ClientType ClientApp::GetClientType() const
+Networking::ClientType ClientApp::GetClientType() const
 { return GetPlayerClientType(m_networking.PlayerID()); }
 
 const std::map<int, PlayerInfo>& ClientApp::Players() const

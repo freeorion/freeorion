@@ -1334,6 +1334,20 @@ bool ServerApp::IsLocalHumanPlayer(int player_id) {
             player_connection->IsLocalConnection());
 }
 
+Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
+{ return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }
+
+Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
+    if (player_id == Networking::INVALID_PLAYER_ID)
+        return Networking::INVALID_CLIENT_TYPE;
+
+    ServerNetworking::const_established_iterator it = m_networking.GetPlayer(player_id);
+    if (it == m_networking.established_end())
+        return Networking::INVALID_CLIENT_TYPE;
+    PlayerConnectionPtr player_connection = *it;
+    return player_connection->GetClientType();
+}
+
 void ServerApp::AddEmpireTurn(int empire_id)
 { m_turn_sequence[empire_id] = 0; } // std::map<int, OrderSet*>
 
