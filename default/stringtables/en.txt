@@ -6845,6 +6845,9 @@ Generates a SitRep message for no recipients
 DESC_GENERATE_SITREP_CAN_SEE
 Generates a SitRep message for empires that can detect an object %2%
 
+DESC_GENERATE_SITREP_HUMAN
+Generates a SitRep message for human-controlled empires
+
 DESC_SET_EMPIRE_TECH_PROGRESS
 Sets the research progress of tech %1% to %2% for empire %3%
 

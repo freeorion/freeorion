@@ -163,6 +163,7 @@
     (HullSpeed)                                 \
     (HullStealth)                               \
     (HullStructure)                             \
+    (Human)                                     \
     (Icon)                                      \
     (ID)                                        \
     (If)                                        \

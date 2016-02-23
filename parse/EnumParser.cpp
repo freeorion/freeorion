@@ -146,6 +146,7 @@ namespace parse {
             |   tok.AnyEmpire_  [ _val = AFFIL_ANY ]
             |   tok.None_       [ _val = AFFIL_NONE ]
             |   tok.CanSee_     [ _val = AFFIL_CAN_SEE ]
+            |   tok.Human_      [ _val = AFFIL_HUMAN ]
             ;
         static bool once = true;
         if (once) {

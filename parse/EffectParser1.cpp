@@ -90,6 +90,12 @@ namespace {
                         >   parse::label(Condition_token)   >   parse::detail::condition_parser
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
                         )
+                    |   (   // condition specified, with an affiliation type of CanSee:
+                            // used to specify CanSee affiliation
+                            parse::label(Affiliation_token) >>  tok.Human_
+                        >   parse::label(Condition_token)   >   parse::detail::condition_parser
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f) ]
+                        )
                     |   (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
                             (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]

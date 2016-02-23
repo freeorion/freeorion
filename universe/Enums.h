@@ -177,6 +177,7 @@ GG_ENUM(EmpireAffiliationType,
     AFFIL_ANY,      ///< any empire
     AFFIL_NONE,     ///< no empire
     AFFIL_CAN_SEE,  ///< special case enum used to specify empires that can detect particular objects, for use in effects or conditions
+    AFFIL_HUMAN,    ///< empire controlled by a human player
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 

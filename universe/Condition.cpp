@@ -1167,6 +1167,15 @@ namespace {
                 break;
             }
 
+            case AFFIL_HUMAN: {
+                if (candidate->Unowned())
+                    return false;
+                if (GetEmpireClientType(candidate->Owner()) == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return true;
+                return false;
+                break;
+            }
+
             default:
                 return false;
                 break;
@@ -1263,6 +1272,9 @@ std::string Condition::EmpireAffiliation::Dump() const {
 
     } else if (m_affiliation == AFFIL_CAN_SEE) {
         retval += "OwnedBy affiliation = CanSee";
+
+    } else if (m_affiliation == AFFIL_HUMAN) {
+        retval += "OwnedBy affiliation = Human";
 
     } else {
         retval += "OwnedBy ??";

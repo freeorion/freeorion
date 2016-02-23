@@ -3574,6 +3574,10 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
         // add no empires
         break;
 
+    case AFFIL_HUMAN:
+        // todo: implement this separately, though not high priority since it
+        // probably doesn't matter if AIs get an extra sitrep message meant for
+        // human eyes
     case AFFIL_ANY:
     default: {
         // add all empires
@@ -3623,6 +3627,7 @@ std::string GenerateSitRepMessage::Description() const {
     case AFFIL_ALLY:    desc_template = UserString("DESC_GENERATE_SITREP_ALLIES");  break;
     case AFFIL_ENEMY:   desc_template = UserString("DESC_GENERATE_SITREP_ENEMIES"); break;
     case AFFIL_CAN_SEE: desc_template = UserString("DESC_GENERATE_SITREP_CAN_SEE"); break;
+    case AFFIL_HUMAN:   desc_template = UserString("DESC_GENERATE_SITREP_HUMAN");   break;
     case AFFIL_NONE:    desc_template = UserString("DESC_GENERATE_SITREP_NONE");    break;
     case AFFIL_ANY:     desc_template = UserString("DESC_GENERATE_SITREP_ALL");     break;
     case AFFIL_SELF:
@@ -3658,6 +3663,7 @@ std::string GenerateSitRepMessage::Dump() const {
     case AFFIL_ALLY:    retval += "AllyOf";     break;
     case AFFIL_ANY:     retval += "AnyEmpire";  break;
     case AFFIL_CAN_SEE: retval += "CanSee";     break;
+    case AFFIL_HUMAN:   retval += "Human";      break;
     default:            retval += "?";          break;
     }
 
@@ -3810,6 +3816,8 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
 
     case AFFIL_CAN_SEE:
         // unsupported so far...
+    case AFFIL_HUMAN:
+        // unsupported so far...
     case AFFIL_NONE:
         // add no empires
         break;
@@ -3858,6 +3866,7 @@ std::string SetVisibility::Description() const {
         case AFFIL_ANY:     desc_template = UserString("DESC_UPGRADE_VIS_ALL");     break;
         case AFFIL_SELF:
         case AFFIL_CAN_SEE:
+        case AFFIL_HUMAN:
         default:            desc_template = UserString("DESC_UPGRADE_VIS");
         }
     } else {
@@ -3868,6 +3877,7 @@ std::string SetVisibility::Description() const {
         case AFFIL_ANY:     desc_template = UserString("DESC_SET_VIS_ALL");     break;
         case AFFIL_SELF:
         case AFFIL_CAN_SEE:
+        case AFFIL_HUMAN:
         default:            desc_template = UserString("DESC_SET_VIS");
         }
     }
@@ -3898,6 +3908,7 @@ std::string SetVisibility::Dump() const {
     case AFFIL_ALLY:    retval += "AllyOf";     break;
     case AFFIL_ANY:     retval += "AnyEmpire";  break;
     case AFFIL_CAN_SEE: retval += "CanSee";     break;
+    case AFFIL_HUMAN:   retval += "Human";      break;
     default:            retval += "?";          break;
     }
 
