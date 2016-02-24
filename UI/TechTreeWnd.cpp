@@ -852,7 +852,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             m_colour.a = 255;
         }
 
-        if (!tech->UnlockedItems().empty() && m_unlock_icons.empty()) {
+        if (m_unlock_icons.empty()) {
             const int PAD = 8;
             GG::X icon_left(GG::X(Value(TechPanelHeight())) + PAD*3/2);
             GG::Y icon_height = TechPanelHeight()/2;
@@ -860,6 +860,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             GG::Y icon_bottom = TechPanelHeight() - PAD/2;
             GG::Y icon_top = icon_bottom - icon_height;
 
+            // add icons for unlocked items
             const std::vector<ItemSpec>& items = tech->UnlockedItems();
             for (std::vector<ItemSpec>::const_iterator item_it = items.begin(); item_it != items.end(); ++item_it) {
                 boost::shared_ptr<GG::Texture> texture;
@@ -870,6 +871,34 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 default:    break;
                 }
 
+                if (texture) {
+                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    m_unlock_icons.push_back(graphic);
+                    graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
+                    icon_left += icon_width + PAD;
+                }
+            }
+            // add icons for modified meters
+            std::set<MeterType> meters_affected;
+            const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = tech->Effects();
+            for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it = effects_groups.begin();
+                 effects_group_it != effects_groups.end(); ++effects_group_it)
+            {
+                const std::vector<Effect::EffectBase*>& effects = (*effects_group_it)->EffectsList();
+                for (std::vector<Effect::EffectBase*>::const_iterator effect_it = effects.begin();
+                     effect_it != effects.end(); ++effect_it)
+                {
+                    if (const Effect::SetMeter* set_meter_effect = dynamic_cast<const Effect::SetMeter*>(*effect_it)) {
+                        meters_affected.insert(set_meter_effect->GetMeterType());
+                    } else if (const Effect::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(*effect_it)) {
+                        meters_affected.insert(set_ship_part_meter_effect->GetMeterType());
+                    }
+                }
+            }
+            for (std::set<MeterType>::const_iterator meter_it = meters_affected.begin();
+                 meter_it != meters_affected.end(); ++meter_it)
+            {
+                boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*meter_it);
                 if (texture) {
                     GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
