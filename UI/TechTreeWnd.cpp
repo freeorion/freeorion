@@ -653,7 +653,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     GG::Y text_height(TechPanelHeight()/2);
 
     GG::Pt ul = GG::Pt(text_left, text_top);
-    GG::Pt lr = ul + GG::Pt(text_width + PAD, text_height*2);
+    GG::Pt lr = ul + GG::Pt(text_width + PAD, TechPanelHeight());
     GG::Clr border_colour = GG::CLR_WHITE;
 
     m_layout_panel->DoZoom(UpperLeft());
@@ -706,7 +706,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
             m_name_label->SetText("<s>" + m_name_text + "</s>");
 
         GG::Pt text_ul(text_left + 4, text_top);
-        GG::Pt text_size(text_width + PAD, text_height - PAD/2);
+        GG::Pt text_size(text_width + PAD, m_unlock_icons.empty() ? text_height*2 : text_height - PAD/2);
         m_name_label->SizeMove(text_ul, text_ul + text_size);
         /// Need to render children too
         GG::GUI::GetGUI()->RenderWindow(m_name_label);
