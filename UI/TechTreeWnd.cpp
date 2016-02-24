@@ -40,7 +40,7 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     GG::X   TechPanelWidth()
-    { return GG::X(ClientUI::Pts()*20); }
+    { return GG::X(ClientUI::Pts()*32); }
     GG::Y   TechPanelHeight()
     { return GG::Y(ClientUI::Pts()*6); }
 
