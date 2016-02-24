@@ -183,6 +183,12 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_HAPPINESS:
     case METER_TARGET_HAPPINESS:
         icon_filename = "happiness.png";    break;
+    case METER_CAPACITY:
+    case METER_MAX_CAPACITY:
+        icon_filename = "capacity.png";   break;
+    case METER_SECONDARY_STAT:
+    case METER_MAX_SECONDARY_STAT:
+        icon_filename = "secondary.png";   break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
         icon_filename = "structure.png";    break;
