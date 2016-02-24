@@ -14,6 +14,7 @@
 #include "../util/Directories.h"
 #include "../universe/Tech.h"
 #include "../universe/Effect.h"
+#include "../universe/ValueRef.h"
 #include "../Empire/Empire.h"
 #include "TechTreeLayout.h"
 #include "TechTreeArcs.h"
@@ -878,8 +879,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                     icon_left += icon_width + PAD;
                 }
             }
-            // add icons for modified meters
+            // add icons for modified part meters / specials
             std::set<MeterType> meters_affected;
+            std::set<std::string> specials_affected;
+            std::set<std::string> parts_whose_meters_are_affected;
             const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = tech->Effects();
             for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it = effects_groups.begin();
                  effects_group_it != effects_groups.end(); ++effects_group_it)
@@ -890,15 +893,46 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 {
                     if (const Effect::SetMeter* set_meter_effect = dynamic_cast<const Effect::SetMeter*>(*effect_it)) {
                         meters_affected.insert(set_meter_effect->GetMeterType());
+
                     } else if (const Effect::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(*effect_it)) {
-                        meters_affected.insert(set_ship_part_meter_effect->GetMeterType());
+                        const ValueRef::ValueRefBase<std::string>* part_name = set_ship_part_meter_effect->GetPartName();
+                        if (part_name && ValueRef::ConstantExpr(part_name))
+                            parts_whose_meters_are_affected.insert(part_name->Eval());
+
+                    } else if (const Effect::AddSpecial* add_special_effect = dynamic_cast<const Effect::AddSpecial*>(*effect_it)) {
+                        const ValueRef::ValueRefBase<std::string>* special_name = add_special_effect->GetSpecialName();
+                        if (special_name && ValueRef::ConstantExpr(special_name))
+                            specials_affected.insert(special_name->Eval());
                     }
+                }
+            }
+
+            for (std::set<std::string>::const_iterator part_it = parts_whose_meters_are_affected.begin();
+                 part_it != parts_whose_meters_are_affected.end(); ++part_it)
+            {
+                boost::shared_ptr<GG::Texture> texture = ClientUI::PartIcon(*part_it);
+                if (texture) {
+                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    m_unlock_icons.push_back(graphic);
+                    graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
+                    icon_left += icon_width + PAD;
                 }
             }
             for (std::set<MeterType>::const_iterator meter_it = meters_affected.begin();
                  meter_it != meters_affected.end(); ++meter_it)
             {
                 boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*meter_it);
+                if (texture) {
+                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    m_unlock_icons.push_back(graphic);
+                    graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
+                    icon_left += icon_width + PAD;
+                }
+            }
+            for (std::set<std::string>::const_iterator special_it = specials_affected.begin();
+                 special_it != specials_affected.end(); ++special_it)
+            {
+                boost::shared_ptr<GG::Texture> texture = ClientUI::SpecialIcon(*special_it);
                 if (texture) {
                     GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);

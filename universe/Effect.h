@@ -629,6 +629,8 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    const ValueRef::ValueRefBase<std::string>*  GetSpecialName() const { return m_name; }
+
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
