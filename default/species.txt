@@ -3031,14 +3031,14 @@ ADVANCED_FOCUS_EFFECTS
                         OwnedBy empire = Source.Owner
                     ]
                 ]
-            	GenerateSitRepMessage
-            		message = "EFFECT_PLANET_DRIVE"
+                GenerateSitRepMessage
+                    message = "EFFECT_PLANET_DRIVE"
                     icon = "icons/focus/planet_drive.png"
-            		parameters = [
-            			tag = "planet" data = Source.ID
-            			tag = "system" data = Source.SystemID
-            		]
-            		empire = Source.Owner
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
                 SetPopulation value = Value / 2
             ]
 
@@ -3052,15 +3052,15 @@ ADVANCED_FOCUS_EFFECTS
                 Not WithinDistance distance = 200 condition = Building name = "BLD_LIGHTHOUSE"
             ]
             effects = [
-            	GenerateSitRepMessage
-            		message = "SITREP_PLANET_DRIVE_FAILURE"
+                GenerateSitRepMessage
+                    message = "SITREP_PLANET_DRIVE_FAILURE"
                     icon = "icons/sitrep/colony_destroyed.png"
-            		parameters = [
-            			tag = "planet" data = Source.ID
-            			tag = "system" data = Source.SystemID
-            		]
-            		empire = Source.Owner
-            	Destroy
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
+                Destroy
             ]
 
         EffectsGroup
