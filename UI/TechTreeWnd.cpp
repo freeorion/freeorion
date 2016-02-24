@@ -587,6 +587,7 @@ private:
     std::string                     m_eta_text;
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
+    std::vector<GG::StaticGraphic*> m_unlock_icons;
     GG::TextControl*                m_name_label;
     GG::TextControl*                m_eta_label;
     GG::Clr                         m_colour;
@@ -604,6 +605,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_eta_text(),
     m_layout_panel(panel),
     m_icon(0),
+    m_unlock_icons(),
     m_name_label(0),
     m_eta_label(0),
     m_colour(GG::CLR_GRAY),
@@ -630,6 +632,7 @@ TechTreeWnd::LayoutPanel::TechPanel::~TechPanel() {
     delete m_icon;
     delete m_name_label;
     delete m_eta_label;
+    // TODO: delete unlock icons
 }
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
@@ -647,10 +650,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
     GG::Y text_top(0);
     GG::X text_width(TechPanelWidth() - text_left);
-    GG::Y text_height(TechPanelHeight());
+    GG::Y text_height(TechPanelHeight()/2);
 
     GG::Pt ul = GG::Pt(text_left, text_top);
-    GG::Pt lr = ul + GG::Pt(text_width + PAD, text_height);
+    GG::Pt lr = ul + GG::Pt(text_width + PAD, text_height*2);
     GG::Clr border_colour = GG::CLR_WHITE;
 
     m_layout_panel->DoZoom(UpperLeft());
@@ -703,7 +706,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
             m_name_label->SetText("<s>" + m_name_text + "</s>");
 
         GG::Pt text_ul(text_left + 4, text_top);
-        GG::Pt text_size(text_width + PAD, text_height);
+        GG::Pt text_size(text_width + PAD, text_height - PAD/2);
         m_name_label->SizeMove(text_ul, text_ul + text_size);
         /// Need to render children too
         GG::GUI::GetGUI()->RenderWindow(m_name_label);
@@ -736,8 +739,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
             GG::GUI::GetGUI()->RenderWindow(m_eta_label);
             glDisable(GL_TEXTURE_2D);
         }
-    }
-    else {
+
+    } else {
         // box only around icon to indicate enqueue (when zoomed far out)
         if (m_enqueued) {
             glColor(GG::CLR_WHITE);
@@ -757,6 +760,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
     m_icon->Render();
+
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_unlock_icons.begin();
+         it != m_unlock_icons.end(); ++it)
+    { (*it)->Render(); }
 
     m_layout_panel->UndoZoom();
 }
@@ -843,6 +850,33 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             m_colour.a = 128;
         } else {
             m_colour.a = 255;
+        }
+
+        if (!tech->UnlockedItems().empty() && m_unlock_icons.empty()) {
+            const int PAD = 8;
+            GG::X icon_left(GG::X(Value(TechPanelHeight())) + PAD*3/2);
+            GG::Y icon_height = TechPanelHeight()/2;
+            GG::X icon_width = GG::X(Value(icon_height));
+            GG::Y icon_bottom = TechPanelHeight() - PAD/2;
+            GG::Y icon_top = icon_bottom - icon_height;
+
+            const std::vector<ItemSpec>& items = tech->UnlockedItems();
+            for (std::vector<ItemSpec>::const_iterator item_it = items.begin(); item_it != items.end(); ++item_it) {
+                boost::shared_ptr<GG::Texture> texture;
+                switch (item_it->type) {
+                case UIT_BUILDING:  texture = ClientUI::BuildingIcon(item_it->name);    break;
+                case UIT_SHIP_PART: texture = ClientUI::PartIcon(item_it->name);        break;
+                case UIT_SHIP_HULL: texture = ClientUI::HullIcon(item_it->name);        break;
+                default:    break;
+                }
+
+                if (texture) {
+                    GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                    m_unlock_icons.push_back(graphic);
+                    graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
+                    icon_left += icon_width + PAD;
+                }
+            }
         }
     }
     m_icon->SetColor(icon_colour);
