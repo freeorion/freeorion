@@ -240,8 +240,10 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         hotkey.m_key = key_modkey_pair.first;
         hotkey.m_mod_keys = key_modkey_pair.second;
 
-        DebugLogger() << "Added hotkey '" << hotkey.m_key << "' with modifiers '"
-                       << hotkey.m_mod_keys << "' for hotkey '" << hotkey.m_name << "'";
+        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+          DebugLogger() << "Added hotkey '" << hotkey.m_key << "' with modifiers '"
+                        << hotkey.m_mod_keys << "' for hotkey '" << hotkey.m_name << "'";
+        }
     }
 }
 
