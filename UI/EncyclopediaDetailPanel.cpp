@@ -1155,7 +1155,7 @@ namespace {
         cost_units = UserString("ENC_RP");
         general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
             % UserString(tech->Category())
-            % UserString(boost::lexical_cast<std::string>(tech->Type()))
+            % ""
             % UserString(tech->ShortDescription()));
 
         const std::set<std::string>& unlocked_techs = tech->UnlockedTechs();

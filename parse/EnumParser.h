@@ -48,9 +48,6 @@ namespace parse {
     enum_parser_rule<UnlockableItemType>::type& enum_parser<UnlockableItemType>();
 
     template <>
-    enum_parser_rule<TechType>::type& enum_parser<TechType>();
-
-    template <>
     enum_parser_rule<ShipSlotType>::type& enum_parser<ShipSlotType>();
 
     template <>

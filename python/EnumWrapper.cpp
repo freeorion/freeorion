@@ -56,11 +56,6 @@ namespace FreeOrionPython {
             .value("adequate",      PE_ADEQUATE)
             .value("good",          PE_GOOD)
         ;
-        enum_<TechType>("techType")
-            .value("theory",        TT_THEORY)
-            .value("application",   TT_APPLICATION)
-            .value("refinement",    TT_REFINEMENT)
-        ;
         enum_<TechStatus>("techStatus")
             .value("unresearchable",    TS_UNRESEARCHABLE)
             .value("researchable",      TS_RESEARCHABLE)

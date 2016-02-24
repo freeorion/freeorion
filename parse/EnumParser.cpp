@@ -182,26 +182,6 @@ namespace parse {
     }
 
     template <>
-    enum_parser_rule<TechType>::type& enum_parser<TechType>()
-    {
-        const parse::lexer& tok = parse::lexer::instance();
-        static enum_parser_rule<TechType>::type retval
-            =   tok.Theory_         [ _val = TT_THEORY ]
-            |   tok.Application_    [ _val = TT_APPLICATION ]
-            |   tok.Refinement_     [ _val = TT_REFINEMENT ]
-            ;
-        static bool once = true;
-        if (once) {
-            retval.name("TechType");
-#if DEBUG_PARSERS
-            debug(retval);
-#endif
-            once = false;
-        }
-        return retval;
-    }
-
-    template <>
     enum_parser_rule<ShipSlotType>::type& enum_parser<ShipSlotType>()
     {
         const parse::lexer& tok = parse::lexer::instance();

@@ -94,14 +94,6 @@ std::string Tech::Dump() const {
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
     retval += DumpIndent() + "shortdescription = \"" + m_short_description + "\"\n";
-    retval += DumpIndent() + "techtype = ";
-    switch (m_type) {
-    case TT_THEORY:      retval += "Theory"; break;
-    case TT_APPLICATION: retval += "Application"; break;
-    case TT_REFINEMENT:  retval += "Refinement"; break;
-    default: retval += "?"; break;
-    }
-    retval += "\n";
     retval += DumpIndent() + "category = \"" + m_category + "\"\n";
     retval += DumpIndent() + "researchcost = " + m_research_cost->Dump() + "\n";
     retval += DumpIndent() + "researchturns = " + m_research_turns->Dump() + "\n";
@@ -428,11 +420,6 @@ std::string TechManager::FindIllegalDependencies() {
                 stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << *prereq_it << "\" as its prerequisite.";
                 return stream.str();
             }
-            //TechType prereq_type = prereq_tech->Type();
-            //if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
-            //    retval += "ERROR: Theory tech \"" + tech->Name() + "\" requires non-Theory tech \"" + prereq_tech->Name() + "\"; Theory techs can only require other Theory techs.\n";
-            //if (prereq_type == TT_REFINEMENT && tech_type != TT_REFINEMENT)
-            //    retval += "ERROR: Non-Refinement Tech \"" + tech->Name() + "\" requires Refinement tech \"" + prereq_tech->Name() + "\"; Refinement techs cannot be requirements for anything but other Refinement techs.\n";
         }
     }
     return retval;
