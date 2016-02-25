@@ -633,7 +633,9 @@ TechTreeWnd::LayoutPanel::TechPanel::~TechPanel() {
     delete m_icon;
     delete m_name_label;
     delete m_eta_label;
-    // TODO: delete unlock icons
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_unlock_icons.begin();
+         it != m_unlock_icons.end(); ++it)
+    { delete *it; }
 }
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
