@@ -1301,7 +1301,6 @@ namespace FreeOrionPython {
         def("sys_get_star_type",                    SystemGetStarType);
         def("sys_set_star_type",                    SystemSetStarType);
         def("sys_get_num_orbits",                   SystemGetNumOrbits);
-        def("sys_get_num_orbits",                   SystemGetNumOrbits);
         def("sys_free_orbits",                      SystemFreeOrbits);
         def("sys_orbit_occupied",                   SystemOrbitOccupied);
         def("sys_orbit_of_planet",                  SystemOrbitOfPlanet);
