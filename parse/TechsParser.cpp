@@ -107,7 +107,7 @@ namespace {
                    )
                 >   parse::label(Category_token)      > tok.string      [ _e = _1 ]
                 >   parse::label(ResearchCost_token)  > double_value_ref[ _f = _1 ]
-                >   parse::label(ResearchTurns_token) > flexible_int_ref   [ _g = _1 ]
+                >   parse::label(ResearchTurns_token) > flexible_int_ref[ _g = _1 ]
                 >  (    tok.Unresearchable_ [ _h = false ]
                     |   tok.Researchable_ [ _h = true ]
                     |   eps [ _h = true ]
