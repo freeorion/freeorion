@@ -23,11 +23,11 @@ namespace fs = boost::filesystem;
 
 BOOST_PYTHON_MODULE(freeorion) {
     boost::python::docstring_options doc_options(true, true, false);
-    FreeOrionPython::WrapServer();
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();
     FreeOrionPython::WrapEmpire();
     FreeOrionPython::WrapUniverseClasses();
+    FreeOrionPython::WrapServer();
 }
 
 namespace {

@@ -1215,10 +1215,6 @@ namespace FreeOrionPython {
             .def_readonly("empire_color",       &PlayerSetupData::m_empire_color)
             .def_readonly("starting_species",   &PlayerSetupData::m_starting_species_name);
 
-        class_<ItemSpec>("ItemSpec", init<UnlockableItemType, const std::string&>())
-            .def_readonly("type",   &ItemSpec::type)
-            .def_readonly("name",   &ItemSpec::name);
-
         class_<FleetPlanWrapper>("FleetPlan", init<const std::string&, const list&>())
             .def("name",            &FleetPlanWrapper::Name)
             .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);

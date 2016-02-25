@@ -517,7 +517,7 @@ namespace FreeOrionPython {
         boost::python::setattr(techsInCategoryFunc, "__doc__", boost::python::str("Returns the names of all techs (StringVec) in the indicated tech category name (string)."));
         def("techsInCategory", techsInCategoryFunc);
 
-        class_<ItemSpec>("itemSpec")
+        class_<ItemSpec>("ItemSpec", init<UnlockableItemType, const std::string&>())
             .add_property("type",               &ItemSpec::type)
             .add_property("name",               &ItemSpec::name)
         ;
