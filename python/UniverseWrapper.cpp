@@ -498,9 +498,9 @@ namespace FreeOrionPython {
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
             .add_property("dump",               &ShipDesign::Dump)
         ;
-        def("validShipDesign",                  ValidDesignHullAndParts);
-        def("validShipDesign",                  ValidDesignDesign);
-        def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>());
+        def("validShipDesign",                  ValidDesignHullAndParts, "Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).");
+        def("validShipDesign",                  ValidDesignDesign, "Returns true (boolean) if the passed ship design (ShipDesign) is valid, and false otherwise.");
+        def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
 
         class_<PartType, noncopyable>("partType", no_init)
             .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
@@ -513,7 +513,7 @@ namespace FreeOrionPython {
             .add_property("costTimeLocationInvariant",
                                                 &PartType::ProductionCostTimeLocationInvariant)
         ;
-        def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
+        def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>(), "Returns the ship part (PartType) with the indicated name (string).");
 
         class_<HullType, noncopyable>("hullType", no_init)
             .add_property("name",               make_function(&HullType::Name,              return_value_policy<copy_const_reference>()))
@@ -534,7 +534,7 @@ namespace FreeOrionPython {
             .add_property("costTimeLocationInvariant",
                                                 &HullType::ProductionCostTimeLocationInvariant)
         ;
-        def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>());
+        def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>(), "Returns the ship hull (HullType) with the indicated name (string).");
 
         //////////////////
         //   Building   //
@@ -562,7 +562,7 @@ namespace FreeOrionPython {
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
             .add_property("dump",               &BuildingType::Dump)
         ;
-        def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
+        def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>(), "Returns the building type (BuildingType) with the indicated name (string).");
         ////////////////////
         // ResourceCenter //
         ////////////////////
@@ -651,7 +651,7 @@ namespace FreeOrionPython {
             .add_property("dump",               &Special::Dump)
             .def("initialCapacity",             SpecialInitialCapacityOnObject)
         ;
-        def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>());
+        def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
 
         /////////////////
         //   Species   //
@@ -669,7 +669,7 @@ namespace FreeOrionPython {
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
             .add_property("dump",               &Species::Dump)
         ;
-        def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>());
+        def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>(), "Returns the species (Species) with the indicated name (string).");
     }
 
     void WrapGalaxySetupData() {
