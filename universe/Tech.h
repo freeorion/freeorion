@@ -31,19 +31,18 @@ public:
         TechInfo()
         {}
         TechInfo(const std::string& name_, const std::string& description_, const std::string& short_description_,
-                 const std::string& category_, TechType type_,
+                 const std::string& category_,
                  ValueRef::ValueRefBase<double>* research_cost_,
                  ValueRef::ValueRefBase<int>* research_turns_,
                  bool researchable_) :
             name(name_), description(description_), short_description(short_description_),
-            category(category_), type(type_), research_cost(research_cost_),
+            category(category_), research_cost(research_cost_),
             research_turns(research_turns_), researchable(researchable_)
         {}
         std::string                     name;
         std::string                     description;
         std::string                     short_description;
         std::string                     category;
-        TechType                        type;
         ValueRef::ValueRefBase<double>* research_cost;
         ValueRef::ValueRefBase<int>*    research_turns;
         bool                            researchable;
@@ -52,7 +51,7 @@ public:
     /** \name Structors */ //@{
     /** basic ctor */
     Tech(const std::string& name, const std::string& description, const std::string& short_description,
-         const std::string& category, TechType type,
+         const std::string& category,
          ValueRef::ValueRefBase<double>* research_cost,
          ValueRef::ValueRefBase<int>* research_turns,
          bool researchable,
@@ -63,7 +62,6 @@ public:
         m_description(description),
         m_short_description(short_description),
         m_category(category),
-        m_type(type),
         m_research_cost(research_cost),
         m_research_turns(research_turns),
         m_researchable(researchable),
@@ -83,7 +81,6 @@ public:
         m_description(tech_info.description),
         m_short_description(tech_info.short_description),
         m_category(tech_info.category),
-        m_type(tech_info.type),
         m_research_cost(tech_info.research_cost),
         m_research_turns(tech_info.research_turns),
         m_researchable(tech_info.researchable),
@@ -99,7 +96,6 @@ public:
     const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
     std::string         Dump() const;                                               //!< Returns a text representation of this object
-    TechType            Type() const                { return m_type; }              //!< Returns the type (theory/application/refinement) of this tech
     const std::string&  Category() const            { return m_category; }          //!< retursn the name of the category to which this tech belongs
     float               ResearchCost(int empire_id) const;                          //!< returns the total research cost in RPs required to research this tech
     float               PerTurnCost(int empire_id) const;                           //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
@@ -113,7 +109,7 @@ public:
     { return m_effects; }
 
     const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }   //!< returns the set of names of all techs required before this one can be researched
-    const std::string&              Graphic() const { return m_graphic; }               //!< returns the name of the grapic file for this tech
+    const std::string&              Graphic() const       { return m_graphic; }         //!< returns the name of the grapic file for this tech
     const std::vector<ItemSpec>&    UnlockedItems() const { return m_unlocked_items; }  //!< returns the set all items that are unlocked by researching this tech
     const std::set<std::string>&    UnlockedTechs() const { return m_unlocked_techs; }  //!< returns the set of names of all techs for which this one is a prerequisite
     //@}
@@ -127,7 +123,6 @@ private:
     std::string                     m_description;
     std::string                     m_short_description;
     std::string                     m_category;
-    TechType                        m_type;
     ValueRef::ValueRefBase<double>* m_research_cost;
     ValueRef::ValueRefBase<int>*    m_research_turns;
     bool                            m_researchable;

@@ -487,7 +487,6 @@ namespace FreeOrionPython {
             .add_property("name",                   make_function(&Tech::Name,              return_value_policy<copy_const_reference>()))
             .add_property("description",            make_function(&Tech::Description,       return_value_policy<copy_const_reference>()))
             .add_property("shortDescription",       make_function(&Tech::ShortDescription,  return_value_policy<copy_const_reference>()))
-            .add_property("type",                   &Tech::Type)
             .add_property("category",               make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
             .def("researchCost",                    &Tech::ResearchCost)
             .def("perTurnCost",                     &Tech::PerTurnCost)

@@ -458,7 +458,6 @@
     (TargetResearch)                            \
     (TargetTrade)                               \
     (Tech)                                      \
-    (TechType)                                  \
     (Terran)                                    \
     (TestValue)                                 \
     (TheEmpire)                                 \

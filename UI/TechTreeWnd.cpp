@@ -114,7 +114,6 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
     std::string main_text;
 
     main_text += UserString(tech->Category()) + " ";
-    main_text += UserString(boost::lexical_cast<std::string>(tech->Type())) + "  :  ";
     main_text += UserString(tech->ShortDescription()) + "\n";
 
     if (empire) {
@@ -1459,16 +1458,14 @@ std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_widt
     const GG::X COST_WIDTH(ClientUI::Pts() * 4);
     const GG::X TIME_WIDTH(ClientUI::Pts() * 4);
     const GG::X CATEGORY_WIDTH(ClientUI::Pts() * 8);
-    const GG::X TYPE_WIDTH(ClientUI::Pts() * 8);
 
-    const GG::X DESC_WIDTH = std::max(GG::X1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH - CATEGORY_WIDTH - TYPE_WIDTH);
+    const GG::X DESC_WIDTH = std::max(GG::X1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH - CATEGORY_WIDTH);
     std::vector<GG::X> retval;
     retval.push_back(GRAPHIC_WIDTH);
     retval.push_back(NAME_WIDTH);
     retval.push_back(COST_WIDTH);
     retval.push_back(TIME_WIDTH);
     retval.push_back(CATEGORY_WIDTH);
-    retval.push_back(TYPE_WIDTH);
     retval.push_back(DESC_WIDTH);
     return retval;
 }
@@ -1487,8 +1484,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     const GG::X COST_WIDTH =      col_widths[2];
     const GG::X TIME_WIDTH =      col_widths[3];
     const GG::X CATEGORY_WIDTH =  col_widths[4];
-    const GG::X TYPE_WIDTH =      col_widths[5];
-    const GG::X DESC_WIDTH =      col_widths[6];
+    const GG::X DESC_WIDTH =      col_widths[5];
     const GG::Y HEIGHT(Value(GRAPHIC_WIDTH));
 
     GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
@@ -1513,11 +1509,6 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 
     text = new CUILabel(UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
     text->Resize(GG::Pt(CATEGORY_WIDTH, HEIGHT));
-    push_back(text);
-
-    std::string type_str = UserString(boost::lexical_cast<std::string>(this_row_tech->Type()));
-    text = new CUILabel(type_str, GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(TYPE_WIDTH, HEIGHT));
     push_back(text);
 
     text = new CUILabel(UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);

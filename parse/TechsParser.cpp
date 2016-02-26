@@ -102,9 +102,6 @@ namespace {
 
             tech_info
                 =   tech_info_name_desc(_a, _b, _c)
-                > -(    parse::label(TechType_token) > parse::enum_parser<TechType>() [ _d = _1 ]
-                   |    eps [ _d = TT_THEORY ]
-                   )
                 >   parse::label(Category_token)      > tok.string      [ _e = _1 ]
                 >   parse::label(ResearchCost_token)  > double_value_ref[ _f = _1 ]
                 >   parse::label(ResearchTurns_token) > flexible_int_ref[ _g = _1 ]
@@ -112,7 +109,7 @@ namespace {
                     |   tok.Researchable_ [ _h = true ]
                     |   eps [ _h = true ]
                    )
-                [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _d, _f, _g, _h) ]
+                [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _f, _g, _h) ]
                 ;
 
             prerequisites
@@ -186,7 +183,7 @@ namespace {
                 std::string,
                 std::string,
                 std::string,
-                TechType,
+                std::vector<std::string>,
                 std::string,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<int>*,

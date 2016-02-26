@@ -200,15 +200,6 @@ GG_ENUM(UnlockableItemType,
     NUM_UNLOCKABLE_ITEM_TYPES   ///< keep last, the number of types of unlockable item
 )
 
-/** General classification for purpose and function of techs, and allowed place in tech prerequisite tree */
-GG_ENUM(TechType,
-    INVALID_TECH_TYPE = -1,
-    TT_THEORY,      ///< Theory: does nothing itself, but is prerequisite for applications and refinements
-    TT_APPLICATION, ///< Application: has effects that do things, or may unlock something such as a building that does things
-    TT_REFINEMENT,  ///< Refinement: does nothing itself, but if researched, may alter the effects of something else
-    NUM_TECH_TYPES  ///< keep last, the number of types of tech
-)
-
 /** Research status of techs, relating to whether they have been or can be researched */
 GG_ENUM(TechStatus,
     INVALID_TECH_STATUS = -1,
