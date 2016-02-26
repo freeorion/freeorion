@@ -1,0 +1,6 @@
+Article
+    name = "INFRASTRUCTURE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "INFRASTRUCTURE_TEXT"
+    icon = "icons/meter/construction.png"

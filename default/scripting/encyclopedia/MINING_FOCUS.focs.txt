@@ -1,0 +1,6 @@
+Article
+    name = "MINING_FOCUS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "PRODUCTION_ARTICLE_SHORT_DESC"
+    description = "MINING_FOCUS_TEXT"
+    icon = "icons/focus/mining.png"
