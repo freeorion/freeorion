@@ -18,7 +18,7 @@
 #include <stdexcept>
 
 namespace {
-    const int SYSTEM_ORBITS = 9;
+    const int SYSTEM_ORBITS = 7;
 }
 
 System::System() :

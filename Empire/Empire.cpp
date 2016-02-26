@@ -1371,6 +1371,22 @@ bool Empire::ResearchableTech(const std::string& name) const {
     return true;
 }
 
+bool Empire::HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const {
+    const Tech* tech = GetTech(name);
+    if (!tech)
+        return false;
+    bool one_unresearched = false;
+    bool one_researched = false;
+    const std::set<std::string>& prereqs = tech->Prerequisites();
+    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+        if (m_techs.find(*it) != m_techs.end())
+            one_researched = true;
+        else
+            one_unresearched = true;
+    }
+    return one_unresearched && one_researched;
+}
+
 const ResearchQueue& Empire::GetResearchQueue() const
 { return m_research_queue; }
 
@@ -1388,7 +1404,7 @@ bool Empire::TechResearched(const std::string& name) const
 TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TS_COMPLETE;
     if (ResearchableTech(name)) return TS_RESEARCHABLE;
-    //if (HasResearchedPrereqAndUnresearchedPrereq(name)) return TS_HAS_RESEARCHED_PREREQ;
+    if (HasResearchedPrereqAndUnresearchedPrereq(name)) return TS_HAS_RESEARCHED_PREREQ;
     return TS_UNRESEARCHABLE;
 }
 

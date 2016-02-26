@@ -68,7 +68,6 @@ GG_ENUM(PlanetSize,
     NUM_PLANET_SIZES
 )
 
-
 /** environmental suitability of planets for a particular race */
 GG_ENUM(PlanetEnvironment,
     INVALID_PLANET_ENVIRONMENT = -1,
@@ -203,9 +202,10 @@ GG_ENUM(UnlockableItemType,
 /** Research status of techs, relating to whether they have been or can be researched */
 GG_ENUM(TechStatus,
     INVALID_TECH_STATUS = -1,
-    TS_UNRESEARCHABLE,
-    TS_RESEARCHABLE,
-    TS_COMPLETE,
+    TS_UNRESEARCHABLE,          ///< never researchable, or has no researched prerequisites
+    TS_HAS_RESEARCHED_PREREQ,   ///< has at least one researched, and at least one unreserached, prerequisite
+    TS_RESEARCHABLE,            ///< all prerequisites researched
+    TS_COMPLETE,                ///< has been researched
     NUM_TECH_STATUSES
 )
 

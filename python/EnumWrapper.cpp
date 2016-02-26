@@ -58,6 +58,7 @@ namespace FreeOrionPython {
         ;
         enum_<TechStatus>("techStatus")
             .value("unresearchable",    TS_UNRESEARCHABLE)
+            .value("partiallyUnlocked", TS_HAS_RESEARCHED_PREREQ)
             .value("researchable",      TS_RESEARCHABLE)
             .value("complete",          TS_COMPLETE)
         ;

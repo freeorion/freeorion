@@ -330,6 +330,7 @@ public:
     bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
     bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
+    bool        HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const;    ///< Returns true iff this tech has some but not all prerequisites researched
     TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
 
     bool        BuildingTypeAvailable(const std::string& name) const;   ///< Returns true if the given building type is known to this empire, false if it is not

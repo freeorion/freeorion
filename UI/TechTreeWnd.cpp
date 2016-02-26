@@ -81,20 +81,20 @@ namespace {
 
     struct ToggleCategoryFunctor {
         ToggleCategoryFunctor(TechTreeWnd* tree_wnd, const std::string& category) : m_tree_wnd(tree_wnd), m_category(category) {}
-        void operator()() {m_tree_wnd->ToggleCategory(m_category);}
+        void operator()() { m_tree_wnd->ToggleCategory(m_category); }
         TechTreeWnd* const m_tree_wnd;
         const std::string m_category;
     };
 
     struct ToggleAllCategoriesFunctor {
         ToggleAllCategoriesFunctor(TechTreeWnd* tree_wnd) : m_tree_wnd(tree_wnd) {}
-        void operator()() {m_tree_wnd->ToggleAllCategories();}
+        void operator()() { m_tree_wnd->ToggleAllCategories(); }
         TechTreeWnd* const m_tree_wnd;
     };
 
     struct ToggleTechStatusFunctor {
         ToggleTechStatusFunctor(TechTreeWnd* tree_wnd, TechStatus status) : m_tree_wnd(tree_wnd), m_status(status) {}
-        void operator()() {m_tree_wnd->ToggleStatus(m_status);}
+        void operator()() { m_tree_wnd->ToggleStatus(m_status); }
         TechTreeWnd* const m_tree_wnd;
         const TechStatus m_status;
     };
@@ -144,6 +144,9 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
 
         } else if (tech_status == TS_COMPLETE) {
             main_text += UserString("TECH_WND_STATUS_COMPLETED") + "\n";
+
+        } else if (tech_status == TS_HAS_RESEARCHED_PREREQ) {
+            main_text += UserString("TECH_WND_STATUS_PARTIAL_UNLOCK") + "\n";
         }
 
         const ResearchQueue& queue = empire->GetResearchQueue();
@@ -266,6 +269,8 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     // create a button for each tech status
     m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_tech_status_buttons[TS_UNRESEARCHABLE]);
+    m_tech_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new CUIButton(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    AttachChild(m_tech_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
     m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
     AttachChild(m_tech_status_buttons[TS_RESEARCHABLE]);
     m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
@@ -673,7 +678,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     // Render text part of tech panel, but only if zoomed in so the text is legible
     if (font_pts > 6) {
-
         // black out dependency lines under panel
         glColor(GG::CLR_BLACK);
         PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
@@ -844,7 +848,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
         m_colour = ClientUI::CategoryColor(tech->Category());
         icon_colour = m_colour;
 
-        if (m_status == TS_UNRESEARCHABLE) {
+        if (m_status == TS_UNRESEARCHABLE || m_status == TS_HAS_RESEARCHED_PREREQ) {
             icon_colour = GG::CLR_GRAY;
             m_colour.a = 64;
         } else if (m_status == TS_RESEARCHABLE) {
@@ -2000,7 +2004,7 @@ void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
         return;
     }
 
-    if (tech_status != TS_UNRESEARCHABLE)
+    if (tech_status != TS_UNRESEARCHABLE && tech_status != TS_HAS_RESEARCHED_PREREQ)
         return;
 
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
