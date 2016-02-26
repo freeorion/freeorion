@@ -2542,11 +2542,8 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
         if (ship_design == it->second) {
             // ship design is already present in universe.  just need to add it to the empire's set of ship designs
             int ship_design_id = it->first;
-            if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
-                m_ship_designs_ordered.insert(m_ship_designs_ordered.end(), ship_design_id);
-                m_ship_designs.insert(ship_design_id);
-            }
-            return it->first;
+            AddShipDesign(ship_design_id);
+            return ship_design_id;
         }
     }
 
@@ -2565,13 +2562,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
         return INVALID_OBJECT_ID;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "AddShipDesign::  "<<ship_design->Name()<< " ("<<new_design_id<<") to empire #"<<EmpireID();
-
-    m_ship_designs_ordered.insert(m_ship_designs_ordered.end(), new_design_id);
-    m_ship_designs.insert(new_design_id);
-
-    ShipDesignsChangedSignal();
+    AddShipDesign(new_design_id);
 
     return new_design_id;
 }
