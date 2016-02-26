@@ -1,0 +1,51 @@
+Part
+    name = "DT_DETECTOR_4"
+    description = "DT_DETECTOR_4_DESC"
+    class = Detection
+    capacity = 200
+    mountableSlotTypes = External
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
+    icon = "icons/ship_parts/detector-4.png"
+
+Part
+    name = "DT_DETECTOR_3"
+    description = "DT_DETECTOR_3_DESC"
+    class = Detection
+    capacity = 150
+    mountableSlotTypes = External
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
+    icon = "icons/ship_parts/detector-3.png"
+
+Part
+    name = "DT_DETECTOR_2"
+    description = "DT_DETECTOR_2_DESC"
+    class = Detection
+    capacity = 75
+    mountableSlotTypes = External
+    buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 4
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
+    icon = "icons/ship_parts/detector-2.png"
+
+Part
+    name = "DT_DETECTOR_1"
+    description = "DT_DETECTOR_1_DESC"
+    class = Detection
+    capacity = 25
+    mountableSlotTypes = External
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 2
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
+    icon = "icons/ship_parts/detector-1.png"
+
+#include "stacking.macros"
+
+#include "../common/shared.macros"

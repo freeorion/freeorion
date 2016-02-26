@@ -1,0 +1,12 @@
+Part
+    name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+    description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
+    class = Speed
+    capacity = 20
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 4
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/engine-2.png"
+
+#include "../common/shared.macros"

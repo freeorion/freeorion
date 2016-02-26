@@ -1,0 +1,37 @@
+Part
+    name = "RS_AUTOLAB"
+    description = "RS_AUTOLAB_DESC"
+    class = Research
+    capacity = 80
+    mountableSlotTypes = Internal
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    Unproducible
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/tech/categories/learning.png"
+
+Part
+    name = "RS_AUTOFACTORY"
+    description = "RS_AUTOFACTORY_DESC"
+    class = Industry
+    capacity = 80
+    mountableSlotTypes = Internal
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    Unproducible
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/tech/categories/production.png"
+
+Part
+    name = "RS_AUTOTRADER"
+    description = "RS_AUTOTRADER_DESC"
+    class = Trade
+    capacity = 80
+    mountableSlotTypes = Internal
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    Unproducible
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/tech/categories/economics.png"
+
+#include "../common/shared.macros"

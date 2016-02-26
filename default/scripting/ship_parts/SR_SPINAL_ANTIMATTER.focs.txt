@@ -1,0 +1,12 @@
+Part
+    name = "SR_SPINAL_ANTIMATTER"
+    description = "SR_SPINAL_ANTIMATTER_DESC"
+    class = ShortRange
+    damage = 100
+    mountableSlotTypes = Core
+    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 4
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/spinal_antimatter.png"
+
+#include "../common/shared.macros"

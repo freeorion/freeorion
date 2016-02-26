@@ -1,0 +1,12 @@
+Part
+    name = "CO_OUTPOST_POD"
+    description = "CO_OUTPOST_POD_DESC"
+    class = Colony
+    capacity = 0
+    mountableSlotTypes = Internal
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/habitation_domes.png"
+
+#include "../common/shared.macros"
