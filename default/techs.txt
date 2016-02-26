@@ -541,6 +541,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = "THEORY"
     graphic = "icons/tech/the_physical_brain.png"
 
 Tech
@@ -568,6 +569,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 16 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = "THEORY"
     prerequisites = [
         "LRN_PHYS_BRAIN"
         "LRN_ALGO_ELEGANCE"
@@ -584,6 +586,7 @@ Tech
         HasTag name = "TELEPATHIC"
     ])
     researchturns = 4
+    tags = "THEORY"
     prerequisites = "LRN_TRANSLING_THT"
     graphic = "icons/tech/psionics.png"
 
@@ -627,6 +630,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 400 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
+    tags = "THEORY"
     prerequisites = "LRN_GRAVITONICS"
     graphic = "icons/tech/the_theory_of_everything.png"
 
@@ -637,6 +641,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
+    tags = "THEORY"
     prerequisites = "LRN_XENOARCH"
     graphic = "icons/tech/mind_of_the_void.png"
 
@@ -647,6 +652,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = "THEORY"
     prerequisites = "LRN_FORCE_FIELD"
     graphic = "icons/tech/n-dimensional_subspace.png"
 
@@ -961,6 +967,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = "THEORY"
     graphic = "icons/tech/genetic_engineering.png"
 /*
 Tech
@@ -991,6 +998,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = "THEORY"
     prerequisites = "GRO_SUBTER_HAB"
     graphic = "icons/tech/advanced_eco_man.png"
 
@@ -1015,6 +1023,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = "THEORY"
     prerequisites = [
         "GRO_GENETIC_MED"
         "PRO_NANOTECH_PROD"
@@ -1083,6 +1092,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
+    tags = "THEORY"
     prerequisites = [
         "GRO_TERRAFORM"
     ]
@@ -1302,6 +1312,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 45 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = "THEORY"
     prerequisites = "PRO_ROBOTIC_PROD"
     graphic = "icons/tech/nanotech_production.png"
 
@@ -1373,6 +1384,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
+    tags = "THEORY"
     prerequisites = [
         "PRO_NDIM_ASSMB"
         "PRO_SINGULAR_GEN"
@@ -1452,6 +1464,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = "THEORY"
     graphic = "icons/tech/asymptotic_materials.png"
 
 Tech
@@ -1461,6 +1474,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = "THEORY"
     prerequisites = "CON_ASYMP_MATS"
     graphic = "icons/tech/architecture_psychology.png"
 
@@ -1789,6 +1803,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 1
+    tags = "THEORY"
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -3341,6 +3356,7 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 1
     researchturns = 1
+    tags = "THEORY"
 
 Tech
     name = "SPY_STEALTH_1"
