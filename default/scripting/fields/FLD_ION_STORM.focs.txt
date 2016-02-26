@@ -1,0 +1,56 @@
+FieldType
+    name = "FLD_ION_STORM"
+    description = "FLD_ION_STORM_DESC"
+    stealth = 0.01
+    tags = [ "EXOTIC" ]
+    effectsgroups = [
+        EffectsGroup    // move around
+            scope = Source
+            effects = [
+                SetSpeed value = 10
+                MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+            ]
+
+        EffectsGroup    // grow size when young
+            scope = Source
+            activation = And [
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 20))
+                Size high = 50
+            ]
+            effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
+
+        EffectsGroup    // shrink size when old
+            scope = Source
+            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
+            effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
+/*
+        EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
+            scope = Source
+            activation = (Source.Age >= 10)
+            effects = SetSize value = Value - 0.3 * (Count condition = And [
+                System
+                WithinDistance distance = 80 condition = Source
+            ])
+*/
+        EffectsGroup    // affect stealth / detection of objects in storm
+            scope = And [
+                Not Field
+                WithinDistance distance = Source.Size condition = Source
+            ]
+            stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
+            effects = [
+                SetStealth value = Value + 40
+                SetDetection value = Value - 40
+            ]
+
+        EffectsGroup    // after reaching a certain age, dissipate when small
+            scope = Source
+            activation = And [
+                (Source.Age >= 10)
+                Size high = 10
+            ]
+            effects = Destroy
+
+    ]
+    graphic = "fields/rainbow_storm.png"

@@ -1,0 +1,57 @@
+FieldType
+    name = "FLD_NEBULA_2"
+    description = "FLD_NEBULA_2_DESC"
+    stealth = 0.01
+    effectsgroups = [
+        EffectsGroup    // shrink slowly when in no-star system
+            scope = Source
+            activation = And [
+                Size low = 2 high = 180
+                Star type = NoStar
+            ]
+            effects =
+                SetSize value = Value + RandomNumber(-0.5, 0.3)
+
+        EffectsGroup    // shrink slowly when in no-star system
+            scope = Source
+            activation = And [
+                Size low = 180
+                Star type = NoStar
+            ]
+            effects =
+                SetSize value = Value + RandomNumber(-0.5, 0)
+
+        EffectsGroup    // spawn new star when small enough
+            scope = And [
+                System
+                Object id = Source.SystemID
+            ]
+            activation = And [
+                Size high = 5
+                Star type = NoStar
+            ]
+            effects = [
+                SetStarType type = OneOf(Blue, Blue, White, Yellow)
+                GenerateSitRepMessage
+                    message = "EFFECT_NEBULA"
+                    icon = "nebulae/nebula15.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        ]
+                    affiliation = CanSee condition = Source
+                ]
+
+        [[CREATE_PLANETS]]
+
+        EffectsGroup    // dissipate when small
+            scope = Source
+            activation = Size high = 5
+            effects = [
+                Destroy
+                CreateField type = "FLD_ACCRETION_DISC" size = 20
+                AddSpecial name = "ACCRETION_DISC_SPECIAL"
+            ]
+    ]
+    graphic = "nebulae/nebula15.png"
+
+#include "fields.macros"

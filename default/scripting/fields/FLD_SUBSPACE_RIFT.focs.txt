@@ -1,0 +1,31 @@
+FieldType
+    name = "FLD_SUBSPACE_RIFT"
+    description = "FLD_SUBSPACE_RIFT_DESC"
+    stealth = 0
+    effectsgroups = [
+        EffectsGroup    // pull in objects
+            scope = And [
+                System
+                Not Contains Source
+                WithinDistance distance = Source.Size condition = Source
+            ]
+            effects = MoveTowards speed = 5 target = Source
+
+        EffectsGroup    // destroy close objects
+            scope = And [
+                Not Source
+                Not Contains Source
+                WithinDistance distance = 10 condition = Source
+            ]
+            effects = Destroy
+
+        EffectsGroup    // shrink at same speed objects are pulled
+            scope = Source
+            effects = SetSize value = Target.Size - 5
+
+        EffectsGroup    // collapse upon self when small enough
+            scope = Source
+            activation = Size high = 5
+            effects = Destroy
+    ]
+    graphic = "nebulae/nebula9.png"

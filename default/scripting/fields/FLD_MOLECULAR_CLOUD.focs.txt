@@ -1,0 +1,52 @@
+FieldType
+    name = "FLD_MOLECULAR_CLOUD"
+    description = "FLD_MOLECULAR_CLOUD_DESC"
+    stealth = 0.01
+    tags = [ "EXOTIC" ]
+    effectsgroups = [
+        EffectsGroup    // move around
+            scope = Source
+            effects = [
+                SetSpeed value = 5
+                MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+                MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
+            ]
+
+        EffectsGroup    // grow size when young
+            scope = Source
+            activation = And [
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 30))
+                Size high = 120
+               ]
+            effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
+
+        EffectsGroup    // shrink size when old
+            scope = Source
+            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 30))
+            effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
+/*
+        EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
+            scope = Source
+            activation = (Source.Age >= 10)
+            effects = SetSize value = Value - 0.1 * (Count condition = And [
+                System
+                WithinDistance distance = 80 condition = Source
+            ])
+*/
+        EffectsGroup    // reduce shields
+            scope = And [
+                Ship
+                WithinDistance distance = Source.Size condition = Source
+            ]
+            stackinggroup = "MOLECULAR_CLOUD_SHIELD_REDUCTION"
+            effects = SetMaxShield value = Value - 15
+
+        EffectsGroup    // after reaching a certain age, dissipate when small
+            scope = Source
+            activation = And [
+                (Source.Age >= 10)
+                Size high = 10
+            ]
+            effects = Destroy
+    ]
+    graphic = "nebulae/nebula8.png"
