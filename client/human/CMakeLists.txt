@@ -21,6 +21,12 @@ if(WIN32)
     find_package(GLEW REQUIRED)
 endif()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_definitions(
+    -DENABLE_CRASH_BACKTRACE
+    )
+endif()
+
 include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIRS}
@@ -224,4 +230,3 @@ install(
     DESTINATION share/freeorion
     COMPONENT COMPONENT_FREEORION
 )
-
