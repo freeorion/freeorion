@@ -1,0 +1,38 @@
+Species
+    name = "SP_HIDDENGARDENER"
+    description = "SP_HIDDENGARDENER_DESC"
+    gameplay_description = "SP_HIDDENGARDENER_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "ORGANIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GOOD_STEALTH" ]
+
+    foci = [
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[GOOD_STEALTH]]
+
+        [[NO_INDUSTRY]]
+        [[NO_RESEARCH]]
+
+        [[NO_DEFENSE_TROOPS]]
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+
+        [[NOT_HUGE_PLANET]]
+    ]
+
+    [[TERRAN_STANDARD_EP]]
+
+    graphic = "icons/species/hidden-gardener.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

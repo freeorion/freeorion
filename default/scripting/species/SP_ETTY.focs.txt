@@ -1,0 +1,48 @@
+Species
+    name = "SP_ETTY"
+    description = "SP_ETTY_DESC"
+    gameplay_description = "SP_ETTY_GAMEPLAY_DESC"
+    Playable
+    //Native
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ROBOTIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_WEAPONS" "AI_TAG_GREAT_SUPPLY" "AI_TAG_BAD_DETECTION" "AI_TAG_GOOD_STEALTH" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
+        [[GOOD_DEFENSE_TROOPS]]
+
+        [[GOOD_WEAPONS]]
+
+        [[BAD_DETECTION]]
+        [[GOOD_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+    ]
+
+    [[DESERT_STANDARD_EP]]
+
+    graphic = "icons/species/etty.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

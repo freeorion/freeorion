@@ -1,0 +1,52 @@
+Species
+    name = "SP_EXOBOT"
+    description = "SP_EXOBOT_DESC"
+    gameplay_description = "SP_EXOBOT_GAMEPLAY_DESC"
+    CanProduceShips
+    CanColonize
+
+    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "CTRL_ALWAYS_REPORT" "AI_TAG_BAD_ATTACKTROOPS" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
+        [[BAD_WEAPONS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Adequate
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Adequate
+        type = Tundra       environment = Poor
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Poor
+        type = Gasgiant     environment = Uninhabitable
+    ]
+
+    graphic = "icons/species/robotic-01.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

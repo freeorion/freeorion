@@ -1,0 +1,40 @@
+Species
+    name = "SP_VOLP"
+    description = "SP_VOLP_DESC"
+    gameplay_description = "SP_VOLP_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "LITHIC" "AI_TAG_GOOD_POPULATION" "AI_TAG_ULTIMATE_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_PROTECTION"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[ULTIMATE_SUPPLY]]        
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[HUGE_PLANET]]
+    ]
+
+    [[BARREN_STANDARD_EP]]
+
+    graphic = "icons/species/volp.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

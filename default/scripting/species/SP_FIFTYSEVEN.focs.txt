@@ -1,0 +1,39 @@
+Species
+    name = "SP_FIFTYSEVEN"
+    description = "SP_FIFTYSEVEN_DESC"
+    gameplay_description = "SP_FIFTYSEVEN_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "ORGANIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_ULTIMATE_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" ]
+
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[ULTIMATE_RESEARCH]]
+
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[SWAMP_STANDARD_EP]]
+
+    graphic = "icons/species/fifty-seven.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

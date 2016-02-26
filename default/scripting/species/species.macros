@@ -1,0 +1,1902 @@
+#include "env.macros"
+
+#include "focus.macros"
+
+STANDARD_CONSTRUCTION
+'''        EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
+            effects = SetTargetConstruction value = Value + 20
+'''
+
+NO_SUPPLY
+'''
+'''
+
+BAD_SUPPLY
+'''     EffectsGroup
+            description = "BAD_SUPPLY"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 0
+'''
+
+AVERAGE_SUPPLY
+'''     EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "AVERAGE_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 1
+'''
+
+GREAT_SUPPLY
+'''     EffectsGroup
+            description = "GREAT_SUPPLY"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 2
+'''
+
+ULTIMATE_SUPPLY
+'''     EffectsGroup
+            description = "ULTIMATE_SUPPLY"
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 3
+'''
+
+
+//#####     P O P U L A T I O N   #####  
+
+BASIC_POPULATION
+'''
+        [[HOMEWORLD_BONUS_POPULATION]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[SELF_SUSTAINING_BONUS]]
+        [[PHOTOTROPHIC_BONUS]]
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[GAIA_POP_MODIFIER]]
+        [[SPECIALS_POP_MODIFIER]]
+        [[GRO_HAB_MODIFIER]]
+        [[POPULATION_TECHS]]
+
+        // Since all species have the same advanced focus effects and infrastructure, the macros are stashed here were they don't need to be manually included in each species macros.
+
+        [[FOCUS_CHANGE_PENALTY]]
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+'''
+
+AVERAGE_POPULATION
+'''     [[BASIC_POPULATION]]
+'''
+
+BAD_POPULATION
+'''     [[BASIC_POPULATION]]
+    
+        EffectsGroup
+            description = "BAD_POPULATION"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_POPULATION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetPopulation value = Value -0.25*abs(Value) 
+'''
+
+GOOD_POPULATION
+'''     [[BASIC_POPULATION]]
+
+        EffectsGroup
+            description = "GOOD_POPULATION"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_POPULATION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetPopulation value = Value +0.25*abs(Value) 
+'''
+
+
+XENOPHOBIC_SELF
+'''     EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            effects = GiveEmpireTech name = "CON_CONC_CAMP"
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                Number low = 1 condition = And [
+                    PopulationCenter
+                    OwnedBy empire = Source.Owner
+                    Not OR [ 
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    Not Contains Building name = "BLD_CONC_CAMP"
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                ]
+            ]
+            stackinggroup = "XENOPHOBIC_LABEL_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            effects = [ 
+                SetTargetIndustry value = Value * 0.2 - 1
+                SetTargetResearch value = Value * 0.9
+                SetTargetHappiness value = Value - (
+                    Count condition = And [
+                    PopulationCenter
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    OwnedBy empire = Source.Owner
+                    Not OR [ 
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                ]
+                )
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                HasTag name = "SELF_SUSTAINING"
+            ]
+            stackinggroup = "XENOPHOBIC_POP_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = max(Value * (0.6 + (0.4 * (0.8 ^ 
+                Count condition = And [
+                    PopulationCenter
+                    Not OR [ 
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    WithinStarlaneJumps
+                                  jumps = 2
+                              condition = ExploredByEmpire
+                                          empire = Source.Owner
+                ]
+                ) ) ), (Value - 3 * Target.SizeAsDouble)) // Sets the pop malus dependent on the number of other species nearby up to a max of the self sustaining bonus
+
+'''
+
+// single argument should be the name of the species capitalized
+XENOPHOBIC_OTHER
+'''     EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                Not OR [ 
+                    Species name = Source.Species
+                    Species name = "SP_EXOBOT"
+                ]
+                Not Population high = 0
+                Not Contains Building name = "BLD_CONC_CAMP"
+                WithinStarlaneJumps jumps = 5 condition = Source
+            ]
+            activation = PopulationCenter
+            stackinggroup = "XENOPHOBIC_LABEL_@1@_OTHER"
+            accountinglabel = "XENOPHOBIC_LABEL_@1@_OTHER"
+            effects = SetTargetIndustry value = Value - Target.Population * 0.1
+'''
+
+/*
+* Implements environmental modifiers from Growth techs.
+* Changes to the growth tree should take this into account.
+*/
+ENVIRONMENT_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Uninhabitable
+            ]
+            accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = -999
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Hostile
+            ]
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Poor
+            ]
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
+
+/*        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Adequate
+            ]
+            accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value + 0 * Source.SizeAsDouble
+*/
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Good Adequate ]
+                OwnerHasTech name = "GRO_PLANET_ECOL"
+                Not OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
+            ]
+            accountinglabel = "GRO_PLANET_ECOL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Good Adequate Poor ]
+                OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
+            ]
+            accountinglabel = "GRO_SYMBIOTIC_BIO"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Adequate Poor ]
+                OwnerHasTech name = "GRO_XENO_GENETICS"
+            ]
+            accountinglabel = "GRO_XENO_GENETICS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech name = "GRO_XENO_GENETICS"
+            ]
+            accountinglabel = "GRO_XENO_GENETICS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Poor ]
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
+            ]
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
+            ]
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech name = "GRO_CYBORG"
+            ]
+            accountinglabel = "GRO_CYBORG"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble  
+'''
+
+HOMEWORLD_BONUS_POPULATION
+'''     EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  
+'''
+
+HOMEWORLD_GROWTH_FOCUS_BOOST
+'''     EffectsGroup 
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = Source.Species
+                Not Homeworld name = Source.Species
+                //TargetPopulation low = 0
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_GROWTH"
+                Homeworld
+            ]
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_SUPPLY"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+'''
+
+GRO_HAB_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "GRO_SUBTER_HAB"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "GRO_SUBTER_HAB"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+'''
+
+GAIA_POP_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "GAIA_SPECIAL"
+                Planet environment = Good
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "GAIA_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
+                SetTargetHappiness value = Value + 5
+            ]
+'''
+
+SPECIALS_POP_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TIDAL_LOCK_SPECIAL"
+            ]
+            accountinglabel = "TIDAL_LOCK_LABEL"
+            effects = SetTargetPopulation value = Value - 1 * Target.SizeAsDouble
+
+     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "WORLDTREE_SPECIAL"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "WORLDTREE_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1
+
+     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TEMPORAL_ANOMALY_SPECIAL"
+            ]
+            accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 5 * Target.SizeAsDouble
+'''
+
+POPULATION_TECHS
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnerHasTech name = "CON_NDIM_STRC"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "NDIM_STRC_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnerHasTech name = "CON_ORBITAL_HAB"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "ORBITAL_HAB_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+'''
+
+// This is dependent on current placement in population effects calc, just after Homeworld and Environment
+SELF_SUSTAINING_BONUS
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                HasTag name = "SELF_SUSTAINING"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "SELF_SUSTAINING_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble  // Gets the same bonus as three growth specials
+
+/* Redundant as we now have effects priorities, remove after testing these properly
+EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = And [
+                Planet
+                HasTag name = "SELF_SUSTAINING"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "SELF_SUSTAINING_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
+*/
+'''
+
+PHOTOTROPHIC_BONUS
+'''     EffectsGroup
+            scope = Contains Source
+            activation = AND [
+                Planet
+                OR [
+                    OwnedBy affiliation = AnyEmpire
+                    Star type = [BlackHole NoStar] // Natives are allowed to have bright or dim stars
+                ]
+                HasTag name = "PHOTOTROPHIC"
+                Turn high = 0
+                NOT Star type = [Orange]
+            ]
+            effects = SetStarType type = Yellow // start with a normal star to be balanced
+ 
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [Blue]
+                TargetPopulation low = 0
+            ]
+            accountinglabel = "VERY_BRIGHT_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [White]
+                TargetPopulation low = 0
+            ]
+            accountinglabel = "BRIGHT_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1.5 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [Red Neutron]
+            ]
+            accountinglabel = "DIM_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [BlackHole NoStar]
+            ]
+            accountinglabel = "NO_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
+'''
+// Population end
+
+AVERAGE_HAPPINESS
+'''
+        EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
+            effects = SetTargetHappiness value = Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = Source.PreferredFocus
+            accountinglabel = "FOCUS_PREFERENCE_LABEL"
+            effects = SetTargetHappiness value = Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Homeworld name = Source.Species
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetHappiness value = Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = Capital
+            accountinglabel = "CAPITAL_LABEL"
+            effects = SetTargetHappiness value = Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = Contains Building name = "BLD_CONC_CAMP"
+            accountinglabel = "CONCENTRATION_CAMPS_LABEL"
+            effects = SetTargetHappiness value = 0
+'''
+
+
+FOCUS_CHANGE_PENALTY
+'''
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus type = "FOCUS_INDUSTRY"
+            ]
+            effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+'''
+
+ADVANCED_FOCUS_EFFECTS
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_STEALTH"
+            ]
+            effects = SetStealth value = Value + 15
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                WithinStarlaneJumps jumps = 4 condition = Source
+                Not Number low = 1 condition = And [
+                    Building name = "BLD_GENOME_BANK"
+                    OwnedBy empire = RootCandidate.Owner
+                ]
+            ]
+            activation = Focus type = "FOCUS_BIOTERROR"
+            effects = SetTargetPopulation value = Value - 4
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                OwnedBy empire = Source.Owner
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Focus type = "FOCUS_STARGATE_SEND"
+                    ]
+                ]
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_STARGATE_RECEIVE"
+            ]
+            stackinggroup = "STARGATE_STACK"
+            effects = [
+                GenerateSitrepMessage
+                    message = "EFFECT_STARGATE"
+                    icon = "icons/focus/stargate_receive.png"
+                    parameters = [
+                        tag = "fleet" data = Target.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
+                MoveTo destination = And [
+                    Contains Source
+                    System
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PLANET_DRIVE"
+                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+            ]
+            effects = [
+                MoveTo destination = And [
+                    OwnedBy empire = Source.Owner
+                    WithinStarlaneJumps jumps = 1 condition = Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]
+                GenerateSitRepMessage
+                        message = "EFFECT_PLANET_DRIVE"
+                    icon = "icons/focus/planet_drive.png"
+                        parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "system" data = Source.SystemID
+                        ]
+                        empire = Source.Owner
+                SetPopulation value = Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PLANET_DRIVE"
+                Random probability = 0.5
+                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance distance = 200 condition = Building name = "BLD_LIGHTHOUSE"
+            ]
+            effects = [
+                GenerateSitRepMessage
+                        message = "SITREP_PLANET_DRIVE_FAILURE"
+                    icon = "icons/sitrep/colony_destroyed.png"
+                        parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "system" data = Source.SystemID
+                        ]
+                        empire = Source.Owner
+                Destroy
+            ]
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                Not Stationary
+                Not InSystem
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                (Source.System.ID = LocalCandidate.NextSystemID)
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_DISTORTION" 
+            ]
+            stackinggroup = "DISTORTION_MOVEMENT_STACK"
+            effects = [
+                If condition = WithinDistance distance = 40 condition = Object id = Target.PreviousSystemID
+                    effects = [
+                        GenerateSitrepMessage
+                            message = "EFFECT_FLEET_MOVED_TO"
+                            parameters = [
+                                tag = "fleet" data = Target.ID
+                                tag = "system" data = Target.PreviousSystemID
+                                tag = "rawtext" data = DirectDistanceBetween object = Target.ID object = Target.PreviousSystemID
+                                tag = "planet" data = Source.ID
+                            ]
+                            empire = Source.Owner
+                        MoveTo destination = Object id = Target.PreviousSystemID
+                    ]
+                    else = [
+                        GenerateSitrepMessage
+                            message = "EFFECT_FLEET_MOVED_TOWARDS"
+                            parameters = [
+                                tag = "fleet" data = Target.ID
+                                tag = "system" data = Target.PreviousSystemID
+                                tag = "rawtext" data = DirectDistanceBetween object = Target.ID object = Target.PreviousSystemID
+                                tag = "planet" data = Source.ID
+                            ]
+                            empire = Source.Owner
+                        MoveTowards speed = 40 target = Object id = Target.PreviousSystemID
+                    ]
+                ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_LOGISTICS"
+            accountinglabel = "SHP_INTSTEL_LOG"
+            effects = SetMaxSupply value = Value + 3
+'''
+
+//#####      I N D U S T R Y    #####//
+
+NO_INDUSTRY
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY)]]'''
+
+BASIC_INDUSTRY
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "FOCUS_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup                    // removes residual production from a dead planet
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = SetIndustry value = 0
+'''
+
+BAD_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "BAD_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "BAD_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[BAD_MULTIPLIER]]
+'''
+
+AVERAGE_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+'''
+
+GOOD_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "GOOD_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "GOOD_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[GOOD_MULTIPLIER]]
+'''
+
+GREAT_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "GREAT_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "GREAT_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[GREAT_MULTIPLIER]]
+'''
+
+ULTIMATE_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "ULTIMATE_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[ULTIMATE_MULTIPLIER]]
+'''
+
+//#####      R E S E A R C H    #####//
+
+BASIC_RESEARCH
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "FOCUS_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
+
+        EffectsGroup      // removes residual production from a dead planet
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = SetResearch value = 0
+'''
+
+NO_RESEARCH
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH)]]'''
+
+BAD_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "BAD_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "BAD_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
+'''
+
+AVERAGE_RESEARCH
+'''[[BASIC_RESEARCH]]
+'''
+
+GOOD_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "GOOD_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "GOOD_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[GOOD_MULTIPLIER]]
+'''
+
+GREAT_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "GREAT_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "GREAT_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[GREAT_MULTIPLIER]]
+'''
+
+ULTIMATE_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "ULTIMATE_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "ULTIMATE_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[ULTIMATE_MULTIPLIER]]
+'''
+
+//#####      T R O O P S     #####//
+
+BASIC_DEFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_ROOT_DEFENSE"
+                Contains Building name = "BLD_IMPERIAL_PALACE"
+            ]
+            stackinggroup = "PALACE_TROOPS_STACK"
+            accountinglabel = "BLD_IMPERIAL_PALACE"
+            effects = SetMaxTroops value = Value + 6
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Homeworld
+                Not Unowned
+            ]
+            stackinggroup = "HOMEWORLD_TROOPS_STACK"
+            accountinglabel = "HOMEWORLD_LABEL"
+            effects = SetMaxTroops value = Value + 4
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Unowned
+            ]
+            stackinggroup = "BASIC_TROOPS_STACK"
+            accountinglabel = "INDEPENDENT_TROOP_LABEL"
+            effects = SetMaxTroops value = Value + 10
+
+EffectsGroup
+            scope = Source
+            activation = Planet
+            stackinggroup = "POPULATION_TROOPS_STACK"
+            accountinglabel = "DEF_ROOT_DEFENSE"
+            effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "GRO_CYBORG"
+            ]
+            stackinggroup = "CYBORG_TROOPS_STACK"
+            accountinglabel = "GRO_CYBORG"
+            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]]
+            
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_2"
+            ]
+            stackinggroup = "GARRISON_2_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_2"
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_4"
+            ]
+            stackinggroup = "GARRISON_4_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_4"
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
+'''
+
+AFTER_SPECIES_MULTIPLICATOR_TROOPS
+'''EffectsGroup
+            scope = Or [
+                Source
+                And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Population high = 0
+                ]
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_1"
+            ]
+            stackinggroup = "GARRISON_1_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_1"
+            effects = SetMaxTroops value = Value + 10   
+
+EffectsGroup
+            scope = Or [
+                Source
+                And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Population high = 0
+                ]
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_3"
+            ]
+            stackinggroup = "GARRISON_3_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_3"
+            effects = SetMaxTroops value = Value + 16
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                WithinStarlaneJumps jumps = 2 condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Contains Building name = "BLD_MEGALITH"
+                ]
+            ]
+            accountinglabel = "MEGALITH_LABEL"
+            effects = SetMaxTroops value = Value + 10
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population high = 0
+            ]
+            stackinggroup = "OUTPOST_TROOPS_STACK"
+            accountinglabel = "OUTPOST_TROOP_LABEL"
+            effects = SetMaxTroops value = Value * .5
+
+[[PROTECTION_FOCUS_TROOPS]]
+'''
+
+NO_DEFENSE_TROOPS
+'''
+    EffectsGroup
+        description = "NO_DEFENSE_TROOPS"
+        scope = Source
+        activation = None
+        effects = SetMaxTroops value = 0
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+BAD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "BAD_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 0.5
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+AVERAGE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+GOOD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "GOOD_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 1.5
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+GREAT_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "GREAT_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 2
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+ULTIMATE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "ULTIMATE_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 3
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+PROTECTION_FOCUS_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PROTECTION"
+            ]
+            stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
+            effects = SetMaxTroops value = Value * 2
+'''
+
+NO_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "NO_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "NO_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = 0
+                SetCapacity partname = "GT_TROOP_POD_2" value = 0
+            ]
+'''
+
+BAD_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "BAD_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "BAD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 0.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 0.5
+            ]
+'''
+
+AVERAGE_OFFENSE_TROOPS
+'''       EffectsGroup
+            description = "AVERAGE_OFFENSE_TROOPS"
+            scope = Source
+            activation = None
+            effects = SetTargetResearch value = Value
+'''
+
+GOOD_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "GOOD_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GOOD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 1.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 1.5
+            ]
+'''
+
+GREAT_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "GREAT_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GREAT_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 2
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 2
+            ]
+'''
+
+ULTIMATE_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "ULTIMATE_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "ULTIMATE_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 3
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 3
+            ]
+'''
+
+//#####      P L A N E T A R Y   S H I E L D S     #####//
+
+
+NATIVE_PLANETARY_SHIELDS
+'''[[BASIC_PLANETARY_SHIELDS]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Unowned
+            ]
+            accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
+            effects = SetMaxShield value = Value + 10
+
+    [[PROTECTION_FOCUS_SHIELDS]]
+'''
+
+
+AVERAGE_PLANETARY_SHIELDS
+'''[[BASIC_PLANETARY_SHIELDS]]
+
+//EffectsGroup
+//            scope = Source
+//            activation = Planet
+//          accountinglabel = "AVERAGE_SHIELDS_LABEL"
+//            effects = SetMaxShield value = Value * 1
+            
+    [[PROTECTION_FOCUS_SHIELDS]]
+'''
+
+BASIC_PLANETARY_SHIELDS
+'''EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_ROOT_DEFENSE"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
+            accountinglabel = "DEF_ROOT_DEFENSE"
+            effects = SetMaxShield value = Value + 1
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "LRN_FORCE_FIELD"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_FF"
+            accountinglabel = "LRN_FORCE_FIELD"
+            effects = SetMaxShield value = Value + 10
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_1"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_1"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
+            effects = SetMaxShield value = Value + 30
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_2"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_2"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
+            effects = SetMaxShield value = Value + 60
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_3"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_3"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
+            effects = SetMaxShield value = Value + 90
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_4"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_4"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
+            effects = SetMaxShield value = Value + 150
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_5"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_5"
+            accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
+            effects = SetMaxShield value = Value + 150
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "GRO_ENERGY_META"
+                Population low = 0.000001
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_GEM"
+            accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxShield value = Value + 50
+'''
+
+PROTECTION_FOCUS_SHIELDS
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PROTECTION"
+            ]
+            stackinggroup = "FOCUS_PROTECTION_SHIELDS_STACK"
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
+            effects = SetMaxShield value = Value * 2
+'''
+
+//#####      P L A N E T A R Y   D E F E N S E     #####//
+
+NATIVE_PLANETARY_DEFENSE
+'''[[BASIC_PLANETARY_DEFENSE]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Unowned
+            ]
+            accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
+            effects = [
+                SetMaxDefense value = Value + 10
+                SetDetection value = Value + 10
+            ]
+    [[PROTECTION_FOCUS_DEFENSE]]
+'''
+
+AVERAGE_PLANETARY_DEFENSE
+'''[[BASIC_PLANETARY_DEFENSE]]
+
+//EffectsGroup
+//            scope = Source
+//            activation = Planet
+//          accountinglabel = "AVERAGE_SHIELDS_LABEL"
+//            effects = SetMaxDefense value = Value * 1
+            
+    [[PROTECTION_FOCUS_DEFENSE]]
+'''
+
+BASIC_PLANETARY_DEFENSE
+'''EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Contains Building name = "BLD_IMPERIAL_PALACE"
+            ]
+            activation = Planet
+            stackinggroup = "PALACE_DEFENSE_STACK"
+            accountinglabel = "BLD_IMPERIAL_PALACE"
+            effects = SetMaxDefense value = Value + 5
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_DEFENSE_NET_1"
+            ]
+            stackinggroup = "DEFENSE_NET_STACK_1"
+            accountinglabel = "DEF_DEFENSE_NET_1"
+            effects = SetMaxDefense value = Value + 5
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_DEFENSE_NET_2"
+            ]
+            stackinggroup = "DEFENSE_NET_STACK_2"
+            accountinglabel = "DEF_DEFENSE_NET_2"
+            effects = SetMaxDefense value = Value + 15
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_DEFENSE_NET_3"
+            ]
+            stackinggroup = "DEFENSE_NET_STACK_3"
+            accountinglabel = "DEF_DEFENSE_NET_3"
+            effects = SetMaxDefense value = Value + 25
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                OwnerHasTech name = "GRO_ENERGY_META"
+            ]
+            stackinggroup = "DEFENSE_NET_STACK_GM"
+            accountinglabel = "GRO_ENERGY_META"
+            effects = SetMaxDefense value = Value + 10
+'''
+
+PROTECTION_FOCUS_DEFENSE
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PROTECTION"
+            ]
+            stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
+            effects = SetMaxDefense value = Value * 2
+'''
+
+//#####      D E T E C T I O N     #####//
+
+BAD_DETECTION
+'''EffectsGroup
+            description = "BAD_DETECTION"
+            scope = Source
+            activation = Not Ship
+            effects = SetDetection value = Value - 20
+    EffectsGroup
+            scope = Source
+            activation = Ship
+            effects = SetDetection value = Value - 9
+'''
+
+GOOD_DETECTION
+'''EffectsGroup
+            description = "GOOD_DETECTION"
+            scope = Source
+            effects = SetDetection value = Value + 25
+'''
+
+GREAT_DETECTION
+'''        EffectsGroup
+            description = "GREAT_DETECTION"
+            scope = Source
+            effects = SetDetection value = Value + 50
+'''
+
+ULTIMATE_DETECTION
+'''        EffectsGroup
+            description = "ULTIMATE_DETECTION"
+            scope = Source
+            effects = SetDetection value = Value + 100
+'''
+
+
+//#####      S T E A L T H     #####//
+
+BAD_STEALTH
+'''EffectsGroup
+            description = "BAD_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value - [[LOW_STEALTH]]
+'''
+
+GOOD_STEALTH
+'''EffectsGroup
+            description = "GOOD_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value + [[LOW_STEALTH]]
+'''
+
+GREAT_STEALTH
+'''EffectsGroup
+            description = "GREAT_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
+'''
+
+ULTIMATE_STEALTH
+'''EffectsGroup
+            description = "ULTIMATE_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value + [[HIGH_STEALTH]]
+'''
+
+//#####      W E A P O N S     #####//
+
+BAD_WEAPONS
+'''EffectsGroup
+            description = "BAD_WEAPONS"
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "SR_WEAPON_1_1"
+                    DesignHasPart name = "SR_WEAPON_2_1"
+                    DesignHasPart name = "SR_WEAPON_3_1"
+                    DesignHasPart name = "SR_WEAPON_4_1"
+                ]
+            ]
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 2
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 3
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value - 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value - 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value - 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value - 4
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects =
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value - 1 
+'''
+
+GOOD_WEAPONS
+'''EffectsGroup
+            description = "GOOD_WEAPONS"
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "SR_WEAPON_1_1"
+                    DesignHasPart name = "SR_WEAPON_2_1"
+                    DesignHasPart name = "SR_WEAPON_3_1"
+                    DesignHasPart name = "SR_WEAPON_4_1"
+                ]
+            ]
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 1
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 2
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 3
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 4
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects =
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 1            
+'''
+
+GREAT_WEAPONS
+'''EffectsGroup
+            description = "GREAT_WEAPONS"
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "SR_WEAPON_1_1"
+                    DesignHasPart name = "SR_WEAPON_2_1"
+                    DesignHasPart name = "SR_WEAPON_3_1"
+                    DesignHasPart name = "SR_WEAPON_4_1"
+                ]
+            ]
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 2
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 4
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 6
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 4
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 6
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 8
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects =
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 2
+'''
+
+ULTIMATE_WEAPONS
+'''EffectsGroup
+            description = "ULTIMATE_WEAPONS"
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "SR_WEAPON_1_1"
+                    DesignHasPart name = "SR_WEAPON_2_1"
+                    DesignHasPart name = "SR_WEAPON_3_1"
+                    DesignHasPart name = "SR_WEAPON_4_1"
+                ]
+            ]
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 3
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 6
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 9
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                Or [
+                    DesignHasPart name = "FT_HANGAR_1"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_2"
+                ]
+            ]
+            effects = [
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 6
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 9
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 12
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Armed
+                DesignHasPart name = "SR_WEAPON_0_1"
+            ]
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 1
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 3
+            ]            
+'''
+
+//#####      P L A N E T   S I Z E     #####//
+
+HUGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Huge
+'''
+
+LARGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Large
+'''
+
+MEDIUM_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Medium
+'''
+
+SMALL_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Small
+'''
+
+NOT_HUGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+            Planet Size = Huge
+        ]
+        effects = SetPlanetSize planetsize = Large
+'''
+
+//#####      COLONIZATION SPEED        #####//
+
+// FAST_COLONIZATION and SLOW_COLONIZATION are stubs for applying the
+// fast colonization building speed description to a species.
+FAST_COLONIZATION
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(FAST_COLONIZATION)]]'''
+
+SLOW_COLONIZATION
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(SLOW_COLONIZATION)]]'''
+
+//#####      M U L T I P L I E R S     #####//
+
+BAD_MULTIPLIER
+'''0.5'''
+
+AVERAGE_MULTIPLIER
+'''1.0'''
+
+GOOD_MULTIPLIER
+'''1.5'''
+
+GREAT_MULTIPLIER
+'''2.0'''
+
+ULTIMATE_MULTIPLIER
+'''4.0'''
+
+BAD_MULTIPLIER_WHOLE
+'''0'''
+
+AVERAGE_MULTIPLIER_WHOLE
+'''1'''
+
+GOOD_MULTIPLIER_WHOLE
+'''2'''
+
+GREAT_MULTIPLIER_WHOLE
+'''3'''
+
+ULTIMATE_MULTIPLIER_WHOLE
+'''4'''
+
+ADEQUATE_MULTIPLIER
+'''0.75'''
+
+POOR_MULTIPLIER
+'''0.5'''
+
+HOSTILE_MULTIPLIER
+'''0.0'''

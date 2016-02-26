@@ -1,0 +1,54 @@
+Species
+    name = "SP_SUPER_TEST"
+    description = "SP_SUPER_TEST_DESC"
+    gameplay_description = "SP_SUPER_TEST_GAMEPLAY_DESC"
+    // Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC" "SELF_SUSTAINING" "TELEPATHIC" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION"  "AI_TAG_ULTIMATE_SUPPLY" "AI_TAG_INFINITE_DETECTION" "AI_TAG_GREAT_ATTACKTROOPS" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[GREAT_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[ULTIMATE_SUPPLY]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[GREAT_OFFENSE_TROOPS]]
+
+        [[ULTIMATE_WEAPONS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
+        EffectsGroup
+            scope = Source
+            effects = SetDetection value = Value + 10000
+
+        EffectsGroup
+            scope = And [
+                Source
+                Capital
+                ]
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = 200  // Omniscient Detection
+
+    ]
+
+    [[VERY_TOLERANT_EP]]
+
+    graphic = "icons/species/other-04.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"
