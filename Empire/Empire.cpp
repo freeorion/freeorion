@@ -414,110 +414,110 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
 
-    std::map<std::string, std::set<std::string> > waitingForPrereqs;
-    std::set<int> dpResearchableTechs;
- 
+    std::map<std::string, std::set<std::string> > waiting_for_prereqs;
+    std::set<int> dp_researchable_techs;
+
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string techname = m_queue[i].name;
-        const Tech* tech = GetTech( techname );
+        const Tech* tech = GetTech(techname);
         if (!tech)
             continue;
-        if ( dpsim_tech_status_map[ techname ] == TS_RESEARCHABLE ) {
-            dpResearchableTechs.insert(i);
-        } else if ( dpsim_tech_status_map[ techname  ] == TS_UNRESEARCHABLE ) {
-            std::set<std::string> thesePrereqs = tech->Prerequisites();
-            for (std::set<std::string>::iterator ptech_it = thesePrereqs.begin(); ptech_it != thesePrereqs.end(); ) {
+        if (dpsim_tech_status_map[ techname ] == TS_RESEARCHABLE) {
+            dp_researchable_techs.insert(i);
+        } else if (dpsim_tech_status_map[ techname  ] == TS_UNRESEARCHABLE) {
+            std::set<std::string> these_prereqs = tech->Prerequisites();
+            for (std::set<std::string>::iterator ptech_it = these_prereqs.begin(); ptech_it != these_prereqs.end();) {
                 if (dpsim_tech_status_map[ *ptech_it ] != TS_COMPLETE) {
                     ++ptech_it;
                 } else {
                     std::set<std::string>::iterator erase_it = ptech_it;
                     ++ptech_it;
-                    thesePrereqs.erase( erase_it );
+                    these_prereqs.erase( erase_it );
                 }
             }
-            waitingForPrereqs[ techname ] = thesePrereqs;
+            waiting_for_prereqs[ techname ] = these_prereqs;
         }
     }
 
     int dpturns = 0;
     //ppStillAvailable[turn-1] gives the RP still available in this resource pool at turn "turn"
-    std::vector<float> rpStillAvailable(DP_TURNS, RPs );  // initialize to the  full RP allocation for every turn
+    std::vector<float> rp_still_available(DP_TURNS, RPs);  // initialize to the  full RP allocation for every turn
 
-    while ((dpturns < DP_TURNS) && !(dpResearchableTechs.empty())) {// if we haven't used up our turns and still have techs to process
+    while ((dpturns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
         ++dpturns;
-        std::map<int, bool> alreadyProcessed;
-        std::set<int>::iterator curTechIt;
-        for (curTechIt = dpResearchableTechs.begin(); curTechIt != dpResearchableTechs.end(); ++curTechIt) {
-            alreadyProcessed[ *curTechIt ] = false;
+        std::map<int, bool> already_processed;
+        std::set<int>::iterator cur_tech_it;
+        for (cur_tech_it = dp_researchable_techs.begin(); cur_tech_it != dp_researchable_techs.end(); ++cur_tech_it) {
+            already_processed[ *cur_tech_it ] = false;
         }
-        curTechIt = dpResearchableTechs.begin();
-        while ((rpStillAvailable[dpturns-1] > EPSILON)) { // try to use up this turns RPs
-            if (curTechIt == dpResearchableTechs.end()) {
+        cur_tech_it = dp_researchable_techs.begin();
+        while ((rp_still_available[dpturns-1] > EPSILON)) { // try to use up this turns RPs
+            if (cur_tech_it == dp_researchable_techs.end()) {
                 break; //will be wasting some RP this turn
             }
-            int curTech = *curTechIt;
-            if (alreadyProcessed[curTech]) {
-                ++curTechIt;
+            int curTech = *cur_tech_it;
+            if (already_processed[curTech]) {
+                ++cur_tech_it;
                 continue;
             }
-            alreadyProcessed[curTech] = true;
+            already_processed[curTech] = true;
             const std::string& tech_name = m_queue[curTech].name;
             const Tech* tech = GetTech(tech_name);
             float progress = dpsim_research_progress[curTech];
-            float RPs_needed = tech ? tech->ResearchCost(m_empire_id) - progress : 0.0;
-            float RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0;
-            float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rpStillAvailable[dpturns-1]);
+            float RPs_needed = tech ? tech->ResearchCost(m_empire_id) - progress : 0.0f;
+            float RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0f;
+            float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dpturns-1]);
             progress += RPs_to_spend;
             dpsim_research_progress[curTech] = progress;
-            rpStillAvailable[dpturns-1] -= RPs_to_spend;
-            std::set<int>::iterator nextResTechIt = curTechIt;
-            int nextResTechIdx;
-            if (++nextResTechIt == dpResearchableTechs.end()) {
-                nextResTechIdx = m_queue.size()+1;
+            rp_still_available[dpturns-1] -= RPs_to_spend;
+            std::set<int>::iterator nextResTechIt = cur_tech_it;
+            int next_res_tech_idx;
+            if (++nextResTechIt == dp_researchable_techs.end()) {
+                next_res_tech_idx = m_queue.size()+1;
             } else {
-                nextResTechIdx = *(nextResTechIt);
+                next_res_tech_idx = *(nextResTechIt);
             }
-            float tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0;
+            float tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0f;
             if (tech_cost - EPSILON <= progress) {
                 dpsim_tech_status_map[tech_name] = TS_COMPLETE;
                 dpsimulation_results[curTech] = dpturns;
 #ifndef ORIG_RES_SIMULATOR
                 m_queue[curTech].turns_left = dpturns;
 #endif
-                dpResearchableTechs.erase(curTechIt);
-                std::set<std::string> unlockedTechs;
+                dp_researchable_techs.erase(cur_tech_it);
+                std::set<std::string> unlocked_techs;
                 if (tech)
-                    unlockedTechs = tech->UnlockedTechs();
-                for (std::set<std::string>::iterator utechIt = unlockedTechs.begin(); utechIt!=unlockedTechs.end(); ++utechIt) {
-                    std::string utechName = *utechIt;
-                    std::map<std::string,std::set<std::string> >::iterator prereqTechIt = waitingForPrereqs.find(utechName);
-                    if (prereqTechIt != waitingForPrereqs.end() ){
-                        std::set<std::string> &thesePrereqs = prereqTechIt->second;
-                        std::set<std::string>::iterator justFinishedIt = thesePrereqs.find( tech_name );
-                        if (justFinishedIt != thesePrereqs.end() ) {  //should always find it
-                            thesePrereqs.erase( justFinishedIt );
-                            if ( thesePrereqs.empty() ) { // tech now fully unlocked
-                                int thisTechIdx = origQueueOrder[utechName];
-                                dpResearchableTechs.insert(thisTechIdx);
-                                waitingForPrereqs.erase( prereqTechIt );
-                                alreadyProcessed[ thisTechIdx ] = true;//doesn't get any allocation on current turn
-                                if (thisTechIdx < nextResTechIdx ) {
-                                    nextResTechIdx = thisTechIdx;
+                    unlocked_techs = tech->UnlockedTechs();
+                for (std::set<std::string>::iterator u_tech_it = unlocked_techs.begin(); u_tech_it!=unlocked_techs.end(); ++u_tech_it) {
+                    std::string u_tech_name = *u_tech_it;
+                    std::map<std::string,std::set<std::string> >::iterator prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
+                    if (prereq_tech_it != waiting_for_prereqs.end() ){
+                        std::set<std::string> &these_prereqs = prereq_tech_it->second;
+                        std::set<std::string>::iterator just_finished_it = these_prereqs.find(tech_name);
+                        if (just_finished_it != these_prereqs.end() ) {  //should always find it
+                            these_prereqs.erase( just_finished_it );
+                            if (these_prereqs.empty()) { // tech now fully unlocked
+                                int this_tech_idx = origQueueOrder[u_tech_name];
+                                dp_researchable_techs.insert(this_tech_idx);
+                                waiting_for_prereqs.erase(prereq_tech_it);
+                                already_processed[ this_tech_idx ] = true;//doesn't get any allocation on current turn
+                                if (this_tech_idx < next_res_tech_idx ) {
+                                    next_res_tech_idx = this_tech_idx;
                                 }
                             }
                         } else { //couldnt find tech_name in prereqs list  
-                            DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << utechName << "but the latter disagreed";
+                            DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
                         }
-                    } //else { //tech_name thinks itself a prereq for ytechName, but utechName not in prereqs -- not a problem so long as utechName not in our queue at all
-                      //  DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << utechName << "but the latter disagreed";
+                    } //else { //tech_name thinks itself a prereq for ytechName, but u_tech_name not in prereqs -- not a problem so long as u_tech_name not in our queue at all
+                      //  DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
                       //}
                 }
             }// if (tech->ResearchCost() - EPSILON <= progress)
-            curTechIt = dpResearchableTechs.find(nextResTechIdx);
-        }//while ((rpStillAvailable[dpturns-1]> EPSILON))
+            cur_tech_it = dp_researchable_techs.find(next_res_tech_idx);
+        }//while ((rp_still_available[dpturns-1]> EPSILON))
         //dp_time = dpsim_queue_timer.elapsed() * 1000;
         // DebugLogger() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
-    } // while ((dpturns < DP_TURNS ) && !(dpResearchableTechs.empty() ) )
+    } // while ((dpturns < DP_TURNS ) && !(dp_researchable_techs.empty() ) )
 
     ResearchQueueChangedSignal();
 }
@@ -1388,6 +1388,7 @@ bool Empire::TechResearched(const std::string& name) const
 TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TS_COMPLETE;
     if (ResearchableTech(name)) return TS_RESEARCHABLE;
+    //if (HasResearchedPrereqAndUnresearchedPrereq(name)) return TS_HAS_RESEARCHED_PREREQ;
     return TS_UNRESEARCHABLE;
 }
 
