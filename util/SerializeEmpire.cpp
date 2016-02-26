@@ -116,6 +116,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         m_id == GetUniverse().EncodingEmpire())
     {
         ar  & BOOST_SERIALIZATION_NVP(m_ship_designs)
+            & BOOST_SERIALIZATION_NVP(m_ship_designs_ordered)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
             & BOOST_SERIALIZATION_NVP(m_resource_pools)
             & BOOST_SERIALIZATION_NVP(m_population_pool)

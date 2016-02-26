@@ -505,7 +505,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                                     next_res_tech_idx = this_tech_idx;
                                 }
                             }
-                        } else { //couldnt find tech_name in prereqs list  
+                        } else { //couldnt find tech_name in prereqs list
                             DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
                         }
                     } //else { //tech_name thinks itself a prereq for ytechName, but u_tech_name not in prereqs -- not a problem so long as u_tech_name not in our queue at all
@@ -1554,7 +1554,7 @@ const std::set<int>& Empire::ShipDesigns() const
 std::set<int> Empire::AvailableShipDesigns() const {
     // create new map containing all ship designs that are available
     std::set<int> retval;
-    for (ShipDesignItr it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+    for (ShipDesignItr it = m_ship_designs_ordered.begin(); it != m_ship_designs_ordered.end(); ++it) {
         if (ShipDesignAvailable(*it))
             retval.insert(*it);
     }
@@ -2107,10 +2107,10 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const
-{ return m_ship_designs.begin(); }
+{return m_ship_designs_ordered.begin(); }
 
 Empire::ShipDesignItr Empire::ShipDesignEnd() const
-{ return m_ship_designs.end(); }
+{ return m_ship_designs_ordered.end(); }
 
 Empire::SitRepItr Empire::SitRepBegin() const
 { return m_sitrep_entries.begin(); }
@@ -2521,8 +2521,11 @@ void Empire::AddShipDesign(int ship_design_id) {
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
+            m_ship_designs_ordered.insert(m_ship_designs_ordered.end(), ship_design_id);
             m_ship_designs.insert(ship_design_id);
             ShipDesignsChangedSignal();
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                DebugLogger() << "AddShipDesign::  "<<ship_design->Name()<< " ("<<ship_design_id<<") to empire #"<<EmpireID();
         }
     } else {
         // design in not valid
@@ -2538,7 +2541,11 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
     for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
         if (ship_design == it->second) {
             // ship design is already present in universe.  just need to add it to the empire's set of ship designs
-            m_ship_designs.insert(it->first);
+            int ship_design_id = it->first;
+            if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
+                m_ship_designs_ordered.insert(m_ship_designs_ordered.end(), ship_design_id);
+                m_ship_designs.insert(ship_design_id);
+            }
             return it->first;
         }
     }
@@ -2558,6 +2565,10 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
         return INVALID_OBJECT_ID;
     }
 
+    if (GetOptionsDB().Get<bool>("verbose-logging"))
+        DebugLogger() << "AddShipDesign::  "<<ship_design->Name()<< " ("<<new_design_id<<") to empire #"<<EmpireID();
+
+    m_ship_designs_ordered.insert(m_ship_designs_ordered.end(), new_design_id);
     m_ship_designs.insert(new_design_id);
 
     ShipDesignsChangedSignal();
@@ -2568,6 +2579,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 void Empire::RemoveShipDesign(int ship_design_id) {
     if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
         m_ship_designs.erase(ship_design_id);
+        m_ship_designs_ordered.remove(ship_design_id);
         ShipDesignsChangedSignal();
     } else {
         DebugLogger() << "Empire::RemoveShipDesign: this empire did not have design with id " << ship_design_id;

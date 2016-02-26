@@ -279,7 +279,7 @@ public:
     typedef std::set<std::string>::const_iterator       TechItr;
     typedef std::set<std::string>::const_iterator       BuildingTypeItr;
     typedef std::set<int>::const_iterator               SystemIDItr;
-    typedef std::set<int>::const_iterator               ShipDesignItr;
+    typedef std::list<int>::const_iterator              ShipDesignItr;
     typedef std::vector<SitRepEntry>::const_iterator    SitRepItr;
     //@}
 
@@ -611,7 +611,8 @@ private:
     std::set<std::string>           m_available_part_types;     ///< list of acquired ship PartType.  These are string names referencing PartType objects
     std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
     std::set<int>                   m_explored_systems;         ///< systems you've explored
-    std::set<int>                   m_ship_designs;             ///< The Empire's ship designs, indexed by design id
+    std::set<int>                   m_ship_designs;             ///< The Empire's ship designs sorted by id
+    std::list<int>                  m_ship_designs_ordered;     ///<The Empire's ship designs in preferred order
 
     std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
 
