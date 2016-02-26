@@ -1,0 +1,39 @@
+BuildingType
+    name = "BLD_ART_PLANET"
+    description = "BLD_ART_PLANET_DESC"
+    buildcost = 800
+    buildtime = 8
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
+        OwnedBy empire = Source.Owner
+        Planet type = [Asteroids GasGiant]
+        Population high = 0
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            effects = [
+                SetPlanetType type = Barren
+                GenerateSitRepMessage
+                    message = "EFFECT_ART_PLANET"
+                    icon = "icons/specials_large/tidal_lock.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+                ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = Destroy
+    ]
+    icon = "icons/specials_huge/tidal_lock.png"
+
+#include "../common/shared.macros"

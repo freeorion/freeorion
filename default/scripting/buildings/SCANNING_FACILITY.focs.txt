@@ -1,0 +1,22 @@
+BuildingType
+    name = "BLD_SCANNING_FACILITY"
+    description = "BLD_SCANNING_FACILITY_DESC"
+    buildcost = 25
+    buildtime = 5
+    location = AND [
+        Planet
+        Not Contains Building name = "BLD_SCANNING_FACILITY"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = SetDetection value = Value + 75
+    ]
+    icon = "icons/building/lighthouse.png"
+
+#include "../common/shared.macros"

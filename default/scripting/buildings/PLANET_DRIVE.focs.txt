@@ -1,0 +1,15 @@
+BuildingType
+    name = "BLD_PLANET_DRIVE"
+    description = "BLD_PLANET_DRIVE_DESC"
+    buildcost = 125
+    buildtime = 5
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_PLANET_DRIVE"
+        OwnedBy empire = Source.Owner
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/planetary_stardrive.png"
+
+#include "../common/shared.macros"

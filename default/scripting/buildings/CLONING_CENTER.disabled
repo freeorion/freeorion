@@ -1,0 +1,15 @@
+BuildingType
+    name = "BLD_CLONING_CENTER"
+    description = "BLD_CLONING_CENTER_DESC"
+    buildcost = 100
+    buildtime = 5
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_CLONING_CENTER"
+        OwnedBy empire = Source.Owner
+        Not Contains Or [
+            Building name = "BLD_CLONING_CENTER"
+            Building name = "BLD_BIOTERROR_PROJECTOR"
+        ]
+    ]
+    icon = ""

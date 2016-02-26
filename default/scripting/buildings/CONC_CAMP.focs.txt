@@ -1,0 +1,70 @@
+BuildingType
+    name = "BLD_CONC_CAMP"
+    description = "BLD_CONC_CAMP_DESC"
+    buildcost = 5
+    buildtime = 1
+    location = AND [
+        Not Contains Building name = "BLD_CONC_CAMP"
+        OwnedBy empire = Source.Owner
+        Population low = 3
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = ContainedBy And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+            ]
+            effects = SetTargetIndustry value = Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = ContainedBy And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                Population low = 0.0001
+                Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+            ]
+            effects = AddSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+        EffectsGroup
+            scope = Source
+            activation =    ContainedBy And [
+                                Object id = Source.PlanetID
+                                Population high = 0
+                            ]
+            effects = [
+                Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_CONC_CAMP_COMLETE"
+                    icon = "icons/building/concentration-camp.png"
+                    parameters = tag = "planet" data = Source.PlanetID
+                    empire = Source.Owner
+                ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = ContainedBy And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+            ]
+            effects = [
+                [[NEXT_TURN_POPULATION_REDUCE_BY(3)]]
+                SetIndustry value = Target.TargetIndustry
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Not ProducedByEmpire empire = Source.Owner
+            effects = Destroy
+    ]
+    icon = "icons/building/concentration-camp.png"
+
+#include "../common/shared.macros"

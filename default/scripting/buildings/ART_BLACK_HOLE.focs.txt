@@ -1,0 +1,36 @@
+BuildingType
+    name = "BLD_ART_BLACK_HOLE"
+    description = "BLD_ART_BLACK_HOLE_DESC"
+    buildcost = 40
+    buildtime = 10
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_ART_BLACK_HOLE"
+        OwnedBy empire = Source.Owner
+        Star type = Red
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.SystemID
+                System
+            ]
+            activation = Star type = Red
+            effects = [
+                SetStarType type = BlackHole
+                GenerateSitRepMessage
+                    message = "EFFECT_BLACKHOLE"
+                    icon = "icons/building/blackhole.png"
+                    parameters = tag = "system" data = Source.SystemID
+                    empire = Source.Owner
+                ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = Destroy
+    ]
+    icon = "icons/building/blackhole.png"
+
+#include "../common/shared.macros"

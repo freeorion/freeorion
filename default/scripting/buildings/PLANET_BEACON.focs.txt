@@ -1,0 +1,18 @@
+BuildingType
+    name = "BLD_PLANET_BEACON"
+    description = "BLD_PLANET_BEACON_DESC"
+    buildcost = 1
+    buildtime = 1
+    location = AND [
+        Not Contains Building name = "BLD_PLANET_BEACON"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_DRIVE"
+            effects = Destroy
+    icon = "icons/building/beacon.png"
+
+#include "../common/shared.macros"

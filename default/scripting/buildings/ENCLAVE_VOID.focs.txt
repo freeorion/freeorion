@@ -1,0 +1,24 @@
+BuildingType
+    name = "BLD_ENCLAVE_VOID"
+    description = "BLD_ENCLAVE_VOID_DESC"
+    buildcost = 100
+    buildtime = 3
+    location = AND [
+        Not Contains Building name = "BLD_ENCLAVE_VOID"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            activation = Source
+            stackinggroup = "BLD_ENCLAVE_VOID_STACK"
+            effects = SetTargetResearch value = Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
+    ]
+    icon = "icons/building/science-institute.png"
+
+#include "../common/shared.macros"

@@ -108,7 +108,9 @@ t_main = string.Template('''BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "${graphic}"''')
+    icon = "${graphic}"
+
+#include "../../common/shared.macros"''')
 
 t_species_condition = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
@@ -203,12 +205,13 @@ t_buildtime_extinct = string.Template('''${t_factor} * max(5.0, 1.0 +
 outpath = os.getcwd()
 print ("Output folder: %s" % outpath)
 
-with open(os.path.join(outpath, "col_buildings.fos"), "w") as f:
-    for species in species_list:
-        sp_id = species[0]
-        sp_name = sp_id.split("_", 1)[1]
-        sp_desc_name = species[1]
-        sp_graphic = species[2]
+for species in species_list:
+    sp_id = species[0]
+    sp_name = sp_id.split("_", 1)[1]
+    sp_desc_name = species[1]
+    sp_graphic = species[2]
+    sp_filename = sp_id + ".fos.txt"
+    with open(os.path.join(outpath, sp_filename), "w") as f:
         if sp_id == "SP_EXOBOT":
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
                     species_condition=r"// no existing Exobot colony required!") + "\n\n")

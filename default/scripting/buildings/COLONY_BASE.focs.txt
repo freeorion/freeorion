@@ -1,0 +1,26 @@
+BuildingType
+    name = "BLD_COLONY_BASE"
+    description = "BLD_COLONY_BASE_DESC"
+    buildcost = 45
+    buildtime = 1
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_COLONY_BASE"
+        Population low = [[MIN_RECOLONIZING_SIZE]]
+        OwnedBy empire = Source.Owner
+    ]
+    /* TODO: Disable colony base if there is no possibility in the current system */
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = CreateShip designname = "SD_COLONY_BASE" empire = Source.Owner species = Source.Planet.Species
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = Destroy
+    ]
+    icon = "icons/ship_hulls/colony_base_hull_small.png"
+
+#include "../common/shared.macros"

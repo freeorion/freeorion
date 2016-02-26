@@ -1,0 +1,39 @@
+BuildingType
+    name = "BLD_HYPER_DAM"
+    description = "BLD_HYPER_DAM_DESC"
+    buildcost = 250
+    buildtime = 10
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_HYPER_DAM"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation = Source
+            stackinggroup = "BLD_HYPER_DAM_BONUS"
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Not Star type = BlackHole
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            activation = Source
+            effects = SetTargetPopulation value = Value - 5
+    ]
+    icon = "icons/building/blackhole.png"
+
+#include "../common/shared.macros"

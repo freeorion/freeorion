@@ -1,0 +1,13 @@
+BuildingType
+    name = "BLD_PLANET_CLOAK"
+    description = "BLD_PLANET_CLOAK_DESC"
+    buildcost = 150
+    buildtime = 8
+    location = AND [
+        Not Contains Building name = "BLD_PLANET_CLOAK"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = ""
+
+#include "../common/shared.macros"

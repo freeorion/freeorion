@@ -1,0 +1,239 @@
+BuildingType
+    name = "BLD_EXPERIMENTOR_OUTPOST"
+    description = "BLD_EXPERIMENTOR_OUTPOST_DESC"
+    buildcost = 1
+    buildtime = 1
+   // captureresult = destroy
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = Or [
+                Source
+                And [
+                    Object id = Source.PlanetID
+                    Planet
+                ]
+            ]
+            effects = SetStealth value = Value + 60
+
+        EffectsGroup
+            scope = Or [
+                And [
+                    Object id = Source.SystemID
+                    System
+                ]
+                And [
+                    Planet
+                    InSystem id = Source.SystemID
+                    Not Source
+                ]
+            ]
+            effects = SetStealth value = Value + 40
+
+        EffectsGroup
+            scope = And [
+                    Object id = Source.PlanetID
+                    Planet
+            ]
+            effects = [
+                SetMaxShield value = Value + 60000
+                SetMaxDefense value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
+                SetMaxTroops value = Value + 300
+                SetDetection value = Value + 100
+            ]
+        EffectsGroup
+            scope = And [
+                    Object id = Source.PlanetID
+                    Planet
+            ]
+            activation = Or [
+               // Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
+                Not ContainedBy Contains And [ Ship OwnedBy affiliation = AnyEmpire ]
+            ]
+            effects = [
+                // Regeneration
+                SetDefense value = Value + 10
+                SetShield value = Value + 50
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                OwnedBy affiliation = AnyEmpire
+                Species name = "SP_EXPERIMENTOR" 
+            ]
+            effects = [
+                Victory reason = "VICTORY_EXPERIMENTOR_CAPTURE"
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                Destroy
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                Not OwnedBy affiliation = AnyEmpire
+            ]
+            activation = Or [
+                Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]      // always remove lanes before spawn start turn
+                Not ContainedBy Contains And [ Monster Unowned Not Design name = "SM_EXP_OUTPOST"]
+            ]
+            effects = RemoveStarlanes endpoint = WithinStarlaneJumps jumps = 1 condition = Source
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]  high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35)
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "3"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 36)
+                Random probability = (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "2"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 36) high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 70)
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "3"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 71)
+                Random probability = (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "2"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 71) high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 130)
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "3"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 131)
+                Random probability = (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "2"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 131)
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+            ]
+            effects = [
+                CreateShip designname = "SM_COSMIC_DRAGON" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_COSMIC_DRAGON"
+                        tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "rawtext" data = "1"
+                    ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+            ]
+    ]
+    icon = ""
+
+#include "experimentor.macros"
+
+#include "../common/shared.macros"

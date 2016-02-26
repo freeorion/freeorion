@@ -1,0 +1,23 @@
+BuildingType
+    name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+    description = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC"
+    buildcost = 64
+    buildtime = 8
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/cellular-growth-chamber.png"
+
+#include "../../common/shared.macros"

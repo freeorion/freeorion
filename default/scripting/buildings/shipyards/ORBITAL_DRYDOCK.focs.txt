@@ -1,0 +1,49 @@
+BuildingType
+    name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+    description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
+    buildcost = 20
+    buildtime = 5
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy empire = Source.Owner
+                Structure high = LocalCandidate.MaxStructure - 0.001
+            ]
+            activation = Turn low = Source.System.LastTurnBattleHere + 1
+            effects = [
+                //SetStructure value = Value + 10
+                SetStructure value = Target.MaxStructure
+                GenerateSitRepMessage
+                    message = "EFFECT_DRYDOCK_SHIP_REPAIR"
+                    icon = "icons/sitrep/ship-repair.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "building" data = Source.ID
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = SetTargetConstruction value = Value - 15
+        ]
+    icon = "icons/building/shipyard-1.png"
+
+#include "../../common/shared.macros"

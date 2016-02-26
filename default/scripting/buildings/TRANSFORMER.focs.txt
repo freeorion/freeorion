@@ -1,0 +1,13 @@
+BuildingType
+    name = "BLD_TRANSFORMER"
+    description = "BLD_TRANSFORMER_DESC"
+    buildcost = 100
+    buildtime = 8
+    location = AND [
+        Not Contains Building name = "BLD_TRANSFORMER"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/transformer.png"
+
+#include "../common/shared.macros"

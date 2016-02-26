@@ -1,0 +1,44 @@
+BuildingType
+    name = "BLD_GATEWAY_VOID"
+    description = "BLD_GATEWAY_VOID_DESC"
+    buildcost = 200
+    buildtime = 10
+    location = AND [
+        Not Contains Building name = "BLD_GATEWAY_VOID"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Fleet
+                InSystem id = Source.SystemID
+            ]
+            activation = Source
+            effects = [
+                Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_GATEWAY_VOID_DESTROY"
+                    parameters = [
+                        tag = "buildingtype" data = "BLD_GATEWAY_VOID"
+                        tag = "planet" data = Source.PlanetID
+                        tag = "fleet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                InSystem id = Source.SystemID
+            ]
+            activation = Source
+            effects = SetTargetPopulation value = min(Value, 0.1)
+
+        EffectsGroup
+            scope = InSystem id = Source.SystemID
+            activation = Source
+            effects = SetStealth value = Value + 1000
+    ]
+    icon = "icons/building/monument_to_exodus.png"
+
+#include "../common/shared.macros"

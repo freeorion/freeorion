@@ -1,0 +1,19 @@
+BuildingType
+    name = "BLD_SHIPYARD_ORG_ORB_INC"
+    description = "BLD_SHIPYARD_ORG_ORB_INC_DESC"
+    buildcost = 40
+    buildtime = 8
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/orbital-incubator.png"
+
+#include "../../common/shared.macros"

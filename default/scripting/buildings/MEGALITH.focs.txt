@@ -1,0 +1,42 @@
+BuildingType
+    name = "BLD_MEGALITH"
+    description = "BLD_MEGALITH_DESC"
+    buildcost = 250
+    buildtime = 10
+    location = And [
+        Planet
+        Contains Building name = "BLD_IMPERIAL_PALACE"
+        Not Contains Building name = "BLD_MEGALITH"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            stackinggroup = "BLD_MEGALITH_EFFECT"
+            effects = [
+                SetTargetConstruction value = Value + 30
+                SetEmpireCapital
+                SetIndustry value = Target.TargetIndustry
+                SetTrade value = Target.TargetTrade
+                SetResearch value = Target.TargetResearch
+            ]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                TargetPopulation low = 1
+            ]
+            activation = Source
+            stackinggroup = "BLD_MEGALITH_EFFECT"
+            effects = SetMaxSupply value = Value + 1
+    ]
+    icon = "icons/building/megalith.png"
+
+#include "../common/shared.macros"

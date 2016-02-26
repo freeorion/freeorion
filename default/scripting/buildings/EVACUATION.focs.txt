@@ -1,0 +1,86 @@
+BuildingType
+    name = "BLD_EVACUATION"
+    description = "BLD_EVACUATION_DESC"
+    buildcost = 10
+    buildtime = 1
+    location = AND [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_EVACUATION"
+        Not Contains Building name = "BLD_CONC_CAMP"
+        Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+        Not Enqueued type = Building name = "BLD_CONC_CAMP"
+        Species
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_EVACUATION"
+        Not Contains Building name = "BLD_CONC_CAMP"
+        Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+        Not Enqueued type = Building name = "BLD_EVACUATION"
+        Not Enqueued type = Building name = "BLD_CONC_CAMP"
+        Species
+    ]
+    effectsgroups = [
+        EffectsGroup            // add population to connected plants with room and suitable species
+            scope = NumberOf number = 1 condition = And [
+                PopulationCenter
+                Species name = Source.Planet.Species
+                Not Object id = Source.PlanetID
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Population low = 1 high = LocalCandidate.TargetPopulation - 1
+                Not Contains Building name = "BLD_EVACUATION"
+                Not Contains Building name = "BLD_CONC_CAMP"
+            ]
+            activation = Number low = 1 condition = And [
+                PopulationCenter
+                Species name = Source.Planet.Species
+                Not Object id = Source.PlanetID
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Population low = 1 high = LocalCandidate.TargetPopulation - 1
+            ]
+            effects = [
+                SetPopulation value = Value + 2
+                GenerateSitRepMessage
+                    message = "EFFECT_EVACUEES"
+                    icon = "icons/building/evacuation.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+                ]
+
+        EffectsGroup            // remove population from location
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = ContainedBy And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+            ]
+            effects = [
+                [[NEXT_TURN_POPULATION_REDUCE_BY(2)]]
+                SetIndustry value = 0
+                SetTargetIndustry value = 0
+                SetResearch value = 0
+                SetTargetResearch value = 0
+                ]
+
+        EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
+            scope = Source
+            activation = OR [
+                Not OwnedBy empire = Source.Owner
+                ContainedBy Or [
+                    And [
+                        Object id = Source.PlanetID
+                        Population high = 0
+                    ]
+                    Contains Building name = "BLD_CONC_CAMP"
+                    HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+                ]
+            ]
+            effects = Destroy
+    ]
+    icon = "icons/building/evacuation.png"
+
+#include "../common/shared.macros"

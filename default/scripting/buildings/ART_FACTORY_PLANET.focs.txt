@@ -1,0 +1,42 @@
+BuildingType
+    name = "BLD_ART_FACTORY_PLANET"
+    description = "BLD_ART_FACTORY_PLANET_DESC"
+    buildcost = 800 + ( 70 * [[COLONY_UPKEEP_MULTIPLICATOR]] )
+    buildtime = 12
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
+        OwnedBy empire = Source.Owner
+        Planet type = [Asteroids GasGiant]
+        OwnerHasTech name = "PRO_EXOBOTS"
+        Population high = 0
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            effects = [
+                SetPlanetType type = Barren
+                SetSpecies name = "SP_EXOBOT"
+                SetPopulation value = 1
+                GenerateSitRepMessage
+                    message = "EFFECT_ART_PLANET"
+                    icon = "icons/species/robotic-01.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = Destroy
+    ]
+    icon = "icons/species/robotic-01.png"
+
+#include "../common/shared.macros"

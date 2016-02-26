@@ -1,0 +1,74 @@
+BuildingType
+    name = "BLD_COL_EXOBOT"
+    description = "BLD_COL_EXOBOT_DESC"
+    buildcost = 70 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EXOBOT"
+        Not Contains Building name = "BLD_COL_EXOBOT"
+        // no existing Exobot colony required!
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EXOBOT"
+        Not Contains Building name = "BLD_COL_EXOBOT"
+        Not Enqueued type = Building name = "BLD_COL_EXOBOT"
+        // no existing Exobot colony required!
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EXOBOT"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EXOBOT"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/robotic-01.png"
+                    parameters = [
+                        tag = "species" data = "SP_EXOBOT"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/species/robotic-01.png"
+
+#include "../../common/shared.macros"
+

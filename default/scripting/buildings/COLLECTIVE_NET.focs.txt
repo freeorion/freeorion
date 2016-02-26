@@ -1,0 +1,42 @@
+BuildingType
+    name = "BLD_COLLECTIVE_NET"
+    description = "BLD_COLLECTIVE_NET_DESC"
+    buildcost = 250
+    buildtime = 10
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_COLLECTIVE_NET"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            activation = Not WithinDistance distance = 200 condition = And [
+                Ship
+                Not Stationary
+            ]
+            stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
+            effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            activation = Not WithinDistance distance = 200 condition = And [
+                Ship
+                Not Stationary
+            ]
+            stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
+            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+    ]
+    icon = "icons/building/psi-corps.png"
+
+#include "../common/shared.macros"

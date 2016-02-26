@@ -1,0 +1,30 @@
+BuildingType
+    name = "BLD_LIGHTHOUSE"
+    description = "BLD_LIGHTHOUSE_DESC"
+    buildcost = 25
+    buildtime = 10
+    location = AND [
+        Planet
+        Not Contains Building name = "BLD_LIGHTHOUSE"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = WithinDistance distance = 0.00001 condition = Source
+            stackinggroup = "LIGHTHOUSE_STEALTH_STACK"
+            effects = SetStealth value = Value - 30
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                WithinDistance distance = 50 condition = Source
+                Speed low = 1 // Immobile objects do not get the starlane speed boost.
+            ]
+            stackinggroup = "LIGHTHOUSE_SPEED_STACK"
+            effects = SetSpeed value = Value + 20
+    ]
+    icon = "icons/building/lighthouse.png"
+
+#include "../common/shared.macros"
