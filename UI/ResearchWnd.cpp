@@ -105,8 +105,8 @@ namespace {
         const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
 
         const GG::X NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
-        const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
-        const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
+        const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 4*MARGIN - 3;
+        const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2 - MARGIN;
 
         const Tech* tech = GetTech(m_tech_name);
         if (tech)
