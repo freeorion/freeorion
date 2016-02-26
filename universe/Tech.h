@@ -10,6 +10,7 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/key_extractors.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 #include <set>
 #include <string>
@@ -34,10 +35,16 @@ public:
                  const std::string& category_,
                  ValueRef::ValueRefBase<double>* research_cost_,
                  ValueRef::ValueRefBase<int>* research_turns_,
-                 bool researchable_) :
-            name(name_), description(description_), short_description(short_description_),
-            category(category_), research_cost(research_cost_),
-            research_turns(research_turns_), researchable(researchable_)
+                 bool researchable_,
+                 const std::set<std::string>& tags_) :
+            name(name_),
+            description(description_),
+            short_description(short_description_),
+            category(category_),
+            research_cost(research_cost_),
+            research_turns(research_turns_),
+            researchable(researchable_),
+            tags(tags_)
         {}
         std::string                     name;
         std::string                     description;
@@ -46,6 +53,7 @@ public:
         ValueRef::ValueRefBase<double>* research_cost;
         ValueRef::ValueRefBase<int>*    research_turns;
         bool                            researchable;
+        std::set<std::string>           tags;
     };
 
     /** \name Structors */ //@{
@@ -55,6 +63,7 @@ public:
          ValueRef::ValueRefBase<double>* research_cost,
          ValueRef::ValueRefBase<int>* research_turns,
          bool researchable,
+         const std::set<std::string>& tags,
          const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic) :
@@ -65,11 +74,16 @@ public:
         m_research_cost(research_cost),
         m_research_turns(research_turns),
         m_researchable(researchable),
+        m_tags(),
         m_effects(effects),
         m_prerequisites(prerequisites),
         m_unlocked_items(unlocked_items),
         m_graphic(graphic)
-    { Init(); }
+    {
+        for (std::set<std::string>::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        Init();
+    }
 
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
@@ -84,11 +98,16 @@ public:
         m_research_cost(tech_info.research_cost),
         m_research_turns(tech_info.research_turns),
         m_researchable(tech_info.researchable),
+        m_tags(),
         m_effects(effects),
         m_prerequisites(prerequisites),
         m_unlocked_items(unlocked_items),
         m_graphic(graphic)
-    { Init(); }
+    {
+        for (std::set<std::string>::iterator tag_it = tech_info.tags.begin(); tag_it != tech_info.tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        Init();
+    }
     //@}
 
     /** \name Accessors */ //@{
@@ -101,6 +120,8 @@ public:
     float               PerTurnCost(int empire_id) const;                           //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
     int                 ResearchTime(int empire_id) const;                          //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
     bool                Researchable() const        { return m_researchable; }      //!< returns whether this tech is researchable by players and appears on the tech tree
+
+    const std::set<std::string>&    Tags() const    { return m_tags; }
 
     /** returns the effects that are applied to the discovering empire's capital
       * when this tech is researched; not all techs have effects, in which case
@@ -126,6 +147,7 @@ private:
     ValueRef::ValueRefBase<double>* m_research_cost;
     ValueRef::ValueRefBase<int>*    m_research_turns;
     bool                            m_researchable;
+    std::set<std::string>           m_tags;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >
                                     m_effects;
     std::set<std::string>           m_prerequisites;

@@ -109,7 +109,8 @@ namespace {
                     |   tok.Researchable_ [ _h = true ]
                     |   eps [ _h = true ]
                    )
-                [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _f, _g, _h) ]
+                >   parse::detail::tags_parser()(_d)
+                [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _f, _g, _h, _d) ]
                 ;
 
             prerequisites
@@ -183,7 +184,7 @@ namespace {
                 std::string,
                 std::string,
                 std::string,
-                std::vector<std::string>,
+                std::set<std::string>,
                 std::string,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<int>*,
