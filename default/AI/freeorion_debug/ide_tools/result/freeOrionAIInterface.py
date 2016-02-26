@@ -61,65 +61,47 @@ class GalaxySetupData(object):
 class IntBoolMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -127,65 +109,47 @@ class IntBoolMap(object):
 class IntDblMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -193,65 +157,47 @@ class IntDblMap(object):
 class IntIntMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -259,87 +205,63 @@ class IntIntMap(object):
 class IntPairVec(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def extend(self, obj):
         """
-        C++ signature:
-            void extend(std::vector<std::pair<int,int>,std::allocator<std::pair<int,int> > > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def append(self, obj):
         """
-        C++ signature:
-            void append(std::vector<std::pair<int,int>,std::allocator<std::pair<int,int> > > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -347,59 +269,41 @@ class IntPairVec(object):
 class IntSet(object):
     def count(self, number):
         """
-        C++ signature:
-            unsigned int count(std::set<int,std::less<int>,std::allocator<int> >,int)
-        
         :param number:
         :type number: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def __contains__(self, number):
         """
-        C++ signature:
-            platform dependant
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype iter
+        :rtype: iter
         """
         return iter()
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def empty(self):
         """
-        C++ signature:
-            bool empty(std::set<int,std::less<int>,std::allocator<int> >)
-        
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def size(self):
         """
-        C++ signature:
-            unsigned int size(std::set<int,std::less<int>,std::allocator<int> >)
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -407,59 +311,41 @@ class IntSet(object):
 class IntSetSet(object):
     def count(self, int_set):
         """
-        C++ signature:
-            unsigned int count(std::set<std::set<int,std::less<int>,std::allocator<int> >,std::less<std::set<int,std::less<int>,std::allocator<int> > >,std::allocator<std::set<int,std::less<int>,std::allocator<int> > > >,std::set<int,std::less<int>,std::allocator<int> >)
-        
         :param int_set:
         :type int_set: IntSet
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def __contains__(self, int_set):
         """
-        C++ signature:
-            platform dependant
-        
         :param int_set:
         :type int_set: IntSet
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def empty(self):
         """
-        C++ signature:
-            bool empty(std::set<std::set<int,std::less<int>,std::allocator<int> >,std::less<std::set<int,std::less<int>,std::allocator<int> > >,std::allocator<std::set<int,std::less<int>,std::allocator<int> > > >)
-        
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def size(self):
         """
-        C++ signature:
-            unsigned int size(std::set<std::set<int,std::less<int>,std::allocator<int> >,std::less<std::set<int,std::less<int>,std::allocator<int> > >,std::allocator<std::set<int,std::less<int>,std::allocator<int> > > >)
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -467,87 +353,63 @@ class IntSetSet(object):
 class IntVec(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def extend(self, obj):
         """
-        C++ signature:
-            void extend(std::vector<int,std::allocator<int> > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype iter
+        :rtype: iter
         """
         return iter()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def append(self, obj):
         """
-        C++ signature:
-            void append(std::vector<int,std::allocator<int> > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -555,87 +417,63 @@ class IntVec(object):
 class ItemSpecVec(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def extend(self, obj):
         """
-        C++ signature:
-            void extend(std::vector<ItemSpec,std::allocator<ItemSpec> > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype iter
+        :rtype: iter
         """
         return iter()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def append(self, obj):
         """
-        C++ signature:
-            void append(std::vector<ItemSpec,std::allocator<ItemSpec> > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -643,65 +481,47 @@ class ItemSpecVec(object):
 class MeterTypeMeterMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -719,65 +539,47 @@ class MeterTypeStringPair(object):
 class PairIntInt_IntMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -785,65 +587,47 @@ class PairIntInt_IntMap(object):
 class ShipPartMeterMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -851,87 +635,63 @@ class ShipPartMeterMap(object):
 class ShipSlotVec(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def extend(self, obj):
         """
-        C++ signature:
-            void extend(std::vector<ShipSlotType,std::allocator<ShipSlotType> > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def append(self, obj):
         """
-        C++ signature:
-            void append(std::vector<ShipSlotType,std::allocator<ShipSlotType> > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -939,59 +699,41 @@ class ShipSlotVec(object):
 class StringSet(object):
     def count(self, string):
         """
-        C++ signature:
-            unsigned int count(std::set<std::string,std::less<std::string >,std::allocator<std::string > >,std::string)
-        
         :param string:
         :type string: str
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def __contains__(self, string):
         """
-        C++ signature:
-            platform dependant
-        
         :param string:
         :type string: str
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype iter
+        :rtype: iter
         """
         return iter()
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def empty(self):
         """
-        C++ signature:
-            bool empty(std::set<std::string,std::less<std::string >,std::allocator<std::string > >)
-        
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def size(self):
         """
-        C++ signature:
-            unsigned int size(std::set<std::string,std::less<std::string >,std::allocator<std::string > >)
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -999,87 +741,63 @@ class StringSet(object):
 class StringVec(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def extend(self, obj):
         """
-        C++ signature:
-            void extend(std::vector<std::string,std::allocator<std::string > > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype iter
+        :rtype: iter
         """
         return iter()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def append(self, obj):
         """
-        C++ signature:
-            void append(std::vector<std::string,std::allocator<std::string > > {lvalue},boost::python::api::object)
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -1087,65 +805,47 @@ class StringVec(object):
 class VisibilityIntMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -1169,48 +869,36 @@ class buildingType(object):
 
     def canBeProduced(self, number1, number2):
         """
-        C++ signature:
-            bool canBeProduced(BuildingType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def productionTime(self, number1, number2):
         """
-        C++ signature:
-            int productionTime(BuildingType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def perTurnCost(self, number1, number2):
         """
-        C++ signature:
-            float perTurnCost(BuildingType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def captureResult(self, number1, number2, number3, boolean):
         """
-        C++ signature:
-            CaptureResult captureResult(BuildingType {lvalue},int,int,int,bool)
-        
         :param number1:
         :type number1: int
         :param number2:
@@ -1219,33 +907,27 @@ class buildingType(object):
         :type number3: int
         :param boolean:
         :type boolean: bool
-        :rtype captureResult
+        :rtype: captureResult
         """
         return captureResult()
 
     def productionCost(self, number1, number2):
         """
-        C++ signature:
-            float productionCost(BuildingType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def canBeEnqueued(self, number1, number2):
         """
-        C++ signature:
-            bool canBeEnqueued(BuildingType,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
@@ -1373,191 +1055,139 @@ class empire(object):
 
     def resourceAvailable(self, resource_type):
         """
-        C++ signature:
-            float resourceAvailable(Empire {lvalue},ResourceType)
-        
         :param resource_type:
         :type resource_type: resourceType
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def techResearched(self, string):
         """
-        C++ signature:
-            bool techResearched(Empire {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def resourceProduction(self, resource_type):
         """
-        C++ signature:
-            float resourceProduction(Empire {lvalue},ResourceType)
-        
         :param resource_type:
         :type resource_type: resourceType
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def productionCostAndTime(self, production_queue_element):
         """
-        C++ signature:
-            std::pair<float,int> productionCostAndTime(Empire,ProductionQueue::Element)
-        
         :param production_queue_element:
         :type production_queue_element: productionQueueElement
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def shipDesignAvailable(self, number):
         """
-        C++ signature:
-            bool shipDesignAvailable(Empire {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def numSitReps(self, number):
         """
-        C++ signature:
-            int numSitReps(Empire {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def getResourcePool(self, resource_type):
         """
-        C++ signature:
-            boost::shared_ptr<ResourcePool> getResourcePool(Empire {lvalue},ResourceType)
-        
         :param resource_type:
         :type resource_type: resourceType
-        :rtype resPool
+        :rtype: resPool
         """
         return resPool()
 
     def resourceStockpile(self, resource_type):
         """
-        C++ signature:
-            float resourceStockpile(Empire {lvalue},ResourceType)
-        
         :param resource_type:
         :type resource_type: resourceType
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def hasExploredSystem(self, number):
         """
-        C++ signature:
-            bool hasExploredSystem(Empire {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def buildingTypeAvailable(self, string):
         """
-        C++ signature:
-            bool buildingTypeAvailable(Empire {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def obstructedStarlanes(self):
         """
-        C++ signature:
-            std::vector<std::pair<int,int>,std::allocator<std::pair<int,int> > > obstructedStarlanes(Empire)
-        
-        :rtype IntPairVec
+        :rtype: IntPairVec
         """
         return IntPairVec()
 
     def population(self):
         """
-        C++ signature:
-            float population(Empire {lvalue})
-        
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def supplyProjections(self, number, boolean):
         """
-        C++ signature:
-            std::map<int,int,std::less<int>,std::allocator<std::pair<int const ,int> > > supplyProjections(Empire,int,bool)
-        
         :param number:
         :type number: int
         :param boolean:
         :type boolean: bool
-        :rtype IntIntMap
+        :rtype: IntIntMap
         """
         return IntIntMap()
 
     def canBuild(self, build_type, string, number):
         """
-        C++ signatures:
-            bool canBuild(Empire {lvalue},BuildType,std::string,int)
-            bool canBuild(Empire {lvalue},BuildType,int,int)
-        
         :param build_type:
         :type build_type: buildType
         :param string:
         :type string: str
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def getSitRep(self, number):
         """
-        C++ signature:
-            SitRepEntry getSitRep(Empire,int)
-        
         :param number:
         :type number: int
-        :rtype sitrep
+        :rtype: sitrep
         """
         return sitrep()
 
     def getTechStatus(self, string):
         """
-        C++ signature:
-            TechStatus getTechStatus(Empire {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype techStatus
+        :rtype: techStatus
         """
         return techStatus()
 
     def researchProgress(self, string):
         """
-        C++ signature:
-            float researchProgress(Empire {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype float
+        :rtype: float
         """
         return float()
 
@@ -1615,38 +1245,29 @@ class hullType(object):
 
     def productionCost(self, number1, number2):
         """
-        C++ signature:
-            float productionCost(HullType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def productionTime(self, number1, number2):
         """
-        C++ signature:
-            int productionTime(HullType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def numSlotsOfSlotType(self, ship_slot_type):
         """
-        C++ signature:
-            unsigned int numSlotsOfSlotType(HullType {lvalue},ShipSlotType)
-        
         :param ship_slot_type:
         :type ship_slot_type: shipSlotType
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -1698,38 +1319,29 @@ class partType(object):
 
     def productionTime(self, number1, number2):
         """
-        C++ signature:
-            int productionTime(PartType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def productionCost(self, number1, number2):
         """
-        C++ signature:
-            float productionCost(PartType {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def canMountInSlotType(self, ship_slot_type):
         """
-        C++ signature:
-            bool canMountInSlotType(PartType {lvalue},ShipSlotType)
-        
         :param ship_slot_type:
         :type ship_slot_type: shipSlotType
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
@@ -1767,52 +1379,37 @@ class productionQueue(object):
 
     def __getitem__(self, number):
         """
-        C++ signature:
-            platform dependant
-        
         :param number:
         :type number: int
-        :rtype productionQueueElement
+        :rtype: productionQueueElement
         """
         return productionQueueElement()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def objectsWithWastedPP(self, res_pool):
         """
-        C++ signature:
-            std::set<std::set<int,std::less<int>,std::allocator<int> >,std::less<std::set<int,std::less<int>,std::allocator<int> > >,std::allocator<std::set<int,std::less<int>,std::allocator<int> > > > objectsWithWastedPP(ProductionQueue {lvalue},boost::shared_ptr<ResourcePool>)
-        
         :param res_pool:
         :type res_pool: resPool
-        :rtype IntSetSet
+        :rtype: IntSetSet
         """
         return IntSetSet()
 
     def availablePP(self, res_pool):
         """
-        C++ signature:
-            std::map<std::set<int,std::less<int>,std::allocator<int> >,float,std::less<std::set<int,std::less<int>,std::allocator<int> > >,std::allocator<std::pair<std::set<int,std::less<int>,std::allocator<int> > const ,float> > > availablePP(ProductionQueue {lvalue},boost::shared_ptr<ResourcePool>)
-        
         :param res_pool:
         :type res_pool: resPool
-        :rtype resPoolMap
+        :rtype: resPoolMap
         """
         return resPoolMap()
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -1862,65 +1459,47 @@ class resPool(object):
 class resPoolMap(object):
     def __delitem__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __getitem__(self, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj2:
         :type obj2: object
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __contains__(self, obj):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj:
         :type obj: object
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __setitem__(self, obj1, obj2):
         """
-        C++ signature:
-            platform dependant
-        
         :param obj1:
         :type obj1: object
         :param obj2:
         :type obj2: object
-        :rtype None
+        :rtype: None
         """
         return None
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -1944,52 +1523,37 @@ class researchQueue(object):
 
     def __getitem__(self, number):
         """
-        C++ signature:
-            platform dependant
-        
         :param number:
         :type number: int
-        :rtype researchQueueElement
+        :rtype: researchQueueElement
         """
         return researchQueueElement()
 
     def __contains__(self, research_queue_element):
         """
-        C++ signature:
-            platform dependant
-        
         :param research_queue_element:
         :type research_queue_element: researchQueueElement
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def __iter__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype object
+        :rtype: object
         """
         return object()
 
     def __len__(self):
         """
-        C++ signature:
-            platform dependant
-        
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def inQueue(self, string):
         """
-        C++ signature:
-            bool inQueue(ResearchQueue {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
@@ -2129,53 +1693,41 @@ class shipDesign(object):
 
     def productionTime(self, number1, number2):
         """
-        C++ signature:
-            int productionTime(ShipDesign {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def productionCost(self, number1, number2):
         """
-        C++ signature:
-            float productionCost(ShipDesign {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def productionLocationForEmpire(self, number1, number2):
         """
-        C++ signature:
-            bool productionLocationForEmpire(ShipDesign {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def perTurnCost(self, number1, number2):
         """
-        C++ signature:
-            float perTurnCost(ShipDesign {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
@@ -2195,23 +1747,17 @@ class sitrep(object):
 
     def getDataString(self, string):
         """
-        C++ signature:
-            std::string getDataString(SitRepEntry {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype str
+        :rtype: str
         """
         return str()
 
     def getDataIDNumber(self, string):
         """
-        C++ signature:
-            int getDataIDNumber(SitRepEntry {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -2239,12 +1785,9 @@ class special(object):
 
     def initialCapacity(self, number):
         """
-        C++ signature:
-            float initialCapacity(Special {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
@@ -2288,12 +1831,9 @@ class species(object):
 
     def getPlanetEnvironment(self, planet_type):
         """
-        C++ signature:
-            PlanetEnvironment getPlanetEnvironment(Species {lvalue},PlanetType)
-        
         :param planet_type:
         :type planet_type: planetType
-        :rtype planetEnvironment
+        :rtype: planetEnvironment
         """
         return planetEnvironment()
 
@@ -2333,45 +1873,33 @@ class tech(object):
 
     def researchCost(self, number):
         """
-        C++ signature:
-            float researchCost(Tech {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def recursivePrerequisites(self, number):
         """
-        C++ signature:
-            std::vector<std::string,std::allocator<std::string > > recursivePrerequisites(Tech,int)
-        
         :param number:
         :type number: int
-        :rtype StringVec
+        :rtype: StringVec
         """
         return StringVec()
 
     def perTurnCost(self, number):
         """
-        C++ signature:
-            float perTurnCost(Tech {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def researchTime(self, number):
         """
-        C++ signature:
-            int researchTime(Tech {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
@@ -2407,245 +1935,185 @@ class universe(object):
 
     def jumpDistance(self, number1, number2):
         """
-        C++ signature:
-            int jumpDistance(Universe,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def dump(self):
         """
-        C++ signature:
-            void dump(Universe)
-        
-        :rtype None
+        :rtype: None
         """
         return None
 
     def linearDistance(self, number1, number2):
         """
-        C++ signature:
-            double linearDistance(Universe,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def getObject(self, number):
         """
-        C++ signature:
-            UniverseObject const * getObject(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype universeObject
+        :rtype: universeObject
         """
         return universeObject()
 
     def getPlanet(self, number):
         """
-        C++ signature:
-            Planet const * getPlanet(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype planet
+        :rtype: planet
         """
         return planet()
 
     def getShip(self, number):
         """
-        C++ signature:
-            Ship const * getShip(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype ship
+        :rtype: ship
         """
         return ship()
 
     def systemsConnected(self, number1, number2, number3):
         """
-        C++ signature:
-            bool systemsConnected(Universe,int,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
         :param number3:
         :type number3: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def getVisibilityTurnsMap(self, number1, number2):
         """
-        C++ signature:
-            std::map<Visibility,int,std::less<Visibility>,std::allocator<std::pair<Visibility const ,int> > > getVisibilityTurnsMap(Universe {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype VisibilityIntMap
+        :rtype: VisibilityIntMap
         """
         return dict()
 
     def leastJumpsPath(self, number1, number2, number3):
         """
-        C++ signature:
-            std::vector<int,std::allocator<int> > leastJumpsPath(Universe,int,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
         :param number3:
         :type number3: int
-        :rtype IntVec
+        :rtype: IntVec
         """
         return IntVec()
 
     def getFleet(self, number):
         """
-        C++ signature:
-            Fleet const * getFleet(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype fleet
+        :rtype: fleet
         """
         return fleet()
 
     def getImmediateNeighbors(self, number1, number2):
         """
-        C++ signature:
-            std::vector<int,std::allocator<int> > getImmediateNeighbors(Universe,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype IntVec
+        :rtype: IntVec
         """
         return IntVec()
 
     def updateMeterEstimates(self, item_list):
         """
-        C++ signature:
-            void updateMeterEstimates(Universe,boost::python::list)
-        
         :param item_list:
         :type item_list: list
-        :rtype None
+        :rtype: None
         """
         return None
 
     def getField(self, number):
         """
-        C++ signature:
-            Field const * getField(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype field
+        :rtype: field
         """
         return field()
 
     def destroyedObjectIDs(self, number):
         """
-        C++ signature:
-            std::set<int,std::less<int>,std::allocator<int> > destroyedObjectIDs(Universe {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype IntSet
+        :rtype: IntSet
         """
         return IntSet()
 
     def getSystemNeighborsMap(self, number1, number2):
         """
-        C++ signature:
-            std::map<int,double,std::less<int>,std::allocator<std::pair<int const ,double> > > getSystemNeighborsMap(Universe,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype IntDblMap
+        :rtype: IntDblMap
         """
         return IntDblMap()
 
     def systemHasStarlane(self, number1, number2):
         """
-        C++ signature:
-            bool systemHasStarlane(Universe {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def shortestPath(self, number1, number2, number3):
         """
-        C++ signature:
-            std::vector<int,std::allocator<int> > shortestPath(Universe,int,int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
         :param number3:
         :type number3: int
-        :rtype IntVec
+        :rtype: IntVec
         """
         return IntVec()
 
     def getVisibility(self, number1, number2):
         """
-        C++ signature:
-            Visibility getVisibility(Universe {lvalue},int,int)
-        
         :param number1:
         :type number1: int
         :param number2:
         :type number2: int
-        :rtype visibility
+        :rtype: visibility
         """
         return visibility()
 
     def getSystem(self, number):
         """
-        C++ signature:
-            System const * getSystem(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype system
+        :rtype: system
         """
         return system()
 
     def getBuilding(self, number):
         """
-        C++ signature:
-            Building const * getBuilding(Universe,int)
-        
         :param number:
         :type number: int
-        :rtype building
+        :rtype: building
         """
         return building()
 
@@ -2713,111 +2181,81 @@ class universeObject(object):
 
     def contains(self, number):
         """
-        C++ signature:
-            bool contains(UniverseObject {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def hasTag(self, string):
         """
-        C++ signature:
-            bool hasTag(UniverseObject {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def nextTurnCurrentMeterValue(self, meter_type):
         """
-        C++ signature:
-            float nextTurnCurrentMeterValue(UniverseObject {lvalue},MeterType)
-        
         :param meter_type:
         :type meter_type: meterType
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def initialMeterValue(self, meter_type):
         """
-        C++ signature:
-            float initialMeterValue(UniverseObject {lvalue},MeterType)
-        
         :param meter_type:
         :type meter_type: meterType
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def containedBy(self, number):
         """
-        C++ signature:
-            bool containedBy(UniverseObject {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def currentMeterValue(self, meter_type):
         """
-        C++ signature:
-            float currentMeterValue(UniverseObject {lvalue},MeterType)
-        
         :param meter_type:
         :type meter_type: meterType
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def specialAddedOnTurn(self, string):
         """
-        C++ signature:
-            int specialAddedOnTurn(UniverseObject {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype int
+        :rtype: int
         """
         return int()
 
     def ownedBy(self, number):
         """
-        C++ signature:
-            bool ownedBy(UniverseObject {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
     def getMeter(self, meter_type):
         """
-        C++ signature:
-            Meter const * getMeter(UniverseObject {lvalue},MeterType)
-        
         :param meter_type:
         :type meter_type: meterType
-        :rtype meter
+        :rtype: meter
         """
         return meter()
 
     def hasSpecial(self, string):
         """
-        C++ signature:
-            bool hasSpecial(UniverseObject {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
@@ -2847,13 +2285,9 @@ class field(universeObject):
 
     def inField(self, base_object):
         """
-        C++ signatures:
-            bool inField(Field,UniverseObject)
-            bool inField(Field {lvalue},double,double)
-        
         :param base_object:
         :type base_object: universeObject
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
@@ -2975,34 +2409,25 @@ class planet(universeObject, popCenter, resourceCenter):
 
     def nextBetterPlanetTypeForSpecies(self, string):
         """
-        C++ signature:
-            PlanetType nextBetterPlanetTypeForSpecies(Planet {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype planetType
+        :rtype: planetType
         """
         return planetType()
 
     def environmentForSpecies(self, string):
         """
-        C++ signature:
-            PlanetEnvironment environmentForSpecies(Planet {lvalue},std::string)
-        
         :param string:
         :type string: str
-        :rtype planetEnvironment
+        :rtype: planetEnvironment
         """
         return planetEnvironment()
 
     def OrbitalPositionOnTurn(self, number):
         """
-        C++ signature:
-            Radian OrbitalPositionOnTurn(Planet {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype object
+        :rtype: object
         """
         return object()
 
@@ -3078,27 +2503,21 @@ class ship(universeObject):
 
     def currentPartMeterValue(self, meter_type, string):
         """
-        C++ signature:
-            float currentPartMeterValue(Ship {lvalue},MeterType,std::string)
-        
         :param meter_type:
         :type meter_type: meterType
         :param string:
         :type string: str
-        :rtype float
+        :rtype: float
         """
         return float()
 
     def initialPartMeterValue(self, meter_type, string):
         """
-        C++ signature:
-            float initialPartMeterValue(Ship {lvalue},MeterType,std::string)
-        
         :param meter_type:
         :type meter_type: meterType
         :param string:
         :type string: str
-        :rtype float
+        :rtype: float
         """
         return float()
 
@@ -3146,12 +2565,9 @@ class system(universeObject):
 
     def HasStarlaneToSystemID(self, number):
         """
-        C++ signature:
-            bool HasStarlaneToSystemID(System {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
@@ -3159,25 +2575,22 @@ class system(universeObject):
         """
         Currently unused.
         
-        C++ signature:
-            bool HasWormholeToSystemID(System {lvalue},int)
-        
         :param number:
         :type number: int
-        :rtype bool
+        :rtype: bool
         """
         return bool()
 
 
 class Enum(int):
     """Enum stub for docs, not really present in fo"""
-    pass
+    def __new__(cls, *args, **kwargs):
+        return super(Enum, cls).__new__(cls, args[0])
 
 
 class aggression(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     invalid = None  # aggression(-1, "invalid")
     beginner = None  # aggression(0, "beginner")
@@ -3199,7 +2612,6 @@ aggression.maniacal = aggression(5, "maniacal")
 class buildType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     building = None  # buildType(1, "building")
     ship = None  # buildType(2, "ship")
@@ -3211,7 +2623,6 @@ buildType.ship = buildType(2, "ship")
 class captureResult(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     capture = None  # captureResult(0, "capture")
     destroy = None  # captureResult(1, "destroy")
@@ -3225,7 +2636,6 @@ captureResult.retain = captureResult(2, "retain")
 class diplomaticMessageType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     noMessage = None  # diplomaticMessageType(-1, "noMessage")
     warDeclaration = None  # diplomaticMessageType(0, "warDeclaration")
@@ -3243,7 +2653,6 @@ diplomaticMessageType.cancelProposal = diplomaticMessageType(3, "cancelProposal"
 class diplomaticStatus(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     war = None  # diplomaticStatus(0, "war")
     peace = None  # diplomaticStatus(1, "peace")
@@ -3255,25 +2664,25 @@ diplomaticStatus.peace = diplomaticStatus(1, "peace")
 class galaxySetupOption(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     invalid = None  # galaxySetupOption(-1, "invalid")
     none = None  # galaxySetupOption(0, "none")
     low = None  # galaxySetupOption(1, "low")
     medium = None  # galaxySetupOption(2, "medium")
     high = None  # galaxySetupOption(3, "high")
+    random = None  # galaxySetupOption(4, "random")
 
 galaxySetupOption.invalid = galaxySetupOption(-1, "invalid")
 galaxySetupOption.none = galaxySetupOption(0, "none")
 galaxySetupOption.low = galaxySetupOption(1, "low")
 galaxySetupOption.medium = galaxySetupOption(2, "medium")
 galaxySetupOption.high = galaxySetupOption(3, "high")
+galaxySetupOption.random = galaxySetupOption(4, "random")
 
 
 class galaxyShape(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     invalid = None  # galaxyShape(-1, "invalid")
     spiral2 = None  # galaxyShape(0, "spiral2")
@@ -3303,71 +2712,75 @@ galaxyShape.random = galaxyShape(9, "random")
 class meterType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     targetPopulation = None  # meterType(0, "targetPopulation")
     targetIndustry = None  # meterType(1, "targetIndustry")
     targetResearch = None  # meterType(2, "targetResearch")
     targetTrade = None  # meterType(3, "targetTrade")
     targetConstruction = None  # meterType(4, "targetConstruction")
-    maxFuel = None  # meterType(7, "maxFuel")
-    maxShield = None  # meterType(8, "maxShield")
-    maxStructure = None  # meterType(9, "maxStructure")
-    maxDefense = None  # meterType(10, "maxDefense")
-    maxSupply = None  # meterType(11, "maxSupply")
-    maxTroops = None  # meterType(12, "maxTroops")
-    population = None  # meterType(13, "population")
-    industry = None  # meterType(14, "industry")
-    research = None  # meterType(15, "research")
-    trade = None  # meterType(16, "trade")
-    construction = None  # meterType(17, "construction")
-    capacity = None  # meterType(19, "capacity")
-    fuel = None  # meterType(20, "fuel")
-    shield = None  # meterType(21, "shield")
-    structure = None  # meterType(22, "structure")
-    defense = None  # meterType(23, "defense")
-    supply = None  # meterType(24, "supply")
-    troops = None  # meterType(25, "troops")
-    rebels = None  # meterType(26, "rebels")
-    size = None  # meterType(27, "size")
-    stealth = None  # meterType(28, "stealth")
-    detection = None  # meterType(29, "detection")
-    starlaneSpeed = None  # meterType(30, "starlaneSpeed")
+    maxCapacity = None  # meterType(6, "maxCapacity")
+    maxSecondaryStat = None  # meterType(7, "maxSecondaryStat")
+    maxFuel = None  # meterType(8, "maxFuel")
+    maxShield = None  # meterType(9, "maxShield")
+    maxStructure = None  # meterType(10, "maxStructure")
+    maxDefense = None  # meterType(11, "maxDefense")
+    maxSupply = None  # meterType(12, "maxSupply")
+    maxTroops = None  # meterType(13, "maxTroops")
+    population = None  # meterType(14, "population")
+    industry = None  # meterType(15, "industry")
+    research = None  # meterType(16, "research")
+    trade = None  # meterType(17, "trade")
+    construction = None  # meterType(18, "construction")
+    capacity = None  # meterType(20, "capacity")
+    secondaryStat = None  # meterType(21, "secondaryStat")
+    fuel = None  # meterType(22, "fuel")
+    shield = None  # meterType(23, "shield")
+    structure = None  # meterType(24, "structure")
+    defense = None  # meterType(25, "defense")
+    supply = None  # meterType(26, "supply")
+    troops = None  # meterType(27, "troops")
+    rebels = None  # meterType(28, "rebels")
+    size = None  # meterType(29, "size")
+    stealth = None  # meterType(30, "stealth")
+    detection = None  # meterType(31, "detection")
+    starlaneSpeed = None  # meterType(32, "starlaneSpeed")
 
 meterType.targetPopulation = meterType(0, "targetPopulation")
 meterType.targetIndustry = meterType(1, "targetIndustry")
 meterType.targetResearch = meterType(2, "targetResearch")
 meterType.targetTrade = meterType(3, "targetTrade")
 meterType.targetConstruction = meterType(4, "targetConstruction")
-meterType.maxFuel = meterType(7, "maxFuel")
-meterType.maxShield = meterType(8, "maxShield")
-meterType.maxStructure = meterType(9, "maxStructure")
-meterType.maxDefense = meterType(10, "maxDefense")
-meterType.maxSupply = meterType(11, "maxSupply")
-meterType.maxTroops = meterType(12, "maxTroops")
-meterType.population = meterType(13, "population")
-meterType.industry = meterType(14, "industry")
-meterType.research = meterType(15, "research")
-meterType.trade = meterType(16, "trade")
-meterType.construction = meterType(17, "construction")
-meterType.capacity = meterType(19, "capacity")
-meterType.fuel = meterType(20, "fuel")
-meterType.shield = meterType(21, "shield")
-meterType.structure = meterType(22, "structure")
-meterType.defense = meterType(23, "defense")
-meterType.supply = meterType(24, "supply")
-meterType.troops = meterType(25, "troops")
-meterType.rebels = meterType(26, "rebels")
-meterType.size = meterType(27, "size")
-meterType.stealth = meterType(28, "stealth")
-meterType.detection = meterType(29, "detection")
-meterType.starlaneSpeed = meterType(30, "starlaneSpeed")
+meterType.maxCapacity = meterType(6, "maxCapacity")
+meterType.maxSecondaryStat = meterType(7, "maxSecondaryStat")
+meterType.maxFuel = meterType(8, "maxFuel")
+meterType.maxShield = meterType(9, "maxShield")
+meterType.maxStructure = meterType(10, "maxStructure")
+meterType.maxDefense = meterType(11, "maxDefense")
+meterType.maxSupply = meterType(12, "maxSupply")
+meterType.maxTroops = meterType(13, "maxTroops")
+meterType.population = meterType(14, "population")
+meterType.industry = meterType(15, "industry")
+meterType.research = meterType(16, "research")
+meterType.trade = meterType(17, "trade")
+meterType.construction = meterType(18, "construction")
+meterType.capacity = meterType(20, "capacity")
+meterType.secondaryStat = meterType(21, "secondaryStat")
+meterType.fuel = meterType(22, "fuel")
+meterType.shield = meterType(23, "shield")
+meterType.structure = meterType(24, "structure")
+meterType.defense = meterType(25, "defense")
+meterType.supply = meterType(26, "supply")
+meterType.troops = meterType(27, "troops")
+meterType.rebels = meterType(28, "rebels")
+meterType.size = meterType(29, "size")
+meterType.stealth = meterType(30, "stealth")
+meterType.detection = meterType(31, "detection")
+meterType.starlaneSpeed = meterType(32, "starlaneSpeed")
 
 
 class planetEnvironment(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     uninhabitable = None  # planetEnvironment(0, "uninhabitable")
     hostile = None  # planetEnvironment(1, "hostile")
@@ -3385,7 +2798,6 @@ planetEnvironment.good = planetEnvironment(4, "good")
 class planetSize(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     unknown = None  # planetSize(-1, "unknown")
     noWorld = None  # planetSize(0, "noWorld")
@@ -3411,7 +2823,6 @@ planetSize.gasGiant = planetSize(7, "gasGiant")
 class planetType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     unknown = None  # planetType(-1, "unknown")
     swamp = None  # planetType(0, "swamp")
@@ -3443,7 +2854,6 @@ planetType.gasGiant = planetType(10, "gasGiant")
 class resourceType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     industry = None  # resourceType(0, "industry")
     trade = None  # resourceType(1, "trade")
@@ -3457,47 +2867,47 @@ resourceType.research = resourceType(2, "research")
 class shipPartClass(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     shortRange = None  # shipPartClass(0, "shortRange")
-    fighters = None  # shipPartClass(1, "fighters")
-    shields = None  # shipPartClass(2, "shields")
-    armour = None  # shipPartClass(3, "armour")
-    troops = None  # shipPartClass(4, "troops")
-    detection = None  # shipPartClass(5, "detection")
-    stealth = None  # shipPartClass(6, "stealth")
-    fuel = None  # shipPartClass(7, "fuel")
-    colony = None  # shipPartClass(8, "colony")
-    speed = None  # shipPartClass(9, "speed")
-    general = None  # shipPartClass(10, "general")
-    bombard = None  # shipPartClass(11, "bombard")
-    industry = None  # shipPartClass(12, "industry")
-    research = None  # shipPartClass(13, "research")
-    trade = None  # shipPartClass(14, "trade")
-    productionLocation = None  # shipPartClass(15, "productionLocation")
+    fighterBay = None  # shipPartClass(1, "fighterBay")
+    fighterHangar = None  # shipPartClass(2, "fighterHangar")
+    shields = None  # shipPartClass(3, "shields")
+    armour = None  # shipPartClass(4, "armour")
+    troops = None  # shipPartClass(5, "troops")
+    detection = None  # shipPartClass(6, "detection")
+    stealth = None  # shipPartClass(7, "stealth")
+    fuel = None  # shipPartClass(8, "fuel")
+    colony = None  # shipPartClass(9, "colony")
+    speed = None  # shipPartClass(10, "speed")
+    general = None  # shipPartClass(11, "general")
+    bombard = None  # shipPartClass(12, "bombard")
+    industry = None  # shipPartClass(13, "industry")
+    research = None  # shipPartClass(14, "research")
+    trade = None  # shipPartClass(15, "trade")
+    productionLocation = None  # shipPartClass(16, "productionLocation")
 
 shipPartClass.shortRange = shipPartClass(0, "shortRange")
-shipPartClass.fighters = shipPartClass(1, "fighters")
-shipPartClass.shields = shipPartClass(2, "shields")
-shipPartClass.armour = shipPartClass(3, "armour")
-shipPartClass.troops = shipPartClass(4, "troops")
-shipPartClass.detection = shipPartClass(5, "detection")
-shipPartClass.stealth = shipPartClass(6, "stealth")
-shipPartClass.fuel = shipPartClass(7, "fuel")
-shipPartClass.colony = shipPartClass(8, "colony")
-shipPartClass.speed = shipPartClass(9, "speed")
-shipPartClass.general = shipPartClass(10, "general")
-shipPartClass.bombard = shipPartClass(11, "bombard")
-shipPartClass.industry = shipPartClass(12, "industry")
-shipPartClass.research = shipPartClass(13, "research")
-shipPartClass.trade = shipPartClass(14, "trade")
-shipPartClass.productionLocation = shipPartClass(15, "productionLocation")
+shipPartClass.fighterBay = shipPartClass(1, "fighterBay")
+shipPartClass.fighterHangar = shipPartClass(2, "fighterHangar")
+shipPartClass.shields = shipPartClass(3, "shields")
+shipPartClass.armour = shipPartClass(4, "armour")
+shipPartClass.troops = shipPartClass(5, "troops")
+shipPartClass.detection = shipPartClass(6, "detection")
+shipPartClass.stealth = shipPartClass(7, "stealth")
+shipPartClass.fuel = shipPartClass(8, "fuel")
+shipPartClass.colony = shipPartClass(9, "colony")
+shipPartClass.speed = shipPartClass(10, "speed")
+shipPartClass.general = shipPartClass(11, "general")
+shipPartClass.bombard = shipPartClass(12, "bombard")
+shipPartClass.industry = shipPartClass(13, "industry")
+shipPartClass.research = shipPartClass(14, "research")
+shipPartClass.trade = shipPartClass(15, "trade")
+shipPartClass.productionLocation = shipPartClass(16, "productionLocation")
 
 
 class shipSlotType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     external = None  # shipSlotType(0, "external")
     internal = None  # shipSlotType(1, "internal")
@@ -3511,7 +2921,6 @@ shipSlotType.core = shipSlotType(2, "core")
 class starType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     unknown = None  # starType(-1, "unknown")
     blue = None  # starType(0, "blue")
@@ -3537,7 +2946,6 @@ starType.noStar = starType(7, "noStar")
 class techStatus(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     unresearchable = None  # techStatus(0, "unresearchable")
     researchable = None  # techStatus(1, "researchable")
@@ -3551,7 +2959,6 @@ techStatus.complete = techStatus(2, "complete")
 class techType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     theory = None  # techType(0, "theory")
     application = None  # techType(1, "application")
@@ -3565,7 +2972,6 @@ techType.refinement = techType(2, "refinement")
 class unlockableItemType(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     invalid = None  # unlockableItemType(-1, "invalid")
     building = None  # unlockableItemType(0, "building")
@@ -3585,7 +2991,6 @@ unlockableItemType.tech = unlockableItemType(4, "tech")
 class visibility(Enum):
     def __init__(self, numerator, name):
         self.name = name
-        self.numerator = numerator
 
     invalid = None  # visibility(-1, "invalid")
     none = None  # visibility(0, "none")
@@ -3602,220 +3007,169 @@ visibility.full = visibility(3, "full")
 
 def allEmpireIDs():
     """
-    C++ signature:
-        std::vector<int,std::allocator<int> > allEmpireIDs()
-    :rtype IntVec
+    :rtype: IntVec
     """
     return IntVec()
 
 
 def allPlayerIDs():
     """
-    C++ signature:
-        std::vector<int,std::allocator<int> > allPlayerIDs()
-    :rtype IntVec
+    :rtype: IntVec
     """
     return IntVec()
 
 
 def currentTurn():
     """
-    C++ signature:
-        int currentTurn()
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def doneTurn():
     """
-    C++ signature:
-        void doneTurn()
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def empireID():
     """
-    C++ signature:
-        int empireID()
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def empirePlayerID(number):
     """
-    C++ signature:
-        int empirePlayerID(int)
-    
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def getAIConfigStr():
     """
-    C++ signature:
-        std::string getAIConfigStr()
-    :rtype str
+    :rtype: str
     """
     return str()
 
 
 def getAIDir():
     """
-    C++ signature:
-        std::string getAIDir()
-    :rtype str
+    :rtype: str
     """
     return str()
 
 
 def getBuildingType(string):
     """
-    C++ signature:
-        BuildingType const * getBuildingType(std::string)
-    
     :param string:
     :type string: str
-    :rtype buildingType
+    :rtype: buildingType
     """
     return buildingType()
 
 
-def getEmpire():
+def getEmpire(number=None):
     """
-    C++ signatures:
-        Empire const * getEmpire()
-        Empire const * getEmpire(int)
-    :rtype empire
+    :param number:
+    :type number: int
+    :rtype: empire
     """
     return empire()
 
 
 def getFieldType(string):
     """
-    C++ signature:
-        FieldType const * getFieldType(std::string)
-    
     :param string:
     :type string: str
-    :rtype fieldType
+    :rtype: fieldType
     """
     return fieldType()
 
 
 def getGalaxySetupData():
     """
-    C++ signature:
-        GalaxySetupData getGalaxySetupData()
-    :rtype GalaxySetupData
+    :rtype: GalaxySetupData
     """
     return GalaxySetupData()
 
 
 def getHullType(string):
     """
-    C++ signature:
-        HullType const * getHullType(std::string)
-    
     :param string:
     :type string: str
-    :rtype hullType
+    :rtype: hullType
     """
     return hullType()
 
 
 def getPartType(string):
     """
-    C++ signature:
-        PartType const * getPartType(std::string)
-    
     :param string:
     :type string: str
-    :rtype partType
+    :rtype: partType
     """
     return partType()
 
 
 def getSaveStateString():
     """
-    C++ signature:
-        std::string getSaveStateString()
-    :rtype str
+    :rtype: str
     """
     return str()
 
 
 def getShipDesign(number):
     """
-    C++ signature:
-        ShipDesign const * getShipDesign(int)
-    
     :param number:
     :type number: int
-    :rtype shipDesign
+    :rtype: shipDesign
     """
     return shipDesign()
 
 
 def getSpecial(string):
     """
-    C++ signature:
-        Special const * getSpecial(std::string)
-    
     :param string:
     :type string: str
-    :rtype special
+    :rtype: special
     """
     return special()
 
 
 def getSpecies(string):
     """
-    C++ signature:
-        Species const * getSpecies(std::string)
-    
     :param string:
     :type string: str
-    :rtype species
+    :rtype: species
     """
     return species()
 
 
 def getTech(string):
     """
-    C++ signature:
-        Tech const * getTech(std::string)
-    
     :param string:
     :type string: str
-    :rtype tech
+    :rtype: tech
     """
     return tech()
 
 
 def getTechCategories(obj):
     """
-    C++ signature:
-        std::vector<std::string,std::allocator<std::string > > getTechCategories(TechManager {lvalue})
-    
     :param obj:
     :type obj: object
-    :rtype StringVec
+    :rtype: StringVec
     """
     return StringVec()
 
 
 def getUniverse():
     """
-    C++ signature:
-        Universe getUniverse()
-    :rtype universe
+    :rtype: universe
     """
     return universe()
 
@@ -3824,99 +3178,77 @@ def getUserDir():
     """
     Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).
     
-    C++ signature:
-        boost::python::str getUserDir()
-    :rtype str
+    :rtype: str
     """
     return str()
 
 
 def initMeterEstimatesDiscrepancies():
     """
-    C++ signature:
-        void initMeterEstimatesDiscrepancies()
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def issueAggressionOrder(number, boolean):
     """
-    C++ signature:
-        int issueAggressionOrder(int,bool)
-    
     :param number:
     :type number: int
     :param boolean:
     :type boolean: bool
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueBombardOrder(number1, number2):
     """
-    C++ signature:
-        int issueBombardOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueChangeFocusOrder(number, string):
     """
-    C++ signature:
-        int issueChangeFocusOrder(int,std::string)
-    
     :param number:
     :type number: int
     :param string:
     :type string: str
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueChangeProductionQuantityOrder(number1, number2, number3):
     """
-    C++ signature:
-        int issueChangeProductionQuantityOrder(int,int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
     :param number3:
     :type number3: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueColonizeOrder(number1, number2):
     """
-    C++ signature:
-        int issueColonizeOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueCreateShipDesignOrder(string1, string2, string3, item_list, string4, string5, boolean):
     """
-    C++ signature:
-        int issueCreateShipDesignOrder(std::string,std::string,std::string,boost::python::list,std::string,std::string,bool)
-    
     :param string1:
     :type string1: str
     :param string2:
@@ -3931,386 +3263,299 @@ def issueCreateShipDesignOrder(string1, string2, string3, item_list, string4, st
     :type string5: str
     :param boolean:
     :type boolean: bool
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueDequeueProductionOrder(number):
     """
-    C++ signature:
-        int issueDequeueProductionOrder(int)
-    
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueDequeueTechOrder(string):
     """
-    C++ signature:
-        int issueDequeueTechOrder(std::string)
-    
     :param string:
     :type string: str
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueEnqueueBuildingProductionOrder(string, number):
     """
-    C++ signature:
-        int issueEnqueueBuildingProductionOrder(std::string,int)
-    
     :param string:
     :type string: str
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueEnqueueShipProductionOrder(number1, number2):
     """
-    C++ signature:
-        int issueEnqueueShipProductionOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueEnqueueTechOrder(string, number):
     """
-    C++ signature:
-        int issueEnqueueTechOrder(std::string,int)
-    
     :param string:
     :type string: str
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueFleetMoveOrder(number1, number2):
     """
-    C++ signature:
-        int issueFleetMoveOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueFleetTransferOrder(number1, number2):
     """
-    C++ signature:
-        int issueFleetTransferOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueGiveObjectToEmpireOrder(number1, number2):
     """
-    C++ signature:
-        int issueGiveObjectToEmpireOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueInvadeOrder(number1, number2):
     """
-    C++ signature:
-        int issueInvadeOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueNewFleetOrder(string, number):
     """
-    C++ signature:
-        int issueNewFleetOrder(std::string,int)
-    
     :param string:
     :type string: str
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueRenameOrder(number, string):
     """
-    C++ signature:
-        int issueRenameOrder(int,std::string)
-    
     :param number:
     :type number: int
     :param string:
     :type string: str
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueRequeueProductionOrder(number1, number2):
     """
-    C++ signature:
-        int issueRequeueProductionOrder(int,int)
-    
     :param number1:
     :type number1: int
     :param number2:
     :type number2: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def issueScrapOrder(number):
     """
-    C++ signature:
-        int issueScrapOrder(int)
-    
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def playerEmpireID(number):
     """
-    C++ signature:
-        int playerEmpireID(int)
-    
     :param number:
     :type number: int
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def playerID():
     """
-    C++ signature:
-        int playerID()
-    :rtype int
+    :rtype: int
     """
     return int()
 
 
 def playerIsAI(number):
     """
-    C++ signature:
-        bool playerIsAI(int)
-    
     :param number:
     :type number: int
-    :rtype bool
+    :rtype: bool
     """
     return bool()
 
 
 def playerIsHost(number):
     """
-    C++ signature:
-        bool playerIsHost(int)
-    
     :param number:
     :type number: int
-    :rtype bool
+    :rtype: bool
     """
     return bool()
 
 
-def playerName():
+def playerName(number=None):
     """
-    C++ signatures:
-        std::string playerName()
-        std::string playerName(int)
-    :rtype str
+    :param number:
+    :type number: int
+    :rtype: str
     """
     return str()
 
 
 def sendChatMessage(number, string):
     """
-    C++ signature:
-        void sendChatMessage(int,std::string)
-    
     :param number:
     :type number: int
     :param string:
     :type string: str
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def sendDiplomaticMessage(diplomatic_message):
     """
-    C++ signature:
-        void sendDiplomaticMessage(DiplomaticMessage)
-    
     :param diplomatic_message:
     :type diplomatic_message: diplomaticMessage
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def setSaveStateString(string):
     """
-    C++ signature:
-        void setSaveStateString(std::string)
-    
     :param string:
     :type string: str
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def techs():
     """
-    C++ signature:
-        std::vector<std::string,std::allocator<std::string > > techs()
-    :rtype StringVec
+    :rtype: StringVec
     """
     return StringVec()
 
 
 def techsInCategory(string):
     """
-    C++ signature:
-        std::vector<std::string,std::allocator<std::string > > techsInCategory(std::string)
-    
     :param string:
     :type string: str
-    :rtype StringVec
+    :rtype: StringVec
     """
     return StringVec()
 
 
 def updateMeterEstimates(boolean):
     """
-    C++ signature:
-        void updateMeterEstimates(bool)
-    
     :param boolean:
     :type boolean: bool
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def updateProductionQueue():
     """
-    C++ signature:
-        void updateProductionQueue()
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def updateResearchQueue():
     """
-    C++ signature:
-        void updateResearchQueue()
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def updateResourcePools():
     """
-    C++ signature:
-        void updateResourcePools()
-    :rtype None
+    :rtype: None
     """
     return None
 
 
 def userString(string):
     """
-    C++ signature:
-        std::string userString(std::string)
-    
     :param string:
     :type string: str
-    :rtype str
+    :rtype: str
     """
     return str()
 
 
 def userStringExists(string):
     """
-    C++ signature:
-        bool userStringExists(std::string)
-    
     :param string:
     :type string: str
-    :rtype bool
+    :rtype: bool
     """
     return bool()
 
 
 def userStringList(string):
     """
-    C++ signature:
-        boost::python::list userStringList(std::string)
-    
     :param string:
     :type string: str
-    :rtype list
+    :rtype: list
     """
     return list()
 
 
 def validShipDesign(string, string_list):
     """
-    C++ signatures:
-        bool validShipDesign(std::string,std::vector<std::string,std::allocator<std::string > >)
-        bool validShipDesign(ShipDesign)
-    
     :param string:
     :type string: str
     :param string_list:
     :type string_list: StringVec
-    :rtype bool
+    :rtype: bool
     """
     return bool()
