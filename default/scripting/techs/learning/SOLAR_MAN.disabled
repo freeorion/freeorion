@@ -1,0 +1,15 @@
+Tech
+    name = "LRN_SOLAR_MAN"
+    description = "LRN_SOLAR_MAN_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 750 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 1
+    prerequisites = "LRN_GRAVITONICS"
+    unlock = [
+        Item type = Building name = "BLD_SOL_ACCEL"
+        Item type = Building name = "BLD_SOL_REJUV"
+    ]
+
+#include "../../common/shared.macros"

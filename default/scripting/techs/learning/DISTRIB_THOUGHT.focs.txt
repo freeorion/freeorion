@@ -1,0 +1,20 @@
+Tech
+    name = "LRN_DISTRIB_THOUGHT"
+    description = "LRN_DISTRIB_THOUGHT_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "LRN_PSIONICS"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                // Focus type = "FOCUS_RESEARCH"  //Does not require research Focus
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/tech/distributed_thought.png"
+
+#include "../../common/shared.macros"

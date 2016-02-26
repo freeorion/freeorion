@@ -1,0 +1,20 @@
+Tech
+    name = "LRN_QUANT_NET"
+    description = "LRN_QUANT_NET_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 6
+    prerequisites = "LRN_NDIM_SUBSPACE"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/tech/quantum_networking.png"
+
+#include "../../common/shared.macros"

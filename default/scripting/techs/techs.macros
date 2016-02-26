@@ -1,0 +1,2 @@
+CANDIDATE_BATTLE_CHECK
+'''Turn low = LocalCandidate.System.LastTurnBattleHere + 1'''

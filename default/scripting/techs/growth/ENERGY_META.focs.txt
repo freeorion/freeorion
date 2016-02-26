@@ -1,0 +1,43 @@
+Tech
+    name = "GRO_ENERGY_META"
+    description = "GRO_ENERGY_META_DESC"
+    short_description = "VARIOUS_SHORT_DESC"
+    category = "GROWTH_CATEGORY"
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 15
+    prerequisites = [
+        "GRO_CYBORG"
+        "LRN_EVERYTHING"
+        "GRO_TRANSORG_SENT"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+            ]
+            effects = SetMaxFuel value = Value + 2
+
+// Shield & defense now adjusted in Species
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
+
+            ]
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+
+            ]
+            effects = SetTargetResearch value = Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/tech/pure-energy_metabolism.png"
+
+#include "../../common/shared.macros"

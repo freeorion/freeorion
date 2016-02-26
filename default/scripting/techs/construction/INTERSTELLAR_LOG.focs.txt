@@ -1,0 +1,22 @@
+Tech
+    name = "SHP_INTSTEL_LOG"
+    description = "SHP_INTSTEL_LOG_DESC"
+    short_description = "STARLANE_SPEED_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = "CON_ORBITAL_CON"
+    effectsgroups = EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                Speed low = 1 // Immobile objects do not get the starlane speed boost.
+                WithinDistance distance = 50 condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                ]
+            ]
+        effects = SetSpeed value = Value + 20
+    graphic = "icons/tech/stellar_navigation.png"
+
+#include "../../common/shared.macros"

@@ -1,0 +1,13 @@
+Tech
+    name = "GRO_INDUSTRY_CLONE"
+    description = "GRO_INDUSTRY_CLONE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 8 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = "GRO_LIFECYCLE_MAN"
+    unlock = Item type = Building name = "BLD_CLONING_CENTER"
+    graphic = "icons/tech/industrial_cloning.png"
+
+#include "../../common/shared.macros"

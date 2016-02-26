@@ -1,0 +1,19 @@
+Tech
+    name = "CON_ART_PLANET"
+    description = "CON_ART_PLANET_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 300 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
+    prerequisites = [
+        "CON_ART_HEAVENLY"
+        "CON_GAL_INFRA"
+    ]
+    unlock = [
+        Item type = Building name = "BLD_ART_PLANET"
+        Item type = Building name = "BLD_ART_FACTORY_PLANET"
+        Item type = Building name = "BLD_ART_PARADISE_PLANET"
+        ]
+    graphic = "icons/tech/artificial_planet.png"
+
+#include "../../common/shared.macros"

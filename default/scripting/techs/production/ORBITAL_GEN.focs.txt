@@ -1,0 +1,15 @@
+Tech
+    name = "PRO_ORBITAL_GEN"
+    description = "PRO_ORBITAL_GEN_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 60 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = [
+        "PRO_FUSION_GEN"
+        "CON_ORBITAL_CON"
+    ]
+    unlock = Item type = Building name = "BLD_GAS_GIANT_GEN"
+    graphic = "icons/tech/orbital_generation.png"
+
+#include "../../common/shared.macros"

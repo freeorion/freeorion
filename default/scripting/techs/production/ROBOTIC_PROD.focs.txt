@@ -1,0 +1,19 @@
+Tech
+    name = "PRO_ROBOTIC_PROD"
+    description = "PRO_ROBOTIC_PROD_DESC"
+    short_description = "INDUSTRY_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 12 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+        ]
+    graphic = "icons/tech/robotic_production.png"
+
+#include "../../common/shared.macros"

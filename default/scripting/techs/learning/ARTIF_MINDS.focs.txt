@@ -1,0 +1,20 @@
+Tech
+    name = "LRN_ARTIF_MINDS"
+    description = "LRN_ARTIF_MINDS_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 25 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = "LRN_ALGO_ELEGANCE"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                NOT TargetPopulation low = 0 high = 0
+            ]
+            effects = SetTargetResearch value = Value + 10 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/tech/basic_autolabs.png"
+
+#include "../../common/shared.macros"

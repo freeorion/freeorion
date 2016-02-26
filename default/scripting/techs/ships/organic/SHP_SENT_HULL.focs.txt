@@ -1,0 +1,19 @@
+Tech
+    name = "SHP_SENT_HULL"
+    description = "SHP_SENT_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_BIOADAPTIVE_SPEC"
+        "SHP_CONT_BIOADAPT"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_SENTIENT"
+        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+    ]
+    graphic = "icons/ship_hulls/sentient_hull_small.png"
+
+#include "../../../common/shared.macros"

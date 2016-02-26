@@ -1,0 +1,12 @@
+Tech
+    name = "CON_ARCH_PSYCH"
+    description = "CON_ARCH_PSYCH_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    tags = "THEORY"
+    prerequisites = "CON_ASYMP_MATS"
+    graphic = "icons/tech/architecture_psychology.png"
+
+#include "../../common/shared.macros"

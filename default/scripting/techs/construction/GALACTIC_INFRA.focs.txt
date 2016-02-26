@@ -1,0 +1,18 @@
+Tech
+    name = "CON_GAL_INFRA"
+    description = "CON_GAL_INFRA_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 750 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 7
+    prerequisites = "SHP_INTSTEL_LOG"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            effects = SetMaxSupply value = Value + 1
+    graphic = "icons/tech/galactic_infrastructure.png"
+
+#include "../../common/shared.macros"

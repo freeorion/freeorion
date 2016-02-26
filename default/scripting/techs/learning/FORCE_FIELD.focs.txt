@@ -1,0 +1,12 @@
+Tech
+    name = "LRN_FORCE_FIELD"
+    description = "LRN_FORCE_FIELD_DESC"
+    short_description = "SHIELD_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "LRN_ARTIF_MINDS"
+    unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
+    graphic = "icons/tech/forcefield_harmonics.png"
+
+#include "../../common/shared.macros"

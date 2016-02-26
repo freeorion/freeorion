@@ -1,0 +1,48 @@
+Tech
+    name = "LRN_STELLAR_TOMOGRAPHY"
+    description = "LRN_STELLAR_TOMOGRAPHY_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 125 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 6
+    prerequisites = "LRN_EVERYTHING"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Star type = BlackHole
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Star type = Neutron
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Star type = [Blue White]
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Star type = [Red Orange Yellow]
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/tech/stellar_tomography.png"
+
+#include "../../common/shared.macros"

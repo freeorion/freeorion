@@ -1,0 +1,18 @@
+Tech
+    name = "SHP_NANOROBO_MAINT"
+    description = "SHP_NANOROBO_MAINT_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 600 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 10
+    prerequisites = [
+        "SHP_SPACE_FLUX_DRIVE"
+        "PRO_NANOTECH_PROD"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_NANOROBOTIC"
+        Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
+    ]
+    graphic = "icons/ship_hulls/nano_robotic_hull_small.png"
+
+#include "../../../common/shared.macros"

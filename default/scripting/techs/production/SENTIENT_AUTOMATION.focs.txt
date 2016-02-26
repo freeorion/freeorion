@@ -1,0 +1,23 @@
+Tech
+    name = "PRO_SENTIENT_AUTOMATION"
+    description = "PRO_SENTIENT_AUTOMATION_DESC"
+    short_description = "INDUSTRY_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 125 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "LRN_ARTIF_MINDS"
+        "PRO_NANOTECH_PROD"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                NOT TargetPopulation low = 0 high = 0
+             ]
+             effects = SetTargetIndustry value = Value + 5
+    ]
+    graphic = "icons/tech/basic_autofactories.png"
+
+#include "../../common/shared.macros"
