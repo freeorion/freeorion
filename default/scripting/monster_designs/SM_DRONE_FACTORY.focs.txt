@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SM_DRONE_FACTORY"
+    description = "SM_DRONE_FACTORY_DESC"
+    hull = "SH_IMMOBILE_FACTORY"
+    parts = [
+        "SR_WEAPON_2_1"
+        "SH_DEFLECTOR"
+        ""
+    ]
+    icon = "icons/monsters/factory.png"
+    model = "seed"

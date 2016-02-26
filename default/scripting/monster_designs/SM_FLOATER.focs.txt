@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SM_FLOATER"
+    description = "SM_FLOATER_DESC"
+    hull = "SH_FLOATER_BODY"
+    parts = [
+        ""
+        "SH_DEFENSE_GRID"
+        ""
+    ]
+    icon = "icons/monsters/floater.png"
+    model = "seed"

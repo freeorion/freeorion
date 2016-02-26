@@ -1,0 +1,7 @@
+ShipDesign
+    name = "SM_TREE"
+    description = "SM_TREE_DESC"
+    hull = "SH_TREE_BODY"
+    parts = "SR_WEAPON_1_1"
+    icon = "icons/monsters/tree.png"
+    model = "seed"

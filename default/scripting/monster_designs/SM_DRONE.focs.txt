@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SM_DRONE"
+    description = "SM_DRONE_DESC"
+    hull = "SH_DRONE_BODY"
+    parts = [
+        "AR_ZORTRIUM_PLATE"
+        "SR_WEAPON_2_1"
+        ""
+    ]
+    icon = "icons/monsters/drone.png"
+    model = "seed"

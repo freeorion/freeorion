@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SM_SNOWFLAKE_3"
+    description = "SM_SNOWFLAKE_3_DESC"
+    hull = "SH_SNOWFLAKE_3_BODY"
+    parts = [
+        "SR_WEAPON_4_1"
+        "SP_BIOTERM"
+        ""
+        ""
+        ]
+    icon = "icons/monsters/snowflake-3.png"
+    model = "seed"

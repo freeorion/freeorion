@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SM_KRILL_2"
+    description = "SM_KRILL_2_DESC"
+    hull = "SH_KRILL_2_BODY"
+    parts = [
+        ""
+        "SR_WEAPON_2_1"
+        ""
+    ]
+    icon = "icons/monsters/krill-2.png"
+    model = "seed"

@@ -1,0 +1,10 @@
+ShipDesign
+    name = "SM_VOID"
+    description = "SM_VOID_DESC"
+    hull = "SH_NEBULOUS_BODY"
+    parts = [
+        ""
+        "SP_VOID"
+    ]
+    icon = "icons/monsters/void.png"
+    model = "seed"

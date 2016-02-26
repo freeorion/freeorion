@@ -1,0 +1,10 @@
+ShipDesign
+    name = "SM_ASH"
+    description = "SM_ASH_DESC"
+    hull = "SH_NEBULOUS_BODY"
+    parts = [
+        ""
+        "SP_ASH"
+    ]
+    icon = "icons/monsters/volcanic_ash.png"
+    model = "seed"

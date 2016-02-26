@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SM_PSIONIC_SNOWFLAKE"
+    description = "SM_PSIONIC_SNOWFLAKE_DESC"
+    hull = "SH_PSIONIC_SNOWFLAKE_BODY"
+    parts = [
+        "SP_CHAOS_WAVE"
+        "SR_WEAPON_4_1"
+        ""
+        "ST_CLOAK_3"
+    ]
+    icon = "icons/monsters/snowflake-4.png"
+    model = "seed"
