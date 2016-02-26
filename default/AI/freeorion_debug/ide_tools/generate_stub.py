@@ -80,7 +80,10 @@ def handle_function(doc):
     return res
 
 
-ENUM_STUB = 'class Enum(int):\n    """Enum stub for docs, not really present in fo"""\n    pass'
+ENUM_STUB = ('class Enum(int):\n'
+             '    """Enum stub for docs, not really present in fo"""\n'
+             '    def __new__(cls, *args, **kwargs):\n'
+             '        return super(Enum, cls).__new__(cls, args[0])')
 
 
 def handle_enum(info):
@@ -89,7 +92,6 @@ def handle_enum(info):
     result = ['class %s(Enum):' % name,
               '    def __init__(self, numerator, name):',
               '        self.name = name',
-              '        self.numerator = numerator',
               ''
               ]
 

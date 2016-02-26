@@ -1,5 +1,7 @@
 import re
 
+import sys
+
 normalization_dict = {'empire': 'empire_object',
                       'int': 'number',
                       'str': 'string',
@@ -44,21 +46,40 @@ normalization_dict = {'empire': 'empire_object',
                       'buildType': 'build_type',
                       'field': 'field',
                       'hullType': 'hull_type',
+                      'PlanetSize': 'planet_size',
+                      'planetSize': 'planet_size',
+                      'unlockableItemType': 'unlockable_item_type',
+                      'dict': 'dictionary',
+                      'StarType': 'star_type',
+                      'starType': 'star_type',
+                      'UnlockableItemType': 'unlocable_item_type',
+                      'FleetPlan': 'fleet_plan',
+                      'MeterTypeMeterMap': 'meter_type_meter_map',
+                      'PairIntInt_IntMap': 'pair_int_int_int_map',
+                      'MonsterFleetPlan': 'monster_fleet_plan',
+                      'ShipPartMeterMap': 'ship_part_meter_map',
+                      'ShipSlotVec': 'ship_slot_vec',
+                      'special': 'special',
                       }
 
 
 def normalize_name(tp):
-    if tp not in normalization_dict:
+    argument_type, provided_name = tp
+    if not provided_name.startswith('arg'):
+        return provided_name
+
+    if argument_type not in normalization_dict:
+        print sys.stderr.write("Can't find proper name for: %s" % argument_type)
         return 'arg'
     else:
-        return normalization_dict[tp]
+        return normalization_dict[argument_type]
 
 
-def get_argument_names(argument_types):
+def get_argument_names(arguments):
     counts = {}
     names = []
-    arg_names = [normalize_name(tp) for tp in argument_types]
-    for tp, arg_name in zip(argument_types, arg_names):
+    arg_names = [normalize_name(tp) for tp in arguments]
+    for tp, arg_name in zip(arguments, arg_names):
         if arg_names.count(arg_name) == 1:
             suffix = ''
         else:
@@ -68,7 +89,7 @@ def get_argument_names(argument_types):
                 counts[arg_name] = 1
             suffix = str(counts[arg_name])
         names.append('%s%s' % (arg_name, suffix))
-    return names
+    return names, [x[0] for x in arguments]
 
 
 def parse_name(txt):
@@ -79,37 +100,23 @@ def parse_name(txt):
 
 
 def merge_args(arg_types):
-    with_arguments = filter(None, arg_types)
-    if len(with_arguments) > 1:
-        keywords = True
-        new_types = []
-        for types in arg_types:
-            new_types.extend(types)
+    if len(arg_types) == 1:
+        names, types = get_argument_names(arg_types[0])
+        use_keyword = False
+    elif len(arg_types) == 2 and any(not x for x in arg_types):
+        names, types = get_argument_names(filter(None, arg_types)[0])
+        use_keyword = True
     else:
-        new_types = with_arguments and with_arguments[0]
-        keywords = False
-    argument_names = get_argument_names(new_types)
-    if keywords:
-        argument_strings = ['%s=None' % x for x in argument_names]
-    else:
-        argument_strings = argument_names[:]
-    return argument_strings, zip(argument_names, new_types)
+        sys.stderr.write('Cannot merge: %s, use first arguments\n' % list(x for x in arg_types))
+        names, types = get_argument_names(arg_types[0])
+        use_keyword = False
+    return ['%s=None' % name for name in names] if use_keyword else names, zip(names, types)
 
 
 def normilize_rtype(rtype):
     if rtype == 'iterator':
         return 'iter'
     return rtype
-
-
-def process_docstring(info):
-    """
-    Make linux and windows stabs look alike.
-    """
-
-    return info.replace('class ', '').replace('struct ', '').replace('enum ', '')\
-        .replace('basic_string<char,std::char_traits<char>,std::allocator<char> >', 'string')\
-        .replace(", ", ',')
 
 
 class Docs(object):
@@ -124,76 +131,91 @@ class Docs(object):
 
         self.text = text
 
-        lines = filter(None, [x.strip() for x in self.text.split('\n')])
+        lines = [x.strip() for x in self.text.split('\n')]
 
-        is_header = True
-        is_signature = False
+        def parse_signature(line):
+            expre = re.compile('(\w+)\((.*)\) -> (\w+)')
+            name, args, rtype = expre.match(line).group(1, 2, 3)
+            args = re.findall('\((\w+)\) *(\w+)', args)
+            return name, args, rtype
 
-        headers = []
-        docs = []
-        signatures = []
-
-        for line in lines:
-            if is_header:
-                headers.append(line)
-                docs.append([])
-                is_header = False
-            else:
-                if is_signature:
-                    signatures.append(line)
-                    is_signature = False
-                    is_header = True
-
-                elif line == 'C++ signature :':
-                    is_signature = True
-
-                elif line:
-                    docs[-1].append(line)
         res = []
-        for name, doc, info in zip(headers, docs, signatures):
-            arg_types, rtype = parse_name(name)
-            # This signatures differes on linux and windows, just ignore them
-            if name.startswith(('__delitem__', '__len__', '__iter__', '__getitem__', '__contains__', '__setitem__')):
-                res.append((arg_types, rtype, 'platform dependant'))
+        name, args, rtype = parse_signature(lines[0])
+        res.append((args, rtype, []))
+        for line in lines[1:]:
+            if line.startswith('%s(' % name):
+                name, args, rtype = parse_signature(line)
+                res.append((args, rtype, []))
             else:
-                res.append((arg_types, rtype, info))
+                res[-1][2].append(line)
 
         self.resources = res
-        arg_types, rtypes, infos = zip(*res)
+
+        args, rtypes, infos = zip(*res)
         rtypes = set(rtypes)
-        assert len(rtypes) == 1, "Different rtypes for: %s" % text
+        assert len(rtypes) == 1, "Different rtypes for: %s in: %s" % (rtypes, text)
         self.rtype = normilize_rtype(rtypes.pop())
 
-        if doc:
-            doc.append('')
-        self.header = doc + ['C++ signature%s:' % ('' if len(res) == 1 else 's')]
-        self.header.extend('    %s' % process_docstring(info) for info in infos)
+        # cut of first and last string if they are empty
+        # we cant cut off all empty lines, because it can be inside docstring
+        doc_lines = []
 
-        # TODO dont ignore second implementation for arguments.
-        _, args = merge_args(arg_types[:1])
+        for doc_part in infos:
+            if not doc_part:
+                continue
+            else:
+                # cut first and last empty strings
+                if not doc_part[0]:
+                    doc_part = doc_part[1:]
+                if not doc_part:
+                    continue
+                if not doc_part[-1]:
+                    doc_part = doc_part[:-1]
+                doc_lines.append('\n'.join(doc_part))
+
+        # if docs are equals show only one of them
+        self.header = sorted(doc_lines)
+        argument_declaration, args = merge_args(args)
+        self.argument_declaration = argument_declaration
         self.args = args
 
     def get_argument_string(self, is_class=False):
-        return ', '.join([arg_name for arg_name, arg_type in self.args[is_class:]])
+        return ', '.join([arg_name for arg_name in self.argument_declaration[is_class:]])
 
     def get_doc_string(self, is_class=False):
         doc = ['"""']
-        doc.extend(self.header)
-        if self.args:
+        if self.header:
+            doc.extend(self.header)
             doc.append('')
         for arg_name, arg_type in self.args[is_class:]:
             doc.append(':param %s:' % arg_name)
             doc.append(':type %s: %s' % (arg_name, arg_type))
 
-        doc.append(':rtype %s' % self.rtype)
+        doc.append(':rtype: %s' % self.rtype)
         doc.append('"""')
         return '\n'.join('%s%s' % (' ' * 4 * self.indent, x) for x in doc)
 
 
 if __name__ == '__main__':
-    example1 = """getPlanet( (universe)arg1, (int)arg2) -> planet :\n    User defined docstring.\n\n    C++ signature :\n        class Planet const * getPlanet(class Universe,int)"""
+    # example1 = """__delitem__( (IntBoolMap)arg1, (object)arg2) -> None"""
+    example1 = """getEmpire() -> empire\n\ngetEmpire((int)star_name, (int)arg2, (int)arg3) -> empire"""
+
+    # example1 = ("""getUserDir() -> str :\n
+    #     Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).
+    #
+    #     getUserDir((int)args1) -> str :\n
+    #         Unicorns.
+    #     """)
+    #
+    # example1 = """getUserDir() -> str :\n    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.)."""
+
     info = Docs(example1, 1)
-    print "!!!"
-    print info.get_argument_string()
-    print "!!!"
-    print info.get_doc_string()
+    print "=" * 100
+    print "Arg string:", info.get_argument_string()
+    print "=" * 100
+    print "Doc string:\n", info.get_doc_string()
+
+   # double standarts
+   # canBuild ['empire', 'buildType', 'str', 'int'], ['empire', 'buildType', 'int', 'int']
+   # inField ['field', 'universeObject'], ['field', 'float', 'float']
+   # validShipDesign ['str', 'StringVec'], ['shipDesign']
