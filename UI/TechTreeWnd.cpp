@@ -333,35 +333,41 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
             ++row;
             col = 0;
         }
+        //std::cout << "row: " << row << "  col: " << col << std::endl;
         GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         it->second->SizeMove(ul, lr);
     }
 
-    // rowbreak after status buttons, before view toggles
-    col = 0;
-    ++row;
-
+    // rowbreak after status buttons, before view toggles, if the list / tree buttons won't both fit
+    ++col;
+    if (col + 2 > m_buttons_per_row) {
+        col = 0;
+        ++row;
+    }
+    //std::cout << "row: " << row << "  col: " << col << std::endl;
     // place view type buttons buttons
     GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
     GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_list_view_button->SizeMove(ul, lr);
     ++col;
+    //std::cout << "row: " << row << "  col: " << col << std::endl;
     if (col >= m_buttons_per_row) {
         ++row;
         col = 0;
     }
+    //std::cout << "row: " << row << "  col: " << col << std::endl;
     ul = GG::Pt(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
     lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_tree_view_button->SizeMove(ul, lr);
 
     // keep track of layout.  Used to draw lines between groups of buttons when rendering
     if (m_buttons_per_row == 1)
-        m_status_button_rows = 3;   // three rows, one button per row
+        m_status_button_rows = 4;   // four rows, one button per row
     else if (m_buttons_per_row == 2)
-        m_status_button_rows = 2;   // two rows, one with two buttons, one with one button
+        m_status_button_rows = 2;   // two rows, two buttons per row
     else
-        m_status_button_rows = 1;   // only one row, three buttons per row
+        m_status_button_rows = 1;   // only one row, four buttons per row
 
     // prevent window from being shrunk less than one button width, or current number of rows of height
     SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD,
@@ -380,23 +386,23 @@ void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void TechTreeWnd::TechTreeControls::Render() {
     CUIWnd::Render();
 
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
+    //GG::Pt cl_ul = ClientUpperLeft();
+    //GG::Pt cl_lr = ClientLowerRight();
 
-    glColor(ClientUI::WndOuterBorderColor());
+    //glColor(ClientUI::WndOuterBorderColor());
 
-    GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-    GG::Line(cl_ul.x, category_bottom, cl_lr.x - 1, category_bottom);
+    //GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
+    //GG::Line(cl_ul.x, category_bottom, cl_lr.x - 1, category_bottom);
 
-    if (m_buttons_per_row >= 6) {
-        // all six status and type buttons are on one row, and need a vertical separator between them
-        GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-        GG::Line(middle, category_bottom, middle, cl_lr.y - 1);
-    } else {
-        // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
-        GG::Y status_bottom = category_bottom + m_status_button_rows*m_row_offset;
-        GG::Line(cl_ul.x, status_bottom, cl_lr.x - 1, status_bottom);
-    }
+    //if (m_buttons_per_row >= 6) {
+    //    // all six status and type buttons are on one row, and need a vertical separator between them
+    //    GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
+    //    GG::Line(middle, category_bottom, middle, cl_lr.y - 1);
+    //} else {
+    //    // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
+    //    GG::Y status_bottom = category_bottom + m_status_button_rows*m_row_offset;
+    //    GG::Line(cl_ul.x, status_bottom, cl_lr.x - 1, status_bottom);
+    //}
 }
 
 void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
