@@ -1,0 +1,85 @@
+Hull
+    name = "SH_SENTIENT"
+    description = "SH_SENTIENT_DESC"
+    speed = 100
+    fuel = 2
+    stealth = 25
+    structure = 12
+    slots = [
+        Slot type = External position = (0.40, 0.40)
+        Slot type = External position = (0.50, 0.40)
+        Slot type = External position = (0.70, 0.40)
+        Slot type = External position = (0.70, 0.60)
+        Slot type = External position = (0.80, 0.40)
+        Slot type = External position = (0.80, 0.60)
+        Slot type = Internal position = (0.40, 0.60)
+        Slot type = Internal position = (0.50, 0.60)
+        Slot type = Internal position = (0.35, 0.75)
+        Slot type = Core     position = (0.60, 0.50)
+    ]
+    buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 8
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
+            ]
+
+        EffectsGroup
+            scope = And [
+                WithinDistance distance = 0 condition = Source
+                Ship
+                Or [
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
+                ]
+            ]
+            activation = Source
+            stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
+            effects = [
+                SetStealth value = Value + 20
+                SetDetection value = Value + 50
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/sentient_hull_small.png"
+    graphic = "hulls_design/sentient_hull.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

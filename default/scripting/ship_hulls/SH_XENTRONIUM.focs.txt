@@ -1,0 +1,33 @@
+Hull
+    name = "SH_XENTRONIUM"
+    description = "SH_XENTRONIUM_DESC"
+    speed = 70
+    fuel = 3
+    stealth = 5
+    structure = 50
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.40, 0.40)
+        Slot type = External position = (0.60, 0.40)
+        Slot type = Core     position = (0.30, 0.65)
+    ]
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 5
+    tags = [ "SHINY" "EXOTIC" ]
+    location = Contains And [
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/xentronium_hull_small.png"
+    graphic = "hulls_design/xentronium_hull.png"
+
+#include "ship_hulls.macros"
+
+#include "../common/shared.macros"

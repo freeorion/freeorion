@@ -1,0 +1,61 @@
+Hull
+    name = "SH_TITANIC"
+    description = "SH_TITANIC_DESC"
+    speed = 80
+    fuel = 3
+    stealth = -35
+    structure = 160
+    slots = [
+        Slot type = External position = (0.10, 0.15)
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = External position = (0.10, 0.85)
+        Slot type = External position = (0.20, 0.85)
+        Slot type = External position = (0.30, 0.85)
+        Slot type = External position = (0.40, 0.85)
+        Slot type = External position = (0.50, 0.85)
+        Slot type = External position = (0.60, 0.85)
+        Slot type = External position = (0.70, 0.85)
+        Slot type = External position = (0.80, 0.85)
+        Slot type = Internal position = (0.30, 0.50)
+        Slot type = Internal position = (0.60, 0.50)
+        Slot type = Internal position = (0.70, 0.50)
+        Slot type = Core     position = (0.45, 0.50)
+    ]
+    buildCost = 160 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 5
+    tags = [ "ROBOTIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/titanic_hull_small.png"
+    graphic = "hulls_design/titanic_hull.png"
+
+#include "robotic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

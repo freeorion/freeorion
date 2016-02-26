@@ -1,0 +1,37 @@
+Hull
+    name = "SH_COMPRESSED_ENERGY"
+    description = "SH_COMPRESSED_ENERGY_DESC"
+    speed = 120
+    fuel = 5
+    stealth = 45
+    structure = 10
+    slots = Slot type = External position = (0.65, 0.40)
+    buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 2
+    tags = [ "ENERGY_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+        Star type = [White Blue BlackHole]
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/compressed_energy_hull_small.png"
+    graphic = "hulls_design/compressed_energy_hull.png"
+
+#include "energy.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

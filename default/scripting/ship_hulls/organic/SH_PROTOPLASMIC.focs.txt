@@ -1,0 +1,60 @@
+Hull
+    name = "SH_PROTOPLASMIC"
+    description = "SH_PROTOPLASMIC_DESC"
+    speed = 100
+    fuel = 2
+    stealth = 35
+    structure = 5
+    slots = [
+        Slot type = External position = (0.75, 0.40)
+        Slot type = External position = (0.65, 0.65)
+        Slot type = Internal position = (0.55, 0.30)
+        Slot type = Internal position = (0.45, 0.525)
+        Slot type = Internal position = (0.35, 0.75)
+    ]
+    buildCost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 5
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 25)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/protoplasmic_hull_small.png"
+    graphic = "hulls_design/protoplasmic_hull.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

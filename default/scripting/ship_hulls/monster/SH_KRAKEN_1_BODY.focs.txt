@@ -1,0 +1,84 @@
+Hull
+    name = "SH_KRAKEN_1_BODY"
+    description = "SH_KRAKEN_1_BODY_DESC"
+    speed = 40
+    fuel = 4
+    stealth = 5
+    structure = 20
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        EffectsGroup    // remove self and recreate on first turn, so that it starts with age 0
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                CreateShip designname = "SM_KRAKEN_1"
+                Destroy
+            ]
+
+        EffectsGroup     
+            scope = NumberOf number = 2 condition = And [
+                Planet
+                Planet type = GasGiant
+                Not WithinStarlaneJumps jumps = 3 condition = And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy affiliation = AnyEmpire
+                    ]
+                ]
+            ]
+            activation = Turn high = 2
+            effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
+
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        EffectsGroup
+            scope = And [
+                Source
+                ContainedBy And [
+                    System 
+                    Contains Planet type = GasGiant
+                ]
+            ]
+            activation = And [
+                Turn low = 30
+                //triple the chance of maturing when in a system with Krill
+                Random probability = (Source.Age*0.01 - 0.1) * 3^(If condition = ContainedBy Contains OR [
+                    Design name = "SM_KRILL_1"
+                    Design name = "SM_KRILL_2" 
+                    Design name = "SM_KRILL_3"  
+                    Design name = "SM_KRILL_4"
+                ])
+            ]
+            effects = [
+                CreateShip designname = "SM_KRAKEN_2" empire = Source.Owner
+                Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/kraken-2.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_KRAKEN_2"
+                    ]
+                    empire = Source.Owner
+            ]
+        [[MODERATE_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/kraken-1.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

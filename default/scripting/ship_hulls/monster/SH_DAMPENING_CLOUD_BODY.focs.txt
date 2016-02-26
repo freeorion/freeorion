@@ -1,0 +1,46 @@
+Hull
+    name = "SH_DAMPENING_CLOUD_BODY"
+    description = "SH_DAMPENING_CLOUD_BODY_DESC"
+    speed = 20
+    fuel = 1
+    stealth = 45
+    structure = 5000
+    slots = [
+        Slot type = External position = (0.60, 0.45)
+    ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[INFINITE_FUEL]]
+        [[MONSTER_MOVE_PRE]]0.10[[MONSTER_MOVE_POST_NOT_OWNED]]
+        EffectsGroup
+            scope = NumberOf number = 1 condition = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+            ]
+            activation = InSystem
+            effects = [
+                SetFuel value = Value - 99
+                GenerateSitRepMessage
+                    message = "EFFECT_DAMP_CLOUD"
+                    icon = "icons/monsters/dampening-cloud.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_DAMPENING_CLOUD"
+                        ]
+                    empire = Target.Owner
+            ]
+    ]
+    icon = ""
+    graphic = ""
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"
+

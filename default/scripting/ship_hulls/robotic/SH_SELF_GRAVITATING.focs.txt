@@ -1,0 +1,50 @@
+Hull
+    name = "SH_SELF_GRAVITATING"
+    description = "SH_SELF_GRAVITATING_DESC"
+    speed = 80
+    fuel = 3
+    stealth = -5
+    structure = 100
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.35, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.65, 0.15)
+        Slot type = External position = (0.40, 0.80)
+        Slot type = Core     position = (0.50, 0.50)
+        Slot type = External position = (0.80, 0.50)
+        Slot type = Internal position = (0.35, 0.50)
+        Slot type = Internal position = (0.65, 0.50)
+    ]
+    buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 2
+    tags = [ "ROBOTIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/self_gravitating_hull_small.png"
+    graphic = "hulls_design/self_gravitating_hull.png"
+
+#include "robotic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

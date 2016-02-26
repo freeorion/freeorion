@@ -1,0 +1,144 @@
+MONSTER_MOVE_ALWAYS
+'''EffectsGroup
+            scope = And [
+                Object id = Source.FleetID
+                Fleet
+            ]
+            activation = And [
+                Turn low = 10
+                Stationary
+                Unowned
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            accountinglabel = "MONSTER_MOVE_ALWAYS_LABEL"
+            effects = SetDestination destination = And [
+                System
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
+            ]
+'''
+
+MONSTER_MOVE_PRE
+'''EffectsGroup
+            scope = And [
+                Object id = Source.FleetID
+                Fleet
+            ]
+            activation = And [
+                Stationary
+                Unowned
+                Random probability = 
+'''
+
+MONSTER_MOVE_POST_NOT_OWNED
+'''
+]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains And [
+                    Planet
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+'''
+
+MONSTER_MOVE_POST
+'''
+]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+            ]
+'''
+
+HUNT_BUILDINGS
+'''EffectsGroup
+            scope = And [
+                Fleet
+                Object id = Source.FleetID
+                Number low = 1 condition = And [
+                    System
+                    Contains And [
+                        Planet
+                        Species
+                        OwnedBy affiliation = AnyEmpire
+                        Contains And [
+                            Building
+                            Stealth high = Source.Detection
+                        ]
+                    ]
+                    WithinDistance distance = Source.Detection condition = Source
+                ]
+            ]
+            activation = Unowned
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Planet
+                    Species
+                    OwnedBy affiliation = AnyEmpire
+                    Contains And [
+                        Building
+                        Stealth high = Source.Detection
+                    ]
+                ]
+                WithinDistance distance = Source.Detection condition = Source
+            ]
+'''
+
+HUNT_SHIPS
+'''EffectsGroup
+            scope = And [
+                Fleet
+                Object id = Source.FleetID
+                Number low = 1 condition = And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                    Stealth high = Source.Detection
+                    WithinDistance distance = Source.Detection condition = Source
+                ]
+            ]
+            activation = Unowned
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                    Stealth high = Source.Detection
+                    WithinDistance distance = Source.Detection condition = Source
+                ]
+            ]
+'''
+
+HUNT_PLANETS
+'''EffectsGroup
+            scope = And [
+                Fleet
+                Object id = Source.FleetID
+                Number low = 1 condition = And [
+                    Planet
+                    OwnedBy affiliation = AnyEmpire
+                    Stealth high = Source.Detection
+                    WithinDistance distance = Source.Detection condition = Source
+                ]
+            ]
+            activation = Unowned
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Contains And [
+                    Planet
+                    OwnedBy affiliation = AnyEmpire
+                    Stealth high = Source.Detection
+                    WithinDistance distance = Source.Detection condition = Source
+                ]
+            ]
+'''

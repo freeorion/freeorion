@@ -1,0 +1,66 @@
+Hull
+    name = "SH_ENDOSYMBIOTIC"
+    description = "SH_ENDOSYMBIOTIC_DESC"
+    speed = 100
+    fuel = 2
+    stealth = 25
+    structure = 5
+    slots = [
+        Slot type = External position = (0.26, 0.45)
+        Slot type = External position = (0.42, 0.45)
+        Slot type = External position = (0.58, 0.45)
+        Slot type = External position = (0.73, 0.45)
+        Slot type = Internal position = (0.47, 0.68)
+        Slot type = Internal position = (0.59, 0.68)
+        Slot type = Internal position = (0.70, 0.68)
+    ]
+    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 6
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/endosymbiotic_hull_small.png"
+    graphic = "hulls_design/endosymbiotic_hull.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

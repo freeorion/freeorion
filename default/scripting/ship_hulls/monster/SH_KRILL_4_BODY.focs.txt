@@ -1,0 +1,52 @@
+Hull
+    name = "SH_KRILL_4_BODY"
+    description = "SH_KRILL_4_BODY_DESC"
+    speed = 20
+    fuel = 4
+    stealth = 15
+    structure = 1000
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Source
+                ContainedBy And [
+                    System 
+                    Contains Planet type = Asteroids
+                ]
+            ]
+            activation = Random probability = 0.06
+            stackinggroup = "KRILL_4_ACTION_STACK"
+            effects = [
+                CreateShip designname = "SM_KRILL_1"
+/*
+                GenerateSitRepMessage
+                    message = "EFFECT_MONSTER_SPAWNING"
+                    parameters = [
+                        tag = "predefinedshipdesign" data = "SM_KRILL_1"
+                        tag = "system" data = Source.SystemID
+                    ]
+*/
+            ]
+
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[GOOD_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/krill-4.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

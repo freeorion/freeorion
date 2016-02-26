@@ -1,0 +1,52 @@
+Hull
+    name = "SH_FRACTAL_ENERGY"
+    description = "SH_FRACTAL_ENERGY_DESC"
+    speed = 120
+    fuel = 5
+    stealth = -5
+    structure = 40
+    slots = [
+        Slot type = External position = (0.10, 0.15)
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.90, 0.15)
+        Slot type = External position = (0.20, 0.50)
+        Slot type = External position = (0.40, 0.50)
+        Slot type = External position = (0.60, 0.50)
+        Slot type = External position = (0.80, 0.50)
+        Slot type = External position = (0.10, 0.85)
+        Slot type = External position = (0.30, 0.85)
+        Slot type = External position = (0.50, 0.85)
+        Slot type = External position = (0.70, 0.85)
+        Slot type = External position = (0.90, 0.85)
+    ]
+    buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 7
+    tags = [ "ENERGY_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+        Star type = [Blue BlackHole]
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/fractal_energy_hull_small.png"
+    graphic = "hulls_design/fractal_energy_hull.png"
+
+#include "energy.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"
