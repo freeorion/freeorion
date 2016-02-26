@@ -1,0 +1,142 @@
+Special
+    name = "FORTRESS_SPECIAL"
+    description = "FORTRESS_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.2
+    spawnlimit = 3
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+        Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Or [
+                OwnedBy affiliation = AnyEmpire
+                Species
+            ]
+            effects = [
+                SetMaxShield value = Value + 100
+                SetMaxDefense value = Value + 30
+                SetMaxTroops value = Value + 30
+                SetDetection value = Value + 30
+
+                //Regeneration
+                SetShield value = Value + min(5.0, max(Value, 0.25*Target.Construction))
+                SetDefense value = Value + 1
+            ]
+
+        // Mines Start
+        EffectsGroup
+            scope = And [
+                Ship
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Source
+                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
+                    ]
+                ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+            ]
+            effects = SetStructure value = Value - 3
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Source
+                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
+                    ]
+                ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES"
+                    icon = "icons/sitrep/combat_damage.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "fleet" data = Target.ID
+                        tag = "rawtext" data = "3"
+                        tag = "system" data = Target.SystemID
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup
+            scope = And [
+                Ship
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Source
+                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
+                    ]
+                ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                Structure high = 3
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_MINES_SHIP_DESTROYED"
+                    icon = "icons/sitrep/combat_destroyed.png"
+                    parameters = [
+                        tag = "empire" data = Target.Owner
+                        tag = "ship" data = Target.ID
+                        tag = "system" data = Target.SystemID
+                    ]
+                    empire = Target.Owner
+                Destroy
+            ]
+        // Mines End
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+                Not ContainedBy Contains Design name = "SM_GUARD_1"
+                Random probability = 0.05
+            ]
+            effects = [
+                CreateShip designname = "SM_GUARD_1" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_SENTRY_CREATED"
+                    icon = "icons/monsters/sentry.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_GUARD_1"
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn high = 0
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
+            effects = CreateShip designname = "SM_GUARD_2"
+        ]
+        graphic = "icons/specials_huge/fortress.png"

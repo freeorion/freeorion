@@ -1,0 +1,57 @@
+Special
+    name = "PANOPTICON_SPECIAL"
+    description = "PANOPTICON_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 1
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+        Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = [
+                SetDetection value = Value + 75
+                SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
+            ]
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Turn high = 0
+                Random probability = 0.5
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+                Not WithinStarlaneJumps jumps = 1 condition = And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy affiliation = AnyEmpire
+                    ]
+                ]
+            ]
+            effects = CreateShip designname = "SM_GUARD_2"
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn high = 0
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
+            effects = CreateShip designname = "SM_GUARD_2"
+        ]
+        graphic = "icons/meter/detection.png"

@@ -1,0 +1,12 @@
+Special
+    name = "CLOUD_COVER_MASTER_SPECIAL"
+    description = "CLOUD_COVER_MASTER_SPECIAL_DESC"
+    stealth = 25
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
+    ]
+    graphic = "icons/specials_huge/cloud_cover.png"

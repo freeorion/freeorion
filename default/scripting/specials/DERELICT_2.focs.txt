@@ -1,0 +1,79 @@
+Special
+    name = "DERELICT_SPECIAL2"               //  MAP / DETECTION
+    description = "DERELICT_SPECIAL_DESC"
+    stealth = 45
+    spawnrate = 0.5
+    spawnlimit = 100
+    location = And [
+        System
+        Not Contains Capital
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = [
+                SetDetection value = Value + 60
+                RemoveSpecial name = "DERELICT_SPECIAL2"
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            activation = And [
+                Ship
+                Number low = 1 condition = And [
+                    Object id = Source.SystemID
+                    HasSpecial name = "DERELICT_SPECIAL2"
+                ]
+            ]
+            effects = [
+                AddSpecial name = "DERELICT_SPECIAL2" // renew the special (that was just removed above) if have moved into system that has (had) the special
+            ]
+
+        EffectsGroup
+            scope = NumberOf number = 1 condition = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                AddSpecial name = "DERELICT_SPECIAL2"
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_MAP"
+                    icon = "icons/specials_huge/derelict.png"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL2"
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                System
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                RemoveSpecial name = "DERELICT_SPECIAL2"
+            ]
+    ]
+    graphic = "icons/specials_huge/derelict.png"

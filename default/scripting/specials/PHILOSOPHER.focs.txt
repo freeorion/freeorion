@@ -1,0 +1,48 @@
+Special
+    name = "PHILOSOPHER_SPECIAL"
+    description = "PHILOSOPHER_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 2.0
+    spawnlimit = 1
+    location = And [
+        Planet
+        Planet size = tiny
+        Not Planet type = [Asteroids GasGiant]
+        Not Species
+        ContainedBy And [
+            System 
+            Contains And [
+                Planet
+                Not Planet size = tiny
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            effects = SetPlanetType type = Radiated
+
+        EffectsGroup
+            scope = And [
+                Planet
+//                Focus type = "FOCUS_RESEARCH" // Does not require focus
+                InSystem id = Source.SystemID
+            ]
+            activation = Unowned
+            stackinggroup = "PHILOSOPHER_STACK"
+            effects = SetTargetResearch value = Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction value = Value - 20
+    ]
+    graphic = "icons/specials_huge/philospher-planet.png"

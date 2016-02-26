@@ -1,0 +1,22 @@
+Special
+    name = "DIM_RIFT_SLAVE_SPECIAL"
+    description = "DIM_RIFT_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        [[STEALTH_BOOST_HIGH_NO_ORBITAL]]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Or [
+                HasSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+                OwnerHasTech name = "SPY_STEALTH_3"
+            ]
+            effects = RemoveSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
+
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/rift.png" 
+    ]
+    graphic = "icons/specials_huge/dim_rift.png"
+
+#include "../common/shared.macros"

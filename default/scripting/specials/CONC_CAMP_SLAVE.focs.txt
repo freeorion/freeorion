@@ -1,0 +1,25 @@
+Special
+    name = "CONC_CAMP_SLAVE_SPECIAL"
+    description = "CONC_CAMP_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetPopulation value = Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
+        EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                Not Contains Building name = "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
+            ]
+            effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
+        EffectsGroup
+            scope = Source
+            activation = OR [
+                Random probability = 0.167
+                Population high = 0
+            ]
+            effects = RemoveSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+    ]
+    graphic = "icons/building/concentration-camp.png"

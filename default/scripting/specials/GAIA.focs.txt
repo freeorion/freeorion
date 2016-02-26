@@ -1,0 +1,63 @@
+Special
+    name = "GAIA_SPECIAL"
+    description = "GAIA_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 12
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+        Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Species
+                Not Planet environment = Good
+                Population low = 0.01
+                OwnedBy affiliation = AnyEmpire
+                Not And [
+                    Species name = "SP_EXOBOT"
+                    Planet environment = adequate
+                ]
+                Random probability = 0.5
+            ]
+            effects = [
+                SetPlanetType type = Target.NextBetterPlanetType
+                GenerateSitRepMessage
+                    message = "EFFECT_GAIAN_TERRAFORM"
+                    icon = "icons/building/terraform.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                    ]
+                    empire = Source.Owner
+            ]
+
+        // population effects in species.txt
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn high = 0
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
+            stackinggroup = "GAIAN_STACK"
+            effects = CreateShip designname = "SM_GUARD_2"
+
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            stackinggroup = "GAIAN_STACK"
+            effects = Destroy
+    ]
+    graphic = "icons/specials_huge/gaia.png"

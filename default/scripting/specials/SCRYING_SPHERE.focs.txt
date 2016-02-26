@@ -1,0 +1,25 @@
+Special
+    name = "BLD_SCRYING_SPHERE"
+    description = "BLD_SCRYING_SPHERE_DESC"
+    stealth = 100
+    spawnrate = 1.0
+    spawnlimit = 8
+    location = And [
+        Planet
+        Unowned
+        Not Planet type = [Asteroids GasGiant]
+        Not WithinStarlaneJumps jumps = 3 condition = And [
+            Planet
+            Not Unowned
+        ]
+    ]   
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn low = 1 high = 1
+            effects = [
+                CreateBuilding type = "BLD_SCRYING_SPHERE"
+                RemoveSpecial name = "BLD_SCRYING_SPHERE"
+            ]
+    ]
+    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
