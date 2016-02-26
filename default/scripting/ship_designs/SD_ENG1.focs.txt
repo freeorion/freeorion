@@ -1,0 +1,8 @@
+ShipDesign
+    name = "SD_ENG1"
+    description = "SD_ENG1_DESC"
+    hull = "SH_COMPRESSED_ENERGY"
+    parts = [
+        "SR_WEAPON_2_1"
+    ]
+    model = "mark1"

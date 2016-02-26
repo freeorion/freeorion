@@ -1,0 +1,6 @@
+ShipDesign
+    name = "SD_OUTPOST_BASE"
+    description = "SD_OUTPOST_BASE_DESC"
+    hull = "SH_COLONY_BASE"
+    parts = "CO_OUTPOST_POD"
+    model = "seed"

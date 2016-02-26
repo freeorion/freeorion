@@ -1,0 +1,8 @@
+ShipDesign
+    name = "SD_SMALL_TROOP_SHIP"
+    description = "SD_SMALL_TROOP_SHIP_DESC"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "GT_TROOP_POD"
+    ]
+    model = "fighter"

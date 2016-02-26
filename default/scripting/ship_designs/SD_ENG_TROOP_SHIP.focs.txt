@@ -1,0 +1,8 @@
+ShipDesign
+    name = "SD_ENG_TROOP_SHIP"
+    description = "SD_ENG_TROOP_SHIP_DESC"
+    hull = "SH_COMPRESSED_ENERGY"
+    parts = [
+        "GT_TROOP_POD"
+    ]
+    model = "mark1"

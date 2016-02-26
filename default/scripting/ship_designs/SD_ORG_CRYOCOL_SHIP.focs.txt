@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SD_ORG_CRYOCOL_SHIP"
+    description = "SD_ORG_CRYOCOL_SHIP_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        ""
+        ""
+        ""
+        "CO_SUSPEND_ANIM_POD"
+    ]
+    model = "seed"

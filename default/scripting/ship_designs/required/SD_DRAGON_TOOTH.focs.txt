@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SD_DRAGON_TOOTH"
+    description = "SD_DRAGON_TOOTH_DESC"
+    hull = "SH_XENTRONIUM"
+    parts = [
+        "DT_DETECTOR_4"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "FU_ZERO_FUEL"
+    ]
+    model = "mark1"

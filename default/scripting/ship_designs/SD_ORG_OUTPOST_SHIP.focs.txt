@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SD_ORG_OUTPOST_SHIP"
+    description = "SD_ORG_OUTPOST_SHIP_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        ""
+        ""
+        ""
+        "CO_OUTPOST_POD"
+    ]
+    model = "seed"

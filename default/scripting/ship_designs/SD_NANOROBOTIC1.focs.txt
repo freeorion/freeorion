@@ -1,0 +1,14 @@
+ShipDesign
+    name = "SD_NANOROBOTIC1"
+    description = "SD_NANOROBOTIC1_DESC"
+    hull = "SH_NANOROBOTIC"
+    parts = [
+        "AR_DIAMOND_PLATE"
+        "AR_DIAMOND_PLATE"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SH_DEFLECTOR"
+    ]
+    model = "some model"
