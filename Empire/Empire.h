@@ -5,6 +5,7 @@
 #include "ResourcePool.h"
 #include "../util/Export.h"
 #include "../universe/Meter.h"
+#include "../universe/ShipDesign.h"
 
 #include <GG/Clr.h>
 
@@ -444,7 +445,9 @@ public:
     void        AddPartType(const std::string& name);       ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
     void        AddHullType(const std::string& name);       ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
     void        AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
-    void        AddShipDesign(int ship_design_id);          ///< inserts given design id into the empire's set of designs
+
+    /** inserts given design id into the empire's set of designs in front of next design */
+    void        AddShipDesign(int ship_design_id, int next_design_id = ShipDesign::INVALID_DESIGN_ID);
     int         AddShipDesign(ShipDesign* ship_design);     ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
     std::string NewShipName();                              ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire

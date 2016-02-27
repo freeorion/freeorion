@@ -593,7 +593,7 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
     static float min_bargain_ratio = -1.0;
     static float max_cost_ratio = -1.0;
     static float max_time_ratio = -1.0;
-    
+
     if (min_bargain_ratio == -1.0) {
         min_bargain_ratio = 1.0;
         try {
@@ -660,7 +660,7 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
                 break;
             }
         }
-            
+
     }
 }
 
@@ -679,24 +679,24 @@ void PartsListBox::Populate() {
     // remove parts currently in rows of listbox
     Clear();
 
-    /** 
-     * The Parts are first filtered for availability to this empire and according to the current 
+    /**
+     * The Parts are first filtered for availability to this empire and according to the current
      * selections of which part classes are to be displayed.  Then, in order to eliminate presentation
      * of clearly suboptimal parts, such as Mass Driver I when Mass Driver II is available at the same
-     * cost & build time, some orgnization, paring and sorting of parts is done. The previously 
-     * filtered parts are grouped according to (class, slot).  Within each group, parts are compared 
+     * cost & build time, some orgnization, paring and sorting of parts is done. The previously
+     * filtered parts are grouped according to (class, slot).  Within each group, parts are compared
      * and pared for display; only parts within the same group may suppress display of each other.
-     * The paring is (currently) done on the basis of main stat, construction cost, and construction 
+     * The paring is (currently) done on the basis of main stat, construction cost, and construction
      * time. If two parts have the same class and slot, and one has a lower main stat but also a lower
      * cost, they will both be presented; if one has a higher main stat and is at least as good on cost
-     * and time, it will suppress the other.  
-     * 
+     * and time, it will suppress the other.
+     *
      * An example of one of the more subtle possible results is that if a part class had multiple parts
      * with different but overlapping MountableSlotType patterns, then a part with two possible slot
      * types might be rendered superfluous for the first slot type by a first other part, be rendered
      * superfluous for the second slot type by a second other part, even if neither of the latter two
      * parts would be considered to individually render the former part obsolete.
-     */    
+     */
 
     /// filter parts by availability and current designation of classes for display; group according to (class, slot)
     PartGroupsType part_groups = GroupAvailableDisplayableParts(empire);
@@ -1117,7 +1117,7 @@ void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_
             HideClass(part_class, refresh_list);
     } else {
         throw std::invalid_argument("PartPalette::ToggleClass was passed an invalid ShipPartClass");
-    } 
+    }
 }
 
 void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
@@ -1201,6 +1201,7 @@ public:
     /** \name Mutators */ //@{
     virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void                    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -1282,6 +1283,11 @@ public:
         std::string                     m_design_name;
     };
 
+protected:
+    virtual void                    DropsAcceptable(DropsAcceptableIter first
+                                                    , DropsAcceptableIter last
+                                                    , const GG::Pt& pt
+                                                    , GG::Flags<GG::ModKey> mod_keys) const;
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1302,7 +1308,6 @@ private:
     bool                        m_showing_saved_designs;
     bool                        m_showing_monsters;
 
-    std::set<int>               m_designs_in_list;
     std::set<std::string>       m_hulls_in_list;
     std::set<std::string>       m_saved_desgins_in_list;
 
@@ -1399,9 +1404,6 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
     BasesListBoxRow(w, h),
     m_design_id(design_id)
 {
-    std::string hull;
-    if (const ShipDesign* ship_design = GetShipDesign(design_id))
-        hull = ship_design->Hull();
     push_back(new ShipDesignPanel(w, h, design_id));
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
@@ -1474,24 +1476,32 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     if (!control)
         return;
 
-    // remove dragged-away row from this ListBox
-    CUIListBox::ChildrenDraggedAway(wnds, destination);
-
     // replace dragged-away control with new copy
     const GG::Pt row_size = ListRowSize();
     std::vector<std::string> empty_parts_vec;
 
     if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
         // find design that was dragged away, and replace
+
         const BasesListBox::CompletedDesignListBoxRow* design_row =
             boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
 
         int design_id = design_row->DesignID();
+
+        ListBox::iterator point;
+        for(point = begin(); point != end(); ++point){
+            const BasesListBox::CompletedDesignListBoxRow* irow =
+                boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*point);
+            if(irow->DesignID() == design_id){
+                ++point;
+                break;
+            }
+        }
+
         CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y,
                                                                        design_id);
-        Insert(row);
+        Insert(row,point);
         row->Resize(row_size);
-        m_designs_in_list.insert(design_id);// should be redundant
 
     } else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
         // find type of hull that was dragged away, and replace
@@ -1517,6 +1527,64 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         row->Resize(row_size);
         m_saved_desgins_in_list.insert(design_name);
     }
+
+    // remove dragged-away row from this ListBox
+    CUIListBox::ChildrenDraggedAway(wnds, destination);
+
+}
+
+
+void BasesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+{
+    for (DropsAcceptableIter it = first; it != last; ++it)
+        it->second = false;
+
+    if (std::distance(first, last) != 1) {
+        ErrorLogger() << "SavedDesignPanel::DropsAcceptable expects a single dropped item.";
+        return;
+    }
+
+    if(m_showing_completed_designs && first->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING)
+        first->second = true;
+}
+void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
+    if (wnds.empty()) return;
+
+    if (wnds.size() != 1) {
+        // delete any extra wnds that won't be processed below
+        std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
+        ++it;
+        for (; it != wnds.end(); ++it)
+            delete *it;
+        ErrorLogger() << "BasesListBox::AcceptDrops given multiple wnds unexpectedly...";
+    }
+
+    const GG::Wnd* wnd = *(wnds.begin());
+    if (!wnd)
+        return;
+
+    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
+        const BasesListBox::CompletedDesignListBoxRow* control =
+            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+        Empire* empire = GetEmpire(m_empire_id_shown);
+        if (control && empire) {
+            int design_id = control->DesignID();
+
+            iterator insert_before_row = RowUnderPt(pt);
+            const BasesListBox::CompletedDesignListBoxRow* insert_before_control =
+                boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
+            int insert_before_id = (insert_before_row == end() || !insert_before_control)
+                ? ShipDesign::INVALID_DESIGN_ID : insert_before_control->DesignID();
+
+            DebugLogger()<<"Accepted Drop of id "<<design_id<<" before "<< insert_before_id;
+
+            empire->RemoveShipDesign(design_id);
+            empire->AddShipDesign(design_id, insert_before_id);
+        }
+    }
+
+    // delete wnd;
 }
 
 void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
@@ -1597,7 +1665,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
         if (!hull_type || !hull_type->Producible())
             continue;
 
-        // add or retain in list 1) all hulls if no empire is specified, or 
+        // add or retain in list 1) all hulls if no empire is specified, or
         //                       2) hulls of appropriate availablility for set empire
         if (!empire ||
             (showing_available && empire->ShipHullAvailable(hull_name)) ||
@@ -2564,7 +2632,7 @@ private:
 
     bool            AddPartEmptySlot(const PartType* part, int slot_number);                            //!< Adds part to slot number
     bool            AddPartWithSwapping(const PartType* part, std::pair<int, int> swap_and_empty_slot); //!< Swaps part in slot # pair.first to slot # pair.second, adds given part to slot # pair.first
-    int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1   
+    int             FindEmptySlotForPart(const PartType* part);                                         //!< Determines if a part can be added to any empty slot, returns the slot index if possible, otherwise -1
 
     void            DesignNameEditedSlot(const std::string& new_name);  //!< triggered when m_design_name's AfterTextChangedSignal fires. Used for basic name validation.
 
@@ -2731,7 +2799,7 @@ void DesignWnd::MainPanel::Sanitize() {
     if (const Empire* empire = GetEmpire(empire_id)) {
         DebugLogger() << "DesignWnd::MainPanel::Sanitize";
         if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
-            GetSavedDesignsManager().LoadAllSavedDesigns(); 
+            GetSavedDesignsManager().LoadAllSavedDesigns();
         }
         m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &MainPanel::ReregisterDesigns,    this); // not apparent if this is working, but in typical use is unnecessary
     }
@@ -2749,7 +2817,7 @@ void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool
     }
     m_slots[slot]->SetPart(part);
     if (emit_signal)  // to avoid unnecessary signal repetition.
-        DesignChangedSignal();  
+        DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
@@ -3074,7 +3142,7 @@ std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_desi
     for (std::vector<std::string>::const_iterator it = part_list.begin(); it != part_list.end(); ++it) {
         retval += "\"" + *it + "\"\n";
     }
-    return retval; 
+    return retval;
 }
 
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
@@ -3191,7 +3259,7 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::W
             const std::string& name = control->DesignName();
             const ShipDesign* design = GetSavedDesignsManager().GetDesign(name);
             if (design) {
-                SetDesignComponents(design->Hull(), design->Parts(), 
+                SetDesignComponents(design->Hull(), design->Parts(),
                                     design->Name(), design->Description());
             }
         }

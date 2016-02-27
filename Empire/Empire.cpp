@@ -2509,7 +2509,7 @@ std::string Empire::NewShipName() {
     return retval;
 }
 
-void Empire::AddShipDesign(int ship_design_id) {
+void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     /* Check if design id is valid.  That is, check that it corresponds to an
      * existing shipdesign in the universe.  On clients, this means that this
      * empire knows about this ship design and the server consequently sent the
@@ -2521,11 +2521,21 @@ void Empire::AddShipDesign(int ship_design_id) {
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
-            m_ship_designs_ordered.insert(m_ship_designs_ordered.end(), ship_design_id);
+            std::list<int>::iterator point = m_ship_designs_ordered.end();
+            bool is_at_end_of_list = (next_design_id == ShipDesign::INVALID_DESIGN_ID);
+            if (!is_at_end_of_list)
+                point = std::find(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), next_design_id);
+
+            m_ship_designs_ordered.insert(point, ship_design_id);
             m_ship_designs.insert(ship_design_id);
+
             ShipDesignsChangedSignal();
+
             if (GetOptionsDB().Get<bool>("verbose-logging"))
-                DebugLogger() << "AddShipDesign::  "<<ship_design->Name()<< " ("<<ship_design_id<<") to empire #"<<EmpireID();
+                DebugLogger() << "AddShipDesign::  " << ship_design->Name() << " ("<<ship_design_id
+                              << ") to empire #" << EmpireID()
+                              << (is_at_end_of_list ? " at end of list." : " in front of id ")
+                              << next_design_id;
         }
     } else {
         // design in not valid
