@@ -941,19 +941,19 @@ std::string ShipDesign::Dump() const {
     if (!m_name_desc_in_stringtable)
         retval += DumpIndent() + "NoStringtableLookup\n";
     retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
-    retval += DumpIndent() + "parts = ";
-    if (m_parts.empty()) {
-        retval += "[]\n";
-    } else if (m_parts.size() == 1) {
-        retval += "\"" + *m_parts.begin() + "\"\n";
-    } else {
-        retval += "[\n";
-        ++g_indent;
-        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-            retval += DumpIndent() + "\"" + *it + "\"\n";
+    if (!m_parts.empty()) {
+        retval += DumpIndent() + "parts = ";
+        if (m_parts.size() == 1) {
+            retval += "\"" + *m_parts.begin() + "\"\n";
+        } else {
+            retval += "[\n";
+            ++g_indent;
+            for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+                retval += DumpIndent() + "\"" + *it + "\"\n";
+            }
+            --g_indent;
+            retval += DumpIndent() + "]\n";
         }
-        --g_indent;
-        retval += DumpIndent() + "]\n";
     }
     if (!m_icon.empty())
         retval += DumpIndent() + "icon = \"" + m_icon + "\"\n";

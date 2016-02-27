@@ -107,7 +107,7 @@ namespace {
                             '[' > +slot [ push_back(_r1, _1) ] > ']'
                             |   slot [ push_back(_r1, _1) ]
                         )
-                     )
+                    )
                 ;
 
             location
