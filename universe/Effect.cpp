@@ -3750,12 +3750,11 @@ std::string SetTexture::Dump() const
 ///////////////////////////////////////////////////////////
 // SetVisibility                                         //
 ///////////////////////////////////////////////////////////
-SetVisibility::SetVisibility(Visibility vis, EmpireAffiliationType affiliation, bool upgrade_only,
+SetVisibility::SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
                              ValueRef::ValueRefBase<int>* empire_id) :
     m_vis(vis),
     m_empire_id(empire_id),
-    m_affiliation(affiliation),
-    m_upgrade_only(upgrade_only)
+    m_affiliation(affiliation)
 {}
 
 SetVisibility::~SetVisibility()
@@ -3858,28 +3857,15 @@ std::string SetVisibility::Description() const {
 
     // pick appropriate sitrep text...
     std::string desc_template;
-    if (m_upgrade_only) {
-        switch (m_affiliation) {
-        case AFFIL_ALLY:    desc_template = UserString("DESC_UPGRADE_VIS_ALLIES");  break;
-        case AFFIL_ENEMY:   desc_template = UserString("DESC_UPGRADE_VIS_ENEMIES"); break;
-        case AFFIL_NONE:    desc_template = UserString("DESC_UPGRADE_VIS_NONE");    break;
-        case AFFIL_ANY:     desc_template = UserString("DESC_UPGRADE_VIS_ALL");     break;
-        case AFFIL_SELF:
-        case AFFIL_CAN_SEE:
-        case AFFIL_HUMAN:
-        default:            desc_template = UserString("DESC_UPGRADE_VIS");
-        }
-    } else {
-        switch (m_affiliation) {
-        case AFFIL_ALLY:    desc_template = UserString("DESC_SET_VIS_ALLIES");  break;
-        case AFFIL_ENEMY:   desc_template = UserString("DESC_SET_VIS_ENEMIES"); break;
-        case AFFIL_NONE:    desc_template = UserString("DESC_SET_VIS_NONE");    break;
-        case AFFIL_ANY:     desc_template = UserString("DESC_SET_VIS_ALL");     break;
-        case AFFIL_SELF:
-        case AFFIL_CAN_SEE:
-        case AFFIL_HUMAN:
-        default:            desc_template = UserString("DESC_SET_VIS");
-        }
+    switch (m_affiliation) {
+    case AFFIL_ALLY:    desc_template = UserString("DESC_SET_VIS_ALLIES");  break;
+    case AFFIL_ENEMY:   desc_template = UserString("DESC_SET_VIS_ENEMIES"); break;
+    case AFFIL_NONE:    desc_template = UserString("DESC_SET_VIS_NONE");    break;
+    case AFFIL_ANY:     desc_template = UserString("DESC_SET_VIS_ALL");     break;
+    case AFFIL_SELF:
+    case AFFIL_CAN_SEE:
+    case AFFIL_HUMAN:
+    default:            desc_template = UserString("DESC_SET_VIS");
     }
 
     return str(FlexibleFormat(desc_template) % vis_str % empire_str);
@@ -3887,10 +3873,7 @@ std::string SetVisibility::Description() const {
 
 std::string SetVisibility::Dump() const {
     std::string retval = DumpIndent();
-    if (m_upgrade_only)
-        retval += "UpgradeVisibility visibility = ";
-    else
-        retval += "SetVisibility visibility = ";
+    retval += "SetVisibility visibility = ";
 
     switch (m_vis) {
     case VIS_NO_VISIBILITY:     retval += "Invisible";  break;

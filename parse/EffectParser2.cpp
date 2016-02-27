@@ -18,7 +18,6 @@ namespace {
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_d_type _d;
-            qi::_e_type _e;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -95,9 +94,7 @@ namespace {
                 ;
 
             set_visibility
-                = (     tok.SetVisibility_      [ _e = false ]
-                    |   tok.UpgradeVisibility_  [ _e = true ]
-                  )
+                =    tok.SetVisibility_
                 >    parse::label(Visibility_token)
                 > (     tok.Invisible_  [ _c = VIS_NO_VISIBILITY ]
                     |   tok.Basic_      [ _c = VIS_BASIC_VISIBILITY ]
@@ -112,14 +109,14 @@ namespace {
                             |   eps [ _d = AFFIL_SELF ]
                             )
                         >>  parse::label(Empire_token) > int_value_ref
-                            [ _val = new_<Effect::SetVisibility>(_c, _d, _e, _1) ]
+                            [ _val = new_<Effect::SetVisibility>(_c, _d, _1) ]
                         )
                    |    (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
                             (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
                             |   eps [ _d = AFFIL_ANY ]
                             )
-                            [ _val = new_<Effect::SetVisibility>(_c, _d, _e, _b) ]
+                            [ _val = new_<Effect::SetVisibility>(_c, _d, _b) ]
                         )
                    )
                 ;
@@ -180,8 +177,7 @@ namespace {
                 ResourceType,
                 ValueRef::ValueRefBase<int>*,
                 Visibility,
-                EmpireAffiliationType,
-                bool
+                EmpireAffiliationType
             >,
             parse::skipper_type
         > set_stockpile_or_vis_rule;

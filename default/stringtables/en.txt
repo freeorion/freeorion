@@ -6863,22 +6863,12 @@ Modifies the appearance of the object
 DESC_SET_TEXTURE
 Modifies the appearance of the object
 
-DESC_UPGRADE_VIS_ALLIES
-Sets the visibility of the object to at least %1% for allies of empire %2%
-DESC_UPGRADE_VIS_ENEMIES
-Sets the visibility of the object to at least %1% for enemies of empire %2%
-DESC_UPGRADE_VIS_NONE
-Sets the visibility of the object for no empires
-DESC_UPGRADE_VIS_ALL
-Sets the visibility of the object to at least %1% for all empires
-DESC_UPGRADE_VIS
-Sets the visibility of the object to at least %1% for empire %2%
 DESC_SET_VIS_ALLIES
 Sets the visibility of the object to %1% for allies of empire %2%
 DESC_SET_VIS_ENEMIES
 Sets the visibility of the object to %1% for enemies of empire %2%
 DESC_SET_VIS_NONE
-[[DESC_UPGRADE_VIS_NONE]]
+Sets the visibility of the object for no empires
 DESC_SET_VIS_ALL
 Sets the visibility of the object to %1% for all empires
 DESC_SET_VIS
