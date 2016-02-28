@@ -50,7 +50,8 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     m_showing_prompt(true),
     m_prompt_str(prompt_str)
 {
-    AllowDropType(drop_type_str);
+    if (!drop_type_str.empty())
+        AllowDropType(drop_type_str);
 
     GG::Connect(BeforeInsertSignal,                 &QueueListBox::EnsurePromptHiddenSlot,      this);
     GG::Connect(AfterEraseSignal,                   &QueueListBox::ShowPromptConditionallySlot, this);
