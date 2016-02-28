@@ -8,7 +8,6 @@
 
 #include <GG/ListBox.h>
 
-class QueueListBox;
 class ProductionInfoPanel;
 class BuildDesignatorWnd;
 class ProductionQueueWnd;
