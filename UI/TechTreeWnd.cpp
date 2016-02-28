@@ -1774,6 +1774,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
 
     ShowAllCategories();
     ShowStatus(TS_RESEARCHABLE);
+    ShowStatus(TS_HAS_RESEARCHED_PREREQ);
     ShowStatus(TS_COMPLETE);
     // leave unresearchable hidden by default
 
