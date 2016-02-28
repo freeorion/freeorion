@@ -5033,12 +5033,8 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
             // functions can throw.
             try {
                 popup->Show();
-            } catch (std::runtime_error& e) {
-                ErrorLogger() << "MapWnd::RemovePopup() : caught exception "
-                                 "cleaning up a popup: " << e.what();
-            } catch (boost::bad_any_cast& e) {
-                ErrorLogger() << "MapWnd::RemovePopup() : caught exception "
-                                 "cleaning up a popup: " << e.what();
+            } catch (const std::exception& e) {
+                ErrorLogger() << "MapWnd::RemovePopup() : caught exception cleaning up a popup: " << e.what();
             }
         }
         std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
@@ -5049,7 +5045,8 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
 
 void MapWnd::ResetEmpireShown() {
     m_production_wnd->SetEmpireShown(HumanClientApp::GetApp()->EmpireID());
-    // TODO: Research... Design?
+    m_research_wnd->SetEmpireShown(HumanClientApp::GetApp()->EmpireID());
+    // TODO: Design?
 }
 
 void MapWnd::Sanitize() {

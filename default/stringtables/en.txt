@@ -2535,7 +2535,7 @@ SIDE_PANEL
 Side Panel
 
 SP_SYSTEM_PRODUCTION
-System Production
+System Resource Output
 
 RESOURCE_PRODUCTION_TOOLTIP
 System %1%: %2%
@@ -2543,11 +2543,11 @@ RESOURCE_ALLOCATION_TOOLTIP
 System %1%: %2%
 
 INDUSTRY_PRODUCTION
-Industrial Production
+Industrial Output
 RESEARCH_PRODUCTION
-Research Production
+Research Output
 TRADE_PRODUCTION
-Trade Production
+Trade Output
 
 INDUSTRY_CONSUMPTION
 Industrial Consumption
@@ -3061,8 +3061,8 @@ Points Available Here
 RESEARCH_WND_TITLE
 Research
 
-RESEARCH_INFO_PANEL_TITLE
-Research
+RESEARCH_QUEUE_EMPIRE
+%1% Research Queue
 
 RESEARCH_INFO_RP
 RP

@@ -194,6 +194,61 @@ namespace {
     }
 }
 
+//////////////////////////////////////////////////
+// ResearchQueueWnd                             //
+//////////////////////////////////////////////////
+class ResearchQueueWnd : public CUIWnd {
+public:
+    typedef QueueListBox ResearchQueueListBox;
+
+    /** \name Structors */ //@{
+    ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
+        CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
+                "research.ResearchQueueWnd"),
+        m_queue_lb(0)
+    {
+        Init(HumanClientApp::GetApp()->EmpireID());
+    }
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        GG::Pt sz = Size();
+        CUIWnd::SizeMove(ul, lr);
+        if (Size() != sz)
+            DoLayout();
+    }
+
+    ResearchQueueListBox*   GetQueueListBox() { return m_queue_lb; }
+
+    void                SetEmpire(int id) {
+        if (const Empire* empire = GetEmpire(id))
+            SetName(boost::io::str(FlexibleFormat(UserString("RESEARCH_QUEUE_EMPIRE")) % empire->Name()));
+        else
+            SetName("");
+    }
+    //@}
+
+private:
+    void DoLayout() {
+        m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
+                                GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
+    }
+
+    void Init(int empire_id) {
+        m_queue_lb = new ResearchQueueListBox("", UserString("RESEARCH_QUEUE_PROMPT"));
+        m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
+        m_queue_lb->SetName("ResearchQueue ListBox");
+
+        SetEmpire(empire_id);
+
+        AttachChild(m_queue_lb);
+        DoLayout();
+    }
+
+    ResearchQueueListBox*   m_queue_lb;
+};
+
 
 //////////////////////////////////////////////////
 // ResearchWnd                                  //
@@ -201,32 +256,26 @@ namespace {
 ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_research_info_panel(0),
-    m_queue_lb(0),
+    m_queue_wnd(0),
     m_tech_tree_wnd(0),
     m_enabled(false)
 {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-
-    m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
-                                                    GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
-
-    m_queue_lb = new QueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
-    m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-
-    GG::Connect(m_queue_lb->QueueItemMovedSignal,       &ResearchWnd::QueueItemMoved,               this);
-    GG::Connect(m_queue_lb->QueueItemDeletedSignal,     &ResearchWnd::DeleteQueueItem,               this);
-    GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
-
-
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
+
+    m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
+                                                    GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
+    m_queue_wnd = new ResearchQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
 
-    GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal, &ResearchWnd::AddTechsToQueueSlot,          this);
-
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ResearchWnd::QueueItemMoved,               this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal, &ResearchWnd::DeleteQueueItem,              this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ResearchWnd::QueueItemClickedSlot,         this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ResearchWnd::QueueItemDoubleClickedSlot,   this);
+    GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal,                 &ResearchWnd::AddTechsToQueueSlot,          this);
 
     AttachChild(m_research_info_panel);
-    AttachChild(m_queue_lb);
+    AttachChild(m_queue_wnd);
     AttachChild(m_tech_tree_wnd);
 
     SetChildClippingMode(ClipToClient);
@@ -251,7 +300,7 @@ void ResearchWnd::DoLayout() {
     GG::Pt queue_ul = GG::Pt(GG::X(2), m_research_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_research_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_research_info_panel->Height());
-    m_queue_lb->SizeMove(queue_ul, queue_ul + queue_size);
+    m_queue_wnd->SizeMove(queue_ul, queue_ul + queue_size);
 
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
     GG::Pt tech_tree_wnd_ul = GG::Pt(m_research_info_panel->Width(), GG::Y0);
@@ -274,7 +323,7 @@ void ResearchWnd::Reset() {
     m_tech_tree_wnd->Reset();
     UpdateQueue();
     UpdateInfoPanel();
-    m_queue_lb->BringRowIntoView(m_queue_lb->begin());
+    m_queue_wnd->GetQueueListBox()->BringRowIntoView(m_queue_wnd->GetQueueListBox()->begin());
 }
 
 void ResearchWnd::Update() {
@@ -308,6 +357,13 @@ void ResearchWnd::Sanitize()
 void ResearchWnd::Render()
 {}
 
+void ResearchWnd::SetEmpireShown(int empire_id) {
+    if (empire_id != m_empire_shown_id) {
+        m_empire_shown_id = empire_id;
+        Refresh();
+    }
+}
+
 void ResearchWnd::ResearchQueueChangedSlot() {
     UpdateQueue();
     UpdateInfoPanel();
@@ -315,30 +371,43 @@ void ResearchWnd::ResearchQueueChangedSlot() {
 }
 
 void ResearchWnd::UpdateQueue() {
+    DebugLogger() << "ResearchWnd::UpdateQueue()";
+
+    m_queue_wnd->SetEmpire(m_empire_shown_id);
+
+    QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
+    std::size_t first_visible_queue_row = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
+    queue_lb->Clear();
+
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
     const ResearchQueue& queue = empire->GetResearchQueue();
-    std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
-    m_queue_lb->Clear();
-    const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
+
 
     for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
         const ResearchQueue::Element& elem = *it;
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, elem));
+        QueueRow* row = new QueueRow(queue_lb->RowWidth(), elem);
+        queue_lb->Insert(row);
     }
 
-    if (!m_queue_lb->Empty())
-        m_queue_lb->BringRowIntoView(--m_queue_lb->end());
-    if (first_visible_queue_row < m_queue_lb->NumRows())
-        m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
+    if (!queue_lb->Empty())
+        queue_lb->BringRowIntoView(--queue_lb->end());
+    if (first_visible_queue_row < queue_lb->NumRows())
+        queue_lb->BringRowIntoView(boost::next(queue_lb->begin(), first_visible_queue_row));
 }
 
 void ResearchWnd::UpdateInfoPanel() {
-    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
+    const Empire* empire = GetEmpire(m_empire_shown_id);
+    if (!empire) {
+        m_research_info_panel->SetName(UserString("RESEARCH_WND_TITLE"));
+        m_research_info_panel->ClearLocalInfo();
         return;
+    } else {
+        m_research_info_panel->SetEmpireID(m_empire_shown_id);
+    }
+
     const ResearchQueue& queue = empire->GetResearchQueue();
     float RPs = empire->ResourceOutput(RE_RESEARCH);
     float total_queue_cost = queue.TotalRPsSpent();
@@ -403,7 +472,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (m_queue_lb->DisplayingValidQueueItems()) {
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
         if (!queue_row)
             return;
@@ -412,12 +481,12 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (m_queue_lb->DisplayingValidQueueItems()) {
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         DeleteQueueItem(it);
     }
 }
 
 void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;
-    m_queue_lb->EnableOrderIssuing(m_enabled);
+    m_queue_wnd->GetQueueListBox()->EnableOrderIssuing(m_enabled);
 }

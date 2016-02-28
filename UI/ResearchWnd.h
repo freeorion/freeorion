@@ -6,10 +6,9 @@
 
 #include <GG/ListBox.h>
 
-class QueueListBox;
-class Tech;
 class TechTreeWnd;
 class ProductionInfoPanel;
+class ResearchQueueWnd;
 
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
 class ResearchWnd : public GG::Wnd {
@@ -19,18 +18,25 @@ public:
     ~ResearchWnd();
     //@}
 
+    /** \name Accessors */ //@{
+    int     ShownEmpireID() const;
+    //@}
+
     /** \name Mutators */ //@{
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+    void    Render();
+
+    void    SetEmpireShown(int empire_id);
 
     void    Refresh();
     void    Reset();
     void    Update();
+
     void    CenterOnTech(const std::string& tech_name);
     void    ShowTech(const std::string& tech_name);
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void    Sanitize();
-
-    void    Render();
 
     /** Enables, or disables if \a enable is false, issuing orders via this ResearchWnd. */
     void    EnableOrderIssuing(bool enable = true);
@@ -47,10 +53,11 @@ private:
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     ProductionInfoPanel*        m_research_info_panel;
-    QueueListBox*               m_queue_lb;
+    ResearchQueueWnd*           m_queue_wnd;
     TechTreeWnd*                m_tech_tree_wnd;
     bool                        m_enabled;
 
+    int                         m_empire_shown_id;
     boost::signals2::connection m_empire_connection;
 };
 
