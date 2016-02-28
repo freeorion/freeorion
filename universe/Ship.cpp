@@ -138,21 +138,23 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             if (this->Unowned())
-                this->m_name =              copied_ship->m_name;
+                this->m_name =                  copied_ship->m_name;
 
-            this->m_design_id =             copied_ship->m_design_id;
+            this->m_design_id =                 copied_ship->m_design_id;
             for (PartMeterMap::const_iterator it = copied_ship->m_part_meters.begin();
                  it != copied_ship->m_part_meters.end(); ++it)
             { this->m_part_meters = copied_ship->m_part_meters; }
-            this->m_species_name =          copied_ship->m_species_name;
+            this->m_species_name =              copied_ship->m_species_name;
+
+            this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
+            this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
+            this->m_arrived_on_turn =           copied_ship->m_arrived_on_turn;
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
                 this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
                 this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
                 this->m_ordered_bombard_planet_id = copied_ship->m_ordered_bombard_planet_id;
-                this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
-                this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
             }
         }
     }
