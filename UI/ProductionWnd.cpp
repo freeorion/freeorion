@@ -594,9 +594,7 @@ namespace {
             if (Size() != old_size)
                 DoLayout();
     }
-}
 
-namespace {
     class ProdQueueListBox : public QueueListBox {
     public:
         ProdQueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
@@ -694,11 +692,11 @@ public:
 private:
     void DoLayout() {
         m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
-                             GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
+                                GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
     void Init(int empire_id) {
-        m_queue_lb = new ProdQueueListBox("PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
+        m_queue_lb = new ProdQueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE, UserString("PRODUCTION_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
 
@@ -710,7 +708,6 @@ private:
 
     ProdQueueListBox*   m_queue_lb;
 };
-
 
 //////////////////////////////////////////////////
 // ProductionWnd                                //
@@ -729,7 +726,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
 
     m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
-        GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "production.InfoPanel");
+                                                      GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "production.InfoPanel");
     m_queue_wnd = new ProductionQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_build_designator_wnd = new BuildDesignatorWnd(ClientSize().x, ClientSize().y);
 
@@ -921,10 +918,7 @@ void ProductionWnd::UpdateQueue() {
     for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
         QueueRow* row = new QueueRow(queue_lb->RowWidth(), *it, i);
         GG::Connect(row->RowQuantChangedSignal,     &ProductionWnd::ChangeBuildQuantityBlockSlot, this);
-
-        const GG::Pt row_size = row->Size();
         queue_lb->Insert(row);
-        //row->Resize(row_size);
     }
 
     if (!queue_lb->Empty())

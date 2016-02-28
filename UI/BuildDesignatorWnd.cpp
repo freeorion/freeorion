@@ -982,6 +982,8 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 //////////////////////////////////////////////////
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
+const std::string BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE = "Production Item";
+
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_enc_detail_panel(0),
