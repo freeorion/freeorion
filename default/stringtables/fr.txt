@@ -266,22 +266,22 @@ Petit astronef équipé d'un Canon Laser. Ne peut être construit que dans une c
 SD_MARK_1
 Escorteur (M1)
 SD_MARK1_DESC
-Astronef patrouilleur basique équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Frégate basique équipée d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_2
 Escorteur (M2)
 SD_MARK2_DESC
-Astronef patrouilleur amélioré équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Frégate améliorée équipée d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_3
 Escorteur (L1)
 SD_MARK3_DESC
-Astronef patrouilleur basique équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Frégate basique équipée d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_4
 Escorteur (L2)
 SD_MARK4_DESC
-Astronef patrouilleur amélioré équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Frégate améliorée équipée d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_1  # translated
 Destroyer (M1)
@@ -1763,9 +1763,9 @@ GSETUP_IRREGULAR
 Irrégulière
 GSETUP_RING
 Annulaire
+
 GSETUP_RANDOM
 Aléatoire
-
 GSETUP_NONE
 Aucun
 GSETUP_LOW
@@ -3000,6 +3000,9 @@ Acquis
 
 TECH_WND_STATUS_RESEARCHABLE
 Accessible
+
+TECH_WND_STATUS_PARTIAL_UNLOCK
+Partiellement Déverrouillé
 
 TECH_WND_STATUS_LOCKED
 Verrouillé
@@ -4396,6 +4399,9 @@ Dern. Tour Bataille ici
 
 LAST_TURN_ACTIVE_IN_BATTLE
 Dern. Tour Bataille
+
+ARRIVED_ON_TURN
+Arrivé au Tour
 
 SIZE_AS_DOUBLE
 Taille numér.
@@ -6845,6 +6851,9 @@ Génère un message de rapport de situation sans destinataires
 DESC_GENERATE_SITREP_CAN_SEE
 Génère un message de rapport de situation pour les empires pouvant détecter un objet %2%
 
+DESC_GENERATE_SITREP_HUMAN
+Génère un message de rapport de situation pour les empires contrôlés par des joueurs humains
+
 DESC_SET_EMPIRE_TECH_PROGRESS
 Définit la progression de la recherche de la technologie %1% à %2% pour l'empire %3%
 
@@ -6857,22 +6866,12 @@ Modifie l'apparence de l'objet
 DESC_SET_TEXTURE
 Modifie l'apparence de l'objet
 
-DESC_UPGRADE_VIS_ALLIES
-Définit la visibilité de l'objet à au moins %1% pour les alliés de l'empire %2%
-DESC_UPGRADE_VIS_ENEMIES
-Définit la visibilité de l'objet à au moins %1% pour les ennemis de l'empire %2%
-DESC_UPGRADE_VIS_NONE
-Définit la visibilité de l'objet pour aucun empire
-DESC_UPGRADE_VIS_ALL
-Définit la visibilité de l'objet à au moins %1% pour tous les empires
-DESC_UPGRADE_VIS
-Définit la visibilité de l'objet à au moins %1% pour l'empire %2%
 DESC_SET_VIS_ALLIES
 Définit la visibilité de l'objet à %1% pour les alliés de l'empire %2%
 DESC_SET_VIS_ENEMIES
 Définit la visibilité de l'objet à %1% pour les ennemis de l'empire %2%
 DESC_SET_VIS_NONE  # translated
-[[DESC_UPGRADE_VIS_NONE]]
+Définit la visibilité de l'objet pour aucun empire
 DESC_SET_VIS_ALL
 Définit la visibilité de l'objet à %1% pour tous les empires
 DESC_SET_VIS
