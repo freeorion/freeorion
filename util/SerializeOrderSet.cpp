@@ -150,6 +150,7 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_design_id);
     ar  & BOOST_SERIALIZATION_NVP(m_delete_design_from_empire);
     ar  & BOOST_SERIALIZATION_NVP(m_create_new_design);
+    ar  & BOOST_SERIALIZATION_NVP(m_move_design);
     ar  & BOOST_SERIALIZATION_NVP(m_update_name_or_description);
     ar  & BOOST_SERIALIZATION_NVP(m_name);
     ar  & BOOST_SERIALIZATION_NVP(m_description);
@@ -160,6 +161,7 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_icon);
     ar  & BOOST_SERIALIZATION_NVP(m_3D_model);
     ar  & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
+    ar  & BOOST_SERIALIZATION_NVP(m_design_id_after);
 }
 
 template <class Archive>
@@ -196,4 +198,3 @@ void Deserialize(Archive& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
 template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, OrderSet& order_set);
 template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, OrderSet& order_set);
-

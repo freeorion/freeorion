@@ -1579,8 +1579,8 @@ void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
 
             DebugLogger()<<"Accepted Drop of id "<<design_id<<" before "<< insert_before_id;
 
-            empire->RemoveShipDesign(design_id);
-            empire->AddShipDesign(design_id, insert_before_id);
+            HumanClientApp::GetApp()->Orders()
+                .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
         }
     }
 
