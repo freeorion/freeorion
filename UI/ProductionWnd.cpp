@@ -316,7 +316,7 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
-            GG::ListBox::Row(w, GG::Y1, "PRODUCTION_QUEUE_ROW"),
+            GG::ListBox::Row(w, GG::Y1, BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
             queue_index(queue_index_),
             m_build(elem)
         {
@@ -339,7 +339,7 @@ namespace {
             Resize(m_panel->Size());
             push_back(m_panel);
 
-            SetDragDropDataType("PRODUCTION_QUEUE_ROW");
+            SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
@@ -597,8 +597,8 @@ namespace {
 
     class ProdQueueListBox : public QueueListBox {
     public:
-        ProdQueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
-            QueueListBox(drop_type_str, prompt_str)
+        ProdQueueListBox() :
+            QueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE,  UserString("PRODUCTION_QUEUE_PROMPT"))
         {}
 
         boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
@@ -696,7 +696,7 @@ private:
     }
 
     void Init(int empire_id) {
-        m_queue_lb = new ProdQueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE, UserString("PRODUCTION_QUEUE_PROMPT"));
+        m_queue_lb = new ProdQueueListBox();
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
 
