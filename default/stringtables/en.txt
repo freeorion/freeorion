@@ -4400,6 +4400,9 @@ Last Turn Battle Here
 LAST_TURN_ACTIVE_IN_BATTLE
 Last Turn In Battle
 
+ARRIVED_ON_TURN
+Arrived on Turn
+
 SIZE_AS_DOUBLE
 Size As Number
 

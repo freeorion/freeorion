@@ -116,6 +116,7 @@ namespace {
             col_types[UserStringNop("PREV_SYSTEM")] =               ObjectNameValueRef("PreviousSystemID");
             col_types[UserStringNop("LAST_TURN_BATTLE_HERE")] =     StringCastedValueRef<int>("LastTurnBattleHere");
             col_types[UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE")] =StringCastedValueRef<int>("LastTurnActiveInBattle");
+            col_types[UserStringNop("ARRIVED_ON_TURN")] =           StringCastedValueRef<int>("ArrivedOnTurn");
 
             col_types[UserStringNop("SIZE_AS_DOUBLE")] =            StringCastedValueRef<double>("SizeAsDouble");
             col_types[UserStringNop("NEXT_TURN_POP_GROWTH")] =      StringCastedValueRef<double>("NextTurnPopGrowth");
