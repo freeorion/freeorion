@@ -1852,7 +1852,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         // create popup menu with a commands in it
         GG::MenuItem menu_contents;
         if (client_empire_id != ALL_EMPIRES)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_OBSOLETE"), 1, false, false));
 
         if (design->DesignedByEmpire() == client_empire_id)
             menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
@@ -2551,6 +2551,7 @@ public:
 
     boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
     int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
+    int                                 GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
 
     bool                                CurrentDesignIsRegistered(std::string& design_name);//!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
     //@}
@@ -2606,6 +2607,10 @@ public:
 
     mutable boost::signals2::signal<void (const HullType*)> HullTypeClickedSignal;
 
+    /** emitted when the user clicks the m_replace_button to replace the currently selected
+      * design with the new design in the player's empire */
+    mutable boost::signals2::signal<void ()>                DesignReplacedSignal;
+
     /** emitted when the user clicks the m_confirm_button to add the new
       * design to the player's empire */
     mutable boost::signals2::signal<void ()>                DesignConfirmedSignal;
@@ -2643,6 +2648,7 @@ private:
     const HullType*                         m_hull;
     std::vector<SlotControl*>               m_slots;
     int                                     m_complete_design_id;
+    int                                     m_replaced_design_id;
     mutable boost::shared_ptr<ShipDesign>   m_incomplete_design;
     std::set<std::string>                   m_completed_design_dump_strings;
 
@@ -2651,6 +2657,7 @@ private:
     GG::Edit*           m_design_name;
     GG::Label*          m_design_description_label;
     GG::Edit*           m_design_description;
+    GG::Button*         m_replace_button;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
     bool                m_disabled_by_name; // if the design confirm button is currently disabled due to empty name
@@ -2668,6 +2675,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_hull(0),
     m_slots(),
     m_complete_design_id(ShipDesign::INVALID_DESIGN_ID),
+    m_replaced_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_incomplete_design(),
     m_completed_design_dump_strings(),
     m_background_image(0),
@@ -2675,6 +2683,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_design_name(0),
     m_design_description_label(0),
     m_design_description(0),
+    m_replace_button(0),
     m_confirm_button(0),
     m_clear_button(0),
     m_disabled_by_name(false)
@@ -2685,20 +2694,24 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_design_name = new CUIEdit(UserString("DESIGN_NAME_DEFAULT"));
     m_design_description_label = new CUILabel(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
-    m_confirm_button = new CUIButton(UserString("DESIGN_WND_CONFIRM"));
+    m_replace_button = new CUIButton(UserString("DESIGN_WND_REPLACE"));
+    m_confirm_button = new CUIButton(UserString("DESIGN_WND_ADD"));
     m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
 
+    m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     AttachChild(m_design_name_label);
     AttachChild(m_design_name);
     AttachChild(m_design_description_label);
     AttachChild(m_design_description);
+    AttachChild(m_replace_button);
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
 
     GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
     GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
+    GG::Connect(m_replace_button->LeftClickedSignal, DesignReplacedSignal);
     GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
     GG::Connect(this->DesignChangedSignal, &DesignWnd::MainPanel::DesignChanged, this);
 
@@ -2739,6 +2752,9 @@ boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() 
 
 int DesignWnd::MainPanel::GetCompleteDesignID() const
 { return m_complete_design_id; }
+
+int DesignWnd::MainPanel::GetReplacedDesignID() const
+{ return m_replaced_design_id; }
 
 bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -2955,6 +2971,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     }
 
     m_complete_design_id = ship_design->ID();
+    m_replaced_design_id = ship_design->ID();
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -3039,6 +3056,11 @@ void DesignWnd::MainPanel::DoLayout() {
     GG::Pt lr = GG::Pt(confirm_right, BUTTON_HEIGHT) + GG::Pt(GG::X0, GG::Y(PAD));
     GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_confirm_button->SizeMove(ul, lr);
+
+    lr = lr - GG::Pt(BUTTON_WIDTH, GG::Y(0))- GG::Pt(GG::X(PAD),GG::Y(0));
+    ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_replace_button->SizeMove(ul, lr);
+
     edit_right = ul.x - PAD;
 
     lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
@@ -3084,6 +3106,7 @@ void DesignWnd::MainPanel::DoLayout() {
 }
 
 void DesignWnd::MainPanel::DesignChanged() {
+    m_replace_button->ClearBrowseInfoWnd();
     m_confirm_button->ClearBrowseInfoWnd();
 
     m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
@@ -3092,28 +3115,50 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_disabled_by_name = false;
 
     if (!m_hull) {
+        m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_REPLACE_INVALID_NO_CANDIDATE"))));
+
+        m_replace_button->Disable(true);
+
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL"))));
 
         m_confirm_button->Disable(true);
     }
     else if (client_empire_id == ALL_EMPIRES) {
+        m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
+
+        m_replace_button->Disable(true);
+
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
 
         m_confirm_button->Disable(true);
     }
     else if (m_design_name->Text().empty()) { // Whitespace probably shouldn't be OK either.
+        m_disabled_by_name = true;
+
+        m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
+        m_replace_button->Disable(true);
+
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
-        m_disabled_by_name = true;
         m_confirm_button->Disable(true);
     }
     else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
         // I have no idea how this would happen, so I'm not going to display a tooltip for it. ~ Bigjoe5
+        m_replace_button->Disable(true);
         m_confirm_button->Disable(true);
     }
     else if (CurrentDesignIsRegistered(design_name)) {
+        m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("DESIGN_KNOWN"),
+            boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL")) % design_name))));
+
+        m_replace_button->Disable(true);
+
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL")) % design_name))));
@@ -3121,6 +3166,16 @@ void DesignWnd::MainPanel::DesignChanged() {
         m_confirm_button->Disable(true);
     }
     else {
+        m_replace_button->Disable(true);
+        if(m_replaced_design_id != ShipDesign::INVALID_DESIGN_ID) {
+            const ShipDesign& ship_design = *GetShipDesign(m_replaced_design_id);
+            std::string replace_name= ship_design.Name();
+
+            m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                new TextBrowseWnd(UserString("DESIGN_WND_REPLACE"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_REPLACE_DETAIL")) % replace_name))));
+            m_replace_button->Disable(false);
+        }
         m_confirm_button->Disable(false);
     }
 }
@@ -3293,6 +3348,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->HullTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
+    GG::Connect(m_main_panel->DesignReplacedSignal,             &DesignWnd::ReplaceDesign,          this);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
     GG::Connect(m_main_panel->DesignChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
                                                                             m_detail_panel,
@@ -3380,16 +3436,20 @@ void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }
 
 void DesignWnd::AddDesign() {
+  AddDesignCore();
+}
+
+int DesignWnd::AddDesignCore() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
-    if (!empire) return;
+    if (!empire) return ShipDesign::INVALID_DESIGN_ID;
 
     std::vector<std::string> parts = m_main_panel->Parts();
     const std::string& hull_name = m_main_panel->Hull();
 
     if (!ShipDesign::ValidDesign(hull_name, parts)) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-        return;
+        return ShipDesign::INVALID_DESIGN_ID;
     }
 
     // make sure name isn't blank.  TODO: prevent duplicate names?
@@ -3414,6 +3474,24 @@ void DesignWnd::AddDesign() {
     m_main_panel->DesignChangedSignal();
 
     DebugLogger() << "Added new design: " << design.Name();
+
+    return new_design_id;
+}
+
+void DesignWnd::ReplaceDesign() {
+    int new_design_id = AddDesignCore();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int replaced_id = m_main_panel->GetReplacedDesignID();
+
+    if(new_design_id == ShipDesign::INVALID_DESIGN_ID) return;
+
+    //move it to before the replaced design
+    HumanClientApp::GetApp()->Orders()
+      .IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, replaced_id )));
+    //remove old design
+    HumanClientApp::GetApp()->Orders()
+        .IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, replaced_id, true)));
+    DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
 }
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
