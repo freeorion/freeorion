@@ -99,10 +99,10 @@ namespace {
         db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
 
-        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 1600));
-        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 1600));
+        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 10240));
+        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 10240));
+        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 10240));
+        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 10240));
 
         const int CENTRE = static_cast<int>(SDL_WINDOWPOS_CENTERED);
         db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     CENTRE, OrValidator<int>( RangedValidator<int>(-10240, 10240),
