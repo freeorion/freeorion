@@ -168,6 +168,19 @@ void QueueListBox::DragDropLeave() {
     m_show_drop_point = false;
 }
 
+void QueueListBox::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!Disabled())
+        switch (key) {
+        case GG::GGK_DELETE: // delete key
+            QueueItemDeletedSignal(Caret());
+            break;
+        default:
+            ListBox::KeyPress(key, key_code_point, mod_keys); // pass on if not delete key
+            break;
+    }
+}
+
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
     for (GG::ListBox::iterator it = begin(); it != end(); ++it)
@@ -235,4 +248,3 @@ void QueueListBox::ShowPromptConditionallySlot(iterator it) {
         m_showing_prompt = true;
     }
 }
-
