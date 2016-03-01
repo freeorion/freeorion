@@ -32,6 +32,7 @@ public:
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 
 protected:
+    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                     const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
     virtual void    ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);

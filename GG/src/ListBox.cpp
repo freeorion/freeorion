@@ -1223,7 +1223,7 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
                 if (m_style & LIST_NOSEL) {
                     if (m_caret != m_rows.end())
                         delete Erase(m_caret, false, true);
-                } else {
+                } else {    // todo: check if erase invalidates iterators in m_selections and makes this loop problematic
                     for (SelectionSet::iterator it = m_selections.begin(); it != m_selections.end(); ++it) {
                         delete Erase(*it, false, true);
                     }

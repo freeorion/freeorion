@@ -82,6 +82,22 @@ void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
+void QueueListBox::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (Disabled()) {
+        CUIListBox::KeyPress(key, key_code_point, mod_keys);
+        return;
+    }
+    if (key == GG::GGK_DELETE) {
+        QueueListBox::iterator it = Caret();
+        if (it == end())
+            return;
+        QueueItemDeletedSignal(it);
+    } else {
+        CUIListBox::KeyPress(key, key_code_point, mod_keys);
+    }
+}
+
 void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
