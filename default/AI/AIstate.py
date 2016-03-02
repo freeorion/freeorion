@@ -10,7 +10,7 @@ import ExplorationAI
 import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType
+from EnumsAI import MissionType, ExplorableSystemType
 import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
@@ -865,7 +865,7 @@ class AIstate(object):
     def get_ship_role(self, ship_design_id):
         """Returns ship role for given designID, assesses and adds as needed."""
 
-        if ship_design_id in self.__shipRoleByDesignID and self.__shipRoleByDesignID[ship_design_id] != EnumsAI.AIShipRoleType.SHIP_ROLE_INVALID:  # if thought was invalid, recheck to be sure
+        if ship_design_id in self.__shipRoleByDesignID and self.__shipRoleByDesignID[ship_design_id] != EnumsAI.ShipRoleType.INVALID:  # if thought was invalid, recheck to be sure
             return self.__shipRoleByDesignID[ship_design_id]
         else:
             self.get_design_id_stats(ship_design_id)  # just to update with info for this new design
@@ -899,20 +899,20 @@ class AIstate(object):
     def get_fleet_role(self, fleet_id, force_new=False):
         """Returns fleet role by ID."""
 
-        if not force_new and fleet_id in self.__fleetRoleByID and self.__fleetRoleByID[fleet_id] != AIFleetMissionType.FLEET_MISSION_INVALID:
+        if not force_new and fleet_id in self.__fleetRoleByID:
             return self.__fleetRoleByID[fleet_id]
         else:
             role = FleetUtilsAI.assess_fleet_role(fleet_id)
             self.__fleetRoleByID[fleet_id] = role
             make_aggressive = False
-            if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  
-                        AIFleetMissionType.FLEET_MISSION_OUTPOST,
-                        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
-                        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
+            if role in [MissionType.COLONISATION,
+                        MissionType.OUTPOST,
+                        MissionType.ORBITAL_INVASION,
+                        MissionType.ORBITAL_OUTPOST
                         ]:
                 pass
-            elif role in [AIFleetMissionType.FLEET_MISSION_EXPLORATION,
-                          AIFleetMissionType.FLEET_MISSION_INVASION
+            elif role in [MissionType.EXPLORATION,
+                          MissionType.INVASION
                           ]:
                 this_rating = self.get_rating(fleet_id)
                 if float(this_rating.get('overall', 0)) / this_rating.get('nships', 1) >= 0.5 * MilitaryAI.cur_best_mil_ship_rating():
@@ -962,7 +962,7 @@ class AIstate(object):
         
     def reset_invasions(self):
         """Useful when testing changes to invasion planning."""
-        invasion_missions = self.get_fleet_missions_with_any_mission_types([EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION])
+        invasion_missions = self.get_fleet_missions_with_any_mission_types([EnumsAI.MissionType.INVASION])
         for mission in invasion_missions:
             mission.clear_fleet_orders()
             mission.clear_target()
@@ -1066,9 +1066,9 @@ class AIstate(object):
     def get_explorable_systems(self, explorable_systems_type):
         """Get all explorable systems determined by type."""
         # return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
-        if explorable_systems_type == AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED:
+        if explorable_systems_type == ExplorableSystemType.EXPLORED:
             return list(self.exploredSystemIDs)
-        elif explorable_systems_type == AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED:
+        elif explorable_systems_type == ExplorableSystemType.UNEXPLORED:
             return list(self.unexploredSystemIDs)
         else:
             print "Error -- unexpected explorableSystemsType (value %s ) submited to AIState.get_explorable_systems "

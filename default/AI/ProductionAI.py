@@ -19,15 +19,15 @@ from TechsListsAI import EXOBOT_TECH_NAME
 
 best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
-shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST: EnumsAI.AIShipDesignTypes.outpostBase,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION: EnumsAI.AIShipDesignTypes.colonyShip,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_COLONISATION: EnumsAI.AIShipDesignTypes.colonyBase,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION: EnumsAI.AIShipDesignTypes.troopShip,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY: EnumsAI.AIShipDesignTypes.attackShip,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE: EnumsAI.AIShipDesignTypes.defenseBase,
-               EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION: EnumsAI.AIShipDesignTypes.troopBase,
+shipTypeMap = {EnumsAI.PriorityType.PRODUCTION_EXPLORATION: EnumsAI.ShipDesignTypes.explorationShip,
+               EnumsAI.PriorityType.PRODUCTION_OUTPOST: EnumsAI.ShipDesignTypes.outpostShip,
+               EnumsAI.PriorityType.PRODUCTION_ORBITAL_OUTPOST: EnumsAI.ShipDesignTypes.outpostBase,
+               EnumsAI.PriorityType.PRODUCTION_COLONISATION: EnumsAI.ShipDesignTypes.colonyShip,
+               EnumsAI.PriorityType.PRODUCTION_ORBITAL_COLONISATION: EnumsAI.ShipDesignTypes.colonyBase,
+               EnumsAI.PriorityType.PRODUCTION_INVASION: EnumsAI.ShipDesignTypes.troopShip,
+               EnumsAI.PriorityType.PRODUCTION_MILITARY: EnumsAI.ShipDesignTypes.attackShip,
+               EnumsAI.PriorityType.PRODUCTION_ORBITAL_DEFENSE: EnumsAI.ShipDesignTypes.defenseBase,
+               EnumsAI.PriorityType.PRODUCTION_ORBITAL_INVASION: EnumsAI.ShipDesignTypes.troopBase,
                }
 
 design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
@@ -42,15 +42,15 @@ def find_best_designs_this_turn():
     start = time.clock()
     ShipDesignAI.Cache.update_for_new_turn()
     design_cache.clear()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.OrbitalColonisationShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.OrbitalColonisationShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
+    design_cache[EnumsAI.PriorityType.PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     end = time.clock()
     print "DEBUG INFORMATION: The design evaluations took %f s" % (end - start)
@@ -98,7 +98,7 @@ def cur_best_military_design_rating():
     current_turn = fo.currentTurn()
     if current_turn in best_military_design_rating_cache:
         return best_military_design_rating_cache[current_turn]
-    priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
+    priority = EnumsAI.PriorityType.PRODUCTION_MILITARY
     if priority in design_cache:
         if design_cache[priority] and design_cache[priority][0]:
             rating, pid, design_id, cost = design_cache[priority][0]
@@ -152,7 +152,7 @@ def getBestShipRatings(loc=None):
     # the running total up to that point, to facilitate later sampling.  Then those running totals are
     # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
     # used to select the chosen design/loc.
-    priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
+    priority = EnumsAI.PriorityType.PRODUCTION_MILITARY
     if loc is None:
         planet_ids = ColonisationAI.empire_shipyards
     elif isinstance(loc, list):
@@ -223,7 +223,7 @@ def generateProductionOrders():
             claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
 
     if (current_turn in [1, 4]) and ((production_queue.totalSpent < total_pp) or (len(production_queue) <= 3)):
-        best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
+        best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_EXPLORATION)
         if len(AIstate.opponentPlanetIDs) == 0:
             init_scouts = 3
         else:
@@ -279,7 +279,7 @@ def generateProductionOrders():
             print "Buildings already in Production Queue:"
             capital_queued_buildings = []
             queued_exobot_locs = []
-            for element in [e for e in production_queue if (e.buildType == EnumsAI.AIEmpireProductionTypes.BT_BUILDING)]:
+            for element in [e for e in production_queue if (e.buildType == EnumsAI.EmpireProductionTypes.BT_BUILDING)]:
                 building_expense += element.allocation
                 if element.locationID == homeworld.id:
                     capital_queued_buildings.append(element)
@@ -366,7 +366,7 @@ def generateProductionOrders():
         target_orbitals = min(int(((current_turn + 4) / (8.0 * aggression_index**1.5))**0.8), fo.aggression.maniacal - aggression_index)
         print "Orbital Defense Check -- target Defense Orbitals: ", target_orbitals
         for element in production_queue:
-            if (element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.get_ship_role(element.designID) == EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_DEFENSE):
+            if (element.buildType == EnumsAI.EmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.get_ship_role(element.designID) == EnumsAI.ShipRoleType.BASE_DEFENSE):
                 planet = universe.getPlanet(element.locationID)
                 if not planet:
                     print "Error: Problem getting Planet for build loc %s"%element.locationID
@@ -383,7 +383,7 @@ def generateProductionOrders():
             sys_orbital_defenses[sys_id] = 0
             fleets_here = foAI.foAIstate.systemStatus.get(sys_id, {}).get('myfleets', [])
             for fid in fleets_here:
-                if foAI.foAIstate.get_fleet_role(fid) == EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE:
+                if foAI.foAIstate.get_fleet_role(fid) == EnumsAI.MissionType.ORBITAL_DEFENSE:
                     print "Found %d existing Orbital Defenses in %s :" % (foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0), ppstring(PlanetUtilsAI.sys_name_ids([sys_id])))
                     sys_orbital_defenses[sys_id] += foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
             for pid in ColonisationAI.empire_species_systems.get(sys_id, {}).get('pids', []):
@@ -391,7 +391,7 @@ def generateProductionOrders():
             if sys_orbital_defenses[sys_id] < target_orbitals:
                 num_needed = target_orbitals - sys_orbital_defenses[sys_id]
                 for pid in ColonisationAI.empire_species_systems.get(sys_id, {}).get('pids', []):
-                    best_design_id, col_design, build_choices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE, pid)
+                    best_design_id, col_design, build_choices = getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_ORBITAL_DEFENSE, pid)
                     if not best_design_id:
                         print "no orbital defenses can be built at ", ppstring(PlanetUtilsAI.planet_name_ids([pid]))
                         continue
@@ -894,13 +894,13 @@ def generateProductionOrders():
     build_ship_facilities(bld_name, best_pilot_facilities, top_locs)
 
     colony_ship_map = {}
-    for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION):
+    for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.MissionType.COLONISATION):
         fleet = universe.getFleet(fid)
         if not fleet:
             continue
         for shipID in fleet.shipIDs:
             ship = universe.getShip(shipID)
-            if ship and (foAI.foAIstate.get_ship_role(ship.design.id) == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION):
+            if ship and (foAI.foAIstate.get_ship_role(ship.design.id) == EnumsAI.ShipRoleType.CIVILIAN_COLONISATION):
                 colony_ship_map.setdefault(ship.speciesName, []).append(1)
 
     building_name = "BLD_CONC_CAMP"
@@ -1125,18 +1125,18 @@ def generateProductionOrders():
                 print "element %s will never be completed as stands and location %d no longer owned; could consider deleting from queue" % (element.name, element.locationID)  # TODO:
             else:
                 print "element %s is projected to never be completed as currently stands, but will remain on queue " % element.name
-        elif element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
+        elif element.buildType == EnumsAI.EmpireProductionTypes.BT_SHIP:
             this_role = foAI.foAIstate.get_ship_role(element.designID)
-            if this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
+            if this_role == EnumsAI.ShipRoleType.CIVILIAN_COLONISATION:
                 this_spec = universe.getPlanet(element.locationID).speciesName
                 queued_colony_ships[this_spec] = queued_colony_ships.get(this_spec, 0) + element.remaining * element.blocksize
-            elif this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
+            elif this_role == EnumsAI.ShipRoleType.CIVILIAN_OUTPOST:
                 queued_outpost_ships += element.remaining * element.blocksize
-            elif this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST:
+            elif this_role == EnumsAI.ShipRoleType.BASE_OUTPOST:
                 queued_outpost_ships += element.remaining * element.blocksize
-            elif this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
+            elif this_role == EnumsAI.ShipRoleType.MILITARY_INVASION:
                 queued_troop_ships += element.remaining * element.blocksize
-            elif (this_role == EnumsAI.AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION) and (queue_index <= 1):
+            elif (this_role == EnumsAI.ShipRoleType.CIVILIAN_EXPLORATION) and (queue_index <= 1):
                 if len(AIstate.opponentPlanetIDs) > 0:
                     can_prioritize_troops = True
     if queued_colony_ships:
@@ -1147,9 +1147,9 @@ def generateProductionOrders():
     for queue_index in dequeue_list[::-1]:
         fo.issueDequeueProductionOrder(queue_index)
 
-    all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_MILITARY)
+    all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.MissionType.MILITARY)
     total_military_ships = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids])
-    all_troop_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
+    all_troop_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.MissionType.INVASION)
     total_troop_ships = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_troop_fleet_ids])
     avail_troop_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troop_fleet_ids))
     total_available_troops = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in avail_troop_fleet_ids])
@@ -1161,7 +1161,7 @@ def generateProductionOrders():
         foAI.foAIstate.systemStatus.get(capital_system_id, {}).get('fleetThreat', 0) == 0 and
         foAI.foAIstate.systemStatus.get(capital_system_id, {}).get('neighborThreat', 0) == 0
     ):
-        best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
+        best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_INVASION)
         if build_choices is not None and len(build_choices) > 0:
             loc = random.choice(build_choices)
             prod_time = best_design.productionTime(empire.empireID, loc)
@@ -1192,38 +1192,38 @@ def generateProductionOrders():
 
     top_score = -1
 
-    num_colony_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION))  # counting existing colony fleets each as one ship
+    num_colony_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.MissionType.COLONISATION))  # counting existing colony fleets each as one ship
     total_colony_fleets = sum(queued_colony_ships.values()) + num_colony_fleets
-    num_outpost_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST))  # counting existing outpost fleets each as one ship
+    num_outpost_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.MissionType.OUTPOST))  # counting existing outpost fleets each as one ship
     total_outpost_fleets = queued_outpost_ships + num_outpost_fleets
 
     max_colony_fleets = PriorityAI.allottedColonyTargets
     max_outpost_fleets = max_colony_fleets
 
-    _, _, colony_build_choices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
+    _, _, colony_build_choices = getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_COLONISATION)
     military_emergency = PriorityAI.unmetThreat > (2.0 * MilitaryAI.totMilRating)
 
     print "Production Queue Priorities:"
     filtered_priorities = {}
     for priority_id, score in sorted_priorities:
         if military_emergency:
-            if priority_id == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION:
+            if priority_id == EnumsAI.PriorityType.PRODUCTION_EXPLORATION:
                 score /= 10.0
-            elif priority_id != EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
+            elif priority_id != EnumsAI.PriorityType.PRODUCTION_MILITARY:
                 score /= 2.0
         if top_score < score:
             top_score = score  # don't really need top_score nor sorting with current handling
-        print " Score: %4d -- %s " % (score, EnumsAI.AIPriorityNames[priority_id])
-        if priority_id != EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS:
-            if (priority_id == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION) and (total_colony_fleets < max_colony_fleets) and (colony_build_choices is not None) and len(colony_build_choices) > 0:
+        print " Score: %4d -- %s " % (score, priority_id)
+        if priority_id != EnumsAI.PriorityType.PRODUCTION_BUILDINGS:
+            if (priority_id == EnumsAI.PriorityType.PRODUCTION_COLONISATION) and (total_colony_fleets < max_colony_fleets) and (colony_build_choices is not None) and len(colony_build_choices) > 0:
                 filtered_priorities[priority_id] = score
-            elif (priority_id == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST) and (total_outpost_fleets < max_outpost_fleets):
+            elif (priority_id == EnumsAI.PriorityType.PRODUCTION_OUTPOST) and (total_outpost_fleets < max_outpost_fleets):
                 filtered_priorities[priority_id] = score
-            elif priority_id not in [EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST, EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION]:
+            elif priority_id not in [EnumsAI.PriorityType.PRODUCTION_OUTPOST, EnumsAI.PriorityType.PRODUCTION_COLONISATION]:
                 filtered_priorities[priority_id] = score
     if filtered_priorities == {}:
         print "No non-building-production priorities with nonzero score, setting to default: Military"
-        filtered_priorities[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY] = 1
+        filtered_priorities[EnumsAI.PriorityType.PRODUCTION_MILITARY] = 1
     if top_score <= 100:
         scaling_power = 1.0
     else:
@@ -1252,7 +1252,7 @@ def generateProductionOrders():
         print "%.2f PP remaining in system group: %s" % (avail_pp, ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set)))))
         print "\t owned planets in this group are:"
         print "\t %s" % (ppstring(PlanetUtilsAI.planet_name_ids(planet_set)))
-        best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, list(planet_set))
+        best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_COLONISATION, list(planet_set))
         species_map = {}
         for loc in (build_choices or []):
             this_spec = universe.getPlanet(loc).speciesName
@@ -1266,7 +1266,7 @@ def generateProductionOrders():
         best_ships = {}
         mil_build_choices = getBestShipRatings(list(planet_set))
         for priority in list(local_priorities):
-            if priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
+            if priority == EnumsAI.PriorityType.PRODUCTION_MILITARY:
                 if not mil_build_choices:
                     del local_priorities[priority]
                     continue
@@ -1280,7 +1280,7 @@ def generateProductionOrders():
                 del local_priorities[priority]  # must be missing a shipyard -- TODO build a shipyard if necessary
                 continue
             best_ships[priority] = [best_design_id, best_design, build_choices]
-            print "best_ships[%s] = %s \t locs are %s from %s" % (EnumsAI.AIPriorityNames[priority], best_design.name, build_choices, planet_set)
+            print "best_ships[%s] = %s \t locs are %s from %s" % (priority, best_design.name, build_choices, planet_set)
 
         if len(local_priorities) == 0:
             print "Alert!! need shipyards in systemSet ", ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(sorted(planet_set)))))
@@ -1293,30 +1293,30 @@ def generateProductionOrders():
             loop_count += 1
             print "Beginning build enqueue loop %d; %.1f PP available" % (loop_count, avail_pp)
             this_priority = random.choice(priority_choices)
-            print "selected priority: ", EnumsAI.AIPriorityNames[this_priority]
+            print "selected priority: ", this_priority
             making_colony_ship = False
             making_outpost_ship = False
-            if this_priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:
+            if this_priority == EnumsAI.PriorityType.PRODUCTION_COLONISATION:
                 if total_colony_fleets >= max_colony_fleets:
                     print "Already sufficient colony ships in queue, trying next priority choice"
                     print
                     for i in range(len(priority_choices) - 1, -1, -1):
-                        if priority_choices[i] == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:
+                        if priority_choices[i] == EnumsAI.PriorityType.PRODUCTION_COLONISATION:
                             del priority_choices[i]
                     continue
                 elif colony_build_choices is None or len(colony_build_choices) == 0:
                     for i in range(len(priority_choices) - 1, -1, -1):
-                        if priority_choices[i] == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION:
+                        if priority_choices[i] == EnumsAI.PriorityType.PRODUCTION_COLONISATION:
                             del priority_choices[i]
                     continue
                 else:
                     making_colony_ship = True
-            if this_priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:
+            if this_priority == EnumsAI.PriorityType.PRODUCTION_OUTPOST:
                 if total_outpost_fleets >= max_outpost_fleets:
                     print "Already sufficient outpost ships in queue, trying next priority choice"
                     print
                     for i in range(len(priority_choices) - 1, -1, -1):
-                        if priority_choices[i] == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST:
+                        if priority_choices[i] == EnumsAI.PriorityType.PRODUCTION_OUTPOST:
                             del priority_choices[i]
                     continue
                 else:
@@ -1324,8 +1324,8 @@ def generateProductionOrders():
             best_design_id, best_design, build_choices = best_ships[this_priority]
             if making_colony_ship:
                 loc = random.choice(colony_build_choices)
-                best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, loc)
-            elif this_priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
+                best_design_id, best_design, build_choices = getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_COLONISATION, loc)
+            elif this_priority == EnumsAI.PriorityType.PRODUCTION_MILITARY:
                 selector = random.random()
                 choice = mil_build_choices[0]  # mil_build_choices can't be empty due to earlier check
                 for choice in mil_build_choices:
@@ -1340,7 +1340,7 @@ def generateProductionOrders():
 
             ship_number = 1
             per_turn_cost = (float(best_design.productionCost(empire.empireID, loc)) / best_design.productionTime(empire.empireID, loc))
-            if this_priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
+            if this_priority == EnumsAI.PriorityType.PRODUCTION_MILITARY:
                 this_rating = ColonisationAI.pilot_ratings.get(loc, 0)
                 rating_ratio = float(this_rating) / ColonisationAI.get_best_pilot_rating()
                 if rating_ratio < 0.1:
@@ -1377,10 +1377,10 @@ def generateProductionOrders():
                     for elem in [production_queue[elemi] for elemi in range(0, min(4, production_queue.size))]:
                         cost, time = empire.productionCostAndTime(elem)
                         leading_block_pp += elem.blocksize * cost / time
-                    if leading_block_pp > 0.5 * total_pp or (military_emergency and this_priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY):
+                    if leading_block_pp > 0.5 * total_pp or (military_emergency and this_priority == EnumsAI.PriorityType.PRODUCTION_MILITARY):
                         prioritized = True
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
-                if (not prioritized) and (priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION):
+                if (not prioritized) and (priority == EnumsAI.PriorityType.PRODUCTION_INVASION):
                     fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
         print
     fo.updateProductionQueue()

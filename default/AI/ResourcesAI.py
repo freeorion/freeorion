@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-from EnumsAI import AIPriorityType, get_priority_resource_types, AIFocusType
+from EnumsAI import PriorityType, get_priority_resource_types, AIFocusType
 import PlanetUtilsAI
 import random
 import ColonisationAI
@@ -11,7 +11,6 @@ from freeorion_tools import tech_is_complete
 
 resource_timer = Timer('timer_bucket')
 
-AIPriorityTypeNames = AIPriorityType()
 newTargets = {}
 currentFocus = {}
 currentOutput = {}
@@ -92,6 +91,7 @@ def print_resources_priority():
     print "Resource Priorities:"
     resourcePriorities = {}
     for priorityType in get_priority_resource_types():
+        print 'zzxxcc', priorityType, type(priorityType)
         resourcePriorities[priorityType] = foAI.foAIstate.get_priority(priorityType)
 
     sortedPriorities = resourcePriorities.items()
@@ -100,7 +100,8 @@ def print_resources_priority():
     for evaluationPair in sortedPriorities:
         if topPriority < 0:
             topPriority = evaluationPair[0]
-        print "    ResourcePriority |Score: %s | %s " % (AIPriorityTypeNames.name(evaluationPair[0]), evaluationPair[1])
+        print "    zzxxcc %s, %s" % (type(evaluationPair[0]), type(evaluationPair[1]))
+        print "    ResourcePriority |Score: %s | %s " % (evaluationPair[0], evaluationPair[1])
 
     # what is the focus of available resource centers?
     print
@@ -241,8 +242,8 @@ def set_planet_resource_foci():
         # TODO: take into acct splintering of resource groups
         # fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
         # fleetSupplyablePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(fleetSupplyableSystemIDs)
-        ppPrio = foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
-        rpPrio = foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
+        ppPrio = foAI.foAIstate.get_priority(PriorityType.RESOURCE_PRODUCTION)
+        rpPrio = foAI.foAIstate.get_priority(PriorityType.RESOURCE_RESEARCH)
         priorityRatio = float(rpPrio) / (ppPrio + 0.0001)
         resource_timer.start("Shuffle")
         # shuffle(generalPlanetIDs)

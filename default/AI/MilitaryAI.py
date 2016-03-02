@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
 import universe_object
-from EnumsAI import AIFleetMissionType
+from EnumsAI import MissionType
 import FleetUtilsAI
 from FleetUtilsAI import combine_ratings, combine_ratings_list, rating_needed
 import PlanetUtilsAI
@@ -35,7 +35,7 @@ def cur_best_mil_ship_rating(include_designs=False):
         return best_rating
     best_rating = 0.001
     universe = fo.getUniverse()
-    for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY):
+    for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY):
         fleet = universe.getFleet(fleet_id)
         for ship_id in fleet.shipIDs:
             ship = universe.getShip(ship_id)
@@ -119,7 +119,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     if milFleetIDs is not None:
         all_military_fleet_ids = milFleetIDs
     else:
-        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
+        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
     if tryReset and (fo.currentTurn() + empire_id) % 30 == 0 and thisround == "Main":
         try_again(all_military_fleet_ids, try_reset=False, thisround=thisround + " Reset")
 
@@ -720,7 +720,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
     doing_main = (useFleetIDList is None)
     if doing_main:
         foAI.foAIstate.misc['ReassignedFleetMissions'] = []
-        base_defense_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
+        base_defense_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE)
         unassigned_base_defense_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(base_defense_ids)
         for fleet_id in unassigned_base_defense_ids:
             fleet = universe.getFleet(fleet_id)
@@ -731,10 +731,10 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
             fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
-            mission_type = AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE
+            mission_type = MissionType.ORBITAL_DEFENSE
             fleet_mission.add_target(mission_type, target)
 
-        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
+        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
         AIstate.militaryFleetIDs = all_military_fleet_ids
         if not all_military_fleet_ids:
             military_allocations = []
@@ -791,9 +791,9 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
             if sys_id in list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)):
-                mission_type = AIFleetMissionType.FLEET_MISSION_SECURE
+                mission_type = MissionType.SECURE
             else:
-                mission_type = AIFleetMissionType.FLEET_MISSION_MILITARY
+                mission_type = MissionType.MILITARY
             fleet_mission.add_target(mission_type, target)
             fleet_mission.generate_fleet_orders()
             if not doing_main:
@@ -805,7 +805,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
     LAST_ROUND_NAME = "LastRound"
     if round <= LAST_ROUND:
         # check if any fleets remain unassigned
-        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
+        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
         avail_mil_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
         allocations = []
         round += 1
