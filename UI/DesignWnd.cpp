@@ -1284,10 +1284,10 @@ public:
     };
 
 protected:
-    virtual void                    DropsAcceptable(DropsAcceptableIter first
-                                                    , DropsAcceptableIter last
-                                                    , const GG::Pt& pt
-                                                    , GG::Flags<GG::ModKey> mod_keys) const;
+    virtual void                    DropsAcceptable(DropsAcceptableIter first,
+                                                    DropsAcceptableIter last,
+                                                    const GG::Pt& pt,
+                                                    GG::Flags<GG::ModKey> mod_keys) const;
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1489,10 +1489,10 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         int design_id = design_row->DesignID();
 
         ListBox::iterator point;
-        for(point = begin(); point != end(); ++point){
+        for (point = begin(); point != end(); ++point) {
             const BasesListBox::CompletedDesignListBoxRow* irow =
                 boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*point);
-            if(irow->DesignID() == design_id){
+            if(irow && irow->DesignID() == design_id){
                 ++point;
                 break;
             }
@@ -1500,7 +1500,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
         CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y,
                                                                        design_id);
-        Insert(row,point);
+        Insert(row, point);
         row->Resize(row_size);
 
     } else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
@@ -1535,7 +1535,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
 
 void BasesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -1545,9 +1545,10 @@ void BasesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIte
         return;
     }
 
-    if(m_showing_completed_designs && first->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING)
+    if (m_showing_completed_designs && first->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING)
         first->second = true;
 }
+
 void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.empty()) return;
 
@@ -1579,8 +1580,7 @@ void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
 
             DebugLogger()<<"Accepted Drop of id "<<design_id<<" before "<< insert_before_id;
 
-            HumanClientApp::GetApp()->Orders()
-                .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
         }
     }
 
