@@ -420,13 +420,13 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
         Effect::TargetSet                  targets               = targets_and_cause.target_set;
 
         if (log_verbose) {
-            DebugLogger() << "ExecuteEffects effectsgroup: \n" << Dump();
+            DebugLogger() << "\n\nExecuteEffects effectsgroup: \n" << Dump();
             DebugLogger() << "ExecuteEffects Targets before: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
                 DebugLogger() << " ... " << (*t_it)->Dump();
         }
 
-        // for non-meter effects, can do default batch execute
+        // for non-meter effects, or without accounting, can do default batch execute
         if ((!accounting_map && !log_verbose) || (!set_meter_effect && !set_ship_part_meter_effect)) {
             Execute(source_context, targets);
             continue;

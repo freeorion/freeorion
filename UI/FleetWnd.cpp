@@ -34,8 +34,8 @@
 
 namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
-    GG::X FLEET_WND_WIDTH = GG::X(360);
-    GG::Y FLEET_WND_HEIGHT = GG::Y(400);
+    GG::X               FLEET_WND_WIDTH = GG::X(360);
+    GG::Y               FLEET_WND_HEIGHT = GG::Y(400);
 
     // how should ship and fleet icons be scaled and/or positioned in the reserved space
     const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()
