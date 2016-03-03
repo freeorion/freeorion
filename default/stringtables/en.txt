@@ -3301,6 +3301,9 @@ Replace "%1%"
 DESIGN_REPLACE_INVALID_NO_CANDIDATE
 Choose an existing design to replace
 
+ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
+Select a hull, add parts and then click "Add New Design" to create an available design.
+
 
 
 ################

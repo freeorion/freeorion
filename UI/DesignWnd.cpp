@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
+#include "QueueListBox.h"
 #include "EncyclopediaDetailPanel.h"
 #include "IconTextBrowseWnd.h"
 #include "ShipDesignPanel.h"
@@ -1188,8 +1189,10 @@ void DesignWnd::PartPalette::Reset()
 /** List of starting points for designs, such as empty hulls, existing designs
   * kept by this empire or seen elsewhere in the universe, design template
   * scripts or saved (on disk) designs from previous games. */
-class BasesListBox : public CUIListBox {
+class BasesListBox : public QueueListBox {
 public:
+    static const std::string BASES_LIST_BOX_DROP_TYPE;
+
     /** \name Structors */ //@{
     BasesListBox(void);
     //@}
@@ -1284,10 +1287,12 @@ public:
     };
 
 protected:
-    virtual void                    DropsAcceptable(DropsAcceptableIter first,
-                                                    DropsAcceptableIter last,
-                                                    const GG::Pt& pt,
-                                                    GG::Flags<GG::ModKey> mod_keys) const;
+    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    virtual void                    DropsAcceptable(DropsAcceptableIter first
+                                                    , DropsAcceptableIter last
+                                                    , const GG::Pt& pt
+                                                    , GG::Flags<GG::ModKey> mod_keys) const;
+
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1315,13 +1320,16 @@ private:
 };
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h) :
-    CUIListBox::Row(w, h, "BasesListBoxRow")
+    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE)
 {}
 
 void BasesListBox::BasesListBoxRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_WHITE, 1);
+    GG::Pt ul_adjusted_for_drop_indicator = GG::Pt(ul.x, ul.y + GG::Y(1));
+    GG::Pt lr_adjusted_for_drop_indicator = GG::Pt(lr.x, lr.y - GG::Y(2));
+    GG::FlatRectangle(ul_adjusted_for_drop_indicator, lr_adjusted_for_drop_indicator,
+                      ClientUI::WndColor(), GG::CLR_WHITE, 1);
 }
 
 void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1436,8 +1444,10 @@ bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
     return design->LookupInStringtable();
 }
 
+const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
+
 BasesListBox::BasesListBox() :
-    CUIListBox(),
+    QueueListBox(COMPLETE_DESIGN_ROW_DROP_STRING,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
@@ -1451,6 +1461,8 @@ BasesListBox::BasesListBox() :
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
     GG::Connect(RightClickedSignal,     &BasesListBox::BaseRightClicked,    this);
+
+    EnableOrderIssuing(true);
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
@@ -1831,6 +1843,10 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, c
         if (hull_type && parts.empty())
             HullClickedSignal(hull_type);
     }
+}
+
+void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+  BaseRightClicked(it, pt, modkeys);
 }
 
 void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
