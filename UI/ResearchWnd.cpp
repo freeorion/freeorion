@@ -9,6 +9,7 @@
 #include "../util/i18n.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
+#include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
@@ -204,7 +205,7 @@ public:
     /** \name Structors */ //@{
     ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-                "research.ResearchQueueWnd"),
+               "research.ResearchQueueWnd"),
         m_queue_lb(0)
     {
         Init(HumanClientApp::GetApp()->EmpireID());
@@ -372,6 +373,7 @@ void ResearchWnd::ResearchQueueChangedSlot() {
 
 void ResearchWnd::UpdateQueue() {
     DebugLogger() << "ResearchWnd::UpdateQueue()";
+    ScopedTimer timer("ResearchWnd::UpdateQueue");
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
 

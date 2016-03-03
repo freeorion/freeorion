@@ -12,6 +12,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Order.h"
+#include "../util/ScopedTimer.h"
 #include "../universe/Building.h"
 #include "../universe/ShipDesign.h"
 
@@ -901,6 +902,7 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 
 void ProductionWnd::UpdateQueue() {
     DebugLogger() << "ProductionWnd::UpdateQueue()";
+    ScopedTimer timer("ProductionWnd::UpdateQueue");
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
 
