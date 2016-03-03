@@ -1431,6 +1431,9 @@ Toggles verbose logging of combat resolution information.
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Toggles inclusion of situation report messages with errors.
 
+OPTIONS_DB_EFFECT_ACCOUNTING
+Toggles effect accounting tabulation when updating after gamestate changes.
+
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).
 
@@ -2400,6 +2403,9 @@ Verbose logging for debugging
 
 OPTIONS_VERBOSE_SITREP_DESC
 Situation reports with errors
+
+OPTIONS_EFFECT_ACCOUNTING
+Effect accounting
 
 OPTIONS_EFFECTS_THREADS
 Effects processing threads

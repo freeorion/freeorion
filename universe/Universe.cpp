@@ -51,9 +51,10 @@ namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
     void AddOptions(OptionsDB& db) {
-        db.Add("verbose-logging",   UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),   false,  Validator<bool>());
-        db.Add("verbose-combat-logging",   UserStringNop("OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC"),   false,  Validator<bool>());
-        db.Add("effects-threads",   UserStringNop("OPTIONS_DB_EFFECTS_THREADS_DESC"),   8,      RangedValidator<int>(1, 32));
+        db.Add("verbose-logging",           UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),           false,  Validator<bool>());
+        db.Add("verbose-combat-logging",    UserStringNop("OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC"),    false,  Validator<bool>());
+        db.Add("effects-threads",           UserStringNop("OPTIONS_DB_EFFECTS_THREADS_DESC"),           8,      RangedValidator<int>(1, 32));
+        db.Add("effect-accounting",         UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1179,6 +1180,11 @@ bool Universe::DeleteShipDesign(int design_id) {
 void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
 
+    if (do_accounting) {
+        // override if option disabled
+        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+    }
+
     m_effect_specified_empire_object_visibilities.clear();
 
     // cache all activation and scoping condition results before applying
@@ -1210,6 +1216,10 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     if (object_ids.empty())
         return;
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + boost::lexical_cast<std::string>(object_ids.size()) + " objects");
+    if (do_accounting) {
+        // override if disabled
+        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+    }
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
@@ -1238,6 +1248,10 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
+    if (do_accounting) {
+        // override if disabled
+        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+    }
 
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
@@ -1256,7 +1270,10 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
 
 void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_accounting) {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
-
+    if (do_accounting) {
+        // override if disabled
+        do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
+    }
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
@@ -1427,6 +1444,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + boost::lexical_cast<std::string>(objects_vec.size()) + " objects", true);
+    bool do_accounting = GetOptionsDB().Get<bool>("effect-accounting");
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
@@ -1447,6 +1465,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
         // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
         obj->ResetPairedActiveMeters();
+
+        if (!do_accounting)
+            continue;
 
         // record current value(s) of meters after resetting
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
@@ -1476,7 +1497,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     GetEffectsAndTargets(targets_causes, objects_vec);
 
     // Apply and record effect meter adjustments
-    ExecuteEffects(targets_causes, true, true, false, false, false);
+    ExecuteEffects(targets_causes, do_accounting, true, false, false, false);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after executing effects objects:";
@@ -1488,7 +1509,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
-    if (!m_effect_discrepancy_map.empty()) {
+    if (!m_effect_discrepancy_map.empty() && do_accounting) {
         for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
              obj_it != object_ptrs.end(); ++obj_it)
         {
@@ -1515,8 +1536,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 if (meter) {
                     if (GetOptionsDB().Get<bool>("verbose-logging"))
                         DebugLogger() << "object " << obj_id << " has meter " << type
-                                               << ": discrepancy: " << discrepancy
-                                               << " and : " << meter->Dump();
+                                      << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
                     meter->AddToCurrent(discrepancy);
 
@@ -2340,7 +2360,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 continue;
 
             if (log_verbose)
-                DebugLogger() << "\n * * * * * * * * * * * (new effects group log entry)";
+                DebugLogger() << "\n\n * * * * * * * * * * * (new effects group log entry)";
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
