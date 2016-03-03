@@ -2225,30 +2225,26 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::ite
     }
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
-    DebugLogger() << "Got temporary Ptr.";
     if (!obj) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
         return;
     }
     TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
-    DebugLogger() << "Got resource center.";
     if (!res) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;
     }
 
     std::size_t i = m_focus_drop->IteratorToIndex(selected);
-    DebugLogger() << "Got selected index (" << i << ")";
     if (i >= res->AvailableFoci().size()) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
-    DebugLogger() << "Finished checking focus.";
 
     Sound::TempUISoundDisabler sound_disabler;
     DebugLogger() << "About to send focus-changed signal.";
     FocusChangedSignal(res->AvailableFoci().at(i));
-    DebugLogger() << "Done!.";
+    DebugLogger() << "Returned from sending focus-changed signal.";
 }
 
 void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {

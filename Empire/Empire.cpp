@@ -1016,7 +1016,7 @@ void ProductionQueue::Update() {
             turnJump = 0;
             if (firstTurnPPAvailable > DP_TURNS) {
                 DebugLogger()  << "ProductionQueue::Update: Projections for Resource Group halted at " 
-                                        << DP_TURNS << " turns; remaining items in this RG marked completing 'Never'.";
+                               << DP_TURNS << " turns; remaining items in this RG marked completing 'Never'.";
                 break; // this resource group is allocated-out for span of simulation; remaining items in group left as never completing
             }
 
