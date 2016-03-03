@@ -244,8 +244,8 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         return;
     }
 
-    const std::string& LINK_TYPE = m_links[sel_link].type;
-    const std::string& DATA = m_links[sel_link].data;
+    const std::string LINK_TYPE = m_links[sel_link].type;
+    const std::string DATA = m_links[sel_link].data;
 
     LinkClickedSignal(LINK_TYPE, DATA);
 }
