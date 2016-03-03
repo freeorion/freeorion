@@ -34,6 +34,7 @@ namespace {
     boost::shared_ptr<GG::Texture> ShipIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
     boost::shared_ptr<GG::Texture> ProductionIcon() { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png"); }
     boost::shared_ptr<GG::Texture> ResearchIcon()   { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png"); }
+    boost::shared_ptr<GG::Texture> DetectionIcon()  { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "detection.png"); }
     boost::shared_ptr<GG::Texture> WonIcon()        { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "victory.png"); }
     boost::shared_ptr<GG::Texture> LostIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png"); }
 
@@ -54,6 +55,7 @@ namespace {
             m_empire_planet_text(0),
             m_empire_production_text(0),
             m_empire_research_text(0),
+            m_empire_detection_text(0),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
             m_player_status(Message::WAITING),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
@@ -69,6 +71,7 @@ namespace {
             m_empire_planet_text = new CUILabel("", GG::FORMAT_LEFT);
             m_empire_production_text = new CUILabel("", GG::FORMAT_LEFT);
             m_empire_research_text = new CUILabel("", GG::FORMAT_LEFT);
+            m_empire_detection_text = new CUILabel("", GG::FORMAT_LEFT);
 
             //AttachChild(m_player_name_text);
             AttachChild(m_empire_name_text);
@@ -76,6 +79,7 @@ namespace {
             AttachChild(m_empire_planet_text);
             AttachChild(m_empire_production_text);
             AttachChild(m_empire_research_text);
+            AttachChild(m_empire_detection_text);
 
             DoLayout();
             Update();
@@ -112,7 +116,7 @@ namespace {
 
             ProductionIcon()->OrthoBlit(UpperLeft() + m_production_icon_ul, UpperLeft() + m_production_icon_ul + ICON_SIZE);
             ResearchIcon()->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
-
+            DetectionIcon()->OrthoBlit(UpperLeft() + m_detection_icon_ul, UpperLeft() + m_detection_icon_ul + ICON_SIZE);
 
             const ClientApp* app = ClientApp::GetApp();
             if (!app) {
@@ -244,6 +248,7 @@ namespace {
             std::string planet_text;
             std::string production_text;
             std::string research_text;
+            std::string detection_text;
 
             if (empires_ship_count == 0.0) {
                 ship_text       = UserString("NOTHING_VALUE_SYMBOL");
@@ -269,10 +274,13 @@ namespace {
                 research_text   = DoubleToString(empires_research_points, 2, false);
             }
 
+            detection_text = DoubleToString(empire->GetMeter("METER_DETECTION_STRENGTH")->Current(), 0, false);
+
             m_empire_ship_text->SetText(ship_text);
             m_empire_planet_text->SetText(planet_text);
             m_empire_production_text->SetText(production_text);
             m_empire_research_text->SetText(research_text);
+            m_empire_detection_text->SetText(detection_text);
 
             m_player_type = player_info.client_type;
             m_host = player_info.host;
@@ -291,6 +299,7 @@ namespace {
             const GG::X EMPIRE_PLANET_WIDTH(ClientUI::Pts()     * 16/5);
             const GG::X EMPIRE_PRODUCTION_WIDTH(ClientUI::Pts() * 16/5);
             const GG::X EMPIRE_RESEARCH_WIDTH(ClientUI::Pts()   * 16/5);
+            const GG::X EMPIRE_DETECTION_WIDTH(ClientUI::Pts()  * 16/5);
 
 
             GG::X left(DATA_PANEL_BORDER);
@@ -331,6 +340,12 @@ namespace {
             m_empire_research_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_RESEARCH_WIDTH, bottom));
             left += EMPIRE_RESEARCH_WIDTH;
 
+            m_detection_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
+
+            m_empire_detection_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_DETECTION_WIDTH, bottom));
+            left += EMPIRE_DETECTION_WIDTH;
+
             m_player_status_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
 
@@ -351,12 +366,14 @@ namespace {
         GG::Label*              m_empire_planet_text;
         GG::Label*              m_empire_production_text;
         GG::Label*              m_empire_research_text;
+        GG::Label*              m_empire_detection_text;
 
         GG::Pt                  m_diplo_status_icon_ul;
         GG::Pt                  m_ship_icon_ul;
         GG::Pt                  m_planet_icon_ul;
         GG::Pt                  m_production_icon_ul;
         GG::Pt                  m_research_icon_ul;
+        GG::Pt                  m_detection_icon_ul;
         GG::Pt                  m_player_status_icon_ul;
         GG::Pt                  m_player_type_icon_ul;
         GG::Pt                  m_host_icon_ul;
