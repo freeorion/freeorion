@@ -2709,7 +2709,7 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_design_name = new CUIEdit(UserString("DESIGN_NAME_DEFAULT"));
     m_design_description_label = new CUILabel(UserString("DESIGN_WND_DESIGN_DESCRIPTION"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_design_description = new CUIEdit(UserString("DESIGN_DESCRIPTION_DEFAULT"));
-    m_replace_button = new CUIButton(UserString("DESIGN_WND_REPLACE"));
+    m_replace_button = new CUIButton(UserString("DESIGN_WND_UPDATE"));
     m_confirm_button = new CUIButton(UserString("DESIGN_WND_ADD"));
     m_clear_button = new CUIButton(UserString("DESIGN_WND_CLEAR"));
 
@@ -3134,7 +3134,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 
     if (!m_hull) {
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_REPLACE_INVALID_NO_CANDIDATE"))));
+            new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_UPDATE_INVALID_NO_CANDIDATE"))));
 
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL"))));
@@ -3172,8 +3172,8 @@ void DesignWnd::MainPanel::DesignChanged() {
             const std::string& replace_name = replace_ship_design->Name();
 
             m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-                new TextBrowseWnd(UserString("DESIGN_WND_REPLACE"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_REPLACE_DETAIL")) % replace_name))));
+                new TextBrowseWnd(UserString("DESIGN_WND_UPDATE"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL")) % replace_name))));
             m_replace_button->Disable(false);
         }
         m_confirm_button->Disable(false);
