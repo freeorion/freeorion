@@ -171,7 +171,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
             DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
             if (loaded_game_data) {
-                DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
+                if (GetOptionsDB().Get<bool>("verbose-logging"))
+                    DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
                 m_AI->ResumeLoadedGame(save_state_string);
                 Orders().ApplyOrders();
             } else {
