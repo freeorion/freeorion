@@ -944,6 +944,7 @@ void Font::RenderCachedText(RenderCache& cache) const
 {
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
@@ -960,8 +961,7 @@ void Font::RenderCachedText(RenderCache& cache) const
     cache.underline_colors->activate();
     glDrawArrays(GL_QUADS, 0, cache.underline_vertices->size());
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    glPopClientAttrib();
 }
 
 void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,

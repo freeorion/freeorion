@@ -282,8 +282,12 @@ void CUIWnd::Render() {
 
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
+
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     m_vertex_buffer.activate();
 
@@ -315,6 +319,7 @@ void CUIWnd::Render() {
     }
 
     glEnable(GL_TEXTURE_2D);
+
     glPopClientAttrib();
 
     GG::Pt ul = UpperLeft();
