@@ -280,7 +280,7 @@ class AIstate(object):
                 continue
             for sys_id in this_enemy.fleetSupplyableSystemIDs:
                 actual_supply.setdefault(sys_id, []).append(enemy_id)
-            for sys_id, supply_val in this_enemy.supplyProjections(-3, False).items():
+            for sys_id, supply_val in this_enemy.supplyProjections().items():
                 if supply_val >= -2:
                     near_supply.setdefault(sys_id, []).append(enemy_id)
         return actual_supply, near_supply
