@@ -99,7 +99,9 @@
     <ClCompile Include="..\..\GG\src\Font.cpp" />
     <ClCompile Include="..\..\GG\src\GLClientAndServerBuffer.cpp" />
     <ClCompile Include="..\..\GG\src\GroupBox.cpp" />
-    <ClCompile Include="..\..\GG\src\GUI.cpp" />
+    <ClCompile Include="..\..\GG\src\GUI.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4251; 4244; 4099; 4275;4351</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="..\..\GG\src\Layout.cpp" />
     <ClCompile Include="..\..\GG\src\ListBox.cpp" />
     <ClCompile Include="..\..\GG\src\Menu.cpp" />
@@ -116,7 +118,9 @@
     <ClCompile Include="..\..\GG\src\StyleFactory.cpp" />
     <ClCompile Include="..\..\GG\src\TabWnd.cpp" />
     <ClCompile Include="..\..\GG\src\TextControl.cpp" />
-    <ClCompile Include="..\..\GG\src\Texture.cpp" />
+    <ClCompile Include="..\..\GG\src\Texture.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4251; 4244; 4099; 4275;4351</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="..\..\GG\src\Timer.cpp" />
     <ClCompile Include="..\..\GG\src\UnicodeCharsets.cpp" />
     <ClCompile Include="..\..\GG\src\Wnd.cpp" />
