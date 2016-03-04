@@ -331,9 +331,14 @@ public:
         glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
         verts.activate();
         glDrawArrays(GL_LINES, 0, verts.size());
+
         glPopClientAttrib();
+
         glEnable(GL_TEXTURE_2D);
 
         glLineWidth(1.0);
@@ -1495,9 +1500,12 @@ void MapWnd::RenderStarfields() {
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
     m_starfield_verts.activate();
     m_starfield_colours.activate();
     glDrawArrays(GL_POINTS, 0, m_starfield_verts.size());
+
     glPopClientAttrib();
 
     glEnable(GL_TEXTURE_2D);
@@ -1521,6 +1529,7 @@ void MapWnd::RenderFields() {
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // render not visible fields
@@ -1601,7 +1610,9 @@ void MapWnd::RenderGalaxyGas() {
     glEnable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     m_galaxy_gas_quad_vertices.activate();
     m_galaxy_gas_texture_coords.activate();
 
@@ -1621,6 +1632,7 @@ void MapWnd::RenderSystemOverlays() {
          it != m_system_icons.end(); ++it)
     { it->second->RenderOverlay(ZoomFactor()); }
     glPopMatrix();
+
     glPopClientAttrib();
 }
 
@@ -1630,6 +1642,7 @@ void MapWnd::RenderSystems() {
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -2072,6 +2085,8 @@ void MapWnd::RenderScaleCircle() {
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
@@ -2087,6 +2102,7 @@ void MapWnd::RenderScaleCircle() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LINE_SMOOTH);
     glLineWidth(1.0f);
+
     glPopClientAttrib();
 }
 

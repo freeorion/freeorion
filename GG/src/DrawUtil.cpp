@@ -82,6 +82,8 @@ namespace { // file-scope constants and functions
         glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         // draw beveled edges
         if (bevel_thick && (border_color1 != CLR_ZERO || border_color2 != CLR_ZERO)) {
@@ -133,6 +135,8 @@ namespace { // file-scope constants and functions
         glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         vert_buf.activate();
 
@@ -184,6 +188,8 @@ namespace { // file-scope constants and functions
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         vert_buf.activate();
 
@@ -455,6 +461,7 @@ namespace { // file-scope constants and functions
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         vert_buf.activate();
         colour_buf.activate();
@@ -546,6 +553,7 @@ namespace { // file-scope constants and functions
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         verts.activate();
         colours.activate();
@@ -646,6 +654,8 @@ namespace GG {
 
         glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glStencilFunc(GL_ALWAYS, mask, mask);
         glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
@@ -707,6 +717,8 @@ namespace GG {
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(2, GL_FLOAT, 0, vertices);
         glDrawArrays(GL_LINES, 0, 2);
@@ -724,6 +736,8 @@ namespace GG {
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(2, GL_FLOAT, 0, vertices);
         glColor(color);
@@ -749,6 +763,8 @@ namespace GG {
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(2, GL_FLOAT, 0, vertices);
 
