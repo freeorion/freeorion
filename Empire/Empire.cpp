@@ -2107,7 +2107,7 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const
-{return m_ship_designs_ordered.begin(); }
+{ return m_ship_designs_ordered.begin(); }
 
 Empire::ShipDesignItr Empire::ShipDesignEnd() const
 { return m_ship_designs_ordered.end(); }

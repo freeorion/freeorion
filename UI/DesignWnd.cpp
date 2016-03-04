@@ -1288,10 +1288,8 @@ public:
 
 protected:
     void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    virtual void                    DropsAcceptable(DropsAcceptableIter first
-                                                    , DropsAcceptableIter last
-                                                    , const GG::Pt& pt
-                                                    , GG::Flags<GG::ModKey> mod_keys) const;
+    virtual void                    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1487,6 +1485,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
         return;
+    DetachChild(wnds.front());
 
     // replace dragged-away control with new copy
     const GG::Pt row_size = ListRowSize();
@@ -1596,7 +1595,7 @@ void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
         }
     }
 
-    // delete wnd;
+    delete wnd;
 }
 
 void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
@@ -1846,7 +1845,7 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, c
 }
 
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-  BaseRightClicked(it, pt, modkeys);
+    BaseRightClicked(it, pt, modkeys);
 }
 
 void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -3130,62 +3129,47 @@ void DesignWnd::MainPanel::DesignChanged() {
     std::string design_name;
     m_disabled_by_name = false;
 
+    m_replace_button->Disable(true);
+    m_confirm_button->Disable(true);
+
     if (!m_hull) {
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_REPLACE_INVALID_NO_CANDIDATE"))));
 
-        m_replace_button->Disable(true);
-
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL"))));
-
-        m_confirm_button->Disable(true);
     }
     else if (client_empire_id == ALL_EMPIRES) {
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
 
-        m_replace_button->Disable(true);
-
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
-
-        m_confirm_button->Disable(true);
     }
     else if (m_design_name->Text().empty()) { // Whitespace probably shouldn't be OK either.
         m_disabled_by_name = true;
 
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
-        m_replace_button->Disable(true);
-
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
-        m_confirm_button->Disable(true);
     }
     else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
         // I have no idea how this would happen, so I'm not going to display a tooltip for it. ~ Bigjoe5
-        m_replace_button->Disable(true);
-        m_confirm_button->Disable(true);
     }
     else if (CurrentDesignIsRegistered(design_name)) {
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL")) % design_name))));
 
-        m_replace_button->Disable(true);
-
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL")) % design_name))));
-
-        m_confirm_button->Disable(true);
     }
     else {
-        m_replace_button->Disable(true);
-        if(m_replaced_design_id != ShipDesign::INVALID_DESIGN_ID) {
-            const ShipDesign& ship_design = *GetShipDesign(m_replaced_design_id);
-            std::string replace_name= ship_design.Name();
+        const ShipDesign* replace_ship_design = GetShipDesign(m_replaced_design_id);
+        if (m_replaced_design_id != ShipDesign::INVALID_DESIGN_ID && replace_ship_design) {
+            const std::string& replace_name = replace_ship_design->Name();
 
             m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
                 new TextBrowseWnd(UserString("DESIGN_WND_REPLACE"),
@@ -3451,9 +3435,8 @@ void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type)
 void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }
 
-void DesignWnd::AddDesign() {
-  AddDesignCore();
-}
+void DesignWnd::AddDesign()
+{ AddDesignCore(); }
 
 int DesignWnd::AddDesignCore() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -3499,14 +3482,12 @@ void DesignWnd::ReplaceDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     int replaced_id = m_main_panel->GetReplacedDesignID();
 
-    if(new_design_id == ShipDesign::INVALID_DESIGN_ID) return;
+    if (new_design_id == ShipDesign::INVALID_DESIGN_ID) return;
 
     //move it to before the replaced design
-    HumanClientApp::GetApp()->Orders()
-      .IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, replaced_id )));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, replaced_id )));
     //remove old design
-    HumanClientApp::GetApp()->Orders()
-        .IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, replaced_id, true)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, replaced_id, true)));
     DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
 }
 
