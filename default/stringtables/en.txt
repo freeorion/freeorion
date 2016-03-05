@@ -7134,28 +7134,40 @@ DESC_PRODUCED_BY_EMPIRE_NOT
 ''' that was not produced by the %1% empire'''
 
 DESC_METER_VALUE_CURRENT
-''' that has a %1% between %2% and %3%'''
+''' that has %1% between %2% and %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
 ''' that doesn't have a %1% between %2% and %3%'''
 
+DESC_METER_VALUE_CURRENT_MIN
+''' that has %1% of at least %2%'''
+
+DESC_METER_VALUE_CURRENT_MIN_NOT
+''' that has %1% more than %2%'''
+
+DESC_METER_VALUE_CURRENT_MAX
+''' that has %1% of at most %2%'''
+
+DESC_METER_VALUE_CURRENT_MAX_NOT
+''' that has %1% less than %2%'''
+
 DESC_SHIP_PART_METER_VALUE_CURRENT
-''' that has a %2% %1% between %3% and %4%'''
+''' that has %2% %1% between %3% and %4%'''
 
 DESC_SHIP_PART_METER_VALUE_CURRENT_NOT
-''' that doesn't have a %2% %1% between %3% and %4%'''
+''' that doesn't have %2% %1% between %3% and %4%'''
 
 DESC_EMPIRE_METER_VALUE_CURRENT
-''' if empire %4% has a %1% between %2% and %3%'''
+''' if empire %4% has %1% between %2% and %3%'''
 
 DESC_EMPIRE_METER_VALUE_CURRENT_NOT
-''' if empire %4% doesn't have a %1% between %2% and %3%'''
+''' if empire %4% doesn't have %1% between %2% and %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE
-''' that belongs to an empire with a %1% stockpile between %2% and %3%'''
+''' that belongs to an empire with %1% stockpile between %2% and %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
-''' that doesn't belong to an empire with a %1% stockpile between %2% and %3%'''
+''' that doesn't belong to an empire with %1% stockpile between %2% and %3%'''
 
 DESC_VISIBLE_TO_EMPIRE
 ''' that is visible to the %1% empire'''

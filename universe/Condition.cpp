@@ -5460,12 +5460,27 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const {
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_METER_VALUE_CURRENT")
-        : UserString("DESC_METER_VALUE_CURRENT_NOT"))
-        % UserString(boost::lexical_cast<std::string>(m_meter))
-        % low_str
-        % high_str);
+
+    if (m_low && !m_high) {
+        return str(FlexibleFormat((!negated) ?
+                                    UserString("DESC_METER_VALUE_CURRENT_MIN") :
+                                    UserString("DESC_METER_VALUE_CURRENT_MIN_NOT"))
+            % UserString(boost::lexical_cast<std::string>(m_meter))
+            % low_str);
+    } else if (m_high && !m_low) {
+        return str(FlexibleFormat((!negated) ?
+                                    UserString("DESC_METER_VALUE_CURRENT_MAX") :
+                                    UserString("DESC_METER_VALUE_CURRENT_MAX_NOT"))
+            % UserString(boost::lexical_cast<std::string>(m_meter))
+            % high_str);
+    } else {
+        return str(FlexibleFormat((!negated) ?
+                                    UserString("DESC_METER_VALUE_CURRENT") :
+                                    UserString("DESC_METER_VALUE_CURRENT_NOT"))
+            % UserString(boost::lexical_cast<std::string>(m_meter))
+            % low_str
+            % high_str);
+    }
 }
 
 std::string Condition::MeterValue::Dump() const {
