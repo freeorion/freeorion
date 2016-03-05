@@ -59,6 +59,7 @@
     (Colour)                                    \
     (Condition)                                 \
     (Construction)                              \
+    (Consumption)                               \
     (ContainedBy)                               \
     (Contains)                                  \
     (Core)                                      \

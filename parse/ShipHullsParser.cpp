@@ -28,7 +28,7 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_ {
+    struct insert_hull_ {
 #if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
@@ -44,7 +44,7 @@ namespace {
             }
         }
     };
-    const boost::phoenix::function<insert_> insert;
+    const boost::phoenix::function<insert_hull_> insert_hull;
 
     struct rules {
         rules() {
@@ -73,6 +73,7 @@ namespace {
             using phoenix::construct;
             using phoenix::new_;
             using phoenix::push_back;
+            using phoenix::insert;
 
             hull_prefix
                 =    tok.Hull_
@@ -123,9 +124,37 @@ namespace {
                 >   producible                                           [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
-                > -(parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ])
-                >   parse::label(Icon_token)        > tok.string
+                > -(consumption(_g, _h))
+                > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
+                >   parse::label(Icon_token)         > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
+            ;
+
+            consumption
+                =   parse::label(Consumption_token)
+                >   '['
+                >  *(
+                        consumable_meter(_r1)
+                    |   consumable_special(_r2)
+                    )
+                >   ']'
+                |   consumable_meter(_r1)
+                |   consumable_special(_r2)
+            ;
+
+            typedef std::map<MeterType, ValueRef::ValueRefBase<double>*>::value_type meter_consumable_map_value_type;
+            consumable_meter
+                =   parse::non_ship_part_meter_type_enum() [ _a = _1 ]
+                >   parse::label(Consumption_token) > double_value_ref
+                [ insert(_r1, construct<meter_consumable_map_value_type>(_a, _1)) ]
+            ;
+
+            typedef std::map<std::string, ValueRef::ValueRefBase<double>*>::value_type special_consumable_map_value_type;
+            consumable_special
+                =   tok.Special_
+                >   parse::label(Name_token)        > tok.string [ _a = _1 ]
+                >   parse::label(Consumption_token) > double_value_ref
+                [ insert(_r1, construct<special_consumable_map_value_type>(_a, _1)) ]
             ;
 
             hull
@@ -134,7 +163,7 @@ namespace {
                 >  -slots(_e)
                 >   common_params [ _d = _1 ]
                 >   parse::label(Graphic_token) > tok.string
-                    [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
+                    [ insert_hull(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start
@@ -148,6 +177,9 @@ namespace {
             slots.name("Slots");
             location.name("Location");
             common_params.name("Part Hull Common Params");
+            consumption.name("Consumption");
+            consumable_meter.name("Consumable Meter");
+            consumable_special.name("Consumable Special");
             hull.name("Hull");
 
 #if DEBUG_PARSERS
@@ -159,6 +191,9 @@ namespace {
             debug(slots);
             debug(location);
             debug(common_params);
+            debug(consumption);
+            debug(consumable_meter);
+            debug(consumable_special);
             debug(hull);
 #endif
 
@@ -170,17 +205,6 @@ namespace {
             void (std::string&, std::string&),
             parse::skipper_type
         > hull_prefix_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (),
-            qi::locals<
-                std::string&,
-                std::string&,
-                std::string&
-            >,
-            parse::skipper_type
-        > art_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -241,6 +265,31 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&,
+                  std::map<std::string, ValueRef::ValueRefBase<double>*>&),
+            parse::skipper_type
+        > consumption_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&),
+            qi::locals<
+                MeterType
+            >,
+            parse::skipper_type
+        > consumable_meter_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::map<std::string, ValueRef::ValueRefBase<double>*>&),
+            qi::locals<
+                std::string
+            >,
+            parse::skipper_type
+        > consumable_special_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             void (std::map<std::string, HullType*>&),
             qi::locals<
                 std::string,
@@ -265,8 +314,10 @@ namespace {
         slots_rule                      slots;
         location_rule                   location;
         part_hull_common_params_rule    common_params;
+        consumption_rule                consumption;
+        consumable_meter_rule           consumable_meter;
+        consumable_special_rule         consumable_special;
         hull_rule                       hull;
-        art_rule                        art;
         start_rule                      start;
     };
 }
