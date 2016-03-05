@@ -2561,7 +2561,8 @@ public:
     /** \name Accessors */ //@{
     const std::vector<std::string>      Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
     const std::string&                  Hull() const;               //!< returns name of hull of current shown design
-    const std::string&                  DesignName() const;         //!< returns name currently entered for design
+    bool                                IsDesignNameValid() const;  //!< checks design name validity
+    const std::string                   ValidatedDesignName() const;//!< returns name currently entered for design or valid default
     const std::string&                  DesignDescription() const;  //!< returns description currently entered for design
 
     boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
@@ -2754,8 +2755,15 @@ const std::string& DesignWnd::MainPanel::Hull() const {
         return EMPTY_STRING;
 }
 
-const std::string& DesignWnd::MainPanel::DesignName() const
-{ return m_design_name->Text(); }
+bool DesignWnd::MainPanel::IsDesignNameValid() const {
+    // Whitespace probably shouldn't be OK either.
+    // make sure name isn't blank.  TODO: prevent duplicate names?
+    return !m_design_name->Text().empty();
+}
+
+const std::string DesignWnd::MainPanel::ValidatedDesignName() const {
+    return (IsDesignNameValid()) ? m_design_name->Text() : UserString("DESIGN_NAME_DEFAULT");
+}
 
 const std::string& DesignWnd::MainPanel::DesignDescription() const
 { return m_design_description->Text(); }
@@ -3146,7 +3154,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR"))));
     }
-    else if (m_design_name->Text().empty()) { // Whitespace probably shouldn't be OK either.
+    else if (!IsDesignNameValid()) {
         m_disabled_by_name = true;
 
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
@@ -3167,21 +3175,26 @@ void DesignWnd::MainPanel::DesignChanged() {
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL")) % design_name))));
     }
     else {
-        const ShipDesign* replace_ship_design = GetShipDesign(m_replaced_design_id);
-        if (m_replaced_design_id != ShipDesign::INVALID_DESIGN_ID && replace_ship_design) {
-            const std::string& replace_name = replace_ship_design->Name();
+        std::string new_design_name = ValidatedDesignName();
+        const ShipDesign* replaced_ship_design = GetShipDesign(m_replaced_design_id);
+
+        if (m_replaced_design_id != ShipDesign::INVALID_DESIGN_ID && replaced_ship_design) {
+            const std::string& replaced_name = replaced_ship_design->Name();
 
             m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
                 new TextBrowseWnd(UserString("DESIGN_WND_UPDATE"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL")) % replace_name))));
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL")) % replaced_name % new_design_name))));
             m_replace_button->Disable(false);
         }
+        m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                new TextBrowseWnd(UserString("DESIGN_WND_ADD"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL")) % new_design_name))));
         m_confirm_button->Disable(false);
     }
 }
 
 void DesignWnd::MainPanel::DesignNameChanged() {
-    if (m_disabled_by_name || (m_design_name->Text().empty() && !m_confirm_button->Disabled()))
+    if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()) || IsDesignNameValid())
         DesignChangedSignal();
     else if (GetOptionsDB().Get<bool>("UI.design-pedia-dynamic"))
         DesignNameChangedSignal();
@@ -3203,7 +3216,7 @@ std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_desi
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     if (ShipDesign* design = m_incomplete_design.get()) {
         if (design->Hull() ==           this->Hull() &&
-            design->Name() ==           this->DesignName() &&
+            design->Name() ==           this->m_design_name->Text() &&
             design->Description() ==    this->DesignDescription() &&
             design->Parts() ==          this->Parts())
         {
@@ -3222,10 +3235,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
         return;
     }
 
-    // make sure name isn't blank.  TODO: prevent duplicate names?
-    std::string name = this->DesignName();
-    if (name.empty())
-        name = UserString("DESIGN_NAME_DEFAULT");
+    std::string name = this->ValidatedDesignName();
 
     const std::string& description = this->DesignDescription();
 
@@ -3451,10 +3461,7 @@ int DesignWnd::AddDesignCore() {
         return ShipDesign::INVALID_DESIGN_ID;
     }
 
-    // make sure name isn't blank.  TODO: prevent duplicate names?
-    std::string name = m_main_panel->DesignName();
-    if (name == "")
-        name = UserString("DESIGN_NAME_DEFAULT");
+    std::string name = m_main_panel->ValidatedDesignName();
 
     const std::string& description = m_main_panel->DesignDescription();
 
