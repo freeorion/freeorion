@@ -1287,9 +1287,9 @@ public:
     };
 
 protected:
-    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    virtual void                    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    virtual void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    virtual void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                 const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1458,7 +1458,6 @@ BasesListBox::BasesListBox() :
 
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
-    GG::Connect(RightClickedSignal,     &BasesListBox::BaseRightClicked,    this);
 
     EnableOrderIssuing(true);
 }
@@ -1541,6 +1540,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
     // remove dragged-away row from this ListBox
     CUIListBox::ChildrenDraggedAway(wnds, destination);
+    DetachChild(wnds.front());
 
 }
 
