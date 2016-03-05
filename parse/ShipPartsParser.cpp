@@ -7,7 +7,6 @@
 #include "Label.h"
 #include "Parse.h"
 #include "ParseImpl.h"
-#include "ShipPartStatsParser.h"
 #include "ValueRefParser.h"
 #include "../universe/ShipDesign.h"
 
@@ -27,7 +26,7 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_ {
+    struct insert_part_type_ {
 #if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
@@ -43,7 +42,7 @@ namespace {
             }
         }
     };
-    const boost::phoenix::function<insert_> insert;
+    const boost::phoenix::function<insert_part_type_> insert_part_type;
 
     struct rules {
         rules() {
@@ -127,7 +126,7 @@ namespace {
                   )
                 >   slots(_f)
                 >   common_params [ _e = _1 ]
-                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _g)) ]
+                    [ insert_part_type(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _g)) ]
                 ;
 
             start

@@ -208,9 +208,6 @@
     <ClInclude Include="..\..\parse\EffectParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse\ShipPartStatsParser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\parse\Tokens.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
