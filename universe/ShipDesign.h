@@ -45,11 +45,15 @@ struct PartHullCommonParams {
                          const std::set<std::string>& tags_,
                          Condition::ConditionBase* location_,
                          const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_,
-                         const std::string& icon_) :
+                         const std::string& icon_,
+                         std::map<MeterType, ValueRef::ValueRefBase<double>*> production_meter_consumption_,
+                         std::map<std::string, ValueRef::ValueRefBase<double>*> production_special_consumption_) :
         production_cost(production_cost_),
         production_time(production_time_),
         producible(producible_),
         tags(),
+        production_meter_consumption(production_meter_consumption_),
+        production_special_consumption(production_special_consumption_),
         location(location_),
         effects(effects_),
         icon(icon_)
@@ -62,6 +66,8 @@ struct PartHullCommonParams {
     ValueRef::ValueRefBase<int>*                            production_time;
     bool                                                    producible;
     std::set<std::string>                                   tags;
+    std::map<MeterType, ValueRef::ValueRefBase<double>*>    production_meter_consumption;
+    std::map<std::string, ValueRef::ValueRefBase<double>*>  production_special_consumption;
     Condition::ConditionBase*                               location;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   effects;
     std::string                                             icon;
@@ -81,6 +87,8 @@ public:
         m_production_time(0),
         m_mountable_slot_types(),
         m_tags(),
+        m_production_meter_consumption(),
+        m_production_special_consumption(),
         m_location(0),
         m_effects(),
         m_icon(),
@@ -102,6 +110,8 @@ public:
         m_producible(common_params.producible),
         m_mountable_slot_types(mountable_slot_types),
         m_tags(),
+        m_production_meter_consumption(common_params.production_meter_consumption),
+        m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
         m_effects(),
         m_icon(common_params.icon),
@@ -132,6 +142,11 @@ public:
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
     bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
 
+    const std::map<MeterType, ValueRef::ValueRefBase<double>*>&
+                            ProductionMeterConsumption() const  { return m_production_meter_consumption; }
+    const std::map<std::string, ValueRef::ValueRefBase<double>*>&
+                            ProductionSpecialConsumption() const{ return m_production_special_consumption; }
+
     const std::set<std::string>& Tags() const       { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const
@@ -152,6 +167,8 @@ private:
     bool                                                    m_producible;
     std::vector<ShipSlotType>                               m_mountable_slot_types;
     std::set<std::string>                                   m_tags;
+    std::map<MeterType, ValueRef::ValueRefBase<double>*>    m_production_meter_consumption;
+    std::map<std::string, ValueRef::ValueRefBase<double>*>  m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
     std::string                                             m_icon;
@@ -260,6 +277,8 @@ public:
         m_producible(false),
         m_slots(),
         m_tags(),
+        m_production_meter_consumption(),
+        m_production_special_consumption(),
         m_location(0),
         m_effects(),
         m_graphic(),
@@ -283,6 +302,8 @@ public:
         m_producible(common_params.producible),
         m_slots(slots),
         m_tags(),
+        m_production_meter_consumption(common_params.production_meter_consumption),
+        m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
@@ -309,6 +330,8 @@ public:
         m_producible(common_params.producible),
         m_slots(slots),
         m_tags(),
+        m_production_meter_consumption(common_params.production_meter_consumption),
+        m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
@@ -340,6 +363,11 @@ public:
     int                 ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this hull
     bool                Producible() const      { return m_producible; }        ///< returns whether this hull type is producible by players and appears on the design screen
 
+    const std::map<MeterType, ValueRef::ValueRefBase<double>*>&
+                            ProductionMeterConsumption() const  { return m_production_meter_consumption; }
+    const std::map<std::string, ValueRef::ValueRefBase<double>*>&
+                            ProductionSpecialConsumption() const{ return m_production_special_consumption; }
+
     unsigned int        NumSlots() const        { return m_slots.size(); }      ///< returns total number of of slots in hull
     unsigned int        NumSlots(ShipSlotType slot_type) const;                 ///< returns number of of slots of indicated type in hull
     const std::vector<Slot>&    Slots() const   { return m_slots; }             ///< returns vector of slots in hull
@@ -369,6 +397,8 @@ private:
     bool                                                    m_producible;
     std::vector<Slot>                                       m_slots;
     std::set<std::string>                                   m_tags;
+    std::map<MeterType, ValueRef::ValueRefBase<double>*>    m_production_meter_consumption;
+    std::map<std::string, ValueRef::ValueRefBase<double>*>  m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
     std::string                                             m_graphic;
@@ -448,6 +478,11 @@ public:
     float                           PerTurnCost(int empire_id, int location_id) const;          ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
     int                             ProductionTime(int empire_id, int location_id) const;       ///< returns the time in turns it takes to build a ship of this design
     bool                            Producible() const      { return m_producible; }            ///< returns whether this design is producible by players and appears on the production screen list
+
+    std::map<MeterType, ValueRef::ValueRefBase<double>*>
+                                    ProductionMeterConsumption() const;
+    std::map<std::string, ValueRef::ValueRefBase<double>*>
+                                    ProductionSpecialConsumption() const;
 
     float                           Speed() const           { return m_speed; }                 ///< returns design speed along starlanes
 
@@ -643,7 +678,9 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect);
+        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
+        & BOOST_SERIALIZATION_NVP(production_meter_consumption)
+        & BOOST_SERIALIZATION_NVP(production_special_consumption);
 }
 
 template <class Archive>
@@ -662,7 +699,9 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_icon);
+        & BOOST_SERIALIZATION_NVP(m_icon)
+        & BOOST_SERIALIZATION_NVP(production_meter_consumption)
+        & BOOST_SERIALIZATION_NVP(production_special_consumption);
 }
 
 #endif // _ShipDesign_h_

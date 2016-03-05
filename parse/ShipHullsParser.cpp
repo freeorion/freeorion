@@ -63,6 +63,8 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
+            qi::_g_type _g;
+            qi::_h_type _h;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
@@ -123,7 +125,7 @@ namespace {
                 >   location(_e)
                 > -(parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ])
                 >   parse::label(Icon_token)        > tok.string
-                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
+                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
             ;
 
             hull
@@ -230,7 +232,9 @@ namespace {
                 bool,
                 std::set<std::string>,
                 Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >
+                std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
+                std::map<MeterType, ValueRef::ValueRefBase<double>*>,
+                std::map<std::string, ValueRef::ValueRefBase<double>*>
             >,
             parse::skipper_type
         > part_hull_common_params_rule;

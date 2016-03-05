@@ -109,7 +109,7 @@ namespace {
                 >   location(_e)
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 >   parse::label(Icon_token)        > tok.string
-                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
+                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
             ;
 
             part_type
@@ -186,7 +186,9 @@ namespace {
                 bool,
                 std::set<std::string>,
                 Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >
+                std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
+                std::map<MeterType, ValueRef::ValueRefBase<double>*>,
+                std::map<std::string, ValueRef::ValueRefBase<double>*>
             >,
             parse::skipper_type
         > part_hull_common_params_rule;
