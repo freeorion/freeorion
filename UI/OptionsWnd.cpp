@@ -37,7 +37,7 @@ namespace {
     const GG::X INDENTATION(20);
     const GG::X ROW_WIDTH(PAGE_WIDTH - 4 - 14 - 5);
     const GG::X COLOR_SELECTOR_WIDTH(75);
-    const GG::X SPIN_WIDTH(65);
+    const GG::X SPIN_WIDTH(92);
     const int LAYOUT_MARGIN = 5;
 
     const std::string OPTIONS_WND_NAME = "options";
