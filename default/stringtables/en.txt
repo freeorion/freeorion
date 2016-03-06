@@ -159,7 +159,6 @@ NEW_ASTEROIDS_NAME
 NEW_PLANET_NAME
 %1% I
 
-
 EMPTY_SPACE
 Deep Space
 
@@ -4343,6 +4342,12 @@ COLUMN_SORT_DESCENDING
 METERS_SUBMENU
 Meters
 
+PLANETS_SUBMENU
+Planets
+
+FLEETS_SUBMENU
+Fleet / Ships
+
 ID
 ID
 
@@ -4386,7 +4391,7 @@ ETA
 Turns To Destination
 
 PRODUCED_BY
-Produced By Empire ID
+Produced By
 
 SYSTEM
 Current System
