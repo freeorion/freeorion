@@ -119,7 +119,6 @@ const GG::Y CUIWnd::BUTTON_TOP_OFFSET(3);
 const GG::X CUIWnd::BUTTON_RIGHT_OFFSET(15);
 const GG::X CUIWnd::MINIMIZED_WND_WIDTH(150);
 const GG::X CUIWnd::BORDER_LEFT(5);
-const GG::Y CUIWnd::BORDER_TOP(21);
 const GG::X CUIWnd::BORDER_RIGHT(5);
 const GG::Y CUIWnd::BORDER_BOTTOM(5);
 const int CUIWnd::OUTER_EDGE_ANGLE_OFFSET = 8;
@@ -198,7 +197,7 @@ void CUIWnd::Init(const std::string& wnd_name) {
         GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
 
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
-    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
+    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
 }
 
 void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -398,7 +397,7 @@ void CUIWnd::MouseLeave() {
 }
 
 GG::Pt CUIWnd::ClientUpperLeft() const
-{ return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_TOP); }
+{ return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, TopBorder()); }
 
 GG::Pt CUIWnd::ClientLowerRight() const
 { return m_minimized ? LowerRight() : LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM); }
@@ -472,13 +471,13 @@ void CUIWnd::InitButtons() {
 }
 
 GG::Pt CUIWnd::MinimizedSize() const
-{ return GG::Pt(MINIMIZED_WND_WIDTH, BORDER_TOP); }
+{ return GG::Pt(MINIMIZED_WND_WIDTH, TopBorder()); }
 
 GG::X CUIWnd::LeftBorder() const
 { return BORDER_LEFT; }
 
 GG::Y CUIWnd::TopBorder() const
-{ return BORDER_TOP; }
+{ return GG::Y(ClientUI::TitlePts()*3/2); }
 
 GG::X CUIWnd::RightBorder() const
 { return BORDER_RIGHT; }
@@ -529,7 +528,7 @@ void CUIWnd::MinimizeClicked() {
 
     } else {
         m_minimized = false;
-        SetMinSize(GG::Pt(MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 10));
+        SetMinSize(GG::Pt(MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 10));
         Resize(GG::Pt(m_original_size));
         Show();
     }

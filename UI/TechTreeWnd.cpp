@@ -371,7 +371,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
 
     // prevent window from being shrunk less than one button width, or current number of rows of height
     SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD,
-                      CUIWnd::BORDER_TOP + CUIWnd::BORDER_BOTTOM + UPPER_LEFT_PAD + (++row)*m_row_offset));
+                      TopBorder() + BottomBorder() + UPPER_LEFT_PAD + (++row)*m_row_offset));
 }
 
 void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {

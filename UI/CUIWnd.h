@@ -108,6 +108,11 @@ public:
     virtual GG::Pt  ClientUpperLeft() const;
     virtual GG::Pt  ClientLowerRight() const;
     virtual bool    InWindow(const GG::Pt& pt) const;
+
+    GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
+    GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
+    GG::X           RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
+    GG::Y           BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
     //@}
 
     //! \name Mutators //@{
@@ -141,10 +146,6 @@ public:
 protected:
     //! \name Accessors //@{
     virtual GG::Pt  MinimizedSize() const;              //!< the size of a minimized CUIWnd
-    GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
-    GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
-    GG::X           RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
-    GG::Y           BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
     int             InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     bool            InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
     void            SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
@@ -203,7 +204,6 @@ protected:
     static const GG::X      BUTTON_RIGHT_OFFSET;
     static const GG::X      MINIMIZED_WND_WIDTH;
     static const GG::X      BORDER_LEFT;
-    static const GG::Y      BORDER_TOP;
     static const GG::X      BORDER_RIGHT;
     static const GG::Y      BORDER_BOTTOM;
     static const int        OUTER_EDGE_ANGLE_OFFSET;
