@@ -43,7 +43,7 @@ def calculate_priorities():
     prioritiees_timer.start('Evaluating Military Status')
     MilitaryAI.get_military_fleets()  # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
     prioritiees_timer.start('reporting Production Priority')
-    print("calculating priorities")
+    print("Calculating priorities")
     calculateIndustryPriority()  # purely for reporting purposes
     prioritiees_timer.start('setting Exploration Priority')
 
@@ -213,10 +213,10 @@ def calculateExplorationPriority():
     explorationPriority = int(40 * scoutsNeeded)
 
     print
-    print "Number of Scouts : " + str(numScouts)
+    print "Number of Scouts: " + str(numScouts)
     print "Number of Unexplored systems: " + str(numUnexploredSystems)
-    print "military size: ", milShips
-    print "Priority for scouts : " + str(explorationPriority)
+    print "Military size: ", milShips
+    print "Priority for scouts: " + str(explorationPriority)
 
     return explorationPriority
 
@@ -309,7 +309,7 @@ def calculateOutpostPriority():
     # print
     # print "Number of Outpost Ships : " + str(num_outpost_ships)
     # print "Number of Colonisable outposts: " + str(num_outpost_planet_ids)
-    print "Priority for outpost ships : " + str(outpost_priority)
+    print "Priority for outpost ships: " + str(outpost_priority)
 
     if outpost_priority < 1: return 0
 

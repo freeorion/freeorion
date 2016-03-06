@@ -42,7 +42,6 @@ def cur_best_mil_ship_rating(include_designs=False):
             if ship:
                 ship_info = [(ship.id, ship.designID, ship.speciesName)]
                 ship_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=ship_info)['overall']
-                print "ship rating: ", ship_rating
                 best_rating = max(best_rating, ship_rating)
     best_ship_rating_cache[current_turn] = best_rating
     if include_designs:
@@ -744,7 +743,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
         mil_needing_repair_ids, avail_mil_fleet_ids = avail_mil_needing_repair(avail_mil_fleet_ids)
         these_allocations = military_allocations
         print "=================================================="
-        print "assigning military fleets"
+        print "Assigning military fleets"
         print "---------------------------------"
     else:
         avail_mil_fleet_ids = list(useFleetIDList)

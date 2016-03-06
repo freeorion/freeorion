@@ -359,8 +359,11 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     system_secured = system_secured and system_status.get('myFleetRating', 0)
 
     if verbose:
-        print "invasion eval of %s %d --- maxShields %.1f -- sysFleetThreat %.1f -- sysMonsterThreat %.1f" % (
-            planet.name, planet_id, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat,
+        print ("Invasion eval of %s\n"
+               " - maxShields: %.1f\n"
+               " - sysFleetThreat: %.1f\n"
+               " - sysMonsterThreat: %.1f") % (
+            planet, planet.currentMeterValue(fo.meterType.maxShield), system_fleet_treat,
             system_monster_threat)
     supply_val = 0
     enemy_val = 0
@@ -391,9 +394,18 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, pop_val+supply_val+bld_tally+enemy_val-0.8*troop_cost)
     if clear_path:
         planet_score *= 1.5
-    invasion_score = [planet_score, planned_troops]
-    print invasion_score, "projected Troop Cost:", troop_cost, ", threatFactor: ", threat_factor, ", planet detail ", detail, "popval, supplyval, bldval, enemyval", pop_val, supply_val, bld_tally, enemy_val
-    return invasion_score
+    if verbose:
+        print (' - planet score: %.2f\n'
+               ' - troop score: %.2f\n'
+               ' - projected troop cost: %.1f\n'
+               ' - threat factor: %s\n'
+               ' - planet detail: %s\n'
+               ' - popval: %.1f\n'
+               ' - supplyval: %.1f\n'
+               ' - bldval: %s\n'
+               ' - enemyval: %s') % (planet_score, planned_troops, troop_cost,
+                                     threat_factor, detail, pop_val, supply_val, bld_tally, enemy_val)
+    return [planet_score, planned_troops]
 
 
 def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):

@@ -50,15 +50,15 @@ def assign_scouts_to_explore_systems():
 
     already_covered, available_scouts = get_current_exploration_info()
 
-    print "explorable sys IDs: %s" % explore_list
-    print "already targeted: %s" % already_covered
+    print "Explorable sys IDs: %s" % explore_list
+    print "Already targeted: %s" % already_covered
     needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
     check_list = foAI.foAIstate.needsEmergencyExploration + needs_vis + explore_list
     needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered]  # emergency coverage can be due to invasion detection trouble, etc.
-    print "needs coverage: %s" % needs_coverage
+    print "Needs coverage: %s" % needs_coverage
 
-    print "available scouts & AIstate locs: %s" % [(x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', -1)) for x in available_scouts]
-    print "available scouts & universe locs: %s" % [(x, universe.getFleet(x).systemID) for x in available_scouts]
+    print "Available scouts & AIstate locs: %s" % [(x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', -1)) for x in available_scouts]
+    print "Available scouts & universe locs: %s" % [(x, universe.getFleet(x).systemID) for x in available_scouts]
     if not needs_coverage or not available_scouts:
         return
 
@@ -87,7 +87,7 @@ def assign_scouts_to_explore_systems():
                                                               systems_checked=[], fleet_pool_set=available_scouts,
                                                               fleet_list=found_fleets, verbose=False)
         if not this_fleet_list:
-            print "seem to have run out of scouts while trying to cover sys_id %d" % this_sys_id
+            print "Seem to have run out of scouts while trying to cover sys_id %d" % this_sys_id
             break  # must have ran out of scouts
         fleet_id = this_fleet_list[0]
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
@@ -98,7 +98,7 @@ def assign_scouts_to_explore_systems():
         else:  # system too far out, skip it, but can add scout back to available pool
             print "sys_id %d too far out for fleet ( ID %d ) to reach" % (this_sys_id, fleet_id)
             available_scouts.update(this_fleet_list)
-    print "sent scouting fleets to sysIDs : %s" % sent_list
+    print "Sent scouting fleets to sysIDs : %s" % sent_list
     return
     # pylint: disable=pointless-string-statement
     """

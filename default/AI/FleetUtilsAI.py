@@ -439,20 +439,20 @@ def generate_fleet_orders_for_fleet_missions():
 
     # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
     print "Fleets by Role\n"
-    print "Exploration Fleets : %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
-    print "Colonization Fleets:%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
-    print "Outpost Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
-    print "Invasion Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVASION)
-    print "Military Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
-    print "Orbital Defense Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
-    print "Outpost Base Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST)
-    print "Invasion Base Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION)
-    print "Securing Fleets :%s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_SECURE)
-    print "Unclassifiable Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVALID)
+    print "Exploration Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
+    print "Colonization Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    print "Outpost Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    print "Invasion Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVASION)
+    print "Military Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
+    print "Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
+    print "Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST)
+    print "Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION)
+    print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_SECURE)
+    print "Unclassifiable Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVALID)
 
     if fo.currentTurn() < 50:
         print
-        print "Explored systems :"
+        print "Explored systems:"
         print_systems(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
         print "Unexplored systems:"
         print_systems(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
@@ -460,11 +460,11 @@ def generate_fleet_orders_for_fleet_missions():
 
     exploration_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_EXPLORATION])
     if exploration_fleet_missions:
-        print "Exploration targets: "
+        print "Exploration targets:"
+        for explorationAIFleetMission in exploration_fleet_missions:
+            print " - %s" % explorationAIFleetMission
     else:
         print "Exploration targets: None"
-    for explorationAIFleetMission in exploration_fleet_missions:
-        print "    %s" % explorationAIFleetMission
 
     colonisation_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_COLONISATION])
     if colonisation_fleet_missions:
@@ -544,7 +544,7 @@ def issue_fleet_orders_for_fleet_missions():
     thisround = 0
     while thisround < 3:
         thisround += 1
-        print "issuing fleet orders Round %d:" % thisround
+        print "Issuing fleet orders round %d:" % thisround
         for mission in fleet_missions:
             fleet_id = mission.fleet.id
             fleet = mission.fleet.get_object()
@@ -562,13 +562,9 @@ def print_systems(system_ids):
     empire = fo.getEmpire()
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
     for system_id in system_ids:
-        # determine if system is in supplied
-        supplied_system = ""
-        if system_id in fleet_supplyable_system_ids:
-            supplied_system = " supplied"
-
         system = universe.getSystem(system_id)
         if system:
-            print "    name:%s id: %s %s" % (system.name, system_id, supplied_system)
+            print "  %s" % system,
         else:
-            print "    name:??? id: %s %s" % (system_id, supplied_system)
+            print "  S_%s<>" % system_id,
+        print 'supplied' if system_id in fleet_supplyable_system_ids else ''
