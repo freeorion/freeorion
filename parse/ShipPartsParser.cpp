@@ -8,6 +8,7 @@
 #include "Parse.h"
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "CommonParams.h"
 #include "../universe/ShipDesign.h"
 
 #include "../universe/Condition.h"
@@ -79,12 +80,6 @@ namespace {
                 >   parse::label(Class_token)       > parse::enum_parser<ShipPartClass>() [ _r3 = _1 ]
                 ;
 
-            producible
-                =   tok.Unproducible_ [ _val = false ]
-                |   tok.Producible_ [ _val = true ]
-                |   eps [ _val = true ]
-                ;
-
             slots
                 =  -(
                         parse::label(MountableSlotTypes_token)
@@ -103,7 +98,7 @@ namespace {
             common_params
                 =   parse::label(BuildCost_token)   > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_token)   > flexible_int_ref  [ _b = _1 ]
-                >   producible                                          [ _c = _1 ]
+                >   parse::detail::producible_parser()                  [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
@@ -134,7 +129,6 @@ namespace {
                 ;
 
             part_type_prefix.name("Part");
-            producible.name("Producible or Unproducible");
             slots.name("mountable slot types");
             location.name("Location");
             common_params.name("Part Hull Common Params");
@@ -142,7 +136,6 @@ namespace {
 
 #if DEBUG_PARSERS
             debug(part_type_prefix);
-            debug(producible);
             debug(slots);
             debug(location);
             debug(common_params);
@@ -157,12 +150,6 @@ namespace {
             void (std::string&, std::string&, ShipPartClass&),
             parse::skipper_type
         > part_type_prefix_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            bool (),
-            parse::skipper_type
-        > producible_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -215,7 +202,6 @@ namespace {
         > start_rule;
 
         part_type_prefix_rule           part_type_prefix;
-        producible_rule                 producible;
         location_rule                   location;
         part_hull_common_params_rule    common_params;
         slots_rule                      slots;

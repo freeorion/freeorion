@@ -6,6 +6,7 @@
 #include "Parse.h"
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "CommonParams.h"
 
 #include "../universe/Building.h"
 
@@ -62,21 +63,15 @@ namespace {
             using phoenix::construct;
 
             building_type_params
-                =   parse::label(Name_token)                > tok.string [ _a = _1 ]
-                >   parse::label(Description_token)         > tok.string [ _b = _1 ]
-                >   parse::label(BuildCost_token)           > double_value_ref [ _c = _1 ]
-                >   parse::label(BuildTime_token)           > flexible_int_ref [ _d = _1 ]
-                >   producible [ _e = _1 ]
+                =   parse::label(Name_token)                > tok.string        [ _a = _1 ]
+                >   parse::label(Description_token)         > tok.string        [ _b = _1 ]
+                >   parse::label(BuildCost_token)           > double_value_ref  [ _c = _1 ]
+                >   parse::label(BuildTime_token)           > flexible_int_ref  [ _d = _1 ]
+                >   parse::detail::producible_parser()                          [ _e = _1 ]
                 >   (   parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
                     |   eps [ _f = CR_CAPTURE ]
                     )
                 [ _val = construct<BuildingTypeParams>(_a, _b, _c, _d, _e, _f) ]
-                ;
-
-            producible
-                =   tok.Unproducible_ [ _val = false ]
-                |   tok.Producible_ [ _val = true ]
-                |   eps [ _val = true ]
                 ;
 
             building_type
@@ -95,12 +90,10 @@ namespace {
                 ;
 
             building_type_params.name("BuildingType Params");
-            producible.name("Producible or Unproducible");
             building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
             debug(building_type_params);
-            debug(producible);
             debug(building_type);
 #endif
 
@@ -123,12 +116,6 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            bool (),
-            parse::skipper_type
-        > producible_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
             void (std::map<std::string, BuildingType*>&),
             qi::locals<
                 BuildingTypeParams,
@@ -147,7 +134,6 @@ namespace {
         > start_rule;
 
         building_type_params_rule   building_type_params;
-        producible_rule             producible;
         building_type_rule          building_type;
         start_rule                  start;
     };

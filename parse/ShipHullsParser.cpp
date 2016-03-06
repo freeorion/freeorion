@@ -8,6 +8,7 @@
 #include "Parse.h"
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "CommonParams.h"
 
 #include "../universe/Condition.h"
 #include "../universe/ShipDesign.h"
@@ -89,12 +90,6 @@ namespace {
                     [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
                 ;
 
-            producible
-                =   tok.Unproducible_ [ _val = false ]
-                |   tok.Producible_ [ _val = true ]
-                |   eps [ _val = true ]
-                ;
-
             slot
                 =   tok.Slot_
                 >   parse::label(Type_token) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
@@ -121,7 +116,7 @@ namespace {
             common_params
                 =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_token)    > flexible_int_ref  [ _b = _1 ]
-                >   producible                                           [ _c = _1 ]
+                >   parse::detail::producible_parser()                   [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 > -(consumption(_g, _h))
@@ -172,7 +167,6 @@ namespace {
 
             hull_prefix.name("Hull");
             hull_stats.name("Hull stats");
-            producible.name("Producible or Unproducible");
             slot.name("Slot");
             slots.name("Slots");
             location.name("Location");
@@ -186,7 +180,6 @@ namespace {
             debug(hull_prefix);
             debug(cost);
             debug(hull_stats);
-            debug(producible);
             debug(slot);
             debug(slots);
             debug(location);
@@ -217,12 +210,6 @@ namespace {
             >,
             parse::skipper_type
         > hull_stats_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            bool (),
-            parse::skipper_type
-        > producible_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -309,7 +296,6 @@ namespace {
 
         hull_prefix_rule                hull_prefix;
         hull_stats_rule                 hull_stats;
-        producible_rule                 producible;
         slot_rule                       slot;
         slots_rule                      slots;
         location_rule                   location;

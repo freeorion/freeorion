@@ -10,6 +10,7 @@ if (NOT BUILD_TESTS)
 endif ()
 
 set (freeorionparse_HEADER
+    CommonParams.h
     ConditionParserImpl.h
     Double.h
     EffectParser.h
@@ -29,6 +30,7 @@ set (freeorionparse_HEADER
 set (freeorionparse_SOURCE
     AlignmentsParser.cpp
     BuildingsParser.cpp
+    CommonParamsParser.cpp
     ConditionParser1.cpp
     ConditionParser2.cpp
     ConditionParser3.cpp

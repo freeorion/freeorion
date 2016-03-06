@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\parse\AlignmentsParser.cpp" />
     <ClCompile Include="..\..\parse\BuildingsParser.cpp" />
+    <ClCompile Include="..\..\parse\CommonParamsParser.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser1.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser2.cpp" />
@@ -208,6 +209,7 @@
     <ClCompile Include="..\..\parse\ValueRefParserImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\parse\CommonParams.h" />
     <ClInclude Include="..\..\parse\ConditionParser.h" />
     <ClInclude Include="..\..\parse\ConditionParserImpl.h" />
     <ClInclude Include="..\..\parse\Double.h" />
