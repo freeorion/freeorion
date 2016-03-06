@@ -11,6 +11,7 @@ Part
     location = And [
         OwnedBy empire = Source.Owner
         Not HasTag name = "NO_ATTACKTROOPS"
+        Troops low = 2
     ]
     icon = "icons/ship_parts/troops.png"
 
@@ -25,6 +26,7 @@ Part
     location = And [
         OwnedBy empire = Source.Owner
         Not HasTag name = "NO_ATTACKTROOPS"
+        Troops low = 4
     ]
     icon = "icons/meter/rebels.png"
 
