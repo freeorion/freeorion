@@ -15,15 +15,15 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
 
-    typedef boost::spirit::qi::rule<
-        parse::token_iterator,
+    typedef qi::rule<
+        token_iterator,
         void (std::set<std::string>&),
         parse::skipper_type
     > tags_rule;
     tags_rule& tags_parser();
 
 
-    typedef boost::spirit::qi::rule<
+    typedef qi::rule<
         token_iterator,
         std::vector<boost::shared_ptr<Effect::EffectsGroup> > (),
         skipper_type
@@ -31,7 +31,7 @@ namespace parse { namespace detail {
     effects_group_rule& effects_group_parser();
 
 
-    typedef boost::spirit::qi::rule<
+    typedef qi::rule<
         token_iterator,
         GG::Clr (),
         qi::locals<
@@ -44,7 +44,7 @@ namespace parse { namespace detail {
     color_parser_rule& color_parser();
 
 
-    typedef boost::spirit::qi::rule<
+    typedef qi::rule<
         token_iterator,
         ItemSpec (),
         qi::locals<UnlockableItemType>,
