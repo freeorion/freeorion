@@ -74,7 +74,8 @@ namespace parse {
 
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/empire_statistics");
 
-        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin(); file_it != file_list.end(); ++file_it)
+        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
+             file_it != file_list.end(); ++file_it)
         {
             result &= detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*> >(*file_it, stats_);
         }

@@ -438,17 +438,19 @@ namespace parse {
         std::vector<boost::filesystem::path> fn_list = ListDir(path);
 
         try {
-            for (std::vector<boost::filesystem::path>::iterator fn_it = fn_list.begin(); fn_it != fn_list.end(); ++fn_it) {
+            for (std::vector<boost::filesystem::path>::iterator fn_it = fn_list.begin();
+                 fn_it != fn_list.end(); ++fn_it)
+            {
                 std::string fn_ext = fn_it->extension().string();
                 std::string fn_stem_ext = fn_it->stem().extension().string();
                 if (fn_ext == ".txt" && fn_stem_ext == ".focs") {
                     retval.push_back(*fn_it);
-                }
-                else {
-                    TraceLogger() << "Parse: Skipping file " << fn_it->string() << " due to extension (" << fn_stem_ext << fn_ext << ")";
+                } else {
+                    TraceLogger() << "Parse: Skipping file " << fn_it->string() 
+                                  << " due to extension (" << fn_stem_ext << fn_ext << ")";
                 }
             }
-        } catch (const boost::filesystem::filesystem_error ec) {
+        } catch (const boost::filesystem::filesystem_error& ec) {
             ErrorLogger() << "Error accessing file " << ec.path1() << " (" << ec.what() << ")";
         }
 

@@ -379,15 +379,15 @@ std::vector<fs::path> ListDir(const fs::path& path) {
     bool is_rel = path.is_relative();
     if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
         DebugLogger() << "ListDir: File " << PathString(path) << " was not included as it is empty or not a directoy";
-    }
-    else {
+    } else {
         const fs::path& default_path = is_rel ? GetResourceDir() / path : path;
 
-        for (fs::recursive_directory_iterator dir_it(default_path); dir_it != fs::recursive_directory_iterator(); ++dir_it) {
+        for (fs::recursive_directory_iterator dir_it(default_path);
+             dir_it != fs::recursive_directory_iterator(); ++dir_it)
+        {
             if (fs::is_regular_file(dir_it->status())) {
                 retval.push_back(dir_it->path());
-            }
-            else if (!fs::is_directory(dir_it->status())) {
+            } else if (!fs::is_directory(dir_it->status())) {
                 TraceLogger() << "Parse: Unknown file not included: " << PathString(dir_it->path());
             }
         }

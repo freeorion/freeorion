@@ -259,7 +259,8 @@ namespace parse {
 
         result &= detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
 
-        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin(); file_it != file_list.end(); ++file_it)
+        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
+             file_it != file_list.end(); ++file_it)
         {
             boost::filesystem::path path = *file_it;
 

@@ -107,7 +107,8 @@ namespace parse {
 
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/fields");
 
-        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin(); file_it != file_list.end(); ++file_it)
+        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
+             file_it != file_list.end(); ++file_it)
         {
             result &= detail::parse_file<rules, std::map<std::string, FieldType*> >(*file_it, field_types);
         }
