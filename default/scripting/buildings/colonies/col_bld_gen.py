@@ -210,7 +210,7 @@ for species in species_list:
     sp_name = sp_id.split("_", 1)[1]
     sp_desc_name = species[1]
     sp_graphic = species[2]
-    sp_filename = sp_id + ".fos.txt"
+    sp_filename = sp_id + ".focs.txt"
     with open(os.path.join(outpath, sp_filename), "w") as f:
         if sp_id == "SP_EXOBOT":
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
