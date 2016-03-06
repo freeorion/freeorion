@@ -1989,6 +1989,37 @@ BuildingType
     icon = "icons/building/nova-bomb-activator.png"
 
 BuildingType
+    name = "BLD_SCRYING_SPHERE"
+    description = "BLD_SCRYING_SPHERE_DESC"
+    buildcost = 150
+    buildtime = 5
+    location = Not WithinStarlaneJumps jumps = 5 condition = Building name = "BLD_SCRYING_SPHERE"
+    effectsgroups =
+        EffectsGroup
+            scope = Or [
+                And [
+                    Or [
+                        Planet
+                        Building
+                    ]
+                    ContainedBy condition = Contains Building name = "BLD_SCRYING_SPHERE"
+                    Not OwnedBy empire = Source.Planet.Owner    // would be redundant to re-assign ownership to own planets
+                ]
+                And [
+                    System
+                    Contains Building name = "BLD_SCRYING_SPHERE"
+                ]
+            ]
+            activation = And [
+                ContainedBy condition = And [
+                    Planet
+                    Not Unowned
+                ]
+            ]
+            effects = SetVisibility visibility = Partial empire = Source.Owner
+    icon = "icons/specials_huge/ancient_ruins_excavated.png"
+
+BuildingType
     name = "BLD_EVACUATION"
     description = "BLD_EVACUATION_DESC"
     buildcost = 10
