@@ -514,10 +514,10 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
     ExtractMessageData(msg.m_message,       single_player_game,             empire_id,
                        current_turn,        Empires(),                      GetUniverse(),
-                       GetSpeciesManager(), GetCombatLogManager(),          Client().Players(),
-                       orders,              loaded_game_data,               ui_data_available,
-                       ui_data,             save_state_string_available,    save_state_string,
-                       Client().GetGalaxySetupData());
+                       GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
+                       Client().Players(),  orders,                         loaded_game_data,
+                       ui_data_available,   ui_data,                        save_state_string_available,
+                       save_state_string,   Client().GetGalaxySetupData());
 
     DebugLogger() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
@@ -574,7 +574,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     try {
         ExtractMessageData(msg.m_message,           Client().EmpireID(),    current_turn,
                            Empires(),               GetUniverse(),          GetSpeciesManager(),
-                           GetCombatLogManager(),   Client().Players());
+                           GetCombatLogManager(),   GetSupplyManager(),     Client().Players());
     } catch (...) {
         Client().GetClientUI()->GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
         return discard_event();

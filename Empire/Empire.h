@@ -363,31 +363,17 @@ public:
 
     /** Returns distance in jumps away from each system that this empire can
       * propegate supply. */
-    const std::map<int, int>&               SystemSupplyRanges() const;
+    const std::map<int, float>&             SystemSupplyRanges() const;
+
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
       * supply can reach the system from elsewhere, or in which planets can
       * exchange supply between themselves (even if not leaving the system). */
     const std::set<int>&                    SupplyUnobstructedSystems() const;
-    /** Returns set of directed starlane traversals along which supply can flow.
-      * Results are pairs of system ids of start and end system of traversal. */
-    const std::set<std::pair<int, int> >&   SupplyStarlaneTraversals() const;
-    /** Returns set of directed starlane traversals along which supply could
-      * flow for this empire, but which can't due to some obstruction in one
-      * of the systems. */
-    const std::set<std::pair<int, int> >&   SupplyObstructedStarlaneTraversals() const;
-    /** Returns set of system ids where fleets can be supplied by this empire
-      * (as determined by object supply meters and rules of supply propagation
-      * and blockade). */
-    const std::set<int>&                    FleetSupplyableSystemIDs() const;
-    /** Returns true if system with id \a system_id is fleet supplyable or in
-      * one of the resource supply groups of this empire. */
-    bool                                    SystemHasFleetSupply(int system_id) const;
-    /** Returns true if the start system is known to this empire and travel to the dest system is not restricted by blockade */
+
+    /** Returns true if the start system is known to this empire and travel to
+        the dest system is not restricted by blockade.  */
     const bool                              UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const;
-    /** Returns set of sets of systems that can share industry (systems in
-      * separate groups are blockaded or otherwise separated). */
-    const std::set<std::set<int> >&         ResourceSupplyGroups() const;
 
     const std::set<int>&                    ExploredSystems() const;    ///< returns set of ids of systems that this empire has explored
     const std::map<int, std::set<int> >     KnownStarlanes() const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
@@ -501,15 +487,6 @@ public:
     void        RecordPendingLaneUpdate(int start_system_id, int dest_system_id);
     /** Processes all the pending lane access updates.  This is managed as a two step process to avoid order-of-processing issues. */
     void        UpdateAvailableLanes();
-    /** Calculates systems at which fleets of this empire can be supplied, and
-      * groups of systems that can exchange resources, and the starlane
-      * traversals used to do so, using the indicated \a starlanes but subject
-      * to obstruction of supply by various factors.  Call
-      * UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before
-      * calling this. */
-    void        UpdateSupply(const std::map<int, std::set<int> >& starlanes);
-    /** Updates supply using this empire's set of known starlanes. */
-    void        UpdateSupply();
 
     /** Checks for production projects that have been completed, and places them
       * at their respective production sites.  Which projects have been
@@ -668,14 +645,10 @@ private:
     std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
     // cached calculation results, returned by reference
-    std::map<int, int>              m_supply_system_ranges;                 ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
-    std::set<int>                   m_supply_unobstructed_systems;          ///< ids of system that don't block supply from flowing
-    std::set<std::pair<int, int> >  m_supply_starlane_traversals;           ///< ordered pairs of system ids between which a starlane runs that can be used to convey resources between systems
-    std::set<std::pair<int, int> >  m_supply_starlane_obstructed_traversals;///< ordered pairs of system ids between which a starlane could be used to convey resources between system, but is not because something is obstructing the resource flow.  That is, the resource flow isn't limited by range, but by something blocking its flow.
-    std::map<int, std::set<int> >   m_available_system_exit_lanes;          ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
-    std::map<int, std::set<int> >   m_pending_system_exit_lanes;            ///< pending updates to m_available_system_exit_lanes
-    std::set<int>                   m_fleet_supplyable_system_ids;          ///< ids of systems where fleets can remain for a turn to be resupplied.
-    std::set<std::set<int> >        m_resource_supply_groups;               ///< sets of system ids that are connected by supply lines and are able to share resources between systems or between objects in systems
+    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
+    std::map<int, std::set<int> >   m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
+    std::map<int, std::set<int> >   m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes
 
     friend class boost::serialization::access;
     Empire();

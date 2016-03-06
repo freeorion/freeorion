@@ -342,6 +342,7 @@
 		CEDABCF01C688D050085A4DC /* libboost_locale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEDABCEF1C688D050085A4DC /* libboost_locale.a */; };
 		CEDABCF31C688E290085A4DC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CEDABCF21C688E290085A4DC /* libiconv.dylib */; };
 		CEDC4AEF1BD3E361009BB38D /* EmpireWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */; };
+		CEED195F1C79BA2F0085A4DC /* Supply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEED195D1C79BA2F0085A4DC /* Supply.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1116,6 +1117,8 @@
 		CED6E5511C6DDC0F0085A4DC /* Fighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fighter.h; sourceTree = "<group>"; };
 		CEDABCEF1C688D050085A4DC /* libboost_locale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_locale.a; sourceTree = "<group>"; };
 		CEDABCF21C688E290085A4DC /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		CEED195D1C79BA2F0085A4DC /* Supply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Supply.cpp; sourceTree = "<group>"; };
+		CEED195E1C79BA2F0085A4DC /* Supply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Supply.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1553,6 +1556,8 @@
 				471D5C780A98A3F900DA9C21 /* EmpireManager.h */,
 				471D5C790A98A3F900DA9C21 /* ResourcePool.cpp */,
 				471D5C7A0A98A3F900DA9C21 /* ResourcePool.h */,
+				CEED195D1C79BA2F0085A4DC /* Supply.cpp */,
+				CEED195E1C79BA2F0085A4DC /* Supply.h */,
 			);
 			path = Empire;
 			sourceTree = "<group>";
@@ -2451,6 +2456,7 @@
 				47103BF70CF04E5900A7DF2B /* SitRepEntry.cpp in Sources */,
 				47103BF80CF04E5900A7DF2B /* VarText.cpp in Sources */,
 				47103BF90CF04E5900A7DF2B /* XMLDoc.cpp in Sources */,
+				CEED195F1C79BA2F0085A4DC /* Supply.cpp in Sources */,
 				47103BFA0CF04E5900A7DF2B /* Building.cpp in Sources */,
 				82EC868B1B40504700D4584D /* Encyclopedia.cpp in Sources */,
 				47103BFB0CF04E5900A7DF2B /* Condition.cpp in Sources */,

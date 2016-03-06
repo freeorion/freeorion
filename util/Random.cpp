@@ -6,7 +6,7 @@ namespace {
     GeneratorType gen; // the one random number generator driving the distributions below
 }
 
-void Seed(unsigned int seed) { 
+void Seed(unsigned int seed) {
     gen.seed(static_cast<boost::mt19937::result_type>(seed));
 }
 

@@ -790,7 +790,12 @@ void HumanClientApp::HandleSystemEvents() {
     } else if (m_networking.MessageAvailable()) {
         Message msg;
         m_networking.GetMessage(msg);
-        HandleMessage(msg);
+        try {
+            HandleMessage(msg);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "exception handing message: " << e.what();
+            ErrorLogger() << "message type: " << msg.Type() << " and text: " << msg.Text();
+        }
     }
 }
 

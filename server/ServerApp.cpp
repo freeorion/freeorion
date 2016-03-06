@@ -286,6 +286,9 @@ EmpireManager& ServerApp::Empires()
 Empire* ServerApp::GetEmpire(int id)
 { return m_empires.GetEmpire(id); }
 
+SupplyManager& ServerApp::GetSupplyManager()
+{ return m_supply_manager; }
+
 TemporaryPtr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
 { return m_universe.Objects().Object(object_id); }
 
@@ -734,7 +737,15 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
+    }
+
+    GetSupplyManager().Update();
+
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;
+
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
@@ -754,8 +765,8 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
                                                         empire_id,              m_current_turn,
                                                         m_empires,              m_universe,
                                                         GetSpeciesManager(),    GetCombatLogManager(),
-                                                        player_info_map,        m_galaxy_setup_data,
-                                                        use_binary_serialization));
+                                                        GetSupplyManager(),     player_info_map,
+                                                        m_galaxy_setup_data,    use_binary_serialization));
     }
 }
 
@@ -1117,10 +1128,16 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         Empire* empire = it->second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
-
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
+    }
+
+    GetSupplyManager().Update();
+
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
@@ -1168,15 +1185,16 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, *orders, sss,
+                                                            GetSupplyManager(), player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, *orders, psgd.m_ui_data.get(),
-                                                            m_galaxy_setup_data, use_binary_serialization));
+                                                            GetSupplyManager(),  player_info_map, *orders,
+                                                            psgd.m_ui_data.get(), m_galaxy_setup_data,
+                                                            use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
                    client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -1185,8 +1203,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, m_galaxy_setup_data,
-                                                            use_binary_serialization));
+                                                            GetSupplyManager(), player_info_map,
+                                                            m_galaxy_setup_data, use_binary_serialization));
         } else {
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
@@ -2974,7 +2992,14 @@ void ServerApp::PostCombatProcessTurns() {
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
-        empire->UpdateSupply();                     // determines which systems can access fleet supply and which groups of systems can exchange resources
+    }
+
+    GetSupplyManager().Update();
+
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
@@ -3128,8 +3153,8 @@ void ServerApp::PostCombatProcessTurns() {
         player->SendMessage(TurnUpdateMessage(player_id,                PlayerEmpireID(player_id),
                                               m_current_turn,           m_empires,
                                               m_universe,               GetSpeciesManager(),
-                                              GetCombatLogManager(),    players,
-                                              use_binary_serialization));
+                                              GetCombatLogManager(),    GetSupplyManager(),
+                                              players,                  use_binary_serialization));
     }
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }

@@ -4,6 +4,7 @@
 
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 #include "../python/server/ServerFramework.h"
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
@@ -173,6 +174,7 @@ public:
     Universe&                   GetUniverse();    ///< returns server's copy of Universe
     EmpireManager&              Empires();        ///< returns the server's copy of the Empires
     Empire*                     GetEmpire(int id);
+    SupplyManager&              GetSupplyManager();
     TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
     TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
@@ -266,6 +268,7 @@ private:
 
     Universe                m_universe;
     EmpireManager           m_empires;
+    SupplyManager           m_supply_manager;
     ServerNetworking        m_networking;
     ServerFSM*              m_fsm;
     PythonServer            m_python_server;

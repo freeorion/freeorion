@@ -364,10 +364,17 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Returns the in-game name of the object with a specified id. */
-struct FO_COMMON_API ValueRef::ObjectNameLookup : public ValueRef::Variable<std::string> {
-    ObjectNameLookup(ValueRef::ValueRefBase<int>* value_ref);
-    ~ObjectNameLookup();
+/** Returns the in-game name of the object / empire / etc. with a specified id. */
+struct FO_COMMON_API ValueRef::NameLookup : public ValueRef::Variable<std::string> {
+    enum LookupType {
+        INVALID_LOOKUP = -1,
+        OBJECT_NAME,
+        EMPIRE_NAME,
+        SHIP_DESIGN_NAME
+    };
+
+    NameLookup(ValueRef::ValueRefBase<int>* value_ref, LookupType lookup_type);
+    ~NameLookup();
 
     virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
     virtual std::string Eval(const ScriptingContext& context) const;
@@ -378,11 +385,13 @@ struct FO_COMMON_API ValueRef::ObjectNameLookup : public ValueRef::Variable<std:
     virtual std::string Description() const;
     virtual std::string Dump() const;
     const ValueRefBase<int>*    GetValueRef() const { return m_value_ref; }
+    LookupType                  GetLookupType() const { return m_lookup_type; }
 
     virtual void                SetTopLevelContent(const std::string& content_name);
 
 private:
     ValueRefBase<int>*  m_value_ref;
+    LookupType          m_lookup_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1450,13 +1459,14 @@ void ValueRef::UserStringLookup::serialize(Archive& ar, const unsigned int versi
 }
 
 ///////////////////////////////////////////////////////////
-// ObjectNameLookup                                      //
+// NameLookup                                            //
 ///////////////////////////////////////////////////////////
 template <class Archive>
-void ValueRef::ObjectNameLookup::serialize(Archive& ar, const unsigned int version)
+void ValueRef::NameLookup::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
-        & BOOST_SERIALIZATION_NVP(m_value_ref);
+        & BOOST_SERIALIZATION_NVP(m_value_ref)
+        & BOOST_SERIALIZATION_NVP(m_lookup_type);
 }
 
 ///////////////////////////////////////////////////////////

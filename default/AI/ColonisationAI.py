@@ -255,10 +255,8 @@ def check_supply():
     print "New Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
-    # Note: empire.supplyProjections supply projection has one major difference from standard supply calculations-- if
-    # the final parameter (obstructed) is False then it intentionally ignores existing obstructions/blockades, so
-    # a Sentinel or somesuch might throw it off, That is an area for future improvement
-    system_supply.update(empire.supplyProjections(-1 - supply_distance, False))
+    # Note: empire.supplyProjections supply returns the number of jumps each system is from a fleet-supplied system for that empire (0 if a system is in supply)
+    system_supply.update(empire.supplyProjections())
     for sys_id, supply_val in system_supply.items():
         # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)

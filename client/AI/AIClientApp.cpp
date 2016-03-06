@@ -160,10 +160,10 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
             ExtractMessageData(msg,                     single_player_game,     m_empire_id,
                                m_current_turn,          m_empires,              m_universe,
-                               GetSpeciesManager(),     GetCombatLogManager(),  m_player_info,
-                               m_orders,                loaded_game_data,       ui_data_available,
-                               ui_data,                 state_string_available, save_state_string,
-                               m_galaxy_setup_data);
+                               GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
+                               m_player_info,           m_orders,               loaded_game_data,
+                               ui_data_available,       ui_data,                state_string_available,
+                               save_state_string,       m_galaxy_setup_data);
 
             DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
@@ -171,7 +171,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
             DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
             if (loaded_game_data) {
-                DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
+                if (GetOptionsDB().Get<bool>("verbose-logging"))
+                    DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
                 m_AI->ResumeLoadedGame(save_state_string);
                 Orders().ApplyOrders();
             } else {
@@ -246,7 +247,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
             //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
             ExtractMessageData(msg,                     m_empire_id,        m_current_turn,
                                m_empires,               m_universe,         GetSpeciesManager(),
-                               GetCombatLogManager(),   m_player_info);
+                               GetCombatLogManager(),   GetSupplyManager(), m_player_info);
             //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
             GetUniverse().InitializeSystemGraph(m_empire_id);
             m_AI->GenerateOrders();

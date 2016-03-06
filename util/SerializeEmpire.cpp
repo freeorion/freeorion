@@ -4,6 +4,7 @@
 #include "SitRepEntry.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
 #include "../universe/Universe.h"
 
@@ -108,11 +109,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_available_hull_types)
         & BOOST_SERIALIZATION_NVP(m_supply_system_ranges)
         & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
-        & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
-        & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
-        & BOOST_SERIALIZATION_NVP(m_available_system_exit_lanes)
-        & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
-        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups);
+        & BOOST_SERIALIZATION_NVP(m_available_system_exit_lanes);
 
     if (GetUniverse().AllObjectsVisible() ||
         GetUniverse().EncodingEmpire() == ALL_EMPIRES ||
@@ -194,3 +191,17 @@ template void DiplomaticMessage::serialize<freeorion_bin_iarchive>(freeorion_bin
 template void DiplomaticMessage::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void DiplomaticMessage::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
+template <class Archive>
+void SupplyManager::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
+        & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
+        & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
+        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups)
+        & BOOST_SERIALIZATION_NVP(m_propegated_supply_ranges);
+}
+
+template void SupplyManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void SupplyManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void SupplyManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void SupplyManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);

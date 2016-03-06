@@ -1657,7 +1657,7 @@ namespace {
     {}
 
     std::pair<bool, Effect::TargetSet>* StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::Find(
-        const Condition::ConditionBase* cond, bool insert) 
+        const Condition::ConditionBase* cond, bool insert)
     {
         // have to iterate through cached condition matches, rather than using
         // find, since there is no operator< for comparing conditions by value

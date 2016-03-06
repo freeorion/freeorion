@@ -14,6 +14,7 @@ namespace {
             // "NumShips" should not follow.
             bound_variable_name
                 =   tok.Owner_
+                |   tok.SupplyingEmpire_
                 |   tok.ID_
                 |   tok.CreationTurn_
                 |   tok.Age_

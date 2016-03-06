@@ -1,5 +1,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
 #include "../universe/Predicates.h"
 #include "../universe/UniverseObject.h"
@@ -7,6 +8,7 @@
 #include "../universe/Tech.h"
 #include "../util/SitRepEntry.h"
 #include "../util/AppInterface.h"
+#include "../util/Logger.h"
 #include "SetWrapper.h"
 
 #include <GG/Clr.h>
@@ -82,124 +84,70 @@ namespace {
 
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
-    std::vector<IntPair>   obstructedStarlanesP(const Empire& empire) {
-        std::set<IntPair > laneset;
-        std::vector<IntPair>  retval;
+    std::vector<IntPair> obstructedStarlanesP(const Empire& empire) {
+        const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        std::vector<IntPair> retval;
         try {
-            laneset = empire.SupplyObstructedStarlaneTraversals();
             for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
             {retval.push_back(*it); }
-            return retval;
         } catch (...) {
         }
         return retval;
     }
-    boost::function<std::vector<IntPair>(const Empire&)> obstructedStarlanesFunc =      &obstructedStarlanesP;
+    boost::function<std::vector<IntPair>(const Empire&)> obstructedStarlanesFunc =              &obstructedStarlanesP;
 
-    void CalculateSupplyUpdate(const std::map<int, std::set<int> >& starlanes,
-                               const std::map<int, int>&            supply_system_ranges,
-                               const std::set<int>&                 supply_unobstructed_systems,
-                               std::map<int, int>&                  propegating_supply_ranges,
-                               int                                  min_tracked_supply = 0,
-                               bool                                 obstructed = true) // Note: must be called with min_tracked_supply = 0 to give the standard result
-    {
-        // store supply range in jumps of all unobstructed systems before
-        // propegation, and add to list of systems to propegate from.
-        std::list<int> propegating_systems_list;
-        for (std::map<int, int>::const_iterator it = supply_system_ranges.begin();
-             it != supply_system_ranges.end(); ++it)
+    std::map<int, int> jumpsToSuppliedSystemP(const Empire& empire) {
+        std::map<int, int> retval;
+        const std::set<int>& empire_supplyable_system_ids = GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID());
+        const std::map<int, std::set<int> >& empire_starlanes = empire.KnownStarlanes();
+        std::list<int> propegating_list;
+
+        for (std::set<int>::const_iterator sys_it = empire_supplyable_system_ids.begin();
+             sys_it != empire_supplyable_system_ids.end(); ++sys_it)
         {
-            if (!obstructed || (supply_unobstructed_systems.find(it->first) != supply_unobstructed_systems.end()))
-                propegating_supply_ranges.insert(*it);
-            else
-                propegating_supply_ranges[it->first] = min_tracked_supply;
-
-            // add system to list of systems to popegate supply from
-            propegating_systems_list.push_back(it->first);
+            retval[*sys_it] = 0;
+            propegating_list.push_back(*sys_it);
         }
 
-        // iterate through list of accessible systems, processing each in order it
-        // was added (like breadth first search) until no systems are left able to
-        // further propregate
-        std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
-        std::list<int>::iterator sys_list_end = propegating_systems_list.end();
-        while (sys_list_it != sys_list_end) {
-            int cur_sys_id = *sys_list_it;
-            int cur_sys_range = propegating_supply_ranges[cur_sys_id];    // range away from this system that supplies can be transported
+        // iteratively propegate supply out from supplied systems, to determine
+        // how many jumps away from supply each unsupplied system is...
+        while (!propegating_list.empty()) {
+            // get next system and distance from the list
+            int from_sys_id = propegating_list.front();
+            propegating_list.pop_front();
+            int from_sys_dist = retval[from_sys_id];
 
-            if (cur_sys_range <= min_tracked_supply) {
-                // can't propegate supply out a system that has no range if min_tracked_supply is zero;
-                // if min_tracked_supply is negative, then may be able to continue propagating. A negative supply 
-                // number indicates number of jumps to nearest supply
-                ++sys_list_it;
-                continue;
+            // get lanes connected to this system
+            std::map<int, std::set<int> >::const_iterator lane_set_it = empire_starlanes.find(from_sys_id);
+            if (lane_set_it == empire_starlanes.end())
+                continue;   // no lanes to propegate from for this supply source
+            const std::set<int>& lane_ends = lane_set_it->second;
+
+            // propegate to any not-already-counted adjacent system
+            for (std::set<int>::const_iterator lane_it = lane_ends.begin(); lane_it != lane_ends.end(); ++lane_it) {
+                if (retval.find(*lane_it) != retval.end())
+                    continue;   // system already processed
+                // system not yet processed; add it to list to propegate from, and set its range to one more than this system
+                propegating_list.push_back(*lane_it);
+                retval[*lane_it] = from_sys_dist - 1;   // negative values used to indicate jumps to nearest supply for historical compatibility reasons
             }
-
-            // can propegate further, if adjacent systems have smaller supply range
-            // than one less than this system's range
-            std::map<int, std::set<int> >::const_iterator system_it = starlanes.find(cur_sys_id);
-            if (system_it == starlanes.end()) {
-                // no starlanes out of this system
-                ++sys_list_it;
-                continue;
-            }
-
-            const std::set<int>& starlane_ends = system_it->second;
-            for (std::set<int>::const_iterator lane_it = starlane_ends.begin();
-                 lane_it != starlane_ends.end(); ++lane_it)
-            {
-                int lane_end_sys_id = *lane_it;
-
-                if (obstructed && (supply_unobstructed_systems.find(lane_end_sys_id) == supply_unobstructed_systems.end())) {
-                    // can't propegate here
-                    continue;
-                }
-
-                // compare next system's supply range to this system's supply range.  propegate if necessary.
-                std::map<int, int>::const_iterator lane_end_sys_it =
-                    propegating_supply_ranges.find(lane_end_sys_id);
-                if (lane_end_sys_it == propegating_supply_ranges.end() ||
-                    lane_end_sys_it->second <= cur_sys_range)
-                {
-                    // next system has no supply yet, or its range equal to or smaller than this system's
-
-                    // update next system's range, if propegating from this system would make it larger
-                    if (lane_end_sys_it == propegating_supply_ranges.end() ||
-                        lane_end_sys_it->second < cur_sys_range - 1)
-                    {
-                        // update with new range
-                        propegating_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
-                        // add next system to list of systems to propegate further
-                        propegating_systems_list.push_back(lane_end_sys_id);
-                    }
-                }
-            }
-            ++sys_list_it;
-            sys_list_end = propegating_systems_list.end();
         }
+
+        //// DEBUG
+        //DebugLogger() << "jumpsToSuppliedSystemP results for empire, " << empire.Name() << " (" << empire.EmpireID() << ") :";
+        //for (std::map<int, int>::const_iterator it = retval.begin(); it != retval.end(); ++it) {
+        //    DebugLogger() << "sys " << it->first << "  range: " << it->second;
+        //}
+        //// END DEBUG
+
+        return retval;
     }
 
-    std::map<int,int> supplyProjectionsP(const Empire& empire, int min_tracked_supply, bool obstructed) {
-        std::map< int, std::set< int > >    starlanes = empire.KnownStarlanes();
-        std::map<int, int>                  supply_system_ranges(empire.SystemSupplyRanges());
-        std::map<int, int>                  propegating_supply_ranges;
-        const std::set<int>&                supply_unobstructed_systems = empire.SupplyUnobstructedSystems();
-        // taking the following sleet_supplyable info into account is necessary to reliably make negative
-        // supply projections for an enemy empire into the client empire's territory
-        if (min_tracked_supply < 0) {
-            std::set<int> supplyable_systems = empire.FleetSupplyableSystemIDs();
-            for (std::set<int>::iterator sys_it = supplyable_systems.begin();
-                 sys_it != supplyable_systems.end(); sys_it++)
-            {
-                supply_system_ranges[*sys_it];  // simply ensures  that at least the default value of zero is entered
-            }
-        }
-        // Note: must be called with min_tracked_supply = 0 to give the standard result
-        CalculateSupplyUpdate(starlanes, supply_system_ranges, supply_unobstructed_systems,
-                              propegating_supply_ranges, min_tracked_supply, obstructed);
-        return propegating_supply_ranges;
-    }
-    boost::function<std::map<int,int>(const Empire&, int min_tracked_supply, bool obstructed)> supplyProjectionsFunc =      &supplyProjectionsP;
+    boost::function<std::map<int,int>(const Empire&)> jumpsToSuppliedSystemFunc =               &jumpsToSuppliedSystemP;
+
+    const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
+    { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
+    boost::function<const std::set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
 
     typedef std::pair<float, int> FloatIntPair;
 
@@ -395,7 +343,11 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
-            .add_property("fleetSupplyableSystemIDs",   make_function(&Empire::FleetSupplyableSystemIDs,    return_internal_reference<>()))
+            .add_property("fleetSupplyableSystemIDs",   make_function(
+                                                            empireFleetSupplyableSystemIDsFunc,
+                                                            return_value_policy<copy_const_reference>(),
+                                                            boost::mpl::vector<const std::set<int>&, const Empire& >()
+                                                        ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          return_internal_reference<>()))
 
@@ -406,13 +358,15 @@ namespace FreeOrionPython {
                                                         boost::mpl::vector<const SitRepEntry&, const Empire&, int>()
                                                     ))
             //.add_property("obstructedStarlanes",  make_function(&Empire::SupplyObstructedStarlaneTraversals,   return_value_policy<return_by_value>()))
-            .def("obstructedStarlanes",             make_function(obstructedStarlanesFunc,
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<IntPair>, const Empire&>()
+            .def("obstructedStarlanes",             make_function(
+                                                        obstructedStarlanesFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::vector<IntPair>, const Empire&>()
                                                     ))
-            .def("supplyProjections",               make_function(supplyProjectionsFunc,
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::map<int, int>, const Empire&, int, bool>()
+            .def("supplyProjections",               make_function(
+                                                        jumpsToSuppliedSystemFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::map<int, int>, const Empire&>()
                                                     ))
         ;
 

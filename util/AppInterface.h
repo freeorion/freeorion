@@ -8,6 +8,7 @@
 
 class EmpireManager;
 class Empire;
+class SupplyManager;
 class Universe;
 class UniverseObject;
 class ObjectMap;
@@ -32,6 +33,8 @@ public:
     virtual EmpireManager& Empires() = 0; ///< returns the set of known Empires for this application
 
     virtual Empire* GetEmpire(int id) = 0;
+
+    virtual SupplyManager& GetSupplyManager() = 0;
 
     virtual TemporaryPtr<UniverseObject> GetUniverseObject(int object_id) = 0;
 
@@ -75,6 +78,10 @@ inline EmpireManager& Empires()
 /** Accessor for Empires */
 inline Empire* GetEmpire(int id)
 { return IApp::GetApp()->GetEmpire(id); }
+
+/** Accessor for the App's empire supply manager */
+inline SupplyManager& GetSupplyManager()
+{ return IApp::GetApp()->GetSupplyManager(); }
 
 /** Accessor for the App's universe object */
 inline Universe& GetUniverse()
