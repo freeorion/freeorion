@@ -10,7 +10,6 @@
 #include "ValueRefParser.h"
 #include "CommonParams.h"
 #include "../universe/ShipDesign.h"
-
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -159,28 +158,6 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (Condition::ConditionBase*&),
-            parse::skipper_type
-        > location_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            PartHullCommonParams (),
-            qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<int>*,
-                bool,
-                std::set<std::string>,
-                Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
-                std::map<MeterType, ValueRef::ValueRefBase<double>*>,
-                std::map<std::string, ValueRef::ValueRefBase<double>*>
-            >,
-            parse::skipper_type
-        > part_hull_common_params_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
             void (std::map<std::string, PartType*>&),
             qi::locals<
                 std::string,
@@ -201,12 +178,12 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        part_type_prefix_rule           part_type_prefix;
-        location_rule                   location;
-        part_hull_common_params_rule    common_params;
-        slots_rule                      slots;
-        part_type_rule                  part_type;
-        start_rule                      start;
+        part_type_prefix_rule                       part_type_prefix;
+        parse::detail::location_rule                location;
+        parse::detail::part_hull_common_params_rule common_params;
+        slots_rule                                  slots;
+        part_type_rule                              part_type;
+        start_rule                                  start;
     };
 
 }
