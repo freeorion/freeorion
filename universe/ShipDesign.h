@@ -679,8 +679,8 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon)
         & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
-        & BOOST_SERIALIZATION_NVP(production_meter_consumption)
-        & BOOST_SERIALIZATION_NVP(production_special_consumption);
+        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
+        & BOOST_SERIALIZATION_NVP(m_production_special_consumption);
 }
 
 template <class Archive>
@@ -700,8 +700,8 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(production_meter_consumption)
-        & BOOST_SERIALIZATION_NVP(production_special_consumption);
+        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
+        & BOOST_SERIALIZATION_NVP(m_production_special_consumption);
 }
 
 #endif // _ShipDesign_h_
