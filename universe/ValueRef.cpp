@@ -826,6 +826,9 @@ namespace ValueRef {
                 return fleet->ETA().first;
             else
                 return 0;
+
+        } else if (property_name == "NumSpecials") {
+            return object->Specials().size();
         }
 
         ErrorLogger() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);

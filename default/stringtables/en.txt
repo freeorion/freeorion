@@ -4447,6 +4447,9 @@ Star Type
 NEXT_TURN_POP_GROWTH
 Next Turn Population Growth
 
+NUM_SPECIALS
+Number of Specials
+
 ####################
 ## Filters Dialog ##
 ####################

@@ -119,6 +119,7 @@ namespace {
             col_types[std::make_pair(UserStringNop("STAR_TYPE"),            "")] =  UserStringCastedValueRef<StarType>("StarType");
             col_types[std::make_pair(UserStringNop("BUILDING_TYPE"),        "")] =  UserStringValueRef("BuildingType");
             col_types[std::make_pair(UserStringNop("LAST_TURN_BATTLE_HERE"),"")] =  StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[std::make_pair(UserStringNop("NUM_SPECIALS"),         "")] =  StringCastedValueRef<int>("NumSpecials");
             // empire
             col_types[std::make_pair(UserStringNop("SUPPLYING_EMPIRE"),     "")] =  EmpireNameValueRef("SupplyingEmpire");
             col_types[std::make_pair(UserStringNop("OWNER"),                "")] =  EmpireNameValueRef("Owner");
