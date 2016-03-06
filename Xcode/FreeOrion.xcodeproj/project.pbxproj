@@ -324,6 +324,7 @@
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */; };
+		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
 		CE2C454D1C65036F0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE2C454E1C6503990085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
@@ -1051,7 +1052,6 @@
 		82D2D9A21838C8340011C212 /* ConditionParser6.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser6.cpp; sourceTree = "<group>"; };
 		82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleComplexValueRefParser.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
-		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
 		82D7B59E1AA3666F00A85842 /* ServerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerWrapper.cpp; sourceTree = "<group>"; };
 		82D7B59F1AA3666F00A85842 /* ServerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerWrapper.h; sourceTree = "<group>"; };
 		82D7B5A11AA37C9000A85842 /* ServerFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerFramework.cpp; sourceTree = "<group>"; };
@@ -1090,6 +1090,8 @@
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
 		CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AIWrapper.cpp; sourceTree = "<group>"; };
 		CE0ED5F81BCFE16E00375001 /* AIWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIWrapper.h; sourceTree = "<group>"; };
+		CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonParams.h; sourceTree = "<group>"; };
+		CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonParamsParser.cpp; sourceTree = "<group>"; };
 		CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
 		CE2C454C1C65036F0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
 		CE6183961BB80D1300952BEA /* GGFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGFwd.h; sourceTree = "<group>"; };
@@ -1948,6 +1950,8 @@
 			children = (
 				825936D6147E3B1B00B840A5 /* AlignmentsParser.cpp */,
 				825936D7147E3B1B00B840A5 /* BuildingsParser.cpp */,
+				CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */,
+				CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */,
 				825936D9147E3B1B00B840A5 /* ConditionParser.cpp */,
 				825936DA147E3B1B00B840A5 /* ConditionParser.h */,
 				825936DB147E3B1B00B840A5 /* ConditionParser1.cpp */,
@@ -1998,7 +2002,6 @@
 				825936FA147E3B1B00B840A5 /* ShipDesignsParser.cpp */,
 				825936FB147E3B1B00B840A5 /* ShipHullsParser.cpp */,
 				825936FC147E3B1B00B840A5 /* ShipPartsParser.cpp */,
-				82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */,
 				825936FD147E3B1B00B840A5 /* SpecialsParser.cpp */,
 				825936FE147E3B1B00B840A5 /* SpeciesParser.cpp */,
 				825936FF147E3B1B00B840A5 /* StarTypeValueRefParser.cpp */,
@@ -2656,6 +2659,7 @@
 				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,
 				82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */,
 				82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */,
+				CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
