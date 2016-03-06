@@ -11,11 +11,14 @@
 #include "CUIControls.h"
 
 namespace {
-    const int       EDGE_PAD(3);
+    const int   EDGE_PAD(3);
 
-    const int       MULTI_INDICATOR_ICON_SPACING(12);
-    const GG::X     MULTI_INDICATOR_ICON_WIDTH(24);
-    const GG::Y     MULTI_INDICATOR_ICON_HEIGHT(24);
+    int         IconSpacing()
+    { return ClientUI::Pts(); }
+    GG::X       IconWidth()
+    { return GG::X(IconSpacing()*2); }
+    GG::Y       IconHeight()
+    { return GG::Y(IconSpacing()*2); }
 }
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id,
@@ -66,14 +69,14 @@ void MultiIconValueIndicator::Init() {
 
         m_icons.push_back(new StatisticIcon(texture, 0.0, 3, false));
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
-        GG::Pt icon_lr = icon_ul + GG::Pt(MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2);
+        GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
         m_icons.back()->InstallEventFilter(this);
         AttachChild(m_icons.back());
-        x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
+        x += IconWidth() + IconSpacing();
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(Width(), EDGE_PAD + MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2));
+        Resize(GG::Pt(Width(), EDGE_PAD + IconHeight() + ClientUI::Pts()*3/2));
     Update();
 }
 
