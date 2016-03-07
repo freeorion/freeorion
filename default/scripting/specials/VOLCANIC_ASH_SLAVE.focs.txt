@@ -1,0 +1,22 @@
+Special
+    name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+    description = "VOLCANIC_ASH_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        [[STEALTH_BOOST_MEDIUM_NO_ORBITAL]]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Or [
+                HasSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
+                OwnerHasTech name = "SPY_STEALTH_2"
+            ]
+            effects = RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ash.png" 
+    ]
+    graphic = "icons/specials_huge/volcanic_ash.png"
+
+#include "../common/shared.macros"

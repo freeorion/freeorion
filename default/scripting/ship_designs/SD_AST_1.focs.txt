@@ -1,0 +1,13 @@
+ShipDesign
+    name = "SD_AST_1"
+    description = "SD_AST_1_DESC"
+    hull = "SH_ASTEROID"
+    parts = [
+        "AR_ZORTRIUM_PLATE"
+        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_1"
+        "AR_ZORTRIUM_PLATE"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"

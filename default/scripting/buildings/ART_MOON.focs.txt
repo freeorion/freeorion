@@ -1,0 +1,24 @@
+BuildingType
+    name = "BLD_ART_MOON"
+    description = "BLD_ART_MOON_DESC"
+    buildcost = 250
+    buildtime = 5
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_ART_MOON"
+        OwnedBy empire = Source.Owner
+        Not Planet type = [Asteroids GasGiant]
+        Not HasSpecial name = "RESONANT_MOON_SPECIAL"
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            effects = AddSpecial name = "RESONANT_MOON_SPECIAL"
+    icon = "icons/specials_huge/resonant_moon.png"
+
+#include "../common/shared.macros"

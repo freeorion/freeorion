@@ -1,0 +1,16 @@
+ShipDesign
+    name = "SD_GRAVITATING1"
+    description = "SD_GRAVITATING1_DESC"
+    hull = "SH_SELF_GRAVITATING"
+    parts = [
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "AR_DIAMOND_PLATE"
+        ""
+        "AR_DIAMOND_PLATE"
+        "FU_BASIC_TANK"
+        "SH_DEFLECTOR"
+    ]
+    model = "mark1"

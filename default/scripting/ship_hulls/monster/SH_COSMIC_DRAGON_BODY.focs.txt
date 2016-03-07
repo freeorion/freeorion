@@ -1,0 +1,46 @@
+Hull
+    name = "SH_COSMIC_DRAGON_BODY"
+    description = "SH_COSMIC_DRAGON_BODY_DESC"
+    speed = 25
+    fuel = 100
+    stealth = 5
+    structure = 50000
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[HUNT_PLANETS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        EffectsGroup
+            scope = NumberOf number = 1 condition = And [
+                Planet
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+                Stealth high = Source.Detection
+            ]
+            activation =
+                InSystem
+            effects = [
+                AddSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                RemoveSpecial name = "SUPERNOVA_SPECIAL"
+            ]
+
+        [[GOOD_VISION]]
+    ]
+    icon = ""
+    graphic = ""
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

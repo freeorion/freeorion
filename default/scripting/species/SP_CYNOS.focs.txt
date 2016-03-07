@@ -1,0 +1,39 @@
+Species
+    name = "SP_CYNOS"
+    description = "SP_CYNOS_DESC"
+    gameplay_description = "SP_CYNOS_GAMEPLAY_DESC"
+    Native
+    CanProduceShips
+
+    tags = [ "PHOTOTROPHIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" ]
+
+    foci = [
+        /* [[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[GOOD_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[BROAD_EP]]
+    ]
+
+    [[SWAMP_BROAD_EP]]
+
+    graphic = "icons/species/cynos.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

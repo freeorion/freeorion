@@ -1,5 +1,6 @@
 #include "AIFramework.h"
 
+#include "../../universe/Building.h"
 #include "../../universe/Universe.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"
@@ -99,6 +100,7 @@ bool PythonAI::Initialize() {
         try {
             object initAIPythonFunction = m_python_module_ai.attr("initFreeOrionAI");
             initAIPythonFunction();
+            BuildingTypeManager& temp = GetBuildingTypeManager();  // Ensure buildings are initialized
         } catch (error_already_set err) {
             PyErr_Print();
             return false;

@@ -3331,28 +3331,22 @@ def linear_distance(number1, number2):
     return float()
 
 
-def load_fleet_plan_list(string):
+def load_fleet_plan_list():
     """
-    :param string:
-    :type string: str
     :rtype: list
     """
     return list()
 
 
-def load_item_spec_list(string):
+def load_item_spec_list():
     """
-    :param string:
-    :type string: str
     :rtype: list
     """
     return list()
 
 
-def load_monster_fleet_plan_list(string):
+def load_monster_fleet_plan_list():
     """
-    :param string:
-    :type string: str
     :rtype: list
     """
     return list()

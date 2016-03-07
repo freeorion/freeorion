@@ -1,0 +1,23 @@
+BuildingType
+    name = "BLD_SHIPYARD_CON_NANOROBO"
+    description = "BLD_SHIPYARD_CON_NANOROBO_DESC"
+    buildcost = 250
+    buildtime = 5
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_SHIPYARD_CON_NANOROBO"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/shipyard-2.png"
+
+#include "../../common/shared.macros"

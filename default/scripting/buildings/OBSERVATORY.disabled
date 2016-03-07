@@ -1,0 +1,24 @@
+// current form doesn't work with current detection mechanics, which have a hard limit on range that can't be exceeded
+BuildingType
+    name = "BLD_OBSERVATORY"
+    description = "BLD_OBSERVATORY_DESC"
+    buildcost = 60
+    buildtime = 3
+    location = AND [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_OBSERVATORY"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = NumberOf number = 1 condition = System
+            effects = SetStealth value = Value - 1
+
+        EffectsGroup
+            scope = And [ 
+                Planet 
+                Object id = Source.PlanetID
+            ]
+            effects = SetTargetConstruction value = Value - 10
+    ]
+    icon = "icons/building/lighthouse.png"

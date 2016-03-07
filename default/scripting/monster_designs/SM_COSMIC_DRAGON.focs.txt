@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SM_COSMIC_DRAGON"
+    description = "SM_COSMIC_DRAGON_DESC"
+    hull = "SH_COSMIC_DRAGON_BODY"
+    parts = [
+        "SP_NOVA_BOMB"
+        "SR_WEAPON_4_1"
+        ""
+        "ST_CLOAK_4"
+    ]
+    icon = "icons/monsters/dragon-2.png"
+    model = "seed"

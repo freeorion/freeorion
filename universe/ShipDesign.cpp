@@ -1,7 +1,6 @@
 #include "ShipDesign.h"
 
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../parse/Parse.h"
@@ -118,7 +117,7 @@ PartTypeManager::PartTypeManager() {
     s_instance = this;
 
     try {
-        parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
+        parse::ship_parts(m_parts);
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship_parts.txt: error: " << e.what();
         throw e;
@@ -448,7 +447,7 @@ HullTypeManager::HullTypeManager() {
     s_instance = this;
 
     try {
-        parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
+        parse::ship_hulls(m_hulls);
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship_hulls.txt: error: " << e.what();
         throw e;
@@ -996,16 +995,16 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
     try {
-        parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
+        parse::ship_designs(m_ship_designs);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing premade_ship_designs.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing ship designs: error: " << e.what();
         throw e;
     }
 
     try {
-        parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
+        parse::monster_designs(m_monster_designs);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing space_monsters.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing monster designs: error: " << e.what();
         throw e;
     }
 

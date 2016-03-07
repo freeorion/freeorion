@@ -1,0 +1,18 @@
+Special
+    name = "VOID_SLAVE_SPECIAL"
+    description = "VOID_SLAVE_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        [[STEALTH_BOOST_ULTIMATE_NO_ORBITAL]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not HasSpecial name = "VOID_MASTER_SPECIAL"
+                Not OwnerHasTech name = "SPY_STEALTH_4"
+            ]
+            effects = RemoveSpecial name = "VOID_SLAVE_SPECIAL"
+    ]
+    graphic = "icons/specials_huge/void.png"
+
+#include "../common/shared.macros"

@@ -1,0 +1,53 @@
+Hull
+    name = "SH_NANOROBOTIC"
+    description = "SH_NANOROBOTIC_DESC"
+    speed = 80
+    fuel = 3
+    stealth = 5
+    structure = 30
+    slots = [
+        Slot type = External position = (0.10, 0.25)
+        Slot type = External position = (0.25, 0.25)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.55, 0.15)
+        Slot type = External position = (0.70, 0.25)
+        Slot type = External position = (0.85, 0.25)
+        Slot type = Internal position = (0.45, 0.50)
+    ]
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 2
+    tags = [ "ROBOTIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_NANOROBO"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 1
+            effects = SetStructure value = Target.MaxStructure
+
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/nano_robotic_hull_small.png"
+    graphic = "hulls_design/nano_robotic_hull.png"
+
+#include "robotic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

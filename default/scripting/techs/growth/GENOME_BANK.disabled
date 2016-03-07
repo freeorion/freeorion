@@ -1,0 +1,13 @@
+Tech
+    name = "GRO_GENOME_BANK"
+    description = "GRO_GENOME_BANK_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 35 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = "GRO_GENETIC_MED"
+    unlock = Item type = Building name = "BLD_GENOME_BANK"
+    graphic = "icons/tech/genome_bank.png"
+
+#include "../../common/shared.macros"

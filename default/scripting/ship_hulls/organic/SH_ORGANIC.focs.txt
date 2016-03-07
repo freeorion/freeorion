@@ -1,0 +1,55 @@
+Hull
+    name = "SH_ORGANIC"
+    description = "SH_ORGANIC_DESC"
+    speed = 90
+    fuel = 2
+    stealth = 5
+    structure = 5
+    slots = [
+        Slot type = External position = (0.30, 0.25)
+        Slot type = External position = (0.50, 0.25)
+        Slot type = External position = (0.70, 0.25)
+        Slot type = Internal position = (0.60, 0.60)
+    ]
+    buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 3
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure value = Value + min(Source.Age*0.2, 5)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/organic_hull_small.png"
+    graphic = "hulls_design/organic_hull.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

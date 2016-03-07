@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SD_ROBOTIC_CRYOCOL"
+    description = "SD_ROBOTIC_CRYOCOL_DESC"
+    hull = "SH_ROBOTIC"
+    parts = [
+        ""
+        ""
+        ""
+        ""
+        "CO_SUSPEND_ANIM_POD"
+    ]
+    model = "mark1"

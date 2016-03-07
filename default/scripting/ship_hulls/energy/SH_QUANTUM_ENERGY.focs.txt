@@ -1,0 +1,48 @@
+Hull
+    name = "SH_QUANTUM_ENERGY"
+    description = "SH_QUANTUM_ENERGY_DESC"
+    speed = 120
+    fuel = 5
+    stealth = -15
+    structure = 50
+    slots = [
+        Slot type = External position = (0.10, 0.25)
+        Slot type = External position = (0.22, 0.25)
+        Slot type = External position = (0.34, 0.25)
+        Slot type = External position = (0.46, 0.25)
+        Slot type = External position = (0.58, 0.25)
+        Slot type = External position = (0.70, 0.25)
+        Slot type = External position = (0.82, 0.25)
+        Slot type = Internal position = (0.22, 0.50)
+        Slot type = Internal position = (0.34, 0.50)
+        Slot type = Internal position = (0.46, 0.50)
+    ]
+    buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 5
+    tags = [ "ENERGY_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+        Star type = [Blue BlackHole]
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/quantum_energy_hull_small.png"
+    graphic = "hulls_design/quantum_energy_hull.png"
+
+#include "energy.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

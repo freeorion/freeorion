@@ -1,0 +1,11 @@
+Tech
+    name = "CON_ORBITAL_HAB"
+    description = "CON_ORBITAL_HAB_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    category = "GROWTH_CATEGORY"
+    researchcost = 250 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 7
+    prerequisites = "PRO_MICROGRAV_MAN"
+    graphic = "icons/tech/orbital_gardens.png"
+
+#include "../../common/shared.macros"

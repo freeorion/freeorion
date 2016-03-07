@@ -132,4 +132,31 @@ namespace {
 namespace parse {
     bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs)
     { return detail::parse_file<rules, std::map<std::string, ShipDesign*> >(path, designs); }
+
+    bool ship_designs(std::map<std::string, ShipDesign*>& designs) {
+        bool result = true;
+
+        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/ship_designs");
+
+        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin(); file_it != file_list.end(); ++file_it)
+        {
+            result &= detail::parse_file<rules, std::map<std::string, ShipDesign*> >(*file_it, designs);
+        }
+
+        return result;
+    }
+
+    bool monster_designs(std::map<std::string, ShipDesign*>& designs) {
+        bool result = true;
+
+        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/monster_designs");
+
+        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
+             file_it != file_list.end(); ++file_it)
+        {
+            result &= detail::parse_file<rules, std::map<std::string, ShipDesign*> >(*file_it, designs);
+        }
+
+        return result;
+    }
 }

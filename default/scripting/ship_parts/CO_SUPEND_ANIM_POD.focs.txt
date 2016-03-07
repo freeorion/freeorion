@@ -1,0 +1,15 @@
+Part
+    name = "CO_SUSPEND_ANIM_POD"
+    description = "CO_SUSPEND_ANIM_POD_DESC"
+    class = Colony
+    capacity = [[MIN_RECOLONIZING_SIZE]]
+    mountableSlotTypes = Internal
+    buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 10
+    location = And [
+        OwnedBy empire = Source.Owner
+        Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
+    ]
+    icon = "icons/ship_parts/cryonic_colony_pod.png"
+
+#include "../common/shared.macros"

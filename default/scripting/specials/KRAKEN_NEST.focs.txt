@@ -1,0 +1,22 @@
+Special
+    name = "KRAKEN_NEST_SPECIAL"
+    description = "KRAKEN_NEST_SPECIAL_DESC"
+    spawnrate = 0.0
+    location = And [
+        (GalaxyMonsterFrequency >= 1)
+        Planet
+        Planet type = GasGiant
+        Not WithinStarlaneJumps jumps = 3 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        [[MONSTER_NEST(KRAKEN,kraken,0.05)]]
+    ]
+    graphic = "icons/specials_huge/kraken-nest.png"
+
+#include "monster_nest.macros"

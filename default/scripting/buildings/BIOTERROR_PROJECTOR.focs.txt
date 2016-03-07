@@ -1,0 +1,19 @@
+BuildingType
+    name = "BLD_BIOTERROR_PROJECTOR"
+    description = "BLD_BIOTERROR_PROJECTOR_DESC"
+    buildcost = 75
+    buildtime = 15
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_BIOTERROR_PROJECTOR"
+        OwnedBy empire = Source.Owner
+        HasSpecial name = "RESONANT_MOON_SPECIAL"
+        Not Contains Or [
+            Building name = "BLD_CLONING_CENTER"
+            Building name = "BLD_BIOTERROR_PROJECTOR"
+        ]
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/bioterror_projector.png"
+
+#include "../common/shared.macros"

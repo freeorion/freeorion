@@ -1,0 +1,51 @@
+Hull
+    name = "SH_PSIONIC_SNOWFLAKE_BODY"
+    description = "SH_PSIONIC_SNOWFLAKE_BODY_DESC"
+    speed = 300
+    fuel = 100
+    stealth = 25
+    structure = 1800
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[HUNT_SHIPS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[EXCELLENT_VISION]]
+
+        EffectsGroup
+            scope = NumberOf number = 4 condition = And [
+                Ship
+                WithinStarlaneJumps jumps = 1 condition = Source
+                HasTag name = "ORGANIC"
+            ]
+            activation = Random probability = 0.2
+            effects = SetOwner empire = Source.Owner
+
+        EffectsGroup
+            scope = NumberOf number = 12 condition = And [
+                Ship
+                WithinStarlaneJumps jumps = 1 condition = Source
+                HasTag name = "ORGANIC"
+                Not HasTag name = "TELEPATHIC"
+                Not OwnerHasTech name = "LRN_PSY_DOM"
+            ]
+            activation = Random probability = 0.8
+            effects = SetOwner empire = Source.Owner
+    ]
+    icon = ""
+    graphic = ""
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

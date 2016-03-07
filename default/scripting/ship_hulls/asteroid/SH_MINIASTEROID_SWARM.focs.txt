@@ -1,0 +1,54 @@
+Hull
+    name = "SH_MINIASTEROID_SWARM"
+    description = "SH_MINIASTEROID_SWARM_DESC"
+    speed = 60
+    fuel = 4
+    stealth = 35
+    structure = 11
+    slots = [
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.60, 0.55)
+    ]
+    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 3
+    tags = [ "ASTEROID_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        ContainedBy And [
+            System 
+            Contains And [
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
+            ]
+        ]
+        ContainedBy And [
+            System 
+            Contains And [
+                Building name = "BLD_SHIPYARD_AST_REF"
+                OwnedBy empire = Source.Owner
+            ]
+        ]
+    ]
+    effectsgroups = [
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxShield value = Value + 5
+
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/mini_asteroid_swarm_small.png"
+    graphic = "hulls_design/mini_asteroid_swarm.png"
+
+#include "asteroid.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

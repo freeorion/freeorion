@@ -1,0 +1,47 @@
+Species
+    name = "SP_HUMAN"
+    description = "SP_HUMAN_DESC"
+    gameplay_description = "SP_HUMAN_GAMEPLAY_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "STYLISH" "AI_TAG_AVERAGE_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_INDUSTRY)]]
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_RESEARCH)]]
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_POPULATION)]]
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_SUPPLY)]]
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_DEFENSE_TROOPS)]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+    ]
+
+    [[TERRAN_STANDARD_EP]]
+
+    graphic = "icons/species/human.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

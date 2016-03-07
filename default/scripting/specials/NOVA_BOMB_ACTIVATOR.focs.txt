@@ -1,0 +1,6 @@
+Special
+    name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+    description = "NOVA_BOMB_ACTIVATOR_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    graphic = "icons/specials_huge/nova_boom.png"

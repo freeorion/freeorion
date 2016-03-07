@@ -1,0 +1,35 @@
+Special
+    name = "RESONANT_MOON_SPECIAL"
+    description = "RESONANT_MOON_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Building
+                ContainedBy And [
+                    Object id = Source.PlanetID
+                    Planet
+                ]
+            ]
+            effects = SetStealth value = Value + 10
+
+        EffectsGroup
+            scope = And [
+                Ship
+                ContainedBy And [
+                    Object id = Source.SystemID
+                    System
+                ]
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "RESONANT_MOON_STACK"
+            effects = SetStealth value = Value + 10
+    ]
+    graphic = "icons/specials_huge/resonant_moon.png"

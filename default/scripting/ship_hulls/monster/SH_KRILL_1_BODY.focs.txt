@@ -1,0 +1,107 @@
+Hull
+    name = "SH_KRILL_1_BODY"
+    description = "SH_KRILL_1_BODY_DESC"
+    speed = 30
+    fuel = 5
+    stealth = 15
+    structure = 20
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+
+        EffectsGroup    // merge small krills to create a medium krill
+            scope = And [
+                System
+                InSystem id = Source.SystemID 
+                Number low = 2 high = 3 condition = And [
+                    Ship
+                    InSystem id = Source.SystemID
+                    DesignHasHull name = "SH_KRILL_1_BODY"
+                ]
+            ]
+            activation = And [
+                Turn low = 30
+                InSystem
+            ]
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = CreateShip designname = "SM_KRILL_2"
+
+        EffectsGroup    // remove merged krills
+            scope = And [
+                Number low = 2 condition = And [
+                    Ship
+                    InSystem id = Source.SystemID
+                    DesignHasHull name = "SH_KRILL_1_BODY"
+                ]
+                NumberOf number = 2 condition = And [
+                    Ship
+                    InSystem id = Source.SystemID
+                    DesignHasHull name = "SH_KRILL_1_BODY"
+                ]
+            ]
+            activation = And [
+                Turn low = 30
+                InSystem
+            ]
+            effects = Destroy
+
+        EffectsGroup    // mature into medium krill
+            scope = And [
+                Source
+                ContainedBy And [
+                    System 
+                    Contains Planet type = Asteroids
+                ]
+            ]
+            activation = And [
+                Turn low = 30
+                Random probability = 0.1
+                InSystem
+            ]
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = [
+                CreateShip designname = "SM_KRILL_2"
+                Destroy
+/*
+                GenerateSitRepMessage
+                    message = "EFFECT_MONSTER_SPAWNING"
+                    parameters = [
+                        tag = "predefinedshipdesign" data = "SM_KRILL_2"
+                        tag = "system" data = Source.SystemID
+                    ]
+*/
+            ]
+
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[WEAK_VISION]]
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Object id = Source.FleetID
+            ]
+            activation = Random probability = 0.80
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = SetDestination destination = And [
+                System
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not InSystem id = Source.SystemID
+            ]
+    ]
+    icon = ""
+    graphic = "icons/monsters/krill-1.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

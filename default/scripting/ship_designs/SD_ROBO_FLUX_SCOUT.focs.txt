@@ -1,0 +1,9 @@
+ShipDesign
+    name = "SD_ROBO_FLUX_SCOUT"
+    description = "SD_ROBO_FLUX_SCOUT_DESC"
+    hull = "SH_SPATIAL_FLUX"
+    parts = [
+        "DT_DETECTOR_2"
+        "AR_STD_PLATE"
+    ]
+    model = "scout"

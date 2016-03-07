@@ -1,0 +1,44 @@
+Species
+    name = "SP_FURTHEST"
+    description = "SP_FURTHEST_DESC"
+    gameplay_description = "SP_FURTHEST_GAMEPLAY_DESC"
+    Native
+
+    CanColonize
+
+    tags = [ "ORGANIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_BAD_SUPPLY" "AI_GOOD_DETECTION" "AI_GREAT_STEALTH" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_GROWTH"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[GOOD_DEFENSE_TROOPS]]
+
+        [[GOOD_DETECTION]]
+        [[GREAT_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[TUNDRA_STANDARD_EP]]
+
+    graphic = "icons/species/furthest.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

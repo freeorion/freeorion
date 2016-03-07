@@ -1,0 +1,12 @@
+Tech
+    name = "CON_REMOTE_COL"
+    description = "CON_REMOTE_COL_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 3 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    unlock = Item type = ShipPart name = "CO_COLONY_POD"
+    graphic = "icons/tech/environmental_encapsulation.png"
+
+#include "../../common/shared.macros"

@@ -1,0 +1,42 @@
+Species
+    name = "SP_SILEXIAN"
+    description = "SP_SILEXIAN_DESC"
+    gameplay_description = "SP_SILEXIAN_GAMEPLAY_DESC"
+    Native
+
+    CanColonize
+
+    Tags = [ "ROBOTIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_GREAT_SUPPLY" ]
+
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+        [[BAD_WEAPONS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[TERRAN_STANDARD_EP]]
+
+    graphic = "icons/species/robotic-06.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

@@ -1,0 +1,17 @@
+Tech
+    name = "CON_ORBITAL_CON"
+    description = "CON_ORBITAL_CON_DESC"
+    short_description = "SUPPLY_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 40 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            effects = SetMaxSupply value = Value + 1
+    graphic = "icons/tech/orbital_construction.png"
+
+#include "../../common/shared.macros"

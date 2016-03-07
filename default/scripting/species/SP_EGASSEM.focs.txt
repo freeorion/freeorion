@@ -1,0 +1,44 @@
+Species
+    name = "SP_EGASSEM"
+    description = "SP_EGASSEM_DESC"
+    gameplay_description = "SP_EGASSEM_GAMEPLAY_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "LITHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_ULTIMATE_INDUSTRY" "AI_TAG_BAD_POPULATION" "AI_TAG_GREAT_SUPPLY" "AI_TAG_GREAT_ATTACKTROOPS" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_INDUSTRY"
+
+    effectsgroups = [
+        [[ULTIMATE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[GREAT_OFFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+        [[NARROW_EP]]
+    ]
+
+    [[INFERNO_NARROW_EP]]
+
+    graphic = "icons/species/egassem.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

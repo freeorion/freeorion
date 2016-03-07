@@ -1,0 +1,8 @@
+ShipDesign
+    name = "SD_SMALL_MARK_2"
+    description = "SD_SMALL_MARK2_DESC"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "SR_WEAPON_2_1"
+    ]
+    model = "fighter"

@@ -1,0 +1,14 @@
+ShipDesign
+    name = "SM_SNAIL"
+    description = "SM_SNAIL_DESC"
+    hull = "SH_ASTEROID"
+    parts = [
+        "SR_WEAPON_4_1"
+        ""
+        ""
+        ""
+        ""
+        ""
+    ]
+    icon = "icons/monsters/snail.png"
+    model = "seed"

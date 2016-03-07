@@ -1,0 +1,55 @@
+BuildingType
+    name = "BLD_INDUSTRY_CENTER"
+    description = "BLD_INDUSTRY_CENTER_DESC"
+    buildcost = 75
+    buildtime = 5
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_INDUSTRY_CENTER"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            activation = And [
+                OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
+                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
+            ]
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            activation = And [
+                OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
+                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
+            ]
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
+    ]
+    icon = "icons/tech/industrial_centre_ii.png"
+
+#include "../common/shared.macros"

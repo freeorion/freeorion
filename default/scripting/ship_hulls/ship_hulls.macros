@@ -1,0 +1,96 @@
+STRUCTURE_MULTIPLICATOR
+'''2.0'''
+
+INFINITE_FUEL
+'''EffectsGroup
+            scope = Source
+            accountinglabel = "INFINITE_FUEL_LABEL"
+            effects = SetFuel value = Value + 1
+'''
+
+SCAVANGE_FUEL_UNOWNED
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Stationary
+                Unowned
+                Random probability = 0.6
+            ]
+            effects = SetFuel value = Value + 1
+'''
+
+REGULAR_HULL_DETECTION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetDetection value = Value + 25
+'''
+
+WEAK_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "WEAK_VISION_LABEL"
+        effects = SetDetection value = Value + 10
+'''
+
+MODERATE_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "MODERATE_VISION_LABEL"
+        effects = SetDetection value = Value + 30
+'''
+
+GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "GOOD_VISION_LABEL"
+        effects = SetDetection value = Value + 50
+'''
+
+EXCELLENT_VISION
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        accountinglabel = "EXCELLENT_VISION_LABEL"
+        effects = SetDetection value = Value + 150
+'''
+
+UNOWNED_GOOD_VISION
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Source
+            Unowned
+        ]
+        accountinglabel = "GOOD_VISION_LABEL"
+        effects = SetDetection value = Value + 50
+'''
+
+UNOWNED_MOVE
+'''EffectsGroup
+            scope = And [
+                Fleet
+                Object id = Source.FleetID
+            ]
+            activation = And [
+                Turn low = 10
+                Stationary
+                Unowned
+                Random probability = 0.9
+                Not And [
+                    DesignHasHull name = "SH_ASTEROID"
+                    Monster
+                ]
+            ]
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
+            ]
+'''
+

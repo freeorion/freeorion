@@ -1,0 +1,12 @@
+Tech
+    name = "GRO_CYBORG"
+    description = "GRO_CYBORG_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    category = "GROWTH_CATEGORY"
+    researchcost = 250 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 10
+    prerequisites = "GRO_NANO_CYBERNET"
+    // Effects are located in species
+    graphic = "icons/tech/cyborgs.png"
+
+#include "../../common/shared.macros"

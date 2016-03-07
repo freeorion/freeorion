@@ -1,0 +1,6 @@
+Article
+    name = "EVACUATION_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "POPULATION_TITLE_SHORT_DESC"
+    description = "EVACUATION_TEXT"
+    icon = "icons/building/evacuation.png"    

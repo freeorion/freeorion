@@ -1,0 +1,54 @@
+Hull
+    name = "SH_TREE_BODY"
+    description = "SH_TREE_BODY_DESC"
+    speed = 0
+    fuel = 0
+    stealth = 5
+    structure = 5
+    slots = Slot type = External position = (0.30, 0.15)
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[MODERATE_VISION]]
+
+        EffectsGroup    // remove self and recreate on first turn, so that trees start with age 0, and thus low initial health, instead of having thousands of structure at start of game
+            scope = Source
+            activation = Turn high = 2
+            effects = [
+                CreateShip designname = "SM_TREE"
+                Destroy
+            ]
+
+        EffectsGroup    // grow larger / stronger with age
+            scope = Source
+            accountinglabel = "AGE_BONUS"
+            effects = SetMaxStructure value = Value + Source.Age*3
+
+        EffectsGroup    // regeneration
+            scope = Source
+            activation = Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+            effects = SetStructure value = Value + 7
+
+        EffectsGroup    // spawn floaters to reproduce
+            scope = Source
+            activation = Random probability = 0.03
+            stackinggroup = "TREE_GROWTH"
+            effects = CreateShip designname = "SM_FLOATER"
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.FleetID
+                Fleet
+            ]
+            effects = SetAggressive
+    ]
+    icon = ""
+    graphic = "icons/monsters/tree.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

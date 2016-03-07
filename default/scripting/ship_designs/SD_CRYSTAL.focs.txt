@@ -1,0 +1,13 @@
+ShipDesign
+    name = "SD_CRYSTAL"
+    description = "SD_CRYSTAL_DESC"
+    hull = "SH_CRYSTALLIZED_ASTEROID"
+    parts = [
+        "AR_CRYSTAL_PLATE"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"

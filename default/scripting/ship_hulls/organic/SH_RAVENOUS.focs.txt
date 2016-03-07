@@ -1,0 +1,58 @@
+Hull
+    name = "SH_RAVENOUS"
+    description = "SH_RAVENOUS_DESC"
+    speed = 100
+    fuel = 2
+    stealth = 5
+    structure = 5
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)        
+        Slot type = Internal position = (0.45, 0.50)
+        Slot type = Internal position = (0.55, 0.50)        
+        Slot type = External position = (0.80, 0.55)        
+        Slot type = External position = (0.20, 0.75)
+        Slot type = External position = (0.40, 0.75)
+    ]
+    buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 6
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection value = Value + 75
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 20)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/ravenous_hull_small.png"
+    graphic = "hulls_design/ravenous_hull.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

@@ -1,0 +1,30 @@
+Special
+    name = "MODERATE_TECH_NATIVES_SPECIAL"
+    description = "MODERATE_TECH_NATIVES_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 50
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Unowned
+        Species
+        Not HasTag name = "PRIMITIVE"
+        Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Unowned
+            effects = [
+                SetMaxDefense value = Value + 10
+                SetMaxShield value = Value + 10
+                SetMaxTroops value = Value + 10
+                SetDetection value = Value + 20
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = RemoveSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+    ]
+    graphic = "icons/tech/categories/learning.png"

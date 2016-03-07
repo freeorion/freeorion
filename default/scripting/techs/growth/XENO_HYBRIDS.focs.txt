@@ -1,0 +1,12 @@
+Tech
+    name = "GRO_XENO_HYBRIDS"
+    description = "GRO_XENO_HYBRIDS_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    category = "GROWTH_CATEGORY"
+    researchcost = 150 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 10
+    prerequisites = "GRO_XENO_GENETICS"
+    // Effects are located in species
+    graphic = "icons/tech/xenological_hybridization.png"
+
+#include "../../common/shared.macros"

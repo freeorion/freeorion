@@ -1,0 +1,40 @@
+Species
+    name = "SP_NYMNMN"
+    description = "SP_NYMNMN_DESC"
+    gameplay_description = "SP_NYMNMN_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "SELF_SUSTAINING" "AI_TAG_NO_INDUSTRY" "AI_TAG_BAD_POPULATION" "AI_TAG_BAD_SUPPLY" "AI_TAG_GREAT_DETECTION" "AI_TAG_GOOD_STEALTH" ]
+
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_GROWTH_FOCUS]]*/
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+
+        [[GREAT_DETECTION]]
+        [[GOOD_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[DESERT_STANDARD_EP]]
+
+    graphic = "icons/species/intangible-05.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

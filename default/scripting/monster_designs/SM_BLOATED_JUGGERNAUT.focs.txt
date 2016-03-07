@@ -1,0 +1,15 @@
+ShipDesign
+    name = "SM_BLOATED_JUGGERNAUT"
+    description = "SM_BLOATED_JUGGERNAUT_DESC"
+    hull = "SH_BLOATED_JUGGERNAUT_BODY"
+    parts = [
+        ""
+        "SP_CHAOS_WAVE"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SH_PLASMA"
+        "ST_CLOAK_2"
+    ]
+    icon  = "icons/monsters/juggernaut-4.png"
+    model = "seed"

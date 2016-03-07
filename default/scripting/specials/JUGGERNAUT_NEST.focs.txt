@@ -1,0 +1,22 @@
+Special
+    name = "JUGGERNAUT_NEST_SPECIAL"
+    description = "JUGGERNAUT_NEST_SPECIAL_DESC"
+    spawnrate = 0.0
+    location = And [
+        Planet
+        (GalaxyMonsterFrequency >= 1)
+        Planet type = Asteroids
+        Not WithinStarlaneJumps jumps = 4 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        [[MONSTER_NEST(JUGGERNAUT,juggernaut,0.06)]]
+    ]
+    graphic = "icons/specials_huge/juggernaut-nest.png"
+
+#include "monster_nest.macros"

@@ -1,0 +1,65 @@
+BuildingType
+    name = "BLD_SPACE_ELEVATOR"
+    description = "BLD_SPACE_ELEVATOR_DESC"
+    buildcost = 150
+    buildtime = 6
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_SPACE_ELEVATOR"
+        Not Planet type = Asteroids
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet size = Tiny
+            ]
+            activation = Source
+            effects = SetMaxSupply value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet size = Small
+            ]
+            activation = Source
+            effects = SetMaxSupply value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet size = Medium
+            ]
+            activation = Source
+            effects = SetMaxSupply value = Value + 3
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet size = Large
+            ]
+            activation = Source
+            effects = SetMaxSupply value = Value + 4
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet size = Huge
+            ]
+            activation = Source
+            effects = SetMaxSupply value = Value + 5
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet type = GasGiant
+            ]
+            activation = Source
+            effects = SetMaxSupply value = Value + 4
+    ]
+    icon = ""
+
+#include "../common/shared.macros"

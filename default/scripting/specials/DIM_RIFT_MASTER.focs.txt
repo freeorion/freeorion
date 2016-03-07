@@ -1,0 +1,20 @@
+Special
+    name = "DIM_RIFT_MASTER_SPECIAL"
+    description = "DIM_RIFT_MASTER_SPECIAL_DESC"
+    stealth = 65
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = [
+                AddSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
+                SetTargetPopulation value = Value - 4
+            ]
+
+        [[REMOVE_CLOUD_COVER]]
+        [[REMOVE_ASH]]
+    ]
+    graphic = "icons/specials_huge/dim_rift.png"
+
+#include "remove_stealth.macros"

@@ -1,0 +1,11 @@
+Tech
+    name = "LRN_PHYS_BRAIN"
+    description = "LRN_PHYS_BRAIN_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 4 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 2
+    tags = "THEORY"
+    graphic = "icons/tech/the_physical_brain.png"
+
+#include "../../common/shared.macros"

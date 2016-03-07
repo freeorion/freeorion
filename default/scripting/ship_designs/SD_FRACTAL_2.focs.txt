@@ -1,0 +1,21 @@
+ShipDesign
+    name = "SD_FRACTAL_2"
+    description = "SD_FRACTAL_2_DESC"
+    hull = "SH_FRACTAL_ENERGY"
+    parts = [
+        "DT_DETECTOR_3"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+        "AR_XENTRONIUM_PLATE"
+    ]
+    model = "fighter"

@@ -1,0 +1,15 @@
+ShipDesign
+    name = "SM_ACIREMA_GUARD"
+    description = "SM_ACIREMA_GUARD_DESC"
+    hull = "SH_GUARD_MONSTER_BODY"
+    parts = [
+        "SR_WEAPON_3_1"
+        "DT_DETECTOR_3"
+        ""
+        ""
+        ""
+        "SH_DEFENSE_GRID"
+        ""
+    ]
+    icon = "icons/monsters/sentinel.png"
+    model = "seed"

@@ -1,0 +1,37 @@
+Species
+    name = "SP_TRENCHERS"
+    description = "SP_TRENCHERS_DESC"
+    gameplay_description = "SP_TRENCHERS_GAMEPLAY_DESC"
+    Native
+
+    Tags = [ "ROBOTIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[NO_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[BARREN_STANDARD_EP]]
+
+    graphic = "icons/species/robotic-02.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

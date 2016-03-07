@@ -1,0 +1,9 @@
+ShipDesign
+    name = "SD_ROBO_FLUX_TROOPS"
+    description = "SD_ROBO_FLUX_TROOPS_DESC"
+    hull = "SH_SPATIAL_FLUX"
+    parts = [
+        "GT_TROOP_POD"
+        "GT_TROOP_POD"
+    ]
+    model = "scout"

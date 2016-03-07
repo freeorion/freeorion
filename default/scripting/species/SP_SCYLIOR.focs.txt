@@ -1,0 +1,42 @@
+Species
+    name = "SP_SCYLIOR"
+    description = "SP_SCYLIOR_DESC"
+    gameplay_description = "SP_SCYLIOR_GAMEPLAY_DESC"
+    //Playable
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[OCEAN_STANDARD_EP]]
+
+    graphic = "icons/species/scylior.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

@@ -1,0 +1,8 @@
+ShipDesign
+    name = "SD_TROOP_DROP_HVY"
+    description = "SD_TROOP_DROP_HVY_DESC"
+    hull = "SH_COLONY_BASE"
+    parts = [
+        "GT_TROOP_POD_2"
+    ]
+    model = "mark1"

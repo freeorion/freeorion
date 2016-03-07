@@ -1,0 +1,42 @@
+Hull
+    name = "SH_TRANSSPATIAL"
+    description = "SH_TRANSSPATIAL_DESC"
+    speed = 80
+    fuel = 3
+    stealth = 15
+    structure = 9
+    slots = [
+        Slot type = External position = (0.40, 0.50)
+        Slot type = Core     position = (0.60, 0.50)
+        ]
+    buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 3
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/trans_spatial_hull_small.png"
+    graphic = "hulls_design/trans_spatial_hull.png"
+
+#include "robotic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

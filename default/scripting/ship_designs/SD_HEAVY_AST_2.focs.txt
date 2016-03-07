@@ -1,0 +1,16 @@
+ShipDesign
+    name = "SD_HEAVY_AST_2"
+    description = "SD_HEAVY_AST_2_DESC"
+    hull = "SH_HEAVY_ASTEROID"
+    parts = [
+        "AR_ROCK_PLATE"
+        "AR_ROCK_PLATE"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "FU_IMPROVED_ENGINE_COUPLINGS"
+        "FU_BASIC_TANK"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"

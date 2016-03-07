@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SD_CARRIER"
+    description = "SD_CARRIER_DESC"
+    hull = "SH_STANDARD"
+    parts = [
+        "FT_BAY_1"
+        "FT_BAY_1"
+        "FT_BAY_1"
+        "FT_HANGAR_1"
+    ]
+    model = "mark1"

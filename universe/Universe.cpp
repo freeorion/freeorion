@@ -1,7 +1,6 @@
 #include "Universe.h"
 
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Random.h"
@@ -417,7 +416,7 @@ namespace EmpireStatistics {
         static std::map<std::string, ValueRef::ValueRefBase<double>*> s_stats;
         if (s_stats.empty()) {
             try {
-                parse::statistics(GetResourceDir() / "empire_statistics.txt", s_stats);
+                parse::statistics(s_stats);
             } catch (const std::exception& e) {
                 ErrorLogger() << "Failed parsing empire_statistics.txt: error: " << e.what();
                 throw e;

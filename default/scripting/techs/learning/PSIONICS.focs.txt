@@ -1,0 +1,15 @@
+Tech
+    name = "LRN_PSIONICS"
+    description = "LRN_PSIONICS_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    category = "LEARNING_CATEGORY"
+    researchcost = 300 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * If condition = AND [
+        OwnedBy empire = Source.Owner
+        HasTag name = "TELEPATHIC"
+    ])
+    researchturns = 4
+    tags = "THEORY"
+    prerequisites = "LRN_TRANSLING_THT"
+    graphic = "icons/tech/psionics.png"
+
+#include "../../common/shared.macros"

@@ -1,0 +1,50 @@
+Species
+    name = "SP_TRITH"
+    description = "SP_TRITH_DESC"
+    gameplay_description = "SP_TRITH_GAMEPLAY_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "SELF_SUSTAINING" "TELEPATHIC" "XENOPHOBIC" "AI_TAG_AVERAGE_SUPPLY" "AI_GREAT_DETECTION" "AI_GOOD_STEALTH" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        [[GREAT_DETECTION]]
+        [[GOOD_STEALTH]]
+
+        [[XENOPHOBIC_SELF]]
+
+        [[XENOPHOBIC_OTHER(TRITH)]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+        [[NARROW_EP]]
+    ]
+
+    [[DESERT_NARROW_EP]]
+
+    graphic = "icons/species/trith.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

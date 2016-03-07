@@ -1,0 +1,41 @@
+Special
+    name = "ACCRETION_DISC_SPECIAL"
+    description = "ACCRETION_DISC_SPECIAL_DESC"
+    spawnrate = 99
+    spawnlimit = 9999
+    location = And [
+        System
+        Or [
+            And [
+                Star type = [BlackHole]
+                Not Contains Capital
+                Random probability = 0.85
+            ]
+            And [
+                Random probability = 0.1
+                Not Star type = [NoStar]
+                Not WithinStarlaneJumps jumps = 2 condition = And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy affiliation = AnyEmpire
+                    ]
+                ]
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            effects = CreateField type = "FLD_ACCRETION_DISC" size = 20
+
+        EffectsGroup
+            scope = And [
+                Planet
+                ContainedBy Source
+            ]
+            effects = SetMaxSupply value = Value - 1
+    ]
+
+    graphic = "nebulae/nebula20.png"

@@ -1,0 +1,29 @@
+Hull
+    name = "SH_DRONE_BODY"
+    description = "SH_DRONE_BODY_DESC"
+    speed = 30
+    fuel = 3
+    stealth = 5
+    structure = 10
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[MODERATE_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/drone.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

@@ -1,0 +1,6 @@
+Article
+    name = "SHIELDS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "SHIELDS_TEXT"
+    icon = "icons/meter/shield.png"

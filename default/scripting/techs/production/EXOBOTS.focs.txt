@@ -1,0 +1,13 @@
+Tech
+    name = "PRO_EXOBOTS"
+    description = "PRO_EXOBOTS_DESC"
+    short_description = "EXOBOT_SHORT_DESC"
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "PRO_SENTIENT_AUTOMATION"
+    unlock = Item type = Building name = "BLD_COL_EXOBOT"
+
+    graphic = "icons/species/robotic-01.png"
+
+#include "../../common/shared.macros"

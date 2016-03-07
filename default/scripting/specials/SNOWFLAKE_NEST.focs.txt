@@ -1,0 +1,21 @@
+Special
+    name = "SNOWFLAKE_NEST_SPECIAL"
+    description = "SNOWFLAKE_NEST_SPECIAL_DESC"
+    spawnrate = 0.0
+    location = And [
+        Planet
+        Planet size = Small
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        [[MONSTER_NEST(SNOWFLAKE,snowflake,0.08)]]
+    ]
+    graphic = "icons/specials_huge/snowflake-nest.png"
+
+#include "monster_nest.macros"

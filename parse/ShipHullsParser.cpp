@@ -287,6 +287,17 @@ namespace {
 }
 
 namespace parse {
-    bool ship_hulls(const boost::filesystem::path& path, std::map<std::string, HullType*>& hulls)
-    { return detail::parse_file<rules, std::map<std::string, HullType*> >(path, hulls); }
+    bool ship_hulls(std::map<std::string, HullType*>& hulls) {
+        bool result = true;
+
+        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/ship_hulls");
+
+        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
+             file_it != file_list.end(); ++file_it)
+        {
+            result &= detail::parse_file<rules, std::map<std::string, HullType*> >(*file_it, hulls);
+        }
+
+        return result;
+    }
 }

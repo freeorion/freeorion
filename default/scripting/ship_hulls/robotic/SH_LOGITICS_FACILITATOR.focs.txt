@@ -1,0 +1,76 @@
+Hull
+    name = "SH_LOGISTICS_FACILITATOR"
+    description = "SH_LOGISTICS_FACILITATOR_DESC"
+    speed = 80
+    fuel = 3
+    stealth = 5
+    structure = 110
+    slots = [
+        Slot type = External position = (0.10, 0.15)
+        Slot type = External position = (0.22, 0.15)
+        Slot type = External position = (0.34, 0.15)
+        Slot type = External position = (0.46, 0.15)
+        Slot type = External position = (0.58, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.82, 0.15)
+        Slot type = Internal position = (0.22, 0.50)
+        Slot type = Internal position = (0.34, 0.50)
+        Slot type = Core     position = (0.50, 0.50)
+    ]
+    buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 8
+    tags = [ "ROBOTIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_CON_NANOROBO"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                Turn low = Target.CreationTurn + 1
+                Or [
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
+                ]
+            ]
+            activation = And [
+                InSystem
+                Turn low = Source.CreationTurn + 1
+            ]
+            stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
+            effects = SetStructure value = max(Target.Structure, Target.MaxStructure)
+
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/logistics_facilitator_hull_small.png"
+    graphic = "hulls_design/logistics_facilitator_hull.png"
+
+#include "robotic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

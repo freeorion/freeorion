@@ -23,7 +23,7 @@ def generate_monsters(monster_freq, systems):
 
     # get all monster fleets that have a spawn rate and limit both > 0 and at least one monster ship design in it
     # (a monster fleet with no monsters in it is pointless) and store them in a list
-    fleet_plans = fo.load_monster_fleet_plan_list("space_monster_spawn_fleets.txt")
+    fleet_plans = fo.load_monster_fleet_plan_list()
 
     # create a map where we store a spawn counter for each monster fleet
     # this counter will be set to the spawn limit initially and decreased every time the monster fleet is spawned

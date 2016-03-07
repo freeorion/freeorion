@@ -1,0 +1,96 @@
+BuildingType
+    name = "BLD_IMPERIAL_PALACE"
+    description = "BLD_IMPERIAL_PALACE_DESC"
+    buildcost = 10
+    buildtime = 8
+    captureresult = destroy
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_IMPERIAL_PALACE"
+        TargetPopulation low = 1
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_IMPERIAL_PALACE"
+            OwnedBy empire = Source.Owner
+            ProducedByEmpire empire = Source.Owner
+        ]
+    ]
+    enqueuelocation = And [
+        // must own production location planet
+        Planet
+        OwnedBy empire = Source.Owner
+
+        // can't build where another palace exists (even if not owned by this empire)
+        Not Contains Building name = "BLD_IMPERIAL_PALACE"
+
+        // must have a non-trivial population
+        TargetPopulation low = 1
+
+        // can't enqueue if already own a self-built palace
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_IMPERIAL_PALACE"
+            OwnedBy empire = Source.Owner
+            ProducedByEmpire empire = Source.Owner
+        ]
+
+        // can't enqueue if already have an enqueued palace anywhere
+        Number low = 0 high = 0 condition = And [
+            Planet
+            Enqueued
+                type = Building
+                name = "BLD_IMPERIAL_PALACE"
+                empire = Source.Owner
+                low = 1
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.ProducedByEmpireID
+            ]
+            effects = SetEmpireCapital
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.ProducedByEmpireID
+            ]
+            stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
+            effects = SetMaxSupply value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.ProducedByEmpireID
+            ]
+            activation = Not Number low = 1 condition = And [
+                Building name = "BLD_MEGALITH"
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "IMPERIAL_PALACE_EFFECT"
+            effects =
+                SetTargetConstruction value = Value + 20
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = Source.Planet.Species
+            ]
+            activation = And [
+                OwnedBy empire = Source.ProducedByEmpireID
+                ContainedBy And [
+                    Object id = Source.PlanetID
+                    Planet
+                    Species
+                ]
+            ]
+            stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
+            effects =
+                SetTargetHappiness value = Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
+        ]
+    icon = "icons/building/palace.png"

@@ -1,0 +1,26 @@
+Tech
+    name = "SPY_STEALTH_1"
+    description = "SPY_STEALTH_1_DESC"
+    short_description = "PLANET_PROTECT_SHORT_DESC"
+    category = "SPY_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]] - (50 * [[TECH_COST_MULTIPLIER]] * If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" )
+    researchturns = 5
+    prerequisites = "SPY_ROOT_DECEPTION"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Or [
+                    Planet
+                    System
+                ]
+            ]
+            activation = And [
+                Not OwnerHasTech name = "SPY_STEALTH_2"
+                Not OwnerHasTech name = "SPY_STEALTH_3"
+                Not OwnerHasTech name = "SPY_STEALTH_4"
+            ]
+            effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
+    graphic = "icons/specials_huge/cloud_cover.png"
+
+#include "../../common/shared.macros"

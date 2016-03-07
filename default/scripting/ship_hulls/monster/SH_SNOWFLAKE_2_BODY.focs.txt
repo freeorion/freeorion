@@ -1,0 +1,55 @@
+Hull
+    name = "SH_SNOWFLAKE_2_BODY"
+    description = "SH_SNOWFLAKE_2_BODY_DESC"
+    speed = 60
+    fuel = 5
+    stealth = 5
+    structure = 60
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+
+        EffectsGroup
+            scope = And [
+                Source
+                ContainedBy And [
+                    System 
+                    Contains Planet size = Small
+                ]
+            ]
+            activation = And [
+                Turn low = 60
+                Random probability = Source.Age*0.01 - 0.1
+            ]
+            effects = [
+                CreateShip designname = "SM_SNOWFLAKE_3" empire = Source.Owner
+                Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_MATURED"
+                    icon = "icons/monsters/snowflake-3.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_SNOWFLAKE_3"
+                    ]
+                    empire = Source.Owner
+            ]
+        [[EXCELLENT_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/snowflake-2.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

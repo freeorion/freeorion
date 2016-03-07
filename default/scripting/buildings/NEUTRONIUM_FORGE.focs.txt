@@ -1,0 +1,20 @@
+BuildingType
+    name = "BLD_NEUTRONIUM_FORGE"
+    description = "BLD_NEUTRONIUM_FORGE_DESC"
+    buildcost = 100
+    buildtime = 3
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/neutronium-forge.png"
+
+#include "../common/shared.macros"

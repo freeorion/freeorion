@@ -1,0 +1,10 @@
+Special
+    name = "VOLCANIC_ACTIVITY_SPECIAL"
+    description = "VOLCANIC_ACTIVITY_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Not HasSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+            effects = RemoveSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
+    graphic = "icons/specials_huge/volcanic_ash.png"

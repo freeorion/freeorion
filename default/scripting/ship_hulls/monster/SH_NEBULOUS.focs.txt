@@ -1,0 +1,28 @@
+Hull
+    name = "SH_NEBULOUS_BODY"
+    description = "SH_NEBULOUS_BODY"
+    speed = 100
+    fuel = 1
+    stealth = 75
+    structure = 5000
+    slots = [
+        Slot type = External position = (0.60, 0.45)
+        Slot type = Internal position = (0.40, 0.55)
+    ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[INFINITE_FUEL]]
+
+        [[MONSTER_MOVE_PRE]]1[[MONSTER_MOVE_POST]]
+    ]
+    icon = ""
+    graphic = ""
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

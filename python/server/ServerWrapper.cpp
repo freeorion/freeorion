@@ -313,10 +313,10 @@ namespace {
     }
 
     // Wrapper for preunlocked items
-    list LoadItemSpecList(const std::string& file_name) {
+    list LoadItemSpecList() {
         list py_items;
         std::vector<ItemSpec> items;
-        parse::items(GetResourceDir() / file_name, items);
+        parse::items(items);
         for (unsigned int i = 0; i < items.size(); i++) {
             py_items.append(object(items[i]));
         }
@@ -427,10 +427,10 @@ namespace {
         FleetPlan* m_fleet_plan;
     };
 
-    list LoadFleetPlanList(const std::string& file_name) {
+    list LoadFleetPlanList() {
         list py_fleet_plans;
         std::vector<FleetPlan*> fleet_plans;
-        parse::fleet_plans(GetResourceDir() / file_name, fleet_plans);
+        parse::fleet_plans(fleet_plans);
         for (unsigned int i = 0; i < fleet_plans.size(); i++) {
             py_fleet_plans.append(new FleetPlanWrapper(fleet_plans[i]));
         }
@@ -501,10 +501,10 @@ namespace {
         MonsterFleetPlan* m_monster_fleet_plan;
     };
 
-    list LoadMonsterFleetPlanList(const std::string& file_name) {
+    list LoadMonsterFleetPlanList() {
         list py_monster_fleet_plans;
         std::vector<MonsterFleetPlan*> monster_fleet_plans;
-        parse::monster_fleet_plans(GetResourceDir() / file_name, monster_fleet_plans);
+        parse::monster_fleet_plans(monster_fleet_plans);
         for (unsigned int i = 0; i < monster_fleet_plans.size(); i++) {
             py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(monster_fleet_plans[i]));
         }

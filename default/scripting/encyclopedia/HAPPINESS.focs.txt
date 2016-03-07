@@ -1,0 +1,6 @@
+Article
+    name = "HAPPINESS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "HAPPINESS_TEXT"
+    icon = "icons/meter/happiness.png"

@@ -1,0 +1,10 @@
+ShipDesign
+    name = "SD_COLONY_SHIP"
+    description = "SD_COLONY_SHIP_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        ""
+        ""
+        "CO_COLONY_POD"
+    ]
+    model = "seed"

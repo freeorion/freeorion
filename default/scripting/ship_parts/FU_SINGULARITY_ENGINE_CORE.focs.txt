@@ -1,0 +1,12 @@
+Part
+    name = "FU_SINGULARITY_ENGINE_CORE"
+    description = "FU_SINGULARITY_ENGINE_CORE_DESC"
+    class = Speed
+    capacity = 30
+    mountableSlotTypes = Core
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/engine-3.png"
+
+#include "../common/shared.macros"

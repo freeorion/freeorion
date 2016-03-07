@@ -1,0 +1,2 @@
+Statistic name = "SHIP_COUNT" value =
+    ShipDesignsOwned empire = Source.Owner    

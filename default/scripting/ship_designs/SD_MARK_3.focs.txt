@@ -1,0 +1,10 @@
+ShipDesign
+    name = "SD_MARK_3"
+    description = "SD_MARK3_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "SR_WEAPON_2_1"
+        "AR_STD_PLATE"
+        "FU_BASIC_TANK"
+    ]
+    model = "mark1"

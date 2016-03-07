@@ -1,0 +1,45 @@
+Part
+    name = "SP_NOVA_BOMB"
+    description = "SP_NOVA_BOMB_DESC"
+    class = General
+    mountableSlotTypes = External
+    buildcost = 5000 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 12
+    location = All
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.SystemID
+                System
+            ]
+            activation = Number low = 1 condition = And [
+                Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+                OwnedBy empire = Source.Owner
+                WithinStarlaneJumps jumps = 1 condition = Source
+            ]
+            effects = [
+                SetStarType type = NoStar
+                AddSpecial name = "SUPERNOVA_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = ContainedBy And [
+                Object id = Source.SystemID
+                System
+            ]
+            activation = Or [
+                Number low = 1 condition = And [
+                    Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+                    OwnedBy empire = Source.Owner
+                    WithinStarlaneJumps jumps = 1 condition = Source
+                ]
+                ContainedBy And [
+                    System 
+                    Contains HasSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                ]
+            ]
+            effects = Destroy
+    ]
+    icon = "icons/ship_parts/nova-bomb.png"
+
+#include "../common/shared.macros"

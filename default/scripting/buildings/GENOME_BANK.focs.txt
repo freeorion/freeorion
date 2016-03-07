@@ -1,0 +1,15 @@
+BuildingType
+    name = "BLD_GENOME_BANK"
+    description = "BLD_GENOME_BANK_DESC"
+    buildcost = 15
+    buildtime = 16
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_GENOME_BANK"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/genome_bank.png"
+
+#include "../common/shared.macros"

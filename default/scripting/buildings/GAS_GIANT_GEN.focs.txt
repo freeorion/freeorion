@@ -1,0 +1,32 @@
+BuildingType
+    name = "BLD_GAS_GIANT_GEN"
+    description = "BLD_GAS_GIANT_GEN_DESC"
+    buildcost = 25
+    buildtime = 3
+    tags = "ORBITAL"
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_GAS_GIANT_GEN"
+        OwnedBy empire = Source.Owner
+        Planet type = GasGiant
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Focus type = "FOCUS_INDUSTRY"
+                NOT Population high = 0
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "GAS_GIANT_GEN_STACK"
+            effects = SetTargetIndustry value = Value + 10
+        EffectsGroup
+            scope = Source
+            activation = Not Planet type = GasGiant
+            effects = Destroy
+    ]
+    icon = "icons/building/gas-giant-generator.png"
+
+#include "../common/shared.macros"

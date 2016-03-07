@@ -1,0 +1,13 @@
+ShipDesign
+    name = "SM_DRAGON"
+    description = "SM_DRAGON_DESC"
+    hull = "SH_STRONG_MONSTER_BODY"
+    parts = [
+        "SR_WEAPON_4_1"
+        "SP_DEATH_SPORE"
+        ""
+        "AR_CRYSTAL_PLATE"
+        "FU_ZERO_FUEL"
+    ]
+    icon = "icons/monsters/dragon.png"
+    model = "seed"

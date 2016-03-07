@@ -1,0 +1,15 @@
+Tech
+    name = "GRO_XENO_GENETICS"
+    description = "GRO_XENO_GENETICS_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    category = "GROWTH_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
+    prerequisites = [
+        "GRO_SYMBIOTIC_BIO"
+        "GRO_GENETIC_MED"
+    ]
+    // Effects are located in species
+    graphic = "icons/tech/xenological_genetics.png"
+
+#include "../../common/shared.macros"

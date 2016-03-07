@@ -1,0 +1,11 @@
+ShipDesign
+    name = "SD_SHIELD_BUG_2"
+    description = "SD_SHIELD_BUG_2_DESC"
+    hull = "SH_ORGANIC"
+    parts = [
+        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_1"
+        "AR_ZORTRIUM_PLATE"
+        "SH_DEFENSE_GRID"
+    ]
+    model = "mark1"

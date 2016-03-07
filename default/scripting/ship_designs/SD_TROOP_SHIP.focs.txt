@@ -1,0 +1,10 @@
+ShipDesign
+    name = "SD_TROOP_SHIP"
+    description = "SD_TROOP_SHIP_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "GT_TROOP_POD"
+        "GT_TROOP_POD"
+        "GT_TROOP_POD"
+    ]
+    model = "mark1"

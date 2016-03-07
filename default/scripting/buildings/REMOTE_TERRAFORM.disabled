@@ -1,0 +1,26 @@
+//  Remote Terraforming is broken badly so hidden
+BuildingType
+    name = "BLD_REMOTE_TERRAFORM"
+    description = "BLD_REMOTE_TERRAFORM_DESC"
+    buildcost = 6
+    buildtime = 16
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_REMOTE_TERRAFORM"
+        OwnedBy empire = Source.Owner
+        Not Planet environment = [Uninhabitable Good]
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = SetPlanetType type = Target.NextBetterPlanetType
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = ""

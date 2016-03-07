@@ -1,0 +1,63 @@
+Special
+    name = "SUPERNOVA_SPECIAL"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom1.png" size = 120
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                RemoveSpecial name = "SUPERNOVA_SPECIAL"
+                AddSpecial name = "SUPERNOVA_SPECIAL2"
+            ]
+    graphic = "icons/specials_huge/nova_boom.png"
+
+Special
+    name = "SUPERNOVA_SPECIAL2"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom2.png" size = 120
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "SUPERNOVA_SPECIAL2"
+                AddSpecial name = "SUPERNOVA_SPECIAL3"
+            ]
+    graphic = "icons/specials_huge/nova_boom.png"
+
+Special
+    name = "SUPERNOVA_SPECIAL3"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom3.png" size = 120
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "SUPERNOVA_SPECIAL3"
+                AddSpecial name = "SUPERNOVA_SPECIAL4"
+            ]
+    graphic = "icons/specials_huge/nova_boom.png"
+
+Special
+    name = "SUPERNOVA_SPECIAL4"
+    description = "SUPERNOVA_SPECIAL_DESC"
+    spawnrate = 0
+    spawnlimit = 0
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetOverlayTexture name = "stars/nova-boom4.png" size = 120
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "SUPERNOVA_SPECIAL4"
+            ]
+    graphic = "icons/specials_huge/nova_boom.png"

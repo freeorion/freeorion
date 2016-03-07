@@ -1,0 +1,96 @@
+Tech
+    name = "SHP_GAL_EXPLO"
+    description = "SHP_GAL_EXPLO_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 4 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 1
+    tags = "THEORY"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Planet size = Tiny
+            ]
+            activation = Planet
+            accountinglabel = "TINY_PLANET_LABEL"
+            effects = SetMaxSupply value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Planet size = Small
+            ]
+            activation = Planet
+            accountinglabel = "SMALL_PLANET_LABEL"
+            effects = SetMaxSupply value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Planet size = Large
+            ]
+            activation = Planet
+            accountinglabel = "LARGE_PLANET_LABEL"
+            effects = SetMaxSupply value = Value - 1
+
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Planet size = Huge
+            ]
+            activation = Planet
+            accountinglabel = "HUGE_PLANET_LABEL"
+            effects = SetMaxSupply value = Value - 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy empire = Source.Owner
+                Planet type = GasGiant
+            ]
+            activation = Planet
+            accountinglabel = "GAS_GIANT_LABEL"
+            effects = SetMaxSupply value = Value - 1
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                CanColonize
+                //(6 > 4) // test
+                //(5 = 5)
+                //(3 != 83)
+                //(6 >= 0)
+                (LocalCandidate.NextTurnPopGrowth       >= [[MIN_RECOLONIZING_SIZE]] - LocalCandidate.Population)
+                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]                       )
+                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1                   )
+                Or [
+                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)                  )
+                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001)             )
+                ]
+            ]
+            activation = Source
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_POP_THRESHOLD"
+                    icon = "icons/sitrep/colony_growth.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+                ]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn low = 0 high = 0
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_WELCOME"
+                    label = "SITREP_WELCOME_LABEL"  // explicitly provided so that the custom SitRep intro message can share the same SitRepPanel filter
+                    icon = "icons/sitrep/fo_logo.png"
+                    empire = Source.Owner
+                ]
+    ]
+    graphic = "icons/tech/galactic_exploration.png"
+
+#include "../../common/shared.macros"

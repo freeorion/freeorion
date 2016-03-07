@@ -1,0 +1,39 @@
+Species
+    name = "SP_BEIGEGOO"
+    description = "SP_BEIGEGOO_DESC"
+    gameplay_description = "SP_BEIGEGOO_GAMEPLAY_DESC"
+    Native
+
+    Tags = [ "ROBOTIC" "AI_TAG_GOOD_POPULATION" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_INDUSTRY"
+
+    effectsgroups = [
+        [[GREAT_INDUSTRY]]
+        [[NO_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[GREAT_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[RADIATED_STANDARD_EP]]
+
+    graphic = "icons/species/beige-goo.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

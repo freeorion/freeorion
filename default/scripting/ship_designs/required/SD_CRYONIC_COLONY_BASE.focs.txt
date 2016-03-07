@@ -1,0 +1,7 @@
+ShipDesign
+    name = "SD_CRYONIC_COLONY_BASE"
+    description = "SD_CRYONIC_COLONY_BASE_DESC"
+    hull = "SH_COLONY_BASE"
+    parts = "CO_SUSPEND_ANIM_POD"
+    icon = "icons/ship_hulls/colony_base_hull_small.png"  
+    model = "seed"

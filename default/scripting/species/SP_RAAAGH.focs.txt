@@ -1,0 +1,39 @@
+Species
+    name = "SP_RAAAGH"
+    description = "SP_RAAAGH_DESC"
+    gameplay_description = "SP_RAAAGH_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" "PRIMITIVE"]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_PROTECTION"
+
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[NO_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[ULTIMATE_DEFENSE_TROOPS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[TERRAN_STANDARD_EP]]
+
+    graphic = "icons/species/raaagh.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

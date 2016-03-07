@@ -1,0 +1,19 @@
+Tech
+    name = "SHP_ENDOSYMB_HULL"
+    description = "SHP_ENDOSYMB_HULL_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 72 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = [
+        "SHP_MONOCELL_EXP"
+        "SHP_ENDOCRINE_SYSTEMS"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_ENDOSYMBIOTIC"
+        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+    ]
+    graphic = "icons/ship_hulls/endosymbiotic_hull_small.png"
+
+#include "../../../common/shared.macros"

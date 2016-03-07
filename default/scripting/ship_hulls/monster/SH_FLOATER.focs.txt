@@ -1,0 +1,56 @@
+Hull
+    name = "SH_FLOATER_BODY"
+    description = "SH_FLOATER_BODY_DESC"
+    speed = 20
+    fuel = 3
+    stealth = 15
+    structure = 20
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = Internal position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[MODERATE_VISION]]
+
+        EffectsGroup    // in systems with no other monsters, spawn trees
+            scope = And [
+                Object id = Source.SystemID
+                System
+                Star type = [Blue White Yellow Orange Red]                
+                Not Number low = 2 condition = And [
+                    Ship
+                    Monster
+                    InSystem id = Source.SystemID
+                ]
+            ]
+            activation = And [
+                InSystem
+                Random probability = 0.1
+            ]
+            stackinggroup = "TREE_GROWTH"
+            effects = [
+                CreateShip designname = "SM_TREE"
+                GenerateSitRepMessage
+                    message = "EFFECT_TREE"
+                    icon = "icons/monsters/tree.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        ]
+                    affiliation = CanSee condition = Source
+                ]
+        ]
+    icon = ""
+    graphic = "icons/monsters/floater.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

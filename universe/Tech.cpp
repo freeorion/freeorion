@@ -5,7 +5,6 @@
 #include "ObjectMap.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../Empire/Empire.h"
@@ -321,9 +320,9 @@ TechManager::TechManager() {
     std::set<std::string> categories_seen_in_techs;
 
     try {
-        parse::techs(GetResourceDir() / "techs.txt", m_techs, m_categories, categories_seen_in_techs);
+        parse::techs(m_techs, m_categories, categories_seen_in_techs);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing techs.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing techs: error: " << e.what();
         throw e;
     }
 
@@ -490,7 +489,7 @@ std::string TechManager::FindRedundantDependency() {
         const Tech* tech = *it;
         if (!tech) {
             std::stringstream stream;
-            stream << "ERROR: Missing tech referenced in techs.txt for unknown reasons...";
+            stream << "ERROR: Missing referenced tech for unknown reasons...";
             return stream.str();
         }
         std::set<std::string> prereqs = tech->Prerequisites();

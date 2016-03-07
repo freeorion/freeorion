@@ -1,0 +1,7 @@
+ShipDesign
+    name = "SD_BASE_DECOY"
+    description = "SD_BASE_DECOY_DESC"
+    hull = "SH_COLONY_BASE"
+    parts = ""
+    icon = "icons/ship_hulls/colony_base_hull_small.png"
+    model = "some model"

@@ -1,0 +1,63 @@
+Special
+    name = "DERELICT_SPECIAL3"               //  FUEL
+    description = "DERELICT_SPECIAL_DESC"
+    stealth = 45
+    spawnrate = 0.5
+    spawnlimit = 100
+    location = And [
+        System
+        Not Contains Capital
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                AddSpecial name = "DERELICT_SPECIAL3"
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_FUEL"
+                    icon = "icons/meter/fuel.png"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL3"
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                System
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                RemoveSpecial name = "DERELICT_SPECIAL3"
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = [
+                SetFuel value = Value + 100
+                RemoveSpecial name = "DERELICT_SPECIAL3"
+            ]
+    ]
+    graphic = "icons/specials_huge/derelict.png"

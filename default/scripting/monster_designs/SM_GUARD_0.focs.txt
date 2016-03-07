@@ -1,0 +1,14 @@
+ShipDesign
+    name = "SM_GUARD_0"
+    description = "SM_GUARD_0_DESC"
+    hull = "SH_GUARD_MONSTER_BODY"
+    parts = [
+        "SR_WEAPON_1_1"
+        ""
+        "AR_PRECURSOR_PLATE"
+        ""
+        ""
+        "SH_DEFENSE_GRID"
+    ]
+    icon = "icons/monsters/maintenance_ship.png"
+    model = "seed"

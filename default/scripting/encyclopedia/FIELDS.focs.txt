@@ -1,0 +1,6 @@
+Article
+    name = "FIELDS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "FIELDS_TITLE"
+    description = "FIELDS_TEXT"
+    icon = "icons/tech/galactic_exploration.png"

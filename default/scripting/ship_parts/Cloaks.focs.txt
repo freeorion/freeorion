@@ -1,0 +1,51 @@
+Part
+    name = "ST_CLOAK_4"
+    description = "ST_CLOAK_4_DESC"
+    class = Stealth
+    capacity = 80
+    mountableSlotTypes = Internal
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 10
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
+    icon = "icons/ship_parts/cloak-4.png"
+
+Part
+    name = "ST_CLOAK_3"
+    description = "ST_CLOAK_3_DESC"
+    class = Stealth
+    capacity = 60
+    mountableSlotTypes = Internal
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 7
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
+    icon = "icons/ship_parts/cloak-3.png"
+
+Part
+    name = "ST_CLOAK_2"
+    description = "ST_CLOAK_2_DESC"
+    class = Stealth
+    capacity = 40
+    mountableSlotTypes = Internal
+    buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
+    icon = "icons/ship_parts/cloak-2.png"
+
+Part
+    name = "ST_CLOAK_1"
+    description = "ST_CLOAK_1_DESC"
+    class = Stealth
+    capacity = 20
+    mountableSlotTypes = Internal
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
+    icon = "icons/ship_parts/cloak-1.png"
+
+#include "stacking.macros"
+
+#include "../common/shared.macros"

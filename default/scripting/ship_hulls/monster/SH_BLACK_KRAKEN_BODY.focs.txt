@@ -1,0 +1,32 @@
+Hull
+    name = "SH_BLACK_KRAKEN_BODY"
+    description = "SH_BLACK_KRAKEN_BODY_DESC"
+    speed = 200
+    fuel = 100
+    stealth = 25
+    structure = 4000
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
+    ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[HUNT_BUILDINGS]]
+        [[MONSTER_MOVE_ALWAYS]]
+        [[EXCELLENT_VISION]]
+        [[INFINITE_FUEL]]
+    ]
+    icon = ""
+    graphic = ""
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

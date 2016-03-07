@@ -1,0 +1,32 @@
+Special
+    name = "CONC_CAMP_MASTER_SPECIAL"
+    description = "CONC_CAMP_MASTER_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not Contains Building name = "BLD_CONC_CAMP"
+                Population low = 0.0001
+            ]
+            effects = [
+                AddSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+                RemoveSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [ 
+                Not Contains Building name = "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
+                Population low = 0.0001
+            ]
+            effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not Contains Building name = "BLD_CONC_CAMP"
+                Population high = 0.0001
+            ]
+            effects = RemoveSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+    ]
+    graphic = "icons/building/concentration-camp.png"

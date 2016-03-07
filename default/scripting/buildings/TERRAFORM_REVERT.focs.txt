@@ -1,0 +1,33 @@
+BuildingType
+    name = "BLD_TERRAFORM_REVERT"
+    description = "BLD_TERRAFORM_REVERT_DESC"
+    buildcost = 150
+    buildtime = 6
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_TERRAFORM"
+        Not Contains Building name = "BLD_TERRAFORM_REVERT"
+        OwnedBy empire = Source.Owner
+        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = LocalCandidate.OriginalType
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = [
+                SetPlanetType type = Target.NextCloserToOriginalPlanetType
+                GenerateSitRepMessage
+                    message = "EFFECT_TERRAFORM"
+                    icon = "icons/building/terraform.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/building/terraform_revert.png"

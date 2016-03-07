@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SM_KRAKEN_2"
+    description = "SM_KRAKEN_2_DESC"
+    hull = "SH_KRAKEN_2_BODY"
+    parts = [
+        "SR_WEAPON_3_1"
+        "SP_SONIC"
+        ""
+        ""
+        ]
+    icon = "icons/monsters/kraken-2.png"
+    model = "seed"

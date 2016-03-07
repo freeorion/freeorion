@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SM_JUGGERNAUT_3"
+    description = "SM_JUGGERNAUT_3_DESC"
+    hull = "SH_JUGGERNAUT_3_BODY"
+    parts = [
+        "SR_WEAPON_4_1"
+        "SP_EMO"
+        ""
+        "SH_PLASMA"
+        ]
+    icon = "icons/monsters/juggernaut-3.png"
+    model = "seed"

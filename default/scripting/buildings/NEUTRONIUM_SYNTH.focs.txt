@@ -1,0 +1,11 @@
+BuildingType
+    name = "BLD_NEUTRONIUM_SYNTH"
+    description = "BLD_NEUTRONIUM_SYNTH_DESC"
+    buildcost = 1200
+    buildtime = 10
+    location = AND [
+        Planet
+        Not Contains Building name = "BLD_NEUTRONIUM_SYNTH"
+        OwnedBy empire = Source.Owner
+        ]
+    icon = "icons/building/neutronium-forge.png"

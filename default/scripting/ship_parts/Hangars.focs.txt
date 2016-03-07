@@ -1,0 +1,61 @@
+Part
+    name = "FT_HANGAR_0"
+    description = "FT_HANGAR_1_DESC"
+    class = FighterHangar
+    capacity = 2
+    damage = 0
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_1"
+    description = "FT_HANGAR_1_DESC"
+    class = FighterHangar
+    capacity = 3
+    damage = 1
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_2"
+    description = "FT_HANGAR_1_DESC"
+    class = FighterHangar
+    capacity = 2
+    damage = 3
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_3"
+    description = "FT_HANGAR_3_DESC"
+    class = FighterHangar
+    capacity = 2
+    damage = 6
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_4"
+    description = "FT_HANGAR_4_DESC"
+    class = FighterHangar
+    capacity = 1
+    damage = 10
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+#include "../common/shared.macros"

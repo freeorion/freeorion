@@ -1,0 +1,31 @@
+Hull
+    name = "SH_JUGGERNAUT_3_BODY"
+    description = "SH_JUGGERNAUT_3_BODY_DESC"
+    speed = 25
+    fuel = 5
+    stealth = 5
+    structure = 1000
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[MONSTER_MOVE_ALWAYS]]
+        [[INFINITE_FUEL]]
+        [[EXCELLENT_VISION]]
+
+    ]
+    icon = ""
+    graphic = "icons/monsters/juggernaut-3.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

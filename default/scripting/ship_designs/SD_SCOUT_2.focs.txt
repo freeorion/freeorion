@@ -1,0 +1,8 @@
+ShipDesign
+    name = "SD_SCOUT_2"
+    description = "SD_SCOUT_2_DESC"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "DT_DETECTOR_2"
+    ]
+    model = "fighter"

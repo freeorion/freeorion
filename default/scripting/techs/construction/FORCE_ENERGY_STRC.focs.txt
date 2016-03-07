@@ -1,0 +1,111 @@
+Tech
+    name = "CON_FRC_ENRG_STRC"
+    description = "CON_FRC_ENRG_STRC_DESC"
+    short_description = "METER_GROWTH_SHORT_DESC"
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "LRN_FORCE_FIELD"
+        "CON_ARCH_PSYCH"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Industry high = RootCandidate.TargetIndustry - 3
+            ]
+            effects = SetIndustry value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Research high = RootCandidate.TargetResearch - 3
+            ]
+            effects = SetResearch value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Construction high = RootCandidate.TargetConstruction - 3
+            ]
+            effects = SetConstruction value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Industry low = RootCandidate.TargetIndustry - 3 high = RootCandidate.TargetIndustry
+            ]
+            effects = SetIndustry value = Target.TargetIndustry
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
+            ]
+            effects = SetResearch value = Target.TargetResearch
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Construction low = RootCandidate.TargetConstruction - 3 high = RootCandidate.TargetConstruction
+            ]
+            effects = SetConstruction value = Target.TargetConstruction
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Industry low = RootCandidate.TargetIndustry + 5
+            ]
+            effects = SetIndustry value = Value - 3
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Research low = RootCandidate.TargetResearch + 5
+            ]
+            effects = SetResearch value = Value - 3
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Construction low = RootCandidate.TargetConstruction + 5
+            ]
+            effects = SetConstruction value = Value - 3
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 5
+            ]
+            effects = SetIndustry value = Target.TargetIndustry
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 5
+            ]
+            effects = SetResearch value = Target.TargetResearch
+
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Construction low = RootCandidate.TargetConstruction high = RootCandidate.TargetConstruction + 5
+            ]
+            effects = SetConstruction value = Target.TargetConstruction
+    ]
+    graphic = "icons/tech/force_energy_structures.png"
+
+#include "../../common/shared.macros"

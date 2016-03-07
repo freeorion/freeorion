@@ -6,7 +6,6 @@
 #include "ValueRef.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 
@@ -18,9 +17,9 @@ namespace {
         SpecialManager() {
 
             try {
-                parse::specials(GetResourceDir() / "specials.txt", m_specials);
+                parse::specials(m_specials);
             } catch (const std::exception& e) {
-                ErrorLogger() << "Failed parsing specials.txt: error: " << e.what();
+                ErrorLogger() << "Failed parsing specials: error: " << e.what();
                 throw e;
             }
 

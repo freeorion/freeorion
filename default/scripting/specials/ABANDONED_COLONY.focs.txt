@@ -1,0 +1,35 @@
+Special
+    name = "ABANDONED_COLONY_SPECIAL"
+    description = "ABANDONED_COLONY_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.4
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Planet type = [Asteroids GasGiant]
+        Not ContainedBy And [
+            System 
+            Contains Homeworld
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+                Construction low = 10
+            ] 
+            stackinggroup = "ABANDONED_STACK"
+            effects = RemoveSpecial name = "ABANDONED_COLONY_SPECIAL"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+            stackinggroup = "ABANDONED_STACK"
+            effects = SetConstruction value = Value + 10
+        ]
+    graphic = "icons/specials_huge/abandoned-colony.png"

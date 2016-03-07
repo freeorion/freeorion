@@ -1,0 +1,42 @@
+Species
+    name = "SP_PHINNERT"
+    description = "SP_PHINNERT_DESC"
+    gameplay_description = "SP_PHINNERT_GAMEPLAY_DESC"
+    Native
+
+    CanColonize
+
+    tags = [ "ORGANIC" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" "PRIMITIVE"]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        /*[[HAS_RESEARCH_FOCUS]]*/
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_INDUSTRY"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[NO_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+        [[FAST_COLONIZATION]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[SWAMP_STANDARD_EP]]
+
+    graphic = "icons/species/phinnert.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

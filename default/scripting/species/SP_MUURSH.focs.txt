@@ -1,0 +1,40 @@
+Species
+    name = "SP_MUURSH"
+    description = "SP_MUURSH_DESC"
+    gameplay_description = "SP_MUURSH_GAMEPLAY_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_GREAT_WEAPONS" "AI_TAG_BAD_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[GREAT_DEFENSE_TROOPS]]
+
+        [[GREAT_WEAPONS]]
+
+        [[NATIVE_PLANETARY_DEFENSE]]
+        [[NATIVE_PLANETARY_SHIELDS]]
+    ]
+
+    [[DESERT_STANDARD_EP]]
+
+    graphic = "icons/species/muursh.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

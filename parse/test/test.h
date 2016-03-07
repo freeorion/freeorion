@@ -36,17 +36,6 @@ enum test_type {
     star_type_value_ref_parser,
     condition_parser,
     effect_parser,
-    buildings_parser,
-    specials_parser,
-    species_parser,
-    techs_parser,
-    items_parser,
-    ship_parts_parser,
-    ship_hulls_parser,
-    ship_designs_parser,
-    fleet_plans_parser,
-    monster_fleet_plans_parser,
-    alignments_parser
 };
 
 void print_help();

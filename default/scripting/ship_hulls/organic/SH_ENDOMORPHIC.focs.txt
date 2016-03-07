@@ -1,0 +1,57 @@
+Hull
+    name = "SH_ENDOMORPHIC"
+    description = "SH_ENDOMORPHIC_DESC"
+    speed = 100
+    fuel = 2
+    stealth = 5
+    structure = 5
+    slots = [
+        Slot type = External position = (0.40, 0.25)
+        Slot type = External position = (0.60, 0.35)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = External position = (0.75, 0.50)
+        Slot type = Internal position = (0.25, 0.45)
+        Slot type = Internal position = (0.40, 0.55)
+    ]
+    buildCost = 23 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 5
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection value = Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            accountinglabel = "ORGANIC_GROWTH"
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
+
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/endomorphic_hull_small.png"
+    graphic = "hulls_design/endomorphic_hull.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

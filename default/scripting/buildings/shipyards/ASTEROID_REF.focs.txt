@@ -1,0 +1,23 @@
+BuildingType
+    name = "BLD_SHIPYARD_AST_REF"
+    description = "BLD_SHIPYARD_AST_REF_DESC"
+    buildcost = 500
+    buildtime = 5
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_SHIPYARD_AST_REF"
+        Planet type = Asteroids
+        OwnedBy empire = Source.Owner
+        Contains And [
+            Building name = "BLD_SHIPYARD_AST"
+            OwnedBy empire = Source.Owner
+        ]
+        Not Contains And [
+            Building name = "BLD_SHIPYARD_AST_REF"
+            OwnedBy empire = Source.Owner
+        ]
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = "icons/building/shipyard-6.png"
+
+#include "../../common/shared.macros"

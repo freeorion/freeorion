@@ -1,0 +1,13 @@
+BuildingType
+    name = "BLD_NOVA_BOMB_ACTIVATOR"
+    description = "BLD_NOVA_BOMB_ACTIVATOR_DESC"
+    buildcost = 25
+    buildtime = 1
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    icon = "icons/building/nova-bomb-activator.png"
+
+#include "../common/shared.macros"

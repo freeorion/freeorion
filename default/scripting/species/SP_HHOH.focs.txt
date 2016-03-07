@@ -1,0 +1,44 @@
+Species
+    name = "SP_HHHOH"
+    description = "SP_HHHOH_DESC"
+    gameplay_description = "SP_HHHOH_GAMEPLAY_DESC"
+    //Playable
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "AI_TAG_GOOD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_INDUSTRY"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[GREAT_DEFENSE_TROOPS]]
+
+        [[GOOD_WEAPONS]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[TUNDRA_STANDARD_EP]]
+
+    graphic = "icons/species/hhhoh.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

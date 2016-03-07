@@ -1,0 +1,42 @@
+Hull
+    name = "SH_ENERGY_FRIGATE"
+    description = "SH_ENERGY_FRIGATE_DESC"
+    speed = 120
+    fuel = 4
+    stealth = 5
+    structure = 15
+    slots = [
+        Slot type = External position = (0.30, 0.20)
+        Slot type = Internal position = (0.25, 0.45)
+        Slot type = External position = (0.45, 0.40)
+        Slot type = External position = (0.55, 0.47)
+        Slot type = External position = (0.65, 0.55)
+    ]
+    buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 3
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+        Star type = [White Blue BlackHole]
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/energy_frigate_hull_small.png"
+    graphic = "hulls_design/energy_frigate_hull.png"
+
+#include "energy.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

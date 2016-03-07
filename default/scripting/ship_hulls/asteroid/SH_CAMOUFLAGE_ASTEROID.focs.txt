@@ -1,0 +1,52 @@
+Hull
+    name = "SH_CAMOUFLAGE_ASTEROID"
+    description = "SH_CAMOUFLAGE_ASTEROID_DESC"
+    speed = 60
+    fuel = 4
+    stealth = 25
+    structure = 40
+    slots = [
+        Slot type = Internal position = (0.25, 0.45)
+        Slot type = Internal position = (0.40, 0.45)
+        Slot type = Internal position = (0.55, 0.45)
+        Slot type = Internal position = (0.70, 0.45)
+    ]
+    buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 2
+    tags = [ "ASTEROID_HULL" ]
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        ContainedBy And [
+            System 
+            Contains And [
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
+            effects = SetStealth value = Value + 40
+
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/camouflage_asteroid_hull_small.png"
+    graphic = "hulls_design/camouflage_asteroid_hull.png"
+
+#include "asteroid.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

@@ -68,4 +68,7 @@ FO_COMMON_API std::string FilenameTimestamp();
 /** Returns the path to \a to, as it appears from \a from. */
 FO_COMMON_API boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to);
 
+/** Returns a vector of files within \a path including a recursive search though sub-dirs */
+FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesystem::path& path);
+
 #endif

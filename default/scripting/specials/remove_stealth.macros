@@ -1,0 +1,27 @@
+REMOVE_CLOUD_COVER
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+'''
+
+REMOVE_ASH
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+'''
+
+REMOVE_DIM
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+'''
+
+REMOVE_VOID
+'''EffectsGroup
+        scope = Source
+        activation = Source
+        effects = RemoveSpecial name = "VOID_MASTER_SPECIAL"
+'''

@@ -1,0 +1,18 @@
+Special
+    name = "VOID_MASTER_SPECIAL"
+    description = "VOID_MASTER_SPECIAL_DESC"
+    stealth = 85
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
+            effects = AddSpecial name = "VOID_SLAVE_SPECIAL"
+
+        [[REMOVE_CLOUD_COVER]]
+        [[REMOVE_ASH]]
+        [[REMOVE_DIM]]
+    ]
+    graphic = "icons/specials_huge/void.png"
+
+#include "remove_stealth.macros"

@@ -1,0 +1,46 @@
+Species
+    name = "SP_LAENFA"
+    description = "SP_LAENFA_DESC"
+    gameplay_description = "SP_LAENFA_GAMEPLAY_DESC"
+    Playable
+    CanProduceShips
+    CanColonize
+
+    tags = [ "PHOTOTROPHIC" "TELEPATHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_DETECTION" "AI_TAG_GREAT_STEALTH" "AI_TAG_BAD_ATTACKTROOPS" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_INDUSTRY"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[BAD_RESEARCH]]
+
+        [[GOOD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
+
+        [[GREAT_DETECTION]]
+        [[GREAT_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+    ]
+
+    [[OCEAN_STANDARD_EP]]
+
+    graphic = "icons/species/laenfa.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

@@ -1,0 +1,57 @@
+Species
+    name = "SP_KILANDOW"
+    description = "SP_KILANDOW_DESC"
+    gameplay_description = "SP_KILANDOW_GAMEPLAY_DESC"
+    CanProduceShips
+    CanColonize
+
+    tags = [ "PHOTOTROPHIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_STEALTH" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        [[BAD_STEALTH]]
+
+        EffectsGroup
+            description = "GREAT_ASTEROID_INDUSTRY"
+            scope = And [
+                Source
+                Focus type = "FOCUS_INDUSTRY"
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        Planet type = Asteroids
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]
+            ]
+            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[RADIATED_STANDARD_EP]]
+
+    graphic = "icons/species/kilandow.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

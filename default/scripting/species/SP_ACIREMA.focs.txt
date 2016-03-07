@@ -1,0 +1,85 @@
+Species
+    name = "SP_ACIREMA"
+    description = "SP_ACIREMA_DESC"
+    gameplay_description = "SP_ACIREMA_GAMEPLAY_DESC"
+    Native
+    CanProduceShips
+
+    tags = [ "SELF_SUSTAINING" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_GOOD_SHIELDS" "AI_TAG_GREAT_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[GREAT_INDUSTRY]]
+        [[GOOD_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        // not for description
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OR [
+                    Turn low = 10 high = 10
+                    Turn low = 80 high = 80
+                    Turn low = 150 high = 150
+                    Turn low = 220 high = 220
+                    Turn low = 290 high = 290
+                ]
+                Not WithinStarlaneJumps jumps = 1 condition = And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy affiliation = AnyEmpire
+                    ]
+                ]
+            ]
+            effects = CreateShip designname = "SM_ACIREMA_GUARD" species = "SP_ACIREMA"
+
+        EffectsGroup
+            description = "GOOD_SHIP_SHIELD"
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = SetMaxShield value = Value + 1
+
+        EffectsGroup
+            description = "GOOD_PLANETARY_DEFENSE"
+            scope = And [
+                Source
+                Planet
+            ]
+            effects = SetMaxDefense value = Value + 5
+
+        EffectsGroup
+            description = "GOOD_PLANETARY_SHIELD"
+            scope = And [
+                Source
+                Planet
+            ]
+            effects = SetMaxShield value = Value + 5
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
+    ]
+
+    [[RADIATED_STANDARD_EP]]
+
+    graphic = "icons/species/acirema.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

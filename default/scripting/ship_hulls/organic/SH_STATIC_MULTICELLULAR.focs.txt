@@ -1,0 +1,46 @@
+Hull
+    name = "SH_STATIC_MULTICELLULAR"
+    description = "SH_STATIC_MULTICELLULAR_DESC"
+    speed = 100
+    fuel = 2
+    stealth = 5
+    structure = 16
+    slots = [
+        Slot type = External position = (0.35, 0.35)
+        Slot type = External position = (0.50, 0.35)
+        Slot type = External position = (0.65, 0.35)
+        Slot type = Internal position = (0.40, 0.60)
+        Slot type = Internal position = (0.60, 0.60)
+    ]
+    buildCost = 18 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 4
+    tags = [ "ORGANIC_HULL" ]
+    location = And [
+       // Contains And [
+        //    Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+        //    OwnedBy empire = Source.Owner
+       // ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/static_multicellular_small.png"
+    graphic = "hulls_design/static_multicellular.png"
+
+#include "organic.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

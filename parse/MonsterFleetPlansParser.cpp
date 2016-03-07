@@ -7,6 +7,7 @@
 
 #include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
+#include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -134,6 +135,8 @@ namespace {
 }
 
 namespace parse {
-    bool monster_fleet_plans(const boost::filesystem::path& path, std::vector<MonsterFleetPlan*>& monster_fleet_plans_)
-    { return detail::parse_file<rules, std::vector<MonsterFleetPlan*> >(path, monster_fleet_plans_); }
+    bool monster_fleet_plans(std::vector<MonsterFleetPlan*>& monster_fleet_plans_) {
+        boost::filesystem::path path = GetResourceDir() / "scripting/monster_fleets.inf";
+        return detail::parse_file<rules, std::vector<MonsterFleetPlan*> >(path, monster_fleet_plans_);
+    }
 }

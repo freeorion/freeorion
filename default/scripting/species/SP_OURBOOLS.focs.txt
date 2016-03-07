@@ -1,0 +1,41 @@
+Species
+    name = "SP_OURBOOLS"
+    description = "SP_OURBOOLS_DESC"
+    gameplay_description = "SP_OURBOOLS_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_BAD_SUPPLY" "AI_TAG_ULTIMATE_DETECTION" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        [[ULTIMATE_DETECTION]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+
+    [[OCEAN_STANDARD_EP]]
+
+    graphic = "icons/species/ourbools.png"
+
+#include "species.macros"
+
+#include "../common/shared.macros"

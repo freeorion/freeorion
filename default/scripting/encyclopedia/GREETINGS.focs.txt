@@ -1,0 +1,6 @@
+Article
+    name = "GREETINGS_GUIDE_TITLE"
+    category = "CATEGORY_GUIDES"
+    short_description = "GREETINGS_GUIDE_TITLE"
+    description = "GREETINGS_GUIDE_TEXT"
+    icon = "icons/tech/galactic_exploration.png"

@@ -189,6 +189,17 @@ namespace {
 }
 
 namespace parse {
-    bool ship_parts(const boost::filesystem::path& path, std::map<std::string, PartType*>& parts)
-    { return detail::parse_file<rules, std::map<std::string, PartType*> >(path, parts); }
+    bool ship_parts(std::map<std::string, PartType*>& parts) {
+        bool result = true;
+
+        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/ship_parts");
+
+        for(std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
+            file_it != file_list.end(); ++file_it)
+        {
+            result &= detail::parse_file<rules, std::map<std::string, PartType*> >(*file_it, parts);
+        }
+
+        return result;
+    }
 }

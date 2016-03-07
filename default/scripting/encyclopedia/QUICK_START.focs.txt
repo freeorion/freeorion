@@ -1,0 +1,6 @@
+Article
+    name = "QUICK_START_GUIDE_TITLE"
+    category = "CATEGORY_GUIDES"
+    short_description = "QUICK_START_GUIDE_TITLE"
+    description = "QUICK_START_GUIDE_TEXT"
+    icon = "icons/tech/galactic_exploration.png"

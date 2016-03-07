@@ -1,0 +1,47 @@
+Hull
+    name = "SH_IMMOBILE_FACTORY"
+    description = "SH_IMMOBILE_FACTORY_DESC"
+    speed = 0
+    fuel = 0
+    stealth = 5
+    structure = 1000
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = Internal position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    buildCost = 1
+    buildTime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[GOOD_VISION]]
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1
+            effects = [   
+                CreateShip designname = "SM_DRONE"
+                CreateShip designname = "SM_DRONE"
+            ]
+
+        EffectsGroup
+            scope = And [
+                System
+                InSystem id = Source.SystemID
+                Number high = 7 condition = And [   // Limits the factory to producing only when there are less than 7 drones in system
+                    Ship
+                    InSystem id = Source.SystemID
+                    DesignHasHull name = "SH_DRONE_BODY"
+                ]
+            ]
+            activation = Random probability = .1
+            effects = CreateShip designname = "SM_DRONE"
+    ]
+    icon = ""
+    graphic = "icons/monsters/factory.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"
