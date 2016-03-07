@@ -95,6 +95,7 @@ namespace {
                 >   parse::detail::producible_parser()                  [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   parse::detail::location_parser()(_e)
+                > -(parse::detail::consumption_parser()(_g, _h))
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 >   parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
