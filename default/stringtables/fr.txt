@@ -159,7 +159,6 @@ Rémanent %1% %2%
 #NEW_PLANET_NAME
 #%1% I
 
-
 EMPTY_SPACE
 Espace Interstellaire
 
@@ -1431,6 +1430,9 @@ Active/Désactive les journaux détaillés de l'information des résolutions de 
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Active/Désactive l'affichage des rapports d'erreurs (pour développeurs).
 
+OPTIONS_DB_EFFECT_ACCOUNTING
+Active/Désactive la tabulation de la comptabilité des effets lors de l'actualisation des statistiques de jeu.
+
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Définit la largeur et la hauteur des icônes du Rapport de Situation; par défaut 16 (min 12, max 64).
 
@@ -2401,6 +2403,9 @@ Journaux détaillés de débogage
 OPTIONS_VERBOSE_SITREP_DESC
 Affichage des rapports d'erreurs
 
+OPTIONS_EFFECT_ACCOUNTING
+Comptabilité des effets
+
 OPTIONS_EFFECTS_THREADS
 Threads de rendu d'effets
 
@@ -2535,12 +2540,12 @@ SIDE_PANEL
 Panneau latéral
 
 SP_SYSTEM_PRODUCTION
-Production du système
+Système - Capacité Ressources
 
 RESOURCE_PRODUCTION_TOOLTIP
-%1% : %2%
+Système - %1% : %2%
 RESOURCE_ALLOCATION_TOOLTIP
-%1% : %2%
+Syst. - %1% : %2%
 
 INDUSTRY_PRODUCTION
 Capacité industrielle
@@ -3040,7 +3045,7 @@ TECH_WND_ETA
 #######################
 
 PRODUCTION_INFO_AT_LOCATION_TITLE
-%3% %1% sur %2%
+%1% %3% sur %2%
 
 PRODUCTION_INFO_EMPIRE
 %2% %1%
@@ -3061,8 +3066,8 @@ Points disponibles ici
 RESEARCH_WND_TITLE
 Recherche
 
-RESEARCH_INFO_PANEL_TITLE
-Recherche
+RESEARCH_QUEUE_EMPIRE
+Recherche %1% : File d'Attente
 
 RESEARCH_INFO_RP
 pts.
@@ -3135,10 +3140,10 @@ PRODUCTION_INFO_PP
 pts.
 
 PRODUCTION_QUEUE_EMPIRE
-%1% : File d'Attente de Production
+Production %1% : File d'Attente
 
 PRODUCTION_QUEUE_EMPIRE_AT
-%1% : File d'Attente de Production sur %2%
+Production %1% : File d'Attente sur %2%
 
 #PRODUCTION_QUEUE_MULTIPLES
 #'''%1%x '''
@@ -4337,6 +4342,12 @@ Déplier
 METERS_SUBMENU
 Indicateurs
 
+PLANETS_SUBMENU
+Planètes
+
+FLEETS_SUBMENU
+Flotte / Astronefs
+
 #ID
 #ID
 
@@ -4370,11 +4381,17 @@ AGE
 TURNS_SINCE_FOCUS_CHANGE
 Tours depuis Modif. Focus
 
+SUPPLY_RANGE
+Portée Approvisionnement
+
+SUPPLYING_EMPIRE
+Empire Approvisionneur
+
 ETA
 Tours avant Destination
 
 PRODUCED_BY
-Produit par Empire ID
+Produit par
 
 SYSTEM
 Système Actuel
@@ -4429,6 +4446,9 @@ Type d'Étoile
 
 NEXT_TURN_POP_GROWTH
 Croiss. Pop. au Prochain Tour
+
+NUM_SPECIALS
+Nombre de Particularités
 
 ####################
 ## Filters Dialog ##
@@ -6870,7 +6890,7 @@ DESC_SET_VIS_ALLIES
 Définit la visibilité de l'objet à %1% pour les alliés de l'empire %2%
 DESC_SET_VIS_ENEMIES
 Définit la visibilité de l'objet à %1% pour les ennemis de l'empire %2%
-DESC_SET_VIS_NONE  # translated
+DESC_SET_VIS_NONE
 Définit la visibilité de l'objet pour aucun empire
 DESC_SET_VIS_ALL
 Définit la visibilité de l'objet à %1% pour tous les empires
@@ -7132,6 +7152,18 @@ DESC_METER_VALUE_CURRENT
 
 DESC_METER_VALUE_CURRENT_NOT
 ''' qui n'a pas un indicateur %1% compris entre %2% et %3%'''
+
+DESC_METER_VALUE_CURRENT_MIN
+''' qui a un indicateur %1% d'au moins %2%'''
+
+DESC_METER_VALUE_CURRENT_MIN_NOT
+''' qui a un indicateur %1% supérieur à %2%'''
+
+DESC_METER_VALUE_CURRENT_MAX
+''' qui a un indicateur %1% d'au plus %2%'''
+
+DESC_METER_VALUE_CURRENT_MAX_NOT
+''' qui a un indicateur %1% inférieur à %2%'''
 
 DESC_SHIP_PART_METER_VALUE_CURRENT
 ''' qui a un(e) %2% %1% compris(e) entre %3% et %4%'''
@@ -9428,6 +9460,12 @@ BLD_NOVA_BOMB_ACTIVATOR
 Détonateur de Bombe Nova
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Active tous les exemplaires de [[shippart SP_NOVA_BOMB]] dans un rayon maximum d'une Voie spatiale.
+
+BLD_SCRYING_SPHERE
+Sphère de Vision
+
+BLD_SCRYING_SPHERE_DESC
+Octroie la visibilité pour toutes les autres planètes abritant également une Sphère de Vision.
 
 BLD_COL_PART_1
 Cette structure ne peut être construite que sur un [[encyclopedia OUTPOSTS_TITLE]], et transformera ce dernier en nouvelle
