@@ -63,9 +63,6 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
-            qi::_f_type _f;
-            qi::_g_type _g;
-            qi::_h_type _h;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
@@ -108,23 +105,11 @@ namespace {
                      )
                 ;
 
-            common_params
-                =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
-                >   parse::label(BuildTime_token)    > flexible_int_ref  [ _b = _1 ]
-                >   parse::detail::producible_parser()                   [ _c = _1 ]
-                >   parse::detail::tags_parser()(_d)
-                >   parse::detail::location_parser()(_e)
-                > -(parse::detail::consumption_parser()(_g, _h))
-                > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
-                >   parse::label(Icon_token)         > tok.string
-                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
-            ;
-
             hull
                 =   hull_prefix(_a, _b)
                 >   hull_stats [ _c = _1 ]
                 >  -slots(_e)
-                >   common_params [ _d = _1 ]
+                >   parse::detail::common_params_parser() [ _d = _1 ]
                 >   parse::label(Graphic_token) > tok.string
                     [ insert_hull(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
@@ -137,7 +122,6 @@ namespace {
             hull_stats.name("Hull stats");
             slot.name("Slot");
             slots.name("Slots");
-            common_params.name("Part Hull Common Params");
             hull.name("Hull");
 
 #if DEBUG_PARSERS
@@ -146,7 +130,6 @@ namespace {
             debug(hull_stats);
             debug(slot);
             debug(slots);
-            debug(common_params);
             debug(hull);
 #endif
 
@@ -211,7 +194,6 @@ namespace {
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         slots_rule                                  slots;
-        parse::detail::part_hull_common_params_rule common_params;
         hull_rule                                   hull;
         start_rule                                  start;
     };

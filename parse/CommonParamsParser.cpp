@@ -6,6 +6,7 @@
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
 #include "EnumParser.h"
+#include "ParseImpl.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -21,8 +22,15 @@ namespace parse { namespace detail {
             const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
 
             qi::_1_type _1;
-            qi::_r1_type _r1;
             qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
+            qi::_f_type _f;
+            qi::_g_type _g;
+            qi::_h_type _h;
+            qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -40,6 +48,18 @@ namespace parse { namespace detail {
                 =    parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
+
+            common
+                =   parse::label(BuildCost_token)    > double_value_ref [ _a = _1 ]
+                >   parse::label(BuildTime_token)    > flexible_int_ref [ _b = _1 ]
+                >   producible                                          [ _c = _1 ]
+                >   parse::detail::tags_parser()(_d)
+                >   location(_e)
+                >  -consumption(_g, _h)
+                > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
+                >   parse::label(Icon_token)         > tok.string
+                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
+            ;
 
             consumption
                 =   parse::label(Consumption_token)
@@ -86,6 +106,13 @@ namespace parse { namespace detail {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&,
+                    std::map<std::string, ValueRef::ValueRefBase<double>*>&),
+            parse::skipper_type
+        > consumption_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&),
             qi::locals<
                 MeterType
@@ -120,9 +147,6 @@ namespace parse { namespace detail {
 
     const location_rule& location_parser()
     { return GetRules().location; }
-
-    const consumption_rule& consumption_parser()
-    { return GetRules().consumption; }
 
     const part_hull_common_params_rule& common_params_parser()
     { return GetRules().common; }

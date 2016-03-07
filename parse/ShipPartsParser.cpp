@@ -89,18 +89,6 @@ namespace {
                      )
                 ;
 
-            common_params
-                =   parse::label(BuildCost_token)   > double_value_ref  [ _a = _1 ]
-                >   parse::label(BuildTime_token)   > flexible_int_ref  [ _b = _1 ]
-                >   parse::detail::producible_parser()                  [ _c = _1 ]
-                >   parse::detail::tags_parser()(_d)
-                >   parse::detail::location_parser()(_e)
-                > -(parse::detail::consumption_parser()(_g, _h))
-                > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
-                >   parse::label(Icon_token)        > tok.string
-                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
-            ;
-
             part_type
                 =   part_type_prefix(_a, _b, _c)
                 > (  (parse::label(Capacity_token)  > parse::double_ [ _d = _1 ])
@@ -115,7 +103,7 @@ namespace {
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
-                >   common_params [ _e = _1 ]
+                >   parse::detail::common_params_parser() [ _e = _1 ]
                     [ insert_part_type(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _g)) ]
                 ;
 
@@ -125,13 +113,11 @@ namespace {
 
             part_type_prefix.name("Part");
             slots.name("mountable slot types");
-            common_params.name("Part Hull Common Params");
             part_type.name("Part");
 
 #if DEBUG_PARSERS
             debug(part_type_prefix);
             debug(slots);
-            debug(common_params);
             debug(part_type);
 #endif
 
@@ -173,7 +159,6 @@ namespace {
         > start_rule;
 
         part_type_prefix_rule                       part_type_prefix;
-        parse::detail::part_hull_common_params_rule common_params;
         slots_rule                                  slots;
         part_type_rule                              part_type;
         start_rule                                  start;

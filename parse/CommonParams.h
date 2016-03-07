@@ -29,14 +29,6 @@ namespace parse { namespace detail {
     > location_rule;
     const location_rule& location_parser();
 
-    typedef boost::spirit::qi::rule<
-        parse::token_iterator,
-        void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&,
-                std::map<std::string, ValueRef::ValueRefBase<double>*>&),
-        parse::skipper_type
-    > consumption_rule;
-    const consumption_rule& consumption_parser();
-
     typedef qi::rule<
         token_iterator,
         PartHullCommonParams (),
