@@ -78,7 +78,7 @@ namespace {
                 =   tok.BuildingType_
                 >   building_type_params [ _a = _1 ]
                 >   parse::detail::tags_parser()(_b)
-                > -(parse::label(Location_token)           >> parse::detail::condition_parser [ _c = _1 ])
+                >   parse::detail::location_parser()(_c)
                 > -(parse::label(EnqueueLocation_token)    >> parse::detail::condition_parser [ _d = _1 ])
                 > -(parse::label(EffectsGroups_token)      >> parse::detail::effects_group_parser() [ _e = _1 ])
                 >   parse::label(Icon_token)               > tok.string

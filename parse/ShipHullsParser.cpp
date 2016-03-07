@@ -108,17 +108,12 @@ namespace {
                      )
                 ;
 
-            location
-                =    parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
-                |    eps [ _r1 = new_<Condition::All>() ]
-                ;
-
             common_params
                 =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_token)    > flexible_int_ref  [ _b = _1 ]
                 >   parse::detail::producible_parser()                   [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
-                >   location(_e)
+                >   parse::detail::location_parser()(_e)
                 > -(consumption(_g, _h))
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 >   parse::label(Icon_token)         > tok.string
@@ -169,7 +164,6 @@ namespace {
             hull_stats.name("Hull stats");
             slot.name("Slot");
             slots.name("Slots");
-            location.name("Location");
             common_params.name("Part Hull Common Params");
             consumption.name("Consumption");
             consumable_meter.name("Consumable Meter");
@@ -182,7 +176,6 @@ namespace {
             debug(hull_stats);
             debug(slot);
             debug(slots);
-            debug(location);
             debug(common_params);
             debug(consumption);
             debug(consumable_meter);
@@ -276,7 +269,6 @@ namespace {
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         slots_rule                                  slots;
-        parse::detail::location_rule                location;
         parse::detail::part_hull_common_params_rule common_params;
         consumption_rule                            consumption;
         consumable_meter_rule                       consumable_meter;

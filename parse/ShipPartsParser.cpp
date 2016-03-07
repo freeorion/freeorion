@@ -89,17 +89,12 @@ namespace {
                      )
                 ;
 
-            location
-                =   parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
-                |   eps [ _r1 = new_<Condition::All>() ]
-                ;
-
             common_params
                 =   parse::label(BuildCost_token)   > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_token)   > flexible_int_ref  [ _b = _1 ]
                 >   parse::detail::producible_parser()                  [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
-                >   location(_e)
+                >   parse::detail::location_parser()(_e)
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 >   parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
@@ -129,14 +124,12 @@ namespace {
 
             part_type_prefix.name("Part");
             slots.name("mountable slot types");
-            location.name("Location");
             common_params.name("Part Hull Common Params");
             part_type.name("Part");
 
 #if DEBUG_PARSERS
             debug(part_type_prefix);
             debug(slots);
-            debug(location);
             debug(common_params);
             debug(part_type);
 #endif
@@ -179,7 +172,6 @@ namespace {
         > start_rule;
 
         part_type_prefix_rule                       part_type_prefix;
-        parse::detail::location_rule                location;
         parse::detail::part_hull_common_params_rule common_params;
         slots_rule                                  slots;
         part_type_rule                              part_type;
