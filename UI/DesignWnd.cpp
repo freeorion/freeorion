@@ -1204,7 +1204,7 @@ public:
     /** \name Mutators */ //@{
     virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void                    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
+    virtual void                    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -1499,10 +1499,10 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         int design_id = design_row->DesignID();
 
         ListBox::iterator point;
-        for (point = begin(); point != end(); ++point) {
+        for ( point = begin(); point != end(); ++point ) {
             const BasesListBox::CompletedDesignListBoxRow* irow =
                 boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*point);
-            if(irow && irow->DesignID() == design_id){
+            if( irow && irow->DesignID() == design_id ) {
                 ++point;
                 break;
             }
@@ -1589,7 +1589,7 @@ void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
             int insert_before_id = (insert_before_row == end() || !insert_before_control)
                 ? ShipDesign::INVALID_DESIGN_ID : insert_before_control->DesignID();
 
-            DebugLogger()<<"Accepted Drop of id "<<design_id<<" before "<< insert_before_id;
+            DebugLogger() << "Accepted Drop of id " << design_id << " before " << insert_before_id;
 
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
         }
@@ -1844,9 +1844,8 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, c
     }
 }
 
-void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    BaseRightClicked(it, pt, modkeys);
-}
+void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{ BaseRightClicked(it, pt, modkeys); }
 
 void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
@@ -2761,9 +2760,8 @@ bool DesignWnd::MainPanel::IsDesignNameValid() const {
     return !m_design_name->Text().empty();
 }
 
-const std::string DesignWnd::MainPanel::ValidatedDesignName() const {
-    return (IsDesignNameValid()) ? m_design_name->Text() : UserString("DESIGN_NAME_DEFAULT");
-}
+const std::string DesignWnd::MainPanel::ValidatedDesignName() const
+{ return (IsDesignNameValid()) ? m_design_name->Text() : UserString("DESIGN_NAME_DEFAULT"); }
 
 const std::string& DesignWnd::MainPanel::DesignDescription() const
 { return m_design_description->Text(); }

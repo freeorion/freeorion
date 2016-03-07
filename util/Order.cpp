@@ -1152,7 +1152,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         }
         empire->RemoveShipDesign(m_design_id);
         empire->AddShipDesign(m_design_id, m_design_id_after);
-        DebugLogger()<<"Move Ship Design "<<m_design_id << " to before "<<m_design_id_after;
+        DebugLogger() << "Move Ship Design " << m_design_id << " to before " << m_design_id_after;
 
     } else {
         // player is ordering empire to retain a particular design, so that is can
