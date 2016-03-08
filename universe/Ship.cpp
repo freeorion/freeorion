@@ -502,7 +502,7 @@ namespace {
         // how much damage does a fighter shot do?
         fighter_damage = std::max(0.0f, fighter_damage);
 
-        retval.push_back(fighter_damage * fighter_shots);
+        retval.push_back(fighter_damage * fighter_shots / 3.0f);    // divide by 3 because fighter calculation is for a full combat, but direct firefor one attack
 
         return retval;
     }
