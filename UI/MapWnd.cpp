@@ -1312,8 +1312,7 @@ void MapWnd::DoLayout() {
 
 void MapWnd::InitializeWindows() {
     // system-view side panel
-    // Width was formerly the default for "UI.sidepanel-width"
-    const GG::Pt sidepanel_ul(AppWidth() - GG::X(384), m_toolbar->Bottom());
+    const GG::Pt sidepanel_ul(AppWidth() - GG::X(512), m_toolbar->Bottom());
     const GG::Pt sidepanel_wh(GG::X(384), AppHeight() - m_toolbar->Height());
 
     // situation report window
