@@ -9,4 +9,4 @@ Tech
     unlock = Item type = Building name = "BLD_HYPER_DAM"
     graphic = "icons/tech/n-dimensional_assembly.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

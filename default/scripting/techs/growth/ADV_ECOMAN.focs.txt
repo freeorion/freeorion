@@ -9,4 +9,4 @@ Tech
     prerequisites = "GRO_SUBTER_HAB"
     graphic = "icons/tech/advanced_eco_man.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

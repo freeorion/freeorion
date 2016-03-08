@@ -12,4 +12,4 @@ Tech
     unlock = Item type = Building name = "BLD_GATEWAY_VOID"
     graphic = "icons/tech/monument_to_exodus.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

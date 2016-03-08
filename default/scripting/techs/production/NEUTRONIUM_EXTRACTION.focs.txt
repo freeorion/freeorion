@@ -15,4 +15,4 @@ Tech
         Item type = ShipPart name = "AR_NEUTRONIUM_PLATE"
     ]
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

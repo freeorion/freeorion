@@ -1,0 +1,36 @@
+STANDARD_CONSTRUCTION
+'''        EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
+            effects = SetTargetConstruction value = Value + 20
+'''
+
+FOCUS_CHANGE_PENALTY
+'''
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus type = "FOCUS_INDUSTRY"
+            ]
+            effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
+'''
+
+//#####      COLONIZATION SPEED        #####//
+
+// FAST_COLONIZATION and SLOW_COLONIZATION are stubs for applying the
+// fast colonization building speed description to a species.
+FAST_COLONIZATION
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(FAST_COLONIZATION)]]'''
+
+SLOW_COLONIZATION
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(SLOW_COLONIZATION)]]'''

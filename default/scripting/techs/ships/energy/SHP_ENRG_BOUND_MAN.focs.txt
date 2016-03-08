@@ -12,4 +12,4 @@ Tech
     unlock = Item type = ShipHull name = "SH_FRACTAL_ENERGY"
     graphic = "icons/ship_hulls/fractal_energy_hull_small.png"
 
-#include "../../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

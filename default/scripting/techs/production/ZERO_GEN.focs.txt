@@ -13,4 +13,4 @@ Tech
     ]
     graphic = "icons/tech/zero_point_energy.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

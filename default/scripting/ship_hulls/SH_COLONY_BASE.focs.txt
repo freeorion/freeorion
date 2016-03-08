@@ -15,5 +15,3 @@ Hull
     graphic = "hulls_design/colony_base_hull.png"
 
 #include "ship_hulls.macros"
-
-#include "../common/shared.macros"

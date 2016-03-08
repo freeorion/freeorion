@@ -9,4 +9,4 @@ Tech
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
     graphic = "icons/tech/lifecycle_manipulation.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

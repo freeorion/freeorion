@@ -46,4 +46,4 @@ Tech
     unlock = Item type = ShipPart name = "SH_MULTISPEC"
     graphic = "icons/ship_parts/multi-spectral.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

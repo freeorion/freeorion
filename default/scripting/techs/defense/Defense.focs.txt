@@ -259,4 +259,4 @@ Tech
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

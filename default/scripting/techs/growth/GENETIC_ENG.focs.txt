@@ -8,4 +8,4 @@ Tech
     tags = "THEORY"
     graphic = "icons/tech/genetic_engineering.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

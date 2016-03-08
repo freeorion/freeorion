@@ -9,4 +9,4 @@ Tech
     unlock = Item type = ShipPart name = "GT_TROOP_POD_2"
     graphic = "icons/tech/nanotech_cybernetics.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

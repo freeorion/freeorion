@@ -15,4 +15,4 @@ Tech
     ]
     graphic = "icons/ship_hulls/endomorphic_hull_small.png"
 
-#include "../../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

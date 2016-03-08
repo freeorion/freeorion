@@ -23,5 +23,3 @@ Special
     graphic = "icons/specials_huge/monopole.png"
 
 #include "specials.macros"
-
-#include "../common/shared.macros"

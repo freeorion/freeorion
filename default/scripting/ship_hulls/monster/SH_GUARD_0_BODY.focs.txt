@@ -20,8 +20,4 @@ Hull
     icon = ""
     graphic = "icons/monsters/maintenance_ship.png"
 
-#include "monster.macros"
-
 #include "../ship_hulls.macros"
-
-#include "../../common/shared.macros"

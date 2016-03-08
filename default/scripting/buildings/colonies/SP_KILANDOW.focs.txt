@@ -133,5 +133,6 @@ BuildingType
     ]
     icon = "icons/species/kilandow.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/upkeep.macros"
 
+#include "/scripting/common/misc.macros"

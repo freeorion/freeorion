@@ -1,0 +1,50 @@
+HUGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Huge
+'''
+
+LARGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Large
+'''
+
+MEDIUM_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Medium
+'''
+
+SMALL_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+        ]
+        effects = SetPlanetSize planetsize = Small
+'''
+
+NOT_HUGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+            Planet Size = Huge
+        ]
+        effects = SetPlanetSize planetsize = Large
+'''

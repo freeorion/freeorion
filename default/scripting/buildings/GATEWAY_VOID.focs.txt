@@ -41,4 +41,4 @@ BuildingType
     ]
     icon = "icons/building/monument_to_exodus.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

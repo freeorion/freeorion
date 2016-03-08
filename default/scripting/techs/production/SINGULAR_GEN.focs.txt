@@ -12,4 +12,4 @@ Tech
     unlock = Item type = Building name = "BLD_BLACK_HOLE_POW_GEN"
     graphic = "icons/tech/singularity_generation.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

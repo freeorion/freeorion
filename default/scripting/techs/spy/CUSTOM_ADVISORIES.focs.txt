@@ -5,6 +5,6 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 1
     researchturns = 1
-#include "../../../customizations/custom_sitreps.txt"
+#include "/customizations/custom_sitreps.txt"
 
 

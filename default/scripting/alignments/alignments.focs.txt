@@ -42,7 +42,7 @@ AlignmentEffects effectsgroups = [
                 empire = Source.Owner
                 meter = "ALIGN_MILITARISM"
                 value = Value + 1
-                
+
     EffectsGroup
         scope = And [
             OwnedBy empire = Source.Owner

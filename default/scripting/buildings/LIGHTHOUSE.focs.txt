@@ -27,4 +27,4 @@ BuildingType
     ]
     icon = "icons/building/lighthouse.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

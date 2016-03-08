@@ -12,4 +12,4 @@ BuildingType
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/heavy_mining_processor.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

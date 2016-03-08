@@ -52,7 +52,7 @@ Part
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/death-ray.png"    
+    icon = "icons/ship_parts/death-ray.png"
 
 Part
     name = "SR_JAWS"
@@ -109,4 +109,4 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/snowflake_laser.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"

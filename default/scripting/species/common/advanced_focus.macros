@@ -1,0 +1,154 @@
+
+ADVANCED_FOCUS_EFFECTS
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_STEALTH"
+            ]
+            effects = SetStealth value = Value + 15
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                WithinStarlaneJumps jumps = 4 condition = Source
+                Not Number low = 1 condition = And [
+                    Building name = "BLD_GENOME_BANK"
+                    OwnedBy empire = RootCandidate.Owner
+                ]
+            ]
+            activation = Focus type = "FOCUS_BIOTERROR"
+            effects = SetTargetPopulation value = Value - 4
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                OwnedBy empire = Source.Owner
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Focus type = "FOCUS_STARGATE_SEND"
+                    ]
+                ]
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_STARGATE_RECEIVE"
+            ]
+            stackinggroup = "STARGATE_STACK"
+            effects = [
+                GenerateSitrepMessage
+                    message = "EFFECT_STARGATE"
+                    icon = "icons/focus/stargate_receive.png"
+                    parameters = [
+                        tag = "fleet" data = Target.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
+                MoveTo destination = And [
+                    Contains Source
+                    System
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PLANET_DRIVE"
+                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+            ]
+            effects = [
+                MoveTo destination = And [
+                    OwnedBy empire = Source.Owner
+                    WithinStarlaneJumps jumps = 1 condition = Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]
+                GenerateSitRepMessage
+                        message = "EFFECT_PLANET_DRIVE"
+                    icon = "icons/focus/planet_drive.png"
+                        parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "system" data = Source.SystemID
+                        ]
+                        empire = Source.Owner
+                SetPopulation value = Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PLANET_DRIVE"
+                Random probability = 0.5
+                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance distance = 200 condition = Building name = "BLD_LIGHTHOUSE"
+            ]
+            effects = [
+                GenerateSitRepMessage
+                        message = "SITREP_PLANET_DRIVE_FAILURE"
+                    icon = "icons/sitrep/colony_destroyed.png"
+                        parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "system" data = Source.SystemID
+                        ]
+                        empire = Source.Owner
+                Destroy
+            ]
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                Not Stationary
+                Not InSystem
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                (Source.System.ID = LocalCandidate.NextSystemID)
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_DISTORTION" 
+            ]
+            stackinggroup = "DISTORTION_MOVEMENT_STACK"
+            effects = [
+                If condition = WithinDistance distance = 40 condition = Object id = Target.PreviousSystemID
+                    effects = [
+                        GenerateSitrepMessage
+                            message = "EFFECT_FLEET_MOVED_TO"
+                            parameters = [
+                                tag = "fleet" data = Target.ID
+                                tag = "system" data = Target.PreviousSystemID
+                                tag = "rawtext" data = DirectDistanceBetween object = Target.ID object = Target.PreviousSystemID
+                                tag = "planet" data = Source.ID
+                            ]
+                            empire = Source.Owner
+                        MoveTo destination = Object id = Target.PreviousSystemID
+                    ]
+                    else = [
+                        GenerateSitrepMessage
+                            message = "EFFECT_FLEET_MOVED_TOWARDS"
+                            parameters = [
+                                tag = "fleet" data = Target.ID
+                                tag = "system" data = Target.PreviousSystemID
+                                tag = "rawtext" data = DirectDistanceBetween object = Target.ID object = Target.PreviousSystemID
+                                tag = "planet" data = Source.ID
+                            ]
+                            empire = Source.Owner
+                        MoveTowards speed = 40 target = Object id = Target.PreviousSystemID
+                    ]
+                ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_LOGISTICS"
+            accountinglabel = "SHP_INTSTEL_LOG"
+            effects = SetMaxSupply value = Value + 3
+'''

@@ -12,4 +12,4 @@ Tech
     unlock = Item type = Building name = "BLD_TRANSFORMER"
     graphic = "icons/tech/transforming_structures.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

@@ -19,4 +19,4 @@ Special
     ]
     graphic = "icons/specials_huge/cloud_cover.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/stealth.macros"

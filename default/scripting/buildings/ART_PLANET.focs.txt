@@ -36,4 +36,4 @@ BuildingType
     ]
     icon = "icons/specials_huge/tidal_lock.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

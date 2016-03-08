@@ -21,4 +21,4 @@ BuildingType
             effects = AddSpecial name = "RESONANT_MOON_SPECIAL"
     icon = "icons/specials_huge/resonant_moon.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

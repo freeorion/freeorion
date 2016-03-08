@@ -60,4 +60,4 @@ Part
     ]
     icon = "icons/ship_parts/EMP.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"

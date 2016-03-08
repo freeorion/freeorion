@@ -9,4 +9,4 @@ Tech
     unlock = Item type = Building name = "BLD_CONC_CAMP"
     graphic = "icons/building/concentration-camp.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

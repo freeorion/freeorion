@@ -52,4 +52,6 @@ BuildingType
     ]
     icon = "icons/tech/industrial_centre_ii.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/enqueue.macros"

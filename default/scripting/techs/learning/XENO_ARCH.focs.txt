@@ -9,4 +9,4 @@ Tech
     unlock = Item type = building name = "BLD_XENORESURRECTION_LAB"
     graphic = "icons/tech/xenoarchaeology.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

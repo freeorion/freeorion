@@ -16,4 +16,4 @@ Tech
     ]
     graphic = "icons/ship_hulls/sentient_hull_small.png"
 
-#include "../../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

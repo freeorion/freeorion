@@ -9,4 +9,4 @@ Tech
     unlock = Item type = Building name = "BLD_SPACE_ELEVATOR"
     graphic = "icons/tech/architectural_monofilaments.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

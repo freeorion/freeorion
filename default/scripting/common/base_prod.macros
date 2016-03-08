@@ -1,0 +1,13 @@
+// Production Boosters based on population should be calculate based on these.
+
+INDUSTRY_PER_POP
+'''0.2'''
+
+RESEARCH_PER_POP
+'''0.2'''
+
+TROOPS_PER_POP
+'''0.2'''
+
+TECH_COST_MULTIPLIER
+'''2.0'''

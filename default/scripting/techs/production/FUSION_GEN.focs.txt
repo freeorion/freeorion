@@ -17,4 +17,4 @@ Tech
     ]
     graphic = "icons/tech/fusion_generation.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

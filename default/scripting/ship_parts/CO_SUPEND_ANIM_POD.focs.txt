@@ -13,4 +13,6 @@ Part
     consumption = Population consumption = 3 condition = Source
     icon = "icons/ship_parts/cryonic_colony_pod.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"
+
+#include "/scripting/common/misc.macros"

@@ -45,4 +45,4 @@ Part
 
     icon = ""
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"

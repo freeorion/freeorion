@@ -98,4 +98,4 @@ Tech
             ]
     graphic = "icons/tech/planetary_barrier_shield.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

@@ -8,4 +8,4 @@ Tech
     prerequisites = "PRO_MICROGRAV_MAN"
     graphic = "icons/tech/orbital_gardens.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

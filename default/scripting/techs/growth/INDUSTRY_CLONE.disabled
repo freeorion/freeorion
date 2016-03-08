@@ -10,4 +10,4 @@ Tech
     unlock = Item type = Building name = "BLD_CLONING_CENTER"
     graphic = "icons/tech/industrial_cloning.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

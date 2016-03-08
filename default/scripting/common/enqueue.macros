@@ -1,0 +1,7 @@
+ENQUEUE_BUILD_ONE_PER_PLANET
+'''And [
+        Not Contains Building name = CurrentContent
+        Not Enqueued type = Building name = CurrentContent
+        OwnedBy empire = Source.Owner
+    ]'''
+

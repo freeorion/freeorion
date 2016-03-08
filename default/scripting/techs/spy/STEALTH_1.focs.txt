@@ -3,7 +3,7 @@ Tech
     description = "SPY_STEALTH_1_DESC"
     short_description = "PLANET_PROTECT_SHORT_DESC"
     category = "SPY_CATEGORY"
-    researchcost = 100 * [[TECH_COST_MULTIPLIER]] - (50 * [[TECH_COST_MULTIPLIER]] * If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" )
+    researchcost = (100 - (50 * If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" )) * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "SPY_ROOT_DECEPTION"
     effectsgroups =
@@ -23,4 +23,4 @@ Tech
             effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
     graphic = "icons/specials_huge/cloud_cover.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

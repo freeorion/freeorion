@@ -15,4 +15,4 @@ Part
             effects = SetFuel value = Value + 0.1
     icon = "icons/ship_parts/antimatter_tank.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"

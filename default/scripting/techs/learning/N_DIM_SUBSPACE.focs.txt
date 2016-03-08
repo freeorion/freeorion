@@ -9,4 +9,4 @@ Tech
     prerequisites = "LRN_FORCE_FIELD"
     graphic = "icons/tech/n-dimensional_subspace.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

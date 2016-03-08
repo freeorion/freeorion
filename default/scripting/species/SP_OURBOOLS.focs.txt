@@ -36,6 +36,6 @@ Species
 
     graphic = "icons/species/ourbools.png"
 
-#include "species.macros"
+#include "common/*.macros"
 
-#include "../common/shared.macros"
+#include "/scripting/common/*.macros"

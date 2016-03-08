@@ -37,6 +37,6 @@ Species
 
     graphic = "icons/species/robotic-06.png"
 
-#include "species.macros"
+#include "common/*.macros"
 
-#include "../common/shared.macros"
+#include "/scripting/common/*.macros"

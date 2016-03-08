@@ -64,4 +64,4 @@ Tech
 
 #include "../techs.macros"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

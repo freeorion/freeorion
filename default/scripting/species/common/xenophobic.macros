@@ -1,0 +1,87 @@
+XENOPHOBIC_SELF
+'''     EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            effects = GiveEmpireTech name = "CON_CONC_CAMP"
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                Number low = 1 condition = And [
+                    PopulationCenter
+                    OwnedBy empire = Source.Owner
+                    Not OR [ 
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    Not Contains Building name = "BLD_CONC_CAMP"
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                ]
+            ]
+            stackinggroup = "XENOPHOBIC_LABEL_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            effects = [ 
+                SetTargetIndustry value = Value * 0.2 - 1
+                SetTargetResearch value = Value * 0.9
+                SetTargetHappiness value = Value - (
+                    Count condition = And [
+                    PopulationCenter
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    OwnedBy empire = Source.Owner
+                    Not OR [ 
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                ]
+                )
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                PopulationCenter
+                HasTag name = "SELF_SUSTAINING"
+            ]
+            stackinggroup = "XENOPHOBIC_POP_SELF"
+            accountinglabel = "XENOPHOBIC_LABEL_SELF"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = max(Value * (0.6 + (0.4 * (0.8 ^ 
+                Count condition = And [
+                    PopulationCenter
+                    Not OR [ 
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
+                    ]
+                    Not Population high = 0
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    WithinStarlaneJumps
+                                  jumps = 2
+                              condition = ExploredByEmpire
+                                          empire = Source.Owner
+                ]
+                ) ) ), (Value - 3 * Target.SizeAsDouble)) // Sets the pop malus dependent on the number of other species nearby up to a max of the self sustaining bonus
+
+'''
+
+// single argument should be the name of the species capitalized
+XENOPHOBIC_OTHER
+'''     EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                Not OR [ 
+                    Species name = Source.Species
+                    Species name = "SP_EXOBOT"
+                ]
+                Not Population high = 0
+                Not Contains Building name = "BLD_CONC_CAMP"
+                WithinStarlaneJumps jumps = 5 condition = Source
+            ]
+            activation = PopulationCenter
+            stackinggroup = "XENOPHOBIC_LABEL_@1@_OTHER"
+            accountinglabel = "XENOPHOBIC_LABEL_@1@_OTHER"
+            effects = SetTargetIndustry value = Value - Target.Population * 0.1
+'''

@@ -12,4 +12,4 @@ Tech
         ]
     graphic = "icons/ship_parts/crystal_plating.png"
 
-#include "../../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

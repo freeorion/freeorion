@@ -9,4 +9,4 @@ Tech
     prerequisites = "CON_ASYMP_MATS"
     graphic = "icons/tech/architecture_psychology.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

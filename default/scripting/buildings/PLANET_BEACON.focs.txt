@@ -15,4 +15,4 @@ BuildingType
             effects = Destroy
     icon = "icons/building/beacon.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"
