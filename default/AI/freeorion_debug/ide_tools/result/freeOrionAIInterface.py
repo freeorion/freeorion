@@ -154,6 +154,54 @@ class IntDblMap(object):
         return int()
 
 
+class IntFltMap(object):
+    def __delitem__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: None
+        """
+        return None
+
+    def __getitem__(self, obj2):
+        """
+        :param obj2:
+        :type obj2: object
+        :rtype: object
+        """
+        return object()
+
+    def __contains__(self, obj):
+        """
+        :param obj:
+        :type obj: object
+        :rtype: bool
+        """
+        return bool()
+
+    def __iter__(self):
+        """
+        :rtype: object
+        """
+        return object()
+
+    def __setitem__(self, obj1, obj2):
+        """
+        :param obj1:
+        :type obj1: object
+        :param obj2:
+        :type obj2: object
+        :rtype: None
+        """
+        return None
+
+    def __len__(self):
+        """
+        :rtype: int
+        """
+        return int()
+
+
 class IntIntMap(object):
     def __delitem__(self, obj):
         """
@@ -412,6 +460,16 @@ class IntVec(object):
         :rtype: int
         """
         return int()
+
+
+class ItemSpec(object):
+    @property
+    def type(self):
+        return unlockableItemType()
+
+    @property
+    def name(self):
+        return str()
 
 
 class ItemSpecVec(object):
@@ -1007,7 +1065,7 @@ class empire(object):
 
     @property
     def systemSupplyRanges(self):
-        return IntIntMap()
+        return IntFltMap()
 
     @property
     def allShipDesigns(self):
@@ -1145,12 +1203,8 @@ class empire(object):
         """
         return float()
 
-    def supplyProjections(self, number, boolean):
+    def supplyProjections(self):
         """
-        :param number:
-        :type number: int
-        :param boolean:
-        :type boolean: bool
         :rtype: IntIntMap
         """
         return IntIntMap()
@@ -1270,16 +1324,6 @@ class hullType(object):
         :rtype: int
         """
         return int()
-
-
-class itemSpec(object):
-    @property
-    def type(self):
-        return unlockableItemType()
-
-    @property
-    def name(self):
-        return str()
 
 
 class meter(object):
@@ -1850,10 +1894,6 @@ class tech(object):
     @property
     def description(self):
         return str()
-
-    @property
-    def type(self):
-        return techType()
 
     @property
     def unlockedTechs(self):
@@ -2574,7 +2614,7 @@ class system(universeObject):
     def HasWormholeToSystemID(self, number):
         """
         Currently unused.
-        
+
         :param number:
         :type number: int
         :rtype: bool
@@ -2718,6 +2758,7 @@ class meterType(Enum):
     targetResearch = None  # meterType(2, "targetResearch")
     targetTrade = None  # meterType(3, "targetTrade")
     targetConstruction = None  # meterType(4, "targetConstruction")
+    targetHappiness = None  # meterType(5, "targetHappiness")
     maxCapacity = None  # meterType(6, "maxCapacity")
     maxSecondaryStat = None  # meterType(7, "maxSecondaryStat")
     maxFuel = None  # meterType(8, "maxFuel")
@@ -2731,6 +2772,7 @@ class meterType(Enum):
     research = None  # meterType(16, "research")
     trade = None  # meterType(17, "trade")
     construction = None  # meterType(18, "construction")
+    happiness = None  # meterType(19, "happiness")
     capacity = None  # meterType(20, "capacity")
     secondaryStat = None  # meterType(21, "secondaryStat")
     fuel = None  # meterType(22, "fuel")
@@ -2743,13 +2785,14 @@ class meterType(Enum):
     size = None  # meterType(29, "size")
     stealth = None  # meterType(30, "stealth")
     detection = None  # meterType(31, "detection")
-    starlaneSpeed = None  # meterType(32, "starlaneSpeed")
+    speed = None  # meterType(32, "speed")
 
 meterType.targetPopulation = meterType(0, "targetPopulation")
 meterType.targetIndustry = meterType(1, "targetIndustry")
 meterType.targetResearch = meterType(2, "targetResearch")
 meterType.targetTrade = meterType(3, "targetTrade")
 meterType.targetConstruction = meterType(4, "targetConstruction")
+meterType.targetHappiness = meterType(5, "targetHappiness")
 meterType.maxCapacity = meterType(6, "maxCapacity")
 meterType.maxSecondaryStat = meterType(7, "maxSecondaryStat")
 meterType.maxFuel = meterType(8, "maxFuel")
@@ -2763,6 +2806,7 @@ meterType.industry = meterType(15, "industry")
 meterType.research = meterType(16, "research")
 meterType.trade = meterType(17, "trade")
 meterType.construction = meterType(18, "construction")
+meterType.happiness = meterType(19, "happiness")
 meterType.capacity = meterType(20, "capacity")
 meterType.secondaryStat = meterType(21, "secondaryStat")
 meterType.fuel = meterType(22, "fuel")
@@ -2775,7 +2819,7 @@ meterType.rebels = meterType(28, "rebels")
 meterType.size = meterType(29, "size")
 meterType.stealth = meterType(30, "stealth")
 meterType.detection = meterType(31, "detection")
-meterType.starlaneSpeed = meterType(32, "starlaneSpeed")
+meterType.speed = meterType(32, "speed")
 
 
 class planetEnvironment(Enum):
@@ -2948,25 +2992,14 @@ class techStatus(Enum):
         self.name = name
 
     unresearchable = None  # techStatus(0, "unresearchable")
-    researchable = None  # techStatus(1, "researchable")
-    complete = None  # techStatus(2, "complete")
+    partiallyUnlocked = None  # techStatus(1, "partiallyUnlocked")
+    researchable = None  # techStatus(2, "researchable")
+    complete = None  # techStatus(3, "complete")
 
 techStatus.unresearchable = techStatus(0, "unresearchable")
-techStatus.researchable = techStatus(1, "researchable")
-techStatus.complete = techStatus(2, "complete")
-
-
-class techType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    theory = None  # techType(0, "theory")
-    application = None  # techType(1, "application")
-    refinement = None  # techType(2, "refinement")
-
-techType.theory = techType(0, "theory")
-techType.application = techType(1, "application")
-techType.refinement = techType(2, "refinement")
+techStatus.partiallyUnlocked = techStatus(1, "partiallyUnlocked")
+techStatus.researchable = techStatus(2, "researchable")
+techStatus.complete = techStatus(3, "complete")
 
 
 class unlockableItemType(Enum):
@@ -3007,6 +3040,8 @@ visibility.full = visibility(3, "full")
 
 def allEmpireIDs():
     """
+    Returns an object (intVec) that contains the empire IDs of all empires in the game.
+
     :rtype: IntVec
     """
     return IntVec()
@@ -3014,6 +3049,8 @@ def allEmpireIDs():
 
 def allPlayerIDs():
     """
+    Returns an object (intVec) that contains the player IDs of all players in the game.
+
     :rtype: IntVec
     """
     return IntVec()
@@ -3021,6 +3058,8 @@ def allPlayerIDs():
 
 def currentTurn():
     """
+    Returns the current game turn (int).
+
     :rtype: int
     """
     return int()
@@ -3028,6 +3067,8 @@ def currentTurn():
 
 def doneTurn():
     """
+    Ends the AI player's turn, indicating to the server that all orders have been issued and turn processing may commence.
+
     :rtype: None
     """
     return None
@@ -3035,6 +3076,8 @@ def doneTurn():
 
 def empireID():
     """
+    Returns the empire ID (int) of this AI player's empire.
+
     :rtype: int
     """
     return int()
@@ -3042,6 +3085,8 @@ def empireID():
 
 def empirePlayerID(number):
     """
+    Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).
+
     :param number:
     :type number: int
     :rtype: int
@@ -3065,6 +3110,8 @@ def getAIDir():
 
 def getBuildingType(string):
     """
+    Returns the building type (BuildingType) with the indicated name (string).
+
     :param string:
     :type string: str
     :rtype: buildingType
@@ -3074,6 +3121,9 @@ def getBuildingType(string):
 
 def getEmpire(number=None):
     """
+    Returns the empire object (Empire) of this AI player
+    Returns the empire object (Empire) with the specified empire ID (int)
+
     :param number:
     :type number: int
     :rtype: empire
@@ -3099,6 +3149,8 @@ def getGalaxySetupData():
 
 def getHullType(string):
     """
+    Returns the ship hull (HullType) with the indicated name (string).
+
     :param string:
     :type string: str
     :rtype: hullType
@@ -3108,6 +3160,8 @@ def getHullType(string):
 
 def getPartType(string):
     """
+    Returns the ship part (PartType) with the indicated name (string).
+
     :param string:
     :type string: str
     :rtype: partType
@@ -3117,6 +3171,8 @@ def getPartType(string):
 
 def getSaveStateString():
     """
+    Returns the previously-saved state string (string). Can be used to retrieve the last-set save state string at any time, although this string is also passed to the resumeLoadedGame(savedStateString) Python function when a game is loaded, so this function isn't necessary to use if resumeLoadedGame stores the passed string.
+
     :rtype: str
     """
     return str()
@@ -3124,6 +3180,8 @@ def getSaveStateString():
 
 def getShipDesign(number):
     """
+    Returns the ship design (ShipDesign) with the indicated id number (int).
+
     :param number:
     :type number: int
     :rtype: shipDesign
@@ -3133,6 +3191,8 @@ def getShipDesign(number):
 
 def getSpecial(string):
     """
+    Returns the special (Special) with the indicated name (string).
+
     :param string:
     :type string: str
     :rtype: special
@@ -3142,6 +3202,8 @@ def getSpecial(string):
 
 def getSpecies(string):
     """
+    Returns the species (Species) with the indicated name (string).
+
     :param string:
     :type string: str
     :rtype: species
@@ -3151,6 +3213,8 @@ def getSpecies(string):
 
 def getTech(string):
     """
+    Returns the tech (Tech) with the indicated name (string).
+
     :param string:
     :type string: str
     :rtype: tech
@@ -3160,6 +3224,8 @@ def getTech(string):
 
 def getTechCategories(obj):
     """
+    Returns the names of all tech categories (StringVec).
+
     :param obj:
     :type obj: object
     :rtype: StringVec
@@ -3169,6 +3235,8 @@ def getTechCategories(obj):
 
 def getUniverse():
     """
+    Returns the universe object (Universe)
+
     :rtype: universe
     """
     return universe()
@@ -3177,7 +3245,7 @@ def getUniverse():
 def getUserDir():
     """
     Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).
-    
+
     :rtype: str
     """
     return str()
@@ -3214,6 +3282,8 @@ def issueBombardOrder(number1, number2):
 
 def issueChangeFocusOrder(number, string):
     """
+    Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.
+
     :param number:
     :type number: int
     :param string:
@@ -3238,6 +3308,8 @@ def issueChangeProductionQuantityOrder(number1, number2, number3):
 
 def issueColonizeOrder(number1, number2):
     """
+    Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.
+
     :param number1:
     :type number1: int
     :param number2:
@@ -3249,6 +3321,8 @@ def issueColonizeOrder(number1, number2):
 
 def issueCreateShipDesignOrder(string1, string2, string3, item_list, string4, string5, boolean):
     """
+    Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.
+
     :param string1:
     :type string1: str
     :param string2:
@@ -3270,6 +3344,8 @@ def issueCreateShipDesignOrder(string1, string2, string3, item_list, string4, st
 
 def issueDequeueProductionOrder(number):
     """
+    Orders the item on the production queue at index queueIndex (int) to be removed form the production queue. Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.
+
     :param number:
     :type number: int
     :rtype: int
@@ -3279,6 +3355,8 @@ def issueDequeueProductionOrder(number):
 
 def issueDequeueTechOrder(string):
     """
+    Orders the tech with name techName (string) to be removed from the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech isn't on this player's empire's tech queue.
+
     :param string:
     :type string: str
     :rtype: int
@@ -3288,6 +3366,8 @@ def issueDequeueTechOrder(string):
 
 def issueEnqueueBuildingProductionOrder(string, number):
     """
+    Orders the building with name (string) to be added to the production queue at the location of the planet with id locationID. Returns 1 (int) on success or 0 (int) on failure if there is no such building or it is not available to this player's empire, or if the building can't be produced at the specified location.
+
     :param string:
     :type string: str
     :param number:
@@ -3299,6 +3379,8 @@ def issueEnqueueBuildingProductionOrder(string, number):
 
 def issueEnqueueShipProductionOrder(number1, number2):
     """
+    Orders the ship design with ID designID (int) to be added to the production queue at the location of the planet with id locationID (int). Returns 1 (int) on success or 0 (int) on failure there is no such ship design or it not available to this player's empire, or if the design can't be produced at the specified location.
+
     :param number1:
     :type number1: int
     :param number2:
@@ -3310,6 +3392,8 @@ def issueEnqueueShipProductionOrder(number1, number2):
 
 def issueEnqueueTechOrder(string, number):
     """
+    Orders the tech with name techName (string) to be added to the tech queue at position (int) on the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech can't be enqueued by this player's empire.
+
     :param string:
     :type string: str
     :param number:
@@ -3321,6 +3405,8 @@ def issueEnqueueTechOrder(string, number):
 
 def issueFleetMoveOrder(number1, number2):
     """
+    Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.
+
     :param number1:
     :type number1: int
     :param number2:
@@ -3332,6 +3418,8 @@ def issueFleetMoveOrder(number1, number2):
 
 def issueFleetTransferOrder(number1, number2):
     """
+    Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.
+
     :param number1:
     :type number1: int
     :param number2:
@@ -3365,6 +3453,8 @@ def issueInvadeOrder(number1, number2):
 
 def issueNewFleetOrder(string, number):
     """
+    Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns 1 (int) on success or 0 (int) on failure due to one of the noted conditions not being met.
+
     :param string:
     :type string: str
     :param number:
@@ -3376,6 +3466,8 @@ def issueNewFleetOrder(string, number):
 
 def issueRenameOrder(number, string):
     """
+    Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).
+
     :param number:
     :type number: int
     :param string:
@@ -3387,6 +3479,8 @@ def issueRenameOrder(number, string):
 
 def issueRequeueProductionOrder(number1, number2):
     """
+    Orders the item on the production queue at index oldQueueIndex (int) to be moved to index newQueueIndex (int). Returns 1 (int) on success or 0 (int) on failure if the old and new queue indices are equal, if either queue index is less than 0 or greater than the largest indexed item on the queue.
+
     :param number1:
     :type number1: int
     :param number2:
@@ -3398,6 +3492,8 @@ def issueRequeueProductionOrder(number1, number2):
 
 def issueScrapOrder(number):
     """
+    Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.
+
     :param number:
     :type number: int
     :rtype: int
@@ -3407,6 +3503,8 @@ def issueScrapOrder(number):
 
 def playerEmpireID(number):
     """
+    Returns the empire ID (int) of the player with the specified player ID (int).
+
     :param number:
     :type number: int
     :rtype: int
@@ -3416,6 +3514,8 @@ def playerEmpireID(number):
 
 def playerID():
     """
+    Returns the integer id of this AI player.
+
     :rtype: int
     """
     return int()
@@ -3423,6 +3523,8 @@ def playerID():
 
 def playerIsAI(number):
     """
+    Returns True (boolean) if the player with the indicated playerID (int) is controlled by an AI and false (boolean) otherwise.
+
     :param number:
     :type number: int
     :rtype: bool
@@ -3432,6 +3534,8 @@ def playerIsAI(number):
 
 def playerIsHost(number):
     """
+    Returns True (boolean) if the player with the indicated playerID (int) is the host player for the game and false (boolean) otherwise.
+
     :param number:
     :type number: int
     :rtype: bool
@@ -3441,6 +3545,9 @@ def playerIsHost(number):
 
 def playerName(number=None):
     """
+    Returns the name (string) of the player with the indicated playerID (int).
+    Returns the name (string) of this AI player.
+
     :param number:
     :type number: int
     :rtype: str
@@ -3450,6 +3557,8 @@ def playerName(number=None):
 
 def sendChatMessage(number, string):
     """
+    Sends the indicated message (string) to the player with the indicated recipientID (int) or to all players if recipientID is -1.
+
     :param number:
     :type number: int
     :param string:
@@ -3470,6 +3579,8 @@ def sendDiplomaticMessage(diplomatic_message):
 
 def setSaveStateString(string):
     """
+    Sets the save state string (string). This is a persistant storage space for the AI script to retain state information when the game is saved and reloaded. Any AI state information to be saved should be stored in a single string (likely using Python's pickle module) and stored using this function when the prepareForSave() Python function is called.
+
     :param string:
     :type string: str
     :rtype: None
@@ -3552,6 +3663,9 @@ def userStringList(string):
 
 def validShipDesign(string, string_list):
     """
+    Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).
+    Returns true (boolean) if the passed ship design (ShipDesign) is valid, and false otherwise.
+
     :param string:
     :type string: str
     :param string_list:
