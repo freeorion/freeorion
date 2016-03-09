@@ -66,7 +66,6 @@ namespace {
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
-            qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::construct;
             using phoenix::new_;
@@ -104,7 +103,8 @@ namespace {
                   )
                 >   slots(_f)
                 >   parse::detail::common_params_parser() [ _e = _1 ]
-                    [ insert_part_type(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _g)) ]
+                >   parse::label(Icon_token)        > tok.string
+                    [ insert_part_type(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _1, _g)) ]
                 ;
 
             start
@@ -144,7 +144,7 @@ namespace {
                 std::string,
                 ShipPartClass,
                 double,
-                PartHullCommonParams,
+                CommonParams,
                 std::vector<ShipSlotType>,
                 bool,
                 double

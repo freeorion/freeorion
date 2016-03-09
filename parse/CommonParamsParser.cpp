@@ -30,6 +30,7 @@ namespace parse { namespace detail {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_i_type _i;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
@@ -49,16 +50,21 @@ namespace parse { namespace detail {
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
+            enqueue_location
+                =    parse::label(EnqueueLocation_token) > parse::detail::condition_parser [ _r1 = _1 ]
+                |    eps [ _r1 = new_<Condition::All>() ]
+                ;
+
             common
                 =   parse::label(BuildCost_token)    > double_value_ref [ _a = _1 ]
                 >   parse::label(BuildTime_token)    > flexible_int_ref [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
+                >   enqueue_location(_i)
                 >  -consumption(_g, _h)
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
-                >   parse::label(Icon_token)         > tok.string
-                    [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1, _g, _h) ]
+                    [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
             ;
 
             consumption
@@ -90,6 +96,7 @@ namespace parse { namespace detail {
 
             producible.name("Producible or Unproducible");
             location.name("Location");
+            enqueue_location.name("Enqueue Location");
             common.name("Consumables");
             consumable_special.name("Consumable Special");
             consumable_meter.name("Consumable Meter");
@@ -97,6 +104,7 @@ namespace parse { namespace detail {
 #if DEBUG_PARSERS
             debug(producible);
             debug(location);
+            debug(enqueue_location);
             debug(common);
             debug(consumption);
             debug(con_special);
@@ -129,12 +137,13 @@ namespace parse { namespace detail {
             parse::skipper_type
         > consumable_special_rule;
 
-        producible_rule                 producible;
-        location_rule                   location;
-        part_hull_common_params_rule    common;
-        consumption_rule                consumption;
-        consumable_special_rule         consumable_special;
-        consumable_meter_rule           consumable_meter;
+        producible_rule         producible;
+        location_rule           location;
+        location_rule           enqueue_location;
+        common_params_rule      common;
+        consumption_rule        consumption;
+        consumable_special_rule consumable_special;
+        consumable_meter_rule   consumable_meter;
     };
 
     rules& GetRules() {
@@ -148,7 +157,7 @@ namespace parse { namespace detail {
     const location_rule& location_parser()
     { return GetRules().location; }
 
-    const part_hull_common_params_rule& common_params_parser()
+    const common_params_rule& common_params_parser()
     { return GetRules().common; }
 
 } }

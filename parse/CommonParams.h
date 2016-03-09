@@ -31,7 +31,7 @@ namespace parse { namespace detail {
 
     typedef qi::rule<
         token_iterator,
-        PartHullCommonParams (),
+        CommonParams (),
         qi::locals<
             ValueRef::ValueRefBase<double>*,
             ValueRef::ValueRefBase<int>*,
@@ -40,11 +40,12 @@ namespace parse { namespace detail {
             Condition::ConditionBase*,
             std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
             std::map<MeterType, ValueRef::ValueRefBase<double>*>,
-            std::map<std::string, ValueRef::ValueRefBase<double>*>
+            std::map<std::string, ValueRef::ValueRefBase<double>*>,
+            Condition::ConditionBase*
         >,
         skipper_type
-    > part_hull_common_params_rule;
-    const part_hull_common_params_rule& common_params_parser();
+    > common_params_rule;
+    const common_params_rule& common_params_parser();
 } }
 
 #endif

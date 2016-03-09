@@ -29,25 +29,27 @@ class Empire;
 
 /** Common parameters for PartType and HullType constructors.  Used as temporary
   * storage for parsing to reduce number of sub-items parsed per item. */
-struct PartHullCommonParams {
-    PartHullCommonParams() :
+struct CommonParams {
+    CommonParams() :
         production_cost(0),
         production_time(0),
         producible(false),
         tags(),
+        production_meter_consumption(),
+        production_special_consumption(),
         location(0),
-        effects(),
-        icon()
+        enqueue_location(0),
+        effects()
     {}
-    PartHullCommonParams(ValueRef::ValueRefBase<double>* production_cost_,
-                         ValueRef::ValueRefBase<int>* production_time_,
-                         bool producible_,
-                         const std::set<std::string>& tags_,
-                         Condition::ConditionBase* location_,
-                         const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_,
-                         const std::string& icon_,
-                         std::map<MeterType, ValueRef::ValueRefBase<double>*> production_meter_consumption_,
-                         std::map<std::string, ValueRef::ValueRefBase<double>*> production_special_consumption_) :
+    CommonParams(ValueRef::ValueRefBase<double>* production_cost_,
+                 ValueRef::ValueRefBase<int>* production_time_,
+                 bool producible_,
+                 const std::set<std::string>& tags_,
+                 Condition::ConditionBase* location_,
+                 const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_,
+                 std::map<MeterType, ValueRef::ValueRefBase<double>*> production_meter_consumption_,
+                 std::map<std::string, ValueRef::ValueRefBase<double>*> production_special_consumption_,
+                 Condition::ConditionBase* enqueue_location_) :
         production_cost(production_cost_),
         production_time(production_time_),
         producible(producible_),
@@ -55,10 +57,10 @@ struct PartHullCommonParams {
         production_meter_consumption(production_meter_consumption_),
         production_special_consumption(production_special_consumption_),
         location(location_),
-        effects(effects_),
-        icon(icon_)
+        enqueue_location(enqueue_location_),
+        effects(effects_)
     {
-        for ( std::set< std::string >::iterator tag_it = tags_.begin(); tag_it != tags_.end(); tag_it++)
+        for (std::set< std::string >::iterator tag_it = tags_.begin(); tag_it != tags_.end(); tag_it++)
             tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 
@@ -69,8 +71,8 @@ struct PartHullCommonParams {
     std::map<MeterType, ValueRef::ValueRefBase<double>*>    production_meter_consumption;
     std::map<std::string, ValueRef::ValueRefBase<double>*>  production_special_consumption;
     Condition::ConditionBase*                               location;
+    Condition::ConditionBase*                               enqueue_location;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   effects;
-    std::string                                             icon;
 };
 
 /** A type of ship part */
@@ -97,8 +99,9 @@ public:
 
     PartType(const std::string& name, const std::string& description,
              ShipPartClass part_class, double capacity, double stat2,
-             const PartHullCommonParams& common_params,
+             const CommonParams& common_params,
              std::vector<ShipSlotType> mountable_slot_types,
+             const std::string& icon,
              bool add_standard_capacity_effect = true) :
         m_name(name),
         m_description(description),
@@ -114,7 +117,7 @@ public:
         m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
         m_effects(),
-        m_icon(common_params.icon),
+        m_icon(icon),
         m_add_standard_capacity_effect(add_standard_capacity_effect)
     {
         Init(common_params.effects);
@@ -286,39 +289,11 @@ public:
     {}
 
     HullType(const std::string& name, const std::string& description,
-             float fuel, float battle_speed, float speed,
-             float stealth, float structure,
-             const PartHullCommonParams& common_params,
-             const std::vector<Slot>& slots,
-             const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_speed(speed),
-        m_fuel(fuel),
-        m_stealth(stealth),
-        m_structure(structure),
-        m_production_cost(common_params.production_cost),
-        m_production_time(common_params.production_time),
-        m_producible(common_params.producible),
-        m_slots(slots),
-        m_tags(),
-        m_production_meter_consumption(common_params.production_meter_consumption),
-        m_production_special_consumption(common_params.production_special_consumption),
-        m_location(common_params.location),
-        m_effects(),
-        m_graphic(graphic),
-        m_icon(common_params.icon)
-    {
-        Init(common_params.effects);
-        for ( std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
-            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
-    }
-
-    HullType(const std::string& name, const std::string& description,
              const HullTypeStats& stats,
-             const PartHullCommonParams& common_params,
+             const CommonParams& common_params,
              const std::vector<Slot>& slots,
-             const std::string& graphic) :
+             const std::string& graphic,
+             const std::string& icon) :
         m_name(name),
         m_description(description),
         m_speed(stats.speed),
@@ -335,10 +310,10 @@ public:
         m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
-        m_icon(common_params.icon)
+        m_icon(icon)
     {
         Init(common_params.effects);
-        for ( std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
+        for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 

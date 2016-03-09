@@ -63,6 +63,7 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
+            qi::_f_type _f;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_val_type _val;
@@ -107,11 +108,12 @@ namespace {
 
             hull
                 =   hull_prefix(_a, _b)
-                >   hull_stats [ _c = _1 ]
+                >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
-                >   parse::detail::common_params_parser() [ _d = _1 ]
-                >   parse::label(Graphic_token) > tok.string
-                    [ insert_hull(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
+                >   parse::detail::common_params_parser()       [ _d = _1 ]
+                >   parse::label(Icon_token)    > tok.string    [ _f = _1 ]
+                >   parse::label(Graphic_token) > tok.string    
+                    [ insert_hull(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1, _f)) ]
                 ;
 
             start
@@ -178,8 +180,9 @@ namespace {
                 std::string,
                 std::string,
                 HullTypeStats,
-                PartHullCommonParams,
-                std::vector<HullType::Slot>
+                CommonParams,
+                std::vector<HullType::Slot>,
+                std::string
             >,
             parse::skipper_type
         > hull_rule;

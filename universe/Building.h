@@ -5,6 +5,7 @@
 #include "UniverseObject.h"
 #include "ObjectMap.h"
 #include "ValueRefFwd.h"
+#include "ShipDesign.h"
 #include "../util/Export.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -84,61 +85,31 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Used by parser to reduce number of parameters when constructing a BuildingType */
-struct BuildingTypeParams {
-    BuildingTypeParams() :
-        name(),
-        desc(),
-        prod_cost(0),
-        prod_time(0),
-        producible(false),
-        capture_result(CR_DESTROY)
-    {}
-    BuildingTypeParams(const std::string& name_, const std::string& desc_,
-                       ValueRef::ValueRefBase<double>* prod_cost_,
-                       ValueRef::ValueRefBase<int>* prod_time_,
-                       bool producible_, CaptureResult capture_result_) :
-        name(name_),
-        desc(desc_),
-        prod_cost(prod_cost_),
-        prod_time(prod_time_),
-        producible(producible_),
-        capture_result(capture_result_)
-    {}
-    std::string                     name;
-    std::string                     desc;
-    ValueRef::ValueRefBase<double>* prod_cost;
-    ValueRef::ValueRefBase<int>*    prod_time;
-    bool                            producible;
-    CaptureResult                   capture_result;
-};
-
 /** A specification for a building of a certain type.  Each building type must
   * have a \a unique name string, by which it can be looked up using
   * GetBuildingType(...). */
 class FO_COMMON_API BuildingType {
 public:
     /** \name Structors */ //@{
-    BuildingType(BuildingTypeParams& params,
-                 const std::set<std::string>& tags,
-                 Condition::ConditionBase* location,
-                 Condition::ConditionBase* enqueue_location,
-                 const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
+    BuildingType(const std::string& name,
+                 const std::string& description,
+                 const CommonParams& common_params,
+                 CaptureResult capture_result,
                  const std::string& icon) :
-        m_name(params.name),
-        m_description(params.desc),
-        m_production_cost(params.prod_cost),
-        m_production_time(params.prod_time),
-        m_producible(params.producible),
-        m_capture_result(params.capture_result),
+        m_name(name),
+        m_description(description),
+        m_production_cost(common_params.production_cost),
+        m_production_time(common_params.production_time),
+        m_producible(common_params.producible),
+        m_capture_result(capture_result),
         m_tags(),
-        m_location(location),
-        m_enqueue_location(enqueue_location),
-        m_effects(effects),
+        m_location(common_params.location),
+        m_enqueue_location(common_params.enqueue_location),
+        m_effects(common_params.effects),
         m_icon(icon)
     {
         Init();
-        for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+        for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 

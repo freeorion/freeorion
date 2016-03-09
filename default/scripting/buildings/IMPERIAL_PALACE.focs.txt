@@ -1,9 +1,9 @@
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
+    captureresult = destroy
     buildcost = 10
     buildtime = 8
-    captureresult = destroy
     location = And [
         Planet
         OwnedBy empire = Source.Owner
