@@ -1312,8 +1312,8 @@ void MapWnd::DoLayout() {
 
 void MapWnd::InitializeWindows() {
     // system-view side panel
-    const GG::Pt sidepanel_ul(AppWidth() - GG::X(512), m_toolbar->Bottom());
-    const GG::Pt sidepanel_wh(GG::X(384), AppHeight() - m_toolbar->Height());
+    const GG::Pt sidepanel_ul(AppWidth() - GG::X(450), m_toolbar->Bottom());
+    const GG::Pt sidepanel_wh(GG::X(450), AppHeight() - m_toolbar->Height());
 
     // situation report window
     const GG::Pt sitrep_ul(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom());
@@ -5231,6 +5231,11 @@ bool MapWnd::ReturnToMap() {
 
     if (m_pedia_panel->Visible()) {
         TogglePedia();
+        return true;
+    }
+
+    if (m_object_list_wnd->Visible()) {
+        ToggleObjects();
         return true;
     }
 
