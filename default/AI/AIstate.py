@@ -529,7 +529,7 @@ class AIstate(object):
             # sys_status['jump4_threat'] = threat
             # sys_status['my_jump4_rating'] = myrating
 
-    def area_ratings(self, system_ids, ref_sys_name=None):
+    def area_ratings(self, system_ids):
         """Returns (fleet_threat, max_threat, myFleetRating, threat_fleets) compiled over a group of systems."""
         max_threat = 0
         threat = 0
@@ -547,10 +547,6 @@ class AIstate(object):
             # myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
             threat_detail.append((sys_id, fthreat, sys_status.get('local_fleet_threats', [])))
             threat_fleets.update(sys_status.get('local_fleet_threats', []))
-        if ref_sys_name:
-            print "Area ratings for %s  ; calc1 %.1f  calc2 %.1f" % (ref_sys_name, threat)
-            for sys_id, fthreat, lft in threat_detail:
-                print "\t %20s: fleet threat %6.1f, fleets: %s" % (str(fo.getUniverse().getSystem(sys_id)), fthreat, lft)
         return threat, max_threat, myrating, threat_fleets
 
     def after_turn_cleanup(self):
