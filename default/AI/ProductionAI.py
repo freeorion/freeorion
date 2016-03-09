@@ -1241,8 +1241,6 @@ def generateProductionOrders():
     for planet_set in allocated_pp:
         print "\t%s\t%.2f" % (ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems(planet_set)))), allocated_pp[planet_set])
 
-    if False:  # log ship design assessment
-        getBestShipRatings(list(AIstate.popCtrIDs))
     print "\n\nBuilding Ships in system groups with remaining PP:"
     for planet_set in planets_with_wasted_pp:
         total_pp = available_pp.get(planet_set, 0)
