@@ -769,3 +769,5 @@ else ()
         REQUIRED
     )
 endif ()
+
+add_subdirectory(experiments EXCLUDE_FROM_ALL)
