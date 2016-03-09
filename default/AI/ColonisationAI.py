@@ -648,7 +648,7 @@ def get_colony_fleets():
                 print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % (
                     ((planet and planet.name) or "unknown"), loc, this_score)
                 continue
-            best_ship, col_design, build_choices = ProductionAI.getBestShipInfo(
+            best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
                 EnumsAI.PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
                 print "Error: can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])

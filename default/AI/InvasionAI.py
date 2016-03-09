@@ -130,7 +130,7 @@ def get_invasion_fleets():
                     this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0)):
                 continue
             loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
-            best_base_trooper_here = ProductionAI.getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
+            best_base_trooper_here = ProductionAI.get_best_ship_info(EnumsAI.PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
                 print "Could not find a suitable orbital invasion design at %s" % loc_planet
@@ -143,7 +143,7 @@ def get_invasion_fleets():
                 print "The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet
                 continue
             this_score, p_troops = evaluate_invasion_planet(pid, empire, secure_ai_fleet_missions, False)
-            _, col_design, build_choices = ProductionAI.getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_ORBITAL_INVASION, loc)
+            _, col_design, build_choices = ProductionAI.get_best_ship_info(EnumsAI.PriorityType.PRODUCTION_ORBITAL_INVASION, loc)
             if not col_design:
                 continue
             if loc not in build_choices:

@@ -361,7 +361,7 @@ def calculateInvasionPriority():
                                                                   EnumsAI.ShipRoleType.BASE_INVASION]:
                 design = fo.getShipDesign(element.designID)
                 queued_troop_capacity += element.remaining * element.blocksize * design.troopCapacity
-    _, best_design, _ = ProductionAI.getBestShipInfo(EnumsAI.PriorityType.PRODUCTION_INVASION)
+    _, best_design, _ = ProductionAI.get_best_ship_info(EnumsAI.PriorityType.PRODUCTION_INVASION)
     if best_design:
         troops_per_best_ship = best_design.troopCapacity
     else:
