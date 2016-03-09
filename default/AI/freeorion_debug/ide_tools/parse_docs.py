@@ -193,7 +193,7 @@ class Docs(object):
 
         doc.append(':rtype: %s' % self.rtype)
         doc.append('"""')
-        return '\n'.join('%s%s' % (' ' * 4 * self.indent, x) for x in doc)
+        return '\n'.join('%s%s' % (' ' * 4 * self.indent if x else '', x) for x in doc)
 
 
 if __name__ == '__main__':
