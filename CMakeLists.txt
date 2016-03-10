@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
-cmake_policy(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8.5)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
