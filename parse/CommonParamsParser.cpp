@@ -56,7 +56,8 @@ namespace parse { namespace detail {
                 ;
 
             common
-                =   parse::label(BuildCost_token)    > double_value_ref [ _a = _1 ]
+                =
+                (   parse::label(BuildCost_token)    > double_value_ref [ _a = _1 ]
                 >   parse::label(BuildTime_token)    > flexible_int_ref [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
@@ -64,7 +65,7 @@ namespace parse { namespace detail {
                 >   enqueue_location(_i)
                 >  -consumption(_g, _h)
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
-                    [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
+                ) [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
             ;
 
             consumption
