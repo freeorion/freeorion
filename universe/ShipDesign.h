@@ -120,6 +120,7 @@ public:
         m_icon(icon),
         m_add_standard_capacity_effect(add_standard_capacity_effect)
     {
+        //std::cout << "part type: " << m_name << " producible: " << m_producible << std::endl;
         Init(common_params.effects);
         for (std::set<std::string>::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
@@ -312,6 +313,7 @@ public:
         m_graphic(graphic),
         m_icon(icon)
     {
+        //std::cout << "hull type: " << m_name << " producible: " << m_producible << std::endl;
         Init(common_params.effects);
         for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
@@ -648,14 +650,15 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_secondary_stat)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
+        & BOOST_SERIALIZATION_NVP(m_producible)
         & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)
         & BOOST_SERIALIZATION_NVP(m_tags)
+        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
+        & BOOST_SERIALIZATION_NVP(m_production_special_consumption)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect)
-        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
-        & BOOST_SERIALIZATION_NVP(m_production_special_consumption);
+        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect);
 }
 
 template <class Archive>
@@ -669,14 +672,15 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_structure)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
+        & BOOST_SERIALIZATION_NVP(m_producible)
         & BOOST_SERIALIZATION_NVP(m_slots)
         & BOOST_SERIALIZATION_NVP(m_tags)
+        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
+        & BOOST_SERIALIZATION_NVP(m_production_special_consumption)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_icon)
-        & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
-        & BOOST_SERIALIZATION_NVP(m_production_special_consumption);
+        & BOOST_SERIALIZATION_NVP(m_icon);
 }
 
 #endif // _ShipDesign_h_
