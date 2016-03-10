@@ -357,53 +357,15 @@ install(
     COMPONENT COMPONENT_FREEORION
 )
 
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_16x16.png
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/16x16/apps/
-    RENAME freeorion.png
-    COMPONENT COMPONENT_FREEORION
-)
-
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_24x24.png
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/24x24/apps/
-    RENAME freeorion.png
-    COMPONENT COMPONENT_FREEORION
-)
-
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_32x32.png
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps/
-    RENAME freeorion.png
-    COMPONENT COMPONENT_FREEORION
-)
-
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_64x64.png
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps/
-    RENAME freeorion.png
-    COMPONENT COMPONENT_FREEORION
-)
-
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_128x128.png
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps/
-    RENAME freeorion.png
-    COMPONENT COMPONENT_FREEORION
-)
-
-install(
-    FILES
-    ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_256x256.png
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps/
-    RENAME freeorion.png
-    COMPONENT COMPONENT_FREEORION
-)
+foreach(SIZE 16 24 32 64 128 256)
+    install(
+        FILES
+        ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
+        RENAME freeorion.png
+        COMPONENT COMPONENT_FREEORION
+    )
+endforeach()
 
 if (WIN32)
     install(
