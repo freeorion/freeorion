@@ -47,7 +47,7 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     m_drop_point(end()),
     m_show_drop_point(false),
     m_order_issuing_enabled(true),
-    m_showing_prompt(true),
+    m_showing_prompt(false),
     m_prompt_str(prompt_str)
 {
     AllowDropType(drop_type_str);
@@ -64,7 +64,7 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     LockColWidths();
     NormalizeRowsOnInsert(false);
 
-    Insert(new PromptRow(RowWidth(), m_prompt_str));
+    ShowPromptSlot();
 }
 
 GG::X QueueListBox::RowWidth() const
@@ -231,8 +231,6 @@ void QueueListBox::ShowPromptSlot() {
 
 void QueueListBox::ShowPromptConditionallySlot(iterator it) {
     if (begin() == end()) {
-        Insert(new PromptRow(Width() - 4, m_prompt_str), begin(), false, false);
-        m_showing_prompt = true;
+        ShowPromptSlot();
     }
 }
-

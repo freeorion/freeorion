@@ -504,7 +504,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                                     next_res_tech_idx = this_tech_idx;
                                 }
                             }
-                        } else { //couldnt find tech_name in prereqs list  
+                        } else { //couldnt find tech_name in prereqs list
                             DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
                         }
                     } //else { //tech_name thinks itself a prereq for ytechName, but u_tech_name not in prereqs -- not a problem so long as u_tech_name not in our queue at all
@@ -1553,7 +1553,7 @@ const std::set<int>& Empire::ShipDesigns() const
 std::set<int> Empire::AvailableShipDesigns() const {
     // create new map containing all ship designs that are available
     std::set<int> retval;
-    for (ShipDesignItr it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+    for (ShipDesignItr it = m_ship_designs_ordered.begin(); it != m_ship_designs_ordered.end(); ++it) {
         if (ShipDesignAvailable(*it))
             retval.insert(*it);
     }
@@ -2106,10 +2106,10 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const
-{ return m_ship_designs.begin(); }
+{ return m_ship_designs_ordered.begin(); }
 
 Empire::ShipDesignItr Empire::ShipDesignEnd() const
-{ return m_ship_designs.end(); }
+{ return m_ship_designs_ordered.end(); }
 
 Empire::SitRepItr Empire::SitRepBegin() const
 { return m_sitrep_entries.begin(); }
@@ -2508,7 +2508,7 @@ std::string Empire::NewShipName() {
     return retval;
 }
 
-void Empire::AddShipDesign(int ship_design_id) {
+void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     /* Check if design id is valid.  That is, check that it corresponds to an
      * existing shipdesign in the universe.  On clients, this means that this
      * empire knows about this ship design and the server consequently sent the
@@ -2520,8 +2520,21 @@ void Empire::AddShipDesign(int ship_design_id) {
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
+            std::list<int>::iterator point = m_ship_designs_ordered.end();
+            bool is_at_end_of_list = (next_design_id == ShipDesign::INVALID_DESIGN_ID);
+            if (!is_at_end_of_list)
+                point = std::find(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), next_design_id);
+
+            m_ship_designs_ordered.insert(point, ship_design_id);
             m_ship_designs.insert(ship_design_id);
+
             ShipDesignsChangedSignal();
+
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                DebugLogger() << "AddShipDesign::  " << ship_design->Name() << " ("<<ship_design_id
+                              << ") to empire #" << EmpireID()
+                              << (is_at_end_of_list ? " at end of list." : " in front of id ")
+                              << next_design_id;
         }
     } else {
         // design in not valid
@@ -2537,8 +2550,9 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
     for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
         if (ship_design == it->second) {
             // ship design is already present in universe.  just need to add it to the empire's set of ship designs
-            m_ship_designs.insert(it->first);
-            return it->first;
+            int ship_design_id = it->first;
+            AddShipDesign(ship_design_id);
+            return ship_design_id;
         }
     }
 
@@ -2557,9 +2571,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
         return INVALID_OBJECT_ID;
     }
 
-    m_ship_designs.insert(new_design_id);
-
-    ShipDesignsChangedSignal();
+    AddShipDesign(new_design_id);
 
     return new_design_id;
 }
@@ -2567,6 +2579,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 void Empire::RemoveShipDesign(int ship_design_id) {
     if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
         m_ship_designs.erase(ship_design_id);
+        m_ship_designs_ordered.remove(ship_design_id);
         ShipDesignsChangedSignal();
     } else {
         DebugLogger() << "Empire::RemoveShipDesign: this empire did not have design with id " << ship_design_id;

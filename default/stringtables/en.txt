@@ -3272,7 +3272,7 @@ DESIGN_INVALID
 Invalid Design
 
 DESIGN_INV_MODERATOR
-Moderators and observers cannot create new ship designs.
+Moderators and observers cannot create or modify ship designs.
 
 DESIGN_INV_NO_HULL
 Begin a ship design by selecting its hull.
@@ -3285,6 +3285,33 @@ Duplicates Existing Design
 
 DESIGN_KNOWN_DETAIL
 This design is a duplicate of "%1%".
+
+DESIGN_OBSOLETE
+Obsolete Design
+
+DESIGN_WND_ADD
+Add New Design
+
+DESIGN_WND_ADD_DETAIL
+'''Add new design called
+"%1%"
+to finished designs.'''
+
+DESIGN_WND_UPDATE
+Update Old Design
+
+DESIGN_WND_UPDATE_DETAIL
+'''Replace old design
+"%1%"
+with new design
+"%2%"
+in finished designs.'''
+
+DESIGN_UPDATE_INVALID_NO_CANDIDATE
+Choose an existing design to update.
+
+ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
+Select a hull, add parts and then click "Add New Design" to create an available design.
 
 ################
 ## Statistics ##

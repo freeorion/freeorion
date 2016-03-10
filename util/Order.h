@@ -88,7 +88,7 @@ public:
 
 private:
     /**
-     * Preconditions of execute: 
+     * Preconditions of execute:
      *    - the designated planet must exist, be owned by the issuing empire
      *
      *  Postconditions:
@@ -109,7 +109,7 @@ private:
 /////////////////////////////////////////////////////
 // NewFleetOrder
 /////////////////////////////////////////////////////
-/** the Order subclass that represents forming a new fleet. 
+/** the Order subclass that represents forming a new fleet.
     Only one of system or position will be used to place the new fleet.*/
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
@@ -179,7 +179,7 @@ private:
      *    - m_fleet is a valid id of a fleet owned by the order-giving empire
      *    - if the fleet is located in a system, m_start_system is the id of that system
      *    - if the fleet is not located in a system, m_start_system is the id of the system the fleet is moving to
-     *    - 
+     *    -
      *
      *  Postconditions:
      *    - TODO: WRITE THIS
@@ -409,7 +409,7 @@ public:
 
 private:
     /**
-     * Preconditions of execute: 
+     * Preconditions of execute:
      *    - the designated planet must exist, be owned by the issuing empire
      *
      *  Postconditions:
@@ -506,7 +506,9 @@ private:
   * The 3-arg ctor taking a ShipDesign argument creates a new shipdesign in the
   * universe's catalog of shipdesigns with the passed new design id, and adds
   * this design to the \a empire's set of remembered designs.  The new design
-  * must be marked as designed by this \a empire.*/
+  * must be marked as designed by this \a empire.
+  * The 3-arg ctor (int,int,int) moves a design_id_to_move to before design_id_after
+  */
 class FO_COMMON_API ShipDesignOrder : public Order {
 public:
     /** \name Structors */ //@{
@@ -515,6 +517,7 @@ public:
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
     ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name = "", const std::string& new_description = "");
+    ShipDesignOrder(int empire, int design_id_to_move, int design_id_after);
     //@}
 
 private:
@@ -542,6 +545,7 @@ private:
     bool                        m_update_name_or_description;
     bool                        m_delete_design_from_empire;
     bool                        m_create_new_design;
+    bool                        m_move_design;
 
     // details of design to create
     std::string                 m_name;
@@ -553,6 +557,7 @@ private:
     std::string                 m_icon;
     std::string                 m_3D_model;
     bool                        m_name_desc_in_stringtable;
+    int                         m_design_id_after;             //<location after the inserted design
     // end details of design to create
 
     friend class boost::serialization::access;
