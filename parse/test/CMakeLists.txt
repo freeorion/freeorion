@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.8.5)
 
-project(test_parsers)
-
-message("-- Configuring test_parsers")
-
 add_definitions(-DFREEORION_BUILD_SERVER)
 
 add_executable(test_parsers

@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.8.5)
 
-project(freeorion)
-
-message("-- Configuring freeorion")
-
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 

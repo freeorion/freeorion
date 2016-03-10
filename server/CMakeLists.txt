@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 2.8.5)
 
-project(freeoriond)
-
-message("-- Configuring freeoriond")
-
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS iostreams python log REQUIRED)
 find_package(PythonLibs ${PYTHON_VERSION} REQUIRED)
 
