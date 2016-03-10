@@ -21,12 +21,6 @@ target_link_libraries(test_parsers
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
-install(
-    TARGETS test_parsers
-    RUNTIME DESTINATION .
-    COMPONENT COMPONENT_FREEORION
-)
-
 find_package (Boost REQUIRED COMPONENTS unit_test_framework)
 
 include_directories (
@@ -48,12 +42,6 @@ target_link_libraries(test_parsers_boost
     freeorioncommon
     freeorionparse
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
-)
-
-install(
-    TARGETS test_parsers_boost
-    RUNTIME DESTINATION .
-    COMPONENT COMPONENT_FREEORION
 )
 
 add_test(enum_parser                           ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)

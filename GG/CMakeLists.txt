@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.5)
 
 enable_testing()
 include(CMakeDependentOption)
+include(GNUInstallDirs)
 
 project(GiGi)
 
@@ -134,10 +135,8 @@ configure_file(
 if (BUILD_DEVEL_PACKAGE)
     install(
         DIRECTORY GG
-        DESTINATION include
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         COMPONENT COMPONENT_GIGI_DEVEL
-        PATTERN ".svn" EXCLUDE
-        PATTERN "*~" EXCLUDE
     )
 endif ()
 
@@ -175,7 +174,7 @@ if (DOXYGEN_FOUND)
     if (BUILD_DEVEL_PACKAGE)
         install(
             DIRECTORY ${GG_DOC_STAMP_DIR}
-            DESTINATION doc
+            DESTINATION ${CMAKE_INSTALL_DOCDIR}
         )
     endif ()
 endif ()

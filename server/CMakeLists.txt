@@ -61,7 +61,7 @@ target_link_libraries(freeoriond
 
 install(
     TARGETS freeoriond
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
 

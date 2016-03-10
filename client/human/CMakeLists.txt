@@ -210,13 +210,6 @@ target_link_libraries(freeorion
 
 install(
     TARGETS freeorion
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
-
-install(
-    FILES
-    DESTINATION share/freeorion
-    COMPONENT COMPONENT_FREEORION
-)
-

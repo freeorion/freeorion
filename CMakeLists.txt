@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.5)
 
+include(GNUInstallDirs)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 IF(NOT CMAKE_BUILD_TYPE)
@@ -31,9 +33,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+if(WIN32)
+    set(CMAKE_INSTALL_BINDIR "")
+    set(FreeOrion_INSTALL_LIBDIR "")
+else()
+    set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
+endif()
+
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/freeorion")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (WIN32)
@@ -115,10 +124,11 @@ endif ()
 # Build common code library            #
 ########################################
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
-set(OLD_LIB_SUFFIX ${LIB_SUFFIX})
-set(LIB_SUFFIX "${LIB_SUFFIX}/freeorion")
+set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
 add_subdirectory(GG)
-set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
+set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
+unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
 ########################################
 # Dependencies                         #
@@ -327,31 +337,30 @@ set(BUILD_PACKAGING
 
 install(
     DIRECTORY default/
-    DESTINATION share/freeorion/default
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
     COMPONENT COMPONENT_FREEORION_DATA
-    PATTERN ".svn" EXCLUDE
     PATTERN "*~" EXCLUDE
     PATTERN "*.pyc" EXCLUDE
 )
 
 install(
     TARGETS freeorioncommon
-    LIBRARY DESTINATION lib${LIB_SUFFIX}/freeorion
-    RUNTIME DESTINATION .
+    LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
 
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/freeorion.desktop
-    DESTINATION share/applications
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
     COMPONENT COMPONENT_FREEORION
 )
 
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_16x16.png
-    DESTINATION share/icons/hicolor/16x16/apps/
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/16x16/apps/
     RENAME freeorion.png
     COMPONENT COMPONENT_FREEORION
 )
@@ -359,7 +368,7 @@ install(
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_24x24.png
-    DESTINATION share/icons/hicolor/24x24/apps/
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/24x24/apps/
     RENAME freeorion.png
     COMPONENT COMPONENT_FREEORION
 )
@@ -367,7 +376,7 @@ install(
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_32x32.png
-    DESTINATION share/icons/hicolor/32x32/apps/
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps/
     RENAME freeorion.png
     COMPONENT COMPONENT_FREEORION
 )
@@ -375,7 +384,7 @@ install(
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_64x64.png
-    DESTINATION share/icons/hicolor/64x64/apps/
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps/
     RENAME freeorion.png
     COMPONENT COMPONENT_FREEORION
 )
@@ -383,7 +392,7 @@ install(
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_128x128.png
-    DESTINATION share/icons/hicolor/128x128/apps/
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps/
     RENAME freeorion.png
     COMPONENT COMPONENT_FREEORION
 )
@@ -391,7 +400,7 @@ install(
 install(
     FILES
     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_256x256.png
-    DESTINATION share/icons/hicolor/256x256/apps/
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps/
     RENAME freeorion.png
     COMPONENT COMPONENT_FREEORION
 )
@@ -420,7 +429,7 @@ if (WIN32)
         wrap_oal.dll
         z.dll
         zlib1.dll
-        DESTINATION bin
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
     )
 endif ()

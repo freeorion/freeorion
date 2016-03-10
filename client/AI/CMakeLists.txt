@@ -60,7 +60,6 @@ target_link_libraries(freeorionca
 
 install(
     TARGETS freeorionca
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
-
