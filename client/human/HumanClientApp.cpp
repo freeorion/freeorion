@@ -185,6 +185,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
+    DebugLogger() << "Human Client Crash Backtrace enabled. ";
 #endif
 #ifdef FREEORION_MACOSX
     SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
