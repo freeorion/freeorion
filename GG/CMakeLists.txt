@@ -43,7 +43,7 @@ option(USE_DEVIL
 option(BUILD_SDL_DRIVER
        "Builds GG SDL support (the GiGiSDL library)."
        ON)
-option(BUILD_DOCUMENTATION
+option(GiGi_BUILD_DOC
        "Builds HTML documentation (requires Doxygen)."
        OFF)
 option(BUILD_DEVEL_PACKAGE
@@ -149,7 +149,7 @@ add_subdirectory(src)
 ########################################
 # Documentation                        #
 ########################################
-if (BUILD_DOCUMENTATION)
+if (GiGi_BUILD_DOC)
     find_package(Doxygen REQUIRED)
 endif ()
 
@@ -163,14 +163,21 @@ if (DOXYGEN_FOUND)
         @ONLY
         IMMEDIATE
     )
+
+    if(NOT TARGET doc)
+        add_custom_target(doc)
+    endif()
+
     add_custom_command (
         OUTPUT ${GG_DOC_STAMP_DIR}/index.html
         COMMAND ${DOXYGEN_EXECUTABLE} ${GG_DOC_OUTPUT_DIR}/Doxyfile
         MAIN_DEPENDENCY ${GG_DOC_OUTPUT_DIR}/Doxyfile ${GG_DOC_SOURCE_DIR}/Doxyfile.in
         DEPENDS ${GG_DOC_SOURCE_DIR}/GGDoc.txt
-        COMMENT "Generating documentation with Doxygen" VERBATIM
+        COMMENT "Generating GiGi API documentation with Doxygen" VERBATIM
     )
-    add_custom_target (doc ALL DEPENDS ${GG_DOC_STAMP_DIR}/index.html)
+    add_custom_target (GiGi-apidoc DEPENDS ${GG_DOC_STAMP_DIR}/index.html)
+    add_dependencies(doc GiGi-apidoc)
+
     if (BUILD_DEVEL_PACKAGE)
         install(
             DIRECTORY ${GG_DOC_STAMP_DIR}

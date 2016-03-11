@@ -8,10 +8,15 @@ if(DOXYGEN_FOUND)
         @ONLY
     )
 
-    add_custom_target(doc
+    if(NOT TARGET doc)
+        add_custom_target(doc)
+    endif()
+
+    add_custom_target(FreeOrion-apidoc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         WORKING_DIRECTORY ${FreeOrion_SOURCE_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
+        COMMENT "Generating FreeOrion API documentation with Doxygen" VERBATIM
     )
+    add_dependencies(doc FreeOrion-apidoc)
 endif()
 
