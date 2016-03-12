@@ -1732,8 +1732,8 @@ namespace {
             {
                 detailed_description += UserString(boost::lexical_cast<std::string>(pt_env_it->first)) + " : " +
                                         UserString(boost::lexical_cast<std::string>(pt_env_it->second)) + "\n";
-                //add blank line between cyclical environments and asteroids and gas giants
-                if(pt_env_it->first == PT_OCEAN){
+                // add blank line between cyclical environments and asteroids and gas giants
+                if (pt_env_it->first == PT_OCEAN) {
                     detailed_description += "\n";
                 }
             }
