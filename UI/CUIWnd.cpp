@@ -241,8 +241,8 @@ void CUIWnd::ValidatePosition()
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
     if (m_config_save) {    // can write position/size to OptionsDB
-        GG::Pt available_size(GG::X(2048), GG::Y(2048));    // arbitrary large values in case available_size can't be set below
 
+        GG::Pt available_size;
         if (const GG::Wnd* parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
@@ -250,6 +250,8 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             // Keep this CUIWnd entirely inside the application window.
             available_size = GG::Pt(app->AppWidth(), app->AppHeight());
         } else {
+            available_size = GG::Pt( GG::X(HumanClientApp::MaximumPossibleWidth()),
+                                     GG::Y(HumanClientApp::MaximumPossibleHeight()));
             ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
         }
 
