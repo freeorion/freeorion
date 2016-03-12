@@ -10104,7 +10104,8 @@ GT_TROOP_POD
 Ground Troop Pod
 
 GT_TROOP_POD_DESC
-'''Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet. 
+'''Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 2 defensive Troops.
+
   * The troops can only be used for one invasion.  
   * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
 
@@ -10112,7 +10113,8 @@ GT_TROOP_POD_2
 Advanced Ground Troop Pod
 
 GT_TROOP_POD_2_DESC
-'''Carries 4 units of cybernetically advanced ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet.
+'''Carries 4 units of cybernetically advanced ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 4 defensive Troops.
+
   * The troops can only be used for one invasion.  
   * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
 
