@@ -99,21 +99,37 @@ namespace {
         db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
 
-        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 10240));
-        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 10240));
-        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 10240));
-        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 10240));
-
-        const int CENTRE = static_cast<int>(SDL_WINDOWPOS_CENTERED);
-        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     CENTRE, OrValidator<int>( RangedValidator<int>(-10240, 10240),
-                                                                                                                     DiscreteValidator<int>(CENTRE) ));
-        db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      50,     RangedValidator<int>(-10240, 10240));
-
         Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
         Hotkey::AddHotkey("quit",       UserStringNop("HOTKEY_QUIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
         Hotkey::AddHotkey("fullscreen", UserStringNop("HOTKEY_FULLSCREEN"), GG::GGK_RETURN, GG::MOD_KEY_ALT);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    /** These options can only be validated after the graphics system (SDL) is initialized,
+        so that display size can be detected
+     */
+    const int DEFAULT_WIDTH = 1025;
+    const int DEFAULT_HEIGHT = 768;
+    const int DEFAULT_LEFT = static_cast<int>(SDL_WINDOWPOS_CENTERED);
+    const int DEFAULT_TOP = 50;
+    const int MIN_WIDTH = 800;
+    const int MIN_HEIGHT = 600;
+
+    void AddOptionsAfterGUIInitialization(OptionsDB& db) {
+        const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
+        const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
+
+        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,   RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            DEFAULT_HEIGHT,    RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+
+        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,   RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,    RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     DEFAULT_LEFT, OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
+        db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      DEFAULT_TOP,     RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+
+    }
+
+    bool temp_bool2 = RegisterOptions(&AddOptionsAfterGUIInitialization);
 
     /* Sets the value of options that need language-dependent default values.*/
     void SetStringtableDependentOptionDefaults() {
@@ -841,8 +857,6 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 }
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
-    //DebugLogger() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
-
     if (!Fullscreen()) {
         GetOptionsDB().Set<int>("app-left-windowed", Value(w));
         GetOptionsDB().Set<int>("app-top-windowed", Value(h));
@@ -851,7 +865,6 @@ void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
-    //DebugLogger() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();

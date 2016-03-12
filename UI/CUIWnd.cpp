@@ -752,17 +752,20 @@ const std::string CUIWnd::AddWindowOptions(const std::string& config_name,
             new_name = config_name;
         }
     } else if (!config_name.empty()) {
+        const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
+        const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
+
         db.Add<bool>("UI.windows."+config_name+".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(),              false);
 
-        db.Add<int> ("UI.windows."+config_name+".left",             UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, 2560), DiscreteValidator<int>(INVALID_POS)));
-        db.Add<int> ("UI.windows."+config_name+".top",              UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, 1600), DiscreteValidator<int>(INVALID_POS)));
-        db.Add<int> ("UI.windows."+config_name+".left-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, 2560), DiscreteValidator<int>(INVALID_POS)));
-        db.Add<int> ("UI.windows."+config_name+".top-windowed",     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, 1600), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".left",             UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".top",              UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".left-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".top-windowed",     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one), DiscreteValidator<int>(INVALID_POS)));
 
-        db.Add<int> ("UI.windows."+config_name+".width",            UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, 2560));
-        db.Add<int> ("UI.windows."+config_name+".height",           UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, 1600));
-        db.Add<int> ("UI.windows."+config_name+".width-windowed",   UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED"),  width,      RangedValidator<int>(0, 2560));
-        db.Add<int> ("UI.windows."+config_name+".height-windowed",  UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED"), height,     RangedValidator<int>(0, 1600));
+        db.Add<int> ("UI.windows."+config_name+".width",            UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, max_width_plus_one));
+        db.Add<int> ("UI.windows."+config_name+".height",           UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, max_height_plus_one));
+        db.Add<int> ("UI.windows."+config_name+".width-windowed",   UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED"),  width,      RangedValidator<int>(0, max_width_plus_one));
+        db.Add<int> ("UI.windows."+config_name+".height-windowed",  UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED"), height,     RangedValidator<int>(0, max_height_plus_one));
 
         db.Add<bool>("UI.windows."+config_name+".visible",          UserStringNop("OPTIONS_DB_UI_WINDOWS_VISIBLE"),         visible,    Validator<bool>());
         db.Add<bool>("UI.windows."+config_name+".pinned",           UserStringNop("OPTIONS_DB_UI_WINDOWS_PINNED"),          pinned,     Validator<bool>());
