@@ -907,10 +907,14 @@ Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
         }
     }
 
-    SDL_DisplayMode mode;
-    SDL_GetDesktopDisplayMode(display_id, &mode);
-    Pt resolution(X(mode.w), Y(mode.h));
-    return resolution;
+    if (display_id >=0 && display_id < SDL_GetNumVideoDisplays()) {
+        SDL_DisplayMode mode;
+        SDL_GetDesktopDisplayMode(display_id, &mode);
+        Pt resolution(X(mode.w), Y(mode.h));
+        return resolution;
+    } else {
+        return Pt(X0, Y0);
+    }
 }
 
 void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
