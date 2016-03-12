@@ -619,11 +619,7 @@ void SDLGUI::SDLInit()
 {
     InitializeKeyMap(m_key_map);
 
-    int sdl_status = SDL_Init(SDL_INIT_VIDEO);
-    if(sdl_status < 0) {
-        std::cerr << "Failed to initialize sdl. SDL_Init returned: " << sdl_status << std::endl;
-        Exit(1);
-    }
+    SDLMinimalInit();
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 2);
@@ -875,6 +871,8 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const
 {
     std::vector<std::string> mode_vec;
 
+    SDLMinimalInit();
+
     unsigned valid_mode_count = SDL_GetNumDisplayModes(m_display_id);
 
     /* Check if our resolution is restricted */
@@ -894,18 +892,22 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const
     return mode_vec;
 }
 
-Pt SDLGUI::GetDefaultResolution (int display_id)
-{ return GetDefaultResolutionStatic(display_id); }
-
-Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
+void SDLGUI::SDLMinimalInit()
 {
-    // Must initialize sdl here to be able to query the default screen resolution
     if (!SDL_WasInit(SDL_INIT_VIDEO)) {
         if(SDL_Init(SDL_INIT_VIDEO) < 0) {
             std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
             throw std::runtime_error("Failed to initialize SDL");
         }
     }
+}
+
+Pt SDLGUI::GetDefaultResolution (int display_id)
+{ return GetDefaultResolutionStatic(display_id); }
+
+Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
+{
+    SDLMinimalInit();
 
     if (display_id >=0 && display_id < SDL_GetNumVideoDisplays()) {
         SDL_DisplayMode mode;

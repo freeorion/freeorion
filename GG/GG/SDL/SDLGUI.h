@@ -147,6 +147,8 @@ protected:
 
 private:
     void            RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
+    // Bare minimum SDL video initialization to allow queries to display sizes etc.
+    static void     SDLMinimalInit();
 
     X         m_app_width;      ///< application width and height (defaults to 1024 x 768)
     Y         m_app_height;
