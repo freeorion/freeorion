@@ -919,6 +919,32 @@ Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
     }
 }
 
+int SDLGUI::NumVideoDisplaysStatic()
+{
+    SDLMinimalInit();
+    return SDL_GetNumVideoDisplays();
+}
+
+int SDLGUI::MaximumPossibleDimension(bool is_width) {
+    int dim = 0;
+
+    int num_displays = NumVideoDisplaysStatic();
+    for (int idisplay = 0; idisplay < num_displays; ++idisplay) {
+        SDL_Rect r;
+        if (SDL_GetDisplayBounds(idisplay, &r) == 0) {
+            dim += is_width ? r.w : r.h;
+        }
+    }
+    return dim;
+}
+
+int SDLGUI::MaximumPossibleWidth()
+{ return MaximumPossibleDimension(true); }
+
+int SDLGUI::MaximumPossibleHeight()
+{ return MaximumPossibleDimension(false); }
+
+
 void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
 {
     const char *current = text.text;

@@ -122,7 +122,15 @@ public:
     // \override
     virtual Pt      GetDefaultResolution (int display_id);
     static  Pt      GetDefaultResolutionStatic(int display_id);
+    static int      NumVideoDisplaysStatic();
     virtual bool    FramebuffersAvailable() const;
+
+    /** Returns the largest possible width if all displays are aligned horizontally.
+        Ideally it reports actual desktop width using all displays.*/
+    static int MaximumPossibleWidth();
+    /** Returns the largest possible height if all displays are aligned vertically.
+        Ideally it reports the actual desktop height using all displays.*/
+    static int MaximumPossibleHeight();
 protected:
     void SetAppSize(const GG::Pt& size);
 
@@ -144,6 +152,11 @@ protected:
     virtual void    Run();
 
     void            ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
+
+    /** Given is_width = true (false) it returns the largest possible window
+        width (height) if all displays are aligned horizontally (vertically).
+        Ideally it returns the actual width (height) of a multi-monitor display.*/
+    static int MaximumPossibleDimension(bool is_width = true);
 
 private:
     void            RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
