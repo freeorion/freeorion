@@ -121,7 +121,6 @@ namespace {
 
         db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,   RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
         db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            DEFAULT_HEIGHT,    RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-
         db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,   RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
         db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,    RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
         db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     DEFAULT_LEFT, OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));

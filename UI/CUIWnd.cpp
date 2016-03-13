@@ -250,8 +250,8 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             // Keep this CUIWnd entirely inside the application window.
             available_size = GG::Pt(app->AppWidth(), app->AppHeight());
         } else {
-            available_size = GG::Pt( GG::X(HumanClientApp::MaximumPossibleWidth()),
-                                     GG::Y(HumanClientApp::MaximumPossibleHeight()));
+            available_size = GG::Pt(GG::X(HumanClientApp::MaximumPossibleWidth()),
+                                    GG::Y(HumanClientApp::MaximumPossibleHeight()));
             ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
         }
 

@@ -895,21 +895,21 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const
 void SDLGUI::SDLMinimalInit()
 {
     if (!SDL_WasInit(SDL_INIT_VIDEO)) {
-        if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
             throw std::runtime_error("Failed to initialize SDL");
         }
     }
 }
 
-Pt SDLGUI::GetDefaultResolution (int display_id)
+Pt SDLGUI::GetDefaultResolution(int display_id)
 { return GetDefaultResolutionStatic(display_id); }
 
 Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
 {
     SDLMinimalInit();
 
-    if (display_id >=0 && display_id < SDL_GetNumVideoDisplays()) {
+    if (display_id >= 0 && display_id < SDL_GetNumVideoDisplays()) {
         SDL_DisplayMode mode;
         SDL_GetDesktopDisplayMode(display_id, &mode);
         Pt resolution(X(mode.w), Y(mode.h));
@@ -929,9 +929,9 @@ int SDLGUI::MaximumPossibleDimension(bool is_width) {
     int dim = 0;
 
     int num_displays = NumVideoDisplaysStatic();
-    for (int idisplay = 0; idisplay < num_displays; ++idisplay) {
+    for (int i_display = 0; i_display < num_displays; ++i_display) {
         SDL_Rect r;
-        if (SDL_GetDisplayBounds(idisplay, &r) == 0) {
+        if (SDL_GetDisplayBounds(i_display, &r) == 0) {
             dim += is_width ? r.w : r.h;
         }
     }
