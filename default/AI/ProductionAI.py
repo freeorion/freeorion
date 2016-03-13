@@ -138,32 +138,29 @@ def get_best_ship_info(priority, loc=None):
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
-def getBestShipRatings(loc=None):
-    """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
-    # Since we haven't yet implemented a way to target military ship construction at/near particular locations
-    # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
-    # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
-    # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
-    # we want some chance of choosing  those alternate designs/locations.
-    #
-    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistical mechanics
-    # type partition function. 'tally' will compute the normalization constant.
-    # So first go through and calculate the tally as well as convert each individual contribution to
-    # the running total up to that point, to facilitate later sampling.  Then those running totals are
-    # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
-    # used to select the chosen design/loc.
+def get_best_ship_ratings(planet_ids):
+    """
+    Returns list of [partition, pid, designID, design] sublists, currently only for military ships.
+
+    Since we haven't yet implemented a way to target military ship construction at/near particular locations
+    where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
+    distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
+    the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
+    we want some chance of choosing  those alternate designs/locations.
+
+    The approach to this taken below is to treat the ratings akin to an energy to be used in a statistical mechanics
+    type partition function. 'tally' will compute the normalization constant.
+    So first go through and calculate the tally as well as convert each individual contribution to
+    the running total up to that point, to facilitate later sampling.  Then those running totals are
+    renormalized by the final tally, so that a later random number selector in the range [0,1) can be
+    used to select the chosen design/loc.
+
+    :param planet_ids: list of planets ids.
+    :type planet_ids: list|set|tuple
+    :rtype: list
+    """
     priority = EnumsAI.PriorityType.PRODUCTION_MILITARY
-    if loc is None:
-        planet_ids = ColonisationAI.empire_shipyards
-    elif isinstance(loc, list):
-        planet_ids = set(loc).intersection(ColonisationAI.empire_shipyards)
-    elif isinstance(loc, int):
-        if loc in ColonisationAI.empire_shipyards:
-            planet_ids = [loc]
-        else:
-            return []
-    else:  # problem
-        return []
+    planet_ids = set(planet_ids).intersection(ColonisationAI.empire_shipyards)
 
     if priority in design_cache:  # use new framework
         build_choices = design_cache[priority]
@@ -174,12 +171,12 @@ def getBestShipRatings(loc=None):
         best_rating = loc_choices[0][0]
         tally = 0
         ret_val = []
-        for choice in loc_choices:
-            if choice[0] < 0.7 * best_rating:
+        for rating, pid, design_id, design in loc_choices:
+            if rating < 0.7 * best_rating:
                 break
-            p = math.exp(10 * (choice[0]/best_rating - 1))
+            p = math.exp(10 * (rating/best_rating - 1))
             tally += p
-            ret_val.append([tally, choice[1], choice[2], choice[3]])
+            ret_val.append([tally, pid, design_id, design])
         for item in ret_val:
             item[0] /= tally
         return ret_val
@@ -1262,14 +1259,14 @@ def generateProductionOrders():
         local_priorities = {}
         local_priorities.update(filtered_priorities)
         best_ships = {}
-        mil_build_choices = getBestShipRatings(list(planet_set))
+        mil_build_choices = get_best_ship_ratings(planet_set)
         for priority in list(local_priorities):
             if priority == EnumsAI.PriorityType.PRODUCTION_MILITARY:
                 if not mil_build_choices:
                     del local_priorities[priority]
                     continue
-                top = mil_build_choices[0]
-                best_design_id, best_design, build_choices = top[2], top[3], [top[1]]
+                _, pid, best_design_id, best_design = mil_build_choices[0]
+                build_choices = [pid]
                 # score = ColonisationAI.pilotRatings.get(pid, 0)
                 # if bestScore < ColonisationAI.curMidPilotRating:
             else:
