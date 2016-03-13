@@ -508,7 +508,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         if (m_networking.Connected()) {
             DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
             m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
-            boost::this_thread::sleep(boost::posix_time::seconds(1));
+            boost::this_thread::sleep_for(boost::chrono::seconds(1));
             m_networking.DisconnectFromServer();
             if (!m_networking.Connected())
                 DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
@@ -611,7 +611,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     if (m_game_started) {
         EndGame();
         // delay to make sure old game is fully cleaned up before attempting to start a new one
-        boost::this_thread::sleep(boost::posix_time::seconds(3));
+        boost::this_thread::sleep_for(boost::chrono::seconds(3));
     } else {
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
     }
@@ -1088,7 +1088,7 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     if (m_networking.Connected()) {
         DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
         m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
-        boost::this_thread::sleep(boost::posix_time::seconds(1));
+        boost::this_thread::sleep_for(boost::chrono::seconds(1));
         m_networking.DisconnectFromServer();
         if (!m_networking.Connected())
             DebugLogger() << "HumanClientApp::EndGame Disconnected from server.";

@@ -232,7 +232,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               EmpireManager& empire_manager, SpeciesManager& species_manager,
               CombatLogManager& combat_log_manager, GalaxySetupData& galaxy_setup_data)
 {
-    //boost::this_thread::sleep(boost::posix_time::seconds(1));
+    //boost::this_thread::sleep_for(boost::chrono::seconds(1));
 
     ScopedTimer timer("LoadGame: " + filename, true);
 
