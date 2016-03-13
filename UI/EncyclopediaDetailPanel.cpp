@@ -652,6 +652,8 @@ void EncyclopediaDetailPanel::Render() {
     glLineWidth(1.0f);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     m_vertex_buffer.activate();
     if (!m_minimized) {

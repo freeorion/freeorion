@@ -121,10 +121,13 @@ namespace {
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
         verts.activate();
         coords.activate();
         glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
+
         glPopClientAttrib();
     }
 

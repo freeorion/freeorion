@@ -183,6 +183,7 @@ void HueSaturationPicker::Render()
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // grid of quads of varying hue and saturation
     glPushMatrix();
@@ -330,6 +331,7 @@ void ValuePicker::Render()
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     vert_buf.activate();
     colour_buf.activate();
@@ -465,6 +467,7 @@ void ColorDlg::ColorDisplay::Render()
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     vert_buf.activate();
     colour_buf.activate();

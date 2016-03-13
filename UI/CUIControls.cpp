@@ -327,6 +327,8 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
         glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glColor(inside_color);
         glDrawArrays(GL_QUADS, 0, 8);
@@ -1681,6 +1683,7 @@ void MultiTurnProgressBar::Render() {
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glDrawArrays(GL_LINES, 0, verts.size());
 
@@ -1904,6 +1907,7 @@ void RotatingGraphic::Render() {
     // render textured quad
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     verts.activate();

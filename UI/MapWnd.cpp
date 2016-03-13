@@ -1622,8 +1622,6 @@ void MapWnd::RenderGalaxyGas() {
 }
 
 void MapWnd::RenderSystemOverlays() {
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glLoadIdentity();
@@ -1631,8 +1629,6 @@ void MapWnd::RenderSystemOverlays() {
          it != m_system_icons.end(); ++it)
     { it->second->RenderOverlay(ZoomFactor()); }
     glPopMatrix();
-
-    glPopClientAttrib();
 }
 
 void MapWnd::RenderSystems() {
@@ -1778,16 +1774,16 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        if (coloured)
+        if (coloured) {
             glEnableClientState(GL_COLOR_ARRAY);
-        else
-            glColor(UNOWNED_LANE_COLOUR);
-
-        vertices.activate();
-
-        if (coloured)
             colours.activate();
+        } else {
+            glDisableClientState(GL_COLOR_ARRAY);
+            glColor(UNOWNED_LANE_COLOUR);
+        }
+        vertices.activate();
 
         glDrawArrays(GL_LINES, 0, vertices.size());
 
@@ -1845,7 +1841,9 @@ void MapWnd::RenderFleetMovementLines() {
     // render movement lines for all fleets
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
     for (std::map<int, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
     { RenderMovementLine(it->second, dot_size, dot_spacing, move_line_animation_shift); }
@@ -1857,7 +1855,6 @@ void MapWnd::RenderFleetMovementLines() {
         if (line_it != m_fleet_lines.end())
             RenderMovementLine(line_it->second, dot_size, dot_spacing, move_line_animation_shift, GG::CLR_WHITE);
     }
-    glPopClientAttrib();
 
     // render move line ETA indicators for selected fleets
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
@@ -1868,20 +1865,17 @@ void MapWnd::RenderFleetMovementLines() {
     }
 
     // render projected move lines
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
     for (std::map<int, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin();
          it != m_projected_fleet_lines.end(); ++it)
     { RenderMovementLine(it->second, dot_size, dot_spacing, move_line_animation_shift, GG::CLR_WHITE); }
-    glPopClientAttrib();
 
     // render projected move line ETA indicators
     for (std::map<int, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin();
          it != m_projected_fleet_lines.end(); ++it)
     { RenderMovementLineETAIndicators(it->second, GG::CLR_WHITE); }
 
+    glPopClientAttrib();
     glPopMatrix();
 }
 

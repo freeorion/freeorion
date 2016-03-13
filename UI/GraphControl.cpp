@@ -167,6 +167,7 @@ void GraphControl::Render() {
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glLineWidth(2.0f);
     glPointSize(5.0f);

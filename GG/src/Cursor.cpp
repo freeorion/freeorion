@@ -69,11 +69,18 @@ void TextureCursor::Render(const Pt& pt)
         };
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
         glVertexPointer(2, GL_INT, 0, verts);
+
         glDisable(GL_TEXTURE_2D);
         glColor3ub(255, 0, 0);
+
         glDrawArrays(GL_LINE_LOOP, 0, 4);
+
         glEnable(GL_TEXTURE_2D);
+
         glPopClientAttrib();
     }
     glColor3ub(255, 255, 255);

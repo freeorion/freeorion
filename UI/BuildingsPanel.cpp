@@ -330,6 +330,8 @@ void BuildingIndicator::Render() {
     glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glVertexPointer(2, GL_FLOAT, 0, verts);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
