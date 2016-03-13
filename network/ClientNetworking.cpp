@@ -239,7 +239,7 @@ void ClientNetworking::DisconnectFromServer() {
     if (Connected())
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
     // HACK! wait a bit for the disconnect to occur
-    boost::this_thread::sleep(boost::posix_time::seconds(1));
+    boost::this_thread::sleep_for(boost::chrono::seconds(1));
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {
