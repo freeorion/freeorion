@@ -1,7 +1,7 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
 import FleetUtilsAI
-from EnumsAI import AIFleetMissionType
+from EnumsAI import MissionType
 import universe_object
 import MoveUtilsAI
 import PlanetUtilsAI
@@ -19,7 +19,7 @@ borderUnexploredSystemIDs = {}
 
 def get_current_exploration_info():
     """Returns ([current target list], [available scout list])."""
-    fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
+    fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.EXPLORATION)
     available_scouts = []
     already_covered = set()
     for fleet_id in fleet_ids:
@@ -27,7 +27,7 @@ def get_current_exploration_info():
         if not fleet_mission.type:
             available_scouts.append(fleet_id)
         else:
-            if fleet_mission.type == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
+            if fleet_mission.type == MissionType.EXPLORATION:
                 already_covered.add(fleet_mission.target)
                 if not fleet_mission.target:
                     print "problem determining existing exploration target systems"
@@ -93,7 +93,7 @@ def assign_scouts_to_explore_systems():
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         target = universe_object.System(this_sys_id)
         if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target)) > 0:
-            fleet_mission.add_target(AIFleetMissionType.FLEET_MISSION_EXPLORATION, target)
+            fleet_mission.add_target(MissionType.EXPLORATION, target)
             sent_list.append(this_sys_id)
         else:  # system too far out, skip it, but can add scout back to available pool
             print "sys_id %d too far out for fleet ( ID %d ) to reach" % (this_sys_id, fleet_id)
@@ -120,7 +120,7 @@ def assign_scouts_to_explore_systems():
             # add exploration mission to fleet with target unexplored system and this system is in range
             #print "try to assign scout to system %d"%systemID
             if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target, fo.empireID())) > 0:
-                fleet_mission.addAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, target)
+                fleet_mission.addAITarget(MissionType.EXPLORATION, target)
                 sent_list.append(sys_id)
                 break
     print "sent scouting fleets to sysIDs : %s"%sent_list

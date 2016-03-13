@@ -1,13 +1,10 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
+from EnumsAI import MissionType, ShipRoleType, ExplorableSystemType
 import traceback
 from universe_object import Planet
 
 __designStats = {}
-__AIShipRoleTypeNames = AIShipRoleType()
-__AIFleetMissionTypeNames = AIFleetMissionType()
-
 
 def combine_ratings(rating1, rating2):
     return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
@@ -141,8 +138,8 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
             needs_species = True
         has_species = ""
 
-        colonization_roles = (AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION,
-                              AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
+        colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION,
+                              ShipRoleType.BASE_COLONISATION)
         for shipID in fleet.shipIDs:
             ship = universe.getShip(shipID)
             if foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles:
@@ -298,7 +295,7 @@ def get_ship_id_with_role(fleet_id, ship_role, verbose=True):
 
     if not fleet_has_ship_with_role(fleet_id, ship_role):
         if verbose:
-            print "No ship with role " + __AIShipRoleTypeNames.name(ship_role) + " found."
+            print "No ship with role %s found." % ship_role
         return None
 
     universe = fo.getUniverse()
@@ -344,14 +341,14 @@ def extract_fleet_ids_without_mission_types(fleets_ids):
 def assess_fleet_role(fleet_id):
     """
     Assesses ShipRoles represented in a fleet and
-    returns a corresponding overall fleetRole (of type AIFleetMissionType).
+    returns a corresponding overall fleetRole (of type MissionType).
     """
     universe = fo.getUniverse()
     ship_roles = {}
     fleet = universe.getFleet(fleet_id)
     if not fleet:
         print "couldn't get fleet with id " + str(fleet_id)
-        return AIShipRoleType.SHIP_ROLE_INVALID
+        return ShipRoleType.INVALID
 
     # count ship_roles
     for ship_id in fleet.shipIDs:
@@ -359,40 +356,40 @@ def assess_fleet_role(fleet_id):
         if ship.design:
             role = foAI.foAIstate.get_ship_role(ship.design.id)
         else:
-            role = AIShipRoleType.SHIP_ROLE_INVALID
+            role = ShipRoleType.INVALID
 
-        if role != AIShipRoleType.SHIP_ROLE_INVALID:
+        if role != ShipRoleType.INVALID:
             ship_roles[role] = ship_roles.get(role, 0) + 1
     # determine most common ship_role
-    favourite_role = AIShipRoleType.SHIP_ROLE_INVALID
+    favourite_role = ShipRoleType.INVALID
     for ship_role in ship_roles:
         if ship_roles[ship_role] == max(ship_roles.values()):
             favourite_role = ship_role
 
     # assign fleet role
-    if AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_COLONISATION
-    elif AIShipRoleType.SHIP_ROLE_BASE_COLONISATION in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_COLONISATION
-    elif AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_OUTPOST
-    elif AIShipRoleType.SHIP_ROLE_BASE_OUTPOST in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
-    elif AIShipRoleType.SHIP_ROLE_BASE_INVASION in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION
-    elif AIShipRoleType.SHIP_ROLE_BASE_DEFENSE in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE
-    elif AIShipRoleType.SHIP_ROLE_MILITARY_INVASION in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_INVASION
+    if ShipRoleType.CIVILIAN_COLONISATION in ship_roles:
+        selected_role = MissionType.COLONISATION
+    elif ShipRoleType.BASE_COLONISATION in ship_roles:
+        selected_role = MissionType.COLONISATION
+    elif ShipRoleType.CIVILIAN_OUTPOST in ship_roles:
+        selected_role = MissionType.OUTPOST
+    elif ShipRoleType.BASE_OUTPOST in ship_roles:
+        selected_role = MissionType.ORBITAL_OUTPOST
+    elif ShipRoleType.BASE_INVASION in ship_roles:
+        selected_role = MissionType.ORBITAL_INVASION
+    elif ShipRoleType.BASE_DEFENSE in ship_roles:
+        selected_role = MissionType.ORBITAL_DEFENSE
+    elif ShipRoleType.MILITARY_INVASION in ship_roles:
+        selected_role = MissionType.INVASION
     ####
-    elif favourite_role == AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION:
-        selected_role = AIFleetMissionType.FLEET_MISSION_EXPLORATION
-    elif favourite_role == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
-        selected_role = AIFleetMissionType.FLEET_MISSION_MILITARY
-    elif favourite_role == AIShipRoleType.SHIP_ROLE_MILITARY:
-        selected_role = AIFleetMissionType.FLEET_MISSION_MILITARY
+    elif favourite_role == ShipRoleType.CIVILIAN_EXPLORATION:
+        selected_role = MissionType.EXPLORATION
+    elif favourite_role == ShipRoleType.MILITARY_ATTACK:
+        selected_role = MissionType.MILITARY
+    elif favourite_role == ShipRoleType.MILITARY:
+        selected_role = MissionType.MILITARY
     else:
-        selected_role = AIShipRoleType.SHIP_ROLE_INVALID
+        selected_role = ShipRoleType.INVALID
     return selected_role
 
 
@@ -401,36 +398,36 @@ def assess_ship_design_role(design):
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
         if design.speed > 0:
-            return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+            return ShipRoleType.CIVILIAN_OUTPOST
         else:
-            return AIShipRoleType.SHIP_ROLE_BASE_OUTPOST
+            return ShipRoleType.BASE_OUTPOST
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity > 0 for p in parts):
         if design.speed > 0:
-            return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+            return ShipRoleType.CIVILIAN_COLONISATION
         else:
-            return AIShipRoleType.SHIP_ROLE_BASE_COLONISATION
+            return ShipRoleType.BASE_COLONISATION
 
     if any(p.partClass == fo.shipPartClass.troops for p in parts):
         if design.speed > 0:
-            return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
+            return ShipRoleType.MILITARY_INVASION
         else:
-            return AIShipRoleType.SHIP_ROLE_BASE_INVASION
+            return ShipRoleType.BASE_INVASION
 
     if design.speed == 0:
         if not parts or parts[0].partClass == fo.shipPartClass.shields:  # ToDo: Update logic for new ship designs
-            return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
+            return ShipRoleType.BASE_DEFENSE
         else:
-            return AIShipRoleType.SHIP_ROLE_INVALID
+            return ShipRoleType.INVALID
 
     stats = foAI.foAIstate.get_design_id_stats(design.id)
     rating = stats['attack'] * (stats['structure'] + stats['shields'])
     if rating > 0:  # positive attack stat
-        return AIShipRoleType.SHIP_ROLE_MILITARY
+        return ShipRoleType.MILITARY
     if any(p.partClass == fo.shipPartClass.detection for p in parts):
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
+        return ShipRoleType.CIVILIAN_EXPLORATION
     else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
+        return ShipRoleType.CIVILIAN_EXPLORATION
 
 
 def generate_fleet_orders_for_fleet_missions():
@@ -439,26 +436,25 @@ def generate_fleet_orders_for_fleet_missions():
 
     # The following fleet lists are based on *Roles* -- Secure type missions are done by fleets with Military Roles
     print "Fleets by Role\n"
-    print "Exploration Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
-    print "Colonization Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
-    print "Outpost Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
-    print "Invasion Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVASION)
-    print "Military Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
-    print "Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
-    print "Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST)
-    print "Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION)
-    print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_SECURE)
-    print "Unclassifiable Fleets: %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVALID)
+    print "Exploration Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.EXPLORATION)
+    print "Colonization Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.COLONISATION)
+    print "Outpost Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.OUTPOST)
+    print "Invasion Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.INVASION)
+    print "Military Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.MILITARY)
+    print "Orbital Defense Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_DEFENSE)
+    print "Outpost Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_OUTPOST)
+    print "Invasion Base Fleets: %s" % get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
+    print "Securing Fleets: %s  (currently FLEET_MISSION_MILITARY should be used instead of this Role)" % get_empire_fleet_ids_by_role(MissionType.SECURE)
 
     if fo.currentTurn() < 50:
         print
         print "Explored systems:"
-        print_systems(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
+        print_systems(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.EXPLORED))
         print "Unexplored systems:"
-        print_systems(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+        print_systems(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.UNEXPLORED))
         print
 
-    exploration_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_EXPLORATION])
+    exploration_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.EXPLORATION])
     if exploration_fleet_missions:
         print "Exploration targets:"
         for explorationAIFleetMission in exploration_fleet_missions:
@@ -466,7 +462,7 @@ def generate_fleet_orders_for_fleet_missions():
     else:
         print "Exploration targets: None"
 
-    colonisation_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_COLONISATION])
+    colonisation_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.COLONISATION])
     if colonisation_fleet_missions:
         print "Colonization targets: "
     else:
@@ -474,7 +470,7 @@ def generate_fleet_orders_for_fleet_missions():
     for colonisation_fleet_mission in colonisation_fleet_missions:
         print "    %s" % colonisation_fleet_mission
 
-    outpost_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_OUTPOST])
+    outpost_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.OUTPOST])
     if outpost_fleet_missions:
         print "Outpost targets: "
     else:
@@ -482,7 +478,7 @@ def generate_fleet_orders_for_fleet_missions():
     for outpost_fleet_mission in outpost_fleet_missions:
         print "    %s" % outpost_fleet_mission
 
-    outpost_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST])
+    outpost_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_OUTPOST])
     if outpost_base_fleet_missions:
         print "Outpost Base targets (must have been interrupted by combat): "
     else:
@@ -490,7 +486,7 @@ def generate_fleet_orders_for_fleet_missions():
     for outpost_fleet_mission in outpost_base_fleet_missions:
         print "    %s" % outpost_fleet_mission
 
-    invasion_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_INVASION])
+    invasion_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.INVASION])
     if invasion_fleet_missions:
         print "Invasion targets: "
     else:
@@ -498,7 +494,7 @@ def generate_fleet_orders_for_fleet_missions():
     for invasion_fleet_mission in invasion_fleet_missions:
         print "    %s" % invasion_fleet_mission
 
-    troop_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION])
+    troop_base_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_INVASION])
     if troop_base_fleet_missions:
         print "Invasion Base targets (must have been interrupted by combat): "
     else:
@@ -506,7 +502,7 @@ def generate_fleet_orders_for_fleet_missions():
     for invasion_fleet_mission in troop_base_fleet_missions:
         print "    %s" % invasion_fleet_mission
 
-    military_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_MILITARY])
+    military_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.MILITARY])
     if military_fleet_missions:
         print "General Military targets: "
     else:
@@ -514,7 +510,7 @@ def generate_fleet_orders_for_fleet_missions():
     for military_fleet_mission in military_fleet_missions:
         print "    %s" % military_fleet_mission
 
-    secure_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_SECURE])
+    secure_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
     if secure_fleet_missions:
         print "Secure targets: "
     else:
@@ -522,7 +518,7 @@ def generate_fleet_orders_for_fleet_missions():
     for secure_fleet_mission in secure_fleet_missions:
         print "    %s" % secure_fleet_mission
 
-    orb_defense_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE])
+    orb_defense_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.ORBITAL_DEFENSE])
     if orb_defense_fleet_missions:
         print "Orbital Defense targets: "
     else:

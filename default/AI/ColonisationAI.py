@@ -9,7 +9,7 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AIFocusType
+from EnumsAI import MissionType, ExplorableSystemType, AIFocusType
 import EnumsAI
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, ppstring, cache_by_turn
 from freeorion_debug import Timer
@@ -291,8 +291,8 @@ def survey_universe():
     current_turn = fo.currentTurn()
 
     # get outpost and colonization planets
-    explored_system_ids = foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
-    un_ex_sys_ids = list(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
+    explored_system_ids = foAI.foAIstate.get_explorable_systems(ExplorableSystemType.EXPLORED)
+    un_ex_sys_ids = list(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.UNEXPLORED))
     un_ex_systems = map(universe.getSystem, un_ex_sys_ids)
     print "Unexplored Systems: %s " % un_ex_systems
     print "Explored SystemIDs: %s" % list(explored_system_ids)
@@ -527,7 +527,7 @@ def get_colony_fleets():
     colonization_timer.start("Getting best milship rating")
     colonization_timer.start('Getting avail colony fleets')
 
-    all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     AIstate.colonyFleetIDs[:] = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_colony_fleet_ids)
 
     # get suppliable systems and planets
@@ -537,26 +537,26 @@ def get_colony_fleets():
 
     # export colony targeted systems for other AI modules
     colony_targeted_planet_ids = FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs,
-                                                                      AIFleetMissionType.FLEET_MISSION_COLONISATION)
+                                                                      MissionType.COLONISATION)
     all_colony_targeted_system_ids = PlanetUtilsAI.get_systems(colony_targeted_planet_ids)
     AIstate.colonyTargetedSystemIDs = all_colony_targeted_system_ids
     print
     print "Colony Targeted SystemIDs: %s" % AIstate.colonyTargetedSystemIDs
     print "Colony Targeted PlanetIDs: %s" % colony_targeted_planet_ids
 
-    colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     if not colony_fleet_ids:
         print "Available Colony Fleets: 0"
     else:
         print "Colony FleetIDs: " % FleetUtilsAI.get_empire_fleet_ids_by_role(
-            AIFleetMissionType.FLEET_MISSION_COLONISATION)
+            MissionType.COLONISATION)
 
     num_colony_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colony_fleet_ids))
     print "Colony Fleets Without Missions: %s" % num_colony_fleets
     outpost_targeted_planet_ids = FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs,
-                                                                       AIFleetMissionType.FLEET_MISSION_OUTPOST)
+                                                                       MissionType.OUTPOST)
     outpost_targeted_planet_ids.extend(
-        FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
+        FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs, MissionType.ORBITAL_OUTPOST))
     all_outpost_targeted_system_ids = PlanetUtilsAI.get_systems(outpost_targeted_planet_ids)
 
     # export outpost targeted systems for other AI modules
@@ -565,12 +565,12 @@ def get_colony_fleets():
     print "Outpost Targeted SystemIDs: " + str(AIstate.outpostTargetedSystemIDs)
     print "Outpost Targeted PlanetIDs: " + str(outpost_targeted_planet_ids)
 
-    outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     if not outpost_fleet_ids:
         print "Available Outpost Fleets: 0"
     else:
         print "Outpost FleetIDs: %s" % FleetUtilsAI.get_empire_fleet_ids_by_role(
-            AIFleetMissionType.FLEET_MISSION_OUTPOST)
+            MissionType.OUTPOST)
 
     num_outpost_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpost_fleet_ids))
     print "Outpost Fleets Without Missions: %s" % num_outpost_fleets
@@ -589,11 +589,11 @@ def get_colony_fleets():
     queued_colony_bases = []
     for queue_index in range(0, len(production_queue)):
         element = production_queue[queue_index]
-        if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP and element.turnsLeft != -1:
-            if foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST]:
+        if element.buildType == EnumsAI.EmpireProductionTypes.BT_SHIP and element.turnsLeft != -1:
+            if foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.ShipRoleType.BASE_OUTPOST]:
                 build_planet = universe.getPlanet(element.locationID)
                 queued_outpost_bases.append(build_planet.systemID)
-            elif foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_COLONISATION]:
+            elif foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.ShipRoleType.BASE_COLONISATION]:
                 build_planet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(build_planet.systemID)
 
@@ -637,7 +637,7 @@ def get_colony_fleets():
             if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1:
                 continue  # already building for here
             loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
-            this_score = evaluate_planet(pid, EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST, None, empire, [])
+            this_score = evaluate_planet(pid, EnumsAI.MissionType.OUTPOST, None, empire, [])
             planet = universe.getPlanet(pid)
             if this_score == 0:
                 # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc, this_score)
@@ -649,7 +649,7 @@ def get_colony_fleets():
                     ((planet and planet.name) or "unknown"), loc, this_score)
                 continue
             best_ship, col_design, build_choices = ProductionAI.getBestShipInfo(
-                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST, loc)
+                EnumsAI.PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
                 print "Error: can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
                 outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
@@ -675,12 +675,12 @@ def get_colony_fleets():
     # print "Evaluated Outpost PlanetIDs: " + str(evaluated_outpost_planet_ids)
 
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids,
-                                                          AIFleetMissionType.FLEET_MISSION_COLONISATION, None, empire)
+                                                          MissionType.COLONISATION, None, empire)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
     colonization_timer.start('Evaluate All Colony Opportunities')
     all_colony_opportunities.clear()
     all_colony_opportunities.update(
-        assign_colonisation_values(evaluated_colony_planet_ids, AIFleetMissionType.FLEET_MISSION_COLONISATION, None,
+        assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None,
                                    empire, [], True))
     colonization_timer.start('Evaluate Outpost Opportunities')
 
@@ -713,11 +713,11 @@ def get_colony_fleets():
     foAI.foAIstate.colonisablePlanetIDs.update(sorted_planets)
 
     # get outpost fleets
-    all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     AIstate.outpostFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids)
 
     evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids,
-                                                           AIFleetMissionType.FLEET_MISSION_OUTPOST, None, empire)
+                                                           MissionType.OUTPOST, None, empire)
     # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
     for pid in set(evaluated_outpost_planets).intersection(evaluated_colony_planets):
         if planet_supply_cache.get(pid, -99) >= 0:
@@ -750,7 +750,7 @@ def assign_colonisation_values(planet_ids, mission_type, species, empire, detail
         detail = []
     orig_detail = detail
     planet_values = {}
-    if mission_type == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+    if mission_type == MissionType.OUTPOST:
         # print "\n=========\nAssigning Outpost Values\n========="
         try_species = [""]
     elif species is not None:
@@ -896,7 +896,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     planet = universe.getPlanet(planet_id)
 
     if (spec_name != planet.speciesName and planet.speciesName and
-                mission_type != AIFleetMissionType.FLEET_MISSION_INVASION):
+                mission_type != MissionType.INVASION):
         return 0
 
     planet_size = planet.size
@@ -1089,8 +1089,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         fixed_res += discount_multiplier * 6
         detail.append("ECCENTRIC_ORBIT_SPECIAL %.1f" % (discount_multiplier * 6))
 
-    if (mission_type == AIFleetMissionType.FLEET_MISSION_OUTPOST or
-            (mission_type == AIFleetMissionType.FLEET_MISSION_INVASION and not spec_name)):
+    if (mission_type == MissionType.OUTPOST or
+            (mission_type == MissionType.INVASION and not spec_name)):
 
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:  # TODO: add value for depleted ancient ruins
             retval += discount_multiplier * 30
@@ -1403,7 +1403,7 @@ def assign_colony_fleets_to_colonise():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     all_outpost_base_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST)
+        MissionType.ORBITAL_OUTPOST)
     avail_outpost_base_fleet_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_base_fleet_ids)
     for fid in avail_outpost_base_fleet_ids:
         fleet = universe.getFleet(fid)
@@ -1418,7 +1418,7 @@ def assign_colony_fleets_to_colonise():
             continue
         target_id = -1
         best_score = -1
-        for pid, rating in assign_colonisation_values(targets, AIFleetMissionType.FLEET_MISSION_OUTPOST, None,
+        for pid, rating in assign_colonisation_values(targets, MissionType.OUTPOST, None,
                                                       empire).items():
             if rating[0] > best_score:
                 best_score = rating[0]
@@ -1427,22 +1427,22 @@ def assign_colony_fleets_to_colonise():
             foAI.foAIstate.qualifyingOutpostBaseTargets[target_id][1] = -1  # TODO: should probably delete
             ai_target = universe_object.Planet(target_id)
             ai_fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
-            ai_fleet_mission.add_target(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, ai_target)
+            ai_fleet_mission.add_target(MissionType.ORBITAL_OUTPOST, ai_target)
 
     # assign fleet targets to colonisable planets
     send_colony_ships(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs.items(),
-                      AIFleetMissionType.FLEET_MISSION_COLONISATION)
+                      MissionType.COLONISATION)
 
     # assign fleet targets to colonisable outposts
     send_colony_ships(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs.items(),
-                      AIFleetMissionType.FLEET_MISSION_OUTPOST)
+                      MissionType.OUTPOST)
 
 
 def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     """sends a list of colony ships to a list of planet_value_pairs"""
     fleet_pool = colony_fleet_ids[:]
     try_all = False
-    if mission_type == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+    if mission_type == MissionType.OUTPOST:
         cost = 20 + AIDependencies.OUTPOST_POD_COST * (1 + len(AIstate.popCtrIDs) * AIDependencies.COLONY_POD_UPKEEP)
     else:
         try_all = True
