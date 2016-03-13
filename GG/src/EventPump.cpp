@@ -49,8 +49,10 @@ void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state, bool do_non_render
         if (double max_FPS = gui->MaxFPS()) {
             double min_ms_per_frame = 1000.0 / max_FPS;
             double ms_to_wait = min_ms_per_frame - (time - state.last_frame_time);
-            if (0.0 < ms_to_wait)
+            if (0.0 < ms_to_wait) {
                 gui->Wait(static_cast<unsigned int>(ms_to_wait));
+                time = gui->Ticks();
+            }
         }
         state.last_frame_time = time;
 
