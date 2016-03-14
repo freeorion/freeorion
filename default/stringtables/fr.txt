@@ -3272,7 +3272,7 @@ DESIGN_INVALID
 Modèle invalide
 
 DESIGN_INV_MODERATOR
-Les modérateurs et observateurs ne peuvent pas créer de nouveaux modèles d'astronefs.
+Les modérateurs et observateurs ne peuvent pas créer ou modifier des modèles d'astronefs.
 
 DESIGN_INV_NO_HULL
 Démarrer la conception d'un astronef par le choix de la coque.
@@ -3285,6 +3285,33 @@ Modèle déjà existant
 
 DESIGN_KNOWN_DETAIL
 Ce modèle est une réplique de "%1%".
+
+DESIGN_OBSOLETE
+Modèle obsolète
+
+DESIGN_WND_ADD
+Ajouter nouveau modèle
+
+DESIGN_WND_ADD_DETAIL
+'''Ajouter nouveau modèle nommé
+"%1%"
+aux modèles finalisés.'''
+
+DESIGN_WND_UPDATE
+Actualiser ancien modèle
+
+DESIGN_WND_UPDATE_DETAIL
+'''Remplacer ancien modèle
+"%1%"
+avec nouveau modèle
+"%2%"
+dans modèles finalisés.'''
+
+DESIGN_UPDATE_INVALID_NO_CANDIDATE
+Choisir un modèle existant à actualiser.
+
+ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
+Choisissez une coque, ajoutez des équipements, puis cliquez sur "Ajouter nouveau modèle" pour créer un modèle utilisable.
 
 ################
 ## Statistics ##
@@ -10077,7 +10104,8 @@ GT_TROOP_POD
 Module d'Infanterie
 
 GT_TROOP_POD_DESC
-'''Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être déployés sur une planète. 
+'''Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être déployés sur une planète. Nécessite la présence d'au moins 2 unités d'Infanterie sur le lieu de production.
+
   * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.  
   * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et dangereux, les rendant inutilisables par la suite.'''
 
@@ -10085,7 +10113,8 @@ GT_TROOP_POD_2
 Module d'Infanterie Améliorée
 
 GT_TROOP_POD_2_DESC
-'''Transporte 4 unités d'[[encyclopedia TROOP_TITLE]] cybernétique et l'équipement pouvant être déployés sur une planète.
+'''Transporte 4 unités d'[[encyclopedia TROOP_TITLE]] cybernétique et l'équipement pouvant être déployés sur une planète. Nécessite la présence d'au moins 4 unités d'Infanterie sur le lieu de production.
+
   * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.  
   * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et dangereux, les rendant inutilisables par la suite.'''
 
