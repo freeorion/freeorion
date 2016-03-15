@@ -8513,6 +8513,18 @@ Hanger Complex
 SHP_FIGHTERS_3_DESC
 Advances in N-Dimensional construction allow the creation of impossibly large spaces within ships, such as the enormous Core Hanger.
 
+SHP_WEAPON_0_2
+Flack Cannon 2
+
+SHP_WEAPON_0_2_DESC
+Improves Flak Cannon by one level, increasing shots to 5.
+
+SHP_WEAPON_0_3
+Flack Cannon 3
+
+SHP_WEAPON_0_2_DESC
+Improves Flak Cannon by one level, increasing shots to 9.
+
 SHP_WEAPON_1_2
 Mass Driver 2
 SHP_WEAPON_1_2_DESC
