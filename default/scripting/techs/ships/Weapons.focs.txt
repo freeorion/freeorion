@@ -81,7 +81,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 DesignHasPart  name = "SR_WEAPON_0_1"
             ]
-            accountinglabel = "SR_WEAPON_0_2"
+            accountinglabel = "SR_WEAPON_0_1"
             effects = SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 2
     graphic = "icons/ship_parts/laser-1.png"
 
@@ -100,7 +100,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 DesignHasPart  name = "SR_WEAPON_0_1"
             ]
-            accountinglabel = "SR_WEAPON_0_3"
+            accountinglabel = "SR_WEAPON_0_1"
             effects = SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 4
     graphic = "icons/ship_parts/plasma-1.png"
 
