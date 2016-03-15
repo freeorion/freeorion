@@ -9778,16 +9778,6 @@ Flak Cannon
 SR_WEAPON_0_1_DESC
 The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
 
-SR_WEAPON_0_2
-Flak Cannon 2
-SR_WEAPON_0_2_DESC
-The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters. Upgraded to fire more rapidly.
-
-SR_WEAPON_0_3
-Flak Cannon 3
-SR_WEAPON_0_3_DESC
-The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters. Upgraded to fire extremely rapidly.
-
 SR_WEAPON_1_1
 Mass Driver
 SR_WEAPON_1_1_DESC
