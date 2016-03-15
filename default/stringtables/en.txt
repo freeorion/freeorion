@@ -8498,6 +8498,21 @@ Bombardment
 SHP_BOMBARD_DESC
 Allows development of planetary bombardment weapons.
 
+SHP_FIGHTERS_1
+Miniaturization
+SHP_FIGHTERS_1_DESC
+Development of shortrange spacefaring propulsion and weapons systems reaches the point where these systems can be made compactly and efficiently enough to be practically carried by larger vessels. Though weak compared to fullsize military spacecraft, these auxilliary fighters can lend both offensive and defensive advantages.
+
+SHP_FIGHTERS_2
+Advanced Miniaturization
+SHP_FIGHTERS_2_DESC
+Further refinement of ship miniaturization technology, allowing more fighters to be launched simultaneously in a given amount of space.
+
+SHP_FIGHTERS_3
+Hanger Complex
+SHP_FIGHTERS_3_DESC
+Advances in N-Dimensional construction allow the creation of impossibly large spaces within ships, such as the enormous Core Hanger.
+
 SHP_WEAPON_1_2
 Mass Driver 2
 SHP_WEAPON_1_2_DESC
@@ -9721,35 +9736,45 @@ Fighter Bay
 FT_BAY_1_DESC
 Launch system for fighters.
 
-FT_HANGAR_0
-Hangar 0
-FT_HANGAR_0_DESC
-Storage system for unarmed decoy craft.
+FT_BAY_2
+Fighter Bay
+FT_BAY_2_DESC
+Improved launch system for fighters.
 
 FT_HANGAR_1
 Hangar 1
 FT_HANGAR_1_DESC
-Storage system for minimally armed fighters.
+Storage system for heavily armed fighters.
 
 FT_HANGAR_2
 Hangar 2
 FT_HANGAR_2_DESC
-Storage system for lightly armed fighters.
+Storage system for moderately armed fighters.
 
 FT_HANGAR_3
 Hangar 3
 FT_HANGAR_3_DESC
-Storage system for moderately armed fighters.
+Storage system for lightly armed fighters.
 
-FT_HANGAR_4
+FT_HANGAR_CORE
 Hangar 4
-FT_HANGAR_4_DESC
-Storage system for heavily armed fighters.
+FT_HANGAR_CORE_DESC
+Massive hanger complex of moderately armed fighters.
 
 SR_WEAPON_0_1
 Flak Cannon
 SR_WEAPON_0_1_DESC
 The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
+
+SR_WEAPON_0_2
+Flak Cannon 2
+SR_WEAPON_0_2_DESC
+The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters. Upgraded to fire more rapidly.
+
+SR_WEAPON_0_3
+Flak Cannon 3
+SR_WEAPON_0_3_DESC
+The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters. Upgraded to fire extremely rapidly.
 
 SR_WEAPON_1_1
 Mass Driver
