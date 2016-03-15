@@ -5,31 +5,7 @@ Part
     damage = 1
     shots = 3
     mountableSlotTypes = External
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser.png"
-    
-Part
-    name = "SR_WEAPON_0_2"
-    description = "SR_WEAPON_0_1_DESC"
-    class = ShortRange
-    damage = 1
-    shots = 5
-    mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser.png"
-
-Part
-    name = "SR_WEAPON_0_3"
-    description = "SR_WEAPON_0_1_DESC"
-    class = ShortRange
-    damage = 1
-    shots = 9
-    mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/laser.png"
