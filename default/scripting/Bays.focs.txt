@@ -9,4 +9,15 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
 
+Part
+    name = "FT_BAY_2"
+    description = "FT_BAY_1_DESC"
+    class = FighterBay
+    capacity = 3
+    mountableSlotTypes = External
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
 #include "../common/shared.macros"
