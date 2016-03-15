@@ -74,7 +74,15 @@ Tech
     researchcost = 25 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_WEAPON_0_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "SR_WEAPON_0_1"
+            ]
+            accountinglabel = "SR_WEAPON_0_2"
+            effects = SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 2
     graphic = "icons/ship_parts/laser-1.png"
 
 Tech
@@ -85,7 +93,15 @@ Tech
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "SHP_WEAPON_0_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_0_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "SR_WEAPON_0_1"
+            ]
+            accountinglabel = "SR_WEAPON_0_3"
+            effects = SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 4
     graphic = "icons/ship_parts/plasma-1.png"
 
 Tech
@@ -154,6 +170,43 @@ Tech
     researchturns = 8
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_2_1"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_1"
+            ]
+            accountinglabel = "FT_HANGAR_1"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 3
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_2"
+            ]
+            accountinglabel = "FT_HANGAR_2"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_3"
+            ]
+            accountinglabel = "FT_HANGAR_3"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_CORE"
+            ]
+            accountinglabel = "FT_HANGAR_CORE"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_CORE" value = Value + 2
+        ]
     graphic = "icons/ship_parts/laser-1.png"
 
 Tech
@@ -222,6 +275,43 @@ Tech
     researchturns = 8
     prerequisites = "SHP_WEAPON_2_1"
     unlock = Item type = ShipPart name = "SR_WEAPON_3_1"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_1"
+            ]
+            accountinglabel = "FT_HANGAR_1"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 3
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_2"
+            ]
+            accountinglabel = "FT_HANGAR_2"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_3"
+            ]
+            accountinglabel = "FT_HANGAR_3"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_CORE"
+            ]
+            accountinglabel = "FT_HANGAR_CORE"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_CORE" value = Value + 2
+        ]
     graphic = "icons/ship_parts/plasma-1.png"
 
 Tech
@@ -290,6 +380,43 @@ Tech
     researchturns = 10
     prerequisites = "SHP_WEAPON_3_1"
     unlock = Item type = ShipPart name = "SR_WEAPON_4_1"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_1"
+            ]
+            accountinglabel = "FT_HANGAR_1"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 6
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_2"
+            ]
+            accountinglabel = "FT_HANGAR_2"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 4
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_3"
+            ]
+            accountinglabel = "FT_HANGAR_3"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 2
+
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_CORE"
+            ]
+            accountinglabel = "FT_HANGAR_CORE"
+            effects = SetMaxSecondaryStat partname = "FT_HANGAR_CORE" value = Value + 4
+        ]
     graphic = "icons/ship_parts/death-ray-1.png"
 
 Tech
