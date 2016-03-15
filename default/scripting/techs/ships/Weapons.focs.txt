@@ -12,6 +12,50 @@ Tech
     graphic = "icons/tech/planetary_colonialism.png"
 
 Tech
+    name = "SHP_FIGHTERS_1"
+    description = "SHP_FIGHTERS_1_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 6
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = [
+        Item type = ShipPart name = name = "FT_BAY_1"
+        Item type = ShipPart name = name = "FT_HANGER_1"
+        Item type = ShipPart name = name = "FT_HANGER_2"
+        Item type = ShipPart name = name = "FT_HANGER_3"
+    ]
+    graphic = "icons/ship_parts/fighters-1.png"
+
+Tech
+    name = "SHP_FIGHTERS_2"
+    description = "SHP_BAY_FIGHTERS_2_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 6
+    prerequisites = [
+        "SHP_FIGHTERS"
+        "PRO_NANOTECH_PROD"
+    ]
+    unlock = Item type = ShipPart name = name = "FT_BAY_2"
+    graphic = "icons/ship_parts/fighters-1.png"
+
+Tech
+    name = "SHP_FIGHTERS_3"
+    description = "SHP_FIGHTERS_3_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 300 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 6
+    prerequisites = [
+        "SHP_FIGHTERS_2"
+        "PRO_NDIM_ASSMB"
+    ]
+    unlock = Item type = ShipPart name = name = "FT_HANGAR_CORE"
+    graphic = "icons/ship_parts/fighters-1.png"    
+
+Tech
     name = "SHP_BOMBARD"
     description = "SHP_BOMBARD_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
