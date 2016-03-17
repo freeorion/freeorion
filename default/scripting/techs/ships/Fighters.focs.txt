@@ -232,4 +232,4 @@ Tech
             effects = SetMaxSecondaryStat partname = "FT_HANGAR_CORE" value = Value + 4
     graphic = "icons/ship_parts/death-ray-1.png"
 
- #include "../common/shared.macros"
+#include "../../common/shared.macros"
