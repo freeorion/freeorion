@@ -14,18 +14,6 @@ Part
     name = "FT_HANGAR_1"
     description = "FT_HANGAR_1_DESC"
     class = FighterHangar
-    capacity = 2
-    damage = 3
-    mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/fighters-1.png"
-
-Part
-    name = "FT_HANGAR_2"
-    description = "FT_HANGAR_1_DESC"
-    class = FighterHangar
     capacity = 3
     damage = 2
     mountableSlotTypes = Internal
@@ -35,28 +23,51 @@ Part
     icon = "icons/ship_parts/fighters-1.png"
 
 Part
-    name = "FT_HANGAR_3"
-    description = "FT_HANGAR_1_DESC"
+    name = "FT_HANGAR_2"
+    description = "FT_HANGAR_2_DESC"
     class = FighterHangar
-    capacity = 6
-    damage = 1
+    capacity = 3
+    damage = 4
     mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_3"
+    description = "FT_HANGAR_3_DESC"
+    class = FighterHangar
+    capacity = 3
+    damage = 6
+    mountableSlotTypes = Internal
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_HANGAR_4"
+    description = "FT_HANGAR_4_DESC"
+    class = FighterHangar
+    capacity = 3
+    damage = 10
+    mountableSlotTypes = Internal
+    buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
 
 Part
     name = "FT_HANGAR_CORE"
-    description = "FT_HANGAR_1_DESC"
+    description = "FT_HANGAR_CORE_DESC"
     class = FighterHangar
-    capacity = 18
+    capacity = 20
     damage = 2
     mountableSlotTypes = Core
-    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 300 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
-
 
 #include "../common/shared.macros"
