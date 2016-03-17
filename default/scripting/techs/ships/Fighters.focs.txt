@@ -7,9 +7,9 @@ Tech
     researchturns = 6
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = [
-        Item type = ShipPart name = name = "FT_BAY_1"
-        Item type = ShipPart name = name = "FT_HANGER_0"
-        Item type = ShipPart name = name = "FT_HANGER_1"
+        Item type = ShipPart name = "FT_BAY_1"
+        Item type = ShipPart name = "FT_HANGER_0"
+        Item type = ShipPart name = "FT_HANGER_1"
     ]
     graphic = "icons/ship_parts/fighters-1.png"
 
