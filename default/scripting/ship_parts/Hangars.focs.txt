@@ -68,6 +68,9 @@ Part
     buildcost = 300 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
+    EffectsGroup
+            scope = Source
+            effects = SetCapacity partname = "FT_HANGAR_CORE"   value = Value + 2
     icon = "icons/ship_parts/fighters-1.png"
 
 #include "../common/shared.macros"
