@@ -8506,12 +8506,25 @@ Development of shortrange spacefaring propulsion and weapons systems reaches the
 SHP_FIGHTERS_2
 Advanced Miniaturization
 SHP_FIGHTERS_2_DESC
-Further refinement of ship miniaturization technology, allowing more fighters to be launched simultaneously in a given amount of space.
+Further refinement of ship miniaturization technology, allowing more fighters to be housed simultaneously in a given amount of space. Increases the maximum number of Fighters in Hangars by 1.
 
 SHP_FIGHTERS_3
-Hanger Complex
+N-Dimensional Hangar
 SHP_FIGHTERS_3_DESC
-Advances in N-Dimensional construction allow the creation of impossibly large spaces within ships, such as the enormous Core Hanger.
+By utilizing multi-dimensional architecture, hangars can be created that are larger on the inside than the outside.  Increases the maximum number of Fighters in Hangars by 1.
+
+SHP_FIGHTERS_4
+Hanger Complex
+SHP_FIGHTERS_4_DESC
+A massive structure that defies the limits of what can typically be accomodated by interstellar vessels. Uses safely contained dimensional rifts as a source of energy and material to reconstruct lost fighters even outside of supply range.
+
+SHP_FTR_WPN_2
+
+SHP_FTR_WPN_2_DESC
+
+SHP_FTR_WPN_2
+
+SHP_FTR_WPN_2_DESC
 
 SHP_WEAPON_0_2
 Flack Cannon 2
