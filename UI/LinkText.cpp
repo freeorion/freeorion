@@ -293,6 +293,32 @@ void TextLinker::MouseLeave_() {
     MarkLinks();
 }
 
+const std::vector<GG::Font::LineData>& TextLinker::GetLineData() const {
+    static std::vector<GG::Font::LineData> retval;
+    return retval;
+}
+
+const boost::shared_ptr<GG::Font>& TextLinker::GetFont() const {
+    static boost::shared_ptr<GG::Font> retval;
+    if (!retval)
+        retval = ClientUI::GetFont();
+    return retval;
+}
+
+GG::Pt TextLinker::TextUpperLeft() const
+{ return GG::Pt(); }
+
+GG::Pt TextLinker::TextLowerRight() const
+{ return GG::Pt(); }
+
+void TextLinker::SetLinkedText(const std::string& str)
+{}
+
+const std::string& TextLinker::RawText() const {
+    static std::string retval;
+    return retval;
+}
+
 void TextLinker::FindLinks() {
     m_links.clear();
 
@@ -355,7 +381,7 @@ void TextLinker::LocateLinks() {
     const std::vector<GG::Font::LineData>& line_data = GetLineData();
     const boost::shared_ptr<GG::Font>& font = GetFont();
 
-    if(m_links.size() == 0)
+    if (m_links.empty())
         return;
 
     GG::Y y_posn(0); // y-coordinate of the top of the current line
