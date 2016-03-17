@@ -8519,12 +8519,19 @@ SHP_FIGHTERS_4_DESC
 A massive structure that defies the limits of what can typically be accomodated by interstellar vessels. Uses safely contained dimensional rifts as a source of energy and material to reconstruct lost fighters even outside of supply range.
 
 SHP_FTR_WPN_2
-
+Laser Fighters
 SHP_FTR_WPN_2_DESC
+Unlocks Fighter Hangars which equip their Fighters with Laser based weaponry.
 
-SHP_FTR_WPN_2
+SHP_FTR_WPN_3
+Plasma Fighters
+SHP_FTR_WPN_3_DESC
+Unlocks Fighter Hangars which equip their Fighters with Plasma Cannon based weaponry.
 
-SHP_FTR_WPN_2_DESC
+SHP_FTR_WPN_4
+Death Ray Fighters
+SHP_FTR_WPN_4_DESC
+Unlocks Fighter Hangars which equip their Fighters with Death Ray based weaponry.
 
 SHP_WEAPON_0_2
 Flack Cannon 2
@@ -9761,35 +9768,35 @@ Fighter Bay
 FT_BAY_1_DESC
 Launch system for fighters.
 
-FT_BAY_2
-Fighter Bay
-FT_BAY_2_DESC
-Improved launch system for fighters.
-
 FT_HANGAR_0
 Decoy Hangar
 FT_HANGAR_0_DESC
 Storage system for automated decoy drones.
 
 FT_HANGAR_1
-Hangar 1
+Mass Driver Hangar
 FT_HANGAR_1_DESC
-Storage system for heavily armed fighters.
+Storage system for Mass Driver equiped fighters.
 
 FT_HANGAR_2
-Hangar 2
+Laser Hangar
 FT_HANGAR_2_DESC
-Storage system for moderately armed fighters.
+Storage system for Laser equipped fighters.
 
 FT_HANGAR_3
-Hangar 3
+Plasma Hangar
 FT_HANGAR_3_DESC
-Storage system for lightly armed fighters.
+Storage system for Plasma equipped fighters.
+
+FT_HANGAR_4
+Death Ray Hangar
+FT_HANGAR_4_DESC
+Storage system for Death Ray equipped fighters.
 
 FT_HANGAR_CORE
-Hangar 4
+Hangar Complex
 FT_HANGAR_CORE_DESC
-Massive hanger complex of moderately armed fighters.
+Massive hanger complex. Because it constructs its own fighters from raw matter, it is always equipped with the most up to date weaponry and can regerate 2 fighters per turn.
 
 SR_WEAPON_0_1
 Flak Cannon
