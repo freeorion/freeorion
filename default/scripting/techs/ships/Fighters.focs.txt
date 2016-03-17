@@ -21,7 +21,7 @@ Tech
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     prerequisites = [
-        "SHP_FIGHTERS"
+        "SHP_FIGHTERS_1"
         "PRO_NANOTECH_PROD"
     ]
     effectsgroups = [
@@ -160,7 +160,7 @@ Tech
         "SHP_FIGHTERS_3"
         "LRN_TIME_MECH"
     ]
-    unlock = Item type = ShipPart name = name = "FT_HANGAR_CORE"
+    unlock = Item type = ShipPart name = "FT_HANGAR_CORE"
     graphic = "icons/ship_parts/fighters-1.png"
 
 Tech
