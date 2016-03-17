@@ -8542,7 +8542,7 @@ Improves Flak Cannon by one level, increasing shots to 5.
 SHP_WEAPON_0_3
 Flack Cannon 3
 
-SHP_WEAPON_0_2_DESC
+SHP_WEAPON_0_3_DESC
 Improves Flak Cannon by one level, increasing shots to 9.
 
 SHP_WEAPON_1_2
