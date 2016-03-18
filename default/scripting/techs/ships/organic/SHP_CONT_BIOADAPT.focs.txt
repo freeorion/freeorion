@@ -2,7 +2,7 @@ Tech
     name = "SHP_CONT_BIOADAPT"
     description = "SHP_CONT_BIOADAPT_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "HULLS_CATEGORY"
     researchcost = 125 * [[TECH_COST_MULTIPLIER]]
     researchturns = 12
     prerequisites = [
