@@ -1217,6 +1217,7 @@ public:
 
     void                            ShowAvailability(bool available, bool refresh_list = true);
     void                            HideAvailability(bool available, bool refresh_list = true);
+    virtual void                    EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -1310,6 +1311,7 @@ private:
     bool                        m_showing_completed_designs;
     bool                        m_showing_saved_designs;
     bool                        m_showing_monsters;
+    bool                        m_enabled;          ///<active player (true) or observer (false)
 
     std::set<std::string>       m_hulls_in_list;
     std::set<std::string>       m_saved_desgins_in_list;
@@ -1451,7 +1453,8 @@ BasesListBox::BasesListBox() :
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false),
     m_showing_saved_designs(false),
-    m_showing_monsters(false)
+    m_showing_monsters(false),
+    m_enabled(false)
 {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL);
@@ -1995,7 +1998,7 @@ void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
     m_showing_completed_designs = true;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
-    EnableOrderIssuing(true);
+    EnableOrderIssuing(m_enabled);
     if (refresh_list)
         Populate();
 }
@@ -2052,6 +2055,12 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
     }
 }
 
+void BasesListBox::EnableOrderIssuing(bool enable/* = true*/)
+{
+    m_enabled = enable;
+    QueueListBox::EnableOrderIssuing(m_enabled && m_showing_completed_designs);
+}
+
 
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
@@ -2069,6 +2078,7 @@ public:
     void            SetEmpireShown(int empire_id, bool refresh_list);
     void            ShowAvailability(bool available, bool refresh_list);
     void            HideAvailability(bool available, bool refresh_list);
+    void            EnableOrderIssuing(bool enable/* = true*/);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -2215,6 +2225,17 @@ void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_li
         else
             ShowAvailability(false, refresh_list);
     }
+}
+
+void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
+    if(m_hulls_list)
+        m_hulls_list->EnableOrderIssuing(enable);
+    if(m_designs_list)
+        m_designs_list->EnableOrderIssuing(enable);
+    if(m_saved_designs_list)
+        m_saved_designs_list->EnableOrderIssuing(enable);
+    if(m_monsters_list)
+        m_monsters_list->EnableOrderIssuing(enable);
 }
 
 void DesignWnd::BaseSelector::DoLayout() {
@@ -3499,4 +3520,6 @@ void DesignWnd::ReplaceDesign() {
 }
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
-{}
+{
+    m_base_selector->EnableOrderIssuing(enable);
+}
