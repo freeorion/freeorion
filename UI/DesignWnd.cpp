@@ -3206,7 +3206,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 }
 
 void DesignWnd::MainPanel::DesignNameChanged() {
-    if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()) || IsDesignNameValid())
+    if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()))
         DesignChangedSignal();
     else if (GetOptionsDB().Get<bool>("UI.design-pedia-dynamic"))
         DesignNameChangedSignal();
