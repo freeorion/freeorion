@@ -1635,6 +1635,7 @@ void TechTreeWnd::TechListBox::Populate() {
     {
         TechRow* tech_row = it->second;
         if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
+            tech_row->Update();
             insertion_timer.restart();
             Insert(tech_row);
             insertion_elapsed += insertion_timer.elapsed();
