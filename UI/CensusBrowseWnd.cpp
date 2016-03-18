@@ -22,7 +22,10 @@ namespace {
     const int       EDGE_PAD(3);
 
     const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
-    const GG::X     BROWSE_TEXT_WIDTH(200);
+
+    const GG::X BrowseTextWidth() {
+        return GG::X(200.0f * (std::max(static_cast<float>(ClientUI::Pts()), 12.0f) / 12.0f));
+    }
 }
 
 class CensusRowPanel : public GG::Control {
@@ -116,7 +119,7 @@ private:
 
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
                                  const std::map<std::string, float>& tag_counts) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1),
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(0),
     m_species_text(0),
     m_list(0),
@@ -131,18 +134,18 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
 
     m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
     m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
-    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
+    m_title_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
 
     top += ROW_HEIGHT;
     m_species_text = new CUILabel(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM);
     m_species_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
-    m_species_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT));
+    m_species_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
 
     top += ROW_HEIGHT + HALF_HEIGHT;
     m_list = new CUIListBox();
     m_list->MoveTo(GG::Pt(m_offset.x, top + m_offset.y));
-    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
+    m_list->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
     m_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     m_list->SetInteriorColor(ClientUI::WndColor());
     // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
@@ -167,17 +170,17 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
         top += ROW_HEIGHT;
     }
     top += (EDGE_PAD*3);
-    m_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top - 2* ROW_HEIGHT - HALF_HEIGHT));
+    m_list->Resize(GG::Pt(BrowseTextWidth(), top - 2* ROW_HEIGHT - HALF_HEIGHT));
 
     GG::Y top2 = top;
     m_tags_text = new CUILabel(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM);
     m_tags_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
-    m_tags_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + HALF_HEIGHT));
+    m_tags_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
 
     top2 += ROW_HEIGHT + HALF_HEIGHT;
     m_tags_list = new CUIListBox();
     m_tags_list->MoveTo(GG::Pt(m_offset.x, top2 + m_offset.y));
-    m_tags_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
+    m_tags_list->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
     m_tags_list->SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
     m_tags_list->SetInteriorColor(ClientUI::WndColor());
     // preinitialize listbox/row column widths, because what ListBox::Insert does on default is not suitable for this case
@@ -213,9 +216,9 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
         }
     }
 
-    m_tags_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
+    m_tags_list->Resize(GG::Pt(BrowseTextWidth(), top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
 
-    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top2  + (EDGE_PAD*3)));
+    Resize(GG::Pt(BrowseTextWidth(), top2  + (EDGE_PAD*3)));
 
     InitBuffer();
 }
