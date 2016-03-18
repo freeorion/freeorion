@@ -1458,8 +1458,6 @@ BasesListBox::BasesListBox() :
 
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
-
-    EnableOrderIssuing(true);
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
@@ -1987,6 +1985,7 @@ void BasesListBox::ShowEmptyHulls(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
+    EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
@@ -1996,6 +1995,7 @@ void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
     m_showing_completed_designs = true;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
+    EnableOrderIssuing(true);
     if (refresh_list)
         Populate();
 }
@@ -2005,6 +2005,7 @@ void BasesListBox::ShowSavedDesigns(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = true;
     m_showing_monsters = false;
+    EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
@@ -2014,6 +2015,7 @@ void BasesListBox::ShowMonsters(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
     m_showing_monsters = true;
+    EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
