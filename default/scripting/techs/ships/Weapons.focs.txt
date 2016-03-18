@@ -2,7 +2,7 @@ Tech
     name = "SHP_ROOT_AGGRESSION"
     description = "SHP_ROOT_AGGRESSION_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 1
     researchturns = 1
     unlock = [
@@ -15,7 +15,7 @@ Tech
     name = "SHP_BOMBARD"
     description = "SHP_BOMBARD_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "SHP_ROOT_AGGRESSION"
@@ -25,7 +25,7 @@ Tech
     name = "SHP_WEAPON_1_2"
     description = "SHP_WEAPON_1_2_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_ROOT_AGGRESSION"
@@ -44,7 +44,7 @@ Tech
     name = "SHP_WEAPON_1_3"
     description = "SHP_WEAPON_1_3_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 6 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_1_2"
@@ -63,7 +63,7 @@ Tech
     name = "SHP_WEAPON_1_4"
     description = "SHP_WEAPON_1_4_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_1_3"
@@ -82,7 +82,7 @@ Tech
     name = "SHP_WEAPON_2_1"
     description = "SHP_WEAPON_2_1_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = "SHP_ROOT_AGGRESSION"
@@ -93,7 +93,7 @@ Tech
     name = "SHP_WEAPON_2_2"
     description = "SHP_WEAPON_2_2_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_2_1"
@@ -112,7 +112,7 @@ Tech
     name = "SHP_WEAPON_2_3"
     description = "SHP_WEAPON_2_3_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_2_2"
@@ -131,7 +131,7 @@ Tech
     name = "SHP_WEAPON_2_4"
     description = "SHP_WEAPON_2_4_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_2_3"
@@ -150,7 +150,7 @@ Tech
     name = "SHP_WEAPON_3_1"
     description = "SHP_WEAPON_3_1_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = "SHP_WEAPON_2_1"
@@ -161,7 +161,7 @@ Tech
     name = "SHP_WEAPON_3_2"
     description = "SHP_WEAPON_3_2_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_3_1"
@@ -180,7 +180,7 @@ Tech
     name = "SHP_WEAPON_3_3"
     description = "SHP_WEAPON_3_3_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_3_2"
@@ -199,7 +199,7 @@ Tech
     name = "SHP_WEAPON_3_4"
     description = "SHP_WEAPON_3_4_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_3_3"
@@ -218,7 +218,7 @@ Tech
     name = "SHP_WEAPON_4_1"
     description = "SHP_WEAPON_4_1_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "SHP_WEAPON_3_1"
@@ -229,7 +229,7 @@ Tech
     name = "SHP_WEAPON_4_2"
     description = "SHP_WEAPON_4_2_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_WEAPON_4_1"
@@ -248,7 +248,7 @@ Tech
     name = "SHP_WEAPON_4_3"
     description = "SHP_WEAPON_4_3_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_WEAPON_4_2"
@@ -267,7 +267,7 @@ Tech
     name = "SHP_WEAPON_4_4"
     description = "SHP_WEAPON_4_4_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 1250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_WEAPON_4_3"
@@ -286,7 +286,7 @@ Tech
     name = "SHP_ORGANIC_WAR_ADAPTION"
     description = "SHP_ORGANIC_WAR_ADAPTION_DESC"
     short_description = "SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
@@ -300,7 +300,7 @@ Tech
     name = "SHP_SOLAR_CONNECTION"
     description = "SHP_SOLAR_CONNECTION_DESC"
     short_description = "SHP_SOLAR_CONNECTION_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "SHP_ORGANIC_WAR_ADAPTION"
@@ -310,7 +310,7 @@ Tech
     name = "SHP_KRILL_SPAWN"
     description = "SHP_KRILL_SPAWN_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
     Unresearchable
