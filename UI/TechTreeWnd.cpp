@@ -284,7 +284,6 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
 
     SetChildClippingMode(ClipToClient);
     DoButtonLayout();
-    Resize(GG::Pt(Width(), MinSize().y));
 }
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout() {
@@ -1858,8 +1857,6 @@ void TechTreeWnd::InitializeWindows() {
     const GG::Pt controls_wh(m_layout_panel->Width() - ClientUI::ScrollWidth(), GG::Y0);
 
     m_enc_detail_panel->InitSizeMove(pedia_ul,  pedia_ul + pedia_wh);
-    // Size to new width so it recalculates its own height.
-    m_tech_tree_controls->Resize(GG::Pt(controls_wh.x, m_tech_tree_controls->Height()));
     m_tech_tree_controls->InitSizeMove(controls_ul,  controls_ul + controls_wh);
 }
 

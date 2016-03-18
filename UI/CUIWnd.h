@@ -141,6 +141,7 @@ public:
 
     //! \name Statics //@{
     static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
+
     //@}
 
 protected:
