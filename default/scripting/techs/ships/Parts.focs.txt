@@ -2,7 +2,7 @@ Tech
     name = "SHP_IMPROVED_ENGINE_COUPLINGS"
     description = "SHP_IMPROVED_ENGINE_COUPLINGS_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 24 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_GAL_EXPLO"
@@ -13,7 +13,7 @@ Tech
     name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
     description = "SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
@@ -27,7 +27,7 @@ Tech
     name = "SHP_SINGULARITY_ENGINE_CORE"
     description = "SHP_SINGULARITY_ENGINE_CORE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = [
@@ -41,7 +41,7 @@ Tech
     name = "SHP_DEUTERIUM_TANK"
     description = "SHP_DEUTERIUM_TANK_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 24 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -58,7 +58,7 @@ Tech
     name = "SHP_ANTIMATTER_TANK"
     description = "SHP_ANTIMATTER_TANK_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 175 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -72,7 +72,7 @@ Tech
     name = "SHP_ZERO_POINT"
     description = "SHP_ZERO_POINT_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 175 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -86,7 +86,7 @@ Tech
     name = "SHP_SPINAL_ANTIMATTER"
     description = "SHP_SPINAL_ANTIMATTER_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -99,7 +99,7 @@ Tech
     name = "SHP_NOVA_BOMB"
     description = "SHP_NOVA_BOMB_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 12
     prerequisites = [
@@ -116,7 +116,7 @@ Tech
     name = "SHP_DEATH_SPORE"
     description = "SHP_DEATH_SPORE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 450 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -130,7 +130,7 @@ Tech
     name = "SHP_BIOTERM"
     description = "SHP_BIOTERM_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
@@ -144,7 +144,7 @@ Tech
     name = "SHP_EMP"
     description = "SHP_EMP_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 450 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -158,7 +158,7 @@ Tech
     name = "SHP_EMO"
     description = "SHP_EMO_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
@@ -172,7 +172,7 @@ Tech
     name = "SHP_SONIC"
     description = "SHP_SONIC_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 450 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -186,7 +186,7 @@ Tech
     name = "SHP_GRV"
     description = "SHP_GRV_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
@@ -200,7 +200,7 @@ Tech
     name = "SHP_DARK_RAY"
     description = "SHP_DARK_RAY_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 450 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
@@ -214,7 +214,7 @@ Tech
     name = "SHP_VOID_SHADOW"
     description = "SHP_VOID_SHADOW_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
@@ -228,7 +228,7 @@ Tech
     name = "SHP_CHAOS_WAVE"
     description = "SHP_CHAOS_WAVE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "WEAPONS_CATEGORY"
     researchcost = 1500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
