@@ -2,7 +2,7 @@ Tech
     name = "SHP_ASTEROID_HULLS"
     description = "SHP_ASTEROID_HULLS_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "HULLS_CATEGORY"
     researchcost = 25 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "PRO_MICROGRAV_MAN"
