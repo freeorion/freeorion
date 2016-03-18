@@ -1457,7 +1457,7 @@ BasesListBox::BasesListBox() :
     m_enabled(false)
 {
     InitRowSizes();
-    SetStyle(GG::LIST_NOSEL);
+    SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
@@ -1485,7 +1485,11 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
         return;
-    DetachChild(wnds.front());
+
+    Row* original_row = boost::polymorphic_downcast<Row*>(*wnds.begin());
+    iterator insertion_point = std::find(begin(), end(), original_row);
+    if(insertion_point != end())
+        ++insertion_point;
 
     // replace dragged-away control with new copy
     const GG::Pt row_size = ListRowSize();
@@ -1499,19 +1503,9 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
         int design_id = design_row->DesignID();
 
-        ListBox::iterator point;
-        for ( point = begin(); point != end(); ++point ) {
-            const BasesListBox::CompletedDesignListBoxRow* irow =
-                boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*point);
-            if( irow && irow->DesignID() == design_id ) {
-                ++point;
-                break;
-            }
-        }
-
         CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y,
                                                                        design_id);
-        Insert(row, point);
+        Insert(row, insertion_point);
         row->Resize(row_size);
 
     } else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
@@ -1522,9 +1516,8 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         const std::string& hull_name = design_row->Hull();
         HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y,
                                                                  hull_name, empty_parts_vec);
-        Insert(row);
+        Insert(row, insertion_point);
         row->Resize(row_size);
-        m_hulls_in_list.insert(hull_name);  // should be redundant
 
     } else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
         // find name of design that was dragged away, and replace
@@ -1534,15 +1527,13 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         const std::string& design_name = design_row->DesignName();
         SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y,
                                                                design_name);
-        Insert(row);
+        Insert(row, insertion_point);
         row->Resize(row_size);
-        m_saved_desgins_in_list.insert(design_name);
     }
 
     // remove dragged-away row from this ListBox
     CUIListBox::ChildrenDraggedAway(wnds, destination);
     DetachChild(wnds.front());
-
 }
 
 
