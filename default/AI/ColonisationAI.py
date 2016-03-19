@@ -9,8 +9,7 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
-from EnumsAI import MissionType, ExplorableSystemType, AIFocusType
-import EnumsAI
+from EnumsAI import MissionType, ExplorableSystemType, AIFocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, ppstring, cache_by_turn
 from freeorion_debug import Timer
 
@@ -589,11 +588,11 @@ def get_colony_fleets():
     queued_colony_bases = []
     for queue_index in range(0, len(production_queue)):
         element = production_queue[queue_index]
-        if element.buildType == EnumsAI.EmpireProductionTypes.BT_SHIP and element.turnsLeft != -1:
-            if foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.ShipRoleType.BASE_OUTPOST]:
+        if element.buildType == EmpireProductionTypes.BT_SHIP and element.turnsLeft != -1:
+            if foAI.foAIstate.get_ship_role(element.designID) in [ShipRoleType.BASE_OUTPOST]:
                 build_planet = universe.getPlanet(element.locationID)
                 queued_outpost_bases.append(build_planet.systemID)
-            elif foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.ShipRoleType.BASE_COLONISATION]:
+            elif foAI.foAIstate.get_ship_role(element.designID) in [ShipRoleType.BASE_COLONISATION]:
                 build_planet = universe.getPlanet(element.locationID)
                 queued_colony_bases.append(build_planet.systemID)
 
@@ -637,7 +636,7 @@ def get_colony_fleets():
             if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1:
                 continue  # already building for here
             loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
-            this_score = evaluate_planet(pid, EnumsAI.MissionType.OUTPOST, None, empire, [])
+            this_score = evaluate_planet(pid, MissionType.OUTPOST, None, empire, [])
             planet = universe.getPlanet(pid)
             if this_score == 0:
                 # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc, this_score)
@@ -649,7 +648,7 @@ def get_colony_fleets():
                     ((planet and planet.name) or "unknown"), loc, this_score)
                 continue
             best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
-                EnumsAI.PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
+                PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
                 print "Error: can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
                 outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
