@@ -6,6 +6,7 @@
 #include <GG/ListBox.h>
 
 #include "../universe/Universe.h"
+#include "ClientUI.h"
 #include "CUIWnd.h"
 
 class EmpireColorSelector;
@@ -15,10 +16,10 @@ struct GalaxySetupData;
 /** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiPlayerLobbyWnd. */
 class GalaxySetupPanel : public GG::Control {
 public:
-    static const GG::X DEFAULT_WIDTH;
+    static const GG::X DefaultWidth();
 
     /** \name Structors*/ //!@{
-    GalaxySetupPanel(GG::X w = GG::X(305), GG::Y h = GG::Y(330));
+    GalaxySetupPanel(GG::X w = GG::X(FontBasedUpscale(305)), GG::Y h = GG::Y(330));
     //!@}
 
     /** \name Accessors*/ //!@{
@@ -32,7 +33,7 @@ public:
     GalaxySetupOption               GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
     GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
     Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level 
-    
+
     boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
     /** the settings changed signal object for this GalaxySetupPanel */

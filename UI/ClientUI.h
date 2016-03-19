@@ -240,4 +240,7 @@ struct StreamableColor {
 std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
+/** Increases the given value when font size is larger than 12 */
+int FontBasedUpscale(int x);
+
 #endif // _ClientUI_h_

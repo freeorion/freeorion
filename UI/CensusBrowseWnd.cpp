@@ -24,7 +24,7 @@ namespace {
     const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
 
     const GG::X BrowseTextWidth() {
-        return GG::X(200.0f * (std::max(static_cast<float>(ClientUI::Pts()), 12.0f) / 12.0f));
+        return GG::X(FontBasedUpscale(200));
     }
 }
 

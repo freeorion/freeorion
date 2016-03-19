@@ -23,7 +23,9 @@ namespace {
     const GG::Y CONTROL_HEIGHT(30);
     const GG::Y PANEL_CONTROL_SPACING(33);
     const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 10);
-    const GG::X GAL_SETUP_WND_WD(645);
+    const GG::X GalSetupWndWidth() {
+        return GG::X(345 + FontBasedUpscale(300));
+    }
     const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
@@ -53,7 +55,9 @@ namespace {
 ////////////////////////////////////////////////
 // GalaxySetupPanel
 ////////////////////////////////////////////////
-const GG::X GalaxySetupPanel::DEFAULT_WIDTH(305);
+const GG::X GalaxySetupPanel::DefaultWidth() {
+    return GG::X(FontBasedUpscale(305));
+}
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
@@ -499,7 +503,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     m_galaxy_setup_panel = new GalaxySetupPanel();
 
-    const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
+    const GG::X LABELS_WIDTH = (GalaxySetupPanel::DefaultWidth() - 5) / 2;
 
     // player name
     m_player_name_label = new CUILabel(UserString("GSETUP_PLAYER_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
@@ -626,16 +630,16 @@ void GalaxySetupWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 GG::Rect GalaxySetupWnd::CalculatePosition() const {
-    GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2,
+    GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth() - GalSetupWndWidth()) / 2,
                   (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2);
-    GG::Pt new_sz(GAL_SETUP_WND_WD, GAL_SETUP_WND_HT);
+    GG::Pt new_sz(GalSetupWndWidth(), GAL_SETUP_WND_HT);
     return GG::Rect(new_ul, new_ul + new_sz);
 }
 
 void GalaxySetupWnd::DoLayout() {
     m_galaxy_setup_panel->MoveTo(GG::Pt(GG::X0, GG::Y(4)));
 
-    const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
+    const GG::X LABELS_WIDTH = (GalaxySetupPanel::DefaultWidth() - 5) / 2;
 
     GG::Pt row_advance(GG::X0, PANEL_CONTROL_SPACING);
     GG::Pt label_ul(CONTROL_MARGIN, GAL_SETUP_PANEL_HT + (PANEL_CONTROL_SPACING - CONTROL_HEIGHT) / 2 + 4);
