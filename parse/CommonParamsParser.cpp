@@ -70,14 +70,17 @@ namespace parse { namespace detail {
 
             consumption
                 =   parse::label(Consumption_token)
-                >   '['
-                >  *(
+                > (
                         consumable_meter(_r1)
                     |   consumable_special(_r2)
-                    )
-                >   ']'
-                |   consumable_meter(_r1)
-                |   consumable_special(_r2)
+                    |(  '['
+                        >> *(
+                                consumable_meter(_r1)
+                            |   consumable_special(_r2)
+                            )
+                        >   ']'
+                     )
+                  )
             ;
 
             typedef std::map<std::string, ValueRef::ValueRefBase<double>*>::value_type special_consumable_map_value_type;

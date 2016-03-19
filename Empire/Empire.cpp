@@ -2913,123 +2913,149 @@ void Empire::CheckProductionProgress() {
         }
 
 
-        // if accumulated PP is sufficient, the item is complete
-        if (item_cost - EPSILON <= elem.progress) {
-            // deduct cost of complete item from progress, so that next
-            // repetition can continue accumulating PP, but don't set progress
-            // to 0, as this way overflow PP allocated this turn can be used
-            // for the next repetition of the item.
-            elem.progress -= item_cost;
+        // iff accumulated PP is sufficient, the item is complete
+        if (item_cost - EPSILON > elem.progress)
+            continue;
 
-            elem.progress_memory = elem.progress;
-            DebugLogger() << "Completed an item: " << elem.item.name;
 
-            switch (elem.item.build_type) {
-            case BT_BUILDING: {
-                TemporaryPtr<Planet> planet = GetPlanet(elem.location);
+        // deduct cost of complete item from progress, so that next
+        // repetition can continue accumulating PP, but don't set progress
+        // to 0, as this way overflow PP allocated this turn can be used
+        // for the next repetition of the item.
+        elem.progress -= item_cost;
 
-                // create new building
-                TemporaryPtr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
-                planet->AddBuilding(building->ID());
-                building->SetPlanetID(planet->ID());
-                system->Insert(building);
+        elem.progress_memory = elem.progress;
+        DebugLogger() << "Completed an item: " << elem.item.name;
 
-                // record building production in empire stats
-                if (m_building_types_produced.find(elem.item.name) != m_building_types_produced.end())
-                    m_building_types_produced[elem.item.name]++;
+
+        // consume the item's special and meter consumption
+        std::map<std::string, float> sc = elem.item.CompletionSpecialConsumption(elem.location);
+        for (std::map<std::string, float>::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
+            if (!build_location->HasSpecial(sc_it->first))
+                continue;
+            float cur_capacity = build_location->SpecialCapacity(sc_it->first);
+            float new_capacity = std::max(0.0f, cur_capacity - sc_it->second);
+            build_location->SetSpecialCapacity(sc_it->first, new_capacity);
+        }
+
+        std::map<MeterType, float> mc = elem.item.CompletionMeterconsumption(elem.location);
+        for (std::map<MeterType, float>::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
+            Meter* meter = build_location->GetMeter(mc_it->first);
+            if (!meter)
+                continue;
+            float cur_meter = meter->Current();
+            float new_meter = cur_meter - mc_it->second;
+            meter->SetCurrent(new_meter);
+            meter->BackPropegate();
+        }
+
+
+        // create actual thing(s) being produced
+        switch (elem.item.build_type) {
+        case BT_BUILDING: {
+            TemporaryPtr<Planet> planet = GetPlanet(elem.location);
+
+            // create new building
+            TemporaryPtr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
+            planet->AddBuilding(building->ID());
+            building->SetPlanetID(planet->ID());
+            system->Insert(building);
+
+            // record building production in empire stats
+            if (m_building_types_produced.find(elem.item.name) != m_building_types_produced.end())
+                m_building_types_produced[elem.item.name]++;
+            else
+                m_building_types_produced[elem.item.name] = 1;
+
+            AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID()));
+            DebugLogger() << "New Building created on turn: " << CurrentTurn();
+            break;
+        }
+
+        case BT_SHIP: {
+            if (elem.blocksize < 1)
+                break;   // nothing to do!
+
+            // get species for this ship.  use popcenter species if build
+            // location is a popcenter, or use ship species if build
+            // location is a ship, or use empire capital species if there
+            // is a valid capital, or otherwise ???
+            // TODO: Add more fallbacks if necessary
+            std::string species_name;
+            if (TemporaryPtr<const PopCenter> location_pop_center = boost::dynamic_pointer_cast<const PopCenter>(build_location))
+                species_name = location_pop_center->SpeciesName();
+            else if (TemporaryPtr<const Ship> location_ship = boost::dynamic_pointer_cast<const Ship>(build_location))
+                species_name = location_ship->SpeciesName();
+            else if (TemporaryPtr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
+                species_name = capital_planet->SpeciesName();
+            // else give up...
+            if (species_name.empty()) {
+                // only really a problem for colony ships, which need to have a species to function
+                const ShipDesign* design = GetShipDesign(elem.item.design_id);
+                if (!design) {
+                    ErrorLogger() << "Couldn't get ShipDesign with id: " << elem.item.design_id;
+                    break;
+                }
+                if (design->CanColonize()) {
+                    ErrorLogger() << "Couldn't get species in order to make colony ship!";
+                    break;
+                }
+            }
+
+            TemporaryPtr<Ship> ship;
+
+            for (int count = 0; count < elem.blocksize; count++) {
+                // create ship
+                ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
+                system->Insert(ship);
+
+                // record ship production in empire stats
+                if (m_ship_designs_produced.find(elem.item.design_id) != m_ship_designs_produced.end())
+                    m_ship_designs_produced[elem.item.design_id]++;
                 else
-                    m_building_types_produced[elem.item.name] = 1;
+                    m_ship_designs_produced[elem.item.design_id] = 1;
+                if (m_species_ships_produced.find(species_name) != m_species_ships_produced.end())
+                    m_species_ships_produced[species_name]++;
+                else
+                    m_species_ships_produced[species_name] = 1;
 
-                AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID()));
-                DebugLogger() << "New Building created on turn: " << CurrentTurn();
-                break;
+
+                // set active meters that have associated max meters to an
+                // initial very large value, so that when the active meters are
+                // later clamped, they will equal the max meter after effects
+                // have been applied, letting new ships start with maxed
+                // everything that is traced with an associated max meter.
+                ship->SetShipMetersToMax();
+                ship->BackPropegateMeters();
+
+                ship->Rename(NewShipName());
+
+                // store ships to put into fleets later
+                system_new_ships[system->ID()].push_back(ship);
+
+                // store ship rally points
+                if (elem.rally_point_id != INVALID_OBJECT_ID)
+                    new_ship_rally_point_ids[ship->ID()] = elem.rally_point_id;
             }
-
-            case BT_SHIP: {
-                if (elem.blocksize < 1)
-                    break;   // nothing to do!
-
-                // get species for this ship.  use popcenter species if build
-                // location is a popcenter, or use ship species if build
-                // location is a ship, or use empire capital species if there
-                // is a valid capital, or otherwise ???
-                // TODO: Add more fallbacks if necessary
-                std::string species_name;
-                if (TemporaryPtr<const PopCenter> location_pop_center = boost::dynamic_pointer_cast<const PopCenter>(build_location))
-                    species_name = location_pop_center->SpeciesName();
-                else if (TemporaryPtr<const Ship> location_ship = boost::dynamic_pointer_cast<const Ship>(build_location))
-                    species_name = location_ship->SpeciesName();
-                else if (TemporaryPtr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
-                    species_name = capital_planet->SpeciesName();
-                // else give up...
-                if (species_name.empty()) {
-                    // only really a problem for colony ships, which need to have a species to function
-                    const ShipDesign* design = GetShipDesign(elem.item.design_id);
-                    if (!design) {
-                        ErrorLogger() << "Couldn't get ShipDesign with id: " << elem.item.design_id;
-                        break;
-                    }
-                    if (design->CanColonize()) {
-                        ErrorLogger() << "Couldn't get species in order to make colony ship!";
-                        break;
-                    }
-                }
-
-                TemporaryPtr<Ship> ship;
-
-                for (int count = 0; count < elem.blocksize; count++) {
-                    // create ship
-                    ship = universe.CreateShip(m_id, elem.item.design_id, species_name, m_id);
-                    system->Insert(ship);
-
-                    // record ship production in empire stats
-                    if (m_ship_designs_produced.find(elem.item.design_id) != m_ship_designs_produced.end())
-                        m_ship_designs_produced[elem.item.design_id]++;
-                    else
-                        m_ship_designs_produced[elem.item.design_id] = 1;
-                    if (m_species_ships_produced.find(species_name) != m_species_ships_produced.end())
-                        m_species_ships_produced[species_name]++;
-                    else
-                        m_species_ships_produced[species_name] = 1;
-
-
-                    // set active meters that have associated max meters to an
-                    // initial very large value, so that when the active meters are
-                    // later clamped, they will equal the max meter after effects
-                    // have been applied, letting new ships start with maxed
-                    // everything that is traced with an associated max meter.
-                    ship->SetShipMetersToMax();
-                    ship->BackPropegateMeters();
-
-                    ship->Rename(NewShipName());
-
-                    // store ships to put into fleets later
-                    system_new_ships[system->ID()].push_back(ship);
-
-                    // store ship rally points
-                    if (elem.rally_point_id != INVALID_OBJECT_ID)
-                        new_ship_rally_point_ids[ship->ID()] = elem.rally_point_id;
-                }
-                // add sitrep
-                if (elem.blocksize == 1) {
-                    AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(), ship->DesignID()));
-                    DebugLogger() << "New Ship, id " << ship->ID() << ", created on turn: " << ship->CreationTurn();
-                } else {
-                    AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), elem.blocksize));
-                    DebugLogger() << "New block of "<< elem.blocksize << " ships created on turn: " << ship->CreationTurn();
-                }
-                break;
+            // add sitrep
+            if (elem.blocksize == 1) {
+                AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(), ship->DesignID()));
+                DebugLogger() << "New Ship, id " << ship->ID() << ", created on turn: " << ship->CreationTurn();
+            } else {
+                AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), elem.blocksize));
+                DebugLogger() << "New block of "<< elem.blocksize << " ships created on turn: " << ship->CreationTurn();
             }
+            break;
+        }
 
-            default:
-                ErrorLogger() << "Build item of unknown build type finished on production queue.";
-                break;
-            }
+        default:
+            ErrorLogger() << "Build item of unknown build type finished on production queue.";
+            break;
+        }
 
-            if (!--m_production_queue[i].remaining) {   // decrement number of remaining items to be produced in current queue element
-                to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
-                DebugLogger() << "Marking completed production queue item to be removed form queue";
-            }
+        if (!--m_production_queue[i].remaining) {   // decrement number of remaining items to be produced in current queue element
+            to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
+            DebugLogger() << "Marking completed production queue item to be removed form queue";
         }
     }
 
