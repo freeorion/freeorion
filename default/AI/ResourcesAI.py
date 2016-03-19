@@ -91,7 +91,6 @@ def print_resources_priority():
     print "Resource Priorities:"
     resourcePriorities = {}
     for priorityType in get_priority_resource_types():
-        print 'zzxxcc', priorityType, type(priorityType)
         resourcePriorities[priorityType] = foAI.foAIstate.get_priority(priorityType)
 
     sortedPriorities = resourcePriorities.items()
@@ -100,7 +99,6 @@ def print_resources_priority():
     for evaluationPair in sortedPriorities:
         if topPriority < 0:
             topPriority = evaluationPair[0]
-        print "    zzxxcc %s, %s" % (type(evaluationPair[0]), type(evaluationPair[1]))
         print "    ResourcePriority |Score: %s | %s " % (evaluationPair[0], evaluationPair[1])
 
     # what is the focus of available resource centers?
