@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Predicates_h_
 #define _Predicates_h_
 

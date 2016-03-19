@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CUIStyle_h_
 #define _CUIStyle_h_
 

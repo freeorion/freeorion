@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MultiMeterStatusBar_h_
 #define _MultiMeterStatusBar_h_
 

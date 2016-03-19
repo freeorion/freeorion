@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #include "../Lexer.h"
 #include "../ValueRefParser.h"
 

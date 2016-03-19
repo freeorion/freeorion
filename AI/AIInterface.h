@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef AI_INTERFACE
 #define AI_INTERFACE
 

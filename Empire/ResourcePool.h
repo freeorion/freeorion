@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ResourcePool_h_
 #define _ResourcePool_h_
 

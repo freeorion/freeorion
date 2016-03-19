@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _PopulationPanel_h_
 #define _PopulationPanel_h_
 

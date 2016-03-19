@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ResourceBrowseWnd_h_
 #define _ResourceBrowseWnd_h_
 

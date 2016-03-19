@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MeterBrowseWnd_h_
 #define _MeterBrowseWnd_h_
 

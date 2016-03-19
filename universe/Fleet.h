@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Fleet_h_
 #define _Fleet_h_
 

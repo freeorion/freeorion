@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Common_Params_h_
 #define _Common_Params_h_
 

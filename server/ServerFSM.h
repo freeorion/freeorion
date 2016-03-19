@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ServerFSM_h_
 #define _ServerFSM_h_
 

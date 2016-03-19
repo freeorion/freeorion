@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Tokens_h_
 #define _Tokens_h_
 

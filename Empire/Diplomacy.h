@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Diplomacy_h_
 #define _Diplomacy_h_
 

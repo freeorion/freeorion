@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _FleetButton_h_
 #define _FleetButton_h_
 

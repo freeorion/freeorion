@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CHMAIN_H
 #define _CHMAIN_H
 

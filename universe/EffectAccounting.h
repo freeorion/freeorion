@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Effect_Accounting_h_
 #define _Effect_Accounting_h_
 

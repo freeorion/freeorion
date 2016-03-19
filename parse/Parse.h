@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Parse_h_
 #define _Parse_h_
 

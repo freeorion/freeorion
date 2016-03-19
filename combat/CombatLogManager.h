@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CombatLogManager_h_
 #define _CombatLogManager_h_
 

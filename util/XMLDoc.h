@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /* Copyright (C) 2006 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or

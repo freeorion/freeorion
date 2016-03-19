@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ProductionWnd_h_
 #define _ProductionWnd_h_
 

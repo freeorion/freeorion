@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _OptionsDB_h_
 #define _OptionsDB_h_
 

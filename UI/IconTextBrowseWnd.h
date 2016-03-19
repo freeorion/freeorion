@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _IconTextBrowseWnd_h_
 #define _IconTextBrowseWnd_h_
 

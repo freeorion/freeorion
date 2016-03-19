@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Sound_h_
 #define _Sound_h_
 

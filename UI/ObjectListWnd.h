@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ObjectListWnd_h_
 #define _ObjectListWnd_h_
 

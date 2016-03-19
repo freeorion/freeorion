@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform sampler2D scene;
 uniform sampler2D glow_geometry;
 

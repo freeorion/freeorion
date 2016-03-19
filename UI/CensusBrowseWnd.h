@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CensusBrowseWnd_h_
 #define _CensusBrowseWnd_h_
 

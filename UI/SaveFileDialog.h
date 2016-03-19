@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//SaveFileDialog.h
 #ifndef _SaveFileDialog_h_
 #define _SaveFileDialog_h_
 

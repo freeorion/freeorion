@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _DesignWnd_h_
 #define _DesignWnd_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Export_h_
 #define _Export_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform sampler2D source;
 
 uniform float texture_width;

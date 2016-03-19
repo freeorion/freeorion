@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _TechTreeWnd_h_
 #define _TechTreeWnd_h_
 

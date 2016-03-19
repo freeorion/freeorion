@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Serialize_h_
 #define _Serialize_h_
 

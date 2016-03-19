@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 

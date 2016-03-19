@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _EffectParserImpl_h_
 #define _EffectParserImpl_h_
 

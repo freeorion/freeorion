@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform vec4 hiliting_color;
 uniform float time;
 

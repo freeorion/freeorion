@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Logger_h_
 #define _Logger_h_
 

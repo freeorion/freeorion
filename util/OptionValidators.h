@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _OptionValidators_h_
 #define _OptionValidators_h_
 

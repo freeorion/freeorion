@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _VarText_h_
 #define _VarText_h_
 

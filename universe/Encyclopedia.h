@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Encyclopedia_h_
 #define _Encyclopedia_h_
 

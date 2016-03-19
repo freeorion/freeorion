@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform sampler2D gas_texture;
 
 varying float diffuse;

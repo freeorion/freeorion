@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform float hiliting_size;
 uniform float time;
 

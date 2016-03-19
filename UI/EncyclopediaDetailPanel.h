@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ENCYCLOPEDIA_DETAIL_PANEL_H_
 #define _ENCYCLOPEDIA_DETAIL_PANEL_H_
 

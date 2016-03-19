@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Field_h_
 #define _Field_h_
 

@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//SystemIcon.h
 #ifndef _SystemIcon_h_
 #define _SystemIcon_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ResourcePanel_h_
 #define _ResourcePanel_h_
 

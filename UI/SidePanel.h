@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _SidePanel_h_
 #define _SidePanel_h_
 

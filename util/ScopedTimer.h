@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ScopedTimer_h_
 #define _ScopedTimer_h_
 

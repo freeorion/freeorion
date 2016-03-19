@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _BuildingsPanel_h_
 #define _BuildingsPanel_h_
 

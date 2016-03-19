@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _LinkText_h_
 #define _LinkText_h_
 

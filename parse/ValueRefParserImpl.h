@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #include "ValueRefParser.h"
 
 #include "ConditionParserImpl.h"

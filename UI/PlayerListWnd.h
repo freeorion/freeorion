@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _PlayerListWnd_h_
 #define _PlayerListWnd_h_
 

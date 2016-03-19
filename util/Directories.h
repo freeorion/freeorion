@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Directories_h_
 #define _Directories_h_
 

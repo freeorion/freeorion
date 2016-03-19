@@ -1,4 +1,3 @@
-// -*- C++ -*-
 void main()
 {
     vec2 pos = sign(gl_Vertex.xy);

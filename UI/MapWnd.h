@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MapWnd_h_
 #define _MapWnd_h_
 

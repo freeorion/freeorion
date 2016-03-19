@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _EnumParser_h_
 #define _EnumParser_h_
 

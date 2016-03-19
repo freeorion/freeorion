@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Tech_h_
 #define _Tech_h_
 

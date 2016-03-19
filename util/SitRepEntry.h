@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _SitRepEntry_h_
 #define _SitRepEntry_h_
 

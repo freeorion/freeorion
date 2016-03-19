@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _SitRepPanel_h_
 #define _SitRepPanel_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _UniverseGenerator_h_
 #define _UniverseGenerator_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ValueRefParser_h_
 #define _ValueRefParser_h_
 

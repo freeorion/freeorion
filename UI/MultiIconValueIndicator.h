@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MultiIconValueIndicator_h_
 #define _MultiIconValueIndicator_h_
 

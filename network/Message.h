@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Message_h_
 #define _Message_h_
 

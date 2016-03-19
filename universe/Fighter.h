@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Fighter_h_
 #define _Fighter_h_
 

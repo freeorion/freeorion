@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ChatWnd_h_
 #define _ChatWnd_h_
 

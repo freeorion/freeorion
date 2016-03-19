@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _SpecialsPanel_h_
 #define _SpecialsPanel_h_
 

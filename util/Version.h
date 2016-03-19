@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Version_h_
 #define _Version_h_
 

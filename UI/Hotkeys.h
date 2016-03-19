@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /*
   Hotkeys.h: hotkeys (keyboard shortcuts) 
   Copyright 2013 by Vincent Fourmond

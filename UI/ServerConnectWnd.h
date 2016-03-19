@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ServerConnectWnd_h_
 #define _ServerConnectWnd_h_
 

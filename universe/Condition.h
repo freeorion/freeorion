@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Condition_h_
 #define _Condition_h_
 

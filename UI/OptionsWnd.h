@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _OptionsWnd_h_
 #define _OptionsWnd_h_
 

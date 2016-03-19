@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _AIClientApp_h_
 #define _AIClientApp_h_
 

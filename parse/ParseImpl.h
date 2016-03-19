@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ParseImpl_h_
 #define _ParseImpl_h_
 

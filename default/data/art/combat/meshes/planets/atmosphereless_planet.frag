@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #version 120 // version 1.20 required for arrays
 
 uniform sampler2D day_texture, night_texture, normal_texture, lights_texture;

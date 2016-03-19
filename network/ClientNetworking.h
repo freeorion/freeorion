@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ClientNetworking_h_
 #define _ClientNetworking_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Label_h_
 #define _Label_h_
 

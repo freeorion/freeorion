@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Process_h_
 #define _Process_h_
 

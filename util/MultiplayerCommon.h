@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _GalaxySetupWnd_h_
 #define _GalaxySetupWnd_h_
 

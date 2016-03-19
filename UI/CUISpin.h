@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CUISpin_h_
 #define _CUISpin_h_
 

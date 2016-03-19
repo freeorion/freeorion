@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//CUIWnd.h
 #ifndef _CUIWnd_h_
 #define _CUIWnd_h_
 

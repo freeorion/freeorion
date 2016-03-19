@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Meter_h_
 #define _Meter_h_
 

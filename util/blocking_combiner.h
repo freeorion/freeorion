@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _blocking_combiner_h_
 #define _blocking_combiner_h_
 

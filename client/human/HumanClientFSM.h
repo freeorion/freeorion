@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _HumanClientFSM_h_
 #define _HumanClientFSM_h_
 

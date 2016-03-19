@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Double_h_
 #define _Double_h_
 

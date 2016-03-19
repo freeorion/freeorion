@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Networking_h_
 #define _Networking_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _SaveLoad_h_
 #define _SaveLoad_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ConditionParser_h_
 #define _ConditionParser_h_
 

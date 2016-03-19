@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _TemporaryPtr_h_
 #define _TemporaryPtr_h_
 

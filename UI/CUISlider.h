@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CUISlider_h_
 #define _CUISlider_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _AccordionPanel_h_
 #define _AccordionPanel_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Moderator_Action_h_
 #define _Moderator_Action_h_
 

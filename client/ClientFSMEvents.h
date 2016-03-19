@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ClientFSMEvents_h_
 #define _ClientFSMEvents_h_
 

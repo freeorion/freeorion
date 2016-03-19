@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _PopCenter_h_
 #define _PopCenter_h_
 

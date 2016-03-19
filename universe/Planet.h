@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Planet_h_
 #define _Planet_h_
 

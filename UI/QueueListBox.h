@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _QueueListBox_h_
 #define _QueueListBox_h_
 

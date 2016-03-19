@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//FieldIcon.h
 #ifndef _FieldIcon_h_
 #define _FieldIcon_h_
 

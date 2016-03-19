@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ReportParseError_h_
 #define _ReportParseError_h_
 

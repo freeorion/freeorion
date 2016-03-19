@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ResourceCenter_h_
 #define _ResourceCenter_h_
 

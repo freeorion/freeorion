@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CUIDrawUtil_h_
 #define _CUIDrawUtil_h_
 

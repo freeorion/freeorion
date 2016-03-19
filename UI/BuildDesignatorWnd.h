@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _BuildDesignatorWnd_h_
 #define _BuildDesignatorWnd_h_
 

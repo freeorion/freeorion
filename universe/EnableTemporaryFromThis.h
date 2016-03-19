@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Enable_Temporary_From_This_h_
 #define _Enable_Temporary_From_This_h_
 

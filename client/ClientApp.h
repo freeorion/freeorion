@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ClientApp_h_
 #define _ClientApp_h_
 

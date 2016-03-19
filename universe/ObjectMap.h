@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Object_Map_h_
 #define _Object_Map_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ShipDesign_h_
 #define _ShipDesign_h_
 

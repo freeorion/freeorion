@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ServerNetworking_h_
 #define _ServerNetworking_h_
 

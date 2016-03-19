@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _FleetWnd_h_
 #define _FleetWnd_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _GraphControl_h_
 #define _GraphControl_h_
 

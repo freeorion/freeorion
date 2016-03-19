@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _CombatSystem_h_
 #define _CombatSystem_h_
 

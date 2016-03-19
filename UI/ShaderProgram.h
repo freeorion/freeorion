@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ShaderProgram_h_
 #define _ShaderProgram_h_
 

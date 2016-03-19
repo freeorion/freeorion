@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Species_h_
 #define _Species_h_
 

@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Int_h_
 #define _Int_h_
 

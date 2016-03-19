@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform sampler2D day_texture, night_texture, cloud_gloss_texture;
 uniform vec4 cloud_color;
 

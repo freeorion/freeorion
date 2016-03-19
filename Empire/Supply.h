@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Supply_h_
 #define _Supply_h_
 

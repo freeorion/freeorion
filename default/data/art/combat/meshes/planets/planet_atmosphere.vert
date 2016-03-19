@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform vec4 light_pos;
 uniform vec3 camera_pos;
 

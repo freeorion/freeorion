@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ResearchWnd_h_
 #define _ResearchWnd_h_
 

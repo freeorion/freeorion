@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//StringTable.h
 #ifndef StringTable__h_
 #define StringTable__h_
 

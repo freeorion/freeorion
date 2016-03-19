@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//MarkupBox.h
 #ifndef _MARKUP_BOX_H_
 #define _MARKUP_BOX_H_
 

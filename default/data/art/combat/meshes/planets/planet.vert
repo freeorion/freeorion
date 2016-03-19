@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform vec4 light_pos;
 
 varying float diffuse;

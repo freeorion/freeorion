@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _I18N_h_
 #define _I18N_h_
 

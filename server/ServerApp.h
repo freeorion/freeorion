@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 

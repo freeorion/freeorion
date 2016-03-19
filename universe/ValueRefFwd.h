@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _ValueRefFwd_h_
 #define _ValueRefFwd_h_
 

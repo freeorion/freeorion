@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Empire_h_
 #define _Empire_h_
 

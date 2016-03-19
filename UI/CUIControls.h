@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//CUIControls.h
 #ifndef _CUIControls_h_
 #define _CUIControls_h_
 

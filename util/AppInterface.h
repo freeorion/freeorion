@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _AppInterface_h_
 #define _AppInterface_h_
 

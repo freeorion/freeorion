@@ -1,5 +1,3 @@
-// -*- C++ -*-
-//InGameMenu.h
 #ifndef _InGameMenu_h_
 #define _InGameMenu_h_
 

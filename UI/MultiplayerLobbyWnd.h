@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MultiPlayerLobbyWnd_h_
 #define _MultiPlayerLobbyWnd_h_
 

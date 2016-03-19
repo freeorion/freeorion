@@ -1,6 +1,3 @@
-// -*- C++ -*-
-//IntroScreen.h
-
 #ifndef _IntroScreen_h_
 #define _IntroScreen_h_
 

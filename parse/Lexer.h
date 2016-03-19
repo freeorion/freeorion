@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Lexer_h_
 #define _Lexer_h_
 

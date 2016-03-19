@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Enums_h_
 #define _Enums_h_
 

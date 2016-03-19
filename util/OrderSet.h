@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _OrderSet_h_
 #define _OrderSet_h_
 

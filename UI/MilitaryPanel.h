@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MilitaryPanel_h_
 #define _MilitaryPanel_h_
 

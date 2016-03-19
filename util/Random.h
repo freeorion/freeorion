@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _Random_h_
 #define _Random_h_
 

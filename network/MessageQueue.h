@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _MessageQueue_h_
 #define _MessageQueue_h_
 

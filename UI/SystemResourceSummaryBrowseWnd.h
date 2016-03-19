@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _SystemResourceSummaryBrowseWnd_h_
 #define _SystemResourceSummaryBrowseWnd_h_
 

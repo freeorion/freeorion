@@ -1,4 +1,3 @@
-// -*- C++ -*-
 uniform vec4 atmosphere_color;
 uniform vec4 atmosphere_edge_color;
 

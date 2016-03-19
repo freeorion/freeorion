@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _UniverseObject_h_
 #define _UniverseObject_h_
 

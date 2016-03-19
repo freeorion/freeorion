@@ -1,4 +1,3 @@
-// -*- C++ -*-
 #ifndef _System_h_
 #define _System_h_
 
