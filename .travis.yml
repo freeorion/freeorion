@@ -1,0 +1,25 @@
+language: cpp
+sudo: required
+dist: trusty
+compile: gcc
+# Auth token to push API documentation
+secure: "dVwZr2EW3sqWvfbrzPkfQou6ZcSuanIw6+Scy1fNA2MdtW0cErTkw9/7N6fiXFAQbvr63oiRsUPJJ2I4zFx+S3mYeUQxadNi0LZHL9X5ncjrS0q376b8Co0Ceb1sLnchOzZQC8LrtujiiJ9FlX36DqKRUAzhix0aYY/cSXPH12s="
+branches:
+  only:
+  - master
+install:
+  # Update system
+  - sudo apt-get update -qq
+  # Install dependencies
+  - sudo apt-get install -qq cmake python doxygen python2.7-dev libfreetype6-dev libglew-dev libopenal-dev libogg-dev libvorbis-dev zlib1g-dev libsdl2-dev mesa-common-dev python libpng16-dev libboost1.54-dev libboost-thread1.54-dev libboost-system1.54-dev libboost-signals1.54-dev libboost-serialization1.54-dev libboost-regex1.54-dev libboost-python1.54-dev libboost-log1.54-dev libboost-iostreams1.54-dev libboost-locale1.54-dev libboost-filesystem1.54-dev libboost-date-time1.54-dev
+before_script:
+  # Configure git to use the identity of FreeOrion Build Bot
+  - git config --global user.email "freeorionorg@gmail.com"
+  - git config --global user.name "FreeOrion Build Bot"
+  - git config --global credential.helper "cache --timeout=300"
+  # Load credentials
+  - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
+script:
+  - mkdir build
+  - cd build
+  - cmake .. && make apidoc-deploy
