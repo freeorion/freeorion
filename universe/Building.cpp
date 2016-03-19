@@ -199,7 +199,7 @@ std::string BuildingType::Dump() const {
     if (m_enqueue_location) {
         retval += DumpIndent() + "enqueue location = \n";
         ++g_indent;
-            retval += m_location->Dump();
+            retval += m_enqueue_location->Dump();
         --g_indent;
     }
 

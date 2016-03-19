@@ -274,7 +274,7 @@ namespace {
                 research_text   = DoubleToString(empires_research_points, 2, false);
             }
 
-            detection_text = DoubleToString(empire->GetMeter("METER_DETECTION_STRENGTH")->Current(), 0, false);
+            detection_text = DoubleToString(empire ? empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0, 0, false);
 
             m_empire_ship_text->SetText(ship_text);
             m_empire_planet_text->SetText(planet_text);

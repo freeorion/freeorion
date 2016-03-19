@@ -6,7 +6,10 @@
 
 struct ValueRefStringFixture {
     ValueRefStringFixture():
-        result(0)
+        result(0),
+        value(0),
+        statistic(0),
+        variable(0)
     {}
 
     ~ValueRefStringFixture() {

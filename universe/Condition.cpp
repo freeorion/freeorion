@@ -2350,10 +2350,12 @@ void HasTag::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        if (!m_name)
+        if (!m_name) {
             EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch());
-        std::string name = boost::to_upper_copy<std::string>(m_name->Eval(local_context));
-        EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name));
+        } else {
+            std::string name = boost::to_upper_copy<std::string>(m_name->Eval(local_context));
+            EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name));
+        }
     } else {
         // re-evaluate allowed turn range for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -4957,13 +4959,13 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
 }
 
 bool DesignHasPartClass::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
+{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
 
 bool DesignHasPartClass::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
 
 bool DesignHasPartClass::SourceInvariant() const
-{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
+{ return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
@@ -5086,12 +5088,14 @@ void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        if (!m_name)
+        if (!m_name) {
             EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch());
-        TemporaryPtr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
-        std::string name = m_name->Eval(local_context);
-        EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch(name));
+        } else {
+            TemporaryPtr<const UniverseObject> no_object;
+            ScriptingContext local_context(parent_context, no_object);
+            std::string name = m_name->Eval(local_context);
+            EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch(name));
+        }
     } else {
         // re-evaluate allowed turn range for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -7963,9 +7967,9 @@ std::string ValueTest::Description(bool negated/* = false*/) const {
     if (m_value_ref1)
         value_str1 = m_value_ref1->Description();
     if (m_value_ref2)
-        value_str2 = m_value_ref1->Description();
+        value_str2 = m_value_ref2->Description();
     if (m_value_ref3)
-        value_str3 = m_value_ref1->Description();
+        value_str3 = m_value_ref3->Description();
 
     std::string comp_str1 = CompareTypeString(m_compare_type1);
     std::string comp_str2 = CompareTypeString(m_compare_type2);

@@ -1797,7 +1797,7 @@ std::string CreateShip::Dump() const {
     if (m_species_name)
         retval += " species = " + m_species_name->Dump();
     if (m_name)
-        retval += " name = " + m_species_name->Dump();
+        retval += " name = " + m_name->Dump();
 
     retval += "\n";
     return retval;

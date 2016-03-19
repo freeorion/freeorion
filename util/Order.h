@@ -29,7 +29,7 @@ class FO_COMMON_API Order {
 public:
     /** \name Structors */ //@{
     Order(); ///< default ctor
-    Order(int empire) : m_empire(empire) {}     ///< ctor taking the ID of the Empire issuing the order
+    Order(int empire) : m_empire(empire), m_executed(false) {}     ///< ctor taking the ID of the Empire issuing the order
     virtual ~Order() {}
     //@}
 

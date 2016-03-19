@@ -108,6 +108,7 @@ public:
         m_sum_of_max_max_healths(0),
         m_min_of_max_max_healths(-1.f),
         m_available_space(available_size),
+        m_use_relative_side_bar_heights(false),
         m_summaries(combat_summaries)
     {
         // We want to measure health on a single scale that shows as much as possible
