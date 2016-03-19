@@ -148,8 +148,10 @@ struct FO_COMMON_API ProductionQueue {
 
         bool operator<(const ProductionItem& rhs) const;
 
-        BuildType   build_type;
+        std::map<std::string, float>    CompletionSpecialConsumption(int location_id) const;
+        std::map<MeterType, float>      CompletionMeterconsumption(int location_id) const;
 
+        BuildType   build_type;
         // only one of these may be valid, depending on BuildType
         std::string name;
         int         design_id;

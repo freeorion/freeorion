@@ -209,13 +209,14 @@ GG_ENUM(TechStatus,
     NUM_TECH_STATUSES
 )
 
-/** The general type of construction being done at a ProdCenter.  Within each valid type, a specific kind 
+/** The general type of production being done at a ProdCenter.  Within each valid type, a specific kind 
     of item is being built, e.g. under BUILDING a kind of building called "SuperFarm" might be built. */
 GG_ENUM(BuildType,
     INVALID_BUILD_TYPE = -1,
-    BT_NOT_BUILDING,         ///< no building is taking place
-    BT_BUILDING,             ///< a Building object is being built
-    BT_SHIP,                 ///< a Ship object is being built
+    BT_NOT_BUILDING,        ///< no building is taking place
+    BT_BUILDING,            ///< a Building object is being built
+    BT_SHIP,                ///< a Ship object is being built
+    BT_PROJECT,             ///< a project may produce effects while on the queue, may or may not ever complete, and does not result in a ship or building being produced
     NUM_BUILD_TYPES
 )
 

@@ -103,6 +103,8 @@ public:
         m_producible(common_params.producible),
         m_capture_result(capture_result),
         m_tags(),
+        m_production_meter_consumption(common_params.production_meter_consumption),
+        m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
         m_enqueue_location(common_params.enqueue_location),
         m_effects(common_params.effects),
@@ -130,6 +132,12 @@ public:
     const ValueRef::ValueRefBase<int>*    Time() const      { return m_production_time; }   ///< returns the ValueRef that determines ProductionTime()
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
+
+    const std::map<MeterType, ValueRef::ValueRefBase<double>*>&
+                                    ProductionMeterConsumption() const  { return m_production_meter_consumption; }
+    const std::map<std::string, ValueRef::ValueRefBase<double>*>&
+                                    ProductionSpecialConsumption() const{ return m_production_special_consumption; }
+
     const std::set<std::string>&    Tags() const            { return m_tags; }
     const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
     const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location; }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
@@ -161,6 +169,8 @@ private:
     bool                                                    m_producible;
     CaptureResult                                           m_capture_result;
     std::set<std::string>                                   m_tags;
+    std::map<MeterType, ValueRef::ValueRefBase<double>*>    m_production_meter_consumption;
+    std::map<std::string, ValueRef::ValueRefBase<double>*>  m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     Condition::ConditionBase*                               m_enqueue_location;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;

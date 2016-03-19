@@ -456,11 +456,6 @@ public:
     int                             ProductionTime(int empire_id, int location_id) const;       ///< returns the time in turns it takes to build a ship of this design
     bool                            Producible() const      { return m_producible; }            ///< returns whether this design is producible by players and appears on the production screen list
 
-    std::map<MeterType, ValueRef::ValueRefBase<double>*>
-                                    ProductionMeterConsumption() const;
-    std::map<std::string, ValueRef::ValueRefBase<double>*>
-                                    ProductionSpecialConsumption() const;
-
     float                           Speed() const           { return m_speed; }                 ///< returns design speed along starlanes
 
     float                           Structure() const       { return m_structure; }             ///< returns the max structure of this design

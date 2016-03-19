@@ -18,6 +18,7 @@
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/ValueRef.h"
 #include "ResourcePool.h"
 #include "EmpireManager.h"
 #include "Supply.h"
@@ -624,6 +625,129 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
 
     return false;
 }
+
+std::map<std::string, float> ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
+    std::map<std::string, float> retval;
+
+    switch (build_type) {
+    case BT_BUILDING: {
+        if (const BuildingType* bt = GetBuildingType(name)) {
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
+            ScriptingContext context(obj);
+
+            const std::map<std::string, ValueRef::ValueRefBase<double>*>& psc = bt->ProductionSpecialConsumption();
+            for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator it = psc.begin();
+                 it != psc.end(); ++it)
+            {
+                if (!it->second)
+                    continue;
+                retval[it->first] += it->second->Eval(context);
+            }
+        }
+        break;
+    }
+    case BT_SHIP: {
+        if (const ShipDesign* sd = GetShipDesign(design_id)) {
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
+            ScriptingContext context(obj);
+
+            if (const HullType* ht = GetHullType(sd->Hull())) {
+                const std::map<std::string, ValueRef::ValueRefBase<double>*> psc = ht->ProductionSpecialConsumption();
+                for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator it = psc.begin();
+                    it != psc.end(); ++it)
+                {
+                    if (!it->second)
+                        continue;
+                    retval[it->first] += it->second->Eval(context);
+                }
+            }
+
+            const std::vector<std::string>& parts = sd->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                const PartType* pt = GetPartType(*it);
+                if (!pt)
+                    continue;
+                const std::map<std::string, ValueRef::ValueRefBase<double>*> psc = pt->ProductionSpecialConsumption();
+                for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator it = psc.begin();
+                    it != psc.end(); ++it)
+                {
+                    if (!it->second)
+                        continue;
+                    retval[it->first] += it->second->Eval(context);
+                }
+            }
+        }
+        break;
+    }
+    case BT_PROJECT:    // TODO
+    default:
+        break;
+    }
+
+    return retval;
+}
+
+std::map<MeterType, float> ProductionQueue::ProductionItem::CompletionMeterconsumption(int location_id) const {
+    std::map<MeterType, float> retval;
+
+    switch (build_type) {
+    case BT_BUILDING: {
+        if (const BuildingType* bt = GetBuildingType(name)) {
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
+            ScriptingContext context(obj);
+
+            const std::map<MeterType, ValueRef::ValueRefBase<double>*>& pmc = bt->ProductionMeterConsumption();
+            for (std::map<MeterType, ValueRef::ValueRefBase<double>*>::const_iterator it = pmc.begin();
+                 it != pmc.end(); ++it)
+            {
+                if (!it->second)
+                    continue;
+                retval[it->first] = it->second->Eval(context);
+            }
+        }
+        break;
+    }
+    case BT_SHIP: {
+        if (const ShipDesign* sd = GetShipDesign(design_id)) {
+            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
+            ScriptingContext context(obj);
+
+            if (const HullType* ht = GetHullType(sd->Hull())) {
+                const std::map<MeterType, ValueRef::ValueRefBase<double>*> pmc = ht->ProductionMeterConsumption();
+                for (std::map<MeterType, ValueRef::ValueRefBase<double>*>::const_iterator it = pmc.begin();
+                    it != pmc.end(); ++it)
+                {
+                    if (!it->second)
+                        continue;
+                    retval[it->first] += it->second->Eval(context);
+                }
+            }
+
+            const std::vector<std::string>& parts = sd->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                const PartType* pt = GetPartType(*it);
+                if (!pt)
+                    continue;
+                const std::map<MeterType, ValueRef::ValueRefBase<double>*> pmc = pt->ProductionMeterConsumption();
+                for (std::map<MeterType, ValueRef::ValueRefBase<double>*>::const_iterator it = pmc.begin();
+                    it != pmc.end(); ++it)
+                {
+                    if (!it->second)
+                        continue;
+                    retval[it->first] += it->second->Eval(context);
+                }
+            }
+        }
+        break;
+    }
+    case BT_PROJECT:    // TODO
+    default:
+        break;
+    }
+
+    return retval;
+}
+
 
 //////////////////////////////
 // ProductionQueue::Element //
