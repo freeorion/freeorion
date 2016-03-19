@@ -5,14 +5,16 @@
 
 namespace {
     const int       EDGE_PAD(3);
-    const GG::X     BROWSE_TEXT_WIDTH(200);
+    const GG::X BrowseTextWidth() {
+        return GG::X(FontBasedUpscale(200));
+    }
     const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
 }
 
 
 ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label,
                                      float used, float output, float target_output) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1),
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(0),
     m_used_points_label(0),
     m_used_points(0),
@@ -32,7 +34,7 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
 
     m_title_text = new CUILabel(title_text, GG::FORMAT_CENTER);
     m_title_text->MoveTo(GG::Pt(top_left.x + EDGE_PAD, top_left.y));
-    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH - 2*EDGE_PAD, ROW_HEIGHT));
+    m_title_text->Resize(GG::Pt(BrowseTextWidth() - 2*EDGE_PAD, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
     top_left.y += m_title_text->Height() + EDGE_PAD;
 
@@ -46,7 +48,7 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
     const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
     const GG::X LEFT_TEXT_X(0);
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
-    const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
+    const GG::X P_LABEL_X = RIGHT_TEXT_X + FontBasedUpscale(40);
 
     std::pair<int, int> m_center_gap(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
@@ -100,7 +102,7 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
     top_left.y += m_target_points_label->Height();
 
     // background / border rendering prep
-    Resize(GG::Pt(BROWSE_TEXT_WIDTH, top_left.y + EDGE_PAD - m_offset.y));
+    Resize(GG::Pt(BrowseTextWidth(), top_left.y + EDGE_PAD - m_offset.y));
 
     InitBuffer();
 }

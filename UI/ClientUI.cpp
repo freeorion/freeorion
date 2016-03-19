@@ -1004,6 +1004,15 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
     return prefixed_textures_it->second;
 }
 
+int FontBasedUpscale(int x) {
+    int retval(x);
+    int font_pts = ClientUI::Pts();
+    if (font_pts > 12) {
+        retval *= static_cast<float>(font_pts) / 12.0f;
+    }
+    return retval;
+}
+
 StreamableColor::StreamableColor() :
     r(0),
     g(0),
