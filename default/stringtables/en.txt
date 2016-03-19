@@ -3918,6 +3918,15 @@ Outpost
 OUTPOSTS_TEXT
 Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.
 
+FOCUS_TITLE
+Planetary Focus
+FOCUS_TEXT
+'''Each planet has a focus setting, dictating what the inhabitants will put more effort toward, such as production or research. Not all areas of focus are always available. They may be restricted because the species can not focus on that area, the technology is not yet known, or other factors such as the availability of a special.
+
+The focus of a planet may grant it bonuses or enable effects. A small penalty applies when changing a planets focus, which will diminish over time.
+
+A planet will default to the inhabiting species' preferred focus if it has one, otherwise it will default to production.'''
+
 GROWTH_FOCUS_TITLE
 Growth Focus
 GROWTH_FOCUS_TEXT
@@ -5045,6 +5054,72 @@ SITREP_EMPIRE_ELIMINATED
 The %empire% has been defeated!
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire Eliminated
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
+BEGINNER_HINTS
+Random Game Hints
+
+RANDOM_BEGINNER_HINT
+Hint #%rawtext%
+
+BEGINNER_HINT_01
+1: At the beginning of the game, constructing more scouts may help in exploring the region around your homeworld.
+
+BEGINNER_HINT_02
+2: Each species has its own planet preference. If you can conquer a planet with a different species, you can colonize other planets with them as well, allowing you to secure a system faster. Keep in mind that not all species can colonize and that some can not build ships.
+
+BEGINNER_HINT_03
+3: Ships will be repaired in a single turn at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there are no enemies in the system that turn.
+
+BEGINNER_HINT_04
+4: Systems that are connected by thick lines are [[encyclopedia SUPPLY_TITLE]] line linked and they share [[encyclopedia INDUSTRY_TITLE]] Production Points (PP).
+
+BEGINNER_HINT_05
+5: All systems share [[encyclopedia RESEARCH_TITLE]] Points (RP) that they generate even if they are not connected by supply lines. When not connected to a supply line, setting the [[encyclopedia FOCUS_TITLE]] to research might be more efficient for a planet than other settings.
+
+BEGINNER_HINT_06
+6: [[encyclopedia SUPPLY_TITLE]] lines can be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
+
+BEGINNER_HINT_07
+7: Some buildings, like the [[buildingtype BLD_INDUSTRY_CENTER]], will have an effect on each planet that has a supply line connection to it. Others, like [[buildingtype BLD_GAS_GIANT_GEN]], only affect the system that they are built in. Check the 'Pedia to learn about the functions of different buildings.
+
+BEGINNER_HINT_08
+8: An Outpost ship can setup an outpost on any unclaimed visible planet or asteroid that it can reach, unless there are hostile ships in that system.
+
+BEGINNER_HINT_09
+9: Colony ships take longer to build than outpost ships, but they can settle planets outside of your supply range.
+
+BEGINNER_HINT_10
+10: With a system selected, right click on a planets picture in the system side panel to access the Planet Suitability report. This will tell you what species from your empire will be able to successfully settle that planet. Numbers in green show the maximum population that the planet could achieve if colonized by that species, red numbers indicate that the species would die out if they attempted to colonize.
+
+BEGINNER_HINT_11
+11: Maximum populations that planets can achieve can be boosted by researching various growth techs. Rare specials can also increase the maximum population for species with certain metabolisms, see [[encyclopedia GROWTH_FOCUS_TITLE]] for more info on these specials.
+
+BEGINNER_HINT_12
+12: Be on the lookout for planets with specials, they usually indicate some special resource on that planet that may benefit your entire empire if utilized properly. Right click on a special's icon to access its 'Pedia entry and find out more!
+
+BEGINNER_HINT_13
+13: Only [[species SP_EXOBOT]] can settle asteroid belts. If you find a lot of asteroids belts nearby you might want to research how to build them sooner rather than later!
+
+BEGINNER_HINT_14
+14: Research [[encyclopedia SUPPLY_TITLE]] improvements to increase the distance from your systems that your supply lines reach.
+
+BEGINNER_HINT_15
+15: Most species start out with a [[encyclopedia HAPPINESS_TITLE]] of 1 when you capture their planet, and this will normally increase by 1 per turn. Look out for [[encyclopedia XENOPHOBIC_SPECIES_TITLE]] species though! They don't like being near other species and this will effect the happiness and other values of both them and the other nearby species.
+
+BEGINNER_HINT_16
+16: You may want to hold off on researching [[tech LRN_PSIONICS]] until your empire includes a species with [[encyclopedia TELEPATHIC_TITLE]].
+
+BEGINNER_HINT_17
+17: [[encyclopedia SHIELDS_TITLE]] on ships defend against every shot that hits the ship, reducing the damage by the amount of the shield value. Ship shield values can be affected by various factors including space storms, what type of star system you are in, or if you are close to a captured empire capital planet.
+
+BEGINNER_HINT_18
+18: [[encyclopedia FOCUS_TITLE]] - pay attention to the focus setting of new planets that are added to your empire, either from settling them or from conquering them. This setting controls if the planet focuses on industrial production or on research or on defense. Later in the game, more focus options may unlock as new technologies are researched, and different species may have different focus options available.
+
+BEGINNER_HINT_19
+19: A colony can be established on an outpost by constructing a colony building or by using a colony ship. Most colony buildings require a supply connection to a planet with at least 5 happiness, and 3 population. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
 
 #############################################################
 ####                    S P E C I E S                    ####

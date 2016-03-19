@@ -190,9 +190,41 @@ EffectsGroup
 //             ]
 //             empire = Source.Owner
 
+//#####     RANDOM BEGINNER HINTS     #####//
 
-
-
+EffectsGroup
+    scope = Source
+    activation = Turn low = 0 high = 100
+    stackinggroup = "HINTSSYSTEM"
+    effects = [
+        GenerateSitrepMessage
+            message = "RANDOM_BEGINNER_HINT"
+            label = "BEGINNER_HINTS"
+            icon = "icons/sitrep/beginner_hint.png"
+            parameters = [
+                tag = "rawtext" data = OneOf(
+                    UserString("BEGINNER_HINT_01"),
+                    UserString("BEGINNER_HINT_02"),
+                    UserString("BEGINNER_HINT_03"),
+                    UserString("BEGINNER_HINT_04"),
+                    UserString("BEGINNER_HINT_05"),
+                    UserString("BEGINNER_HINT_06"),
+                    UserString("BEGINNER_HINT_07"),
+                    UserString("BEGINNER_HINT_08"),
+                    UserString("BEGINNER_HINT_09"),
+                    UserString("BEGINNER_HINT_10"),
+                    UserString("BEGINNER_HINT_11"),
+                    UserString("BEGINNER_HINT_12"),
+                    UserString("BEGINNER_HINT_13"),
+                    UserString("BEGINNER_HINT_14"),
+                    UserString("BEGINNER_HINT_15"),
+                    UserString("BEGINNER_HINT_16"),
+                    UserString("BEGINNER_HINT_17"),
+                    UserString("BEGINNER_HINT_18"),
+                    UserString("BEGINNER_HINT_19"))
+            ]
+            empire = Source.Owner
+    ]
 
 // Note, the "]" on the following line is functional and important; it must be present and all EffectsGroups must be above it.
 ]
