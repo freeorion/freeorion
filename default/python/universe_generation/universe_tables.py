@@ -53,7 +53,7 @@ UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST = {
 # This checks what you chose for galaxy planet density:
 DENSITY_MOD_TO_PLANET_SIZE_DIST = {
 #                                none  tiny  small  medium  large  huge  asteroids  gas giant
-    fo.galaxySetupOption.low:   ( 77,    0,     0,      0,    -5,  -10,         0,         0),
+    fo.galaxySetupOption.low:   ( 85,    0,     0,      0,    -5,  -10,         0,         0),
     fo.galaxySetupOption.medium:( 70,    0,     0,      0,    -5,  -10,         0,         0),
     fo.galaxySetupOption.high:  ( 50,    0,     0,      0,    -5,  -10,         0,         0),
 }
