@@ -45,6 +45,8 @@ if(DOXYGEN_FOUND)
             COMMAND
                 ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE} pull --depth 1 ${FreeOrion_APIDOC_GIT_REMOTE} master:master
             COMMAND
+                ${CMAKE_COMMAND} -E remove_directory ${FreeOrion_APIDOC_GIT_LOCAL}/${FreeOrion_CPP_APIDOC_PATH}
+            COMMAND
                 ${CMAKE_COMMAND} -E copy_directory ${FreeOrion_CPP_APIDOC_OUTDIR}/html ${FreeOrion_APIDOC_GIT_LOCAL}/${FreeOrion_CPP_APIDOC_PATH}
             COMMAND
                 ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE} add ${FreeOrion_CPP_APIDOC_PATH}
