@@ -52,7 +52,7 @@ if(DOXYGEN_FOUND)
                 ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE} commit -F ${CMAKE_CURRENT_SOURCE_DIR}/apidoc-commit-message
             COMMAND
                 ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE}  push ${FreeOrion_APIDOC_GIT_REMOTE} master:master
-            DEPENDS cpp-apidoc
+            DEPENDS cpp-apidoc freeorionversion
             COMMENT "Deploy FreeOrion API documentation to github.io" VERBATIM
         )
     endif()
