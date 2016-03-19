@@ -1,4 +1,3 @@
-/// \file CombatEvent.h declares the base CombatEvent.
 #ifndef COMBATEVENT_H
 #define COMBATEVENT_H
 

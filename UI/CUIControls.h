@@ -20,11 +20,13 @@
 
 #include "LinkText.h"
 
-
-//! \file All CUI* classes are FreeOrion-style controls incorporating 
-//! the visual theme the project requires.  Implementation may
-//! depend on graphics and design team specifications.  They extend
-//! GG controls.
+/** \file
+ *
+ * All CUI* classes are FreeOrion-style controls incorporating
+ * the visual theme the project requires.  Implementation may
+ * depend on graphics and design team specifications.  They extend
+ * GG controls.
+ */
 
 /** a FreeOrion Label control */
 class CUILabel : public GG::TextControl {

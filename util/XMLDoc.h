@@ -1,3 +1,6 @@
+#ifndef _XMLDoc_h_
+#define _XMLDoc_h_
+
 /* Copyright (C) 2006 T. Zachary Laine
 
    This library is free software; you can redistribute it and/or
@@ -21,14 +24,6 @@
    Zach Laine
    whatwasthataddress@hotmail.com */
 
-/** \file XMLDoc.h
-    Contains the XMLElement and XMLDoc classes and numerous free functions, which are used to encode objects into 
-    XML descriptions.
-*/
-
-#ifndef _XMLDoc_h_
-#define _XMLDoc_h_
-
 #ifndef _GG_Enum_h_
 #include <GG/Enum.h>
 #endif
@@ -44,6 +39,11 @@
 #include <vector>
 
 #include "Export.h"
+
+/** \file
+ *
+ * Contains free functions and classes to modify, read and write XML files.
+ */
 
 /** encapsulates an XML element (from a <> tag to a </> tag).  XMLElement is a simplified XML element, 
     consisting only of a tag, a single text string, attributes and child elements.  It is designed to represent 

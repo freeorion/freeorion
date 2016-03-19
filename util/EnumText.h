@@ -1,6 +1,11 @@
 #ifndef _EnumText_h_
 #define _EnumText_h_
-/// \file Methods to turn values defined in Enums.h into user readable strings.
+
+/** \file
+ *
+ * Free functions to turn enumeration values defined in Enums.h into human
+ * readable strings.
+ */
 
 #include <string>
 

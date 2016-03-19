@@ -1,4 +1,3 @@
-/// \file CombatEvents.h decalares all combat events. If you need to access information in them, include this.
 #ifndef COMBATEVENTS_H
 #define COMBATEVENTS_H
 
@@ -10,6 +9,9 @@
 
 #include "CombatEvent.h"
 
+/** \file
+ * Contains all combat event implementation declarations.
+ */
 
 /// Generated when a new bout begins in the battle
 struct FO_COMMON_API BoutBeginEvent : public CombatEvent {

@@ -16,14 +16,20 @@
 
 #include "Export.h"
 
-/** \file Random.h
-    A collection of robust and portable random number generation functors and functions.
-    If you need to generate one or two random numbers, prefer the functions (e.g. RandomInt()).
-    If you need to generate a large volume of random numbers with the
-    same parameterization,
-    generate a functor (e.g. with a call to IntDist()) and then call the functor repeatedly to
-    generate the numbers.  This eliminates the overhead associated with repeatedly contructing 
-    distributions, when you call the Random*() functions. */
+/** \file
+ *
+ * A collection of robust and portable random number generation functors and
+ * functions.
+ *
+ * If you need to generate one or two random numbers, prefer the functions
+ * (e.g. RandomInt()).
+ *
+ * If you need to generate a large volume of random numbers with the same
+ * parameterization, generate a functor (e.g. with a call to IntDist()) and
+ * then call the functor repeatedly to generate the numbers.  This eliminates
+ * the overhead associated with repeatedly contructing distributions, when you
+ * call the Random*() functions.
+ */
 
 typedef boost::mt19937                                                          GeneratorType;
 typedef boost::variate_generator<GeneratorType&, boost::uniform_smallint<> >    SmallIntDistType;
