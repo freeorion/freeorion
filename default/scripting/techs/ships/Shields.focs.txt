@@ -2,7 +2,7 @@ Tech
     name = "SHP_DEFLECTOR_SHIELD"
     description = "SHP_DEFLECTOR_SHIELD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "LRN_FORCE_FIELD"
@@ -13,7 +13,7 @@ Tech
     name = "SHP_PLASMA_SHIELD"
     description = "SHP_PLASMA_SHIELD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "SHP_DEFLECTOR_SHIELD"
@@ -24,7 +24,7 @@ Tech
     name = "SHP_BLACKSHIELD"
     description = "SHP_BLACKSHIELD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 3750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "SHP_PLASMA_SHIELD"
@@ -35,7 +35,7 @@ Tech
     name = "SHP_MULTISPEC_SHIELD"
     description = "SHP_MULTISPEC_SHIELD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "PARTS_CATEGORY"
     researchcost = 2000
     researchturns = 10
     //Unresearchable
