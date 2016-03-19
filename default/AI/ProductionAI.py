@@ -15,7 +15,7 @@ import time
 import cProfile, pstats, StringIO
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
-                     AIFocusType, ShipRoleType, ShipDesignTypes)
+                     FocusType, ShipRoleType, ShipDesignTypes)
 from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error
 from TechsListsAI import EXOBOT_TECH_NAME
 
@@ -640,7 +640,7 @@ def generateProductionOrders():
                         other_planet = universe.getPlanet(opid)
                         if other_planet.size == fo.planetSize.gasGiant:
                             gg_list.append(opid)
-                        if opid != pid and other_planet.owner == empire.empireID and (AIFocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]):
+                        if opid != pid and other_planet.owner == empire.empireID and (FocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]):
                             can_use_gg = True
                     if pid in sorted(gg_list)[:max_gggs] and can_use_gg:
                         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
@@ -931,7 +931,7 @@ def generateProductionOrders():
                     res = fo.issueScrapOrder(bldg)
                     print "Tried scrapping %s at planet %s, got result %d" % (building_name, planet.name, res)
         elif foAI.foAIstate.aggression > fo.aggression.typical and can_build_camp and (t_pop >= 36):
-            if (planet.focus == AIFocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials) or (pid == capital_id):
+            if (planet.focus == FocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials) or (pid == capital_id):
                 continue
                 # pass  # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
             queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
@@ -940,12 +940,12 @@ def generateProductionOrders():
                     print "Conc Camp disqualified at %s due to pop: current %.1f target: %.1f" % (planet.name, c_pop, t_pop)
             else:
                 if pid not in queued_building_locs:
-                    if planet.focus in [AIFocusType.FOCUS_INDUSTRY]:
+                    if planet.focus in [FocusType.FOCUS_INDUSTRY]:
                         if c_ind >= t_ind + c_pop:
                             continue
                     else:
                         old_focus = planet.focus
-                        fo.issueChangeFocusOrder(pid, AIFocusType.FOCUS_INDUSTRY)
+                        fo.issueChangeFocusOrder(pid, FocusType.FOCUS_INDUSTRY)
                         universe.updateMeterEstimates([pid])
                         t_ind = planet.currentMeterValue(fo.meterType.targetIndustry)
                         if c_ind >= t_ind + c_pop:

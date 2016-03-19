@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-from EnumsAI import PriorityType, get_priority_resource_types, AIFocusType
+from EnumsAI import PriorityType, get_priority_resource_types, FocusType
 import PlanetUtilsAI
 import random
 import ColonisationAI
@@ -15,11 +15,11 @@ newTargets = {}
 currentFocus = {}
 currentOutput = {}
 planetMap = {}
-IFocus = AIFocusType.FOCUS_INDUSTRY
-RFocus = AIFocusType.FOCUS_RESEARCH
-MFocus = AIFocusType.FOCUS_MINING  # not currently used in content
-GFocus = AIFocusType.FOCUS_GROWTH
-PFocus = AIFocusType.FOCUS_PROTECTION
+IFocus = FocusType.FOCUS_INDUSTRY
+RFocus = FocusType.FOCUS_RESEARCH
+MFocus = FocusType.FOCUS_MINING  # not currently used in content
+GFocus = FocusType.FOCUS_GROWTH
+PFocus = FocusType.FOCUS_PROTECTION
 
 RESEARCH_WEIGHTING = 2.0
 

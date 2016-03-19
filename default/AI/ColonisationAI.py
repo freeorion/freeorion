@@ -9,7 +9,7 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
-from EnumsAI import MissionType, ExplorableSystemType, AIFocusType, EmpireProductionTypes, ShipRoleType, PriorityType
+from EnumsAI import MissionType, ExplorableSystemType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, ppstring, cache_by_turn
 from freeorion_debug import Timer
 
@@ -440,9 +440,9 @@ def survey_universe():
                         this_facility_dict.setdefault("systems", set()).add(sys_id)
                         this_facility_dict.setdefault("planets", set()).add(pid)
 
-                if planet.focus == AIFocusType.FOCUS_INDUSTRY:
+                if planet.focus == FocusType.FOCUS_INDUSTRY:
                     empire_status['industrialists'] += planet_population
-                elif planet.focus == AIFocusType.FOCUS_RESEARCH:
+                elif planet.focus == FocusType.FOCUS_RESEARCH:
                     empire_status['researchers'] += planet_population
                 if "ANCIENT_RUINS_SPECIAL" in planet.specials:
                     gotRuins = True
@@ -452,7 +452,7 @@ def survey_universe():
                     if special in AIDependencies.metabolismBoosts:
                         empire_planets_with_growth_specials.setdefault(pid, []).append(special)
                         available_growth_specials.setdefault(special, []).append(pid)
-                        if planet.focus == AIFocusType.FOCUS_GROWTH:
+                        if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
                 if "BLD_SHIPYARD_ORBITAL_DRYDOCK" in buildings_here:
                     empire_dry_docks.setdefault(planet.systemID, []).append(pid)
@@ -1167,7 +1167,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 other_planet = universe.getPlanet(pid)
                 if other_planet.size == fo.planetSize.gasGiant:
                     gg_list.append(pid)
-                if pid != planet_id and other_planet.owner == empire.empireID and AIFocusType.FOCUS_INDUSTRY in list(
+                if pid != planet_id and other_planet.owner == empire.empireID and FocusType.FOCUS_INDUSTRY in list(
                         other_planet.availableFoci) + [other_planet.focus]:
                     orb_gen_val += per_gg * discount_multiplier
                     gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg))
@@ -1203,7 +1203,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
                          empire_status['industrialists'] * discount_multiplier)
-            if AIFocusType.FOCUS_INDUSTRY not in species_foci:
+            if FocusType.FOCUS_INDUSTRY not in species_foci:
                 honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
             retval += honey_val
             detail.append("%s %.1f" % ("HONEYCOMB_SPECIAL", honey_val))
@@ -1234,7 +1234,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         local_gg = False
         got_owned_gg = False
         ast_shipyard_name = ""
-        if system and AIFocusType.FOCUS_INDUSTRY in species.foci:
+        if system and FocusType.FOCUS_INDUSTRY in species.foci:
             for pid in [temp_id for temp_id in system.planetIDs if temp_id != planet_id]:
                 p2 = universe.getPlanet(pid)
                 if p2:
@@ -1340,7 +1340,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         max_ind_factor = 0
         if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
             fixed_ind += discount_multiplier * 5
-        if AIFocusType.FOCUS_INDUSTRY in species.foci:
+        if FocusType.FOCUS_INDUSTRY in species.foci:
             if 'TIDAL_LOCK_SPECIAL' in planet.specials:
                 ind_mult += 1
             max_ind_factor += base_pop_ind * mining_bonus
@@ -1364,7 +1364,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             detail.append("Bonus for %s: %.1f" % (special, gbonus))
 
         base_pop_res = 0.2  # will also be doubling value of research, below
-        if AIFocusType.FOCUS_RESEARCH in species.foci:
+        if FocusType.FOCUS_RESEARCH in species.foci:
             research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size
             if "ANCIENT_RUINS_SPECIAL" in planet.specials or "ANCIENT_RUINS_DEPLETED_SPECIAL" in planet.specials:
                 research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 5
