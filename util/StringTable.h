@@ -45,7 +45,7 @@
 //! test four<br>
 class StringTable_ {
 public:
-    //! \names Structors
+    //! \name Structors
     //!@{
     StringTable_();  //!< default construction, uses S_DEFAULT_FILENAME
 
@@ -76,7 +76,7 @@ public:
     inline const std::string& Filename() const {return m_filename;} //!< accessor to the filename
     //!@}
 
-    //! \names Constants
+    //! \name Constants
     //!@{
     static const std::string S_DEFAULT_FILENAME; //!< the default file used if none specified
     static const std::string S_ERROR_STRING;     //!< A string that gets returned when invalid indices are used

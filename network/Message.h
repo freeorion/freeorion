@@ -333,7 +333,7 @@ FO_COMMON_API Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLo
     receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
 FO_COMMON_API Message LobbyChatMessage(int sender, int receiver, const std::string& text);
 
-/** creates an LOBBY_CHAT message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.
+/** creates an LOBBY_CHAT message containing a chat string from \a sender to be displayed in \a receiver's lobby dialog.
     This message should only be sent by the server.*/
 FO_COMMON_API Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
 
