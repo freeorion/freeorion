@@ -64,7 +64,7 @@ public:
     virtual void SizeMove(const Pt& ul, const Pt& lr);
 
     //! Use this to customize the handling of tags in the text on a per-object basis.
-    void SetBlockFactoryMap(const boost::shared_ptr< BLOCK_FACTORY_MAP >& blockFactoryMap);
+    void SetBlockFactoryMap(const boost::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map);
 
     //! Registers a factory in the default block factory map.
     static int RegisterDefaultBlock(const std::string& tag, IBlockControlFactory* factory);

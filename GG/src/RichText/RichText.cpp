@@ -145,7 +145,7 @@ namespace GG {
             m_font(font),
             m_color(color),
             m_format(format),
-            m_blockFactoryMap(RichText::DefaultBlockFactoryMap()),
+            m_block_factory_map(RichText::DefaultBlockFactoryMap()),
             m_padding(0)
         {}
 
@@ -158,7 +158,7 @@ namespace GG {
             m_owner->DeleteChildren();
 
             // Get a set of tags registered for rich text usage.
-            std::set<std::string> known_tags = MapKeys(*m_blockFactoryMap);
+            std::set<std::string> known_tags = MapKeys(*m_block_factory_map);
 
             // Parse the content into a vector of tags.
             std::vector<RichTextTag> tags = TagParser::ParseTags(content, known_tags);
@@ -205,23 +205,21 @@ namespace GG {
 
         // Set the mapping from tags to factories that should be used to generate blocks from them.
         void SetBlockFactoryMap(boost::shared_ptr<RichText::BLOCK_FACTORY_MAP> block_factory_map)
-        {
-            m_blockFactoryMap = block_factory_map;
-        }
+        { m_block_factory_map = block_factory_map; }
 
     private:
-        RichText* const m_owner; //!< The public control.
-        boost::shared_ptr<Font> m_font; //!< The font to use for text.
-        Clr m_color; //! < The color to use for text.
-        Flags<TextFormat> m_format; //!< Text format.
-        boost::shared_ptr< RichText::BLOCK_FACTORY_MAP > m_blockFactoryMap; //!< A map that tells us how to generate block controls from tags.
-        std::vector<BlockControl*> m_blocks; //!< The blocks generated from our content.
+        RichText* const             m_owner; //!< The public control.
+        boost::shared_ptr<Font>     m_font; //!< The font to use for text.
+        Clr                         m_color; //! < The color to use for text.
+        Flags<TextFormat>           m_format; //!< Text format.
+        boost::shared_ptr<RichText::BLOCK_FACTORY_MAP>
+                                    m_block_factory_map; //!< A map that tells us how to generate block controls from tags.
+        std::vector<BlockControl*>  m_blocks; //!< The blocks generated from our content.
         int m_padding;
 
-        // Easier access to m_blockFactoryMap
-        RichText::BLOCK_FACTORY_MAP& FactoryMap() {
-            return *m_blockFactoryMap;
-        }
+        // Easier access to m_block_factory_map
+        RichText::BLOCK_FACTORY_MAP& FactoryMap()
+        { return *m_block_factory_map; }
 
         // Create blocks from tags.
         void PopulateBlocks(const std::vector<RichTextTag>& tags)
@@ -283,14 +281,12 @@ namespace GG {
     void RichText::SizeMove(const Pt& ul, const Pt& lr) { m_self->SizeMove(ul, lr); }
 
     void RichText::SetBlockFactoryMap(const boost::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map)
-    {
-        m_self->SetBlockFactoryMap(block_factory_map);
-    }
+    { m_self->SetBlockFactoryMap(block_factory_map); }
 
     /// Global storage for registered block tags.
     // The factory object live for the lifetime of the process, they are never
     // deleted.
-    boost::shared_ptr< RichText::BLOCK_FACTORY_MAP >& RichText::DefaultBlockFactoryMap() {
+    boost::shared_ptr<RichText::BLOCK_FACTORY_MAP>& RichText::DefaultBlockFactoryMap() {
         static boost::shared_ptr<RichText::BLOCK_FACTORY_MAP> tag_map(
             new RichText::BLOCK_FACTORY_MAP());
         return tag_map;

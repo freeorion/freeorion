@@ -7,8 +7,8 @@
 namespace GG {
 
     TextBlock::TextBlock(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
-                         Clr color, Flags<TextFormat> format, Flags<WndFlag> flags)
-    : BlockControl(x, y, w, flags)
+                         Clr color, Flags<TextFormat> format, Flags<WndFlag> flags) :
+        BlockControl(x, y, w, flags)
     {
         // Construct the text control. Activatee full text wrapping features, and make it stick to the top.
         // With these setting the height is largely ignored, so we set it to one.
