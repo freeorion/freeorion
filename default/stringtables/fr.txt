@@ -2971,10 +2971,10 @@ TECH_NAVIGATION  # translated
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% pts & %2% tours
+%1% PR & %2% tours
 
 TECH_TURN_COST_STR
-+%1% / %2% pts
++%1% / %2% PR
 
 TECH_TURNS_LEFT_STR
 %1% tour(s)
@@ -3034,8 +3034,8 @@ TECH_WND_UNLOCKS
 Débloque
 
 TECH_WND_PROGRESS
-'''%1% / %2% points de recherche
-+ %3% / %4% points/tour'''
+'''%1% / %2% PR
++ %3% / %4% PR/tour'''
 
 TECH_WND_ETA
 %1% tour(s) restant(s)
@@ -3070,7 +3070,7 @@ RESEARCH_QUEUE_EMPIRE
 Recherche %1% : File d'Attente
 
 RESEARCH_INFO_RP
-pts.
+PR
 
 RESEARCH_QUEUE_PROMPT
 '''Double-clic ou MAJ+clic sur les technologies accessibles pour les ajouter à la file d'attente de Recherche.
@@ -3103,10 +3103,10 @@ PRODUCTION_WND_REDUNDANT
 Redondants
 
 PRODUCTION_TOTAL_COST_STR
-%1% pts & %2% tours
+%1% PP & %2% tours
 
-PRODUCTION_TURN_COST_STR
-+%1% / %2% pts
+PRODUCTION_TURN_COST_STR  # translated
++%1% / %2% PP
 
 PRODUCTION_TURNS_LEFT_STR
 %1% tours restant(s)
@@ -3136,8 +3136,8 @@ Double-clic sur les projets disponibles pour les ajouter à la file d'attente de
 PRODUCTION_WND_TITLE  # translated
 Production
 
-PRODUCTION_INFO_PP
-pts.
+PRODUCTION_INFO_PP  # translated
+PP
 
 PRODUCTION_QUEUE_EMPIRE
 Production %1% : File d'Attente
@@ -3290,7 +3290,7 @@ DESIGN_OBSOLETE
 Modèle obsolète
 
 DESIGN_WND_ADD
-Ajouter nouveau modèle
+Ajouter nouv. modèle
 
 DESIGN_WND_ADD_DETAIL
 '''Ajouter nouveau modèle nommé
@@ -3298,7 +3298,7 @@ DESIGN_WND_ADD_DETAIL
 aux modèles finalisés.'''
 
 DESIGN_WND_UPDATE
-Actualiser ancien modèle
+Actualiser anc. modèle
 
 DESIGN_WND_UPDATE_DETAIL
 '''Remplacer ancien modèle
@@ -3434,7 +3434,7 @@ ENC_TECH
 Technologie
 
 ENC_SPECIAL
-Particularité Planétaire et Spatiale
+Particularité Planétaire ou Spatiale
 
 OBJECTS_WITH_SPECIAL
 '''Objets avec Particularité : '''
@@ -3577,11 +3577,11 @@ Index de l'Encyclopédie
 #ENC_DETAIL_TYPE_STR
 #%1% %2%
 
-ENC_PP
-points de production
+ENC_PP  # translated
+PP
 
 ENC_RP
-points de recherche
+PR
 
 # indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
 # be produced or researched (e.g. specials)
@@ -3918,6 +3918,15 @@ Avant-Poste
 OUTPOSTS_TEXT
 Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
+FOCUS_TITLE
+Focus Planétaire
+FOCUS_TEXT
+'''Chaque planète dispose d'un réglage 'Focus', indiquant quel domaine sera privilégié par ses habitants, comme l'[[encyclopedia INDUSTRY_TITLE]] ou la [[encyclopedia RESEARCH_TITLE]]. Toutes les possibilités de Focus ne sont pas toujours disponibles, ces dernières dépendant parfois de l'espèce peuplant la planète, d'une technologie encore inconnue, ou bien d'autres facteurs tels que la présence d'une [[encyclopedia ENC_SPECIAL]].
+
+Le Focus d'une planète peut procurer un bonus ou engendrer certains effets sur celle-ci. Une faible pénalité est appliquée à chaque fois que le Focus d'une planète est modifié, sa valeur diminuant avec le temps.
+
+Une planète sera réglée par défaut sur le Focus favori de l'espèce la peuplant (si cette dernière en possède un), ou sinon par défaut sur le Focus [[encyclopedia INDUSTRY_TITLE]].'''
+
 GROWTH_FOCUS_TITLE
 Focus Croissance
 GROWTH_FOCUS_TEXT
@@ -3948,19 +3957,19 @@ Privilégier la Protection consiste pour une planète à se consacrer entièreme
 INDUSTRY_TITLE
 Industrie
 INDUSTRY_TEXT
-'''L'Industrie, mesurée en points de Production, représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
+'''L'Industrie, mesurée en Points de Production (PP), représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
 
 L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire. L'Industrie qui n'est affectée à aucun projet durant un tour est perdue (production gaspillée).
 
-Chaque projet nécessite un nombre minimal de tours pour être mené à son terme. Par exemple, si un projet coûte 15 points de production et requiert un minimum de 3 tours, un maximum de 5 points de production seulement par tour peut lui être affecté.
-Les points de production sont alloués aux projets selon leur position dans de la file d'attente : le projet en tête de file est prioritaire. Les points de production restants sont affectés au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des projets dans la file d'attente peut être modifié : les projets que vous jugez prioritaires peuvent ainsi être déplacés en tête de file.
+Chaque projet nécessite un nombre minimal de tours pour être mené à son terme. Par exemple, si un projet coûte 15 PP et requiert un minimum de 3 tours, un maximum de 5 PP seulement par tour peut lui être affecté.
+Les PP sont alloués aux projets selon leur position dans de la file d'attente : le projet en tête de file est prioritaire. Les PP restants sont affectés au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des projets dans la file d'attente peut être modifié : les projets que vous jugez prioritaires peuvent ainsi être déplacés en tête de file.
 '''
 
 RESEARCH_TITLE
 Recherche
 RESEARCH_TEXT
-'''La Recherche, mesurée en points de Recherche, est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles technologies. La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 points de recherche et requiert 5 tours, un maximum de 4 points de recherche seulement par tour peut lui être consacré. 
-Les points de recherche sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les points de recherche restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
+'''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles technologies. La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 PR et requiert 5 tours, un maximum de 4 PR seulement par tour peut lui être consacré. 
+Les PR sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
 
 À l'inverse de l'Industrie, la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire.'''
 
@@ -4071,7 +4080,7 @@ Xénophobe
 XENOPHOBIC_SPECIES_TEXT
 '''Les espèces xénophobes utilisent une partie de leur Industrie pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de Métabolisme Autosuffisant considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa population maximale (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
 
-Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.'''
+La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.'''
 
 FUEL_TITLE
 Carburant
@@ -4083,7 +4092,7 @@ Approvisionnement
 SUPPLY_TEXT
 '''L'indicateur d'approvisionnement d'une planète représente le nombre de Voies spatiales sur lesquelles l'approvisionnement peut être distribué. Les petites planètes peuvent déployer l'approvisionnement sur de grandes distances mais peu de lignes, tandis que les grandes planètes peuvent approvisionner davantage de lignes mais sur de moins grandes distances.
 
-Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes forment un "Groupe Ressource" et peuvent échanger des ressources matérielles. La capacité de Production (ou points de production) d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures.
+Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes forment un "Groupe Ressource" et peuvent échanger des ressources matérielles. La capacité de Production (ou Points de Production) d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures.
 
 Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
 
@@ -5045,6 +5054,72 @@ SITREP_EMPIRE_ELIMINATED
 L'empire %empire% a été vaincu!
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire vaincu
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
+BEGINNER_HINTS
+Astuces de Jeu
+
+RANDOM_BEGINNER_HINT
+Astuce #%rawtext%
+
+BEGINNER_HINT_01
+1: Au commencement d'une partie, la production de plusieurs [[predefinedshipdesign SD_SCOUT]]s peut faciliter l'exploration de la région aux alentours de votre Planète Natale.
+
+BEGINNER_HINT_02
+2: Chaque espèce s'adapte à un environnement planétaire favori. Si vous parvenez à conquérir une planète peuplée par une autre espèce, vous pouvez utiliser cette dernière pour coloniser d'autres planètes, vous permettant ainsi de sécuriser rapidement un système. Cependant, gardez à l'esprit que certaines espèces ne peuvent pas coloniser d'autres mondes ou sont incapables de construire des astronefs.
+
+BEGINNER_HINT_03
+3: Les astronefs peuvent être réparés en un seul tour dans un système abritant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] alliée, et ce, si aucun ennemi ne se trouve dans ce système pour le tour en question.
+
+BEGINNER_HINT_04
+4: Les systèmes reliés par des lignes d'une épaisseur plus importante sont connectés par lignes d'[[encyclopedia SUPPLY_TITLE]] et partagent ainsi leur Points de Production (PP) d'[[encyclopedia INDUSTRY_TITLE]].
+
+BEGINNER_HINT_05
+5: Tous les systèmes partagent leur Points de [[encyclopedia RESEARCH_TITLE]] (PR) même s'ils ne sont pas reliés par lignes d'[[encyclopedia SUPPLY_TITLE]]. Lorsqu'une planète n'est pas connectée par lignes d'Approvisionnement, le [[encyclopedia FOCUS_TITLE]] 'Recherche' est dans la plupart des cas le réglage le plus efficace.
+
+BEGINNER_HINT_06
+6: Les lignes d'[[encyclopedia SUPPLY_TITLE]] peuvent être utilisées pour ravitailler les astronefs en [[encyclopedia FUEL_TITLE]].
+
+BEGINNER_HINT_07
+7: Certaines structures, tel que le [[buildingtype BLD_INDUSTRY_CENTER]], engendreront un effet sur chaque planète lui étant reliée par ligne d'[[encyclopedia SUPPLY_TITLE]]. D'autres structures, comme le [[buildingtype BLD_GAS_GIANT_GEN]], affectent seulement le système dans lequel elles sont construites. Consultez la section [[encyclopedia ENC_BUILDING_TYPE]] de l'Encyclopédie pour découvrir les fonctions des différentes structures.
+
+BEGINNER_HINT_08
+8: Un astronef [[predefinedshipdesign SD_OUTPOST_SHIP]] peut établir un [[encyclopedia OUTPOSTS_TITLE]] sur toute planète ou astéroide visible n'appartenant à aucun empire et atteignable par l'astronef, excepté si des astronefs hostiles se trouvent dans le même système.
+
+BEGINNER_HINT_09
+9: Un astronef [[predefinedshipdesign SD_COLONY_SHIP]] nécessite un délai de construction plus important qu'un astronef [[predefinedshipdesign SD_OUTPOST_SHIP]], mais ils rendent possible l'établissement de colonies sur des planètes au-delà de votre portée d'[[encyclopedia SUPPLY_TITLE]].
+
+BEGINNER_HINT_10
+10: Lorsque qu'un système est sélectionné dans la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], un clic-droit sur l'image d'une planète dans le panneau latéral donnera accès au rapport d'Habitabilité de la planète. Celui-ci vous indiquera quelle espèce au sein de votre empire sera en mesure de s'établir avec succès sur cette planète. Les nombres verts indiquent le maximum de Population atteignable si la planète est colonisée par cette espèce. Les nombres rouges signalent que l'espèce finirait par périr si elle tentait de coloniser cette planète.
+
+BEGINNER_HINT_11
+11: Les maximums de Population atteignables sur une planète peuvent être augmentés via la recherche de diverses technologies de Croissance. Certaines Particularités peuvent également accroître le maximum de Population pour les espèces d'un métabolisme donné. Consultez l'article [[encyclopedia GROWTH_FOCUS_TITLE]] pour plus d'informations sur ces Particularités.
+
+BEGINNER_HINT_12
+12: Prêtez attention aux planètes dotées d'une [[encyclopedia ENC_SPECIAL]], ces dernières renfermant parfois des ressources pouvant benéficier à l'ensemble de votre empire si celles-ci sont utilisées avec efficacité. Un clic-droit sur l'icône de la Particularité ouvrira l'article correspondant dans l'Encyclopédie.
+
+BEGINNER_HINT_13
+13: Seule l'espèce [[species SP_EXOBOT]] peut s'établir au sein des ceintures d'astéroïdes. Si vous découvrez de nombreuses ceintures d'astéroïdes à proximité des planètes de votre empire, il serait judicieux de rechercher comment produire ces Exobots!
+
+BEGINNER_HINT_14
+14: Recherchez les technologies améliorant l'[[encyclopedia SUPPLY_TITLE]], telle la [[tech CON_ORBITAL_CON]], afin d'accroître la distance que vos lignes d'approvisonnement peuvent atteindre à partir de vos systèmes.
+
+BEGINNER_HINT_15
+15: La plupart des espèces se retrouvent avec un indicateur [[encyclopedia HAPPINESS_TITLE]] de 1 lorsque vous capturez leur planète, puis ce dernier augmente normalement de 1 à chaque tour. Faites cependant attention aux espèces [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s! Elles n'apprécient guère la proximité d'autres espèces et cela aura un effet négatif sur le Bonheur ainsi que d'autres indicateurs, à la fois pour l'espèce xénophobe et les autres espèces à proximité.
+
+BEGINNER_HINT_16
+16: Il est plus judicieux de ne pas développer la technologie [[tech LRN_PSIONICS]] tant que votre empire n'abrite pas une espèce maîtrisant la [[encyclopedia TELEPATHIC_TITLE]].
+
+BEGINNER_HINT_17
+17: Les [[encyclopedia SHIELDS_TITLE]] d'astronef constituent une défense contre chaque tir ennemi, réduisant les [[encyclopedia DAMAGE_TITLE]] subis de la valeur de solidité du Bouclier de l'astronef. La solidité d'un Bouclier peut être affecté par divers facteurs comme les tempêtes spatiales, le type d'étoile au sein du système, ou la proximité d'une Planète Capitale d'un Empire ayant été capturée.
+
+BEGINNER_HINT_18
+18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'Industrie, la Recherche ou la Défense. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les technologies requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
+
+BEGINNER_HINT_19
+19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[encyclopedia SUPPLY_TITLE]] à une planète présentant un indicateur [[encyclopedia HAPPINESS_TITLE]] d'au moins 5, et une Population supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour fonder une [[buildingtype BLD_COL_EXOBOT]].
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -10230,19 +10305,19 @@ RS_AUTOLAB  # translated
 Autolab
 
 RS_AUTOLAB_DESC
-Génère des points de Recherche pour l'empire.
+Génère des Points de Recherche pour l'empire.
 
 RS_AUTOFACTORY
 Autofabrik
 
 RS_AUTOFACTORY_DESC
-Génère des points de Production pour l'empire.
+Génère des Points de Production pour l'empire.
 
 RS_AUTOTRADER  # translated
 Autotrader
 
 RS_AUTOTRADER_DESC
-Génère des points de Commerce pour l'empire.
+Génère des Points de Commerce pour l'empire.
 
 #############################################################
 ####                 S H I P   H U L L S                 ####
