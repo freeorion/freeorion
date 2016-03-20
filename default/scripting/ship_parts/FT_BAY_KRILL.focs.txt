@@ -1,0 +1,12 @@
+Part
+    name = "FT_BAY_KRILL"
+    description = "FT_BAY_KRILL_DESC"
+    class = FighterBay
+    capacity = 4
+    mountableSlotTypes = External
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/krill.png"
+
+#include "../common/shared.macros"

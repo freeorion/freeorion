@@ -6,13 +6,13 @@ Hull
     stealth = 15
     structure = 7000
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
-        Slot type = External position = (0.80, 0.15)
-        Slot type = External position = (0.80, 0.75)
-        Slot type = Internal position = (0.20, 0.75)
-        Slot type = Internal position = (0.40, 0.75)
+        Slot type = External position = (0.35, 0.70)
+        Slot type = External position = (0.65, 0.75)
+        Slot type = External position = (0.95, 0.65)
+        Slot type = External position = (0.18, 0.30)
+        Slot type = External position = (0.78, 0.35)
+        Slot type = Internal position = (0.37, 0.40)
+        Slot type = Internal position = (0.58, 0.40)
     ]
     buildcost = 1
     buildtime = 1
@@ -25,7 +25,7 @@ Hull
         [[INFINITE_FUEL]]
     ]
     icon = ""
-    graphic = ""
+    graphic = "icons/monsters/juggernaut-4.png"
 
 #include "monster.macros"
 

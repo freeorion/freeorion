@@ -54,4 +54,59 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/death-ray.png"    
 
+Part
+    name = "SR_TEETH"
+    description = "SR_TEETH_DESC"
+    class = ShortRange
+    damage = 5
+    mountableSlotTypes = External
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/teeth.png"
+
+Part
+    name = "SR_CLAWS"
+    description = "SR_CLAWS_DESC"
+    class = ShortRange
+    damage = 20
+    mountableSlotTypes = External
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/claw.png"
+
+Part
+    name = "SR_TENTACLE"
+    description = "SR_TENTACLE_DESC"
+    class = ShortRange
+    damage = 5
+    mountableSlotTypes = External
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 2
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/tentacle.png"
+
+Part
+    name = "SR_FLAME_THROWER"
+    description = "SR_FLAME_THROWER_DESC"
+    class = ShortRange
+    damage = 20
+    mountableSlotTypes = External
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 3
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/flame_thrower.png"
+
+Part
+    name = "SR_SNOWFLAKE_LASER"
+    description = "SR_SNOWFLAKE_LASER_DESC"
+    class = ShortRange
+    damage = 9
+    mountableSlotTypes = External
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 2
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/snowflake_laser.png"
+
 #include "../common/shared.macros"

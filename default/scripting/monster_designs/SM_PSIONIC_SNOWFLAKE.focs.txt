@@ -5,7 +5,7 @@ ShipDesign
     parts = [
         "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
-        ""
+        "SR_WEAPON_4_1"
         "ST_CLOAK_3"
     ]
     icon = "icons/monsters/snowflake-4.png"

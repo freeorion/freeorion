@@ -6,11 +6,11 @@ Hull
     stealth = 25
     structure = 4000
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
-        Slot type = External position = (0.80, 0.15)
-        Slot type = Internal position = (0.40, 0.75)
+        Slot type = External position = (0.15, 0.45)
+        Slot type = External position = (0.25, 0.70)
+        Slot type = External position = (0.48, 0.88)
+        Slot type = External position = (0.70, 0.20)
+        Slot type = Internal position = (0.55, 0.45)
     ]
     buildcost = 1
     buildtime = 1
@@ -23,7 +23,7 @@ Hull
         [[INFINITE_FUEL]]
     ]
     icon = ""
-    graphic = ""
+    graphic = "icons/monsters/kraken-4.png"
 
 #include "monster.macros"
 

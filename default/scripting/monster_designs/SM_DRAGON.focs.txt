@@ -3,11 +3,11 @@ ShipDesign
     description = "SM_DRAGON_DESC"
     hull = "SH_STRONG_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_4_1"
+        "SR_FLAME_THROWER"
         "SP_DEATH_SPORE"
         ""
         "AR_CRYSTAL_PLATE"
         "FU_ZERO_FUEL"
     ]
-    icon = "icons/monsters/dragon.png"
+    icon = "icons/monsters/dragon-1.png"
     model = "seed"

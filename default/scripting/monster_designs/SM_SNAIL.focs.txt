@@ -3,9 +3,9 @@ ShipDesign
     description = "SM_SNAIL_DESC"
     hull = "SH_ASTEROID"
     parts = [
-        "SR_WEAPON_4_1"
+        "SR_WEAPON_3_1"
         ""
-        ""
+        "SR_TEETH"
         ""
         ""
         ""

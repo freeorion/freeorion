@@ -5,7 +5,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_3_1"
         ""
-        ""
+        "SR_WEAPON_0_1"
         ""
     ]
     icon = "icons/monsters/sentry.png"

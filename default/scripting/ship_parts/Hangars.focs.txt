@@ -58,4 +58,16 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
 
+Part
+    name = "FT_KRILL"
+    description = "FT_KRILL_DESC"
+    class = FighterHangar
+    capacity = 30
+    damage = 1
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/krill.png"
+
 #include "../common/shared.macros"

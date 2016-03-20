@@ -3,11 +3,11 @@ ShipDesign
     description = "SM_BLOATED_JUGGERNAUT_DESC"
     hull = "SH_BLOATED_JUGGERNAUT_BODY"
     parts = [
-        ""
         "SP_CHAOS_WAVE"
-        "SR_WEAPON_4_1"
-        "SR_WEAPON_4_1"
-        "SR_WEAPON_4_1"
+        "SR_FLAME_THROWER"
+        "SR_CLAWS"
+        "SR_CLAWS"
+        "SR_CLAWS"
         "SH_PLASMA"
         "ST_CLOAK_2"
     ]

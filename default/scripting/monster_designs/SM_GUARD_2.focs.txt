@@ -4,7 +4,7 @@ ShipDesign
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
         "SR_WEAPON_4_1"
-        ""
+        "SR_WEAPON_0_1"
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
 

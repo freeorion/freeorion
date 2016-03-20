@@ -18,6 +18,15 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
+        
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetMaxCapacity partname = "SR_SNOWFLAKE_LASER_1" value = Value + min(Source.Age*0.3, 18)
+                SetCapacity partname = "SR_SNOWFLAKE_LASER_1" value = Value + min(Source.Age*0.3, 18)
+            ]
+        
         [[EXCELLENT_VISION]]
     ]
     icon = ""

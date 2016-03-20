@@ -3,8 +3,8 @@ ShipDesign
     description = "SM_JUGGERNAUT_1_DESC"
     hull = "SH_JUGGERNAUT_1_BODY"
     parts = [
-        "SR_WEAPON_2_1"
         ""
+        "SR_TEETH"
         ""
         "SH_DEFENSE_GRID"
         ]

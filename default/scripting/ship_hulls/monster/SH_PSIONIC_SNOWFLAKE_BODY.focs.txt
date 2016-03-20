@@ -42,7 +42,7 @@ Hull
             effects = SetOwner empire = Source.Owner
     ]
     icon = ""
-    graphic = ""
+    graphic = "icons/monsters/snowflake-4.png"
 
 #include "monster.macros"
 
