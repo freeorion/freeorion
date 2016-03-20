@@ -50,7 +50,8 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     m_showing_prompt(false),
     m_prompt_str(prompt_str)
 {
-    AllowDropType(drop_type_str);
+    if (!drop_type_str.empty())
+        AllowDropType(drop_type_str);
 
     GG::Connect(BeforeInsertSignal,                 &QueueListBox::EnsurePromptHiddenSlot,      this);
     GG::Connect(AfterEraseSignal,                   &QueueListBox::ShowPromptConditionallySlot, this);
@@ -101,6 +102,9 @@ void QueueListBox::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Fla
 void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
+    for (DropsAcceptableIter it = first; it != last; ++it)
+        it->second = false;
+
     if (std::distance(first, last) != 1) {
         ErrorLogger() << "QueueListBox::DropsAcceptable unexpected passed more than one Wnd to test";
     }
@@ -112,17 +116,23 @@ void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIte
 }
 
 void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (wnds.size() != 1)
+    if (wnds.empty())
         return;
+    if (wnds.size() > 1) {
+        // delete any extra wnds that won't be processed below
+        for (std::vector<GG::Wnd*>::const_iterator it = ++wnds.begin(); it != wnds.end(); ++it)
+            delete *it;
+        ErrorLogger() << "QueueListBox::AcceptDrops given multiple wnds unexpectedly...";
+    }
     GG::Wnd* wnd = *wnds.begin();
     const std::string& drop_type = wnd->DragDropDataType();
-    if (AllowedDropTypes().find(drop_type) == AllowedDropTypes().end())
-        return;
     GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(wnd);
-    if (!row)
+    if (AllowedDropTypes().find(drop_type) == AllowedDropTypes().end() ||
+        !row ||
+        std::find(begin(), end(), row) == end()) {
+        delete wnd;
         return;
-    if (std::find(begin(), end(), row) == end())
-        return;
+    }
     iterator it = RowUnderPt(pt);
     QueueItemMovedSignal(row, std::distance(begin(), it));
 }
