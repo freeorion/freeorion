@@ -148,7 +148,7 @@ struct FO_COMMON_API ProductionQueue {
         bool operator<(const ProductionItem& rhs) const;
 
         std::map<std::string, std::map<int, float> >    CompletionSpecialConsumption(int location_id) const;// for each special name, what object ids have those special capacities reduced by what amount
-        std::map<MeterType, std::map<int, float> >      CompletionMeterconsumption(int location_id) const;  // for each meter type, what object ids have those meters reduced by what amount
+        std::map<MeterType, std::map<int, float> >      CompletionMeterConsumption(int location_id) const;  // for each meter type, what object ids have those meters reduced by what amount
 
         BuildType   build_type;
         // only one of these may be valid, depending on BuildType

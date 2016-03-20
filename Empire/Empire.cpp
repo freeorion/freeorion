@@ -700,7 +700,7 @@ std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::Co
     return retval;
 }
 
-std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::CompletionMeterconsumption(int location_id) const {
+std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const {
     std::map<MeterType, std::map<int, float> > retval;
 
     switch (build_type) {
@@ -2417,8 +2417,8 @@ void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
     m_production_queue[index].blocksize = blocksize;
-    if (blocksize !=original_blocksize) // if reducing, may lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed; if increasing, may be able to claim credit if undoing a recent decrease
-        m_production_queue[index].progress = (m_production_queue[index].progress_memory / m_production_queue[index].blocksize_memory ) * std::min( m_production_queue[index].blocksize_memory, blocksize);
+    if (blocksize != original_blocksize) // if reducing, may lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed; if increasing, may be able to claim credit if undoing a recent decrease
+        m_production_queue[index].progress = (m_production_queue[index].progress_memory / m_production_queue[index].blocksize_memory) * std::min( m_production_queue[index].blocksize_memory, blocksize);
 }
 
 void Empire::SetBuildRallyPoint(int index, int rally_point_id) {
@@ -2926,8 +2926,40 @@ void Empire::CheckProductionProgress() {
         }
 
 
-        // iff accumulated PP is sufficient, the item is complete
+        // only if accumulated PP is sufficient, the item can be completed
         if (item_cost - EPSILON > elem.progress)
+            continue;
+
+
+        // only if consumed resources are available, then item can be completd
+        bool consumption_impossible = false;
+        std::map<std::string, std::map<int, float> > sc = elem.item.CompletionSpecialConsumption(elem.location);
+        for (std::map<std::string, std::map<int, float> >::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
+            if (consumption_impossible)
+                break;
+            for (std::map<int, float>::iterator it = sc_it->second.begin(); it != sc_it->second.end(); ++it) {
+                TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
+                float capacity = obj ? obj->SpecialCapacity(sc_it->first) : 0.0f;
+                if (capacity < it->second * elem.blocksize) {
+                    consumption_impossible = true;
+                    break;
+                }
+            }
+        }
+        std::map<MeterType, std::map<int, float> > mc = elem.item.CompletionMeterConsumption(elem.location);
+        for (std::map<MeterType, std::map<int, float> >::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
+            if (consumption_impossible)
+                break;
+            for (std::map<int, float>::iterator it = mc_it->second.begin(); it != mc_it->second.end(); ++it) {
+                TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
+                const Meter* meter = obj ? obj->GetMeter(mc_it->first) : 0;
+                if (!meter || meter->Current() < it->second * elem.blocksize) {
+                    consumption_impossible = true;
+                    break;
+                }
+            }
+        }
+        if (consumption_impossible)
             continue;
 
 
@@ -2942,7 +2974,6 @@ void Empire::CheckProductionProgress() {
 
 
         // consume the item's special and meter consumption
-        std::map<std::string, std::map<int, float> > sc = elem.item.CompletionSpecialConsumption(elem.location);
         for (std::map<std::string, std::map<int, float> >::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
             for (std::map<int, float>::iterator it = sc_it->second.begin(); it != sc_it->second.end(); ++it) {
                 TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
@@ -2951,12 +2982,10 @@ void Empire::CheckProductionProgress() {
                 if (!obj->HasSpecial(sc_it->first))
                     continue;
                 float cur_capacity = obj->SpecialCapacity(sc_it->first);
-                float new_capacity = std::max(0.0f, cur_capacity - it->second);
+                float new_capacity = std::max(0.0f, cur_capacity - it->second * elem.blocksize);
                 obj->SetSpecialCapacity(sc_it->first, new_capacity);
             }
         }
-
-        std::map<MeterType, std::map<int, float> > mc = elem.item.CompletionMeterconsumption(elem.location);
         for (std::map<MeterType, std::map<int, float> >::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
             for (std::map<int, float>::iterator it = mc_it->second.begin(); it != mc_it->second.end(); ++it) {
                 TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
@@ -2966,7 +2995,7 @@ void Empire::CheckProductionProgress() {
                 if (!meter)
                     continue;
                 float cur_meter = meter->Current();
-                float new_meter = cur_meter - it->second;
+                float new_meter = cur_meter - it->second * elem.blocksize;
                 meter->SetCurrent(new_meter);
                 meter->BackPropegate();
             }
