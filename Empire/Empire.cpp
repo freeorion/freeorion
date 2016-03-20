@@ -632,24 +632,37 @@ std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::Co
     switch (build_type) {
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
-            ScriptingContext context(obj);
+            TemporaryPtr<UniverseObject> location_obj = GetUniverseObject(location_id);
+            ScriptingContext context(location_obj);
 
             const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >& psc = bt->ProductionSpecialConsumption();
-            for (std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = psc.begin();
-                 it != psc.end(); ++it)
+            for (std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator
+                 it = psc.begin(); it != psc.end(); ++it)
             {
                 if (!it->second.first)
                     continue;
-                retval[it->first][location_id] += it->second.first->Eval(context);
+                Condition::ObjectSet matches;
+                // if a condition selectin gwhere to take resources from was specified, use it.
+                // Otherwise take from the production location
+                if (it->second.second) {
+                    it->second.second->Eval(context, matches);
+                } else {
+                    matches.push_back(location_obj);
+                }
+
+                // determine how much to take from each matched object
+                for (Condition::ObjectSet::iterator set_it = matches.begin(); set_it != matches.end(); ++set_it) {
+                    context.effect_target = boost::const_pointer_cast<UniverseObject>(*set_it);
+                    retval[it->first][(*set_it)->ID()] += it->second.first->Eval(context);
+                }
             }
         }
         break;
     }
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
-            ScriptingContext context(obj);
+            TemporaryPtr<const UniverseObject> location_obj = GetUniverseObject(location_id);
+            ScriptingContext context(location_obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
                 const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > psc = ht->ProductionSpecialConsumption();
