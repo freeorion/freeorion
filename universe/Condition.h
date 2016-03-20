@@ -20,110 +20,49 @@ struct ScriptingContext;
   * represent predicates about UniverseObjects used by, for instance, the
   * Effect system. */
 namespace Condition {
-    typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
+typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
 
-    enum Invariance {
-        UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
-        INVARIANT,          ///< This condition is invariant to a particular type of object change
-        VARIANT             ///< This condition's result depends on the state of a particular object
-    };
+enum Invariance {
+    UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
+    INVARIANT,          ///< This condition is invariant to a particular type of object change
+    VARIANT             ///< This condition's result depends on the state of a particular object
+};
 
-    enum SearchDomain {
-        NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
-        MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
-    };
+enum SearchDomain {
+    NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
+    MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
+};
 
-    enum SortingMethod {
-        SORT_MAX,       ///< Objects with the largest sort key will be selected
-        SORT_MIN,       ///< Objects with the smallest sort key will be selected
-        SORT_MODE,      ///< Objects with the most common sort key will be selected
-        SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
-    };
+enum SortingMethod {
+    SORT_MAX,       ///< Objects with the largest sort key will be selected
+    SORT_MIN,       ///< Objects with the smallest sort key will be selected
+    SORT_MODE,      ///< Objects with the most common sort key will be selected
+    SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
+};
 
-    enum ComparisonType {
-        INVALID_COMPARISON = -1,
-        EQUAL,
-        GREATER_THAN,
-        GREATER_THAN_OR_EQUAL,
-        LESS_THAN,
-        LESS_THAN_OR_EQUAL,
-        NOT_EQUAL
-    };
+enum ComparisonType {
+    INVALID_COMPARISON = -1,
+    EQUAL,
+    GREATER_THAN,
+    GREATER_THAN_OR_EQUAL,
+    LESS_THAN,
+    LESS_THAN_OR_EQUAL,
+    NOT_EQUAL
+};
 
-    enum ContentType {
-        CONTENT_BUILDING,
-        CONTENT_SPECIES,
-        CONTENT_SHIP_HULL,
-        CONTENT_SHIP_PART,
-        CONTENT_SPECIAL,
-        CONTENT_FOCUS
-    };
+enum ContentType {
+    CONTENT_BUILDING,
+    CONTENT_SPECIES,
+    CONTENT_SHIP_HULL,
+    CONTENT_SHIP_PART,
+    CONTENT_SPECIAL,
+    CONTENT_FOCUS
+};
 
-    struct ConditionBase;
-    struct All;
-    struct None;
-    struct EmpireAffiliation;
-    struct Source;
-    struct RootCandidate;
-    struct Target;
-    struct Homeworld;
-    struct Capital;
-    struct Monster;
-    struct Armed;
-    struct Type;
-    struct Building;
-    struct HasSpecial;
-    struct HasTag;
-    struct Contains;
-    struct PlanetSize;
-    struct PlanetType;
-    struct PlanetEnvironment;
-    struct Species;
-    struct Enqueued;
-    struct FocusType;
-    struct StarType;
-    struct DesignHasHull;
-    struct DesignHasPart;
-    struct DesignHasPartClass;
-    struct PredefinedShipDesign;
-    struct NumberedShipDesign;
-    struct ProducedByEmpire;
-    struct Chance;
-    struct MeterValue;
-    struct ShipPartMeterValue;
-    struct EmpireMeterValue;
-    struct EmpireStockpileValue;
-    struct OwnerHasTech;
-    struct OwnerHasBuildingTypeAvailable;
-    struct OwnerHasShipDesignAvailable;
-    struct VisibleToEmpire;
-    struct WithinDistance;
-    struct WithinStarlaneJumps;
-    struct CanAddStarlaneConnection;
-    struct ExploredByEmpire;
-    struct Stationary;
-    struct FleetSupplyableByEmpire;
-    struct ResourceSupplyConnectedByEmpire;
-    struct And;
-    struct Or;
-    struct Not;
-    struct Turn;
-    struct ContainedBy;
-    struct Number;
-    struct SortedNumberOf;
-    struct InSystem;
-    struct ObjectID;
-    struct CreatedOnTurn;
-    struct CanColonize;
-    struct CanProduceShips;
-    struct OrderedBombarded;
-    struct ValueTest;
-    struct Location;
-    struct Described;
-}
+struct ConditionBase;
 
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
-FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition::ConditionBase*>& conditions,
+FO_COMMON_API std::string ConditionFailedDescription(const std::vector<ConditionBase*>& conditions,
                                                      TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
                                                      TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
 
@@ -136,12 +75,12 @@ FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition
   * candidate object is provided, the returned string will indicate which
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
-FO_COMMON_API std::string ConditionDescription(const std::vector<Condition::ConditionBase*>& conditions,
+FO_COMMON_API std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
                                                TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
                                                TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
 
 /** The base class for all Conditions. */
-struct FO_COMMON_API Condition::ConditionBase {
+struct FO_COMMON_API ConditionBase {
     ConditionBase() :
         m_root_candidate_invariant(UNKNOWN_INVARIANCE),
         m_target_invariant(UNKNOWN_INVARIANCE),
@@ -149,25 +88,25 @@ struct FO_COMMON_API Condition::ConditionBase {
     {}
     virtual ~ConditionBase();
 
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    bool                operator!=(const Condition::ConditionBase& rhs) const { return !(*this == rhs); }
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    bool                operator!=(const ConditionBase& rhs) const { return !(*this == rhs); }
 
     virtual void        Eval(const ScriptingContext& parent_context,
-                             Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches,
+                             ObjectSet& matches,
+                             ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
 
     /** Matches with an empty ScriptingContext */
-    void                Eval(Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches,
+    void                Eval(ObjectSet& matches,
+                             ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
     void                Eval(const ScriptingContext& parent_context,
-                             Condition::ObjectSet& matches) const;
+                             ObjectSet& matches) const;
 
     /** Tests all objects in universe as NON_MATCHES with empty ScriptingContext. */
-    void                Eval(Condition::ObjectSet& matches) const;
+    void                Eval(ObjectSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool                Eval(const ScriptingContext& parent_context,
@@ -178,7 +117,7 @@ struct FO_COMMON_API Condition::ConditionBase {
     bool                Eval(TemporaryPtr<const UniverseObject> candidate) const;
 
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this
@@ -225,7 +164,7 @@ private:
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
-struct FO_COMMON_API Condition::Number : public Condition::ConditionBase {
+struct FO_COMMON_API Number : public ConditionBase {
     Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
            ConditionBase* condition) :
         m_low(low),
@@ -233,10 +172,10 @@ struct FO_COMMON_API Condition::Number : public Condition::ConditionBase {
         m_condition(condition)
     {}
     virtual ~Number();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -262,16 +201,16 @@ private:
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
-struct FO_COMMON_API Condition::Turn : public Condition::ConditionBase {
+struct FO_COMMON_API Turn : public ConditionBase {
     explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = 0) :
         m_low(low),
         m_high(high)
     {}
     virtual ~Turn();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -302,13 +241,13 @@ private:
   * the specified \a sorting_type of those property values.  For example,
   * objects with the largest, smallest or most common property value may be
   * selected preferentially. */
-struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase {
+struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                    ConditionBase* condition) :
         m_number(number),
         m_sort_key(0),
-        m_sorting_method(Condition::SORT_RANDOM),
+        m_sorting_method(SORT_RANDOM),
         m_condition(condition)
     {}
 
@@ -324,10 +263,10 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
         m_condition(condition)
     {}
     virtual ~SortedNumberOf();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -339,7 +278,7 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
     SortingMethod                           GetSortingMethod() const { return m_sorting_method; }
     const ConditionBase*                    GetCondition() const { return m_condition; }
     virtual void                            GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                                              Condition::ObjectSet& condition_non_targets) const;
+                                                                              ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -355,12 +294,12 @@ private:
 };
 
 /** Matches all objects. */
-struct FO_COMMON_API Condition::All : public Condition::ConditionBase {
+struct FO_COMMON_API All : public ConditionBase {
     All() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -378,12 +317,12 @@ private:
 
 /** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
-struct FO_COMMON_API Condition::None : public Condition::ConditionBase {
+struct FO_COMMON_API None : public ConditionBase {
     None() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -393,7 +332,7 @@ struct FO_COMMON_API Condition::None : public Condition::ConditionBase {
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const { }  // efficient rejection of everything
+                                                          ObjectSet& condition_non_targets) const { }  // efficient rejection of everything
 
 
 private:
@@ -405,7 +344,7 @@ private:
 /** Matches all objects that are owned (if \a exclusive == false) or only owned
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
-struct FO_COMMON_API Condition::EmpireAffiliation : public Condition::ConditionBase {
+struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
     explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
@@ -415,11 +354,11 @@ struct FO_COMMON_API Condition::EmpireAffiliation : public Condition::ConditionB
        m_affiliation(affiliation)
     {}
     virtual ~EmpireAffiliation();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -444,16 +383,16 @@ private:
 };
 
 /** Matches the source object only. */
-struct FO_COMMON_API Condition::Source : public Condition::ConditionBase {
+struct FO_COMMON_API Source : public ConditionBase {
     Source() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     //virtual bool        SourceInvariant() const { return false; } // same as ConditionBase
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
 
@@ -469,9 +408,9 @@ private:
   * within a subcondition to match the object actually being matched by the
   * whole compound condition, rather than an object just being matched in a
   * subcondition in order to evaluate the outer condition. */
-struct FO_COMMON_API Condition::RootCandidate : public Condition::ConditionBase {
+struct FO_COMMON_API RootCandidate : public ConditionBase {
     RootCandidate() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -492,16 +431,16 @@ private:
   * use the All condition. */
 
 /** Matches the target of an effect being executed. */
-struct FO_COMMON_API Condition::Target : public Condition::ConditionBase {
+struct FO_COMMON_API Target : public ConditionBase {
     Target() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return false; }
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
 
@@ -516,7 +455,7 @@ private:
 /** Matches planets that are a homeworld for any of the species specified in
   * \a names.  If \a names is empty, matches any planet that is a homeworld for
   * any species in the current game Universe. */
-struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
+struct FO_COMMON_API Homeworld : public ConditionBase {
     Homeworld() :
         ConditionBase(),
         m_names()
@@ -526,10 +465,10 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
         m_names(names)
     {}
     virtual ~Homeworld();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -538,7 +477,7 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -553,16 +492,16 @@ private:
 };
 
 /** Matches planets that are an empire's capital. */
-struct FO_COMMON_API Condition::Capital : public Condition::ConditionBase {
+struct FO_COMMON_API Capital : public ConditionBase {
     Capital() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
 
@@ -575,16 +514,16 @@ private:
 };
 
 /** Matches space monsters. */
-struct FO_COMMON_API Condition::Monster : public Condition::ConditionBase {
+struct FO_COMMON_API Monster : public ConditionBase {
     Monster() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
 
@@ -597,9 +536,9 @@ private:
 };
 
 /** Matches armed ships and monsters. */
-struct FO_COMMON_API Condition::Armed : public Condition::ConditionBase {
+struct FO_COMMON_API Armed : public ConditionBase {
     Armed() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -617,16 +556,16 @@ private:
 };
 
 /** Matches all objects that are of UniverseObjectType \a type. */
-struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
+struct FO_COMMON_API Type : public ConditionBase {
     explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
         ConditionBase(),
         m_type(type)
     {}
     virtual ~Type();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -635,7 +574,7 @@ struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<UniverseObjectType>*   GetType() const { return m_type; }
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -651,16 +590,16 @@ private:
 
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
-struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
+struct FO_COMMON_API Building : public ConditionBase {
     explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
     virtual ~Building();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -669,7 +608,7 @@ struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -684,7 +623,7 @@ private:
 };
 
 /** Matches all objects that have an attached Special named \a name. */
-struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
+struct FO_COMMON_API HasSpecial : public ConditionBase {
     explicit HasSpecial(const std::string& name);
     explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
@@ -715,10 +654,10 @@ struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
         m_since_turn_high(0)
     {}
     virtual ~HasSpecial();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -748,7 +687,7 @@ private:
 };
 
 /** Matches all objects that have the tag \a tag. */
-struct FO_COMMON_API Condition::HasTag : public Condition::ConditionBase {
+struct FO_COMMON_API HasTag : public ConditionBase {
     explicit HasTag(const std::string& name);
     explicit HasTag(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
@@ -756,10 +695,10 @@ struct FO_COMMON_API Condition::HasTag : public Condition::ConditionBase {
     {}
     virtual ~HasTag();
 
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -782,17 +721,17 @@ private:
 };
 
 /** Matches all objects that were created on turns within the specified range. */
-struct FO_COMMON_API Condition::CreatedOnTurn : public Condition::ConditionBase {
+struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
     CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
         ConditionBase(),
         m_low(low),
         m_high(high)
     {}
     virtual ~CreatedOnTurn();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -818,16 +757,16 @@ private:
 /** Matches all objects that contain an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct FO_COMMON_API Condition::Contains : public Condition::ConditionBase {
+struct FO_COMMON_API Contains : public ConditionBase {
     Contains(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
     virtual ~Contains();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -836,7 +775,7 @@ struct FO_COMMON_API Condition::Contains : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -853,16 +792,16 @@ private:
 /** Matches all objects that are contained by an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct FO_COMMON_API Condition::ContainedBy : public Condition::ConditionBase {
+struct FO_COMMON_API ContainedBy : public ConditionBase {
     ContainedBy(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
     virtual ~ContainedBy();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -884,16 +823,16 @@ private:
 };
 
 /** Matches all objects that are in the system with the indicated \a system_id */
-struct FO_COMMON_API Condition::InSystem : public Condition::ConditionBase {
+struct FO_COMMON_API InSystem : public ConditionBase {
     InSystem(ValueRef::ValueRefBase<int>* system_id) :
         ConditionBase(),
         m_system_id(system_id)
     {}
     virtual ~InSystem();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -915,16 +854,16 @@ private:
 };
 
 /** Matches the object with the id \a object_id */
-struct FO_COMMON_API Condition::ObjectID : public Condition::ConditionBase {
+struct FO_COMMON_API ObjectID : public ConditionBase {
     ObjectID(ValueRef::ValueRefBase<int>* object_id) :
         ConditionBase(),
         m_object_id(object_id)
     {}
     virtual ~ObjectID();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -933,7 +872,7 @@ struct FO_COMMON_API Condition::ObjectID : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  ObjectId() const { return m_object_id; }
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -950,16 +889,16 @@ private:
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct FO_COMMON_API Condition::PlanetType : public Condition::ConditionBase {
+struct FO_COMMON_API PlanetType : public ConditionBase {
     PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types) :
         ConditionBase(),
         m_types(types)
     {}
     virtual ~PlanetType();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -968,7 +907,7 @@ struct FO_COMMON_API Condition::PlanetType : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
     void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -985,16 +924,16 @@ private:
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct FO_COMMON_API Condition::PlanetSize : public Condition::ConditionBase {
+struct FO_COMMON_API PlanetSize : public ConditionBase {
     PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
         ConditionBase(),
         m_sizes(sizes)
     {}
     virtual ~PlanetSize();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1003,7 +942,7 @@ struct FO_COMMON_API Condition::PlanetSize : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
     void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1020,7 +959,7 @@ private:
 /** Matches all Planet objects that have one of the PlanetEnvironments in
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
-struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionBase {
+struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
     PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
                       ValueRef::ValueRefBase<std::string>* species_name_ref = 0) :
         ConditionBase(),
@@ -1028,10 +967,10 @@ struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionB
         m_species_name(species_name_ref)
     {}
     virtual ~PlanetEnvironment();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1040,7 +979,7 @@ struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionB
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
     void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          Condition::ObjectSet& condition_non_targets) const;
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1058,7 +997,7 @@ private:
 /** Matches all planets or ships that have one of the species in \a species.
   * Note that all Building object which are on matching planets are also
   * matched. */
-struct FO_COMMON_API Condition::Species : public Condition::ConditionBase {
+struct FO_COMMON_API Species : public ConditionBase {
     Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
@@ -1068,10 +1007,10 @@ struct FO_COMMON_API Condition::Species : public Condition::ConditionBase {
         m_names()
     {}
     virtual ~Species();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1094,7 +1033,7 @@ private:
 
 /** Matches planets where the indicated number of the indicated building type
   * or ship design are enqueued on the production queue. */
-struct FO_COMMON_API Condition::Enqueued : public Condition::ConditionBase {
+struct FO_COMMON_API Enqueued : public ConditionBase {
     Enqueued(BuildType build_type,
              ValueRef::ValueRefBase<std::string>* name,
              ValueRef::ValueRefBase<int>* empire_id = 0,
@@ -1130,10 +1069,10 @@ struct FO_COMMON_API Condition::Enqueued : public Condition::ConditionBase {
         m_high(0)
     {}
     virtual ~Enqueued();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1165,16 +1104,16 @@ private:
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
-struct FO_COMMON_API Condition::FocusType : public Condition::ConditionBase {
+struct FO_COMMON_API FocusType : public ConditionBase {
     FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
     virtual ~FocusType();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1197,16 +1136,16 @@ private:
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
-struct FO_COMMON_API Condition::StarType : public Condition::ConditionBase {
+struct FO_COMMON_API StarType : public ConditionBase {
     StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types) :
         ConditionBase(),
         m_types(types)
     {}
     virtual ~StarType();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1228,16 +1167,16 @@ private:
 };
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
-struct FO_COMMON_API Condition::DesignHasHull : public Condition::ConditionBase {
+struct FO_COMMON_API DesignHasHull : public ConditionBase {
     explicit DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
     virtual ~DesignHasHull();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1261,7 +1200,7 @@ private:
 
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
-struct FO_COMMON_API Condition::DesignHasPart : public Condition::ConditionBase {
+struct FO_COMMON_API DesignHasPart : public ConditionBase {
     DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low = 0,
                   ValueRef::ValueRefBase<int>* high = 0) :
         ConditionBase(),
@@ -1270,10 +1209,10 @@ struct FO_COMMON_API Condition::DesignHasPart : public Condition::ConditionBase 
         m_name(name)
     {}
     virtual ~DesignHasPart();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1300,7 +1239,7 @@ private:
 
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
   * the specified \a part_class */
-struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::ConditionBase {
+struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
     DesignHasPartClass(ShipPartClass part_class, ValueRef::ValueRefBase<int>* low,
                        ValueRef::ValueRefBase<int>* high) :
         ConditionBase(),
@@ -1309,10 +1248,10 @@ struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::Condition
         m_class(part_class)
     {}
     virtual ~DesignHasPartClass();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1339,16 +1278,16 @@ private:
 
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
-struct FO_COMMON_API Condition::PredefinedShipDesign : public Condition::ConditionBase {
+struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
     explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
     virtual ~PredefinedShipDesign();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1371,16 +1310,16 @@ private:
 };
 
 /** Matches ships whose design id \a id. */
-struct FO_COMMON_API Condition::NumberedShipDesign : public Condition::ConditionBase {
+struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
     NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id) :
         ConditionBase(),
         m_design_id(design_id)
     {}
     virtual ~NumberedShipDesign();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1402,16 +1341,16 @@ private:
 };
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
-struct FO_COMMON_API Condition::ProducedByEmpire : public Condition::ConditionBase {
+struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
     ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~ProducedByEmpire();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1433,16 +1372,16 @@ private:
 };
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
-struct FO_COMMON_API Condition::Chance : public Condition::ConditionBase {
+struct FO_COMMON_API Chance : public ConditionBase {
     Chance(ValueRef::ValueRefBase<double>* chance) :
         ConditionBase(),
         m_chance(chance)
     {}
     virtual ~Chance();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1465,7 +1404,7 @@ private:
 
 /** Matches all objects that have a meter of type \a meter, and whose current
   * value is >= \a low and <= \a high. */
-struct FO_COMMON_API Condition::MeterValue : public Condition::ConditionBase {
+struct FO_COMMON_API MeterValue : public ConditionBase {
     MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
                ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
@@ -1474,10 +1413,10 @@ struct FO_COMMON_API Condition::MeterValue : public Condition::ConditionBase {
         m_high(high)
     {}
     virtual ~MeterValue();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1504,7 +1443,7 @@ private:
 
 /** Matches ships that have a ship part meter of type \a meter for part \a part
   * whose current value is >= low and <= high. */
-struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::ConditionBase {
+struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
     ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
                        MeterType meter,
                        ValueRef::ValueRefBase<double>* low,
@@ -1516,10 +1455,10 @@ struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::Condition
         m_high(high)
     {}
     virtual ~ShipPartMeterValue();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1544,7 +1483,7 @@ private:
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
   * \a meter whose current value is >= \a low and <= \a high. */
-struct FO_COMMON_API Condition::EmpireMeterValue : public Condition::ConditionBase {
+struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
     EmpireMeterValue(const std::string& meter,
                      ValueRef::ValueRefBase<double>* low,
                      ValueRef::ValueRefBase<double>* high) :
@@ -1565,10 +1504,10 @@ struct FO_COMMON_API Condition::EmpireMeterValue : public Condition::ConditionBa
         m_high(high)
     {}
     virtual ~EmpireMeterValue();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1593,7 +1532,7 @@ private:
 
 /** Matches all objects whose owner's stockpile of \a stockpile is between
   * \a low and \a high, inclusive. */
-struct FO_COMMON_API Condition::EmpireStockpileValue : public Condition::ConditionBase {
+struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
     EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
                          ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
@@ -1602,10 +1541,10 @@ struct FO_COMMON_API Condition::EmpireStockpileValue : public Condition::Conditi
         m_high(high)
     {}
     virtual ~EmpireStockpileValue();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1631,16 +1570,16 @@ private:
 };
 
 /** Matches all objects whose owner who has tech \a name. */
-struct FO_COMMON_API Condition::OwnerHasTech : public Condition::ConditionBase {
+struct FO_COMMON_API OwnerHasTech : public ConditionBase {
     explicit OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
     virtual ~OwnerHasTech();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1663,17 +1602,17 @@ private:
 };
 
 /** Matches all objects whose owner who has the building type \a name available. */
-struct FO_COMMON_API Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBase {
+struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
     explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
     virtual ~OwnerHasBuildingTypeAvailable();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1696,17 +1635,17 @@ private:
 };
 
 /** Matches all objects whose owner who has the ship design \a id available. */
-struct FO_COMMON_API Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase {
+struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
     explicit OwnerHasShipDesignAvailable(int id);
     explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
         ConditionBase(),
         m_id(id)
     {}
     virtual ~OwnerHasShipDesignAvailable();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1729,16 +1668,16 @@ private:
 };
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
-struct FO_COMMON_API Condition::VisibleToEmpire : public Condition::ConditionBase {
+struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
     explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~VisibleToEmpire();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1763,17 +1702,17 @@ private:
   * object that meets \a condition.  Warning: this Condition can slow things
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
-struct FO_COMMON_API Condition::WithinDistance : public Condition::ConditionBase {
+struct FO_COMMON_API WithinDistance : public ConditionBase {
     WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition) :
         ConditionBase(),
         m_distance(distance),
         m_condition(condition)
     {}
     virtual ~WithinDistance();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1798,17 +1737,17 @@ private:
   * object that meets \a condition.  Warning: this Condition can slow things
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
-struct FO_COMMON_API Condition::WithinStarlaneJumps : public Condition::ConditionBase {
+struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
     WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition) :
         ConditionBase(),
         m_jumps(jumps),
         m_condition(condition)
     {}
     virtual ~WithinStarlaneJumps();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1835,16 +1774,16 @@ private:
   * that a lane would be geometrically acceptable, meaning it wouldn't cross
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
-struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
+struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
     explicit CanAddStarlaneConnection(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
     virtual ~CanAddStarlaneConnection();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1866,16 +1805,16 @@ private:
 
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
-struct FO_COMMON_API Condition::ExploredByEmpire : public Condition::ConditionBase {
+struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
     explicit ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~ExploredByEmpire();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1897,9 +1836,9 @@ private:
 
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
-struct FO_COMMON_API Condition::Stationary : public Condition::ConditionBase {
+struct FO_COMMON_API Stationary : public ConditionBase {
     explicit Stationary() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -1918,16 +1857,16 @@ private:
 
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
-struct FO_COMMON_API Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
+struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
     explicit FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~FleetSupplyableByEmpire();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1950,17 +1889,17 @@ private:
 /** Matches objects that are in systems that are connected by resource-sharing
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
-struct FO_COMMON_API Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionBase {
+struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
     ResourceSupplyConnectedByEmpire(ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition) :
         ConditionBase(),
         m_empire_id(empire_id),
         m_condition(condition)
     {}
     virtual ~ResourceSupplyConnectedByEmpire();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1982,9 +1921,9 @@ private:
 };
 
 /** Matches objects whose species has the ability to found new colonies. */
-struct FO_COMMON_API Condition::CanColonize : public Condition::ConditionBase {
+struct FO_COMMON_API CanColonize : public ConditionBase {
     explicit CanColonize() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -2002,9 +1941,9 @@ private:
 };
 
 /** Matches objects whose species has the ability to produce ships. */
-struct FO_COMMON_API Condition::CanProduceShips : public Condition::ConditionBase {
+struct FO_COMMON_API CanProduceShips : public ConditionBase {
     CanProduceShips() : ConditionBase() {}
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual bool        operator==(const ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
@@ -2023,16 +1962,16 @@ private:
 
 /** Matches the objects that have been targeted for bombardment by at least one
   * object that matches \a m_by_object_condition. */
-struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBase {
+struct FO_COMMON_API OrderedBombarded : public ConditionBase {
     OrderedBombarded(ConditionBase* by_object_condition) :
         ConditionBase(),
         m_by_object_condition(by_object_condition)
     {}
     virtual ~OrderedBombarded();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2054,7 +1993,7 @@ private:
 
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
-struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
+struct FO_COMMON_API ValueTest : public ConditionBase {
     ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
               ComparisonType comp1,
               ValueRef::ValueRefBase<double>* value_ref2,
@@ -2068,10 +2007,10 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
         m_compare_type2(comp2)
     {}
     virtual ~ValueTest();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2102,7 +2041,7 @@ private:
 
 /** Matches objects that match the location condition of the specified
   * content.  */
-struct FO_COMMON_API Condition::Location : public Condition::ConditionBase {
+struct FO_COMMON_API Location : public ConditionBase {
 public:
     Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
              ValueRef::ValueRefBase<std::string>* name2 = 0) :
@@ -2112,10 +2051,10 @@ public:
         m_content_type(content_type)
     {}
     virtual ~Location();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2140,16 +2079,16 @@ private:
 };
 
 /** Matches all objects that match every Condition in \a operands. */
-struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
+struct FO_COMMON_API And : public ConditionBase {
     And(const std::vector<ConditionBase*>& operands) :
         ConditionBase(),
         m_operands(operands)
     {}
     virtual ~And();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2158,7 +2097,7 @@ struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const std::vector<ConditionBase*>&
                         Operands() const { return m_operands; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -2171,16 +2110,16 @@ private:
 };
 
 /** Matches all objects that match at least one Condition in \a operands. */
-struct FO_COMMON_API Condition::Or : public Condition::ConditionBase {
+struct FO_COMMON_API Or : public ConditionBase {
     Or(const std::vector<ConditionBase*>& operands) :
         ConditionBase(),
         m_operands(operands)
     {}
     virtual ~Or();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2201,16 +2140,16 @@ private:
 };
 
 /** Matches all objects that do not match the Condition \a operand. */
-struct FO_COMMON_API Condition::Not : public Condition::ConditionBase {
+struct FO_COMMON_API Not : public ConditionBase {
     Not(ConditionBase* operand) :
         ConditionBase(),
         m_operand(operand)
     {}
     virtual ~Not();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2231,17 +2170,17 @@ private:
 
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
-struct FO_COMMON_API Condition::Described : public Condition::ConditionBase {
+struct FO_COMMON_API Described : public ConditionBase {
     Described(ConditionBase* condition, const std::string& desc_stringtable_key) :
         ConditionBase(),
         m_condition(condition),
         m_desc_stringtable_key(desc_stringtable_key)
     {}
     virtual ~Described();
-    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -2264,11 +2203,11 @@ private:
 
 // template implementations
 template <class Archive>
-void Condition::ConditionBase::serialize(Archive& ar, const unsigned int version)
+void ConditionBase::serialize(Archive& ar, const unsigned int version)
 {}
 
 template <class Archive>
-void Condition::Number::serialize(Archive& ar, const unsigned int version)
+void Number::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_low)
@@ -2277,7 +2216,7 @@ void Condition::Number::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::Turn::serialize(Archive& ar, const unsigned int version)
+void Turn::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_low)
@@ -2285,7 +2224,7 @@ void Condition::Turn::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int version)
+void SortedNumberOf::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_number)
@@ -2295,15 +2234,15 @@ void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int versio
 }
 
 template <class Archive>
-void Condition::All::serialize(Archive& ar, const unsigned int version)
+void All::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::None::serialize(Archive& ar, const unsigned int version)
+void None::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
+void EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
@@ -2311,52 +2250,52 @@ void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int ver
 }
 
 template <class Archive>
-void Condition::Source::serialize(Archive& ar, const unsigned int version)
+void Source::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::RootCandidate::serialize(Archive& ar, const unsigned int version)
+void RootCandidate::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::Target::serialize(Archive& ar, const unsigned int version)
+void Target::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
+void Homeworld::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
-void Condition::Capital::serialize(Archive& ar, const unsigned int version)
+void Capital::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::Monster::serialize(Archive& ar, const unsigned int version)
+void Monster::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::Armed::serialize(Archive& ar, const unsigned int version)
+void Armed::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
-void Condition::Type::serialize(Archive& ar, const unsigned int version)
+void Type::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
 template <class Archive>
-void Condition::Building::serialize(Archive& ar, const unsigned int version)
+void Building::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
-void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
+void HasSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name)
@@ -2367,14 +2306,14 @@ void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::HasTag::serialize(Archive& ar, const unsigned int version)
+void HasTag::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
-void Condition::CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
+void CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_low)
@@ -2382,49 +2321,49 @@ void Condition::CreatedOnTurn::serialize(Archive& ar, const unsigned int version
 }
 
 template <class Archive>
-void Condition::Contains::serialize(Archive& ar, const unsigned int version)
+void Contains::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>
-void Condition::ContainedBy::serialize(Archive& ar, const unsigned int version)
+void ContainedBy::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>
-void Condition::InSystem::serialize(Archive& ar, const unsigned int version)
+void InSystem::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_system_id);
 }
 
 template <class Archive>
-void Condition::ObjectID::serialize(Archive& ar, const unsigned int version)
+void ObjectID::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
 template <class Archive>
-void Condition::PlanetType::serialize(Archive& ar, const unsigned int version)
+void PlanetType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_types);
 }
 
 template <class Archive>
-void Condition::PlanetSize::serialize(Archive& ar, const unsigned int version)
+void PlanetSize::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_sizes);
 }
 
 template <class Archive>
-void Condition::PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
+void PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_environments)
@@ -2432,14 +2371,14 @@ void Condition::PlanetEnvironment::serialize(Archive& ar, const unsigned int ver
 }
 
 template <class Archive>
-void Condition::Species::serialize(Archive& ar, const unsigned int version)
+void Species::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
-void Condition::Enqueued::serialize(Archive& ar, const unsigned int version)
+void Enqueued::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_build_type)
@@ -2451,28 +2390,28 @@ void Condition::Enqueued::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::FocusType::serialize(Archive& ar, const unsigned int version)
+void FocusType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
-void Condition::StarType::serialize(Archive& ar, const unsigned int version)
+void StarType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_types);
 }
 
 template <class Archive>
-void Condition::DesignHasHull::serialize(Archive& ar, const unsigned int version)
+void DesignHasHull::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
-void Condition::DesignHasPart::serialize(Archive& ar, const unsigned int version)
+void DesignHasPart::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_low)
@@ -2481,7 +2420,7 @@ void Condition::DesignHasPart::serialize(Archive& ar, const unsigned int version
 }
 
 template <class Archive>
-void Condition::DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
+void DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_low)
@@ -2490,35 +2429,35 @@ void Condition::DesignHasPartClass::serialize(Archive& ar, const unsigned int ve
 }
 
 template <class Archive>
-void Condition::PredefinedShipDesign::serialize(Archive& ar, const unsigned int version)
+void PredefinedShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
-void Condition::NumberedShipDesign::serialize(Archive& ar, const unsigned int version)
+void NumberedShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_design_id);
 }
 
 template <class Archive>
-void Condition::ProducedByEmpire::serialize(Archive& ar, const unsigned int version)
+void ProducedByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
-void Condition::Chance::serialize(Archive& ar, const unsigned int version)
+void Chance::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_chance);
 }
 
 template <class Archive>
-void Condition::MeterValue::serialize(Archive& ar, const unsigned int version)
+void MeterValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_meter)
@@ -2527,7 +2466,7 @@ void Condition::MeterValue::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
+void EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_low)
@@ -2535,35 +2474,35 @@ void Condition::EmpireStockpileValue::serialize(Archive& ar, const unsigned int 
 }
 
 template <class Archive>
-void Condition::OwnerHasTech::serialize(Archive& ar, const unsigned int version)
+void OwnerHasTech::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
-void Condition::OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int version)
+void OwnerHasBuildingTypeAvailable::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
-void Condition::OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int version)
+void OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_id);
 }
 
 template <class Archive>
-void Condition::VisibleToEmpire::serialize(Archive& ar, const unsigned int version)
+void VisibleToEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
-void Condition::WithinDistance::serialize(Archive& ar, const unsigned int version)
+void WithinDistance::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_distance)
@@ -2571,7 +2510,7 @@ void Condition::WithinDistance::serialize(Archive& ar, const unsigned int versio
 }
 
 template <class Archive>
-void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
+void WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_jumps)
@@ -2579,34 +2518,34 @@ void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int v
 }
 
 template <class Archive>
-void Condition::CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
+void CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>
-void Condition::ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
+void ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
-void Condition::Stationary::serialize(Archive& ar, const unsigned int version)
+void Stationary::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
 
 template <class Archive>
-void Condition::FleetSupplyableByEmpire::serialize(Archive& ar, const unsigned int version)
+void FleetSupplyableByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>
-void Condition::ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int version)
+void ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
@@ -2614,26 +2553,26 @@ void Condition::ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const un
 }
 
 template <class Archive>
-void Condition::CanColonize::serialize(Archive& ar, const unsigned int version)
+void CanColonize::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
 
 template <class Archive>
-void Condition::CanProduceShips::serialize(Archive& ar, const unsigned int version)
+void CanProduceShips::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
 
 template <class Archive>
-void Condition::OrderedBombarded::serialize(Archive& ar, const unsigned int version)
+void OrderedBombarded::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_by_object_condition);
 }
 
 template <class Archive>
-void Condition::ValueTest::serialize(Archive& ar, const unsigned int version)
+void ValueTest::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_value_ref1)
@@ -2644,7 +2583,7 @@ void Condition::ValueTest::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::Location::serialize(Archive& ar, const unsigned int version)
+void Location::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name1)
@@ -2653,32 +2592,33 @@ void Condition::Location::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::And::serialize(Archive& ar, const unsigned int version)
+void And::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class Archive>
-void Condition::Or::serialize(Archive& ar, const unsigned int version)
+void Or::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class Archive>
-void Condition::Not::serialize(Archive& ar, const unsigned int version)
+void Not::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_operand);
 }
 
 template <class Archive>
-void Condition::Described::serialize(Archive& ar, const unsigned int version)
+void Described::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition)
         & BOOST_SERIALIZATION_NVP(m_desc_stringtable_key);
 }
+} // namespace Condition
 
 #endif // _Condition_h_
