@@ -1477,6 +1477,8 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+    if (MatchesOrContains(this, destination))
+        return;
     if (wnds.empty())
         return;
     if (wnds.size() != 1)
@@ -1564,13 +1566,13 @@ void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
         ErrorLogger() << "BasesListBox::AcceptDrops given multiple wnds unexpectedly...";
     }
 
-    const GG::Wnd* wnd = *(wnds.begin());
+    GG::Wnd* wnd = *(wnds.begin());
     if (!wnd)
         return;
 
     if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-        const BasesListBox::CompletedDesignListBoxRow* control =
-            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+        BasesListBox::CompletedDesignListBoxRow* control =
+            boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(wnd);
         Empire* empire = GetEmpire(m_empire_id_shown);
         if (control && empire) {
             int design_id = control->DesignID();
@@ -1583,11 +1585,15 @@ void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
 
             DebugLogger() << "Accepted Drop of id " << design_id << " before " << insert_before_id;
 
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
+            if (design_id != insert_before_id)
+                Insert(control, insert_before_row);
+                control->Resize(ListRowSize());
+                HumanClientApp::GetApp()->Orders()
+                    .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
         }
+    } else {
+        delete wnd;
     }
-
-    delete wnd;
 }
 
 void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {

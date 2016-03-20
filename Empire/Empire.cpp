@@ -2640,6 +2640,8 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
      * valid, so this just adds this design's id to those that this empire will
      * retain as one of it's ship designs, which are those displayed in the GUI
      * list of available designs for human players, and */
+    if (ship_design_id == next_design_id)
+        return;
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
