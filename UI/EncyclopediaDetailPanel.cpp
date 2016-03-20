@@ -560,8 +560,10 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
-EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
-{ delete m_graph; }
+EncyclopediaDetailPanel::~EncyclopediaDetailPanel() {
+    if (m_graph && m_graph->Parent() != this)
+    delete m_graph;
+}
 
 void EncyclopediaDetailPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
