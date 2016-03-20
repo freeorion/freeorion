@@ -2978,7 +2978,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     }
 
     m_complete_design_id = ship_design->ID();
-    m_replaced_design_id = ship_design->ID();
+    m_replaced_design_id = ship_design->IsMonster() ? ShipDesign::INVALID_DESIGN_ID : ship_design->ID();
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -2998,6 +2998,7 @@ void DesignWnd::MainPanel::SetDesign(int design_id)
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::vector<std::string>& parts)
 {
+    m_replaced_design_id = ShipDesign::INVALID_DESIGN_ID;
     SetHull(hull);
     SetParts(parts);
 }
@@ -3007,8 +3008,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::string& name,
                                                const std::string& desc)
 {
-    SetHull(hull);
-    SetParts(parts);
+    SetDesignComponents(hull, parts);
     m_design_name->SetText(name);
     m_design_description->SetText(desc);
 }
