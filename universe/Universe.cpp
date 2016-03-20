@@ -1615,7 +1615,7 @@ namespace {
     private:
         // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
         boost::shared_ptr<Effect::EffectsGroup>                 m_effects_group;
-        const std::vector< TemporaryPtr<const UniverseObject> >*m_sources;
+        const std::vector<TemporaryPtr<const UniverseObject> >* m_sources;
         EffectsCauseType                                        m_effect_cause_type;
         const std::string                                       m_specific_cause_name;
         Effect::TargetSet*                                      m_target_objects;
@@ -1733,14 +1733,14 @@ namespace {
 
         Effect::TargetSet* target_set = &cache_entry->second;
         Condition::ObjectSet& matched_target_objects =
-            *reinterpret_cast<Condition::ObjectSet *>(target_set);
+            *reinterpret_cast<Condition::ObjectSet*>(target_set);
         if (target_objects.empty()) {
             // move matches from default target candidates into target_set
             cond->Eval(source_context, matched_target_objects);
         } else {
             // move matches from candidates in target_objects into target_set
             Condition::ObjectSet& potential_target_objects =
-                *reinterpret_cast<Condition::ObjectSet *>(&target_objects);
+                *reinterpret_cast<Condition::ObjectSet*>(&target_objects);
 
             // move matches from candidates in target_objects into target_set
             cond->Eval(source_context, matched_target_objects, potential_target_objects);
