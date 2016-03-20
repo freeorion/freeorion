@@ -2930,7 +2930,7 @@ void Empire::CheckProductionProgress() {
 
         // consume the item's special and meter consumption
         std::map<std::string, std::map<int, float> > sc = elem.item.CompletionSpecialConsumption(elem.location);
-        for (std::map<std::string, std::map<int, float>>::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
+        for (std::map<std::string, std::map<int, float> >::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
             for (std::map<int, float>::iterator it = sc_it->second.begin(); it != sc_it->second.end(); ++it) {
                 TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
                 if (!obj)
@@ -2944,7 +2944,7 @@ void Empire::CheckProductionProgress() {
         }
 
         std::map<MeterType, std::map<int, float> > mc = elem.item.CompletionMeterconsumption(elem.location);
-        for (std::map<MeterType, std::map<int, float>>::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
+        for (std::map<MeterType, std::map<int, float> >::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
             for (std::map<int, float>::iterator it = mc_it->second.begin(); it != mc_it->second.end(); ++it) {
                 TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
                 if (!obj)
