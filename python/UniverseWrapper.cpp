@@ -509,7 +509,6 @@ namespace FreeOrionPython {
             .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
             .add_property("partClass",          &PartType::Class)
             .add_property("capacity",           &PartType::Capacity)
-            .add_property("secondaryStat",      &PartType::SecondaryStat)
             .add_property("mountableSlotTypes", make_function(&PartType::MountableSlotTypes,return_value_policy<return_by_value>()))
             .def("productionCost",              &PartType::ProductionCost)
             .def("productionTime",              &PartType::ProductionTime)

@@ -1420,7 +1420,6 @@ public:
 
     //! \name Mutators //@{
     void    Reset();
-    void    Update();
 
     void    ShowCategory(const std::string& category);
     void    ShowAllCategories();
@@ -1442,7 +1441,6 @@ private:
         const std::string&          GetTech() { return m_tech; }
         virtual void                Render();
         static std::vector<GG::X>   ColWidths(GG::X total_width);
-        void                        Update();
 
     private:
         std::string m_tech;
@@ -1528,20 +1526,6 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     push_back(text);
 }
 
-void TechTreeWnd::TechListBox::TechRow::Update() {
-    const Tech* this_row_tech = ::GetTech(m_tech);
-    if (!this || !this_row_tech || this->size() < 4)
-        return;
-
-    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((*this)[2]))
-        tc->SetText(cost_str);
-
-    std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((*this)[3]))
-        tc->SetText(time_str);
-}
-
 TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     CUIListBox()
 {
@@ -1588,16 +1572,6 @@ std::set<TechStatus> TechTreeWnd::TechListBox::GetTechStatusesShown() const
 
 void TechTreeWnd::TechListBox::Reset()
 { Populate(); }
-
-void TechTreeWnd::TechListBox::Update() {
-    for (std::multimap<std::string, TechRow*>::iterator it = m_all_tech_rows.begin();
-         it != m_all_tech_rows.end(); ++it)
-    {
-        TechRow* tech_row = it->second;
-        if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown))
-            tech_row->Update();
-    }
-}
 
 void TechTreeWnd::TechListBox::Populate() {
     // abort of not visible to see results
@@ -1833,10 +1807,7 @@ std::set<TechStatus> TechTreeWnd::GetTechStatusesShown() const
 { return m_layout_panel->GetTechStatusesShown(); }
 
 void TechTreeWnd::Update()
-{
-    m_layout_panel->Update();
-    m_tech_list->Update();
-}
+{ m_layout_panel->Update(); }
 
 void TechTreeWnd::Clear() {
     m_enc_detail_panel->OnIndex();
