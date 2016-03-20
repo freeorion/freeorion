@@ -9821,6 +9821,16 @@ Hangar 4
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
+FT_KRILL
+Krill Swarm
+FT_KRILL_DESC
+Krill Swarm.
+
+FT_BAY_KRILL
+Krill Swarm
+FT_BAY_KRILL_DESC
+When Krill swarms are big enough, single Krills leave the swarm to attack ships the swarm encounters.
+
 SR_WEAPON_0_1
 Flak Cannon
 SR_WEAPON_0_1_DESC
@@ -9851,6 +9861,32 @@ Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
+
+SR_TEETH
+Teeth
+SR_TEETH_DESC
+Teeth of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
+
+SR_CLAWS
+Claws
+SR_CLAWS_DESC
+Claws of a space monster, a powerfull strike of the space monster can deal big damage to a ship.
+
+SR_TENTACLE
+Tentacle
+SR_TENTACLE_DESC
+Tentacle of a Kraken, can damage ships.
+
+SR_FLAME_THROWER
+Flame Thrower
+SR_FLAME_THROWER_DESC
+Flame thrower of a space monster, capable of melting most armor.
+
+SR_SNOWFLAKE_LASER
+Laser
+
+SR_SNOWFLAKE_LASER_DESC
+Large Lasers, integrated into the body of a space monster.
 
 SR_ION_CANNON
 Ion Cannon
