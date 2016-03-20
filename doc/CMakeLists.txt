@@ -49,7 +49,7 @@ if(DOXYGEN_FOUND)
             COMMAND
                 ${CMAKE_COMMAND} -E copy_directory ${FreeOrion_CPP_APIDOC_OUTDIR}/html ${FreeOrion_APIDOC_GIT_LOCAL}/${FreeOrion_CPP_APIDOC_PATH}
             COMMAND
-                ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE} add ${FreeOrion_CPP_APIDOC_PATH}
+                ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE} add -A ${FreeOrion_CPP_APIDOC_PATH}
             COMMAND
                 ${CMAKE_COMMAND} -E chdir ${FreeOrion_APIDOC_GIT_LOCAL} ${GIT_EXECUTABLE} commit -F ${CMAKE_CURRENT_SOURCE_DIR}/apidoc-commit-message
             COMMAND
