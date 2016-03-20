@@ -1194,7 +1194,7 @@ public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    BasesListBox(void);
+    BasesListBox(const std::string& drop_type = "");
     //@}
 
     /** \name Accessors */ //@{
@@ -1204,7 +1204,7 @@ public:
     /** \name Mutators */ //@{
     virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void                    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void                    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
+    void                            QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -1289,8 +1289,6 @@ public:
 
 protected:
     virtual void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    virtual void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                 const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1446,8 +1444,8 @@ bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-BasesListBox::BasesListBox() :
-    QueueListBox(COMPLETE_DESIGN_ROW_DROP_STRING,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
+BasesListBox::BasesListBox(const std::string& drop_type) :
+    QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
@@ -1461,6 +1459,7 @@ BasesListBox::BasesListBox() :
 
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
+    GG::Connect(QueueItemMovedSignal,   &BasesListBox::QueueItemMoved,      this);
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
@@ -1538,61 +1537,28 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     DetachChild(wnds.front());
 }
 
+void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
+    BasesListBox::CompletedDesignListBoxRow* control =
+        boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(row);
+    Empire* empire = GetEmpire(m_empire_id_shown);
+    if (control != NULL && empire != NULL) {
+        int design_id = control->DesignID();
 
-void BasesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
+        iterator insert_before_row = begin();
+        for(std::size_t ii = 0; ii < position; ++ii)
+            insert_before_row++;
+        const BasesListBox::CompletedDesignListBoxRow* insert_before_control =
+            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
+        int insert_before_id = (insert_before_row == end() || !insert_before_control)
+            ? ShipDesign::INVALID_DESIGN_ID : insert_before_control->DesignID();
 
-    if (std::distance(first, last) != 1) {
-        ErrorLogger() << "SavedDesignPanel::DropsAcceptable expects a single dropped item.";
-        return;
-    }
+        DebugLogger() << "Accepted Drop of id " << design_id << " before " << insert_before_id;
 
-    if (m_showing_completed_designs && first->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING)
-        first->second = true;
-}
-
-void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (wnds.empty()) return;
-
-    if (wnds.size() != 1) {
-        // delete any extra wnds that won't be processed below
-        std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
-        ++it;
-        for (; it != wnds.end(); ++it)
-            delete *it;
-        ErrorLogger() << "BasesListBox::AcceptDrops given multiple wnds unexpectedly...";
-    }
-
-    GG::Wnd* wnd = *(wnds.begin());
-    if (!wnd)
-        return;
-
-    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-        BasesListBox::CompletedDesignListBoxRow* control =
-            boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(wnd);
-        Empire* empire = GetEmpire(m_empire_id_shown);
-        if (control && empire) {
-            int design_id = control->DesignID();
-
-            iterator insert_before_row = RowUnderPt(pt);
-            const BasesListBox::CompletedDesignListBoxRow* insert_before_control =
-                boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
-            int insert_before_id = (insert_before_row == end() || !insert_before_control)
-                ? ShipDesign::INVALID_DESIGN_ID : insert_before_control->DesignID();
-
-            DebugLogger() << "Accepted Drop of id " << design_id << " before " << insert_before_id;
-
-            if (design_id != insert_before_id)
-                Insert(control, insert_before_row);
-                control->Resize(ListRowSize());
-                HumanClientApp::GetApp()->Orders()
-                    .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
-        }
-    } else {
-        delete wnd;
+        if (design_id != insert_before_id)
+            Insert(control, insert_before_row);
+        control->Resize(ListRowSize());
+        HumanClientApp::GetApp()->Orders()
+            .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
     }
 }
 
@@ -2132,7 +2098,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     GG::Connect(m_hulls_list->HullClickedSignal,                DesignWnd::BaseSelector::HullClickedSignal);
 
-    m_designs_list = new BasesListBox();
+    m_designs_list = new BasesListBox(COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
