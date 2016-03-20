@@ -626,8 +626,8 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
     return false;
 }
 
-std::map<std::string, float> ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
-    std::map<std::string, float> retval;
+std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
+    std::map<std::string, std::map<int, float> > retval;
 
     switch (build_type) {
     case BT_BUILDING: {
@@ -635,13 +635,13 @@ std::map<std::string, float> ProductionQueue::ProductionItem::CompletionSpecialC
             TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
-            const std::map<std::string, ValueRef::ValueRefBase<double>*>& psc = bt->ProductionSpecialConsumption();
-            for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator it = psc.begin();
+            const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >& psc = bt->ProductionSpecialConsumption();
+            for (std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = psc.begin();
                  it != psc.end(); ++it)
             {
-                if (!it->second)
+                if (!it->second.first)
                     continue;
-                retval[it->first] += it->second->Eval(context);
+                retval[it->first][location_id] += it->second.first->Eval(context);
             }
         }
         break;
@@ -652,13 +652,13 @@ std::map<std::string, float> ProductionQueue::ProductionItem::CompletionSpecialC
             ScriptingContext context(obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
-                const std::map<std::string, ValueRef::ValueRefBase<double>*> psc = ht->ProductionSpecialConsumption();
-                for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator it = psc.begin();
+                const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > psc = ht->ProductionSpecialConsumption();
+                for (std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = psc.begin();
                     it != psc.end(); ++it)
                 {
-                    if (!it->second)
+                    if (!it->second.first)
                         continue;
-                    retval[it->first] += it->second->Eval(context);
+                    retval[it->first][location_id] += it->second.first->Eval(context);
                 }
             }
 
@@ -667,13 +667,13 @@ std::map<std::string, float> ProductionQueue::ProductionItem::CompletionSpecialC
                 const PartType* pt = GetPartType(*it);
                 if (!pt)
                     continue;
-                const std::map<std::string, ValueRef::ValueRefBase<double>*> psc = pt->ProductionSpecialConsumption();
-                for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator it = psc.begin();
+                const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > psc = pt->ProductionSpecialConsumption();
+                for (std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = psc.begin();
                     it != psc.end(); ++it)
                 {
-                    if (!it->second)
+                    if (!it->second.first)
                         continue;
-                    retval[it->first] += it->second->Eval(context);
+                    retval[it->first][location_id] += it->second.first->Eval(context);
                 }
             }
         }
@@ -687,8 +687,8 @@ std::map<std::string, float> ProductionQueue::ProductionItem::CompletionSpecialC
     return retval;
 }
 
-std::map<MeterType, float> ProductionQueue::ProductionItem::CompletionMeterconsumption(int location_id) const {
-    std::map<MeterType, float> retval;
+std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::CompletionMeterconsumption(int location_id) const {
+    std::map<MeterType, std::map<int, float> > retval;
 
     switch (build_type) {
     case BT_BUILDING: {
@@ -696,13 +696,13 @@ std::map<MeterType, float> ProductionQueue::ProductionItem::CompletionMeterconsu
             TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
-            const std::map<MeterType, ValueRef::ValueRefBase<double>*>& pmc = bt->ProductionMeterConsumption();
-            for (std::map<MeterType, ValueRef::ValueRefBase<double>*>::const_iterator it = pmc.begin();
+            const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >& pmc = bt->ProductionMeterConsumption();
+            for (std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = pmc.begin();
                  it != pmc.end(); ++it)
             {
-                if (!it->second)
+                if (!it->second.first)
                     continue;
-                retval[it->first] = it->second->Eval(context);
+                retval[it->first][location_id] = it->second.first->Eval(context);
             }
         }
         break;
@@ -713,13 +713,13 @@ std::map<MeterType, float> ProductionQueue::ProductionItem::CompletionMeterconsu
             ScriptingContext context(obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
-                const std::map<MeterType, ValueRef::ValueRefBase<double>*> pmc = ht->ProductionMeterConsumption();
-                for (std::map<MeterType, ValueRef::ValueRefBase<double>*>::const_iterator it = pmc.begin();
+                const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > pmc = ht->ProductionMeterConsumption();
+                for (std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = pmc.begin();
                     it != pmc.end(); ++it)
                 {
-                    if (!it->second)
+                    if (!it->second.first)
                         continue;
-                    retval[it->first] += it->second->Eval(context);
+                    retval[it->first][location_id] += it->second.first->Eval(context);
                 }
             }
 
@@ -728,13 +728,13 @@ std::map<MeterType, float> ProductionQueue::ProductionItem::CompletionMeterconsu
                 const PartType* pt = GetPartType(*it);
                 if (!pt)
                     continue;
-                const std::map<MeterType, ValueRef::ValueRefBase<double>*> pmc = pt->ProductionMeterConsumption();
-                for (std::map<MeterType, ValueRef::ValueRefBase<double>*>::const_iterator it = pmc.begin();
+                const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > pmc = pt->ProductionMeterConsumption();
+                for (std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >::const_iterator it = pmc.begin();
                     it != pmc.end(); ++it)
                 {
-                    if (!it->second)
+                    if (!it->second.first)
                         continue;
-                    retval[it->first] += it->second->Eval(context);
+                    retval[it->first][location_id] += it->second.first->Eval(context);
                 }
             }
         }
@@ -2929,24 +2929,34 @@ void Empire::CheckProductionProgress() {
 
 
         // consume the item's special and meter consumption
-        std::map<std::string, float> sc = elem.item.CompletionSpecialConsumption(elem.location);
-        for (std::map<std::string, float>::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
-            if (!build_location->HasSpecial(sc_it->first))
-                continue;
-            float cur_capacity = build_location->SpecialCapacity(sc_it->first);
-            float new_capacity = std::max(0.0f, cur_capacity - sc_it->second);
-            build_location->SetSpecialCapacity(sc_it->first, new_capacity);
+        std::map<std::string, std::map<int, float> > sc = elem.item.CompletionSpecialConsumption(elem.location);
+        for (std::map<std::string, std::map<int, float>>::iterator sc_it = sc.begin(); sc_it != sc.end(); ++sc_it) {
+            for (std::map<int, float>::iterator it = sc_it->second.begin(); it != sc_it->second.end(); ++it) {
+                TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
+                if (!obj)
+                    continue;
+                if (!obj->HasSpecial(sc_it->first))
+                    continue;
+                float cur_capacity = obj->SpecialCapacity(sc_it->first);
+                float new_capacity = std::max(0.0f, cur_capacity - it->second);
+                obj->SetSpecialCapacity(sc_it->first, new_capacity);
+            }
         }
 
-        std::map<MeterType, float> mc = elem.item.CompletionMeterconsumption(elem.location);
-        for (std::map<MeterType, float>::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
-            Meter* meter = build_location->GetMeter(mc_it->first);
-            if (!meter)
-                continue;
-            float cur_meter = meter->Current();
-            float new_meter = cur_meter - mc_it->second;
-            meter->SetCurrent(new_meter);
-            meter->BackPropegate();
+        std::map<MeterType, std::map<int, float> > mc = elem.item.CompletionMeterconsumption(elem.location);
+        for (std::map<MeterType, std::map<int, float>>::iterator mc_it = mc.begin(); mc_it != mc.end(); ++mc_it) {
+            for (std::map<int, float>::iterator it = mc_it->second.begin(); it != mc_it->second.end(); ++it) {
+                TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
+                if (!obj)
+                    continue;
+                Meter*meter = obj->GetMeter(mc_it->first);
+                if (!meter)
+                    continue;
+                float cur_meter = meter->Current();
+                float new_meter = cur_meter - it->second;
+                meter->SetCurrent(new_meter);
+                meter->BackPropegate();
+            }
         }
 
 

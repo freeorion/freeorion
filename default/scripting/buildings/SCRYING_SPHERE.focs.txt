@@ -26,5 +26,5 @@ BuildingType
                     Not Unowned
                 ]
             ]
-            effects = SetVisibility visibility = Partial empire = Source.Owner
+            effects = SetVisibility visibility = Partial empire = Source.Planet.Owner
     icon = "icons/specials_huge/ancient_ruins_excavated.png"

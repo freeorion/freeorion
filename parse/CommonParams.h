@@ -38,8 +38,8 @@ namespace parse { namespace detail {
             std::set<std::string>,
             Condition::ConditionBase*,
             std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
-            std::map<MeterType, ValueRef::ValueRefBase<double>*>,
-            std::map<std::string, ValueRef::ValueRefBase<double>*>,
+            std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >,
+            std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >,
             Condition::ConditionBase*
         >,
         skipper_type

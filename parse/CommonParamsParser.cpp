@@ -15,6 +15,9 @@ namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     struct rules {
+        typedef std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> val_cond_pair;
+
+
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
@@ -71,31 +74,37 @@ namespace parse { namespace detail {
             consumption
                 =   parse::label(Consumption_token)
                 > (
-                        consumable_meter(_r1)
-                    |   consumable_special(_r2)
+                        consumable_meter(_r1, _r2)
+                    |   consumable_special(_r1, _r2)
                     |(  '['
                         >> *(
-                                consumable_meter(_r1)
-                            |   consumable_special(_r2)
+                                consumable_meter(_r1, _r2)
+                            |   consumable_special(_r1, _r2)
                             )
                         >   ']'
                      )
                   )
             ;
 
-            typedef std::map<std::string, ValueRef::ValueRefBase<double>*>::value_type special_consumable_map_value_type;
+            typedef std::map<std::string, val_cond_pair>::value_type special_consumable_map_value_type;
             consumable_special
                 =   tok.Special_
-                >   parse::label(Name_token)        > tok.string [ _a = _1 ]
-                >   parse::label(Consumption_token) > double_value_ref
-                [ insert(_r1, construct<special_consumable_map_value_type>(_a, _1)) ]
+                > (
+                    parse::label(Name_token)        > tok.string [ _b = _1 ]
+                >   parse::label(Consumption_token) > double_value_ref [ _c = _1 ]
+                > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
+                  )
+                [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
             ;
 
-            typedef std::map<MeterType, ValueRef::ValueRefBase<double>*>::value_type meter_consumable_map_value_type;
+            typedef std::map<MeterType, val_cond_pair>::value_type meter_consumable_map_value_type;
             consumable_meter
-                =   parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                >   parse::label(Consumption_token) > double_value_ref
-                [ insert(_r1, construct<meter_consumable_map_value_type>(_a, _1)) ]
+                = (
+                    parse::non_ship_part_meter_type_enum() [ _a = _1 ]
+                >   parse::label(Consumption_token) > double_value_ref [ _c = _1 ]
+                > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
+                  )
+                [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]
             ;
 
             producible.name("Producible or Unproducible");
@@ -118,36 +127,30 @@ namespace parse { namespace detail {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&,
-                    std::map<std::string, ValueRef::ValueRefBase<double>*>&),
+            void (std::map<MeterType, val_cond_pair>&,
+                  std::map<std::string, val_cond_pair>&),
             parse::skipper_type
         > consumption_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::map<MeterType, ValueRef::ValueRefBase<double>*>&),
+            void (std::map<MeterType, val_cond_pair>&, std::map<std::string, val_cond_pair>&),
             qi::locals<
-                MeterType
+                MeterType,
+                std::string,
+                ValueRef::ValueRefBase<double>*,
+                Condition::ConditionBase*
             >,
             parse::skipper_type
-        > consumable_meter_rule;
+        > consumable_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, ValueRef::ValueRefBase<double>*>&),
-            qi::locals<
-                std::string
-            >,
-            parse::skipper_type
-        > consumable_special_rule;
-
-        producible_rule         producible;
-        location_rule           location;
-        location_rule           enqueue_location;
-        common_params_rule      common;
-        consumption_rule        consumption;
-        consumable_special_rule consumable_special;
-        consumable_meter_rule   consumable_meter;
+        producible_rule     producible;
+        location_rule       location;
+        location_rule       enqueue_location;
+        common_params_rule  common;
+        consumption_rule    consumption;
+        consumable_rule     consumable_special;
+        consumable_rule     consumable_meter;
     };
 
     rules& GetRules() {

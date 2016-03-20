@@ -12,7 +12,7 @@ Part
         Not HasTag name = "NO_ATTACKTROOPS"
         Troops low = 2
     ]
-    consumption = Troops consumption = 2
+    consumption = Troops consumption = 2 condition = Source
     icon = "icons/ship_parts/troops.png"
 
 Part
@@ -28,7 +28,7 @@ Part
         Not HasTag name = "NO_ATTACKTROOPS"
         Troops low = 4
     ]
-    consumption = Troops consumption = 4
+    consumption = Troops consumption = 4 condition = Source
     icon = "icons/meter/rebels.png"
 
 #include "../common/shared.macros"
