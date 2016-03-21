@@ -164,7 +164,7 @@ class EmpireProductionTypes(Enum):
     BT_SHIP = 2  # ///< a Ship object is being built
 
 
-class AIFocusType(object):
+class FocusType(object):
     FOCUS_PROTECTION = "FOCUS_PROTECTION"
     FOCUS_GROWTH = "FOCUS_GROWTH"
     FOCUS_INDUSTRY = "FOCUS_INDUSTRY"

@@ -48,8 +48,9 @@ import copy
 import traceback
 import math
 import AIstate
-import EnumsAI
 from collections import Counter, defaultdict
+
+from EnumsAI import ShipDesignTypes
 from freeorion_tools import print_error, UserString
 from ResearchAI import tech_is_complete
 
@@ -338,7 +339,7 @@ class ShipDesignCache(object):
         # create a copy of the dict-keys so we can alter the dict
         for designname in list(self.design_id_by_name):
             # dropping invalid designs from cache
-            if self.design_id_by_name[designname] == EnumsAI.ShipDesignTypes.SHIPDESIGN_INVALID:
+            if self.design_id_by_name[designname] == ShipDesignTypes.SHIPDESIGN_INVALID:
                 del self.design_id_by_name[designname]
                 continue
             try:
@@ -1974,7 +1975,7 @@ def _update_design_by_name_cache(design_name, verbose=False):
     else:
         # invalid design
         print "Shipdesign %s seems not to exist: Caching as invalid design." % design_name
-        Cache.design_id_by_name[design_name] = EnumsAI.ShipDesignTypes.SHIPDESIGN_INVALID
+        Cache.design_id_by_name[design_name] = ShipDesignTypes.SHIPDESIGN_INVALID
 
     return design
 
@@ -1997,7 +1998,7 @@ def _get_design_by_name(design_name, verbose=False, update_invalid=False):
     #  * if an design is invalid and update_invalid is true
     # otherwise use cache
     if design_name in Cache.design_id_by_name and not (
-            update_invalid and (Cache.design_id_by_name[design_name] == EnumsAI.ShipDesignTypes.SHIPDESIGN_INVALID)):
+            update_invalid and (Cache.design_id_by_name[design_name] == ShipDesignTypes.SHIPDESIGN_INVALID)):
         design = fo.getShipDesign(Cache.design_id_by_name[design_name])
     else:
         design = _update_design_by_name_cache(design_name)

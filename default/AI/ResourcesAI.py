@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-from EnumsAI import PriorityType, get_priority_resource_types, AIFocusType
+from EnumsAI import PriorityType, get_priority_resource_types, FocusType
 import PlanetUtilsAI
 import random
 import ColonisationAI
@@ -15,11 +15,11 @@ newTargets = {}
 currentFocus = {}
 currentOutput = {}
 planetMap = {}
-IFocus = AIFocusType.FOCUS_INDUSTRY
-RFocus = AIFocusType.FOCUS_RESEARCH
-MFocus = AIFocusType.FOCUS_MINING  # not currently used in content
-GFocus = AIFocusType.FOCUS_GROWTH
-PFocus = AIFocusType.FOCUS_PROTECTION
+IFocus = FocusType.FOCUS_INDUSTRY
+RFocus = FocusType.FOCUS_RESEARCH
+MFocus = FocusType.FOCUS_MINING  # not currently used in content
+GFocus = FocusType.FOCUS_GROWTH
+PFocus = FocusType.FOCUS_PROTECTION
 
 RESEARCH_WEIGHTING = 2.0
 
@@ -91,7 +91,6 @@ def print_resources_priority():
     print "Resource Priorities:"
     resourcePriorities = {}
     for priorityType in get_priority_resource_types():
-        print 'zzxxcc', priorityType, type(priorityType)
         resourcePriorities[priorityType] = foAI.foAIstate.get_priority(priorityType)
 
     sortedPriorities = resourcePriorities.items()
@@ -100,7 +99,6 @@ def print_resources_priority():
     for evaluationPair in sortedPriorities:
         if topPriority < 0:
             topPriority = evaluationPair[0]
-        print "    zzxxcc %s, %s" % (type(evaluationPair[0]), type(evaluationPair[1]))
         print "    ResourcePriority |Score: %s | %s " % (evaluationPair[0], evaluationPair[1])
 
     # what is the focus of available resource centers?

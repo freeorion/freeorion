@@ -5,12 +5,10 @@ import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIFleetMission
-import EnumsAI
 import ExplorationAI
 import FleetUtilsAI
-import ProductionAI
 import ResourcesAI
-from EnumsAI import MissionType, ExplorableSystemType
+from EnumsAI import MissionType, ExplorableSystemType, get_ship_roles_types, ShipRoleType, check_validity
 import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
@@ -70,7 +68,7 @@ class AIstate(object):
         self.__priorityByType = {}
 
         # self.__explorableSystemByType = {}
-        # for explorableSystemsType in EnumsAI.get_explorable_system_types():
+        # for explorableSystemsType in get_explorable_system_types():
         # self.__explorableSystemByType[explorableSystemsType] = {}
 
         # initialize home system knowledge
@@ -861,7 +859,7 @@ class AIstate(object):
     def get_ship_role(self, ship_design_id):
         """Returns ship role for given designID, assesses and adds as needed."""
 
-        if ship_design_id in self.__shipRoleByDesignID and self.__shipRoleByDesignID[ship_design_id] != EnumsAI.ShipRoleType.INVALID:  # if thought was invalid, recheck to be sure
+        if ship_design_id in self.__shipRoleByDesignID and self.__shipRoleByDesignID[ship_design_id] != ShipRoleType.INVALID:  # if thought was invalid, recheck to be sure
             return self.__shipRoleByDesignID[ship_design_id]
         else:
             self.get_design_id_stats(ship_design_id)  # just to update with info for this new design
@@ -871,7 +869,7 @@ class AIstate(object):
 
     def add_ship_role(self, ship_design_id, ship_role):
         """Adds a ship designID/role pair."""
-        if not (ship_role in EnumsAI.get_ship_roles_types()):
+        if not (ship_role in get_ship_roles_types()):
             print "Invalid shipRole: " + str(ship_role)
             return
         elif ship_design_id in self.__shipRoleByDesignID:
@@ -921,7 +919,7 @@ class AIstate(object):
     def add_fleet_role(self, fleet_id, mission_type):
         """Adds a fleet ID/role pair."""
 
-        if not EnumsAI.check_validity(mission_type):
+        if not check_validity(mission_type):
             return
         if fleet_id in self.__fleetRoleByID:
             return
@@ -958,7 +956,7 @@ class AIstate(object):
         
     def reset_invasions(self):
         """Useful when testing changes to invasion planning."""
-        invasion_missions = self.get_fleet_missions_with_any_mission_types([EnumsAI.MissionType.INVASION])
+        invasion_missions = self.get_fleet_missions_with_any_mission_types([MissionType.INVASION])
         for mission in invasion_missions:
             mission.clear_fleet_orders()
             mission.clear_target()

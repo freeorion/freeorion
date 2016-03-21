@@ -3,7 +3,6 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
 import FleetUtilsAI
-import EnumsAI
 import FreeOrionAI as foAI
 import MoveUtilsAI
 import MilitaryAI
@@ -97,10 +96,10 @@ class AIFleetMission(object):
 
         # TODO consider establishing an AI strategy & tactics planning document for discussing & planning
         # high level considerations for issues like fleet merger
-        compatibileRolesMap = {EnumsAI.MissionType.ORBITAL_DEFENSE: [EnumsAI.MissionType.ORBITAL_DEFENSE],
-                               EnumsAI.MissionType.MILITARY: [EnumsAI.MissionType.MILITARY],
-                               EnumsAI.MissionType.ORBITAL_INVASION: [EnumsAI.MissionType.ORBITAL_INVASION],
-                               EnumsAI.MissionType.INVASION: [EnumsAI.MissionType.INVASION],
+        compatibileRolesMap = {MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
+                               MissionType.MILITARY: [MissionType.MILITARY],
+                               MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
+                               MissionType.INVASION: [MissionType.INVASION],
                                }
 
         main_fleet_role = foAI.foAIstate.get_fleet_role(fleet_id)
