@@ -474,22 +474,35 @@ class AIFleetMission(object):
                 fleet_order = self._get_fleet_order_from_target(self.type, self.target)
                 self.orders.append(fleet_order)
 
-    def _need_repair(self):
-        """
-        Check if fleet need repair. Check if fleet HP is less of cutoff.
-        TODO make more clever implementation.
-        """
-        repair_limit = 0.70
+    def _need_repair(self, repair_limit=0.70):
+        """Check if fleet needs to be repaired.
 
+         If the fleet is already at a system where it can be repaired, stay there until fully repaired.
+         Otherwise, repair if fleet health is below specified *repair_limit*.
+         For military fleets, there is a special evaluation called, cf. *MilitaryAI.avail_mil_needing_repair()*
+
+         :param repair_limit: percentage of health below which the fleet is sent to repair
+         :type repair_limit: float
+         :return: True if fleet needs repair
+         :rtype: bool
+        """
+        # TODO: More complex evaluation if fleet needs repair (consider self-repair, distance, threat, mission...)
         universe = fo.getUniverse()
         fleet_id = self.fleet.id
+        # if we are already at a system where we can repair, make sure we use it...
+        system = self.fleet.get_system()
+        # TODO starlane obstruction is not considered in the next call
+        nearest_dock = MoveUtilsAI.get_nearest_drydock_system_id(system.id)
+        if nearest_dock == system.id:
+            repair_limit = 0.99
         # if combat fleet, use military repair check
         if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
-            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], False, bool(self.orders))[0]
+            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], False, bool(self.orders),
+                                                                   repair_limit=repair_limit)[0]
+        # TODO: Allow to split fleet to send only damaged ships to repair
         fleet = universe.getFleet(fleet_id)
         ships_cur_health = 0
         ships_max_health = 0
-
         for ship_id in fleet.shipIDs:
             this_ship = universe.getShip(ship_id)
             ships_cur_health += this_ship.currentMeterValue(fo.meterType.structure)

@@ -63,11 +63,11 @@ def get_safety_factor():
     return [4.0, 3.0, 2.0, 1.5, 1.2, 1.0][foAI.foAIstate.aggression]
 
 
-def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False):
+def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False, repair_limit=0.70):
     """returns tuple of lists-- ( ids_needing_repair, ids_not )"""
     fleet_buckets = [[], []]
     universe = fo.getUniverse()
-    cutoff = [0.70, 0.25][on_mission]
+    cutoff = [repair_limit, 0.25][on_mission]
     for fleet_id in mil_fleet_ids:
         fleet = universe.getFleet(fleet_id)
         ship_buckets = [[], []]
