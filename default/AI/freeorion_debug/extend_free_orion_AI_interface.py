@@ -38,8 +38,11 @@ wrap any fo function or method to logger to get more info about it.
 don't commit logger wrapped function to repo.
 
 """
-
+import inspect
+import os
 from functools import wraps
+from itertools import izip_longest
+
 import freeOrionAIInterface as fo
 from freeorion_tools import dict_from_map
 
@@ -108,8 +111,30 @@ def int_int_map_to_string(int_int_map):
 fo.IntIntMap.__str__ = int_int_map_to_string
 
 
-def logger(function):
+def logger(callable_object, argument_wrappers=None):
+    """
+    Wrapper to log call of any callable (function or method). It is useful for inspecting API calls.
+
+    Example:
+        fo.issueEnqueueShipProductionOrder = logger(fo.issueEnqueueShipProductionOrder,
+                                                    argument_wrappers=[
+                                                        lambda x: fo.getShipDesign(x).name,
+                                                        lambda x: fo.getUniverse().getPlanet(x)
+                                                        ]
+                                                    )
+    Output:
+        ProductionAI.py:1352 issueEnqueueShipProductionOrder(UN Cerberus Mk. 5, P_22<Invincible Albans I>) -> 1
+
+    :param callable_object: object to be wrapped
+    :param argument_wrappers: list of function to print arguments in different way when they we passed.
+     for example ``lambda x: fo.getUniverse().getPlanet(x)`` for planet id.
+    :return:
+    """
     def inner(*args, **kwargs):
-        print "%s(*%s, **%s)" % (function.__name__, args, kwargs)
-        return function(*args, **kwargs)
+        arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in izip_longest(args, argument_wrappers)]
+        arguments.extend('%s=%s' % item for item in kwargs.items())
+        res = callable_object(*args, **kwargs)
+        frame = inspect.currentframe().f_back
+        print "%s:%s %s(%s) -> %s" % (os.path.basename(frame.f_code.co_filename), frame.f_lineno, callable_object.__name__, ', '.join(arguments), res)
+        return res
     return inner
