@@ -9868,22 +9868,22 @@ SR_TEETH_DESC
 Teeth of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
 
 SR_CLAWS
-Claws
+Spines
 SR_CLAWS_DESC
-Claws of a space monster, a powerfull strike of the space monster can deal big damage to a ship.
+Spines of a space monster, a powerfull strike of the space monster can deal big damage to a ship.
 
 SR_TENTACLE
 Tentacle
 SR_TENTACLE_DESC
-Tentacle of a Kraken, can damage ships.
+Tentacle of a kraken, can damage ships.
 
 SR_FLAME_THROWER
-Flame Thrower
+Plasma Discharge
 SR_FLAME_THROWER_DESC
-Flame thrower of a space monster, capable of melting most armor.
+Plasma Discharge of a space monster, capable of melting most armor.
 
 SR_SNOWFLAKE_LASER
-Laser
+Large Laser
 
 SR_SNOWFLAKE_LASER_DESC
 Large Lasers, integrated into the body of a space monster.
