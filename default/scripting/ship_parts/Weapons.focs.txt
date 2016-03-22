@@ -55,8 +55,8 @@ Part
     icon = "icons/ship_parts/death-ray.png"    
 
 Part
-    name = "SR_TEETH"
-    description = "SR_TEETH_DESC"
+    name = "SR_JAWS"
+    description = "SR_JAWS_DESC"
     class = ShortRange
     damage = 5
     mountableSlotTypes = External
@@ -66,8 +66,8 @@ Part
     icon = "icons/ship_parts/teeth.png"
 
 Part
-    name = "SR_CLAWS"
-    description = "SR_CLAWS_DESC"
+    name = "SR_SPINES"
+    description = "SR_SPINES_DESC"
     class = ShortRange
     damage = 20
     mountableSlotTypes = External
@@ -88,7 +88,7 @@ Part
     icon = "icons/ship_parts/tentacle.png"
 
 Part
-    name = "SR_FLAME_THROWER"
+    name = "SR_PLASMA_DISCHARGE"
     description = "SR_FLAME_THROWER_DESC"
     class = ShortRange
     damage = 20
@@ -99,8 +99,8 @@ Part
     icon = "icons/ship_parts/flame_thrower.png"
 
 Part
-    name = "SR_SNOWFLAKE_LASER"
-    description = "SR_SNOWFLAKE_LASER_DESC"
+    name = "SR_ICE_BEAM"
+    description = "SR_ICE_BEAM_DESC"
     class = ShortRange
     damage = 9
     mountableSlotTypes = External

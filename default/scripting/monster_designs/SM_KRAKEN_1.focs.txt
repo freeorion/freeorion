@@ -3,7 +3,7 @@ ShipDesign
     description = "SM_KRAKEN_1_DESC"
     hull = "SH_KRAKEN_1_BODY"
     parts = [
-        "SR_TEETH"
+        "SR_JAWS"
         ""
         ]
     icon = "icons/monsters/kraken-1.png"

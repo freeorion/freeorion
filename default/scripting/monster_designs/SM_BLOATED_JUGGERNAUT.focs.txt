@@ -4,10 +4,10 @@ ShipDesign
     hull = "SH_BLOATED_JUGGERNAUT_BODY"
     parts = [
         "SP_CHAOS_WAVE"
-        "SR_FLAME_THROWER"
-        "SR_CLAWS"
-        "SR_CLAWS"
-        "SR_CLAWS"
+        "SR_PLASMA_DISCHARGE"
+        "SR_SPINES"
+        "SR_SPINES"
+        "SR_SPINES"
         "SH_PLASMA"
         "ST_CLOAK_2"
     ]

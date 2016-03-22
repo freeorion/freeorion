@@ -4,7 +4,7 @@ ShipDesign
     hull = "SH_JUGGERNAUT_2_BODY"
     parts = [
         "SP_EMP"
-        "SR_TEETH"
+        "SR_JAWS"
         ""
         "SH_DEFLECTOR"
         ]

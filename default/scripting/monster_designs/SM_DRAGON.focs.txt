@@ -3,7 +3,7 @@ ShipDesign
     description = "SM_DRAGON_DESC"
     hull = "SH_STRONG_MONSTER_BODY"
     parts = [
-        "SR_FLAME_THROWER"
+        "SR_PLASMA_DISCHARGE"
         "SP_DEATH_SPORE"
         ""
         "AR_CRYSTAL_PLATE"

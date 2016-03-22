@@ -23,8 +23,8 @@ Hull
             scope = Source
             activation = Source
             effects = [
-                SetMaxCapacity partname = "SR_SNOWFLAKE_LASER_1" value = Value + min(Source.Age*0.3, 18)
-                SetCapacity partname = "SR_SNOWFLAKE_LASER_1" value = Value + min(Source.Age*0.3, 18)
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.3, 18)
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.3, 18)
             ]
         
         [[EXCELLENT_VISION]]

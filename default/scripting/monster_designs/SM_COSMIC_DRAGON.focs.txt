@@ -3,8 +3,8 @@ ShipDesign
     description = "SM_COSMIC_DRAGON_DESC"
     hull = "SH_COSMIC_DRAGON_BODY"
     parts = [
-        "SR_FLAME_THROWER"
-        "SR_FLAME_THROWER"
+        "SR_PLASMA_DISCHARGE"
+        "SR_PLASMA_DISCHARGE"
         "SP_NOVA_BOMB"
         "ST_CLOAK_4"
     ]

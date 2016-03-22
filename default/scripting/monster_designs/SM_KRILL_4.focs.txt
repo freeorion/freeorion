@@ -6,7 +6,7 @@ ShipDesign
         "FT_KRILL"
         "FT_BAY_KRILL"
         "FT_BAY_KRILL"
-		"FT_BAY_KRILL"
+        "FT_BAY_KRILL"
         "SP_VOID_SHADOW"
     ]
     icon = "icons/monsters/krill-4.png"

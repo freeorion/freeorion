@@ -3,7 +3,7 @@ ShipDesign
     description = "SM_KRAKEN_3_DESC"
     hull = "SH_KRAKEN_3_BODY"
     parts = [
-        "SR_TEETH"
+        "SR_JAWS"
 		"SR_TENTACLE"
         "SP_GRV"
         ""

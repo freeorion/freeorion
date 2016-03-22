@@ -5,7 +5,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_3_1"
         ""
-        "SR_TEETH"
+        "SR_JAWS"
         ""
         ""
         ""

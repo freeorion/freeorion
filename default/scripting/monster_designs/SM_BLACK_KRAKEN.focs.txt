@@ -3,9 +3,9 @@ ShipDesign
     description = "SM_BLACK_KRAKEN_DESC"
     hull = "SH_BLACK_KRAKEN_BODY"
     parts = [
-        "SR_CLAWS"
-        "SR_CLAWS"
-        "SR_CLAWS"
+        "SR_SPINES"
+        "SR_SPINES"
+        "SR_SPINES"
         "SP_CHAOS_WAVE"
         "ST_CLOAK_1"
     ]

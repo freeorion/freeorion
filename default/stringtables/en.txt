@@ -9862,14 +9862,14 @@ Spinal Antimatter Cannon
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
 
-SR_TEETH
-Teeth
-SR_TEETH_DESC
-Teeth of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
+SR_JAWS
+Jaws
+SR_JAWS_DESC
+Jaws of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
 
-SR_CLAWS
+SR_SPINES
 Spines
-SR_CLAWS_DESC
+SR_SPINES_DESC
 Spines of a space monster, a powerfull strike of the space monster can deal big damage to a ship.
 
 SR_TENTACLE
@@ -9877,15 +9877,15 @@ Tentacle
 SR_TENTACLE_DESC
 Tentacle of a kraken, can damage ships.
 
-SR_FLAME_THROWER
+SR_PLASMA_DISCHARGE
 Plasma Discharge
-SR_FLAME_THROWER_DESC
+SR_PLASMA_DISCHARGE_DESC
 Plasma Discharge of a space monster, capable of melting most armor.
 
-SR_SNOWFLAKE_LASER
+SR_ICE_BEAM
 Large Laser
 
-SR_SNOWFLAKE_LASER_DESC
+SR_ICE_BEAM_DESC
 Large Lasers, integrated into the body of a space monster.
 
 SR_ION_CANNON
