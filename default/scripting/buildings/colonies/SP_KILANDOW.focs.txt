@@ -38,6 +38,7 @@ BuildingType
              + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
         )
     )
+    tags = [ "CTRL_EXTINCT" "SP_KILANDOW" ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner

@@ -2287,8 +2287,36 @@ namespace {
         for (SpeciesManager::iterator it = species_manager.begin();
                 it != species_manager.end(); ++it)
         {
-            if (it->second && (it->second->Tags().find("CTRL_ALWAYS_REPORT") != it->second->Tags().end()))
-                    species_names.insert(it->first);
+            if (!it->second)
+                continue;
+            const std::string& species_str = it->first;
+            const std::set<std::string>& species_tags = it->second->Tags();
+            if (species_tags.find("CTRL_ALWAYS_REPORT") != species_tags.end()) {
+                species_names.insert(species_str);
+                continue;
+            }
+            // Add extinct species if their (extinct) colony building is available
+            // Extinct species should have an EXTINCT tag
+            // The colony building should have an EXTINCT tag unless it is a starting unlock
+            if (species_tags.find("CTRL_EXTINCT") != species_tags.end()) {
+                const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
+                for (BuildingTypeManager::iterator bld_it = building_type_manager.begin();
+                    bld_it != building_type_manager.end(); ++bld_it)
+                {
+                    const std::set<std::string>& bld_tags = bld_it->second->Tags();
+                    // check if building matches tag requirements
+                    if ((bld_tags.find("CTRL_EXTINCT") != bld_tags.end()) &&
+                        (bld_tags.find(species_str) != bld_tags.end()))
+                    {
+                        const std::string& bld_str = bld_it->first;
+                        // Add if colony building is available to empire
+                        if (empire->BuildingTypeAvailable(bld_str)) {
+                            species_names.insert(species_str);
+                        }
+                        continue;
+                    }
+                }
+            }
         }
 
         for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {

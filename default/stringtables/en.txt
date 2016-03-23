@@ -5943,17 +5943,38 @@ Banforo Remains
 EXTINCT_BANFORO_SPECIAL_DESC
 '''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
 
+TECH_COL_BANFORO
+Banforo Resequencing
+
+TECH_COL_BANFORO_DESC
+'''Allows reconstruction of the ancient [[species SP_BANFORO]] species.'''
+
 EXTINCT_KILANDOW_SPECIAL
 Kilandow Remains
 
 EXTINCT_KILANDOW_SPECIAL_DESC
 '''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
 
+TECH_COL_KILANDOW
+Kilandow Resequencing
+
+TECH_COL_KILANDOW_DESC
+'''Allows reconstruction of the ancient [[species SP_KILANDOW]] species.'''
+
 EXTINCT_MISIORLA_SPECIAL
 Misiorla Remains
 
 EXTINCT_MISIORLA_SPECIAL_DESC
 '''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
+
+TECH_COL_MISIORLA
+Misiorla Resequencing
+
+TECH_COL_MISIORLA_DESC
+'''Allows reconstruction of the ancient [[species SP_MISIORLA]] species.'''
+
+EXTINCT_UNLOCK_SHORT_DESC
+'''Unlocks an extinct species'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
