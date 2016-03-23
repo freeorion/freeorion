@@ -1,0 +1,27 @@
+Hull
+    name = "SH_GUARD_0_BODY"
+    description = "SH_GUARD_0_BODY_DESC"
+    speed = 0
+    fuel = 0
+    stealth = 5
+    structure = 35
+    slots = [
+        Slot type = External position = (0.20, 0.67)
+        Slot type = External position = (0.74, 0.42)
+        Slot type = Internal position = (0.50, 0.35)
+    ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[GOOD_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/maintenance_ship.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

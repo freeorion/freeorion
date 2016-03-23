@@ -10764,6 +10764,11 @@ Guard Hull
 SH_GUARD_MONSTER_BODY_DESC
 A Strong Hull for Guardian Class Monsters
 
+SH_GUARD_0_BODY
+Maintenance Ship Hull
+SH_GUARD_0_BODY_DESC
+Maintenance Ship Hull
+
 SH_KRILL_1_BODY
 Krill Body 1
 SH_KRILL_1_BODY_DESC

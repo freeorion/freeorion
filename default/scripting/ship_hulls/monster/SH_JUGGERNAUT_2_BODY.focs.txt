@@ -48,8 +48,8 @@ Hull
             scope = Source
             activation = Source
             effects = [
-                SetMaxCapacity partname = "SR_TEETH" value = Value + min(Source.Age*0.1, 8)
-                SetCapacity partname = "SR_TEETH" value = Value + min(Source.Age*0.1, 8)
+                SetMaxCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.1, 8)
+                SetCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.1, 8)
             ]
         
         [[GOOD_VISION]]
