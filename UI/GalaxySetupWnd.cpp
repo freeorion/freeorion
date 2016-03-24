@@ -26,7 +26,9 @@ namespace {
     const GG::X GalSetupWndWidth() {
         return GG::X(345 + FontBasedUpscale(300));
     }
-    const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
+    const GG::Y GalSetupWndHeight() {
+        return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
+    }
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
     const int MAX_AI_PLAYERS = 40;
@@ -631,8 +633,8 @@ void GalaxySetupWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 GG::Rect GalaxySetupWnd::CalculatePosition() const {
     GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth() - GalSetupWndWidth()) / 2,
-                  (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2);
-    GG::Pt new_sz(GalSetupWndWidth(), GAL_SETUP_WND_HT);
+                  (HumanClientApp::GetApp()->AppHeight() - GalSetupWndHeight()) / 2);
+    GG::Pt new_sz(GalSetupWndWidth(), GalSetupWndHeight());
     return GG::Rect(new_ul, new_ul + new_sz);
 }
 
