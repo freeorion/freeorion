@@ -3,8 +3,10 @@ ShipDesign
     description = "SM_KRILL_2_DESC"
     hull = "SH_KRILL_2_BODY"
     parts = [
-        "FT_KRILL"
-        "FT_BAY_KRILL"
+//        "FT_KRILL"
+//        "FT_BAY_KRILL"
+        ""
+        "SR_JAWS"
     ]
     icon = "icons/monsters/krill-2.png"
     model = "seed"
