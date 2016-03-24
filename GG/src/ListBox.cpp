@@ -686,9 +686,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
 
         m_selections = new_selections;
 
-        if (m_selections.empty()) {
-            ClearedSignal();
-        } else if (m_selections.size() != initially_selected_rows.size()) {
+        if (m_selections.size() != initially_selected_rows.size()) {
             SelChangedSignal(m_selections);
         }
     }
