@@ -360,8 +360,10 @@ def set_planet_industry_and_research_foci(empirePlanetIDs, newFoci, priorityRati
     curTargetRP = 0.001
     resource_timer.start("Loop")  # loop
     has_force = tech_is_complete("CON_FRC_ENRG_STRC")
-    preset_ids = set(planetMap.keys()) - set(empirePlanetIDs)
+    #cumulative all industry focus
     ctPP0, ctRP0 = 0, 0
+
+    #Handle presets
     for pid in preset_ids:
         nPP, nRP = newTargets.get(pid, {}).get(planetMap[pid].focus, [0, 0])
         curTargetPP += nPP
@@ -371,14 +373,18 @@ def set_planet_industry_and_research_foci(empirePlanetIDs, newFoci, priorityRati
         ctRP0 += iRP
 
     id_set = set(empirePlanetIDs)
-    for adj_round in [1, 2, 3, 4]:
-        maxi_ratio = ctRP0 / max(0.01, ctPP0)  # should only change between rounds 1 and 2
+
+    # tally max Industry
+    for pid in list(id_set):
+        iPP, iRP = newTargets.get(pid, {}).get(IFocus, [0, 0])
+        ctPP0 += iPP
+        ctRP0 += iRP
+
+    #smallest possible ratio of research to industry with an all industry focus
+    maxi_ratio = ctRP0 / max(0.01, ctPP0)
+
+    for adj_round in [2, 3, 4]:
         for pid in list(id_set):
-            if adj_round == 1:  # tally max Industry
-                iPP, iRP = newTargets.get(pid, {}).get(IFocus, [0, 0])
-                ctPP0 += iPP
-                ctRP0 += iRP
-                continue
             II, IR = newTargets[pid][IFocus]
             RI, RR = newTargets[pid][RFocus]
             CI, CR = currentOutput[pid][IFocus], currentOutput[pid][RFocus]
