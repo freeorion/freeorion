@@ -35,16 +35,19 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
 CUILinkTextMultiEdit& CUILinkTextBlock::Text()
 { return *m_link_text; }
 
-GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(
-    const std::string& tag, const GG::RichText::TAG_PARAMS& params, const std::string& content,
-    const boost::shared_ptr<GG::Font>& font, const GG::Clr& color, GG::Flags<GG::TextFormat> format)
+GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(const std::string& tag,
+                                                           const GG::RichText::TAG_PARAMS& params,
+                                                           const std::string& content,
+                                                           const boost::shared_ptr<GG::Font>& font,
+                                                           const GG::Clr& color,
+                                                           GG::Flags<GG::TextFormat> format)
 {
     CUILinkTextBlock* block = new CUILinkTextBlock(content, font, format, color, GG::NO_WND_FLAGS);
 
     // Wire the block's signals to come through us.
-    GG::Connect(block->m_link_text->LinkClickedSignal, this->LinkClickedSignal);
-    GG::Connect(block->m_link_text->LinkDoubleClickedSignal, this->LinkDoubleClickedSignal);
-    GG::Connect(block->m_link_text->LinkRightClickedSignal, this->LinkRightClickedSignal);
+    GG::Connect(block->m_link_text->LinkClickedSignal,          this->LinkClickedSignal);
+    GG::Connect(block->m_link_text->LinkDoubleClickedSignal,    this->LinkDoubleClickedSignal);
+    GG::Connect(block->m_link_text->LinkRightClickedSignal,     this->LinkRightClickedSignal);
 
     // Color ships and planets by their owner empires.
     block->m_link_text->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());

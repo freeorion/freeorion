@@ -300,5 +300,4 @@ namespace GG {
         // Return a dummy to enable static registration.
         return 0;
     }
-
 }

@@ -524,15 +524,15 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_description_panel = new GG::ScrollPanel(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
 
     // Copy default block factory.
-    boost::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP> factoryMap( new GG::RichText::BLOCK_FACTORY_MAP( *GG::RichText::DefaultBlockFactoryMap()));
+    boost::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP> factory_map(new GG::RichText::BLOCK_FACTORY_MAP(*GG::RichText::DefaultBlockFactoryMap()));
     CUILinkTextBlock::Factory* factory = new CUILinkTextBlock::Factory();
     // Wire this factory to produce links that talk to us.
     GG::Connect(factory->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
     GG::Connect(factory->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(factory->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
-    (*factoryMap)[GG::RichText::PLAINTEXT_TAG] = factory;
-    m_description_box->SetBlockFactoryMap(factoryMap);
-    m_description_box->SetPadding( DESCRIPTION_PADDING );
+    (*factory_map)[GG::RichText::PLAINTEXT_TAG] = factory;
+    m_description_box->SetBlockFactoryMap(factory_map);
+    m_description_box->SetPadding(DESCRIPTION_PADDING);
 
     m_description_panel->SetBackgroundColor(ClientUI::CtrlColor());
 

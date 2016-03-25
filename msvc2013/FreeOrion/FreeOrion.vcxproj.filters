@@ -502,9 +502,6 @@
     <ClCompile Include="..\..\UI\MapWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\MarkupBox.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\MeterBrowseWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
