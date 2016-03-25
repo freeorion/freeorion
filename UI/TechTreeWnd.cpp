@@ -37,6 +37,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("UI.tech-layout-horz-spacing", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 1.0,  RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("UI.tech-layout-vert-spacing", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("UI.tech-layout-zoom-scale",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -982,7 +983,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 {
     SetChildClippingMode(ClipToClient);
 
-    m_scale = 1.0; //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
+    m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("UI.tech-layout-zoom-scale")); //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
     m_layout_surface = new LayoutSurface();
 
@@ -1115,8 +1116,8 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
         scale = MIN_SCALE;
     if (MAX_SCALE < scale)
         scale = MAX_SCALE;
-    if (m_scale != scale)
-        m_scale = scale;
+    m_scale = scale;
+    GetOptionsDB().Set<double>("UI.tech-layout-zoom-scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category) {

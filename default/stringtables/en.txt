@@ -1370,6 +1370,9 @@ The horizontal spacing to be placed between techs in the tech screen, in multipl
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
 The vertical spacing to be placed between techs in the tech screen, in multiples of the height of a single theory tech.
 
+OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
+Adjusts the scale to zoom the tech window.
+
 OPTIONS_DB_SAVE_DIR
 The directory in which saved games are saved and from which they are loaded.
 
@@ -2000,6 +2003,9 @@ Horizontal
 
 OPTIONS_VERTICAL
 Vertical
+
+OPTIONS_ZOOM
+Zoom
 
 OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
