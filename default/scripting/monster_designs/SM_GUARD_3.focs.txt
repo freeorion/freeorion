@@ -1,15 +1,15 @@
 ShipDesign
     name = "SM_GUARD_3"
     description = "SM_GUARD_3_DESC"
-    hull = "SH_GUARD_MONSTER_BODY"
+    hull = "SH_GUARD_3_BODY"
     parts = [
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
-        "AR_PRECURSOR_PLATE"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
         "SH_BLACK"
-        "AR_PRECURSOR_PLATE"
     ]
     icon = "icons/monsters/warden.png"
     model = "seed"

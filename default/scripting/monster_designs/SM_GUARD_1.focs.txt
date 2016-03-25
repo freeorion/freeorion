@@ -1,12 +1,11 @@
 ShipDesign
     name = "SM_GUARD_1"
     description = "SM_GUARD_1_DESC"
-    hull = "SH_GUARD_MONSTER_BODY"
+    hull = "SH_GUARD_1_BODY"
     parts = [
         "SR_WEAPON_3_1"
         ""
         "SR_WEAPON_0_1"
-        ""
     ]
     icon = "icons/monsters/sentry.png"
     model = "seed"

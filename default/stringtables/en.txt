@@ -10762,12 +10762,22 @@ Large strong body with fearsome natural weapons and strong natural armor.
 SH_GUARD_MONSTER_BODY
 Guard Hull
 SH_GUARD_MONSTER_BODY_DESC
-A Strong Hull for Guardian Class Monsters
+A Strong Hull for Guardian Class Monsters.
 
 SH_GUARD_0_BODY
 Maintenance Ship Hull
 SH_GUARD_0_BODY_DESC
 Maintenance Ship Hull
+
+SH_GUARD_1_BODY
+Sentry Hull
+SH_GUARD_1_BODY_DESC
+A basic hull for Guardian Class Monsters.
+
+SH_GUARD_3_BODY
+Warden Hull
+SH_GUARD_3_BODY_DESC
+A powerfull hull for Guardian Class Monsters.
 
 SH_KRILL_1_BODY
 Krill Body 1

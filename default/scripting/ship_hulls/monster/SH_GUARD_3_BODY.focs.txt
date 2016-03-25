@@ -1,0 +1,32 @@
+Hull
+    name = "SH_GUARD_3_BODY"
+    description = "SH_GUARD_3_BODY_DESC"
+    speed = 0
+    fuel = 0
+    stealth = 5
+    structure = 800
+    slots = [
+        Slot type = External position = (0.13, 0.52)
+        Slot type = External position = (0.32, 0.32)
+        Slot type = External position = (0.60, 0.20)
+        Slot type = External position = (0.25, 0.75)
+        Slot type = External position = (0.58, 0.65)
+        Slot type = External position = (0.85, 0.45)
+        Slot type = Internal position = (0.38, 0.52)
+        Slot type = Internal position = (0.62, 0.42)
+    ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[GOOD_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/warden.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

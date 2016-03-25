@@ -89,7 +89,7 @@ Part
 
 Part
     name = "SR_PLASMA_DISCHARGE"
-    description = "SR_FLAME_THROWER_DESC"
+    description = "SR_PLASMA_DISCHARGE_DESC"
     class = ShortRange
     damage = 20
     mountableSlotTypes = External
