@@ -6,9 +6,9 @@ Hull
     stealth = 5
     structure = 50000
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.90, 0.70)
+        Slot type = External position = (0.30, 0.45)
+        Slot type = External position = (0.55, 0.30)
         Slot type = Internal position = (0.50, 0.65)
     ]
     buildcost = 1
@@ -37,7 +37,7 @@ Hull
         [[GOOD_VISION]]
     ]
     icon = ""
-    graphic = ""
+    graphic = "icons/monsters/dragon-2.png"
 
 #include "monster.macros"
 

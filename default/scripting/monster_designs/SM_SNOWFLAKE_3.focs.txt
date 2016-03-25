@@ -3,7 +3,7 @@ ShipDesign
     description = "SM_SNOWFLAKE_3_DESC"
     hull = "SH_SNOWFLAKE_3_BODY"
     parts = [
-        "SR_WEAPON_4_1"
+        "SR_ICE_BEAM"
         "SP_BIOTERM"
         ""
         ""

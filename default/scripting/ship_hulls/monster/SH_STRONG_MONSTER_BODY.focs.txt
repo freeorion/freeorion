@@ -23,7 +23,7 @@ Hull
         [[GOOD_VISION]]
     ]
     icon = ""
-    graphic = "icons/monsters/dragon.png"
+    graphic = "icons/monsters/dragon-1.png"
 
 #include "monster.macros"
 

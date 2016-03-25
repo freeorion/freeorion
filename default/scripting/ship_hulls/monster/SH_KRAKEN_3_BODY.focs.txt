@@ -6,10 +6,10 @@ Hull
     stealth = 5
     structure = 1000
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
-        Slot type = Internal position = (0.50, 0.65)
+        Slot type = External position = (0.15, 0.60)
+        Slot type = External position = (0.35, 0.80)
+        Slot type = External position = (0.70, 0.20)
+        Slot type = Internal position = (0.55, 0.45)
     ]
     buildCost = 1
     buildTime = 1
@@ -18,7 +18,15 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
-
+        
+         EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetMaxCapacity partname = "SR_TENTACLE" value = Value + min(Source.Age*0.3, 15)
+                SetCapacity partname = "SR_TENTACLE" value = Value + min(Source.Age*0.3, 15)
+            ]
+        
         [[GOOD_VISION]]
     ]
     icon = ""

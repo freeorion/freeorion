@@ -9827,6 +9827,16 @@ Hangar 4
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
+FT_KRILL
+Krill Swarm
+FT_KRILL_DESC
+Krill Swarm.
+
+FT_BAY_KRILL
+Krill Swarm
+FT_BAY_KRILL_DESC
+When Krill swarms are big enough, single Krills leave the swarm to attack ships the swarm encounters.
+
 SR_WEAPON_0_1
 Flak Cannon
 SR_WEAPON_0_1_DESC
@@ -9857,6 +9867,32 @@ Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
+
+SR_JAWS
+Jaws
+SR_JAWS_DESC
+Jaws of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
+
+SR_SPINES
+Spines
+SR_SPINES_DESC
+Spines of a space monster, a powerfull strike of the space monster can deal big damage to a ship.
+
+SR_TENTACLE
+Tentacle
+SR_TENTACLE_DESC
+Tentacle of a kraken, can damage ships.
+
+SR_PLASMA_DISCHARGE
+Plasma Discharge
+SR_PLASMA_DISCHARGE_DESC
+Plasma Discharge of a space monster, capable of melting most armor.
+
+SR_ICE_BEAM
+Large Laser
+
+SR_ICE_BEAM_DESC
+Large Lasers, integrated into the body of a space monster.
 
 SR_ION_CANNON
 Ion Cannon
@@ -10732,7 +10768,22 @@ Large strong body with fearsome natural weapons and strong natural armor.
 SH_GUARD_MONSTER_BODY
 Guard Hull
 SH_GUARD_MONSTER_BODY_DESC
-A Strong Hull for Guardian Class Monsters
+A Strong Hull for Guardian Class Monsters.
+
+SH_GUARD_0_BODY
+Maintenance Ship Hull
+SH_GUARD_0_BODY_DESC
+Maintenance Ship Hull
+
+SH_GUARD_1_BODY
+Sentry Hull
+SH_GUARD_1_BODY_DESC
+A basic hull for Guardian Class Monsters.
+
+SH_GUARD_3_BODY
+Warden Hull
+SH_GUARD_3_BODY_DESC
+A powerfull hull for Guardian Class Monsters.
 
 SH_KRILL_1_BODY
 Krill Body 1

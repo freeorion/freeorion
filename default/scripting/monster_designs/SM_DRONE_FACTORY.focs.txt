@@ -5,7 +5,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_2_1"
         "SH_DEFLECTOR"
-        ""
+        "SR_WEAPON_0_1"
     ]
     icon = "icons/monsters/factory.png"
     model = "seed"

@@ -1,0 +1,27 @@
+Hull
+    name = "SH_GUARD_1_BODY"
+    description = "SH_GUARD_1_BODY_DESC"
+    speed = 0
+    fuel = 0
+    stealth = 5
+    structure = 35
+    slots = [
+        Slot type = External position = (0.20, 0.65)
+        Slot type = External position = (0.46, 0.25)
+        Slot type = External position = (0.83, 0.35)
+    ]
+    buildCost = 1
+    buildTime = 2
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[GOOD_VISION]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/sentry.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"
+
+#include "../../common/shared.macros"

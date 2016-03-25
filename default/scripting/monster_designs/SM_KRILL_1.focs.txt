@@ -4,8 +4,6 @@ ShipDesign
     hull = "SH_KRILL_1_BODY"
     parts = [
         ""
-        ""
-        ""
     ]
     icon = "icons/monsters/krill-1.png"
     model = "seed"

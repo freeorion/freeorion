@@ -43,6 +43,15 @@ Hull
                     ]
                     empire = Source.Owner
             ]
+        
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.15, 4)
+                SetCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.15, 4)
+            ]
+        
         [[EXCELLENT_VISION]]
     ]
     icon = ""

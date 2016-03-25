@@ -6,9 +6,9 @@ Hull
     stealth = 5
     structure = 1000
     slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = Internal position = (0.50, 0.15)
-        Slot type = External position = (0.80, 0.15)
+        Slot type = External position = (0.20, 0.18)
+        Slot type = Internal position = (0.50, 0.26)
+        Slot type = External position = (0.80, 0.47)
     ]
     buildCost = 1
     buildTime = 1
