@@ -7,9 +7,7 @@ ShipDesign
         "DT_DETECTOR_3"
         ""
         ""
-        ""
         "SH_DEFENSE_GRID"
-        ""
     ]
     icon = "icons/monsters/sentinel.png"
     model = "seed"
