@@ -1,4 +1,16 @@
 Part
+    name = "SR_WEAPON_0_1"
+    description = "SR_WEAPON_0_1_DESC"
+    class = ShortRange
+    damage = 1
+    shots = 3
+    mountableSlotTypes = External
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/laser.png"
+
+Part
     name = "SR_WEAPON_1_1"
     description = "SR_WEAPON_1_1_DESC"
     class = ShortRange
@@ -8,18 +20,6 @@ Part
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/mass-driver.png"
-
-Part
-    name = "SR_WEAPON_0_1"
-    description = "SR_WEAPON_0_1_DESC"
-    class = ShortRange
-    damage = 1
-    shots = 3
-    mountableSlotTypes = External
-    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser.png"
 
 Part
     name = "SR_WEAPON_2_1"

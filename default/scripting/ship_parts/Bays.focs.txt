@@ -2,10 +2,10 @@ Part
     name = "FT_BAY_1"
     description = "FT_BAY_1_DESC"
     class = FighterBay
-    capacity = 2
+    capacity = 3
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1
+    buildtime = 2
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
 

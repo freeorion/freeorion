@@ -7,6 +7,7 @@ Tech
     researchturns = 1
     unlock = [
         Item type = ShipPart name = "SR_WEAPON_1_1"
+        Item type = ShipPart name = "SR_WEAPON_0_1"
         Item type = ShipPart name = "GT_TROOP_POD"
     ]
     graphic = "icons/tech/planetary_colonialism.png"
@@ -20,6 +21,44 @@ Tech
     researchturns = 5
     prerequisites = "SHP_ROOT_AGGRESSION"
     graphic = ""
+
+Tech
+    name = "SHP_WEAPON_0_2"
+    description = "SHP_WEAPON_0_2_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 25 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "SR_WEAPON_0_1"
+            ]
+            accountinglabel = "SR_WEAPON_0_1"
+            effects = SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 2
+    graphic = "icons/ship_parts/laser-1.png"
+
+Tech
+    name = "SHP_WEAPON_0_3"
+    description = "SHP_WEAPON_0_3_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    category = "SHIPS_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SHP_WEAPON_0_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "SR_WEAPON_0_1"
+            ]
+            accountinglabel = "SR_WEAPON_0_1"
+            effects = SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value + 4
+    graphic = "icons/ship_parts/plasma-1.png"
 
 Tech
     name = "SHP_WEAPON_1_2"
