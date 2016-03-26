@@ -52,13 +52,13 @@ public:
     {}
     virtual ~EffectsGroup();
 
-    void    GetTargetSet(int source_id, TargetSet& targets) const;
-    void    GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
-    /** WARNING: this GetTargetSet version will modify potential_targets.
-      * in particular, it will move detected targets from potential_targets
-      * to targets. Cast the second parameter to \c const \c TargetSet& in
-      * order to leave potential_targets unchanged. */
-    void    GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
+    //void    GetTargetSet(int source_id, TargetSet& targets) const;
+    //void    GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
+    ///** WARNING: this GetTargetSet version will modify potential_targets.
+    //  * in particular, it will move detected targets from potential_targets
+    //  * to targets. Cast the second parameter to \c const \c TargetSet& in
+    //  * order to leave potential_targets unchanged. */
+    //void    GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
 
     /** execute all effects in group */
     void    Execute(const TargetsCauses& targets_causes,
