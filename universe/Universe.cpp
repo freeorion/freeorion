@@ -52,7 +52,9 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("verbose-logging",           UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),           false,  Validator<bool>());
         db.Add("verbose-combat-logging",    UserStringNop("OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC"),    false,  Validator<bool>());
-        db.Add("effects-threads",           UserStringNop("OPTIONS_DB_EFFECTS_THREADS_DESC"),           8,      RangedValidator<int>(1, 32));
+        db.Add("effects-threads-ui",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        8,      RangedValidator<int>(1, 32));
+        db.Add("effects-threads-ai",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
+        db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
         db.Add("effect-accounting",         UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -1875,7 +1877,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     boost::timer eval_timer;
 
     std::list<Effect::TargetsCauses> targets_causes_reorder_buffer; // create before run_queue, destroy after run_queue
-    unsigned int num_threads = static_cast<unsigned int>(std::max(1, GetOptionsDB().Get<int>("effects-threads")));
+    unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     RunQueue<StoreTargetsAndCausesOfEffectsGroupsWorkItem> run_queue(num_threads);
     boost::shared_mutex global_mutex;
     boost::unique_lock<boost::shared_mutex> global_lock(global_mutex); // create after run_queue, destroy before run_queue

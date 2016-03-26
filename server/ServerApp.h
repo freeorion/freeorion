@@ -90,6 +90,8 @@ public:
 
     Networking::ClientType  GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
     Networking::ClientType  GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
+
+    virtual int             EffectsProcessingThreads() const;
     //@}
 
 

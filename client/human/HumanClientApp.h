@@ -37,6 +37,7 @@ public:
     bool                CanSaveNow() const;         ///< returns true / false to indicate whether this client can currently safely initiate a game save
     int                 AutoTurnsLeft() const;      ///< returns number of turns left to execute automatically
     bool                HaveWindowFocus() const;    ///< as far as the HCA knows, does the game window have focus?
+    virtual int         EffectsProcessingThreads() const;
     //@}
 
     /** \name Mutators */ //@{

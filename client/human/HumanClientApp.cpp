@@ -1146,6 +1146,9 @@ int HumanClientApp::AutoTurnsLeft() const
 bool HumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
+int HumanClientApp::EffectsProcessingThreads() const
+{ return GetOptionsDB().Get<int>("effects-threads-ui"); }
+
 void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {
         double fps = GetOptionsDB().Get<double>("max-fps");

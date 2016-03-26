@@ -1445,8 +1445,14 @@ Sets the sitrep text size; default 12 (min 10, max 48).
 OPTIONS_DB_LOAD
 Loads the specified single-player save game.
 
-OPTIONS_DB_EFFECTS_THREADS_DESC
-Specifies number of threads to use in effects processing. More than one thread may lead to unpredictable crashes of the client or server.
+OPTIONS_DB_EFFECTS_THREADS_UI_DESC
+Specifies number of threads to use for effects processing in the user interface. More than one thread may lead to unpredictable crashes.
+
+OPTIONS_DB_EFFECTS_THREADS_AI_DESC
+Specifies number of threads to use in effects processing for the AI players. More than one thread may lead to unpredictable crashes.
+
+OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
+Specifies number of threads to use in effects processing on the server. More than one thread may lead to unpredictable crashes.
 
 OPTIONS_DB_AUTO_QUIT
 Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
@@ -2412,8 +2418,14 @@ Situation reports with errors
 OPTIONS_EFFECT_ACCOUNTING
 Effect accounting
 
-OPTIONS_EFFECTS_THREADS
-Effects processing threads
+OPTIONS_EFFECTS_THREADS_UI
+Effects processing threads (user interface)
+
+OPTIONS_EFFECTS_THREADS_AI
+Effects processing threads (AIs)
+
+OPTIONS_EFFECTS_THREADS_SERVER
+Effects processing threads (server)
 
 OPTIONS_ADD_SAVED_DESIGNS
 Add All Saved Ship Designs at Game Start

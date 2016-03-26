@@ -59,6 +59,7 @@ public:
     virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;///< returns the networking client type for the given empire_id
     virtual Networking::ClientType GetPlayerClientType(int player_id) const = 0;///< returns the networking client type for the given player_id
 
+    virtual int EffectsProcessingThreads() const = 0;
 
 protected:
     IApp();
@@ -176,6 +177,9 @@ inline Networking::ClientType GetEmpireClientType(int empire_id)
 
 inline Networking::ClientType GetPlayerClientType(int player_id)
 { return IApp::GetApp()->GetPlayerClientType(player_id); }
+
+inline int EffectsProcessingThreads()
+{ return IApp::GetApp()->EffectsProcessingThreads(); }
 
 
 // sentinel values returned by CurrentTurn().  Can't be an enum since
