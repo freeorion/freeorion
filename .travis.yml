@@ -2,9 +2,11 @@ language: cpp
 sudo: required
 dist: trusty
 compiler: gcc
-env:
-    # Auth token to push API documentation
-    - secure: "dVwZr2EW3sqWvfbrzPkfQou6ZcSuanIw6+Scy1fNA2MdtW0cErTkw9/7N6fiXFAQbvr63oiRsUPJJ2I4zFx+S3mYeUQxadNi0LZHL9X5ncjrS0q376b8Co0Ceb1sLnchOzZQC8LrtujiiJ9FlX36DqKRUAzhix0aYY/cSXPH12s="
+matrix:
+    allow_failures:
+        env:
+            # Auth token to push API documentation
+            - secure: "dVwZr2EW3sqWvfbrzPkfQou6ZcSuanIw6+Scy1fNA2MdtW0cErTkw9/7N6fiXFAQbvr63oiRsUPJJ2I4zFx+S3mYeUQxadNi0LZHL9X5ncjrS0q376b8Co0Ceb1sLnchOzZQC8LrtujiiJ9FlX36DqKRUAzhix0aYY/cSXPH12s="
 branches:
   only:
   - master
