@@ -360,22 +360,23 @@ namespace {
     }
 
     struct QuitSignal : public std::exception {
-        QuitSignal (int exit_code_) :
-        std::exception(), exit_code(exit_code_) {}
+        QuitSignal(int exit_code_) :
+            std::exception(), exit_code(exit_code_)
+        {}
 
-        virtual const char* what() const throw (){
-            return "Quitting application";
-        }
+        virtual const char* what() const throw()
+        { return "Quitting application"; }
 
         int exit_code;
     };
 
-    class FramebufferFailedException : public std::exception{
+    class FramebufferFailedException : public std::exception {
     public:
         FramebufferFailedException(GLenum status):
-            m_status(status) {}
+            m_status(status)
+        {}
 
-        virtual const char * what(){
+        virtual const char* what() {
             switch (m_status) {
                 case GL_FRAMEBUFFER_UNSUPPORTED:
                     return "The requested framebuffer format was unsupported";
@@ -393,12 +394,14 @@ namespace {
 }
 
 namespace GG {
-    class Framebuffer{
+    class Framebuffer {
     public:
         /// Construct a framebuffer of dimensions \a size.
         /// \throws FramebufferFailedException if using framebuffers is not going to work.
-        Framebuffer(GG::Pt size):
-        m_id(0), m_texture(0), m_depth_rbo(0)
+        Framebuffer(GG::Pt size) :
+            m_id(0),
+            m_texture(0),
+            m_depth_rbo(0)
         {
             int width = Value(size.x);
             int height = Value(size.y);
@@ -453,19 +456,18 @@ namespace GG {
             glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
         }
 
-        GLuint OpenGLId(){
-            return m_id;
-        }
+        GLuint OpenGLId()
+        { return m_id; }
 
-        GLuint TextureId() {
-            return m_texture;
-        }
+        GLuint TextureId()
+        { return m_texture; }
 
-        ~Framebuffer(){
+        ~Framebuffer() {
             glDeleteFramebuffersEXT(1, &m_id);
             glDeleteRenderbuffersEXT(1, &m_depth_rbo);
             glDeleteTextures(1, &m_texture);
         }
+
     private:
         GLuint m_id;
         GLuint m_texture;
@@ -475,8 +477,7 @@ namespace GG {
 
 // member functions
 SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/, const std::string& app_name/* = "GG"*/,
-               int x, int y, bool fullscreen, bool fake_mode_change
-) :
+               int x, int y, bool fullscreen, bool fake_mode_change) :
     GUI(app_name),
     m_app_width(w),
     m_app_height(h),
@@ -528,9 +529,7 @@ void SDLGUI::operator()()
 { GUI::operator()(); }
 
 void SDLGUI::Exit(int code)
-{
-    throw QuitSignal(code);
-}
+{ throw QuitSignal(code); }
 
 void SDLGUI::SetWindowTitle(const std::string& title)
 { SDL_SetWindowTitle(m_window, title.c_str()); }
@@ -853,7 +852,7 @@ void SDLGUI::Run()
         ModalEventPump pump(m_done);
         pump();
     } catch (QuitSignal&) {
-        // Normal exit
+        Exit(0);
         return;
     } catch (const std::invalid_argument& e) {
         std::cerr << "std::invalid_argument exception caught in GUI::Run(): " << e.what() << std::endl;
