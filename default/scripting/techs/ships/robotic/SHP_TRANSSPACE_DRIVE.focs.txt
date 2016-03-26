@@ -2,7 +2,7 @@ Tech
     name = "SHP_TRANSSPACE_DRIVE"
     description = "SHP_TRANSSPACE_DRIVE_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    category = "SHIPS_CATEGORY"
+    category = "HULLS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "SHP_NANOROBO_MAINT"
