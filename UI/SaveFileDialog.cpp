@@ -444,7 +444,6 @@ public:
 
     /// Loads preview data on all save files in a directory specidifed by path.
     /// @param [in] path The path of the directory
-    /// @param [out] previews The preview datas indexed by file names
     void LoadSaveGamePreviews(const fs::path& path, const std::string& extension) {
         LoadDirectories(path);
 
@@ -454,8 +453,7 @@ public:
     }
 
     /// Loads preview data on all save files in a directory specidifed by path.
-    /// @param [in] path The path of the directory
-    /// @param [out] previews The preview datas indexed by file names
+    /// @param [in] previews The preview data
     void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
         for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it)
@@ -720,14 +718,17 @@ void SaveFileDialog::Confirm() {
 
     /// Check if we chose a directory
     std::string choice = m_name_edit->Text();
-    fs::path current_dir(FilenameToPath(GetDirPath()));
+
     if (!choice.empty()) {
+        fs::path current_dir(FilenameToPath(GetDirPath()));
         fs::path chosen = current_dir / choice;
+
         if (fs::is_directory(chosen)) {
             DebugLogger() << "SaveFileDialog::Confirm: " << chosen << " is a directory. Listing content.";
             UpdateDirectory(PathString(chosen));
             return;
-        } else {
+
+        } else if (fs::is_regular_file(FilenameToPath(Result()))) {
             DebugLogger() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
             if (!m_load_only) {
                 // If not loading and file exists, ask to confirm override
@@ -740,7 +741,12 @@ void SaveFileDialog::Confirm() {
                     }
                 }
             }
+
+        } else {
+            ErrorLogger() << "SaveFileDialog::Confirm: problem with result: " << Result();
+            return;
         }
+
     } else {
         DebugLogger() << "SaveFileDialog::Confirm: Returning no file.";
     }
@@ -781,13 +787,13 @@ void SaveFileDialog::AskDelete() {
 }
 
 void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    m_file_list->SelectRow ( row );
+    m_file_list->SelectRow(row);
     Confirm();
 }
 
 void SaveFileDialog::Cancel() {
     DebugLogger() << "SaveFileDialog::Cancel: Dialog Canceled";
-    m_name_edit->SetText ( "" );
+    m_name_edit->SetText("");
     CloseClicked();
 }
 
