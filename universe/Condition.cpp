@@ -36,63 +36,63 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingObjects());
         std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingBuildings());
         std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFields());
         std::transform( Objects().ExistingFieldsBegin(), Objects().ExistingFieldsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFleets());
         std::transform( Objects().ExistingFleetsBegin(), Objects().ExistingFleetsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPlanets());
         std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddPopCenterSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPopCenters());
         std::transform( Objects().ExistingPopCentersBegin(), Objects().ExistingPopCentersEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddResCenterSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingResourceCenters());
         std::transform( Objects().ExistingResourceCentersBegin(), Objects().ExistingResourceCentersEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddShipSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingShips());
         std::transform( Objects().ExistingShipsBegin(), Objects().ExistingShipsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingSystems());
         std::transform( Objects().ExistingSystemsBegin(), Objects().ExistingSystemsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
     /** Attempts to cast \a obj to a Fleet pointer. If that fails, attempts to
@@ -281,21 +281,23 @@ bool ConditionBase::operator==(const ConditionBase& rhs) const {
 }
 
 void ConditionBase::Eval(const ScriptingContext& parent_context,
-                                    ObjectSet& matches, ObjectSet& non_matches,
-                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+                         ObjectSet& matches, ObjectSet& non_matches,
+                         SearchDomain search_domain/* = NON_MATCHES*/) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
 void ConditionBase::Eval(ObjectSet& matches, ObjectSet& non_matches,
-                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+                         SearchDomain search_domain/* = NON_MATCHES*/) const
 { Eval(ScriptingContext(), matches, non_matches, search_domain); }
 
 void ConditionBase::Eval(const ScriptingContext& parent_context,
-                                    ObjectSet& matches) const
+                         ObjectSet& matches) const
 {
     matches.clear();
-    // evaluate condition on all non-destroyed objects in Universe
     ObjectSet condition_initial_candidates;
+
+    // evaluate condition only on objects that could potentially be matched by the condition
     GetDefaultInitialCandidateObjects(parent_context, condition_initial_candidates);
+
     matches.reserve(condition_initial_candidates.size());
     Eval(parent_context, matches, condition_initial_candidates);
 }
@@ -304,7 +306,7 @@ void ConditionBase::Eval(ObjectSet& matches) const
 { Eval(ScriptingContext(), matches); }
 
 bool ConditionBase::Eval(const ScriptingContext& parent_context,
-                                    TemporaryPtr<const UniverseObject> candidate) const
+                         TemporaryPtr<const UniverseObject> candidate) const
 {
     if (!candidate)
         return false;
@@ -324,7 +326,7 @@ bool ConditionBase::Eval(TemporaryPtr<const UniverseObject> candidate) const {
 }
 
 void ConditionBase::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                                 ObjectSet& condition_non_targets) const
+                                                      ObjectSet& condition_non_targets) const
 {
     AddAllObjectsSet(condition_non_targets);
 }
@@ -396,8 +398,8 @@ std::string Number::Dump() const {
 }
 
 void Number::Eval(const ScriptingContext& parent_context,
-                             ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain/* = NON_MATCHES*/) const
+                  ObjectSet& matches, ObjectSet& non_matches,
+                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // Number does not have a single valid local candidate to be matched, as it
     // will match anything if the proper number of objects match the
@@ -520,8 +522,8 @@ bool Turn::operator==(const ConditionBase& rhs) const {
 }
 
 void Turn::Eval(const ScriptingContext& parent_context,
-                           ObjectSet& matches, ObjectSet& non_matches,
-                           SearchDomain search_domain/* = NON_MATCHES*/) const
+                ObjectSet& matches, ObjectSet& non_matches,
+                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // if ValueRef for low or high range limits depend on local candidate, then
     // they must be evaluated per-candidate.
@@ -768,7 +770,8 @@ namespace {
                     to_set.push_back(object_to_transfer);
                     number_transferred++;
                     if (number_transferred >= number)
-                        return;                }
+                        return;
+                }
             }
         } else if (sorting_method == SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
@@ -821,8 +824,8 @@ namespace {
 }
 
 void SortedNumberOf::Eval(const ScriptingContext& parent_context,
-                                     ObjectSet& matches, ObjectSet& non_matches,
-                                     SearchDomain search_domain/* = NON_MATCHES*/) const
+                          ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // Most conditions match objects independently of the other objects being
     // tested, but the number parameter for NumberOf conditions makes things
@@ -1020,11 +1023,10 @@ std::string SortedNumberOf::Dump() const {
 }
 
 void SortedNumberOf::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                                  ObjectSet& condition_non_targets) const
+                                                       ObjectSet& condition_non_targets) const
 {
     if (m_condition) {
         m_condition->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
-        return;
     } else {
         ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
     }
@@ -1072,8 +1074,8 @@ std::string All::Dump() const
 // None                                                   //
 ///////////////////////////////////////////////////////////
 void None::Eval(const ScriptingContext& parent_context,
-                          ObjectSet& matches, ObjectSet& non_matches,
-                          SearchDomain search_domain/* = NON_MATCHES*/) const
+                ObjectSet& matches, ObjectSet& non_matches,
+                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     if (search_domain == MATCHES) {
         // move all objects from matches to non_matches
@@ -1190,8 +1192,8 @@ namespace {
 }
 
 void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
-                                        ObjectSet& matches, ObjectSet& non_matches,
-                                        SearchDomain search_domain/* = NON_MATCHES*/) const
+                             ObjectSet& matches, ObjectSet& non_matches,
+                             SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (!m_empire_id || ValueRef::ConstantExpr(m_empire_id)) ||
                             ((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
@@ -1325,7 +1327,7 @@ bool Source::Match(const ScriptingContext& local_context) const {
 }
 
 void Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const
+                                               ObjectSet& condition_non_targets) const
 {
     if (parent_context.source)
         condition_non_targets.push_back(parent_context.source);
@@ -1375,7 +1377,7 @@ bool Target::Match(const ScriptingContext& local_context) const {
 }
 
 void Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const
+                                               ObjectSet& condition_non_targets) const
 {
     if (parent_context.effect_target)
         condition_non_targets.push_back(parent_context.effect_target);
@@ -1457,8 +1459,8 @@ namespace {
 }
 
 void Homeworld::Eval(const ScriptingContext& parent_context,
-                                ObjectSet& matches, ObjectSet& non_matches,
-                                SearchDomain search_domain/* = NON_MATCHES*/) const
+                     ObjectSet& matches, ObjectSet& non_matches,
+                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -1599,7 +1601,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 }
 
 void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                             ObjectSet& condition_non_targets) const
+                                                  ObjectSet& condition_non_targets) const
 { AddPlanetSet(condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
@@ -1644,7 +1646,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 }
 
 void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                           ObjectSet& condition_non_targets) const
+                                                ObjectSet& condition_non_targets) const
 { AddPlanetSet(condition_non_targets); }
 
 ///////////////////////////////////////////////////////////
@@ -1677,7 +1679,7 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 }
 
 void Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                           ObjectSet& condition_non_targets) const
+                                                ObjectSet& condition_non_targets) const
 { AddShipSet(condition_non_targets); }
 
 ///////////////////////////////////////////////////////////
@@ -1764,8 +1766,8 @@ namespace {
 }
 
 void Type::Eval(const ScriptingContext& parent_context,
-                           ObjectSet& matches, ObjectSet& non_matches,
-                           SearchDomain search_domain/* = NON_MATCHES*/) const
+                ObjectSet& matches, ObjectSet& non_matches,
+                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ValueRef::ConstantExpr(m_type) ||
                             (m_type->LocalCandidateInvariant() &&
@@ -1829,7 +1831,7 @@ bool Type::Match(const ScriptingContext& local_context) const {
 }
 
 void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                        ObjectSet& condition_non_targets) const
+                                             ObjectSet& condition_non_targets) const
 {
     // Ships, Fleets and default checks for current objects only
     bool found_type = false;
@@ -1868,8 +1870,9 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
     }
     if (found_type) {
         //if (int(condition_non_targets.size()) < Objects().NumObjects()) {
-        //    DebugLogger() << "Type::GetBaseNonMatches will provide " << condition_non_targets.size() 
-        //                            << " objects of type " << GetType()->Eval() << " rather than " << Objects().NumObjects() << " total objects";
+        //    DebugLogger() << "Type::GetBaseNonMatches will provide " << condition_non_targets.size()
+        //                  << " objects of type " << GetType()->Eval() << " rather than "
+        //                  << Objects().NumObjects() << " total objects";
         //}
     } else {
         ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
@@ -1935,8 +1938,8 @@ namespace {
 }
 
 void Building::Eval(const ScriptingContext& parent_context,
-                               ObjectSet& matches, ObjectSet& non_matches,
-                               SearchDomain search_domain/* = NON_MATCHES*/) const
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2031,7 +2034,7 @@ std::string Building::Dump() const {
 }
 
 void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                            ObjectSet& condition_non_targets) const
+                                                 ObjectSet& condition_non_targets) const
 { AddBuildingSet(condition_non_targets); }
 
 bool Building::Match(const ScriptingContext& local_context) const {
@@ -2144,8 +2147,8 @@ namespace {
 }
 
 void HasSpecial::Eval(const ScriptingContext& parent_context,
-                                 ObjectSet& matches, ObjectSet& non_matches,
-                                 SearchDomain search_domain/* = NON_MATCHES*/) const
+                      ObjectSet& matches, ObjectSet& non_matches,
+                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
                              (!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
@@ -2338,8 +2341,8 @@ namespace {
 }
 
 void HasTag::Eval(const ScriptingContext& parent_context,
-                             ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain/* = NON_MATCHES*/) const
+                  ObjectSet& matches, ObjectSet& non_matches,
+                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -2448,8 +2451,8 @@ namespace {
 }
 
 void CreatedOnTurn::Eval(const ScriptingContext& parent_context,
-                                    ObjectSet& matches, ObjectSet& non_matches,
-                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+                         ObjectSet& matches, ObjectSet& non_matches,
+                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
@@ -2601,8 +2604,8 @@ namespace {
 }
 
 void Contains::Eval(const ScriptingContext& parent_context,
-                               ObjectSet& matches, ObjectSet& non_matches,
-                               SearchDomain search_domain/* = NON_MATCHES*/) const
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2646,12 +2649,12 @@ std::string Contains::Dump() const {
 }
 
 void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                            ObjectSet& condition_non_targets) const
+                                                 ObjectSet& condition_non_targets) const
 {
-    // objects that can contain other objects: fleets, planets, and systems
+    // objects that can contain other objects: systems, fleets, planets
+    AddSystemSet(condition_non_targets);
     AddFleetSet(condition_non_targets);
     AddPlanetSet(condition_non_targets);
-    AddSystemSet(condition_non_targets);
 }
 
 bool Contains::Match(const ScriptingContext& local_context) const {
@@ -2767,8 +2770,8 @@ namespace {
 }
 
 void ContainedBy::Eval(const ScriptingContext& parent_context,
-                                  ObjectSet& matches, ObjectSet& non_matches,
-                                  SearchDomain search_domain/* = NON_MATCHES*/) const
+                       ObjectSet& matches, ObjectSet& non_matches,
+                       SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2810,6 +2813,16 @@ std::string ContainedBy::Dump() const {
         retval += m_condition->Dump();
     --g_indent;
     return retval;
+}
+
+void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                    ObjectSet& condition_non_targets) const
+{
+    // objects that can be contained by other objects: fleets, planets, ships, buildings
+    AddFleetSet(condition_non_targets);
+    AddPlanetSet(condition_non_targets);
+    AddShipSet(condition_non_targets);
+    AddBuildingSet(condition_non_targets);
 }
 
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
@@ -2879,8 +2892,8 @@ namespace {
 }
 
 void InSystem::Eval(const ScriptingContext& parent_context,
-                               ObjectSet& matches, ObjectSet& non_matches,
-                               SearchDomain search_domain/* = NON_MATCHES*/) const
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = !m_system_id || ValueRef::ConstantExpr(m_system_id) ||
                             (m_system_id->LocalCandidateInvariant() &&
@@ -2936,6 +2949,42 @@ std::string InSystem::Dump() const {
     return retval;
 }
 
+void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                 ObjectSet& condition_non_targets) const
+{
+    if (!m_system_id) {
+        // can match objects in any system, or any system
+        AddAllObjectsSet(condition_non_targets);
+        return;
+    }
+
+    bool simple_eval_safe = ValueRef::ConstantExpr(m_system_id) ||
+                            (m_system_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+
+    if (!simple_eval_safe) {
+        // almost anything can be in a system, and can also match the system itself
+        AddAllObjectsSet(condition_non_targets);
+        return;
+    }
+
+    // simple case of a single specified system id; can add just objects in that system
+    int system_id = m_system_id->Eval(parent_context);
+    TemporaryPtr<const System> system = GetSystem(system_id);
+    if (!system)
+        return;
+
+    const ObjectMap& obj_map = Objects();
+    const std::set<int>& system_object_ids = system->ObjectIDs();
+    std::vector<TemporaryPtr<const UniverseObject> > sys_objs = obj_map.FindObjects(system_object_ids);
+
+    // insert all objects that have the specified system id
+    condition_non_targets.reserve(sys_objs.size() + 1);
+    std::copy(sys_objs.begin(), sys_objs.end(), std::back_inserter(condition_non_targets));
+    // also insert system itself
+    condition_non_targets.push_back(system);
+}
+
 bool InSystem::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -2987,8 +3036,8 @@ namespace {
 }
 
 void ObjectID::Eval(const ScriptingContext& parent_context,
-                               ObjectSet& matches, ObjectSet& non_matches,
-                               SearchDomain search_domain/* = NON_MATCHES*/) const
+                    ObjectSet& matches, ObjectSet& non_matches,
+                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = !m_object_id || ValueRef::ConstantExpr(m_object_id) ||
                             (m_object_id->LocalCandidateInvariant() &&
@@ -3035,7 +3084,7 @@ std::string ObjectID::Dump() const
 { return DumpIndent() + "Object id = " + m_object_id->Dump() + "\n"; }
 
 void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                            ObjectSet& condition_non_targets) const
+                                                 ObjectSet& condition_non_targets) const
 {
     if (!m_object_id)
         return;
@@ -3226,7 +3275,7 @@ std::string PlanetType::Dump() const {
 }
 
 void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                              ObjectSet& condition_non_targets) const
+                                                   ObjectSet& condition_non_targets) const
 {
     AddPlanetSet(condition_non_targets);
     AddBuildingSet(condition_non_targets);
@@ -3420,7 +3469,7 @@ std::string PlanetSize::Dump() const {
 }
 
 void PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                              ObjectSet& condition_non_targets) const
+                                                   ObjectSet& condition_non_targets) const
 {
     AddPlanetSet(condition_non_targets);
     AddBuildingSet(condition_non_targets);
@@ -3640,7 +3689,7 @@ std::string PlanetEnvironment::Dump() const {
 }
 
 void PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                                     ObjectSet& condition_non_targets) const
+                                                          ObjectSet& condition_non_targets) const
 {
     AddPlanetSet(condition_non_targets);
     AddBuildingSet(condition_non_targets);
@@ -8297,7 +8346,7 @@ std::string And::Dump() const {
 
 void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const {
     if (!Operands().empty()) {
-        Operands()[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets); //gets condition_non_targets from first operand condition
+        Operands()[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets); // gets condition_non_targets from first operand condition
     } else {
         ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
     }
@@ -8337,7 +8386,7 @@ bool Or::operator==(const ConditionBase& rhs) const {
 }
 
 void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                         ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+              ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);

@@ -809,6 +809,8 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -840,6 +842,8 @@ struct FO_COMMON_API InSystem : public ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  SystemId() const { return m_system_id; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -2097,7 +2101,8 @@ struct FO_COMMON_API And : public ConditionBase {
     virtual std::string Dump() const;
     const std::vector<ConditionBase*>&
                         Operands() const { return m_operands; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
