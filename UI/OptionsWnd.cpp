@@ -78,7 +78,11 @@ namespace {
     struct BrowseForPathButtonFunctor {
         BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters,
                                    GG::Edit* edit, bool directory, bool return_relative_path) :
-            m_path(path), m_filters(filters), m_edit(edit), m_directory(directory), m_return_relative_path(return_relative_path)
+            m_path(path),
+            m_filters(filters),
+            m_edit(edit),
+            m_directory(directory),
+            m_return_relative_path(return_relative_path)
         {}
 
         void operator()() {
