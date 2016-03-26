@@ -159,8 +159,8 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     Init(directory);
 
     if (!filename.empty()) {
-    fs::path filename_path = fs::system_complete(fs::path(filename));
-    m_files_edit->SetText(filename_path.leaf().string());
+        fs::path filename_path = fs::system_complete(fs::path(filename));
+        m_files_edit->SetText(filename_path.leaf().string());
     }
 }
 
