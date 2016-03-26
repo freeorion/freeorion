@@ -18,4 +18,4 @@ Tech
             effects = SetTargetConstruction value = Value + 10
     graphic = "icons/tech/n-dimensional_structures.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

@@ -20,4 +20,4 @@ BuildingType
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/xeno-coordination-facility.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

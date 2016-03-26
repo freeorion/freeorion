@@ -9,4 +9,4 @@ Tech
     unlock = Item type = Building name = "BLD_STARLANE_NEXUS"
     graphic = "icons/tech/temporal_mechanics.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

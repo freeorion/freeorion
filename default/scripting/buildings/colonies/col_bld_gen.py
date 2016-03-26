@@ -110,7 +110,9 @@ t_main = string.Template('''BuildingType
     ]
     icon = "${graphic}"
 
-#include "../../common/shared.macros"''')
+#include "/scripting/common/misc.macros"
+
+#include "/scripting/common/upkeep.macros"''')
 
 t_species_condition = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet

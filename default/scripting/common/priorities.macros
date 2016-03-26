@@ -1,0 +1,14 @@
+// Default = 100
+
+EARLY_PRIORITY
+'''90'''
+
+DEFAULT_PRIORITY
+'''100'''
+
+LATE_PRIORITY
+'''110'''
+
+VERY_LATE_PRIORITY
+'''120'''
+

@@ -16,4 +16,4 @@ Tech
         ]
     graphic = "icons/tech/robotic_production.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

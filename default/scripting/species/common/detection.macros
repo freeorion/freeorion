@@ -1,0 +1,32 @@
+BAD_DETECTION
+'''EffectsGroup
+            description = "BAD_DETECTION"
+            scope = Source
+            activation = Not Ship
+            effects = SetDetection value = Value - 20
+    EffectsGroup
+            scope = Source
+            activation = Ship
+            effects = SetDetection value = Value - 9
+'''
+
+GOOD_DETECTION
+'''EffectsGroup
+            description = "GOOD_DETECTION"
+            scope = Source
+            effects = SetDetection value = Value + 25
+'''
+
+GREAT_DETECTION
+'''        EffectsGroup
+            description = "GREAT_DETECTION"
+            scope = Source
+            effects = SetDetection value = Value + 50
+'''
+
+ULTIMATE_DETECTION
+'''        EffectsGroup
+            description = "ULTIMATE_DETECTION"
+            scope = Source
+            effects = SetDetection value = Value + 100
+'''

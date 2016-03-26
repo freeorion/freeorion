@@ -71,6 +71,10 @@ namespace parse {
     FO_PARSE_API std::vector< boost::filesystem::path > ListScripts(const boost::filesystem::path& path);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
+
+    FO_PARSE_API void process_include_substitutions(std::string& text, 
+                                                    const boost::filesystem::path& file_search_path, 
+                                                    std::set<boost::filesystem::path>& files_included);
 }
 
 #endif

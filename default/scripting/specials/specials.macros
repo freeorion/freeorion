@@ -130,3 +130,7 @@ POPULATION_BOOST_LITHIC
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
 '''
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

@@ -1,0 +1,389 @@
+BASIC_POPULATION
+'''
+        [[HOMEWORLD_BONUS_POPULATION]]
+        [[ENVIRONMENT_MODIFIER]]
+        [[SELF_SUSTAINING_BONUS]]
+        [[PHOTOTROPHIC_BONUS]]
+        [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
+        [[GAIA_POP_MODIFIER]]
+        [[SPECIALS_POP_MODIFIER]]
+        [[GRO_HAB_MODIFIER]]
+        [[POPULATION_TECHS]]
+
+        // Since all species have the same advanced focus effects and infrastructure, the macros are stashed here were they don't need to be manually included in each species macros.
+
+        [[FOCUS_CHANGE_PENALTY]]
+        [[ADVANCED_FOCUS_EFFECTS]]
+        [[STANDARD_CONSTRUCTION]]
+'''
+
+AVERAGE_POPULATION
+'''     [[BASIC_POPULATION]]
+'''
+
+BAD_POPULATION
+'''     [[BASIC_POPULATION]]
+    
+        EffectsGroup
+            description = "BAD_POPULATION"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_POPULATION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetPopulation value = Value -0.25*abs(Value) 
+'''
+
+GOOD_POPULATION
+'''     [[BASIC_POPULATION]]
+
+        EffectsGroup
+            description = "GOOD_POPULATION"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_POPULATION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetPopulation value = Value +0.25*abs(Value) 
+'''
+
+/*
+* Implements environmental modifiers from Growth techs.
+* Changes to the growth tree should take this into account.
+*/
+ENVIRONMENT_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Uninhabitable
+            ]
+            accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = -999
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Hostile
+            ]
+            accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Poor
+            ]
+            accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
+
+/*        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = Adequate
+            ]
+            accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = Value + 0 * Source.SizeAsDouble
+*/
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Good
+            accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Good Adequate ]
+                OwnerHasTech name = "GRO_PLANET_ECOL"
+                Not OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
+            ]
+            accountinglabel = "GRO_PLANET_ECOL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Good Adequate Poor ]
+                OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
+            ]
+            accountinglabel = "GRO_SYMBIOTIC_BIO"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Adequate Poor ]
+                OwnerHasTech name = "GRO_XENO_GENETICS"
+            ]
+            accountinglabel = "GRO_XENO_GENETICS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech name = "GRO_XENO_GENETICS"
+            ]
+            accountinglabel = "GRO_XENO_GENETICS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Poor ]
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
+            ]
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
+            ]
+            accountinglabel = "GRO_XENO_HYBRIDS"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Planet environment = [ Hostile ]
+                OwnerHasTech name = "GRO_CYBORG"
+            ]
+            accountinglabel = "GRO_CYBORG"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble  
+'''
+
+HOMEWORLD_BONUS_POPULATION
+'''     EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = Planet
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_BONUS"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  
+'''
+
+HOMEWORLD_GROWTH_FOCUS_BOOST
+'''     EffectsGroup 
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = Source.Species
+                Not Homeworld name = Source.Species
+                //TargetPopulation low = 0
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation = And [
+                Planet
+                Focus type = "FOCUS_GROWTH"
+                Homeworld
+            ]
+            stackinggroup = "HOMEWORLD_STACK"
+            accountinglabel = "HOMEWORLD_SUPPLY"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+'''
+
+GRO_HAB_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "GRO_SUBTER_HAB"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "GRO_SUBTER_HAB"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+'''
+
+GAIA_POP_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "GAIA_SPECIAL"
+                Planet environment = Good
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "GAIA_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
+                SetTargetHappiness value = Value + 5
+            ]
+'''
+
+SPECIALS_POP_MODIFIER
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TIDAL_LOCK_SPECIAL"
+            ]
+            accountinglabel = "TIDAL_LOCK_LABEL"
+            effects = SetTargetPopulation value = Value - 1 * Target.SizeAsDouble
+
+     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "WORLDTREE_SPECIAL"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "WORLDTREE_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1
+
+     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TEMPORAL_ANOMALY_SPECIAL"
+            ]
+            accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 5 * Target.SizeAsDouble
+'''
+
+POPULATION_TECHS
+'''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnerHasTech name = "CON_NDIM_STRC"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "NDIM_STRC_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnerHasTech name = "CON_ORBITAL_HAB"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "ORBITAL_HAB_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
+'''
+
+// This is dependent on current placement in population effects calc, just after Homeworld and Environment
+SELF_SUSTAINING_BONUS
+'''     EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                HasTag name = "SELF_SUSTAINING"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "SELF_SUSTAINING_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble  // Gets the same bonus as three growth specials
+
+/* Redundant as we now have effects priorities, remove after testing these properly
+EffectsGroup
+            scope = AND [
+                Source
+                Homeworld name = Source.Species
+            ]
+            activation = And [
+                Planet
+                HasTag name = "SELF_SUSTAINING"
+                //TargetPopulation low = 0
+            ]
+            accountinglabel = "SELF_SUSTAINING_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
+*/
+'''
+
+PHOTOTROPHIC_BONUS
+'''     EffectsGroup
+            scope = Contains Source
+            activation = AND [
+                Planet
+                OR [
+                    OwnedBy affiliation = AnyEmpire
+                    Star type = [BlackHole NoStar] // Natives are allowed to have bright or dim stars
+                ]
+                HasTag name = "PHOTOTROPHIC"
+                Turn high = 0
+                NOT Star type = [Orange]
+            ]
+            effects = SetStarType type = Yellow // start with a normal star to be balanced
+ 
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [Blue]
+                TargetPopulation low = 0
+            ]
+            accountinglabel = "VERY_BRIGHT_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [White]
+                TargetPopulation low = 0
+            ]
+            accountinglabel = "BRIGHT_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1.5 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [Red Neutron]
+            ]
+            accountinglabel = "DIM_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasTag name = "PHOTOTROPHIC"
+                Star type = [BlackHole NoStar]
+            ]
+            accountinglabel = "NO_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
+'''

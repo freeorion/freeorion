@@ -1,0 +1,59 @@
+BAD_STEALTH
+'''EffectsGroup
+            description = "BAD_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value - [[LOW_STEALTH]]
+'''
+
+GOOD_STEALTH
+'''EffectsGroup
+            description = "GOOD_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value + [[LOW_STEALTH]]
+'''
+
+GREAT_STEALTH
+'''EffectsGroup
+            description = "GREAT_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
+'''
+
+ULTIMATE_STEALTH
+'''EffectsGroup
+            description = "ULTIMATE_STEALTH"
+            scope = Or [
+                Source
+                And [
+                    ContainedBy Source
+                    Not HasTag name = "ORBITAL"
+                ]
+            ]
+            activation = Planet
+            stackinggroup = "SPECIES_STEALTH_STACK"
+            effects = SetStealth value = Value + [[HIGH_STEALTH]]
+'''

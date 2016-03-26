@@ -14,4 +14,4 @@ Part
             effects = SetFuel value = Target.MaxFuel
     icon = "icons/ship_parts/zero-point-generator.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"

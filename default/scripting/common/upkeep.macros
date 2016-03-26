@@ -1,0 +1,6 @@
+COLONY_UPKEEP_MULTIPLICATOR
+'''(1 + 0.06 * SpeciesColoniesOwned empire = Source.Owner)'''
+
+FLEET_UPKEEP_MULTIPLICATOR
+'''(1 + 0.01 * ShipDesignsOwned empire = Source.Owner)'''
+

@@ -19,4 +19,4 @@ Tech
         effects = SetSpeed value = Value + 20
     graphic = "icons/tech/stellar_navigation.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

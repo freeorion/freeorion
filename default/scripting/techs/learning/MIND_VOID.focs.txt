@@ -9,4 +9,4 @@ Tech
     prerequisites = "LRN_XENOARCH"
     graphic = "icons/tech/mind_of_the_void.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

@@ -85,4 +85,4 @@ BuildingType
     ]
     icon = "icons/building/archive.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/priorities.macros"

@@ -1,0 +1,8 @@
+/* Complicated population formula necessary to actually peg pop reduction at a specific value such as -2, not just 2 less growth than it would have been
+   the fixed amount for pop reduction per turn is 'k' towards the beginning and the end of the comment line immediately below
+      SetPopulation value = min(Value - k, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-k*100))^0.5))
+   This macro takes a parameter, i.e., use it like
+      [[NEXT_TURN_POPULATION_REDUCE_BY(2)]]
+*/
+NEXT_TURN_POPULATION_REDUCE_BY
+'''SetPopulation value = min(Value - @1@, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation) - @1@*100))^0.5))'''

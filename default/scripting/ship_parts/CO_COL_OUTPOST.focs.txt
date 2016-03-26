@@ -9,4 +9,4 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/habitation_domes.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/upkeep.macros"

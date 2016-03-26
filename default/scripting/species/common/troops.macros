@@ -1,0 +1,314 @@
+BASIC_DEFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_ROOT_DEFENSE"
+                Contains Building name = "BLD_IMPERIAL_PALACE"
+            ]
+            stackinggroup = "PALACE_TROOPS_STACK"
+            accountinglabel = "BLD_IMPERIAL_PALACE"
+            effects = SetMaxTroops value = Value + 6
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Homeworld
+                Not Unowned
+            ]
+            stackinggroup = "HOMEWORLD_TROOPS_STACK"
+            accountinglabel = "HOMEWORLD_LABEL"
+            effects = SetMaxTroops value = Value + 4
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Unowned
+            ]
+            stackinggroup = "BASIC_TROOPS_STACK"
+            accountinglabel = "INDEPENDENT_TROOP_LABEL"
+            effects = SetMaxTroops value = Value + 10
+
+EffectsGroup
+            scope = Source
+            activation = Planet
+            stackinggroup = "POPULATION_TROOPS_STACK"
+            accountinglabel = "DEF_ROOT_DEFENSE"
+            effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "GRO_CYBORG"
+            ]
+            stackinggroup = "CYBORG_TROOPS_STACK"
+            accountinglabel = "GRO_CYBORG"
+            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]]
+            
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_2"
+            ]
+            stackinggroup = "GARRISON_2_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_2"
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_4"
+            ]
+            stackinggroup = "GARRISON_4_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_4"
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
+'''
+
+AFTER_SPECIES_MULTIPLICATOR_TROOPS
+'''EffectsGroup
+            scope = Or [
+                Source
+                And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Population high = 0
+                ]
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_1"
+            ]
+            stackinggroup = "GARRISON_1_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_1"
+            effects = SetMaxTroops value = Value + 10   
+
+EffectsGroup
+            scope = Or [
+                Source
+                And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Population high = 0
+                ]
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "DEF_GARRISON_3"
+            ]
+            stackinggroup = "GARRISON_3_TROOPS_STACK"
+            accountinglabel = "DEF_GARRISON_3"
+            effects = SetMaxTroops value = Value + 16
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                WithinStarlaneJumps jumps = 2 condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Contains Building name = "BLD_MEGALITH"
+                ]
+            ]
+            accountinglabel = "MEGALITH_LABEL"
+            effects = SetMaxTroops value = Value + 10
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population high = 0
+            ]
+            stackinggroup = "OUTPOST_TROOPS_STACK"
+            accountinglabel = "OUTPOST_TROOP_LABEL"
+            effects = SetMaxTroops value = Value * .5
+
+[[PROTECTION_FOCUS_TROOPS]]
+'''
+
+NO_DEFENSE_TROOPS
+'''
+    EffectsGroup
+        description = "NO_DEFENSE_TROOPS"
+        scope = Source
+        activation = None
+        effects = SetMaxTroops value = 0
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+BAD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "BAD_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 0.5
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+AVERAGE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+GOOD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "GOOD_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 1.5
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+GREAT_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "GREAT_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 2
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+ULTIMATE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
+
+EffectsGroup
+            description = "ULTIMATE_DEFENSE_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 3
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+PROTECTION_FOCUS_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Focus type = "FOCUS_PROTECTION"
+            ]
+            stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
+            effects = SetMaxTroops value = Value * 2
+'''
+
+NO_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "NO_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "NO_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = 0
+                SetCapacity partname = "GT_TROOP_POD_2" value = 0
+            ]
+'''
+
+BAD_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "BAD_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "BAD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 0.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 0.5
+            ]
+'''
+
+AVERAGE_OFFENSE_TROOPS
+'''       EffectsGroup
+            description = "AVERAGE_OFFENSE_TROOPS"
+            scope = Source
+            activation = None
+            effects = SetTargetResearch value = Value
+'''
+
+GOOD_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "GOOD_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GOOD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 1.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 1.5
+            ]
+'''
+
+GREAT_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "GREAT_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GREAT_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 2
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 2
+            ]
+'''
+
+ULTIMATE_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "ULTIMATE_OFFENSE_TROOPS"
+            scope = Source
+            activation = And [
+                Ship
+                Or [
+                    DesignHasPart name = "GT_TROOP_POD"
+                    DesignHasPart name = "GT_TROOP_POD_2"
+                ]
+            ]
+            stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "ULTIMATE_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 3
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 3
+            ]
+'''

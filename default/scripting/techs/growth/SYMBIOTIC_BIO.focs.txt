@@ -9,4 +9,4 @@ Tech
     // Effects are located in species.txt
     graphic = "icons/tech/symbiosis_biology.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

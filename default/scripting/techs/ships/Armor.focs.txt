@@ -41,4 +41,4 @@ Tech
     unlock = Item type = ShipPart name = "AR_XENTRONIUM_PLATE"
     graphic = "icons/tech/armor_plating.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

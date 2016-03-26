@@ -9,4 +9,4 @@ Tech
     prerequisites = "PRO_ROBOTIC_PROD"
     graphic = "icons/tech/nanotech_production.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

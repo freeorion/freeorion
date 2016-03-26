@@ -17,4 +17,4 @@ Tech
             effects = SetStealth value = Value + 5
     graphic = ""
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

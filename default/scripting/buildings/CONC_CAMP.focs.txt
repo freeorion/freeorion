@@ -67,4 +67,4 @@ BuildingType
     ]
     icon = "icons/building/concentration-camp.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/*.macros"

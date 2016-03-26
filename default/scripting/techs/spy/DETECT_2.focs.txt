@@ -34,4 +34,4 @@ Tech
     ]
     graphic = "icons/tech/active_radar.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

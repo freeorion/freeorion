@@ -10,4 +10,4 @@ BuildingType
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = ""
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

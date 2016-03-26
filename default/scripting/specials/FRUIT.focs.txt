@@ -22,5 +22,3 @@ Special
     graphic = "icons/specials_huge/fruit.png"
 
 #include "specials.macros"
-
-#include "../common/shared.macros"

@@ -19,4 +19,4 @@ Special
     ]
     graphic = "icons/specials_huge/volcanic_ash.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/stealth.macros"

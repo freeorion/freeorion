@@ -28,4 +28,4 @@ Tech
             effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 50
     ]
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

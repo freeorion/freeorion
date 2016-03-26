@@ -262,4 +262,4 @@ Special
     ]
     graphic = "icons/specials_huge/ancient_ruins.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

@@ -109,5 +109,6 @@ BuildingType
     ]
     icon = "icons/species/trith.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/misc.macros"
 
+#include "/scripting/common/upkeep.macros"

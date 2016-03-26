@@ -9,4 +9,4 @@ Tech
     unlock = Item type = ShipPart name = "ST_CLOAK_3"
     graphic = "icons/ship_parts/cloak-3.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

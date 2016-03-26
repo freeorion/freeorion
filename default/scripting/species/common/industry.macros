@@ -1,0 +1,91 @@
+NO_INDUSTRY
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY)]]'''
+
+BASIC_INDUSTRY
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "FOCUS_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup                    // removes residual production from a dead planet
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = SetIndustry value = 0
+'''
+
+BAD_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "BAD_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "BAD_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[BAD_MULTIPLIER]]
+'''
+
+AVERAGE_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+'''
+
+GOOD_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "GOOD_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "GOOD_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[GOOD_MULTIPLIER]]
+'''
+
+GREAT_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "GREAT_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "GREAT_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[GREAT_MULTIPLIER]]
+'''
+
+ULTIMATE_INDUSTRY
+'''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "ULTIMATE_INDUSTRY"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value*[[ULTIMATE_MULTIPLIER]]
+'''

@@ -40,4 +40,4 @@ Tech
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

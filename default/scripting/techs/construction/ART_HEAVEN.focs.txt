@@ -9,4 +9,4 @@ Tech
     unlock = Item type = Building name = "BLD_ART_MOON"
     graphic = "icons/tech/artificial_heavenly_bodies.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

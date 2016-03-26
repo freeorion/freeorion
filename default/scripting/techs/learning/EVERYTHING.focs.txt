@@ -9,4 +9,4 @@ Tech
     prerequisites = "LRN_GRAVITONICS"
     graphic = "icons/tech/the_theory_of_everything.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

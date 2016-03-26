@@ -8,4 +8,4 @@ Tech
     tags = "THEORY"
     graphic = "icons/tech/the_physical_brain.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

@@ -10,4 +10,4 @@ Tech
         "GRO_TERRAFORM"
     ]
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

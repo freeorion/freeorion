@@ -83,4 +83,4 @@ BuildingType
     ]
     icon = "icons/building/evacuation.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/pop_reduce.macros"

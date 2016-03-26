@@ -38,4 +38,4 @@ BuildingType
     ]
     icon = "icons/building/paradise_planet.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

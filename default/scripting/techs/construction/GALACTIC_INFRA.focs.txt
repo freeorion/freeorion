@@ -15,4 +15,4 @@ Tech
             effects = SetMaxSupply value = Value + 1
     graphic = "icons/tech/galactic_infrastructure.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

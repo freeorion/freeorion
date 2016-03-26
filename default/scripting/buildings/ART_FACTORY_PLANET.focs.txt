@@ -39,4 +39,6 @@ BuildingType
     ]
     icon = "icons/species/robotic-01.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"
+
+#include "/scripting/common/upkeep.macros"

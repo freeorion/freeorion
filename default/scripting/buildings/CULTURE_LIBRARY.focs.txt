@@ -22,5 +22,3 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/archive.png"
-
-#include "../common/shared.macros"

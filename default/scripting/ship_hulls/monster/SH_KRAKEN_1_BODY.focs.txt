@@ -78,5 +78,3 @@ Hull
 #include "monster.macros"
 
 #include "../ship_hulls.macros"
-
-#include "../../common/shared.macros"

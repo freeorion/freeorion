@@ -29,4 +29,4 @@ BuildingType
     ]
     icon = "icons/building/gas-giant-generator.png"
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

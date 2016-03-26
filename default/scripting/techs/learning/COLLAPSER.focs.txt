@@ -9,4 +9,4 @@ Tech
     unlock = Item type = Building name = "BLD_BLACK_HOLE_COLLAPSER"
     graphic = "icons/tech/black_hole_collapse.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

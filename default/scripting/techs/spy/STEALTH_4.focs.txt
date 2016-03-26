@@ -27,4 +27,4 @@ Tech
             ]
     graphic = "icons/specials_huge/void.png"
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

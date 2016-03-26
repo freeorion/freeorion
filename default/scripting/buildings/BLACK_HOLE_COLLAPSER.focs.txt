@@ -19,4 +19,4 @@ BuildingType
     ]
     icon = ""
 
-#include "../common/shared.macros"
+#include "/scripting/common/enqueue.macros"

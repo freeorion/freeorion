@@ -462,41 +462,111 @@ namespace parse {
 
     std::set<std::string> missing_include_files;
 
+    /** \brief Resolve script directives
+     * 
+     * @param[in,out] text contents to search through
+     * @param[in] file_search_path base path of content
+     */
     void file_substitution(std::string& text, const boost::filesystem::path& file_search_path) {
         if (!boost::filesystem::is_directory(file_search_path)) {
-            ErrorLogger() << "File parsing include substitution given search path that is not a directory: " << file_search_path.string();
+            ErrorLogger() << "File parsing include substitution given search path that is not a directory: "
+                          << file_search_path.string();
             return;
         }
         try {
-            std::size_t position = 0; // position in the text, past the already processed part
-            smatch match;
-            while (regex_search(text.begin() + position, text.end(), match, FILENAME_INSERTION, regex_constants::match_default)) {
-                position += match.position();
-                const std::string& matched_text = match.str();  // [[FILENAME_TEXT]]
-                const std::string& filename = match[1];        // just FILENAME_TEXT
-                // read file to insert
-                boost::filesystem::path insert_file_path = file_search_path / filename;
-                std::string insert_file_contents;
-                bool read_success = read_file(insert_file_path, insert_file_contents);
-                if (!read_success) {
-                    std::string missing_file_pathstring = insert_file_path.string();
-                    if (missing_include_files.find(missing_file_pathstring) == missing_include_files.end()) {
-                        missing_include_files.insert(missing_file_pathstring);
-                        ErrorLogger() << "File parsing include substitution failed to read file at path: " << insert_file_path.string();
-                    }
-                }
-
-                // TODO: check for cyclic file insertion
-                // insert file text in place of inclusion line
-                text.replace(position, matched_text.length(), insert_file_contents);
-                // recusrive replacement allowed, so don't skip past
-                // start of replacement text, so that inserted text can
-                // be matched on the next pass
-            }
+            std::set<boost::filesystem::path> files_included;
+            process_include_substitutions(text, file_search_path, files_included);
         } catch (const std::exception& e) {
             ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
+        }
+    }
+
+    /** \brief Replace all include statements with contents of file
+     * 
+     * Search for any include statements in *text* and replace them with the contents
+     * of the file given.  File lookup is relative to *file_search_path* and will not
+     * be included if found in *files_included*.
+     * Each included file is added to *files_included*.
+     * This is a recursive function, processing the contents of any included files.
+     * 
+     * @param[in,out] text content to search through
+     * @param[in] file_search_path base path of content
+     * @param[in,out] files_included canonical path of any files previously included
+     * */
+    void process_include_substitutions(std::string& text, const boost::filesystem::path& file_search_path,
+                                       std::set<boost::filesystem::path>& files_included)
+    {
+        smatch match;
+        while (regex_search(text.begin(), text.end(), match, FILENAME_INSERTION, regex_constants::match_default)) {
+            const std::string& fn_match = match[1];
+            if (fn_match.empty()) {
+                continue;
+            }
+            const sregex INCL_ONCE_SEARCH = bol >> "#include" >> *space >> "\"" >> fn_match >> "\"" >> *space >> _n;
+            boost::filesystem::path base_path;
+            boost::filesystem::path match_path;
+            // check for base path
+            if (fn_match.substr(0, 1) == "/") {
+                base_path = GetResourceDir();
+                match_path = base_path / fn_match.substr(1);
+            } else {
+                base_path = file_search_path;
+                match_path = base_path / fn_match;
+            }
+            std::string fn_str = boost::filesystem::path(fn_match).filename().string();
+            if (fn_str.substr(0, 1) == "*") {
+                if (match_path.parent_path().empty()) {
+                    DebugLogger() << "Parse: " << match_path.parent_path().string() << " is empty, skipping.";
+                    continue;
+                }
+                fn_str = fn_str.substr(1, fn_str.size() - 1);
+                std::vector<boost::filesystem::path> fn_list = ListDir(match_path.parent_path());
+                std::set<boost::filesystem::path> match_list;
+                // filter results
+                for (std::vector<boost::filesystem::path>::iterator fn_it = fn_list.begin();
+                    fn_it != fn_list.end(); ++fn_it)
+                {
+                    std::string it_str = fn_it->filename().string();
+                    std::size_t it_len = it_str.length();
+                    std::size_t match_len = fn_str.length();
+                    if (it_len > match_len) {
+                        if (it_str.substr(it_len - match_len, match_len) == fn_str) {
+                            match_list.insert(*fn_it);
+                        }
+                    }
+                }
+                // read in results
+                std::string dir_text;
+                for (std::set<boost::filesystem::path>::iterator list_it = match_list.begin();
+                     list_it != match_list.end(); ++list_it)
+                {
+                    if (files_included.insert(boost::filesystem::canonical(*list_it)).second) {
+                        std::string new_text;
+                        if (read_file(*list_it, new_text)) {
+                            new_text.append("\n");
+                            dir_text.append(new_text);
+                        } else {
+                            ErrorLogger() << "Parse: Unable to read file " << list_it->string();
+                        }
+                    }
+                }
+                text = regex_replace(text, INCL_ONCE_SEARCH, dir_text, regex_constants::format_first_only);
+            } else if (files_included.insert(boost::filesystem::canonical(match_path)).second) {
+                std::string file_content;
+                if (read_file(match_path, file_content)) {
+                    file_content.append("\n");
+                    process_include_substitutions(file_content, match_path.parent_path(), files_included);
+                    text = regex_replace(text, INCL_ONCE_SEARCH, file_content, regex_constants::format_first_only);
+                } else if (missing_include_files.insert(PathString(match_path)).second) {
+                    ErrorLogger() << "Parse: " << PathString(match_path) << " was not found for inclusion (Path:"
+                                  << PathString(base_path) << ") (File:" << fn_str << ")";
+                }
+            }
+            // remove any remaining includes of this file
+            text = regex_replace(text, INCL_ONCE_SEARCH, "\n", regex_constants::match_default);
+            // TraceLogger() << "Parse: contents after scrub of " << fn_match << ":\n" << text;
         }
     }
 

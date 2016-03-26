@@ -1,0 +1,86 @@
+BASIC_RESEARCH
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "FOCUS_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
+
+        EffectsGroup      // removes residual production from a dead planet
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = SetResearch value = 0
+'''
+
+NO_RESEARCH
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH)]]'''
+
+BAD_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "BAD_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "BAD_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
+'''
+
+AVERAGE_RESEARCH
+'''[[BASIC_RESEARCH]]
+'''
+
+GOOD_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "GOOD_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "GOOD_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[GOOD_MULTIPLIER]]
+'''
+
+GREAT_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "GREAT_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "GREAT_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[GREAT_MULTIPLIER]]
+'''
+
+ULTIMATE_RESEARCH
+'''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "ULTIMATE_RESEARCH"
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "ULTIMATE_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value*[[ULTIMATE_MULTIPLIER]]
+'''

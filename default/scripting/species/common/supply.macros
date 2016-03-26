@@ -1,0 +1,38 @@
+NO_SUPPLY
+'''
+'''
+
+BAD_SUPPLY
+'''     EffectsGroup
+            description = "BAD_SUPPLY"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 0
+'''
+
+AVERAGE_SUPPLY
+'''     EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "AVERAGE_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 1
+'''
+
+GREAT_SUPPLY
+'''     EffectsGroup
+            description = "GREAT_SUPPLY"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 2
+'''
+
+ULTIMATE_SUPPLY
+'''     EffectsGroup
+            description = "ULTIMATE_SUPPLY"
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_SUPPLY_LABEL"
+            effects = SetMaxSupply value = Value + 3
+'''

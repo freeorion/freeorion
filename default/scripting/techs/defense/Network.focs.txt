@@ -57,4 +57,4 @@ Tech
             ]
             effects = SetDefense value = Value + max(0.1*Target.MaxDefense, 0.25*Target.Construction)
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"

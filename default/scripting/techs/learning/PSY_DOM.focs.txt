@@ -49,4 +49,4 @@ Tech
                 SetOwner empire = Source.Owner
             ]
 
-#include "../../common/shared.macros"
+#include "/scripting/common/base_prod.macros"
