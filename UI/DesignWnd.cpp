@@ -1489,7 +1489,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
     Row* original_row = boost::polymorphic_downcast<Row*>(*wnds.begin());
     iterator insertion_point = std::find(begin(), end(), original_row);
-    if(insertion_point != end())
+    if (insertion_point != end())
         ++insertion_point;
 
     // replace dragged-away control with new copy
@@ -1541,11 +1541,11 @@ void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     BasesListBox::CompletedDesignListBoxRow* control =
         boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(row);
     Empire* empire = GetEmpire(m_empire_id_shown);
-    if (control != NULL && empire != NULL) {
+    if (control && empire) {
         int design_id = control->DesignID();
 
         iterator insert_before_row = begin();
-        for(std::size_t ii = 0; ii < position; ++ii)
+        for (std::size_t ii = 0; ii < position; ++ii)
             insert_before_row++;
         const BasesListBox::CompletedDesignListBoxRow* insert_before_control =
             boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
@@ -2018,8 +2018,7 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
     }
 }
 
-void BasesListBox::EnableOrderIssuing(bool enable/* = true*/)
-{
+void BasesListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;
     QueueListBox::EnableOrderIssuing(m_enabled && m_showing_completed_designs);
 }
@@ -2191,7 +2190,7 @@ void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_li
 }
 
 void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
-    if(m_hulls_list)
+    if (m_hulls_list)
         m_hulls_list->EnableOrderIssuing(enable);
     if(m_designs_list)
         m_designs_list->EnableOrderIssuing(enable);
@@ -3482,7 +3481,6 @@ void DesignWnd::ReplaceDesign() {
     DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
 }
 
-void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
-{
+void DesignWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_base_selector->EnableOrderIssuing(enable);
 }
