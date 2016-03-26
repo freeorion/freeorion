@@ -38,7 +38,7 @@ namespace {
         for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
             if (text[i] == '\0') break;
             if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
-                ErrorLogger() << error_buffer;
+                BOOST_LOG_TRIVIAL(error) << error_buffer;
                 error_buffer = "";
             } else {
                 error_buffer += text[i];
