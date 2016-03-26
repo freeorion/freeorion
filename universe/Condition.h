@@ -1022,6 +1022,8 @@ struct FO_COMMON_API Species : public ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1089,6 +1091,8 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
     const ValueRef::ValueRefBase<int>*          EmpireID() const { return m_empire_id; }
     const ValueRef::ValueRefBase<int>*          Low() const { return m_low; }
     const ValueRef::ValueRefBase<int>*          High() const { return m_high; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1125,6 +1129,8 @@ struct FO_COMMON_API FocusType : public ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::vector<ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1187,8 +1193,9 @@ struct FO_COMMON_API DesignHasHull : public ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-
     const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1226,6 +1233,8 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
     const ValueRef::ValueRefBase<int>*          Low() const  { return m_low; }
     const ValueRef::ValueRefBase<int>*          High() const { return m_high; }
     const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1265,6 +1274,8 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
     const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
     ShipPartClass                       Class() const { return m_class; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          ObjectSet& condition_non_targets) const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 

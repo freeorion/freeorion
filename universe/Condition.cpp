@@ -3895,6 +3895,14 @@ std::string Species::Dump() const {
     return retval;
 }
 
+void Species::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                ObjectSet& condition_non_targets) const
+{
+    AddPlanetSet(condition_non_targets);
+    AddBuildingSet(condition_non_targets);
+    AddShipSet(condition_non_targets);
+}
+
 bool Species::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -4210,6 +4218,12 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
     return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high)(candidate);
 }
 
+void Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                 ObjectSet& condition_non_targets) const
+{
+    AddPlanetSet(condition_non_targets);
+}
+
 void Enqueued::SetTopLevelContent(const std::string& content_name) {
     if (m_name)
         m_name->SetTopLevelContent(content_name);
@@ -4267,8 +4281,8 @@ namespace {
                     res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
-                return !res_center->Focus().empty() && (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
-
+                return !res_center->Focus().empty() &&
+                    (std::find(m_names.begin(), m_names.end(), res_center->Focus()) != m_names.end());
             }
 
             return false;
@@ -4395,6 +4409,13 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
         }
     }
     return false;
+}
+
+void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                  ObjectSet& condition_non_targets) const
+{
+    AddPlanetSet(condition_non_targets);
+    AddBuildingSet(condition_non_targets);
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
@@ -4619,8 +4640,8 @@ namespace {
 }
 
 void DesignHasHull::Eval(const ScriptingContext& parent_context,
-                                    ObjectSet& matches, ObjectSet& non_matches,
-                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+                         ObjectSet& matches, ObjectSet& non_matches,
+                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
@@ -4675,6 +4696,12 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
     return DesignHasHullSimpleMatch(name)(candidate);
+}
+
+void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                  ObjectSet& condition_non_targets) const
+{
+    AddShipSet(condition_non_targets);
 }
 
 void DesignHasHull::SetTopLevelContent(const std::string& content_name) {
@@ -4830,6 +4857,12 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     return DesignHasPartSimpleMatch(low, high, name)(candidate);
 }
 
+void DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                      ObjectSet& condition_non_targets) const
+{
+    AddShipSet(condition_non_targets);
+}
+
 void DesignHasPart::SetTopLevelContent(const std::string& content_name) {
     if (m_low)
         m_low->SetTopLevelContent(content_name);
@@ -4974,6 +5007,12 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
     return DesignHasPartClassSimpleMatch(low, high, m_class)(candidate);
+}
+
+void DesignHasPartClass::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                           ObjectSet& condition_non_targets) const
+{
+    AddShipSet(condition_non_targets);
 }
 
 void DesignHasPartClass::SetTopLevelContent(const std::string& content_name) {
