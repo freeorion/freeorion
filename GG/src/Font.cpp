@@ -880,7 +880,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
     }
 
     PreRenderText(ul, lr, text, format, *line_data, *render_state,
-                  0, CP0, line_data->size(), CPSize(line_data->back().char_data.size()), cache);
+                  0, CP0, line_data->size(), line_data->empty() ? CP0 : CPSize(line_data->back().char_data.size()), cache);
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
