@@ -87,8 +87,10 @@ add_library(freeorionparse
 if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
     set_property(
         SOURCE
+        CommonParamsParser.cpp
         ConditionParser1.cpp
         EffectParser1.cpp
+        EffectParser2.cpp
         PROPERTY
         COMPILE_FLAGS -ftemplate-depth=512
     )
