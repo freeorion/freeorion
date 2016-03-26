@@ -99,9 +99,29 @@ std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const st
     return result;
 }
 
+std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const std::set<int>& object_ids) const {
+    std::vector<TemporaryPtr<const UniverseObject> > result;
+    for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
+        if (TemporaryPtr<const UniverseObject> obj = Object(*it))
+            result.push_back(obj);
+        else
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+    return result;
+}
+
 std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::vector<int>& object_ids) {
     std::vector<TemporaryPtr<UniverseObject> > result;
     for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
+        if (TemporaryPtr<UniverseObject> obj = Object(*it))
+            result.push_back(obj);
+        else
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+    return result;
+}
+
+std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::set<int>& object_ids) {
+    std::vector<TemporaryPtr<UniverseObject> > result;
+    for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
         if (TemporaryPtr<UniverseObject> obj = Object(*it))
             result.push_back(obj);
         else

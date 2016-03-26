@@ -198,9 +198,11 @@ public:
 
     /** Returns a vector containing the objects with ids in \a object_ids */
     std::vector<TemporaryPtr<const UniverseObject> >    FindObjects(const std::vector<int>& object_ids) const;
+    std::vector<TemporaryPtr<const UniverseObject> >    FindObjects(const std::set<int>& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids */
     std::vector<TemporaryPtr<UniverseObject> >          FindObjects(const std::vector<int>& object_ids);
+    std::vector<TemporaryPtr<UniverseObject> >          FindObjects(const std::set<int>& object_ids);
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
