@@ -13,6 +13,29 @@ BuildingType
         ]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+                HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
+            ]
+            effects = GiveEmpireTech name = "TECH_COL_BANFORO"
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+                HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+            ]
+            effects = GiveEmpireTech name = "TECH_COL_KILANDOW"
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+                HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+            ]
+            effects = GiveEmpireTech name = "TECH_COL_MISIORLA"
+    ]
     icon = "icons/building/the_caducean_institute.png"
 
 #include "../common/shared.macros"
