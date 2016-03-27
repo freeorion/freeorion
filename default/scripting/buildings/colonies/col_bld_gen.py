@@ -113,7 +113,8 @@ t_main = string.Template('''BuildingType
 
 #include "/scripting/common/misc.macros"
 
-#include "/scripting/common/upkeep.macros"''')
+#include "/scripting/common/upkeep.macros"
+''')
 
 t_species_condition = string.Template(
     '''ResourceSupplyConnected empire = Source.Owner condition = And [
@@ -210,37 +211,30 @@ t_buildtime_extinct = string.Template('''${t_factor} * max(5.0, 1.0 +
 outpath = os.getcwd()
 print ("Output folder: %s" % outpath)
 
-for species in species_list:
-    sp_id = species[0]
+for sp_id, sp_desc_name, sp_graphic in species_list:
     sp_name = sp_id.split("_", 1)[1]
-    sp_desc_name = species[1]
     sp_tags = '"' + sp_id + '"'
-    sp_graphic = species[2]
     sp_filename = sp_id + ".focs.txt"
+
+    data = {
+        'id': sp_id,
+        'name': sp_name,
+        'tags': sp_tags,
+        'graphic': sp_graphic,
+        'cost': 50,
+        'time': t_buildtime.substitute(id=sp_id, t_factor=time_factor.get(sp_id, "1.0")),
+        'species_condition': t_species_condition.substitute(id=sp_id)
+    }
+
+    if sp_id == "SP_EXOBOT":
+        data['tags'] += ' "CTRL_ALWAYS_REPORT"'
+        data['cost'] = 70
+        data['time'] = 5
+        data['species_condition'] = r"// no existing Exobot colony required!"
+    elif sp_id in ("SP_BANFORO", "SP_KILANDOW", "SP_MISIORLA"):
+        data['tags'] += ' "CTRL_EXTINCT"'
+        data['species_condition'] = t_species_condition_extinct.substitute(id=sp_id, name=sp_name)
+        data['time'] = t_buildtime_extinct.substitute(id=sp_id, name=sp_name, t_factor=time_factor.get(sp_id, "1.0"))
+
     with open(os.path.join(outpath, sp_filename), "w") as f:
-        if sp_id == "SP_EXOBOT":
-            sp_tags += ' "CTRL_ALWAYS_REPORT"'
-            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags,
-                                      graphic=sp_graphic, cost=70, time=5,
-                                      species_condition=r"// no existing " +
-                                      "Exobot colony required!") + "\n\n")
-        elif sp_id == "SP_BANFORO" or sp_id == "SP_KILANDOW" or \
-                sp_id == "SP_MISIORLA":
-            this_time_factor = time_factor.get(sp_id, "1.0")
-            sp_tags += ' "CTRL_EXTINCT"'
-            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags,
-                                      graphic=sp_graphic, cost=50,
-                                      time=t_buildtime_extinct.substitute(
-                                          id=sp_id, name=sp_name,
-                                          t_factor=this_time_factor),
-                                      species_condition=t_species_condition_extinct.substitute(
-                                          id=sp_id, name=sp_name)) + "\n\n")
-        else:
-            this_time_factor = time_factor.get(sp_id, "1.0")
-            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags,
-                                      graphic=sp_graphic, cost=50,
-                                      time=t_buildtime.substitute(
-                                          id=sp_id,
-                                          t_factor=this_time_factor),
-                                      species_condition=t_species_condition.substitute(
-                                          id=sp_id)) + "\n\n")
+        f.write(t_main.substitute(**data))

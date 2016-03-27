@@ -113,4 +113,3 @@ BuildingType
 #include "/scripting/common/misc.macros"
 
 #include "/scripting/common/upkeep.macros"
-
