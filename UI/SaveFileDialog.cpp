@@ -143,6 +143,9 @@ namespace {
         }
         return false;
     }
+
+    bool IsValidUTF8(const std::string& in)
+    { return utf8::is_valid(in.begin(), in.end()); }
 }
 
 /** Describes how a column should be set up in the dialog */
@@ -466,8 +469,18 @@ public:
             Insert(new SaveFileRow(".."));
 
         for (fs::directory_iterator it(path); it != end_it; ++it) {
-            if (fs::is_directory(it->path()))
-                Insert(new SaveFileRow(PathString(it->path().filename())));
+            if (fs::is_directory(it->path())) {
+                fs::path last_bit_of_path = it->path().filename();
+                std::string utf8_dir_name = PathString(last_bit_of_path);
+                DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
+                Insert(new SaveFileRow(utf8_dir_name));
+
+                //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
+                //std::string path_string;
+                //utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
+                //DebugLogger() << "SaveFileDialog::LoadDirectories name: " << path_string << " valid UTF-8: " << IsValidUTF8(path_string);
+                //Insert(new SaveFileRow(path_string));
+            }
         }
     }
 
@@ -475,7 +488,7 @@ public:
         for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
             SaveFileRow* row = dynamic_cast<SaveFileRow*>(*it);
             if (row && row->Filename() == filename)
-                    return true;
+                return true;
         }
         return false;
     }
@@ -718,37 +731,45 @@ void SaveFileDialog::Confirm() {
 
     /// Check if we chose a directory
     std::string choice = m_name_edit->Text();
+    if (choice.empty()) {
+        DebugLogger() << "SaveFileDialog::Confirm: Returning no file.";
+        CloseClicked();
+        return;
+    }
 
-    if (!choice.empty()) {
-        fs::path current_dir(FilenameToPath(GetDirPath()));
-        fs::path chosen = current_dir / choice;
+    fs::path choice_path = FilenameToPath(choice);
+    DebugLogger() << "choice: " << choice << " valid utf-8: " << IsValidUTF8(choice);
 
-        if (fs::is_directory(chosen)) {
-            DebugLogger() << "SaveFileDialog::Confirm: " << chosen << " is a directory. Listing content.";
-            UpdateDirectory(PathString(chosen));
-            return;
+    fs::path current_dir = FilenameToPath(GetDirPath());
+    DebugLogger() << "current dir PathString: " << PathString(current_dir) << " valid utf-8: " << IsValidUTF8(PathString(current_dir));
 
-        } else if (fs::is_regular_file(FilenameToPath(Result()))) {
-            DebugLogger() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
-            if (!m_load_only) {
-                // If not loading and file exists, ask to confirm override
-                // Use Result() to ensure we are using the extension.
-                if (fs::exists(FilenameToPath(Result()))) {
-                    boost::format templ(UserString("SAVE_REALLY_OVERRIDE"));
-                    std::string question = (templ % choice).str();
-                    if (!Prompt(question)) {
-                        return;
-                    }
+    fs::path chosen_full_path = current_dir / choice_path;
+    DebugLogger() << "chosen_full_path PathString: " << PathString(chosen_full_path) << " valid utf-8: " << IsValidUTF8(PathString(chosen_full_path));
+    DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
+
+
+    if (fs::is_directory(chosen_full_path)) {
+        DebugLogger() << "SaveFileDialog::Confirm: " << PathString(chosen_full_path) << " is a directory. Listing content.";
+        UpdateDirectory(PathString(chosen_full_path));
+        return;
+
+    } else if (fs::is_regular_file(FilenameToPath(Result()))) {
+        DebugLogger() << "SaveFileDialog::Confirm: File " << PathString(chosen_full_path) << " chosen.";
+        if (!m_load_only) {
+            // If not loading and file exists, ask to confirm override
+            // Use Result() to ensure we are using the extension.
+            if (fs::exists(FilenameToPath(Result()))) {
+                boost::format templ(UserString("SAVE_REALLY_OVERRIDE"));
+                std::string question = (templ % choice).str();
+                if (!Prompt(question)) {
+                    return;
                 }
             }
-
-        } else {
-            ErrorLogger() << "SaveFileDialog::Confirm: problem with result: " << Result();
-            return;
         }
 
     } else {
-        DebugLogger() << "SaveFileDialog::Confirm: Returning no file.";
+        ErrorLogger() << "SaveFileDialog::Confirm: problem with result: " << Result();
+        return;
     }
 
     CloseClicked();
@@ -878,7 +899,7 @@ bool SaveFileDialog::CheckChoiceValidity() {
     // Check folder validity
     if (!m_server_previews) {
         fs::path dir(FilenameToPath(GetDirPath()));
-        if (fs::exists (dir) && fs::is_directory (dir)) {
+        if (fs::exists(dir) && fs::is_directory(dir)) {
             m_current_dir_edit->SetColor(ClientUI::TextColor());
         } else {
             m_current_dir_edit->SetColor(GG::CLR_RED);
