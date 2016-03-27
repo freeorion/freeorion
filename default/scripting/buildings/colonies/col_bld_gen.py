@@ -115,7 +115,8 @@ t_main = string.Template('''BuildingType
 
 #include "/scripting/common/upkeep.macros"''')
 
-t_species_condition = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
+t_species_condition = string.Template(
+    '''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
             OwnedBy empire = Source.Owner
             Species name = "${id}"
@@ -123,7 +124,8 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             Happiness low = 5
         ]''')
 
-t_species_condition_extinct = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
+t_species_condition_extinct = string.Template(
+    '''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
             OwnedBy empire = Source.Owner
             Or [
@@ -218,16 +220,27 @@ for species in species_list:
     with open(os.path.join(outpath, sp_filename), "w") as f:
         if sp_id == "SP_EXOBOT":
             sp_tags += ' "CTRL_ALWAYS_REPORT"'
-            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags, graphic=sp_graphic, cost=70, time=5,
-                    species_condition=r"// no existing Exobot colony required!") + "\n\n")
-        elif sp_id == "SP_BANFORO" or sp_id == "SP_KILANDOW" or sp_id == "SP_MISIORLA":
+            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags,
+                                      graphic=sp_graphic, cost=70, time=5,
+                                      species_condition=r"// no existing " +
+                                      "Exobot colony required!") + "\n\n")
+        elif sp_id == "SP_BANFORO" or sp_id == "SP_KILANDOW" or \
+                sp_id == "SP_MISIORLA":
             this_time_factor = time_factor.get(sp_id, "1.0")
             sp_tags += ' "CTRL_EXTINCT"'
-            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags, graphic=sp_graphic, cost=50,
-                                      time=t_buildtime_extinct.substitute(id=sp_id, name=sp_name, t_factor=this_time_factor),
-                                      species_condition=t_species_condition_extinct.substitute(id=sp_id, name=sp_name)) + "\n\n")
+            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags,
+                                      graphic=sp_graphic, cost=50,
+                                      time=t_buildtime_extinct.substitute(
+                                          id=sp_id, name=sp_name,
+                                          t_factor=this_time_factor),
+                                      species_condition=t_species_condition_extinct.substitute(
+                                          id=sp_id, name=sp_name)) + "\n\n")
         else:
             this_time_factor = time_factor.get(sp_id, "1.0")
-            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags, graphic=sp_graphic, cost=50,
-                                      time=t_buildtime.substitute(id=sp_id, t_factor=this_time_factor),
-                                      species_condition=t_species_condition.substitute(id=sp_id)) + "\n\n")
+            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags,
+                                      graphic=sp_graphic, cost=50,
+                                      time=t_buildtime.substitute(
+                                          id=sp_id,
+                                          t_factor=this_time_factor),
+                                      species_condition=t_species_condition.substitute(
+                                          id=sp_id)) + "\n\n")

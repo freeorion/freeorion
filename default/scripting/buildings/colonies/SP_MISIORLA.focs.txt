@@ -38,7 +38,7 @@ BuildingType
              + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
         )
     )
-    tags = [ "CTRL_EXTINCT" "SP_MISIORLA" ]
+    tags = [ "SP_MISIORLA" "CTRL_EXTINCT" ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -137,3 +137,4 @@ BuildingType
 #include "/scripting/common/misc.macros"
 
 #include "/scripting/common/upkeep.macros"
+
