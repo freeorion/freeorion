@@ -753,18 +753,13 @@ void SaveFileDialog::Confirm() {
         UpdateDirectory(PathString(chosen_full_path));
         return;
 
-    } else if (fs::is_regular_file(FilenameToPath(Result()))) {
+    } else if (fs::is_regular_file(chosen_full_path)) {
         DebugLogger() << "SaveFileDialog::Confirm: File " << PathString(chosen_full_path) << " chosen.";
-        if (!m_load_only) {
+        if (!m_load_only && fs::exists(chosen_full_path)) {
             // If not loading and file exists, ask to confirm override
-            // Use Result() to ensure we are using the extension.
-            if (fs::exists(FilenameToPath(Result()))) {
-                boost::format templ(UserString("SAVE_REALLY_OVERRIDE"));
-                std::string question = (templ % choice).str();
-                if (!Prompt(question)) {
-                    return;
-                }
-            }
+            std::string question = str((FlexibleFormat(UserString("SAVE_REALLY_OVERRIDE")) % choice));
+            if (!Prompt(question))
+                return;
         }
 
     } else {
@@ -936,7 +931,7 @@ std::string SaveFileDialog::GetDirPath() const {
     const std::string& path_edit_text = m_current_dir_edit->Text();
 
     //std::cout << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end()) << std::endl;
-    DebugLogger() << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end());
+    //DebugLogger() << "SaveFileDialog::GetDirPath text: " << path_edit_text << " valid UTF-8: " << utf8::is_valid(path_edit_text.begin(), path_edit_text.end());
     if (!m_server_previews) {
         return path_edit_text;
     }
@@ -990,19 +985,21 @@ void SaveFileDialog::SetDirPath(const string& path) {
 }
 
 std::string SaveFileDialog::Result() const {
-    std::string filename = m_name_edit->Text();
-    if (filename.empty()) {
+    std::string choice = m_name_edit->Text();
+    if (choice.empty()) {
         return "";
     }
 
-    // Ensure the file has an extension
-    std::string::size_type end = filename.length();
-    std::size_t ext_length = m_extension.length();
-    if (filename.length() < ext_length || filename.substr(end-ext_length, ext_length) != m_extension) {
-        filename.append(m_extension);
-    }
+    //// Ensure the file has an extension
+    //std::string::size_type end = choice.length();
+    //std::size_t ext_length = m_extension.length();
+    //if (choice.length() < ext_length || choice.substr(end-ext_length, ext_length) != m_extension) {
+    //    choice.append(m_extension);
+    //}
 
-    // Convert to a path to concatenate directory and filename, then convert back to UTF-8 string representation
-    fs::path current_dir(FilenameToPath(GetDirPath()));
-    return PathString(current_dir / filename);
+    fs::path choice_path = FilenameToPath(choice);
+    fs::path current_dir = FilenameToPath(GetDirPath());
+    fs::path chosen_full_path = current_dir / choice_path;
+
+    return PathString(chosen_full_path);
 }
