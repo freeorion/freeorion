@@ -3,6 +3,7 @@ BuildingType
     description = "BLD_COL_EXOBOT_DESC"
     buildcost = 70 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
+    tags = [ "SP_EXOBOT" "CTRL_ALWAYS_REPORT" ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -73,3 +74,4 @@ BuildingType
 #include "/scripting/common/misc.macros"
 
 #include "/scripting/common/upkeep.macros"
+

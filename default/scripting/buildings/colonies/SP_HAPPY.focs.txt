@@ -30,6 +30,7 @@ BuildingType
              + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
         )
     )
+    tags = [ "SP_HAPPY" ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -112,3 +113,4 @@ BuildingType
 #include "/scripting/common/misc.macros"
 
 #include "/scripting/common/upkeep.macros"
+
