@@ -43,6 +43,7 @@ t_main = string.Template('''BuildingType
     description = "BLD_COL_${name}_DESC"
     buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = ${time}
+    tags = [ ${tags} ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -211,19 +212,22 @@ for species in species_list:
     sp_id = species[0]
     sp_name = sp_id.split("_", 1)[1]
     sp_desc_name = species[1]
+    sp_tags = '"' + sp_id + '"'
     sp_graphic = species[2]
     sp_filename = sp_id + ".focs.txt"
     with open(os.path.join(outpath, sp_filename), "w") as f:
         if sp_id == "SP_EXOBOT":
-            f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
+            sp_tags += ' "CTRL_ALWAYS_REPORT"'
+            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags, graphic=sp_graphic, cost=70, time=5,
                     species_condition=r"// no existing Exobot colony required!") + "\n\n")
         elif sp_id == "SP_BANFORO" or sp_id == "SP_KILANDOW" or sp_id == "SP_MISIORLA":
             this_time_factor = time_factor.get(sp_id, "1.0")
-            f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,
+            sp_tags += ' "CTRL_EXTINCT"'
+            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags, graphic=sp_graphic, cost=50,
                                       time=t_buildtime_extinct.substitute(id=sp_id, name=sp_name, t_factor=this_time_factor),
                                       species_condition=t_species_condition_extinct.substitute(id=sp_id, name=sp_name)) + "\n\n")
         else:
             this_time_factor = time_factor.get(sp_id, "1.0")
-            f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,
+            f.write(t_main.substitute(id=sp_id, name=sp_name, tags=sp_tags, graphic=sp_graphic, cost=50,
                                       time=t_buildtime.substitute(id=sp_id, t_factor=this_time_factor),
                                       species_condition=t_species_condition.substitute(id=sp_id)) + "\n\n")
