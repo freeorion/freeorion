@@ -210,6 +210,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
 int mainSetupAndRun() {
     try {
+        RegisterOptions(&HumanClientApp::AddWindowSizeOptionsAfterMainStart);
+
         int colour_depth = GetOptionsDB().Get<int>("color-depth");
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
         bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");

@@ -160,7 +160,8 @@ protected:
 
 private:
     void            RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
-    // Bare minimum SDL video initialization to allow queries to display sizes etc.
+    /** Bare minimum SDL video initialization to allow queries to display sizes etc.
+        If called during static initialization, it will cause OSX to crash on exit. */
     static void     SDLMinimalInit();
 
     X         m_app_width;      ///< application width and height (defaults to 1024 x 768)
