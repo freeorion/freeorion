@@ -851,8 +851,14 @@ void SDLGUI::Run()
         Initialize();
         ModalEventPump pump(m_done);
         pump();
-    } catch (QuitSignal&) {
-        Exit(0);
+    }
+    // TODO re-throw these exceptions because they are not handled here and we can't continue.
+    catch (QuitSignal& e) {
+        if (e.exit_code != 0)
+            throw;
+
+        // This is the normal exit path from Run()
+        // Do not put exit(0) or Exit(0) here.
         return;
     } catch (const std::invalid_argument& e) {
         std::cerr << "std::invalid_argument exception caught in GUI::Run(): " << e.what() << std::endl;
