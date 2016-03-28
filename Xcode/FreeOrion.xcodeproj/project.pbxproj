@@ -48,7 +48,6 @@
 		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server and AI client */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
 		343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */; };
 		343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */; };
-		343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */; };
 		343EC6650F3F5C7C00782AD3 /* QueueListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6610F3F5C7C00782AD3 /* QueueListBox.cpp */; };
 		343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6590F3F5B5300782AD3 /* DesignWnd.cpp */; };
 		343EC67A0F3F61D000782AD3 /* EmpireWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */; };
@@ -2708,7 +2707,6 @@
 				8275F4001AD31381003568FF /* MultiMeterStatusBar.cpp in Sources */,
 				471D5E210A98A9C000DA9C21 /* LinkText.cpp in Sources */,
 				471D5E220A98A9C500DA9C21 /* MapWnd.cpp in Sources */,
-				343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */,
 				827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */,
 				8275F4011AD31381003568FF /* PopulationPanel.cpp in Sources */,
 				471D5E230A98A9C700DA9C21 /* MultiplayerLobbyWnd.cpp in Sources */,
