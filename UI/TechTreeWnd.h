@@ -41,13 +41,12 @@ public:
     void            ShowAllCategories();
     void            HideCategory(const std::string& category);
     void            HideAllCategories();
-    void            ToggleCategory(const std::string& category);
     void            ToggleAllCategories();
 
     void            ShowStatus(const TechStatus status);
     void            HideStatus(const TechStatus status);
-    void            ToggleStatus(const TechStatus status);
 
+    void            ToggleViewType(bool show_list_view);
     void            ShowTreeView();
     void            ShowListView();
 
