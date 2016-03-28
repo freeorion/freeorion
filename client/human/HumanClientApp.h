@@ -4,6 +4,7 @@
 #include "../ClientApp.h"
 #include "../../util/Process.h"
 #include "../../UI/ClientUI.h"
+#include "../../util/OptionsDB.h"
 
 #include <GG/SDL/SDLGUI.h>
 
@@ -83,6 +84,9 @@ public:
 
     static HumanClientApp*      GetApp();               ///< returns HumanClientApp pointer to the single instance of the app
 
+    /** Adds window dimension options to OptionsDB after the start of main, but before HumanClientApp constructor.
+        OSX will not tolerate static initialization of SDL, to check screen size. */
+    static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
 protected:
     virtual void Initialize();
 
