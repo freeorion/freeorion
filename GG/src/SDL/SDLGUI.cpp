@@ -365,7 +365,7 @@ namespace {
         {}
 
         virtual const char* what() const throw()
-        { return "Quitting application"; }
+        { return  exit_code ? "Quitting SDLGUI with error." : "Quitting SDLGUI normally."; }
 
         int exit_code;
     };
@@ -851,24 +851,13 @@ void SDLGUI::Run()
         Initialize();
         ModalEventPump pump(m_done);
         pump();
-    }
-    // TODO re-throw these exceptions because they are not handled here and we can't continue.
-    catch (QuitSignal& e) {
+    } catch (QuitSignal& e) {
         if (e.exit_code != 0)
             throw;
 
         // This is the normal exit path from Run()
         // Do not put exit(0) or Exit(0) here.
         return;
-    } catch (const std::invalid_argument& e) {
-        std::cerr << "std::invalid_argument exception caught in GUI::Run(): " << e.what() << std::endl;
-        Exit(1);
-    } catch (const std::runtime_error& e) {
-        std::cerr << "std::runtime_error exception caught in GUI::Run(): " << e.what() << std::endl;
-        Exit(1);
-    } catch (const ExceptionBase& e) {
-        std::cerr << "GG exception (subclass " << e.type() << ") caught in GUI::Run(): " << e.what() << std::endl;
-        Exit(1);
     }
 }
 
