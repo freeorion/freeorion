@@ -19,19 +19,18 @@ from universe_object import System
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
 # in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values
 # global variables
-# foodStockpileSize = 1  # food stored per population
 colonyTargetedSystemIDs = []
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
-opponentSystemIDs = []
+opponentSystemIDs = []  # TODO: Currently never filled but some (uncommented) code in MilitaryAI refers to this...
 invasionTargets = []
 invasionTargetedSystemIDs = []
-blockadeTargetedSystemIDs = []
+blockadeTargetedSystemIDs = []  # TODO also never filled atm... either implement this or remove redundant code
 militarySystemIDs = []
 colonyFleetIDs = []
 outpostFleetIDs = []
 invasionFleetIDs = []
-fleetsLostBySystem = {}
+fleetsLostBySystem = {}  # keys are system_ids, values are ratings for the fleets lost
 popCtrSystemIDs = []
 colonizedSystems = {}
 empireStars = {}
@@ -52,7 +51,6 @@ class AIstate(object):
         self.turn_uids = {}
 
         # 'global' (?) variables
-        # self.foodStockpileSize = 1    # food stored per population
         self.colonisablePlanetIDs = odict()
         self.colonisableOutpostIDs = odict()  #
         self.__aiMissionsByFleetID = {}
@@ -61,10 +59,6 @@ class AIstate(object):
         self.designStats = {}
         self.diplomatic_logs = {}
         self.__priorityByType = {}
-
-        # self.__explorableSystemByType = {}
-        # for explorableSystemsType in get_explorable_system_types():
-        # self.__explorableSystemByType[explorableSystemsType] = {}
 
         # initialize home system knowledge
         universe = fo.getUniverse()
@@ -857,7 +851,6 @@ class AIstate(object):
         for sys_id in self.systemStatus:
             self.systemStatus[sys_id]['myFleetRating'] = 0
 
-        # deleteRoles = []
         universe = fo.getUniverse()
         ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
         fleet_list = sorted(list(self.__fleetRoleByID))
@@ -885,8 +878,6 @@ class AIstate(object):
             new_rating = self.rate_fleet(fleet_id, self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_enemy)]))
             old_sys_id = status.get('sysID', -2)
             fleet = universe.getFleet(fleet_id)
-            # if fleet and not fleet.aggressive:
-            #     fleet.setAggressive(True)
             if fleet:
                 sys_id = fleet.systemID
                 if old_sys_id in [-2, -1]:
