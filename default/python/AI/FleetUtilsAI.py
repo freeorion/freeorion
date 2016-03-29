@@ -567,3 +567,26 @@ def _print_systems_and_supply(system_ids):
         else:
             print "  S_%s<>" % system_id,
         print 'supplied' if system_id in fleet_supplyable_system_ids else ''
+
+
+def get_fighter_capacity_of_fleet(fleet_id):
+    """Return current and max fighter capacity
+
+    :param fleet_id:
+    :type fleet_id: int
+    :return: current and max fighter capacity
+    """
+    universe = fo.getUniverse()
+    fleet = universe.getFleet(fleet_id)
+    cur_capacity = 0
+    max_capacity = 0
+    ships = (universe.getShip(ship_id) for ship_id in (fleet.shipIDs if fleet else []))
+    for ship in ships:
+        design = ship and ship.design
+        design_parts = design.parts if design and design.isArmed else []
+        for partname in design_parts:
+            part = get_part_type(partname)
+            if part and part.partClass == fo.shipPartClass.fighterHangar:
+                cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
+                max_capacity += ship.currentPartMeterValue(fo.meterType.maxCapacity, partname)
+    return cur_capacity, max_capacity
