@@ -5,7 +5,7 @@ import PlanetUtilsAI
 import random
 import ColonisationAI
 import AIDependencies
-import FleetUtilsAI
+import CombatRatingsAI
 from freeorion_debug import Timer
 from freeorion_tools import tech_is_complete
 
@@ -205,9 +205,9 @@ def assess_protection_focus(pid):
                    local_production_diff > 5))):
         use_protection = False
         reason = "F"
-    elif (regional_threat <= FleetUtilsAI.combine_ratings(local_fleet_rating, adjusted_p_defenses) and
+    elif (regional_threat <= CombatRatingsAI.combine_ratings(local_fleet_rating, adjusted_p_defenses) and
           safety_factor * regional_threat <=
-          FleetUtilsAI.combine_ratings_list([my_neighbor_rating, local_fleet_rating, adjusted_p_defenses]) and
+          CombatRatingsAI.combine_ratings_list([my_neighbor_rating, local_fleet_rating, adjusted_p_defenses]) and
           local_production_diff > 5):
         use_protection = False
         reason = "G"

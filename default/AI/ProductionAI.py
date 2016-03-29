@@ -11,6 +11,7 @@ import PriorityAI
 import ColonisationAI
 import MilitaryAI
 import ShipDesignAI
+import CombatRatingsAI
 import time
 import cProfile, pstats, StringIO
 
@@ -104,11 +105,8 @@ def cur_best_military_design_rating():
     if priority in design_cache:
         if design_cache[priority] and design_cache[priority][0]:
             rating, pid, design_id, cost = design_cache[priority][0]
-            pilots = fo.getUniverse().getPlanet(pid).speciesName
-            ship_id = -1  # no existing ship
-            design_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=[(ship_id, design_id, pilots)])['overall']
-            best_military_design_rating_cache[current_turn] = design_rating
-            return max(design_rating, 0.001)
+            best_military_design_rating_cache[current_turn] = rating
+            return max(rating, 0.001)
         else:
             return 0.001
     else:
