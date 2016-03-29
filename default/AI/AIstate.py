@@ -933,7 +933,6 @@ class AIstate(object):
             return
 
     def session_start_cleanup(self):
-        ResourcesAI.newTargets.clear()
         self.newlySplitFleets = {}
         for fleetID in FleetUtilsAI.get_empire_fleet_ids():
             self.get_fleet_role(fleetID)
