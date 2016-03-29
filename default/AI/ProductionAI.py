@@ -22,16 +22,6 @@ from TechsListsAI import EXOBOT_TECH_NAME
 
 best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
-shipTypeMap = {PriorityType.PRODUCTION_EXPLORATION: ShipDesignTypes.explorationShip,
-               PriorityType.PRODUCTION_OUTPOST: ShipDesignTypes.outpostShip,
-               PriorityType.PRODUCTION_ORBITAL_OUTPOST: ShipDesignTypes.outpostBase,
-               PriorityType.PRODUCTION_COLONISATION: ShipDesignTypes.colonyShip,
-               PriorityType.PRODUCTION_ORBITAL_COLONISATION: ShipDesignTypes.colonyBase,
-               PriorityType.PRODUCTION_INVASION: ShipDesignTypes.troopShip,
-               PriorityType.PRODUCTION_MILITARY: ShipDesignTypes.attackShip,
-               PriorityType.PRODUCTION_ORBITAL_DEFENSE: ShipDesignTypes.defenseBase,
-               PriorityType.PRODUCTION_ORBITAL_INVASION: ShipDesignTypes.troopBase,
-               }
 
 design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
