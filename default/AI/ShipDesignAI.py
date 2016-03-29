@@ -727,7 +727,7 @@ class ShipDesigner(object):
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_speed - self.speed)
         estimated_structure = (self.structure +
                                self.organic_growth * self.additional_specifications.expected_turns_till_fight)
-        if estimated_structure < self._minimum_structure():
+        if estimated_structure < min_structure:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
         if rating < 0:
             return rating
@@ -755,16 +755,16 @@ class ShipDesigner(object):
         """Set stats to default.
 
         Call this if design is invalid to avoid miscalculation of ratings."""
-        self.structure = 0
         self.attacks.clear()
+        self.structure = 0
         self.shields = 0
-        self.fuel = 0.0001
-        self.speed = 0.0001
-        self.stealth = 0.0001
-        self.detection = 0.0001
+        self.fuel = 0
+        self.speed = 0
+        self.stealth = 0
+        self.detection = 0
         self.troops = 0
         self.colonisation = -1
-        self.production_cost = 9999999
+        self.production_cost = 9999
         self.production_time = 1
         self.fuel_per_turn = 0
         self.organic_growth = 0
