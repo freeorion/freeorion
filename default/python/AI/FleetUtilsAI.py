@@ -3,6 +3,7 @@ import FreeOrionAI as foAI
 from EnumsAI import MissionType, ShipRoleType
 import traceback
 from universe_object import Planet
+from ShipDesignAI import get_part_type
 
 __designStats = {}
 
@@ -397,7 +398,7 @@ def assess_fleet_role(fleet_id):
 
 
 def assess_ship_design_role(design):
-    parts = [fo.getPartType(partname) for partname in design.parts if partname and fo.getPartType(partname)]
+    parts = [get_part_type(partname) for partname in design.parts if partname and get_part_type(partname)]
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
         if design.speed > 0:
