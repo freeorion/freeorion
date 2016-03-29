@@ -35,7 +35,16 @@ def find_best_designs_this_turn():
     start = time.clock()
     ShipDesignAI.Cache.update_for_new_turn()
     design_cache.clear()
-    design_cache[PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    best_military_stats = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
+    if not best_carrier_stats:
+        design_cache[PriorityType.PRODUCTION_MILITARY] = best_military_stats
+    elif not best_military_stats:
+        design_cache[PriorityType.PRODUCTION_MILITARY] = best_carrier_stats
+    elif best_carrier_stats[0] > best_military_stats[0]:
+        design_cache[PriorityType.PRODUCTION_MILITARY] = best_carrier_stats
+    else:
+        design_cache[PriorityType.PRODUCTION_MILITARY] = best_military_stats
     design_cache[PriorityType.PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
     design_cache[PriorityType.PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
     design_cache[PriorityType.PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
