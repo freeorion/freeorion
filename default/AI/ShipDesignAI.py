@@ -66,6 +66,8 @@ ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
 WEAPONS = frozenset({fo.shipPartClass.shortRange})
 GENERAL = frozenset({fo.shipPartClass.general})
+FIGHTER_BAY = frozenset({fo.shipPartClass.fighterBay})
+FIGHTER_HANGAR = frozenset({fo.shipPartClass.fighterHangar})
 ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
                               COLONISATION, ENGINES, TROOPS, GENERAL})
 
@@ -600,6 +602,7 @@ class AdditionalSpecifications(object):
         self.minimum_fuel = 0
         self.minimum_speed = 0
         self.minimum_structure = 1
+        self.minimum_fighter_launchrate = 0
         self.enemy_shields = 0
         self.max_enemy_weapon_strength = 0
         self.avg_enemy_weapon_strength = 0
@@ -630,6 +633,8 @@ class AdditionalSpecifications(object):
                 d += dmg*count
                 n += count
             self.avg_enemy_weapon_strength = d/n
+
+        print enemy_attack_stats, self.max_enemy_weapon_strength
 
     def convert_to_tuple(self):
         """Create a tuple of this class' attributes (e.g. to use as key in dict).
@@ -703,6 +708,9 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
+        self.fighter_capacity = 0
+        self.fighter_launchrate = 0
+        self.fighter_damage = 0
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -721,6 +729,7 @@ class ShipDesigner(object):
         min_fuel = self._minimum_fuel()
         min_speed = self._minimum_speed()
         min_structure = self._minimum_structure()
+        min_fighter_launchrate = self._minimum_fighter_launchrate()
         if self.fuel < min_fuel:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.fuel)
         if self.speed < min_speed:
@@ -729,6 +738,8 @@ class ShipDesigner(object):
                                self.organic_growth * self.additional_specifications.expected_turns_till_fight)
         if estimated_structure < min_structure:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
+        if self.fighter_launchrate < min_fighter_launchrate:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launchrate - self.fighter_launchrate)
         if rating < 0:
             return rating
         else:
@@ -742,6 +753,9 @@ class ShipDesigner(object):
 
     def _minimum_structure(self):
         return self.additional_specifications.minimum_structure
+
+    def _minimum_fighter_launchrate(self):
+        return self.additional_specifications.minimum_fighter_launchrate
 
     def _rating_function(self):
         """Rate the design according to current hull/part combo.
@@ -772,6 +786,9 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
+        self.fighter_capacity = 0
+        self.fighter_launchrate = 0
+        self.fighter_damage = 0
 
     def update_hull(self, hullname):
         """Set hull of the design.
@@ -832,8 +849,13 @@ class ShipDesigner(object):
         self.asteroid_stealth = 0
         self.solar_stealth = 0
 
+        self.fighter_capacity = 0
+        self.fighter_launchrate = 0
+        self.fighter_damage = 0
+
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = 0  # to deal with Non-stacking parts
+        hangar_parts = set()
         for part in self.parts:
             self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.empireID(), self.pid))
             self.production_time = max(self.production_time,
@@ -875,6 +897,17 @@ class ShipDesigner(object):
                     self.stealth += capacity
                 else:
                     self.stealth = 0
+            elif partclass in FIGHTER_BAY:
+                self.fighter_launchrate += capacity
+            elif partclass in FIGHTER_HANGAR:
+                hangar_parts.add(part.name)
+                if len(hangar_parts) > 1:
+                    # enforce only one hangar part per design
+                    self.fighter_capacity = 0
+                    self.fighter_damage = 0
+                else:
+                    self.fighter_capacity += capacity
+                    self.fighter_damage = self._calculate_hangar_damage(part)
 
         self._apply_hardcoded_effects()
 
@@ -1179,8 +1212,10 @@ class ShipDesigner(object):
         if self.filter_inefficient_parts:
             local_cost_cache = Cache.production_cost[self.pid]
             # TODO: Check for redundance of weapons with new tech upgrade system
+            # TODO: Check for redundance of hangars
+            # TODO Remember to use secondaryStat as well for weapons/hangars
             check_for_redundance = (ARMOUR | ENGINES | FUEL | SHIELDS
-                                    | STEALTH | DETECTION | TROOPS) & self.useful_part_classes
+                                    | STEALTH | DETECTION | TROOPS | FIGHTER_BAY) & self.useful_part_classes
             for slottype in part_dict:
                 partclass_dict = defaultdict(list)
                 for tup in part_dict[slottype]:
@@ -1337,7 +1372,7 @@ class ShipDesigner(object):
         rating = self.evaluate()
         return rating, partlist
 
-    def _filling_algorithm(self, available_parts):
+    def _filling_algorithm(self, available_parts, verbose=False):
         """Fill the slots of the design using some optimizing algorithm.
 
         Default algorithm is _combinatorial_filling().
@@ -1593,6 +1628,99 @@ class MilitaryShipDesigner(ShipDesigner):
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
         return self.structure*self._total_dmg()*(1+self.shields/10)
+
+
+class CarrierShipDesigner(ShipDesigner):
+    """Class that implements military designs with fighter parts.
+
+    Extends __init__()
+    Extends _filling_algorithm()
+    Overrides _rating_function()
+    Overrides _calc_rating_for_name()
+    """
+    basename = "Carrier"
+    description = "Carrier"
+    useful_part_classes = WEAPONS | ARMOUR | SHIELDS | FUEL | ENGINES | FIGHTER_HANGAR | FIGHTER_BAY
+    filter_useful_parts = True
+    filter_inefficient_parts = True
+
+    NAMETABLE = "AI_SHIPDESIGN_NAME_MILITARY"
+    NAME_THRESHOLDS = sorted([0, 1000])
+
+    def __init__(self):
+        ShipDesigner.__init__(self)
+        self.additional_specifications.minimum_fuel = 1
+        self.additional_specifications.minimum_speed = 30
+        self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
+        self.additional_specifications.minimum_fighter_launchrate = 1
+
+    def _rating_function(self):
+        if self.fighter_capacity < 1:
+            return INVALID_DESIGN_RATING
+        # first, calculate "normal" weapon stuff
+        weapon_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
+        enemy_dmg_max = self.additional_specifications.max_enemy_weapon_strength
+        enemy_dmg_avg = self.additional_specifications.avg_enemy_weapon_strength
+        shield_factor = max(enemy_dmg_max / max(0.01, enemy_dmg_max - self.shields), 1)
+        expected_growth = min(self.additional_specifications.expected_turns_till_fight * self.organic_growth,
+                              self.maximum_organic_growth)
+        remaining_growth = self.maximum_organic_growth - expected_growth
+
+        # now, consider offensive potential of our fighters
+        launched_1st_bout = min(self.fighter_capacity, self.fighter_launchrate)
+        launched_2nd_bout = min(self.fighter_capacity - self.fighter_launchrate, self.fighter_launchrate)
+        survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
+        total_fighter_damage = self.fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
+        fighter_damage_per_bout = total_fighter_damage / 3
+
+        # now, consider the defensive potential of our fighters!
+        fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
+        damage_prevented = fighters_shot_down * enemy_dmg_avg  # TODO: Some shields calculations...
+
+        total_dmg = weapon_dmg + fighter_damage_per_bout
+        effective_structure = (self.structure + expected_growth + remaining_growth/5) * shield_factor + damage_prevented
+        return total_dmg * effective_structure
+
+    # TODO Implement _starting_guess() for faster convergence
+
+    def _filling_algorithm(self, available_parts, verbose=True):
+        # Currently, only one type of hangar part is allowed due to game mechanics.
+        # However, in the generic _filling_algorithm(), only one part is exchanged per time.
+        # Therefore, after using (multiple) entries of one hangar part, the algorithm won't consider different parts.
+        # Workaround: Do multiple passes with only one hangar part each and choose the best rated one.
+
+        print "Calling _filling_algorithm() for Carrier-Style ships!"
+        print "Available parts: ", available_parts
+        # first, get all available hangar parts.
+        hangar_parts = set()
+        for partlist in available_parts.values():
+            for partname in partlist:
+                part = get_part_type(partname)
+                if part.partClass == fo.shipPartClass.fighterHangar:
+                    hangar_parts.add(partname)
+        if verbose:
+            print "Found the following hangar parts: ", hangar_parts
+
+        # now, call the standard-algorithm with only one hangar part at a time and choose the best rated one.
+        best_rating = INVALID_DESIGN_RATING
+        best_partlist = [""] * len(self.hull.slots)
+        for this_hangar_part in hangar_parts:
+            current_available_parts = dict()
+            forbidden_hangar_parts = {part for part in hangar_parts if part != this_hangar_part}
+            for slot, partlist in available_parts.iteritems():
+                current_available_parts[slot] = [part for part in partlist if part not in forbidden_hangar_parts]
+            this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
+            if verbose:
+                print "Best rating for part %s is %.2f with partlist %s" % (this_hangar_part, this_rating, this_partlist)
+            if this_rating > best_rating:
+                best_rating = this_rating
+                best_partlist = this_partlist
+        return best_rating, best_partlist
+
+    def _calc_rating_for_name(self):
+        base_rating = self.structure*self._total_dmg()*(1+self.shields/10)
+        fighter_rating = self.fighter_capacity * self.fighter_launchrate * (.1+self.fighter_damage)
+        return base_rating + fighter_rating
 
 
 class TroopShipDesignerBaseClass(ShipDesigner):
