@@ -26,6 +26,7 @@ limitAssessments = False
 
 lastFociCheck = [0]
 
+
 class PlanetFocusManager(object):
     """PlanetFocusManager tracks all of the empire's planets, what their current and future focus will be."""
 
@@ -48,6 +49,25 @@ class PlanetFocusManager(object):
         self.planet_map.update(zip(self.planet_ids, planets))
 
         self.new_foci = {}
+
+    def set_future_focus(self, pid, focus):
+        """Set the focus and remove it from the list of unset planets
+        Return success or failure"""
+        curFocus = self.planet_map[pid].focus
+        if curFocus == focus:
+            return True
+        success = False
+        self.new_foci[pid] = focus
+
+        result = fo.issueChangeFocusOrder(pid, focus)
+        if result == 1:
+            # TODO determine if this should update all planets (for reporting) or just the remaining unplaced planets
+            universe = fo.getUniverse()
+            universe.updateMeterEstimates(self.planet_ids)
+            success = True
+            if pid in self.planet_ids:
+                del self.planet_ids[self.planet_ids.index(pid)]
+        return success
 
     def fill_data_dicts(self):
         #TODO rename this something less generic
@@ -271,14 +291,8 @@ def use_planet_growth_specials(focus_manager):
                 rankedPlanets.sort()
                 print "Considering Growth Focus choice for special %s; possible planet pop, id pairs are %s" % (metab, rankedPlanets)
                 for spSize, spPID, cur_focus in rankedPlanets:  # index 0 should be able to set focus, but just in case...
-                    result = 1
-                    if cur_focus != GFocus:
-                        result = fo.issueChangeFocusOrder(spPID, GFocus)
-                    if result == 1:
-                        focus_manager.new_foci[spPID] = GFocus
-                        if spPID in focus_manager.planet_ids:
-                            del focus_manager.planet_ids[focus_manager.planet_ids.index(spPID)]
-                            print "%s focus of planet %s (%d) at Growth Focus" % (["set", "left"][cur_focus == GFocus], focus_manager.planet_map[spPID].name, spPID)
+                    if focus_manager.set_future_focus(spPID, GFocus):
+                        print "%s focus of planet %s (%d) at Growth Focus" % (["set", "left"][cur_focus == GFocus], focus_manager.planet_map[spPID].name, spPID)
                         break
                     else:
                         print "failed setting focus of planet %s (%d) at Growth Focus; focus left at %s" % (focus_manager.planet_map[spPID].name, spPID, focus_manager.planet_map[spPID].focus)
@@ -286,59 +300,39 @@ def use_planet_growth_specials(focus_manager):
 
 def use_planet_production_and_research_specials(focus_manager):
     '''Use production and research specials as appropriate.  Remove planets from list of candidates.'''
+    #TODO remove reliance on rules knowledge.  Just scan for specials with production
+    #and research bonuses and use what you find. Perhaps maintain a list
+    # of know types of specials
     universe = fo.getUniverse()
     already_have_comp_moon = False
     for pid in focus_manager.planet_ids:
         planet = focus_manager.planet_map[pid]
         if "COMPUTRONIUM_SPECIAL" in planet.specials and RFocus in planet.availableFoci and not already_have_comp_moon:
-            curFocus = planet.focus
-            focus_manager.new_foci[pid] = RFocus
-            result = 0
-            if curFocus != RFocus:
-                result = fo.issueChangeFocusOrder(pid, RFocus)
-                if result == 1:
-                    universe.updateMeterEstimates(focus_manager.planet_ids)
-            if curFocus == RFocus or result == 1:
+            if focus_manager.set_future_focus(pid, RFocus):
                 already_have_comp_moon = True
                 print "%s focus of planet %s (%d) (with Computronium Moon) at Research Focus" % (["set", "left"][curFocus == RFocus], focus_manager.planet_map[pid].name, pid)
-                if pid in focus_manager.planet_ids:
-                    del focus_manager.planet_ids[focus_manager.planet_ids.index(pid)]
                 continue
         if "HONEYCOMB_SPECIAL" in planet.specials and IFocus in planet.availableFoci:
-            curFocus = planet.focus
-            focus_manager.new_foci[pid] = IFocus
-            result = 0
-            if curFocus != IFocus:
-                result = fo.issueChangeFocusOrder(pid, IFocus)
-                if result == 1:
-                    universe.updateMeterEstimates(focus_manager.planet_ids)
-            if curFocus == IFocus or result == 1:
+            if focus_manager.set_future_focus(pid, IFocus):
                 print "%s focus of planet %s (%d) (with Honeycomb) at Industry Focus" % (["set", "left"][curFocus == IFocus], focus_manager.planet_map[pid].name, pid)
-                if pid in focus_manager.planet_ids:
-                    del focus_manager.planet_ids[focus_manager.planet_ids.index(pid)]
                 continue
         if ((([bld.buildingTypeName for bld in map(universe.getObject, planet.buildingIDs) if bld.buildingTypeName in
-                ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]] != []) or
-                         ([ccspec for ccspec in planet.specials if ccspec in ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]] != []))
-                and IFocus in planet.availableFoci):
+               ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]] != [])
+             or ([ccspec for ccspec in planet.specials if ccspec in
+                  ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]] != []))
+            and IFocus in planet.availableFoci):
+
             curFocus = planet.focus
-            focus_manager.new_foci[pid] = IFocus
-            result = 0
-            if curFocus != IFocus:
-                result = fo.issueChangeFocusOrder(pid, IFocus)
-                if result == 1:
+            if focus_manager.set_future_focus(pid, IFocus):
+                if curFocus != IFocus:
                     print ("Tried setting %s for Concentration Camp planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
                            (focus_manager.new_foci[pid], planet.name, pid, planet.speciesName, curFocus, result, focus_manager.planet_map[pid].focus))
-                    universe.updateMeterEstimates(focus_manager.planet_ids)
-                if (result != 1) or focus_manager.planet_map[pid].focus != IFocus:
-                    newplanet = universe.getPlanet(pid)
-                    print ("Error: Failed setting %s for Concentration Camp planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
-                           (focus_manager.new_foci[pid], focus_manager.planet_map[pid].name, pid, focus_manager.planet_map[pid].speciesName, focus_manager.planet_map[pid].focus, newplanet.focus))
-            if curFocus == IFocus or result == 1:
                 print "%s focus of planet %s (%d) (with Concentration Camps/Remnants) at Industry Focus" % (["set", "left"][curFocus == IFocus], focus_manager.planet_map[pid].name, pid)
-                if pid in focus_manager.planet_ids:
-                    del focus_manager.planet_ids[focus_manager.planet_ids.index(pid)]
                 continue
+            else:
+                newplanet = universe.getPlanet(pid)
+                print ("Error: Failed setting %s for Concentration Camp planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
+                       (focus_manager.new_foci[pid], focus_manager.planet_map[pid].name, pid, focus_manager.planet_map[pid].speciesName, focus_manager.planet_map[pid].focus, newplanet.focus))
 
 
 def set_planet_protection_foci(focus_manager):
@@ -348,23 +342,16 @@ def set_planet_protection_foci(focus_manager):
         planet = focus_manager.planet_map[pid]
         if PFocus in planet.availableFoci and assess_protection_focus(focus_manager, pid):
             curFocus = planet.focus
-            focus_manager.new_foci[pid] = PFocus
-            result = 0
-            if curFocus != PFocus:
-                result = fo.issueChangeFocusOrder(pid, PFocus)
-                if result == 1:
+            if focus_manager.set_future_focus(pid, PFocus):
+                if curFocus != PFocus:
                     print ("Tried setting %s for planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
                            (focus_manager.new_foci[pid], planet.name, pid, planet.speciesName, curFocus, result, planet.focus))
-                    universe.updateMeterEstimates(focus_manager.planet_ids)
-                if (result != 1) or planet.focus != PFocus:
-                    newplanet = universe.getPlanet(pid)
-                    print ("Error: Failed setting %s for planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
-                           (focus_manager.new_foci[pid], planet.name, pid, planet.speciesName, planet.focus, newplanet.focus))
-            if curFocus == PFocus or result == 1:
                 print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (["set", "left"][curFocus == PFocus], planet.name, pid)
-                if pid in focus_manager.planet_ids:
-                    del focus_manager.planet_ids[focus_manager.planet_ids.index(pid)]
                 continue
+            else:
+                newplanet = universe.getPlanet(pid)
+                print ("Error: Failed setting %s for planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
+                       (focus_manager.new_foci[pid], planet.name, pid, planet.speciesName, planet.focus, newplanet.focus))
 
 
 def set_planet_happiness_foci(focus_manager):
