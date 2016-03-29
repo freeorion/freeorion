@@ -12,6 +12,7 @@ import ProductionAI
 import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
+import CombatRatingsAI
 from freeorion_tools import tech_is_complete
 from freeorion_debug import Timer
 
@@ -137,8 +138,8 @@ def get_invasion_fleets():
                 continue
             # TODO: have TroopShipDesigner give the expected number of troops including species effects directly
             troops_per_ship = best_base_trooper_here.troopCapacity
-            _, _, species_troop_grade = foAI.foAIstate.get_piloting_grades(loc_planet.speciesName)
-            troops_per_ship = foAI.foAIstate.weight_attack_troops(troops_per_ship, species_troop_grade)
+            _, _, species_troop_grade = CombatRatingsAI.get_piloting_grades(loc_planet.speciesName)
+            troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
             if not troops_per_ship:
                 print "The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet
                 continue
