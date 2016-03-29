@@ -81,7 +81,7 @@ INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSI
 
 # Potentially, not adding techs to AIDependencies is intended for testing purposes.
 # Therefore, chat the player only once to inform him about the issue to prevent spam.
-__raised_warnings = []
+_raised_warnings = set()
 
 # string constants for better readability of the cache
 WITH_UPKEEP = "considering fleet upkeep"
@@ -1509,7 +1509,7 @@ class MilitaryShipDesigner(ShipDesigner):
         armours = [part for part in parts if part.partClass in ARMOUR]
         cap = lambda x: x.capacity
         if weapons:
-            weapon_part = max(weapons, key=_calculate_weapon_strength)
+            weapon_part = max(weapons, key=self._calculate_weapon_strength)
             weapon = weapon_part.name
             idxweapon = available_parts.index(weapon)
             cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.empireID(), self.pid))
@@ -1980,7 +1980,7 @@ def _update_design_by_name_cache(design_name, verbose=False):
     return design
 
 
-def _get_design_by_name(design_name, verbose=False, update_invalid=False):
+def _get_design_by_name(design_name, update_invalid=False):
     """Return the shipDesign object of the design with the name design_name.
 
     Results are cached for performance improvements. The cache is to be
