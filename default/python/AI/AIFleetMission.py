@@ -7,6 +7,7 @@ import FreeOrionAI as foAI
 import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
+import CombatRatingsAI
 from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
 
@@ -130,7 +131,8 @@ class AIFleetMission(object):
             if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
                 continue
             fleet = universe.getFleet(fid)
-            if not fleet or fleet.systemID != system_id:
+
+            if not fleet or fleet.systemID != system_id or len(fleet.shipIDs) == 0:
                 continue
             if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
                 continue
@@ -159,8 +161,8 @@ class AIFleetMission(object):
                             # consider 'borrowing' for work in neighbor system  # TODO check condition
                             need_left = 1.5 * sum(foAI.foAIstate.systemStatus.get(nid, {}).get('fleetThreat', 0)
                                                   for nid in neighbors if nid != target_id)
-                            fb_rating = foAI.foAIstate.get_rating(fid)
-                            if (need_left < fb_rating.get('overall', 0)) and fb_rating.get('nships', 0) > 1:
+                            fleet_rating = CombatRatingsAI.get_fleet_rating(fid)
+                            if need_left < fleet_rating:
                                 do_merge = True
             if do_merge:
                 FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
@@ -545,6 +547,5 @@ class AIFleetMission(object):
         return "%-25s [%-11s] ships: %2d; total rating: %4d; target: %s" % (fleet,
                                                                             "NONE" if self.type is None else self.type,
                                                                             (fleet and len(fleet.shipIDs)) or 0,
-                                                                            foAI.foAIstate.get_rating(fleet_id).get(
-                                                                                'overall', 0),
+                                                                            CombatRatingsAI.get_fleet_rating(fleet_id),
                                                                             self.target or 'no target')
