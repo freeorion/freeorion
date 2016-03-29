@@ -36,7 +36,6 @@ def find_best_designs_this_turn():
 
     # TODO Dont use PriorityType but introduce more reasonable Enum
     designers = [
-        ('Military', PriorityType.PRODUCTION_MILITARY, ShipDesignAI.MilitaryShipDesigner),
         ('Orbital Invasion', PriorityType.PRODUCTION_ORBITAL_INVASION, ShipDesignAI.OrbitalTroopShipDesigner),
         ('Invasion', PriorityType.PRODUCTION_INVASION, ShipDesignAI.StandardTroopShipDesigner),
         ('Orbital Colonization', PriorityType.PRODUCTION_ORBITAL_COLONISATION, ShipDesignAI.OrbitalColonisationShipDesigner),
@@ -50,6 +49,11 @@ def find_best_designs_this_turn():
     for timer_name, priority_type, designer in designers:
         design_timer.start(timer_name)
         _design_cache[priority_type] = designer().optimize_design()
+    best_military_stats = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
+    best_stats = best_military_stats + best_carrier_stats
+    best_stats.sort(reverse=True)
+    _design_cache[PriorityType.PRODUCTION_MILITARY] = best_stats
     design_timer.start('Krill Spawner')
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     if fo.currentTurn() % 10 == 0:
