@@ -8,6 +8,11 @@ piloting_grades = {}
 
 
 def get_empire_standard_fighter():
+    """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.
+
+    :return: Stats of most common fighter in the empire
+    :rtype: ShipCombatStats
+    """
     stats_dict = {}
     for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY):
         ship_stats = FleetCombatStats(fleet_id, consider_refuel=True).get_ship_combat_stats()
@@ -22,6 +27,11 @@ def get_empire_standard_fighter():
 
 
 def default_ship_stats():
+    """ Return some ship stats to assume if no other intel is available.
+
+    :return: Some weak standard ship
+    :rtype: ShipCombatStats
+    """
     attacks = (4.0, 1)
     structure = 15
     shields = 0
@@ -34,6 +44,7 @@ def default_ship_stats():
 class ShipCombatStats(object):
     """Stores all relevant stats of a ship for combat strength evaluation."""
     class BasicStats(object):
+        """Stores non-fighter-related stats."""
         def __init__(self, stat_tuple=None, attacks=None, structure=1, shields=0):
             """
 
@@ -56,6 +67,11 @@ class ShipCombatStats(object):
                 self.attacks = attacks or {}
 
         def get_stats(self, hashable=False):
+            """
+
+            :param hashable: if hashable, return tuple instead of attacks-dict
+            :return: attacks, structure, shields
+            """
             if not hashable:
                 return self.attacks, self.structure, self.shields
             else:
@@ -65,6 +81,7 @@ class ShipCombatStats(object):
             return str(self.get_stats())
 
     class FighterStats(object):
+        """ Stores fighter-related stats """
         def __init__(self, stat_tuple=None, capacity=0, launch_rate=0, damage=0):
             if stat_tuple and isinstance(stat_tuple, tuple):
                 self.capacity, self.launch_rate, self.damage = stat_tuple
@@ -77,6 +94,9 @@ class ShipCombatStats(object):
             return str(self.get_stats())
 
         def get_stats(self):
+            """
+            :return: capacity, launch_rate, damage
+            """
             return self.capacity, self.launch_rate, self.damage
 
     def __init__(self, ship_id=-1, consider_refuel=False, stats=None):
@@ -135,12 +155,27 @@ class ShipCombatStats(object):
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launchrate, fighter_damage)
 
     def get_basic_stats(self, hashable=False):
+        """Get non-fighter-related combat stats of the ship.
+
+        :param hashable: if true, returns tuple instead of attacks-dict
+        :return: attacks, structure, shields
+        """
         return self._basic_stats.get_stats(hashable=hashable)
 
     def get_fighter_stats(self):
+        """ Get fighter related combat stats
+        :return: capacity, launchrate, damage
+        """
         return self._fighter_stats.get_stats()
 
     def get_rating(self, enemy_stats=None):
+        """Calculate a rating against specified enemy.
+
+        :param enemy_stats: Enemy stats to be rated against
+        :type enemy_stats: ShipCombatStats
+        :return: rating against specified enemy
+        :rtype: float
+        """
         # adjust base stats according to enemy stats
         my_attacks, my_structure, my_shields = self.get_basic_stats()
         e_avg_attack = 1
@@ -176,11 +211,16 @@ class ShipCombatStats(object):
         return my_total_attack * my_structure
 
     def get_stats(self, hashable=False):
+        """ Get all combat related stats of the ship.
+
+        :param hashable: if true, return tuple instead of dict for attacks
+        :return: attacks, structure, shields, fighter-capacity, fighter-launchrate, fighter-damage
+        """
         return self.get_basic_stats(hashable=hashable)+self.get_fighter_stats()
 
 
 class FleetCombatStats(object):
-
+    """Stores combat related stats of the fleet."""
     def __init__(self, fleet_id=-1, consider_refuel=False):
         self.__fleet_id = fleet_id
         self._consider_refuel = consider_refuel
@@ -188,15 +228,31 @@ class FleetCombatStats(object):
         self.__get_stats_from_fleet()
 
     def get_ship_stats(self, hashable=False):
+        """Get combat stats of all ships in fleet.
+
+        :param hashable: if true, returns tuple instead of dict for attacks
+        :type hashable: bool
+        :return: list of ship stats
+        :rtype: list
+        """
         return map(lambda x: x.get_stats(hashable=hashable), self.__ship_stats)
 
     def get_ship_combat_stats(self):
+        """Returns list of ShipCombatStats of fleet."""
         return list(self.__ship_stats)
 
     def get_rating(self, enemy_stats=None):
+        """Calculates the rating of the fleet by combining all its ships ratings.
+
+        :param enemy_stats: enemy to be rated against
+        :type enemy_stats: ShipCombatStats
+        :return: Rating of the fleet
+        :rtype: float
+        """
         return combine_ratings_list(map(lambda x: x.get_rating(enemy_stats), self.__ship_stats))
 
     def __get_stats_from_fleet(self):
+        """Calculate fleet combat stats (i.e. the stats of all its ships)."""
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.__fleet_id)
         if not fleet:
@@ -206,10 +262,25 @@ class FleetCombatStats(object):
 
 
 def get_fleet_rating(fleet_id, enemy_stats=None):
+    """Get rating for the fleet against specified enemy.
+
+    :param fleet_id: fleet to be rated
+    :type fleet_id: int
+    :param enemy_stats: enemy to be rated against
+    :type enemy_stats: ShipCombatStats
+    :return: Rating
+    :rtype: float
+    """
     return FleetCombatStats(fleet_id, consider_refuel=False).get_rating(enemy_stats)
 
 
 def get_piloting_grades(species_name):
+    """Get species modifier.
+
+    :param species_name:
+    :type species_name: str
+    :return: 3 strings: weapons_grade, shield_grade, attacktroops_grade
+    """
     if species_name not in piloting_grades:
         spec_tags = []
         if species_name:
@@ -244,9 +315,50 @@ def weight_shields(shields, grade):
 
 
 def combine_ratings(rating1, rating2):
+    """ Combines two combat ratings to a total rating.
+
+    The formula takes into account the fact that the combined strength of two ships is more than the
+    sum of its individual ratings. Basic idea as follows:
+
+    We use the following definitions
+
+    r: rating
+    a: attack
+    s: structure
+
+    where we take into account effective values after accounting for e.g. shields effects.
+
+    We generally define the rating of a ship as
+    r_i = a_i*s_i                                                                   (1)
+
+    A natural extension for the combined rating of two ships is
+    r_tot = (a_1+a_2)*(s_1+s_2)                                                     (2)
+
+    Assuming         a_i \approx s_i                                                (3)
+    It follows that  a_i \approx \sqrt(r_i) \approx s_i                             (4)
+    And thus         r_tot = (sqrt(r_1)+sqrt(r_2))^2 = r1 + r2 + 2*sqrt(r1*r2)      (5)
+
+    Note that this function has commutative and associative properties.
+
+    :param rating1:
+    :type rating1: float
+    :param rating2:
+    :type rating2: float
+    :return: combined rating
+    :rtype: float
+    """
     return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
 
 
 def combine_ratings_list(ratings_list):
+    """ Combine ratings in the list.
+
+    Repetitively calls combine_ratings() until finished.
+
+    :param ratings_list: list of ratings to be combined
+    :type ratings_list: list
+    :return: combined rating
+    :rtype: float
+    """
     return reduce(combine_ratings, ratings_list) if ratings_list else 0
 
