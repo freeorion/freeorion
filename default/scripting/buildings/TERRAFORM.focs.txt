@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 200 * (1 + Target.DistanceFromOriginalType)
+    buildcost = 100 * (Target.SizeAsDouble + Target.DistanceFromOriginalType)
     buildtime = 8
     location = And [
         Planet

@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_GAIA_TRANS"
     description = "BLD_GAIA_TRANS_DESC"
-    buildcost = 500
+    buildcost = 200 * Target.SizeAsDouble
     buildtime = 12
     location = And [
         Planet
