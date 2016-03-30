@@ -1630,7 +1630,7 @@ class MilitaryShipDesigner(ShipDesigner):
         return self.structure*self._total_dmg()*(1+self.shields/10)
 
 
-class CarrierShipDesigner(ShipDesigner):
+class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from MilitaryShipDesigner
     """Class that implements military designs with fighter parts.
 
     Extends __init__()
@@ -1679,7 +1679,10 @@ class CarrierShipDesigner(ShipDesigner):
 
         total_dmg = weapon_dmg + fighter_damage_per_bout
         effective_structure = (self.structure + expected_growth + remaining_growth/5) * shield_factor + damage_prevented
-        return total_dmg * effective_structure
+
+        speed_factor = 1 + 0.005*(self.speed - 85)
+        fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
+        return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     # TODO Implement _starting_guess() for faster convergence
 
