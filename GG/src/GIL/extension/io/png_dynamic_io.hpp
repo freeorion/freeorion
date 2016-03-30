@@ -120,6 +120,30 @@ inline void png_read_image(const std::string& filename,any_image<Images>& im) {
 }
 
 /// \ingroup PNG_IO
+/// \brief reads a PNG image into a run-time instantiated image
+template <typename Images>
+inline void png_read_image(FILE* file,any_image<Images>& im) {
+    detail::png_reader_dynamic m(file);
+    m.read_image(im);
+}
+
+/// \ingroup PNG_IO
+/// \brief reads a PNG image into a run-time instantiated image
+template <typename Images>
+inline void png_read_image(const boost::filesystem::path& path,any_image<Images>& im) {
+#if defined (_WIN32)
+    boost::filesystem::path::string_type path_native = path.native();
+    FILE* file = _wfopen(path_native.c_str(), L"rb");
+    detail::png_reader_dynamic m(file);
+    m.read_image(im);
+    fclose(file);
+#else
+    std::string filename = path.generic_string());
+    png_read_image(filename.c_str(),im);
+#endif
+}
+
+/// \ingroup PNG_IO
 /// \brief Saves the currently instantiated view to a png file specified by the given png image file name.
 /// Throws std::ios_base::failure if the currently instantiated view type is not supported for writing by the I/O extension 
 /// or if it fails to create the file.

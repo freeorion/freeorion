@@ -313,7 +313,7 @@ public:
     boost::shared_ptr<Font>    GetFont(const boost::shared_ptr<Font>& font, unsigned int pts);
 
     /** Removes the desired font from the managed pool; since shared_ptr's are
-        used, the font may be deleted much later */
+        used, the font may be deleted much later. */
     void                       FreeFont(const std::string& font_filename, unsigned int pts);
 
     /** Adds an already-constructed texture to the managed pool \warning
@@ -321,9 +321,24 @@ public:
         do that. */
     boost::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
 
-    boost::shared_ptr<Texture> StoreTexture(const boost::shared_ptr<Texture> &texture, const std::string& texture_name); ///< adds an already-constructed texture to the managed pool
-    boost::shared_ptr<Texture> GetTexture(const std::string& name, bool mipmap = false); ///< loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true
-    void                       FreeTexture(const std::string& name); ///< removes the desired texture from the managed pool; since shared_ptr's are used, the texture may be deleted much later
+    /** Adds an already-constructed texture to the managed pool. */
+    boost::shared_ptr<Texture> StoreTexture(const boost::shared_ptr<Texture> &texture, const std::string& texture_name);
+
+    /** Loads the requested texture from file \a name; mipmap textures are
+      * generated if \a mipmap is true. */
+    boost::shared_ptr<Texture> GetTexture(const std::string& name, bool mipmap = false);
+
+    /** Loads the requested texture from file \a name; mipmap textures are
+      * generated if \a mipmap is true. */
+    boost::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+
+    /** Removes the desired texture from the managed pool; since shared_ptr's
+      * are used, the texture may be deleted much later. */
+    void                       FreeTexture(const std::string& name);
+
+    /** Removes the desired texture from the managed pool; since shared_ptr's
+      * are used, the texture may be deleted much later. */
+    void                       FreeTexture(const boost::filesystem::path& path);
 
     void SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory); ///< sets the currently-installed style factory
 

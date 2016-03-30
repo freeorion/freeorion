@@ -48,7 +48,7 @@
 const Tech* GetTech(const std::string& name);
 
 bool TextureFileNameCompare(const boost::shared_ptr<GG::Texture> t1, const boost::shared_ptr<GG::Texture> t2)
-{ return t1 && t2 && t1->Filename() < t2->Filename(); }
+{ return t1 && t2 && t1->Path() < t2->Path(); }
 
 namespace fs = boost::filesystem;
 
@@ -926,9 +926,9 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/) {
     boost::shared_ptr<GG::Texture> retval;
     try {
-        retval = HumanClientApp::GetApp()->GetTexture(path.string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture(path, mipmap);
     } catch(...) {
-        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
     }
 #ifdef FREEORION_MACOSX
     if (!mipmap)

@@ -281,6 +281,8 @@ public:
     png_reader_color_convert(FILE* file          ) : png_reader(file) {}
     png_reader_color_convert(const char* filename,CC cc_in) : png_reader(filename),_cc(cc_in) {}
     png_reader_color_convert(const char* filename) : png_reader(filename) {}
+    png_reader_color_convert(const boost::filesystem::path& path) : png_reader(path) {}
+
     template <typename View>
     void apply(const View& view) {
         png_uint_32 width, height;

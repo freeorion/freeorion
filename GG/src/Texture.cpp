@@ -27,6 +27,7 @@
 #include <GG/GUI.h>
 #include <GG/Config.h>
 #include <GG/DrawUtil.h>
+#include <GG/utf8/checked.h>
 
 #if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
 # include <IL/il.h>
@@ -145,8 +146,8 @@ Texture::Texture() :
 Texture::~Texture()
 { Clear(); }
 
-std::string Texture::Filename() const
-{ return m_filename; }
+const boost::filesystem::path& Texture::Path() const
+{ return m_path; }
 
 GLenum Texture::WrapS() const
 { return m_wrap_s; }
@@ -252,10 +253,32 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords/
 void Texture::OrthoBlit(const Pt& pt) const
 { OrthoBlit(pt, pt + Pt(m_default_width, m_default_height), m_tex_coords); }
 
-void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
+void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
+    namespace gil = boost::gil;
+    namespace fs = boost::filesystem;
+
     if (m_opengl_id)
         Clear();
+
+    if (!fs::exists(path)) {
+        std::cerr << "Texture::Load passed non-existant path: " << path.generic_string() << std::endl;
+        throw BadFile("Texture file \"" + path.generic_string() + "\" does not exist");
+    }
+    if (!fs::is_regular_file(path)) {
+        std::cerr << "Texture::Load passed non-file path: " << path.generic_string() << std::endl;
+        throw BadFile("Texture \"file\" \"" + path.generic_string() + "\" is not a file");
+    }
+
+    // convert path into UTF-8 format filename string
+#if defined (_WIN32)
+    boost::filesystem::path::string_type path_native = path.native();
+    std::string filename;
+    utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(filename));
+#else
+    std::string filename = path.generic_string());
+#endif
+
 
 #if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
 
@@ -277,7 +300,7 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
         throw BadFile("Could not load temporary DevIL image from file \"" + filename + "\"");
     }
 
-    m_filename = filename;
+    m_path = path;
     m_default_width = X(ilGetInteger(IL_IMAGE_WIDTH));
     CheckILErrors("ilGetInteger(IL_IMAGE_WIDTH)");
     m_default_height = Y(ilGetInteger(IL_IMAGE_HEIGHT));
@@ -305,9 +328,6 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
 
 #else
 
-    namespace gil = boost::gil;
-    namespace fs = boost::filesystem;
-
     BOOST_STATIC_ASSERT((sizeof(gil::gray8_pixel_t) == 1));
     BOOST_STATIC_ASSERT((sizeof(gil::gray_alpha8_pixel_t) == 2));
     BOOST_STATIC_ASSERT((sizeof(gil::rgb8_pixel_t) == 3));
@@ -321,11 +341,8 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
     > ImageTypes;
     typedef gil::any_image<ImageTypes> ImageType;
 
-    fs::path path(filename);
-
     if (!fs::exists(path))
         throw BadFile("Texture file \"" + filename + "\" does not exist");
-
     if (!fs::is_regular_file(path))
         throw BadFile("Texture \"file\" \"" + filename + "\" is not a file");
 
@@ -342,7 +359,7 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
 #endif
 #if GG_HAVE_LIBPNG
         if (extension == ".png")
-            gil::png_read_image(filename, image);
+            gil::png_read_image(path, image);
         else
 #endif
 #if GG_HAVE_LIBTIFF
@@ -364,7 +381,7 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
 #if GG_HAVE_LIBPNG
         if (extension == ".png") {
             gil::rgba8_image_t rgba_image;
-            gil::png_read_and_convert_image(filename, rgba_image);
+            gil::png_read_and_convert_image(path, rgba_image);
             image.move_in(rgba_image);
         }
 #endif
@@ -377,7 +394,7 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
 #endif
     }
 
-    m_filename = filename;
+    m_path = path;
     m_default_width = X(image.width());
     m_default_height = Y(image.height());
     m_type = GL_UNSIGNED_BYTE;
@@ -481,7 +498,7 @@ void Texture::Clear()
     if (m_opengl_id)
         glDeleteTextures(1, &m_opengl_id);
 
-    m_filename = "";
+    m_path.clear();
 
     m_bytes_pp = 4;
     m_default_width = m_width = X0;
@@ -686,15 +703,18 @@ boost::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, const 
 boost::shared_ptr<Texture> TextureManager::StoreTexture(const boost::shared_ptr<Texture>& texture, const std::string& texture_name)
 { return (m_textures[texture_name] = texture); }
 
-boost::shared_ptr<Texture> TextureManager::GetTexture(const std::string& name, bool mipmap/* = false*/)
+boost::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
-    std::map<std::string, boost::shared_ptr<Texture> >::iterator it = m_textures.find(name);
+    std::map<std::string, boost::shared_ptr<Texture> >::iterator it = m_textures.find(path.string());
     if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
-        return (m_textures[name] = LoadTexture(name, mipmap));
+        return (m_textures[path.generic_string()] = LoadTexture(path, mipmap));
     } else { // otherwise, just return the texture we found
         return it->second;
     }
 }
+
+void TextureManager::FreeTexture(const boost::filesystem::path& path)
+{ FreeTexture(path.generic_string()); }
 
 void TextureManager::FreeTexture(const std::string& name)
 {
@@ -703,11 +723,11 @@ void TextureManager::FreeTexture(const std::string& name)
         m_textures.erase(it);
 }
 
-boost::shared_ptr<Texture> TextureManager::LoadTexture(const std::string& filename, bool mipmap/* = false*/)
+boost::shared_ptr<Texture> TextureManager::LoadTexture(const boost::filesystem::path& path, bool mipmap)
 {
     boost::shared_ptr<Texture> temp(new Texture());
-    temp->Load(filename, mipmap);
-    return (m_textures[filename] = temp);
+    temp->Load(path, mipmap);
+    return (m_textures[path.generic_string()] = temp);
 }
 
 TextureManager& GG::GetTextureManager()

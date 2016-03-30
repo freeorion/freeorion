@@ -1335,11 +1335,11 @@ boost::shared_ptr<Texture> GUI::StoreTexture(Texture* texture, const std::string
 boost::shared_ptr<Texture> GUI::StoreTexture(const boost::shared_ptr<Texture>& texture, const std::string& texture_name)
 { return GetTextureManager().StoreTexture(texture, texture_name); }
 
-boost::shared_ptr<Texture> GUI::GetTexture(const std::string& name, bool mipmap/* = false*/)
-{ return GetTextureManager().GetTexture(name, mipmap); }
+boost::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
+{ return GetTextureManager().GetTexture(path, mipmap); }
 
-void GUI::FreeTexture(const std::string& name)
-{ GetTextureManager().FreeTexture(name); }
+void GUI::FreeTexture(const boost::filesystem::path& path)
+{ GetTextureManager().FreeTexture(path); }
 
 void GUI::SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory)
 {

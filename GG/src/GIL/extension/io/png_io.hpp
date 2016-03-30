@@ -176,6 +176,29 @@ inline void png_read_and_convert_image(const std::string& filename,Image& im) {
 }
 
 /// \ingroup PNG_IO
+/// \brief Allocates a new image whose dimensions are determined by the given png image file, loads and color-converts the pixels into it.
+template <typename Image>
+inline void png_read_and_convert_image(FILE* file,Image& im) {
+    detail::png_reader_color_convert<default_color_converter> m(file, default_color_converter());
+    m.read_image(im);
+}
+
+/// \ingroup PNG_IO
+/// \brief Allocates a new image whose dimensions are determined by the given png image file path, loads and color-converts the pixels into it.
+template <typename Image>
+inline void png_read_and_convert_image(const boost::filesystem::path& path,Image& im) {
+#if defined (_WIN32)
+    boost::filesystem::path::string_type path_native = path.native();
+    FILE* file = _wfopen(path_native.c_str(), L"rb");
+    gil::png_read_and_convert_image(file,im);
+    fclose(file);
+#else
+    std::string filename = path.generic_string());
+    png_read_and_convert_image(filename.c_str(),im);
+#endif
+}
+
+/// \ingroup PNG_IO
 /// \brief Determines whether the given view type is supported for writing
 template <typename View>
 struct png_write_support {
