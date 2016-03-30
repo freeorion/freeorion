@@ -1804,6 +1804,11 @@ namespace {
     GG::GL2DVertexBuffer dot_vertices_buffer;
     GG::GLTexCoordBuffer dot_star_texture_coords;
     const unsigned int BUFFER_CAPACITY(512);    // should be long enough for most plausible fleet move lines
+
+    boost::shared_ptr<GG::Texture> MoveLineDotTexture() {
+        boost::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+        return retval;
+    }
 }
 
 void MapWnd::RenderFleetMovementLines() {
@@ -1817,7 +1822,7 @@ void MapWnd::RenderFleetMovementLines() {
     float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots
-    boost::shared_ptr<GG::Texture> move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+    boost::shared_ptr<GG::Texture> move_line_dot_texture = MoveLineDotTexture();
     float dot_size = Value(move_line_dot_texture->DefaultWidth());
     //std::cout << "dot size: " << dot_size << std::endl;
 
