@@ -68,7 +68,7 @@ void InitDirs(const std::string& argv0) {
             exit(-1);
         }
     }
-    
+
     bundle_path = fs::path(bundle_dir);
 
     // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
@@ -82,7 +82,7 @@ void InitDirs(const std::string& argv0) {
         }
         app_path /= "FreeOrion.app/Contents";
     }
-    
+
     s_root_data_dir =   app_path / "Resources";
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
@@ -288,11 +288,14 @@ const fs::path GetResourceDir() {
     // use default location
     std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource-dir");
     fs::path dir = FilenameToPath(options_resource_dir);
-
-    if (options_resource_dir.empty() || !fs::is_directory(dir) || !fs::exists(dir))
-        return FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource-dir"));
-    else
+    if (fs::exists(dir) && fs::is_directory(dir))
         return dir;
+
+    dir = GetOptionsDB().GetDefault<std::string>("resource-dir");
+    if (!fs::is_directory(dir) || !fs::exists(dir))
+        dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource-dir"));
+
+    return dir;
 }
 
 const fs::path GetConfigPath() {
@@ -399,3 +402,6 @@ std::vector<fs::path> ListDir(const fs::path& path) {
 
     return retval;
 }
+
+bool IsValidUTF8(const std::string& in)
+{ return utf8::is_valid(in.begin(), in.end()); }
