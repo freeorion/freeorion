@@ -1,10 +1,10 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+import sys
+
 import FleetUtilsAI
 from EnumsAI import MissionType
-from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict
+from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
-
-piloting_grades = {}
 
 
 def get_empire_standard_fighter():
@@ -275,26 +275,43 @@ def get_fleet_rating(fleet_id, enemy_stats=None):
     return FleetCombatStats(fleet_id, consider_refuel=False).get_rating(enemy_stats)
 
 
-def get_piloting_grades(species_name):
-    """Get species modifier.
+@cache_by_session
+def _get_species_grades(species_name, grade_type):
+    spec_tags = []
+    if species_name:
+        species = fo.getSpecies(species_name)
+        if species:
+            spec_tags = species.tags
+        else:
+            sys.stderr.write("Error: get_species_grades couldn't retrieve species '%s'\n" % species_name)
+    return get_ai_tag_grade(spec_tags, grade_type)
 
-    :param species_name:
-    :type species_name: str
-    :return: 3 strings: weapons_grade, shield_grade, attacktroops_grade
+
+def get_pilot_weapons_grade(species_name):
     """
-    if species_name not in piloting_grades:
-        spec_tags = []
-        if species_name:
-            species = fo.getSpecies(species_name)
-            if species:
-                spec_tags = species.tags
-            else:
-                print "Error: get_piloting_grades couldn't retrieve species '%s'" % species_name
-        piloting_grades[species_name] = (get_ai_tag_grade(spec_tags, 'WEAPONS'),
-                                         get_ai_tag_grade(spec_tags, 'SHIELDS'),
-                                         get_ai_tag_grade(spec_tags, 'ATTACKTROOPS'),
-                                         )
-    return piloting_grades[species_name]
+    Return pilot grade string.
+
+    :rtype str
+    """
+    return _get_species_grades(species_name, 'WEAPONS')
+
+
+def get_species_troops_grade(species_name):
+    """
+    Return troop grade string.
+
+    :rtype str
+    """
+    return _get_species_grades(species_name, 'ATTACKTROOPS')
+
+
+def get_species_shield_grade(species_name):
+    """
+    Return shield grade string.
+
+    :rtype str
+    """
+    return _get_species_grades(species_name, 'SHIELDS')
 
 
 def weight_attack_troops(troops, grade):

@@ -924,9 +924,10 @@ class ShipDesigner(object):
         self._apply_hardcoded_effects()
 
         if self.species and not ignore_species:
-            weapons_grade, shields_grade, troops_grade = CombatRatingsAI.get_piloting_grades(self.species)
+            shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
             self.shields = CombatRatingsAI.weight_shields(self.shields, shields_grade)
             if self.troops:
+                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
                 self.troops = CombatRatingsAI.weight_attack_troops(self.troops, troops_grade)
 
     def _apply_hardcoded_effects(self):
@@ -1127,13 +1128,15 @@ class ShipDesigner(object):
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
             # The same is true for the canProduceShips trait which simply means no hull can be built.
-            weapons_grade, shields_grade, troops_grade = CombatRatingsAI.get_piloting_grades(self.species)
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
+                weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
                 relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
+                shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
                 relevant_grades.append("SHIELDS: %s" % shields_grade)
             if TROOPS & self.useful_part_classes:
+                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
                 relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
@@ -1526,7 +1529,6 @@ class ShipDesigner(object):
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
         weapon_name = weapon_part.name
-        base_damage = weapon_part.capacity
 
         # tech modifiers
         try:
@@ -1546,7 +1548,7 @@ class ShipDesigner(object):
             # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
         # species modifiers
         if not ignore_species:
-            weapons_grade, _, _ = CombatRatingsAI.get_piloting_grades(self.species)
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
             species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1560,7 +1562,7 @@ class ShipDesigner(object):
             base_shots = 1
         # species modifier
         if not ignore_species:
-            weapons_grade, _, _ = CombatRatingsAI.get_piloting_grades(self.species)
+            weapons_grade = CombatRatingsAI.get_piloting_grades(self.species)
             species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1574,7 +1576,7 @@ class ShipDesigner(object):
         base_damage = hangar_part.secondaryStat
         # species modifier
         if not ignore_species:
-            weapons_grade, _, _ = CombatRatingsAI.get_piloting_grades(self.species)
+            weapons_grade = CombatRatingsAI.get_piloting_grades(self.species)
             species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
