@@ -705,8 +705,9 @@ boost::shared_ptr<Texture> TextureManager::StoreTexture(const boost::shared_ptr<
 
 boost::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
-    std::map<std::string, boost::shared_ptr<Texture> >::iterator it = m_textures.find(path.string());
+    std::map<std::string, boost::shared_ptr<Texture> >::iterator it = m_textures.find(path.generic_string());
     if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
+        //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
         return (m_textures[path.generic_string()] = LoadTexture(path, mipmap));
     } else { // otherwise, just return the texture we found
         return it->second;
