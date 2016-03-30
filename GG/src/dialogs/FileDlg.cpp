@@ -227,7 +227,6 @@ const boost::filesystem::path FileDlg::StringToPath(const std::string& str) {
 #endif
 }
 
-
 void FileDlg::CreateChildren(bool multi)
 {
     if (m_save)
