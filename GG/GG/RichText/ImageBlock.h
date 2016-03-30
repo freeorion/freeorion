@@ -7,8 +7,6 @@
 
 namespace GG
 {
-
-
 /**
 * @brief A Block control containing an image.
 *
@@ -28,27 +26,25 @@ public:
      */
     static const std::string IMAGE_TAG;
 
-
     /**
      * @brief Construct image block.
      *
      * @param image_path The path to the image.
      */
-    ImageBlock ( const std::string& image_path, X x, Y y, X w, GG::Flags< GG::WndFlag > flags );
+    ImageBlock(const std::string& image_path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
 
     //! Implement from BlockControl sets the maximum width, returns the actual size based on that.
-    virtual Pt SetMaxWidth ( X width );
+    virtual Pt SetMaxWidth(X width);
 
     virtual void Render();
 
     //! Set the root path from which to look for images with the factory.
-    static bool SetImagePath (
-        RichText::IBlockControlFactory* factory, //!< The factory to set the path for. Should be an image block factory.
-        const std::string& path ); //!< The base path to look for images from.
+    static bool SetImagePath(RichText::IBlockControlFactory* factory,  //!< The factory to set the path for. Should be an image block factory.
+                             const std::string& path);                 //!< The base path to look for images from.
 
     //! Set the root path from which to look for images with the factory.
-    static bool SetDefaultImagePath (
-        const std::string& path ); //!< The base path to look for images from.
+    static bool SetDefaultImagePath(const std::string& path); //!< The base path to look for images from.
+
 private:
     StaticGraphic* m_graphic; //! The StaticGraphic used to render the image.
 };

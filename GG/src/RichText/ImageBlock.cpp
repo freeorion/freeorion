@@ -21,8 +21,7 @@ namespace GG {
     {
         try {
             boost::shared_ptr<Texture> texture = GetTextureManager().GetTexture(image_path);
-            m_graphic = new StaticGraphic(texture,
-                                          GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
+            m_graphic = new StaticGraphic(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
             AttachChild(m_graphic);
         } catch (GG::Texture::BadFile&) {
             // No can do inside GiGi.
@@ -74,7 +73,9 @@ namespace GG {
     // A factory for creating image blocks from tags.
     class ImageBlockFactory : public RichText::IBlockControlFactory {
     public:
-        ImageBlockFactory() : m_root_path(".") {}
+        ImageBlockFactory() :
+            m_root_path(".")
+        {}
 
         //! Create a Text block from a plain text tag.
         virtual BlockControl* CreateFromTag(const std::string& tag,
@@ -92,7 +93,8 @@ namespace GG {
         }
 
         // Sets the root of image search path.
-        void SetRootPath(const std::string& path) { m_root_path = FileDlg::StringToPath(path); }
+        void SetRootPath(const std::string& path)
+        { m_root_path = FileDlg::StringToPath(path); }
 
     private:
         boost::filesystem::path m_root_path;
@@ -115,17 +117,12 @@ namespace GG {
     };
 
     // Register image block as the image tag handler.
-    static int dummy =
-        RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, new ImageBlockFactory());
+    static int dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, new ImageBlockFactory());
 
     //! Set the root path from which to look for images with the factory.
-    bool ImageBlock::SetImagePath(
-        RichText::IBlockControlFactory* factory, //!< The factory to set the
-        //! path for. Should be an image
-        //! block factory.
-        const std::string& path)
-    { //!< The base path to look for images from.
-
+    bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory,
+                                  const std::string& path)
+    {
         // Try to convert the factory to an image factory.
         ImageBlockFactory* image_factory = dynamic_cast<ImageBlockFactory*>(factory);
 
