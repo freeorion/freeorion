@@ -129,7 +129,8 @@ void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
     GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(wnd);
     if (AllowedDropTypes().find(drop_type) == AllowedDropTypes().end() ||
         !row ||
-        std::find(begin(), end(), row) == end()) {
+        std::find(begin(), end(), row) == end())
+    {
         delete wnd;
         return;
     }

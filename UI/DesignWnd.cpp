@@ -1541,20 +1541,19 @@ void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     BasesListBox::CompletedDesignListBoxRow* control =
         boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(row);
     Empire* empire = GetEmpire(m_empire_id_shown);
-    if (control && empire) {
+    if (control && empire && position <= NumRows()) {
         int design_id = control->DesignID();
 
         iterator insert_before_row = begin();
-        for (std::size_t ii = 0; ii < position; ++ii)
-            insert_before_row++;
-        const BasesListBox::CompletedDesignListBoxRow* insert_before_control =
-            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
-        int insert_before_id = (insert_before_row == end() || !insert_before_control)
-            ? ShipDesign::INVALID_DESIGN_ID : insert_before_control->DesignID();
+        std::advance(insert_before_row, position);
 
-        DebugLogger() << "Accepted Drop of id " << design_id << " before " << insert_before_id;
+        const BasesListBox::CompletedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? NULL :
+            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
+        int insert_before_id = insert_before_control
+            ? insert_before_control->DesignID() : ShipDesign::INVALID_DESIGN_ID;
 
         if (design_id != insert_before_id)
+            //insert_before_row may be end() to insert as last item
             Insert(control, insert_before_row);
         control->Resize(ListRowSize());
         HumanClientApp::GetApp()->Orders()
@@ -2192,11 +2191,11 @@ void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_li
 void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
     if (m_hulls_list)
         m_hulls_list->EnableOrderIssuing(enable);
-    if(m_designs_list)
+    if (m_designs_list)
         m_designs_list->EnableOrderIssuing(enable);
-    if(m_saved_designs_list)
+    if (m_saved_designs_list)
         m_saved_designs_list->EnableOrderIssuing(enable);
-    if(m_monsters_list)
+    if (m_monsters_list)
         m_monsters_list->EnableOrderIssuing(enable);
 }
 
@@ -3481,6 +3480,5 @@ void DesignWnd::ReplaceDesign() {
     DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
 }
 
-void DesignWnd::EnableOrderIssuing(bool enable/* = true*/) {
-    m_base_selector->EnableOrderIssuing(enable);
-}
+void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
+{ m_base_selector->EnableOrderIssuing(enable); }
