@@ -5,6 +5,8 @@
 #include <GG/RichText/RichText.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/filesystem/path.hpp>
+
 namespace GG
 {
 /**
@@ -31,7 +33,7 @@ public:
      *
      * @param image_path The path to the image.
      */
-    ImageBlock(const std::string& image_path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
+    ImageBlock(const boost::filesystem::path& path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
 
     //! Implement from BlockControl sets the maximum width, returns the actual size based on that.
     virtual Pt SetMaxWidth(X width);
@@ -39,11 +41,11 @@ public:
     virtual void Render();
 
     //! Set the root path from which to look for images with the factory.
-    static bool SetImagePath(RichText::IBlockControlFactory* factory,  //!< The factory to set the path for. Should be an image block factory.
-                             const std::string& path);                 //!< The base path to look for images from.
+    static bool SetImagePath(RichText::IBlockControlFactory* factory,   //!< The factory to set the path for. Should be an image block factory.
+                             const boost::filesystem::path& path);      //!< The base path to look for images from.
 
     //! Set the root path from which to look for images with the factory.
-    static bool SetDefaultImagePath(const std::string& path); //!< The base path to look for images from.
+    static bool SetDefaultImagePath(const boost::filesystem::path& path); //!< The base path to look for images from.
 
 private:
     StaticGraphic* m_graphic; //! The StaticGraphic used to render the image.

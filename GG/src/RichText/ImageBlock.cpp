@@ -4,23 +4,24 @@
 #include <GG/RichText/RichText.h>
 #include <GG/TextControl.h>
 #include <GG/DrawUtil.h>
-
+#include <GG/utf8/checked.h>
 #include <GG/dialogs/FileDlg.h>
 
 #include <boost/filesystem.hpp>
 #include <algorithm>
 
 namespace GG {
+    namespace fs = boost::filesystem;
 
     const std::string ImageBlock::IMAGE_TAG("img");
 
-    ImageBlock::ImageBlock(const std::string& image_path, X x, Y y, X w,
+    ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
                            GG::Flags<GG::WndFlag> flags) :
         BlockControl(x, y, w, flags),
         m_graphic(0)
     {
         try {
-            boost::shared_ptr<Texture> texture = GetTextureManager().GetTexture(image_path);
+            boost::shared_ptr<Texture> texture = GetTextureManager().GetTexture(path);
             m_graphic = new StaticGraphic(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
             AttachChild(m_graphic);
         } catch (GG::Texture::BadFile&) {
@@ -59,22 +60,23 @@ namespace GG {
 
     void ImageBlock::Render()
     {
-        if (m_graphic == 0) {
-            // Error: no image. Draw red x.
-            Pt ul = UpperLeft();
-            Pt lr = LowerRight();
-            Pt size = lr - ul;
-            ul.x += size.x / 2 - X(Value(size.y)) / 2;
-            lr.x -= size.x / 2 - X(Value(size.y)) / 2;
-            FlatX(ul, lr, CLR_RED);
-        }
+        if (m_graphic)
+            return;
+
+        // Error: no image. Draw red x.
+        Pt ul = UpperLeft();
+        Pt lr = LowerRight();
+        Pt size = lr - ul;
+        ul.x += size.x / 2 - X(Value(size.y)) / 2;
+        lr.x -= size.x / 2 - X(Value(size.y)) / 2;
+        FlatX(ul, lr, CLR_RED);
     }
 
     // A factory for creating image blocks from tags.
     class ImageBlockFactory : public RichText::IBlockControlFactory {
     public:
         ImageBlockFactory() :
-            m_root_path(".")
+            m_root_path()
         {}
 
         //! Create a Text block from a plain text tag.
@@ -85,33 +87,43 @@ namespace GG {
                                             Flags<TextFormat> format)
         {
             // Get the path from the parameters.
-            std::string path = ExtractPath(params);
+            fs::path param_path = ExtractPath(params);
+            std::cout << "ImageBlockFactory param path: " << param_path.generic_string() << std::endl;
+            fs::path combined_path = m_root_path / param_path;
+            std::cout << "ImageBlockFactory combined path: " << combined_path.generic_string() << "  exists?: " << fs::exists(combined_path) << std::endl;
+
+            if (!fs::exists(combined_path))
+                return 0;
 
             // Create a new image block, basing the path on the root path.
-            return new ImageBlock((m_root_path / FileDlg::StringToPath(path)).string(), X0, Y0, X1,
-                                  Flags<WndFlag>());
+            return new ImageBlock(combined_path, X0, Y0, X1, Flags<WndFlag>());
         }
 
         // Sets the root of image search path.
-        void SetRootPath(const std::string& path)
-        { m_root_path = FileDlg::StringToPath(path); }
+        void SetRootPath(const fs::path& path)
+        { m_root_path = path; }
 
     private:
-        boost::filesystem::path m_root_path;
+        fs::path m_root_path;
 
         // Extracts the path from the given params.
-        static std::string ExtractPath(const RichText::TAG_PARAMS& params)
+        static fs::path ExtractPath(const RichText::TAG_PARAMS& params)
         {
-
             // Find the src.
             RichText::TAG_PARAMS::const_iterator src_param = params.find("src");
 
             // If src not found, error out.
             if (src_param == params.end()) {
-                return std::string("ERR:invalid params: missing src.");
+                return fs::path();
             } else {
-                // Return the path.
-                return src_param->second;
+#if defined(_WIN32)
+                // convert UTF-8 path string to UTF-16
+                fs::path::string_type str_native;
+                utf8::utf8to16(src_param->second.begin(), src_param->second.end(), std::back_inserter(str_native));
+                return fs::path(str_native);
+#else
+                return fs::path(src_param->second);
+#endif
             }
         }
     };
@@ -120,8 +132,7 @@ namespace GG {
     static int dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, new ImageBlockFactory());
 
     //! Set the root path from which to look for images with the factory.
-    bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory,
-                                  const std::string& path)
+    bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, const fs::path& path)
     {
         // Try to convert the factory to an image factory.
         ImageBlockFactory* image_factory = dynamic_cast<ImageBlockFactory*>(factory);
@@ -136,20 +147,15 @@ namespace GG {
     }
 
     //! Set the root path from which to look for images with the factory.
-    bool ImageBlock::SetDefaultImagePath(const std::string& path)
+    bool ImageBlock::SetDefaultImagePath(const fs::path& path)
     {
         // Find the image block factory from the default map and give it the path.
-        RichText::BLOCK_FACTORY_MAP::const_iterator factory_it =
-            RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
-
+        RichText::BLOCK_FACTORY_MAP::const_iterator factory_it = RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
         if (factory_it != RichText::DefaultBlockFactoryMap()->end()) {
-            ImageBlockFactory* factory = dynamic_cast<ImageBlockFactory*>(factory_it->second);
-
-            if (factory != 0) {
+            if (ImageBlockFactory* factory = dynamic_cast<ImageBlockFactory*>(factory_it->second)) {
                 return SetImagePath(factory, path);
             }
         }
-
         return false;
     }
 }
