@@ -1490,7 +1490,7 @@ void GUI::RenderWindow(Wnd* wnd)
             if (clip)
                 wnd->BeginClipping();
             for (std::list<Wnd*>::iterator it = wnd->m_children.begin(); it != wnd->m_children.end(); ++it) {
-                if ((*it)->Visible())
+                if ((*it) && (*it)->Visible())
                     RenderWindow(*it);
             }
             if (clip)
@@ -1504,7 +1504,7 @@ void GUI::RenderWindow(Wnd* wnd)
             if (children_copy.begin() != client_child_begin) {
                 wnd->BeginNonclientClipping();
                 for (std::vector<Wnd*>::iterator it = children_copy.begin(); it != client_child_begin; ++it) {
-                    if ((*it)->Visible())
+                    if ((*it) && (*it)->Visible())
                         RenderWindow(*it);
                 }
                 wnd->EndNonclientClipping();
@@ -1513,7 +1513,7 @@ void GUI::RenderWindow(Wnd* wnd)
             if (client_child_begin != children_copy.end()) {
                 wnd->BeginClipping();
                 for (std::vector<Wnd*>::iterator it = client_child_begin; it != children_copy.end(); ++it) {
-                    if ((*it)->Visible())
+                    if ((*it) && (*it)->Visible())
                         RenderWindow(*it);
                 }
                 wnd->EndClipping();
