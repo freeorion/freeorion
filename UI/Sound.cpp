@@ -1,6 +1,7 @@
 #include "Sound.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 
 #ifdef FREEORION_MACOSX
 # include <OpenAL/alc.h>
@@ -156,27 +157,22 @@ Sound::Sound() :
     InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
 }
 
-Sound::~Sound()
-{
-    if (alcGetCurrentContext() != 0)
-    {
+Sound::~Sound() {
+    if (alcGetCurrentContext() != 0) {
         alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
 
         alDeleteBuffers(2, m_music_buffers);
-        for( std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr )
+        for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
             alDeleteBuffers(1, &itr->second );
     }
-
-
     ShutdownOpenAL();
 }
 
-void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
-{
+void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/) {
     ALenum m_openal_error;
-    std::string filename = path.string();
-    FILE *m_f = 0;
-    vorbis_info *vorbis_info;
+    std::string filename = PathString(path);
+    FILE* m_f = 0;
+    vorbis_info* vorbis_info;
     m_music_loops = 0;
 
 #ifdef FREEORION_WIN32
@@ -269,7 +265,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     if (!GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
-    std::string filename = path.string();
+    std::string filename = PathString(path);
     ALuint current_buffer;
     ALenum source_state;
     ALsizei ogg_freq;
@@ -369,7 +365,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
 
 void Sound::FreeSound(const boost::filesystem::path& path) {
     ALenum m_openal_error;
-    std::string filename = path.string();
+    std::string filename = PathString(path);
     std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
 
     if (it != m_buffers.end()) {
