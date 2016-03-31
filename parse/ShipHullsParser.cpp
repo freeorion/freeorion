@@ -65,7 +65,6 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_r1_type _r1;
-            qi::_r2_type _r2;
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
@@ -73,12 +72,6 @@ namespace {
             using phoenix::new_;
             using phoenix::push_back;
             using phoenix::insert;
-
-            hull_prefix
-                =    tok.Hull_
-                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
-                ;
 
             hull_stats
                 =   parse::label(Speed_token)       >   parse::double_ [ _a = _1 ]
@@ -107,27 +100,26 @@ namespace {
                 ;
 
             hull
-                =   hull_prefix(_a, _b)
+                =   tok.Hull_
+                >   parse::detail::more_common_params_parser()  [ _a = _1 ]
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
                 >   parse::detail::common_params_parser()       [ _d = _1 ]
                 >   parse::label(Icon_token)    > tok.string    [ _f = _1 ]
-                >   parse::label(Graphic_token) > tok.string    
-                    [ insert_hull(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1, _f)) ]
+                >   parse::label(Graphic_token) > tok.string
+                    [ insert_hull(_r1, new_<HullType>(_c, _d, _a, _e, _1, _f)) ]
                 ;
 
             start
                 =   +hull(_r1)
                 ;
 
-            hull_prefix.name("Hull");
             hull_stats.name("Hull stats");
             slot.name("Slot");
             slots.name("Slots");
             hull.name("Hull");
 
 #if DEBUG_PARSERS
-            debug(hull_prefix);
             debug(cost);
             debug(hull_stats);
             debug(slot);
@@ -137,12 +129,6 @@ namespace {
 
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::string&, std::string&),
-            parse::skipper_type
-        > hull_prefix_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -177,8 +163,8 @@ namespace {
             parse::token_iterator,
             void (std::map<std::string, HullType*>&),
             qi::locals<
-                std::string,
-                std::string,
+                MoreCommonParams,
+                std::string,    // dummy
                 HullTypeStats,
                 CommonParams,
                 std::vector<HullType::Slot>,
@@ -193,7 +179,6 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        hull_prefix_rule                            hull_prefix;
         hull_stats_rule                             hull_stats;
         slot_rule                                   slot;
         slots_rule                                  slots;

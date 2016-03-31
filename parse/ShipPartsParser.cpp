@@ -44,6 +44,7 @@ namespace {
     };
     const boost::phoenix::function<insert_part_type_> insert_part_type;
 
+
     struct rules {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
@@ -64,19 +65,10 @@ namespace {
             qi::_g_type _g;
             qi::_h_type _h;
             qi::_r1_type _r1;
-            qi::_r2_type _r2;
-            qi::_r3_type _r3;
             qi::eps_type eps;
             using phoenix::construct;
             using phoenix::new_;
             using phoenix::push_back;
-
-            part_type_prefix
-                =   tok.Part_
-                >   parse::label(Name_token)        > tok.string [ _r1 = _1 ]
-                >   parse::label(Description_token) > tok.string [ _r2 = _1 ]
-                >   parse::label(Class_token)       > parse::enum_parser<ShipPartClass>() [ _r3 = _1 ]
-                ;
 
             slots
                 =  -(
@@ -89,7 +81,9 @@ namespace {
                 ;
 
             part_type
-                =   part_type_prefix(_a, _b, _c)
+                = ( tok.Part_
+                >   parse::detail::more_common_params_parser()       [ _a = _1 ]
+                >   parse::label(Class_token)       > parse::enum_parser<ShipPartClass>() [ _c = _1 ]
                 > (  (parse::label(Capacity_token)  > parse::double_ [ _d = _1 ])
                    | (parse::label(Damage_token)    > parse::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
@@ -102,33 +96,25 @@ namespace {
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
-                >   parse::detail::common_params_parser() [ _e = _1 ]
-                >   parse::label(Icon_token)        > tok.string
-                    [ insert_part_type(_r1, new_<PartType>(_a, _b, _c, _d, _h, _e, _f, _1, _g)) ]
+                >   parse::detail::common_params_parser()           [ _e = _1 ]
+                >   parse::label(Icon_token)        > tok.string    [ _b = _1 ]
+                  ) [ insert_part_type(_r1, new_<PartType>(_c, _d, _h, _e, _a, _f, _b, _g)) ]
                 ;
 
             start
                 =   +part_type(_r1)
                 ;
 
-            part_type_prefix.name("Part");
             slots.name("mountable slot types");
             part_type.name("Part");
 
 #if DEBUG_PARSERS
-            debug(part_type_prefix);
             debug(slots);
             debug(part_type);
 #endif
 
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::string&, std::string&, ShipPartClass&),
-            parse::skipper_type
-        > part_type_prefix_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -140,7 +126,7 @@ namespace {
             parse::token_iterator,
             void (std::map<std::string, PartType*>&),
             qi::locals<
-                std::string,
+                MoreCommonParams,
                 std::string,
                 ShipPartClass,
                 double,
@@ -158,7 +144,6 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        part_type_prefix_rule                       part_type_prefix;
         slots_rule                                  slots;
         part_type_rule                              part_type;
         start_rule                                  start;

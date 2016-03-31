@@ -76,6 +76,23 @@ struct CommonParams {
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   effects;
 };
 
+struct MoreCommonParams {
+    MoreCommonParams() :
+        name(),
+        description(),
+        exclusions()
+    {}
+    MoreCommonParams(const std::string& name_, const std::string& description_,
+                     const std::set<std::string>& exclusions_) :
+        name(name_),
+        description(description_),
+        exclusions(exclusions_)
+    {}
+    std::string             name;
+    std::string             description;
+    std::set<std::string>   exclusions;
+};
+
 /** A type of ship part */
 class FO_COMMON_API PartType {
 public:
@@ -93,19 +110,20 @@ public:
         m_production_meter_consumption(),
         m_production_special_consumption(),
         m_location(0),
+        m_exclusions(),
         m_effects(),
         m_icon(),
         m_add_standard_capacity_effect(false)
     {}
 
-    PartType(const std::string& name, const std::string& description,
-             ShipPartClass part_class, double capacity, double stat2,
+    PartType(ShipPartClass part_class, double capacity, double stat2,
              const CommonParams& common_params,
+             const MoreCommonParams& more_common_params,
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon,
              bool add_standard_capacity_effect = true) :
-        m_name(name),
-        m_description(description),
+        m_name(more_common_params.name),
+        m_description(more_common_params.description),
         m_class(part_class),
         m_capacity(capacity),
         m_secondary_stat(stat2),
@@ -117,6 +135,7 @@ public:
         m_production_meter_consumption(common_params.production_meter_consumption),
         m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
+        m_exclusions(more_common_params.exclusions),
         m_effects(),
         m_icon(icon),
         m_add_standard_capacity_effect(add_standard_capacity_effect)
@@ -154,6 +173,7 @@ public:
 
     const std::set<std::string>& Tags() const       { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
+    const std::set<std::string>& Exclusions() const { return m_exclusions; }        ///< returns the names of other content that cannot be used in the same ship design as this part
     const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const
                                                     { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects this part has
     const std::string&      Icon() const            { return m_icon; }              ///< returns icon graphic that represents part in UI
@@ -177,6 +197,7 @@ private:
     std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
                                                             m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
+    std::set<std::string>                                   m_exclusions;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
     std::string                                             m_icon;
     bool                                                    m_add_standard_capacity_effect;
@@ -292,14 +313,12 @@ public:
         m_icon()
     {}
 
-    HullType(const std::string& name, const std::string& description,
-             const HullTypeStats& stats,
-             const CommonParams& common_params,
+    HullType(const HullTypeStats& stats, const CommonParams& common_params,
+             const MoreCommonParams& more_common_params,
              const std::vector<Slot>& slots,
-             const std::string& graphic,
-             const std::string& icon) :
-        m_name(name),
-        m_description(description),
+             const std::string& icon, const std::string& graphic) :
+        m_name(more_common_params.name),
+        m_description(more_common_params.description),
         m_speed(stats.speed),
         m_fuel(stats.fuel),
         m_stealth(stats.stealth),
@@ -312,6 +331,7 @@ public:
         m_production_meter_consumption(common_params.production_meter_consumption),
         m_production_special_consumption(common_params.production_special_consumption),
         m_location(common_params.location),
+        m_exclusions(more_common_params.exclusions),
         m_effects(),
         m_graphic(graphic),
         m_icon(icon)
@@ -356,6 +376,7 @@ public:
 
     const Condition::ConditionBase* Location() const
     { return m_location; }                                                      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
+    const std::set<std::string>& Exclusions() const { return m_exclusions; }    ///< returns the names of other content that cannot be used in the same ship design as this part
     const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                                                       ///< returns the EffectsGroups that encapsulate the effects this part hull has
 
@@ -382,6 +403,7 @@ private:
     std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
                                                             m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
+    std::set<std::string>                                   m_exclusions;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
     std::string                                             m_graphic;
     std::string                                             m_icon;
@@ -656,6 +678,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
         & BOOST_SERIALIZATION_NVP(m_production_special_consumption)
         & BOOST_SERIALIZATION_NVP(m_location)
+        & BOOST_SERIALIZATION_NVP(m_exclusions)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_icon)
         & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect);
@@ -678,6 +701,7 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_production_meter_consumption)
         & BOOST_SERIALIZATION_NVP(m_production_special_consumption)
         & BOOST_SERIALIZATION_NVP(m_location)
+        & BOOST_SERIALIZATION_NVP(m_exclusions)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_icon);

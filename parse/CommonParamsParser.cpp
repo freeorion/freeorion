@@ -58,6 +58,24 @@ namespace parse { namespace detail {
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
+            exclusions
+                =  -(
+                        parse::label(Exclusions_token)
+                    >>  (
+                            ('[' > +tok.string [ insert(_r1, _1) ] > ']')
+                            |   tok.string [ insert(_r1, _1) ]
+                        )
+                    )
+                ;
+
+            more_common
+                =
+                (   parse::label(Name_token)        > tok.string [ _a = _1 ]
+                >   parse::label(Description_token) > tok.string [ _b = _1 ]
+                >   exclusions(_c)
+                ) [ _val = construct<MoreCommonParams>(_a, _b, _c) ]
+                ;
+
             common
                 =
                 (   parse::label(BuildCost_token)    > double_value_ref [ _a = _1 ]
@@ -69,7 +87,7 @@ namespace parse { namespace detail {
                 >  -consumption(_g, _h)
                 > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 ) [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
-            ;
+                ;
 
             consumption
                 =   parse::label(Consumption_token)
@@ -84,7 +102,7 @@ namespace parse { namespace detail {
                         >   ']'
                      )
                   )
-            ;
+                ;
 
             typedef std::map<std::string, val_cond_pair>::value_type special_consumable_map_value_type;
             consumable_special
@@ -95,7 +113,7 @@ namespace parse { namespace detail {
                 > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
-            ;
+                ;
 
             typedef std::map<MeterType, val_cond_pair>::value_type meter_consumable_map_value_type;
             consumable_meter
@@ -105,12 +123,15 @@ namespace parse { namespace detail {
                 > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]
-            ;
+                ;
 
             producible.name("Producible or Unproducible");
             location.name("Location");
             enqueue_location.name("Enqueue Location");
-            common.name("Consumables");
+            exclusions.name("Exclusions");
+            more_common.name("More Common Parameters");
+            common.name("Common Paramaters");
+            consumption.name("Consumption");
             consumable_special.name("Consumable Special");
             consumable_meter.name("Consumable Meter");
 
@@ -118,6 +139,8 @@ namespace parse { namespace detail {
             debug(producible);
             debug(location);
             debug(enqueue_location);
+            debug(exclusions);
+            debug(more_common);
             debug(common);
             debug(consumption);
             debug(con_special);
@@ -144,13 +167,21 @@ namespace parse { namespace detail {
             parse::skipper_type
         > consumable_rule;
 
-        producible_rule     producible;
-        location_rule       location;
-        location_rule       enqueue_location;
-        common_params_rule  common;
-        consumption_rule    consumption;
-        consumable_rule     consumable_special;
-        consumable_rule     consumable_meter;
+        typedef qi::rule<
+            token_iterator,
+            void (std::set<std::string>&),
+            parse::skipper_type
+        > exclusions_rule;
+
+        producible_rule         producible;
+        location_rule           location;
+        location_rule           enqueue_location;
+        exclusions_rule         exclusions;
+        more_common_params_rule more_common;
+        common_params_rule      common;
+        consumption_rule        consumption;
+        consumable_rule         consumable_special;
+        consumable_rule         consumable_meter;
     };
 
     rules& GetRules() {
@@ -167,5 +198,7 @@ namespace parse { namespace detail {
     const common_params_rule& common_params_parser()
     { return GetRules().common; }
 
+    const more_common_params_rule& more_common_params_parser()
+    { return GetRules().more_common; }
 } }
 

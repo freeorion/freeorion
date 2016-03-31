@@ -110,6 +110,7 @@
     (Environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \
+    (Exclusions)                                \
     (External)
 
 #define TOKEN_SEQ_4                             \

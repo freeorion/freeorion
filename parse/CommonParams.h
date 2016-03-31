@@ -45,6 +45,19 @@ namespace parse { namespace detail {
         skipper_type
     > common_params_rule;
     const common_params_rule& common_params_parser();
+
+    typedef qi::rule<
+        token_iterator,
+        MoreCommonParams (),
+        qi::locals<
+            std::string,
+            std::string,
+            std::set<std::string>
+        >,
+        skipper_type
+    > more_common_params_rule;
+    const more_common_params_rule& more_common_params_parser();
+
 } }
 
 #endif
