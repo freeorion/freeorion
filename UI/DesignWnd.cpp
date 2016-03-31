@@ -2676,6 +2676,7 @@ private:
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;
     bool                m_disabled_by_name; // if the design confirm button is currently disabled due to empty name
+    bool                m_disabled_by_part_conflict;
 
     boost::signals2::connection             m_empire_designs_changed_signal;
 };
@@ -2701,7 +2702,8 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_replace_button(0),
     m_confirm_button(0),
     m_clear_button(0),
-    m_disabled_by_name(false)
+    m_disabled_by_name(false),
+    m_disabled_by_part_conflict(false)
 {
     SetChildClippingMode(ClipToClient);
 
@@ -2869,9 +2871,8 @@ void DesignWnd::MainPanel::AddPart(const PartType* part) {
         return;
 
     if (!AddPartWithSwapping(part, FindSlotForPartWithSwapping(part)))
-        DebugLogger() << "DesignWnd::MainPanel::AddPart("
-                               << (part ? part->Name() : "no part")
-                               << ") couldn't find a slot for the part";
+        DebugLogger() << "DesignWnd::MainPanel::AddPart(" << (part ? part->Name() : "no part")
+                      << ") couldn't find a slot for the part";
 }
 
 bool DesignWnd::MainPanel::CanPartBeAdded(const PartType* part) {
@@ -2903,6 +2904,18 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
     if (!part)
         return result;
 
+    if (part->Class() == PC_FIGHTER_HANGAR) {
+        // give up if part is a hangar and there is already a hangar of another type
+        std::string already_seen_hangar_name;
+        for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots for other hangar types
+            const PartType* part_type = m_slots[i]->GetPart();          // check if this slot has a hangar part
+            if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+                continue;
+            if (part_type->Name() != part->Name())
+                return result;
+        }
+    }
+
     for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
         const ShipSlotType slot_type = m_slots[i]->SlotType();
         const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
@@ -2925,6 +2938,17 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
 
     if (!part)
         return std::make_pair(-1, -1);
+
+    // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
+    if (part->Class() == PC_FIGHTER_HANGAR) {
+        for (unsigned int j = 0; j < m_slots.size(); ++j) {
+            const PartType* existing_part = m_slots[j]->GetPart();
+            if (!existing_part || existing_part->Class() != PC_FIGHTER_HANGAR)
+                continue;
+            if (existing_part->Name() != part->Name())
+                return std::make_pair(-1, -1);  // conflict; new part can't be added
+        }
+    }
 
     // first search for an empty compatible slot for the new part
     for (unsigned int i = 0; i < m_slots.size(); ++i) {
@@ -3134,6 +3158,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     std::string design_name;
     m_disabled_by_name = false;
+    m_disabled_by_part_conflict = false;
 
     m_replace_button->Disable(true);
     m_confirm_button->Disable(true);
@@ -3161,7 +3186,38 @@ void DesignWnd::MainPanel::DesignChanged() {
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
     }
     else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
-        // I have no idea how this would happen, so I'm not going to display a tooltip for it. ~ Bigjoe5
+        // if a design has multiple different hangar types, highlight these, and indicate it on the button
+
+        std::string already_seen_hangar_name;
+        std::vector<std::string> parts = Parts();
+        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+            const std::string& part_name = *part_it;
+            if (part_name.empty())
+                continue;
+            const PartType* part_type = GetPartType(part_name);
+            if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+                continue;
+            if (already_seen_hangar_name.empty()) {
+                already_seen_hangar_name = part_name;
+                continue;
+            }
+            if (already_seen_hangar_name != part_name) {
+                // a problem! multiple different hangar part types...
+                m_disabled_by_part_conflict = true;
+
+                m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                    new TextBrowseWnd(UserString("HANGAR_CONFLICT"),
+                    boost::io::str(FlexibleFormat(UserString("HANGAR_CONFLICT_DETAIL")) % design_name))));
+
+                m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                    new TextBrowseWnd(UserString("HANGAR_CONFLICT"),
+                    boost::io::str(FlexibleFormat(UserString("HANGAR_CONFLICT_DETAIL")) % design_name))));
+
+                // todo: mark hangar parts somehow
+
+                break;
+            }
+        }
     }
     else if (CurrentDesignIsRegistered(design_name)) {
         m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
@@ -3358,14 +3414,8 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Connect(m_main_panel->HullTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->DesignReplacedSignal,             &DesignWnd::ReplaceDesign,          this);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
-    GG::Connect(m_main_panel->DesignChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
-                                                                            m_detail_panel,
-                                                                            boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
-                                                                                        m_main_panel)));
-    GG::Connect(m_main_panel->DesignNameChangedSignal,          boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
-                                                                            m_detail_panel,
-                                                                            boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
-                                                                                        m_main_panel)));
+    GG::Connect(m_main_panel->DesignChangedSignal,              &DesignWnd::DesignChanged,          this);
+    GG::Connect(m_main_panel->DesignNameChangedSignal,          &DesignWnd::DesignNameChanged,      this);
     GG::Connect(m_main_panel->CompleteDesignClickedSignal,      static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign),m_detail_panel);
     m_main_panel->Sanitize();
 
@@ -3495,6 +3545,12 @@ void DesignWnd::ReplaceDesign() {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, replaced_id, true)));
     DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
 }
+
+void DesignWnd::DesignChanged()
+{ m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign()); }
+
+void DesignWnd::DesignNameChanged()
+{ m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign()); }
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
 {}

@@ -3304,6 +3304,12 @@ Duplicates Existing Design
 DESIGN_KNOWN_DETAIL
 This design is a duplicate of "%1%".
 
+HANGAR_CONFLICT
+Mixed Hangars
+
+HANGAR_CONFLICT_DETAIL
+A ship design may have only a single type of fighter hangar part.
+
 DESIGN_OBSOLETE
 Obsolete Design
 
