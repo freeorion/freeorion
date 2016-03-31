@@ -1070,7 +1070,21 @@ namespace {
         if (part->CanMountInSlotType(SL_CORE))
             slot_types_list += UserString("SL_CORE");
         if (!slot_types_list.empty())
-            detailed_description += "\n\n" +UserString("ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES") + slot_types_list;
+            detailed_description += "\n\n" + UserString("ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES") + slot_types_list;
+
+        const std::set<std::string>& exclusions = part->Exclusions();
+        if (!exclusions.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
+            for (std::set<std::string>::const_iterator ex_it = exclusions.begin(); ex_it != exclusions.end(); ++ex_it) {
+                if (const PartType* ex_part = GetPartType(*ex_it)) {
+                    detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, *ex_it) + "  ";
+                } else if (const HullType* ex_hull = GetHullType(*ex_it)) {
+                    detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, *ex_it) + "  ";
+                } else {
+                    // unknown exclusion...?
+                }
+            }
+        }
 
         std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {

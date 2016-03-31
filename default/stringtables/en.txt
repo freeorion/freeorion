@@ -3731,6 +3731,9 @@ ENC_UNLOCKS
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 '''Can mount in: '''
 
+ENC_SHIP_EXCLUSIONS
+'''Cannot be in design with: '''
+
 ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''%1%: %2%
 '''
