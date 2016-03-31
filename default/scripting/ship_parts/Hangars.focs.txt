@@ -1,6 +1,7 @@
 Part
     name = "FT_HANGAR_0"
     description = "FT_HANGAR_1_DESC"
+    exclusions = [ "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
     damage = 0
@@ -13,6 +14,7 @@ Part
 Part
     name = "FT_HANGAR_1"
     description = "FT_HANGAR_1_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 3
     damage = 1
@@ -25,6 +27,7 @@ Part
 Part
     name = "FT_HANGAR_2"
     description = "FT_HANGAR_1_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
     damage = 3
@@ -37,6 +40,7 @@ Part
 Part
     name = "FT_HANGAR_3"
     description = "FT_HANGAR_3_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
     damage = 6
@@ -49,6 +53,7 @@ Part
 Part
     name = "FT_HANGAR_4"
     description = "FT_HANGAR_4_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_3" ]
     class = FighterHangar
     capacity = 1
     damage = 10
