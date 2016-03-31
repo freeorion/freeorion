@@ -29,6 +29,7 @@ GFocus = FocusType.FOCUS_GROWTH
 PFocus = FocusType.FOCUS_PROTECTION
 fociMap = {IFocus: "Industry", RFocus: "Research", MFocus: "Mining", GFocus: "Growth", PFocus: "Defense"}
 
+#TODO use the priorityRatio to weight
 RESEARCH_WEIGHTING = 2.0
 
 useGrowth = True
@@ -146,46 +147,118 @@ class PlanetFocusManager(object):
         for pid, pinfo, planet in planet_infos:
             pinfo.possible_output[PFocus] = pinfo.possible_output[GFocus]
 
-def print_resources_priority():
-    """calculate top resource priority"""
-    universe = fo.getUniverse()
-    empire = fo.getEmpire()
-    empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
-    print "Resource Management:"
-    print
-    print "Resource Priorities:"
-    resourcePriorities = {}
-    for priorityType in get_priority_resource_types():
-        resourcePriorities[priorityType] = foAI.foAIstate.get_priority(priorityType)
+class Reporter(object):
+    """Reporter contains some file scope functions to report"""
 
-    sortedPriorities = resourcePriorities.items()
-    sortedPriorities.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
-    topPriority = -1
-    for evaluationPair in sortedPriorities:
-        if topPriority < 0:
-            topPriority = evaluationPair[0]
-        print "    ResourcePriority |Score: %s | %s " % (evaluationPair[0], evaluationPair[1])
+    def __init__(self, focus_manager):
+        self.focus_manager = focus_manager
+        self.sections = list()
+        self.captured_ids = set()
 
-    # what is the focus of available resource centers?
-    print
-    warnings = {}
-    print "Planet Resources Foci:"
-    for planetID in empirePlanetIDs:
-        planet = universe.getPlanet(planetID)
-        planetPopulation = planet.currentMeterValue(fo.meterType.population)
-        maxPop = planet.currentMeterValue(fo.meterType.targetPopulation)
-        if maxPop < 1 and planetPopulation > 0:
-            warnings[planet.name] = (planetPopulation, maxPop)
-        statusStr = "  ID: " + str(planetID) + " Name: % 18s -- % 6s % 8s " % (str(planet.name), str(planet.size), str(planet.type))
-        statusStr += " Focus: % 8s" % ("_".join(str(planet.focus).split("_")[1:])[:8]) + " Species: " + str(planet.speciesName) + " Pop: %2d/%2d" % (planetPopulation, maxPop)
-        print statusStr
-    print "\n\nEmpire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n" % (empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
-    if warnings != {}:
-        for pname in warnings:
-            mp, cp = warnings[pname]
-            print "Population Warning! -- %s has unsustainable current pop %d -- target %d" % (pname, cp, mp)
+    def capture_section_info(self, title):
+        """Grab ids of all the newly baked planets
+        """
+        new_captured_ids = set(self.focus_manager.baked_planet_info)
+        new_ids = new_captured_ids - self.captured_ids
+        if len(new_ids) > 0:
+            self.captured_ids = new_captured_ids
+            self.sections.append((title, list(new_ids)))
+
+    table_format = "%34s | %17s | %17s  | %13s | %13s  | %17s |"
+
+    @staticmethod
+    def print_resource_ai_header():
+        print "\n============================"
+        print "Collecting info to assess Planet Focus Changes\n"
+
+    def print_table_header(self, priorityRatio, ctRP0, ctPP0):
+        pp = sum(x.planet.currentMeterValue(fo.meterType.targetIndustry) for x in self.focus_manager.all_planet_info.values())
+        rp = sum(x.planet.currentMeterValue(fo.meterType.targetResearch) for x in self.focus_manager.all_planet_info.values())
+
+        print "============================"
+        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" % (priorityRatio, rp / (pp + 0.0001), rp, pp)
+        print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" % (ctRP0 / (ctPP0 + 0.0001), ctRP0, ctPP0)
+        print "-------------------------------------"
+        print Reporter.table_format % ("                      Planet", "current RP/PP", "old target RP/PP", "current Focus", "newFocus", "new target RP/PP")
+
+    def print_table(self, priorityRatio, ctRP0, ctPP0, curTargetRP, curTargetPP):
+        self.print_table_header(priorityRatio, ctRP0, ctPP0)
+        totalChanged = 0
+        for title, id_set in self.sections:
+            print Reporter.table_format % (("---------- "+title+" ------------------------------")[:33], "", "", "", "", "")
+            id_set.sort()  #pay sort cost only when printing
+            for pid in id_set:
+                pinfo = self.focus_manager.baked_planet_info[pid]
+                oldFocus = pinfo.current_focus
+                newFocus = pinfo.future_focus
+                if oldFocus != newFocus:
+                    totalChanged += 1
+                cPP, cRP = pinfo.current_output[IFocus], pinfo.current_output[RFocus]
+                otPP, otRP = pinfo.possible_output.get(oldFocus, (0, 0))
+                ntPP, ntRP = pinfo.possible_output[newFocus]
+                print (Reporter.table_format %
+                       ("pID (%3d) %22s" % (pid, pinfo.planet.name[-22:]),
+                        "c: %5.1f / %5.1f" % (cRP, cPP),
+                        "cT: %5.1f / %5.1f" % (otRP, otPP),
+                        "cF: %8s" % fociMap.get(oldFocus, 'unknown'),
+                        "nF: %8s" % fociMap.get(newFocus, 'unset'),
+                        "cT: %5.1f / %5.1f" % (ntRP, ntPP)))
+        print "-------------------------------------"
+        print "Final Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes" % (fo.currentTurn(), curTargetRP / (curTargetPP + 0.0001), curTargetRP, curTargetPP, totalChanged)
+
+
+    @staticmethod
+    def print_resource_ai_footer():
+        empire = fo.getEmpire()
+        aPP, aRP = empire.productionPoints, empire.resourceProduction(fo.resourceType.research)
+        # Next string used in charts. Don't modify it!
+        print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )" % (fo.currentTurn(), aRP / (aPP + 0.0001), aRP, aPP)
+        print "------------------------"
+        print "ResourcesAI Time Requirements:"
+
+
+    @staticmethod
+    def print_resources_priority():
+        """calculate top resource priority"""
+        universe = fo.getUniverse()
+        empire = fo.getEmpire()
+        empirePlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
+        print "Resource Management:"
         print
-    warnings.clear()
+        print "Resource Priorities:"
+        resourcePriorities = {}
+        for priorityType in get_priority_resource_types():
+            resourcePriorities[priorityType] = foAI.foAIstate.get_priority(priorityType)
+
+        sortedPriorities = resourcePriorities.items()
+        sortedPriorities.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
+        topPriority = -1
+        for evaluationPair in sortedPriorities:
+            if topPriority < 0:
+                topPriority = evaluationPair[0]
+            print "    ResourcePriority |Score: %s | %s " % (evaluationPair[0], evaluationPair[1])
+
+        # what is the focus of available resource centers?
+        print
+        warnings = {}
+        #TODO combine this with previous table to reduce report duplication?
+        print "Planet Resources Foci:"
+        for planetID in empirePlanetIDs:
+            planet = universe.getPlanet(planetID)
+            planetPopulation = planet.currentMeterValue(fo.meterType.population)
+            maxPop = planet.currentMeterValue(fo.meterType.targetPopulation)
+            if maxPop < 1 and planetPopulation > 0:
+                warnings[planet.name] = (planetPopulation, maxPop)
+            statusStr = "  ID: " + str(planetID) + " Name: % 18s -- % 6s % 8s " % (str(planet.name), str(planet.size), str(planet.type))
+            statusStr += " Focus: % 8s" % ("_".join(str(planet.focus).split("_")[1:])[:8]) + " Species: " + str(planet.speciesName) + " Pop: %2d/%2d" % (planetPopulation, maxPop)
+            print statusStr
+        print "\n\nEmpire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n" % (empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
+        if warnings != {}:
+            for pname in warnings:
+                mp, cp = warnings[pname]
+                print "Population Warning! -- %s has unsustainable current pop %d -- target %d" % (pname, cp, mp)
+            print
+        warnings.clear()
 
 
 def weighted_sum_output(outputs):
@@ -493,9 +566,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
 def set_planet_resource_foci():
     """set resource focus of planets """
 
-    print "\n============================"
-    print "Collecting info to assess Planet Focus Changes\n"
-    empire = fo.getEmpire()
+    Reporter.print_resource_ai_header()
     currentTurn = fo.currentTurn()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency
@@ -513,47 +584,29 @@ def set_planet_resource_foci():
 
         focus_manager = PlanetFocusManager()
 
-        use_planet_growth_specials(focus_manager)
+        reporter = Reporter(focus_manager)
+        reporter.capture_section_info("Unfocusable")
 
+        use_planet_growth_specials(focus_manager)
         use_planet_production_and_research_specials(focus_manager)
+        reporter.capture_section_info("Specials")
 
         focus_manager.calculate_planet_infos(focus_manager.raw_planet_info.keys())
 
         set_planet_protection_foci(focus_manager)
-
-        specials_ids = dict(focus_manager.baked_planet_info.items())
+        reporter.capture_section_info("Protection")
 
         set_planet_happiness_foci(focus_manager)
+        reporter.capture_section_info("Happiness")
 
         ctPP0, ctRP0, curTargetPP, curTargetRP = set_planet_industry_and_research_foci(focus_manager, priorityRatio)
+        reporter.capture_section_info("Typical")
 
-        pp = sum(x.planet.currentMeterValue(fo.meterType.targetIndustry) for x in focus_manager.all_planet_info.values())
-        rp = sum(x.planet.currentMeterValue(fo.meterType.targetResearch) for x in focus_manager.all_planet_info.values())
+        reporter.print_table(priorityRatio, ctRP0, ctPP0, curTargetRP, curTargetPP)
 
-        print "============================"
-        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" % (priorityRatio, rp / (pp + 0.0001), rp, pp)
-        print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" % (ctRP0 / (ctPP0 + 0.0001), ctRP0, ctPP0)
-        print "-------------------------------------"
-        print "%34s|%20s|%15s |%15s|%15s |%15s " % ("                      Planet ", " current RP/PP ", " current target RP/PP ", "current Focus ", "  newFocus ", " new target RP/PP ")
-        totalChanged = 0
-        for id_set in [focus_manager.all_planet_info]: #specials_ids, focus_manager.raw_planet_info:
-            for pid, pinfo in id_set.items():
-                canFocus = pinfo.planet.currentMeterValue(fo.meterType.targetPopulation) > 0
-                oldFocus = pinfo.current_focus
-                newFocus = pinfo.future_focus
-                cPP, cRP = pinfo.current_output[IFocus], pinfo.current_output[RFocus]
-                otPP, otRP = pinfo.possible_output.get(oldFocus, (0, 0))
-                ntPP, ntRP = pinfo.possible_output[newFocus]
-                print "pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f " % (pid, pinfo.planet.name, cRP, cPP, otRP, otPP, fociMap.get(oldFocus, 'unknown'), fociMap.get(newFocus, 'unset'), ntRP, ntPP)
-            print "-------------------------------------"
-        print "-------------------------------------"
-        print "Final Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes" % (fo.currentTurn(), curTargetRP / (curTargetPP + 0.0001), curTargetRP, curTargetPP, totalChanged)
         resource_timer.end()
-    aPP, aRP = empire.productionPoints, empire.resourceProduction(fo.resourceType.research)
-    # Next string used in charts. Don't modify it!
-    print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )" % (fo.currentTurn(), aRP / (aPP + 0.0001), aRP, aPP)
-    print "------------------------"
-    print "ResourcesAI Time Requirements:"
+
+    Reporter.print_resource_ai_footer()
 
 
 def generate_resources_orders():
@@ -574,5 +627,5 @@ def generate_resources_orders():
 
     # setGasGiantsResourceFocus()
 
-    print_resources_priority()
+    Reporter.print_resources_priority()
     # print "ResourcesAI Time Requirements:"
