@@ -826,7 +826,30 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 
     const std::vector<HullType::Slot>& slots = hull_type->Slots();
 
-    std::string already_seen_hangar_name;
+    // check hull exclusions against all parts...
+    const std::set<std::string>& hull_exclusions = hull_type->Exclusions();
+    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+        if (part_it->empty())
+            continue;
+        if (hull_exclusions.find(*part_it) != hull_exclusions.end())
+            return false;
+    }
+
+    // check part exclusions against other parts and hull
+    std::set<std::string> already_seen_component_names;
+    already_seen_component_names.insert(hull);
+    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+        const PartType* part_type = GetPartType(*part_it);
+        if (!part_type)
+            continue;
+        const std::set<std::string>& part_exclusions = part_type->Exclusions();
+        for (std::set<std::string>::const_iterator ex_it = part_exclusions.begin(); ex_it != part_exclusions.end(); ++ex_it) {
+            if (already_seen_component_names.find(*ex_it) != already_seen_component_names.end())
+                return false;
+        }
+        already_seen_component_names.insert(*part_it);
+    }
+
 
     // ensure all passed parts can be mounted in slots of type they were passed for
     for (unsigned int i = 0; i < size; ++i) {
@@ -845,16 +868,6 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
         if (!(part->CanMountInSlotType(slot_type))) {
             DebugLogger() << "ShipDesign::ValidDesign: part " << part_name << " can't be mounted in " << boost::lexical_cast<std::string>(slot_type) << " slot";
             return false;
-        }
-
-        // if part is a hangar, must not be a different hangar from any others previously seen
-        if (part->Class() == PC_FIGHTER_HANGAR) {
-            if (already_seen_hangar_name.empty()) {
-                already_seen_hangar_name = part_name;
-                continue;
-            }
-            if (already_seen_hangar_name != part_name)
-                return false;
         }
     }
 
