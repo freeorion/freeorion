@@ -352,8 +352,8 @@ def assess_protection_focus(pid, pinfo):
     if use_protection or pinfo.current_focus == PFocus:
         print ("Advising %sProtection Focus (reason %s) for planet %s, with local_prod_diff of %.1f, comb. local"
                " defenses %.1f, local fleet rating %.1f and regional threat %.1f, threat sources: %s") % (
-            ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
-            local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
+                   ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
+                   local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
     return use_protection
 
 
@@ -414,8 +414,7 @@ def use_planet_production_and_research_specials(focus_manager):
                ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]] != [])
              or ([ccspec for ccspec in planet.specials if ccspec in
                   ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]] != []))
-            and IFocus in planet.availableFoci):
-
+                and IFocus in planet.availableFoci):
             if focus_manager.bake_future_focus(pid, IFocus):
                 if pinfo.current_focus != IFocus:
                     print ("Tried setting %s for Concentration Camp planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
@@ -535,11 +534,11 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
         # if focus_manager.current_focus[pid] == MFocus:
         # II = max( II, focus_manager.possible_output[MFocus][0] )
         if (not do_research and (
-               (ratio > 2.0 and curTargetPP < 15 and gotAlgo) or
-               (ratio > 2.5 and curTargetPP < 25 and II > 5 and gotAlgo) or
-               (ratio > 3.0 and curTargetPP < 40 and II > 5 and gotAlgo) or
-               (ratio > 4.0 and curTargetPP < 100 and II > 10) or
-               ((curTargetRP + RR - IR) / max(0.001, curTargetPP - II + RI) > 2 * priorityRatio))):  # we already have algo elegance and more RP would be too expensive, or overkill
+                (ratio > 2.0 and curTargetPP < 15 and gotAlgo) or
+                (ratio > 2.5 and curTargetPP < 25 and II > 5 and gotAlgo) or
+                (ratio > 3.0 and curTargetPP < 40 and II > 5 and gotAlgo) or
+                (ratio > 4.0 and curTargetPP < 100 and II > 10) or
+                ((curTargetRP + RR - IR) / max(0.001, curTargetPP - II + RI) > 2 * priorityRatio))):  # we already have algo elegance and more RP would be too expensive, or overkill
             if not printedHeader:
                 printedHeader = True
                 print "Rejecting further Research Focus choices as too expensive:"
