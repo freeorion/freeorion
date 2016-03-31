@@ -46,8 +46,8 @@ const GalaxySetupData& ClientApp::GetGalaxySetupData() const
 EmpireManager& ClientApp::Empires()
 { return m_empires; }
 
-Empire* ClientApp::GetEmpire(int id)
-{ return m_empires.GetEmpire(id); }
+Empire* ClientApp::GetEmpire(int empire_id)
+{ return m_empires.GetEmpire(empire_id); }
 
 SupplyManager& ClientApp::GetSupplyManager()
 { return m_supply_manager; }
@@ -159,8 +159,8 @@ int ClientApp::GetNewDesignID() {
 ClientApp* ClientApp::GetApp()
 { return static_cast<ClientApp*>(s_app); }
 
-void ClientApp::SetEmpireID(int id)
-{ m_empire_id = id; }
+void ClientApp::SetEmpireID(int empire_id)
+{ m_empire_id = empire_id; }
 
 void ClientApp::SetCurrentTurn(int turn)
 { m_current_turn = turn; }

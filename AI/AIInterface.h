@@ -12,108 +12,338 @@ class Universe;
 struct DiplomaticStatusUpdateInfo;
 struct GalaxySetupData;
 
-/* AI logic modules implement this class, and AIClientApps contain one, and call it to generate orders */
+/** @brief Base class allowing AI to recieve basic game events.
+ *
+ * A subclass can overwrite any of the defined methods to implement a reaction
+ * behaviour whenever an game event occurs.
+ */
 class AIBase {
 public:
     virtual ~AIBase();
 
-    virtual void                GenerateOrders();                                           ///< Called when the server has sent a new turn update.  AI should review the new gamestate and send orders for this turn.
-    virtual void                HandleChatMessage(int sender_id, const std::string& msg);   ///< Called when another player sends a chat message to this player.  AI can respond or ignore.
-    virtual void                HandleDiplomaticMessage(const DiplomaticMessage& msg);      ///< Called when another player sends a diplomatic message that affects this player. AI can respond or ignore.
-    virtual void                HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u);  ///< Called when empires' diplomatic status changes
-    virtual void                StartNewGame();                                             ///< Called when a new game (not loaded) is started.  AI should clear its state and prepare to start a new game
-    virtual void                ResumeLoadedGame(const std::string& save_state_string);     ///< Called when a game is loaded from save.  AI should extract any state information stored in \a save_state_string so as to be able to continue generating orders when asked to do so
-    virtual const std::string&  GetSaveStateString();                                       ///< Called when the server is saving the game.  AI should store any state information it will need to resume at a later time, and return this information in the save_state_string
-    void                        SetAggression(int aggr);
+    /** @brief Call when the server has sent a new turn update.
+     *
+     * The AI subclass should review the new gamestate and send orders for
+     * this turn.
+     */
+    virtual void GenerateOrders();
+
+    /** @brief Called when another player sends a chat message to this AI.
+     *
+     * The AI subclass should respond or react to the message in a meaningful
+     * way.
+     *
+     * @param sender_id The player identifier representing the player, who sent
+     *      the message.
+     * @param msg The text body of the sent message.
+     */
+    virtual void HandleChatMessage(int sender_id, const std::string& msg);
+
+    /** @brief Called when another player sends a diplomatic message that
+     *      affects this player
+     *
+     * The AI subclass should respond or react to the message in a meaningful
+     * way.
+     *
+     * @param msg The diplomatic message sent.
+     */
+    virtual void HandleDiplomaticMessage(const DiplomaticMessage& msg);
+
+    /** @brief Called when two empires diplomatic status changes
+     *
+     * The AI subclass should respond or react to the change in a meaningful
+     * way.
+     *
+     * @param u The diplomatic status changed.
+     */
+    virtual void HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u);
+
+    /** @brief Called when a new game (not loaded) is started
+     *
+     * The AI subclass should clear its state and prepare to start for a new
+     * game.
+     */
+    virtual void StartNewGame();
+
+    /** @brief Called when a game is loaded from a save
+     *
+     * The AI subclass should extract any state information stored in
+     * @a save_state so it is able to continue generating orders when
+     * asked to do so.
+     *
+     * @param save_state The serialized state information from a previous game
+     *      run.
+     */
+    virtual void ResumeLoadedGame(const std::string& save_state);
+
+    /** @brief Called when the server is saving the game
+     *
+     * The AI should store any state information it will need to resume at any
+     * later time, and return this information.
+     *
+     * @return The serialized state information of the game running.
+     */
+    virtual const std::string& GetSaveStateString();
+
+    /** @brief Set the aggressiveness of this AI
+     *
+     * The AI should change their behaviour when setting another aggression
+     * level.
+     *
+     * @param aggr The new aggression level.  The value should be one of
+     *      ::Aggression.
+     */
+    void SetAggression(int aggr);
+
 protected:
+    /** @brief The current aggressiveness of this AI
+     *
+     * The value should be one of ::Aggression.
+     */
     int m_aggression;
 };
 
-/* Public interface providing relatively easy-to use and somewhat conveniently grouped-together functions that
-   a class that implements AIBase can call to get information from the AIClientApp about the gamestate, and which
-   can be used to interat with the gamestate by issueing orders, ending the AI player's turn, or sending message
-   to other players. */
+/** @brief List of functions for AIs to query the game state, interact with
+ *      other players and issue game orders.
+ */
 namespace AIInterface {
-    /** Gamestate Accessors */ //@{
-    const std::string&  PlayerName();                   ///< returns the player name of this client
-    const std::string&  PlayerName(int player_id);      ///< returns the name of player with \a player_id
+    /** @name Game state accessors */ /** @{ */
 
-    int                 PlayerID();                     ///< returns the player ID of this client
-    int                 EmpirePlayerID(int empire_id);  ///< returns ID of player controlling empire with id \a empire_id
-    std::vector<int>    AllPlayerIDs();                 ///< returns vector containing IDs of all players in game
+    /** @brief Return the player name of this client
+     *
+     * @return An UTF-8 encoded and NUL terminated string containing the player
+     *      name of this client.
+     */
+    const std::string& PlayerName();
 
-    bool                PlayerIsAI(int player_id);      ///< returns true iff the player with id \a player_id is an AI
-    bool                PlayerIsHost(int player_id);    ///< returns true iff the player with id \a player_id is the game host
+    /** @brief Return the player name of the client identified by @a player_id
+     *
+     * @param player_id An client identifier.
+     *
+     * @return An UTF-8 encoded and NUL terminated string containing the player
+     *      name of this client or an empty string the player is not known or
+     *      does not exist.
+     */
+    const std::string& PlayerName(int player_id);
 
-    int                 EmpireID();                     ///< returns the empire ID of this client
-    int                 PlayerEmpireID(int player_id);  ///< returns ID of empire controlled by player with id \a player_id
-    std::vector<int>    AllEmpireIDs();                 ///< returns vector containing IDs of all empires in game
+    /** @brief Return the player identifier of this client
+     *
+     * @return The player identifier of this client as assigned by the server.
+     */
+    int PlayerID();
 
-    const Empire*       GetEmpire();                    ///< returns empire of this client's player
-    const Empire*       GetEmpire(int empire_id);       ///< returns empire with id \a empire_id
+    /** @brief Return the player identfier of the player controlling the empire
+     *      @a empire_id
+     *
+     * @param empire_id An empire identifier representing an empire.
+     *
+     * @return The player identifier of the client controlling the empire.
+     */
+    int EmpirePlayerID(int empire_id);
 
-    const Universe&     GetUniverse();                  ///< returns Universe known to this player
+    /** @brief Return all player identifiers that are in game
+     *
+     * @return A vector containing the identifiers of all players.
+     */
+    std::vector<int> AllPlayerIDs();
 
-    const Tech*         GetTech(const std::string& tech_name);  ///< returns Tech with name \a name
+    /** @brief Return if the player identified by @a player_id is an AI
+     *
+     * @param player_id An client identifier.
+     *
+     * @return True if the player is an AI, false if not.
+     */
+    bool PlayerIsAI(int player_id);
 
-    int                 CurrentTurn();                  ///< returns the current game turn
+    /** @brief Return if the player identified by @a player_id is the game
+     *      host
+     *
+     * @param player_id An client identifier.
+     *
+     * @return True if the player is the game host, false if not.
+     */
+    bool PlayerIsHost(int player_id);
 
-    std::string         GetAIConfigStr();               ///< returns the OptionsDB ai-config value
-    std::string         GetAIDir();                     ///< returns the full AI directory path
+    /** @brief Return the empire identifier of the empire this client controls
+     *
+     * @return An empire identifier.
+     */
+    int EmpireID();
 
-    const GalaxySetupData&  GetGalaxySetupData();       ///< returns the setup data used to generate the game universe
-    //@}
+    /** @brief Return the empire identifier of the empire @a player_id controls
+     *
+     * @param player_id An client identifier.
+     *
+     * @return An empire identifier.
+     */
+    int PlayerEmpireID(int player_id);
 
-    /** Gamestate Prediction Utilites */ //@{
-    void                InitTurn();                     ///< initializes and calculates meters, resource pools and queues so info based on latest turn update
-    void                InitMeterEstimatesAndDiscrepancies();
-    void                UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire = false);  ///< sets object meters to what they are expected to be during the next turn processing phase, after orders are submitted.  if \a pretend_unowned_planets_owned_by_this_ai_empire is true, unowned planets known of by this player will have this player added as an owner before meter values are calculated, so that their max meter values will be what they would be if those planets were colonized by this empire
-    void                UpdateResourcePools(); ///< determines how much of each resource is available at each object owned by this empire, and updates resource pool amounts and spending on queues accordingly
-    void                UpdateResearchQueue();
-    void                UpdateProductionQueue();
-    //@}
+    /** @brief Return all empire identifiers that are in game
+     *
+     * @return A vector containing the identifiers of all empires.
+     */
+    std::vector<int> AllEmpireIDs();
 
-    /** Order-Giving */ //@{
-    int                 IssueRenameOrder(int object_id, const std::string& new_name);
-    int                 IssueScrapOrder(const std::vector<int>& object_ids);
-    int                 IssueScrapOrder(int object_id);
-    int                 IssueFleetMoveOrder(int fleet_id, int destination_id);
-    int                 IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
-    int                 IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
-    int                 IssueFleetTransferOrder(int ship_id, int new_fleet_id);
-    int                 IssueColonizeOrder(int ship_id, int planet_id);
-    int                 IssueInvadeOrder(int ship_id, int planet_id);
-    int                 IssueBombardOrder(int ship_id, int planet_id);
-    int                 IssueDeleteFleetOrder();
-    int                 IssueAggressionOrder(int object_id, bool aggressive);
-    int                 IssueGiveObjectToEmpireOrder(int object_id, int recipient_id);
+    /** @brief Return the ::Empire this client controls
+     *
+     * @return A pointer to the Empire instance this client has the control
+     *      over.
+     */
+    const Empire* GetEmpire();
 
-    int                 IssueChangeFocusOrder(int planet_id, const std::string& focus);
+    /** @brief Return the ::Empire identified by @a empire_id
+     *
+     * @param empire_id An empire identifier.
+     *
+     * @return A pointer to the Empire instance identified by @a empire_id.
+     */
+    const Empire* GetEmpire(int empire_id);
 
-    int                 IssueEnqueueTechOrder(const std::string& tech_name, int position);
-    int                 IssueDequeueTechOrder(const std::string& tech_name);
+    /** @brief Return the ::Universe known to this client
+     *
+     * @return A constant reference to the single ::Universe instance
+     *      representing the known universe of this client.
+     */
+    const Universe& GetUniverse();
 
-    int                 IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id);
-    int                 IssueEnqueueShipProductionOrder(int design_id, int location_id);
-    int                 IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize);
-    int                 IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
-    int                 IssueDequeueProductionOrder(int queue_index);
+    /** @brief Return the ::Tech identified by @a name
+     *
+     * @param name The identifying name of the requested ::Tech.
+     *
+     * @return A pointer to the ::Tech matching @a name or NULL if no ::Tech
+     *      with that name was found.
+     */
+    const Tech* GetTech(const std::string& name);
 
-    int                 IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
-                                                   const std::string& hull,
-                                                   const std::vector<std::string> parts,
-                                                   const std::string& graphic, const std::string& model, bool nameDescInStringTable);
+    /** @brief Return the current game turn
+     *
+     * @return The number representing the current game turn.
+     */
+    int CurrentTurn();
 
-    void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
-    void                SendDiplomaticMessage(const DiplomaticMessage& diplo_message);
+    /** @brief Return the value of the ::OptionsDB `ai-config` key
+     *
+     * @return An UTF-8 encoded and NUL terminated string containing the path
+     *      to an optional ai configuration file or an empty string if not set.
+     */
+    std::string GetAIConfigStr();
 
-    void                DoneTurn();        ///< AI player is done submitting orders for this turn
-    //@}
+    /** @brief Return the canonical AI directory path
+     *
+     * The value depends on the ::OptionsDB `resource-dir` and `ai-path` keys.
+     *
+     * @return The canonical path pointing to the directory containing all
+     *      python AI scripts.
+     */
+    std::string GetAIDir();
 
-    /** Logging */ //@{
-    void                LogOutput(const std::string& log_text);     ///< output text to as DEBUG
-    void                ErrorOutput(const std::string& log_text);   ///< output text to as ERROR
-    //@}
+    /** @brief Return the ::GalaxySetupData of this game
+     *
+     * @return A reference to the ::GalaxySetupData used in this game session.
+     */
+    const GalaxySetupData& GetGalaxySetupData();
+
+    /** @} */
+
+    /** @name Game state prediction */ /** @{ */
+
+    /** @brief Initialize and update game state based last turn update
+     *
+     * Initialize and update game state by updating this client
+     *
+     * * Global ::Meter
+     * * ::ResourcePool
+     * * ::ProductionQueue
+     * * ::ResearchQueue
+     *
+     * instances based on the latest turn update.
+     */
+    void InitTurn();
+
+    /** @brief Initialize and update the ::Universe ::Meter s
+     *
+     * @see ::Universe::InitMeterEstimatesAndDiscrepancies
+     */
+    void InitMeterEstimatesAndDiscrepancies();
+
+    /** @brief Set ::Universe ::Meter instances to their estimated values as
+     *      if the next turn processing phase were done
+     *
+     * @param pretend_to_own_unowned_planets When set to true pretend during
+     *      calculation that this clients Empire owns all known uncolonized
+     *      planets.  The unowned planets MAX ::Meter values will contain the
+     *      estimated value for those planets.
+     */
+    void UpdateMeterEstimates(bool pretend_to_own_unowned_planets = false);
+
+    /** @brief Calculate resource generation, update ::ResourcePool s and
+     *      change queue spending.
+     */
+    void UpdateResourcePools();
+
+    void UpdateResearchQueue();
+    void UpdateProductionQueue();
+
+    /** @} */
+
+    /** \name Issuing orders */ /** @{ */
+
+    int IssueRenameOrder(int object_id, const std::string& new_name);
+    int IssueScrapOrder(const std::vector<int>& object_ids);
+    int IssueScrapOrder(int object_id);
+    int IssueFleetMoveOrder(int fleet_id, int destination_id);
+    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
+    int IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
+    int IssueFleetTransferOrder(int ship_id, int new_fleet_id);
+    int IssueColonizeOrder(int ship_id, int planet_id);
+    int IssueInvadeOrder(int ship_id, int planet_id);
+    int IssueBombardOrder(int ship_id, int planet_id);
+    int IssueDeleteFleetOrder();
+    int IssueAggressionOrder(int object_id, bool aggressive);
+    int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id);
+
+    int IssueChangeFocusOrder(int planet_id, const std::string& focus);
+
+    int IssueEnqueueTechOrder(const std::string& tech_name, int position);
+    int IssueDequeueTechOrder(const std::string& tech_name);
+
+    int IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id);
+    int IssueEnqueueShipProductionOrder(int design_id, int location_id);
+    int IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize);
+    int IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
+    int IssueDequeueProductionOrder(int queue_index);
+
+    int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
+                                   const std::string& hull, const std::vector<std::string> parts,
+                                   const std::string& graphic, const std::string& model, bool nameDescInStringTable);
+
+    void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
+    void SendDiplomaticMessage(const DiplomaticMessage& diplo_message);
+
+    /** @brief Notify server that all orders for this client are given */
+    void DoneTurn();
+
+    /** @} */
+
+    /** Logging */ /** @{ */
+
+    /** @brief Log @a log_text with DEBUG level
+     *
+     * Writes the given text and appends a new line
+     *
+     * @param log_text The text that should be written to the log system.
+     */
+    void LogOutput(const std::string& log_text);
+
+    /** @brief Log @a log_text with ERROR level
+     *
+     * Writes the given text and appends a new line
+     *
+     * @param log_text The text that should be written to the log system.
+     */
+    void ErrorOutput(const std::string& log_text);
+
+    /** @} */
 };
 
 #endif

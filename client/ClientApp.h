@@ -9,72 +9,243 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 
-/** The abstract base class for the application framework classes AIClientApp
-  * and HumanClientApp.  The static functions are designed to give both types
-  * of client (which are very different) a unified interface.  This allows code
-  * in either type of client app to handle Messages and gain access to the data
-  * structures common to both apps, without worrying about which type of app the
-  * code is being run in.*/
+/** \brief Abstract base class for the application framework classes
+ *
+ * The static functions are designed to give both types of client (which are
+ * very different) a unified interface.  This allows code in either type of
+ * client app to handle Messages and gain access to the data structures
+ * common to both apps, without worrying about which type of app the code is
+ * being run in.
+ */
 class ClientApp : public IApp {
 public:
-    /** \name Structors */ //@{
     ClientApp();
+
     virtual ~ClientApp();
-    //@}
 
-    /** \name Accessors */ //@{
-    int                     PlayerID() const;         ///< returns the player ID of this client
-    int                     EmpireID() const;         ///< returns the empire ID of this client
-    int                     CurrentTurn() const;      ///< returns the current game turn
+    /** @brief Return the player identifier of this client
+     *
+     * @return The player identifier of this client as assigned by the server.
+     */
+    int PlayerID() const;
 
-    int                     EmpirePlayerID(int empire_id) const;///< returns the player ID for the player playing the empire with ID \a empire_id
+    /** @brief Return the empire identifier of the empire this client controls
+     *
+     * @return An empire identifier.
+     */
+    int EmpireID() const;
 
-    const std::map<int, PlayerInfo>&Players() const;            ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
-    const std::map<int, Message::PlayerStatus>&
-                                    PlayerStatus() const;       ///< returns the map, indexed by player ID, of the latest known PlayerStatus for each player in the game
+    /** @brief Return the current game turn
+     *
+     * @return The number representing the current game turn.
+     */
+    int CurrentTurn() const;
 
-    const Universe&             GetUniverse() const;        ///< returns client's local copy of Universe
-    const GalaxySetupData&      GetGalaxySetupData() const; ///< returns the settings used in creating the current Universe
-    const OrderSet&             Orders() const;             ///< returns Order set for this client's player
-    const ClientNetworking&     Networking() const;         ///< returns the networking object for this client's player
-    Networking::ClientType      GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
-    Networking::ClientType      GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
-    Networking::ClientType      GetClientType() const;                      ///< returns the networking client type for this client's player
+    /** @brief Return the player identfier of the player controlling the empire
+     *      @a empire_id
+     *
+     * @param empire_id An empire identifier representing an empire.
+     *
+     * @return The player identifier of the client controlling the empire.
+     */
+    int EmpirePlayerID(int empire_id) const;
 
-    std::string                 GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
-    //@}
+    /** @brief Return the players in game as ::PlayerInfo map
+     *
+     * @return Return a map containing ::PlayerInfo instances as value and
+     *      their player identifier as key.
+     *
+     * @{ */
+    std::map<int, PlayerInfo>& Players();
+    const std::map<int, PlayerInfo>& Players() const;
+    /** @} */
 
-    /** \name Mutators */ //@{
-    virtual void                StartTurn();        ///< encodes order sets and sends turn orders message
+    /** @brief Return the player statuses in game
+     *
+     * @return Return a map containing ::PlayerStatus instances as value and
+     *      their player identifier as key.
+     *
+     * @{ */
+    std::map<int, Message::PlayerStatus>& PlayerStatus();
+    const std::map<int, Message::PlayerStatus>& PlayerStatus() const;
+    /** @} */
 
-    Universe&                   GetUniverse();  ///< returns client's local copy of Universe
-    GalaxySetupData&            GetGalaxySetupData();
-    EmpireManager&              Empires();      ///< returns the set of known Empires
-    Empire*                     GetEmpire(int id);
-    SupplyManager&              GetSupplyManager();
+    /** @brief Return the ::Universe known to this client
+     *
+     * @return A reference to the single ::Universe instance representing
+     *      the known universe of this client.
+     *
+     * @{ */
+    Universe& GetUniverse();
+    const Universe& GetUniverse() const;
+    /** @} */
+
+    /** @brief Return the ::GalaxySetupData of this game
+     *
+     * @return A reference to the ::GalaxySetupData used in this game session.
+     *
+     * @{ */
+    GalaxySetupData& GetGalaxySetupData();
+    const GalaxySetupData& GetGalaxySetupData() const;
+    /** @} */
+
+    /** @brief Return the OrderSet of this client
+     *
+     * @return A reference to the OrderSet of this client.
+     *
+     * @{ */
+    OrderSet& Orders();
+    const OrderSet& Orders() const;
+    /** @} */
+
+    /** @brief Return the networking object of this clients player
+     *
+     * @return A reference to the ClientNetworking object of this client.
+     *
+     * @{ */
+    ClientNetworking& Networking();
+    const ClientNetworking& Networking() const;
+    /** @} */
+
+    /** @brief Return The Networking::ClientType of this client
+     *
+     * @return the networking client type of this players client.
+     */
+    Networking::ClientType GetClientType() const;
+
+    /** @brief Return the Networking::ClientType of the empire @a empire_id
+     *
+     * @param empire_id An empire identifier.
+     *
+     * @return the networking client type of the empire represented by @a
+     *      empire_id parameter.
+     */
+    Networking::ClientType GetEmpireClientType(int empire_id) const;
+
+    /** @brief Return the Networking::ClientType of the player @a player_id
+     *
+     * @param player_id An client identifier.
+     *
+     * @return the networking client type of the player represented by @a
+     *      player_id parameter.
+     */
+    Networking::ClientType GetPlayerClientType(int player_id) const;
+
+    /** @brief Return the ::UniverseObject associated with @a object_id
+     *
+     * @param object_id An object identifier
+     *
+     * @return A pointer to the ::UniverseObject associated with @a object_id.
+     *      When there is no matching object or the client does not know of the
+     *      object existence the pointer may be NULL.
+     */
     TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
-    ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
-    TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
-    OrderSet&                   Orders();       ///< returns Order set for this client's player
-    ClientNetworking&           Networking();   ///< returns the networking object for this client's player
-    std::map<int, PlayerInfo>&  Players();      ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
-    std::map<int, Message::PlayerStatus>&
-                                PlayerStatus(); ///< returns the map, indexed by player ID, of the latest known PlayerStatus for each player in the game
 
-    void SetEmpireID(int id);                   ///< sets the empire ID of this client
-    void SetCurrentTurn(int turn);              ///< sets the current game turn
-    void SetSinglePlayerGame(bool sp = true);   ///< sets whether the current game is single player (sp = true) or multiplayer (sp = false)
+    /** @brief Return the for this client visible name of @a object
+     *
+     * @param object The object to obtain the name from.
+     *
+     * @return The name of the @a object.  Depdending on Visibility it may not
+     *      match with the actual object name.
+     */
+    std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
+
+    /** @brief Send the OrderSet to the server and start a new turn */
+    virtual void StartTurn();
+
+    /** @brief Return the set of known Empire s for this client
+     *
+     * @return The EmpireManager instance in charge of maintaining the Empire
+     *      object instances.
+     */
+    EmpireManager& Empires();
+
+    /** @brief Return the Empire identified by @a empire_id
+     *
+     * @param empire_id An empire identifier.
+     *
+     * @return A pointer to the Empire instance represented by @a empire_id.
+     *      If there is no Empire with this @a empire_id or if the Empire is
+     *      not yet known to this client a NULL pointer is returned.
+     */
+    Empire* GetEmpire(int empire_id);
+
+    SupplyManager& GetSupplyManager();
+
+    /** @brief Return all Objects known to @a empire_id
+     *
+     * @param empire_id An empire identifier.
+     *
+     * @return A map containing all Objects known to the ::Empire identified by
+     *      @a empire_id.  If there is no ::Empire an empty map is returned.
+     */
+    ObjectMap& EmpireKnownObjects(int empire_id);
+
+    /** @brief Return the UniverseObject @a object_id if known by @a empire_id
+     *
+     * @param object An UniverseObject identifier.
+     * @param empire_id An empire identifier.
+     *
+     * @return A pointer to the UniverseObject, that is identified by
+     *      @a object_id and known by the ::Empire identified by @a empire_id.
+     *      If there is no such object or if that object is not known to the
+     *      empire a NULL pointer is returned.
+     */
+    TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id);
+
+    /** @brief Set the identifier of the ::Empire controlled by this client to
+     *      @a empire_id
+     *
+     * @param empire_id The new ::Empire identifier.
+     */
+    void SetEmpireID(int empire_id);
+
+    /** @brief Set the current game turn of this client to @a turn
+     *
+     * @param turn The new turn number of this client.
+     */
+    void SetCurrentTurn(int turn);
+
+    /** @brief Set whether the current game is a single player game or not
+     *
+     * @param single_player Set true if the game is a single player game,
+     *      false if not.
+     */
+    void SetSinglePlayerGame(bool single_player = true);
+
+    /** @brief Set the Message::PlayerStatus @a status for @a player_id
+     *
+     * @param player_id A player identifier.
+     * @param status The new Message::PlayerStatus of the player identified by
+     *      @a player_id.
+     */
     void SetPlayerStatus(int player_id, Message::PlayerStatus status);
 
-    /** returns a universe object ID which can be used for new objects created by the client.
-        Can return INVALID_OBJECT_ID if an ID cannot be created. */
-    int                     GetNewObjectID();
+    /** @brief Return a new universe object identifier
+     *
+     * The returned universe object identifier can be used for new objects
+     * created by this client.
+     *
+     * @return A new, unique universe object identifier.  If no new idenfifier
+     *      can be create INVALID_OBJECT_ID is returned.
+     */
+    int GetNewObjectID();
 
-    /** returns a design ID which can be used for a new design to uniquely identify it.
-        Can return INVALID_OBJECT_ID if an ID cannot be created. */
-    int                     GetNewDesignID();
+    /** @brief Return a new ship design identifier
+     *
+     * The returned ship design identifier can be used for new ship designs
+     * created by this client.
+     *
+     * @return A new, unique ship design identifier.  If no new idenfifier
+     *      can be create INVALID_OBJECT_ID is returned.
+     */
+    int GetNewDesignID();
 
-    static ClientApp*       GetApp(); ///< returns the singleton ClientApp object
+    /** @brief Return the singleton instance of this Application
+     *
+     * @return A pointer to the single ClientApp instance of this client.
+     */
+    static ClientApp* GetApp();
 
 protected:
     Universe                    m_universe;
@@ -85,9 +256,14 @@ protected:
     ClientNetworking            m_networking;
     int                         m_empire_id;
     int                         m_current_turn;
-    std::map<int, PlayerInfo>   m_player_info;      ///< indexed by player id, contains info about all players in the game
+    /** Indexed by player id, contains info about all players in the game */
+
+    std::map<int, PlayerInfo>   m_player_info;
+    /** Indexed by player id, contains the last known PlayerStatus for each
+     *      player.
+     */
     std::map<int, Message::PlayerStatus>
-                                m_player_status;    ///< indexed by player id, the last known PlayerStatus for each player
+                                m_player_status;
 
 private:
     const ClientApp& operator=(const ClientApp&); // disabled

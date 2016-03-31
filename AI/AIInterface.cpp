@@ -137,8 +137,8 @@ namespace AIInterface {
     const Universe& GetUniverse()
     { return AIClientApp::GetApp()->GetUniverse(); }
 
-    const Tech* GetTech(const std::string& tech_name)
-    { return TechManager::GetTechManager().GetTech(tech_name); }
+    const Tech* GetTech(const std::string& name)
+    { return TechManager::GetTechManager().GetTech(name); }
 
     int CurrentTurn()
     { return AIClientApp::GetApp()->CurrentTurn(); }
@@ -167,21 +167,26 @@ namespace AIInterface {
         universe.InitMeterEstimatesAndDiscrepancies();
     }
 
-    void UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire) {
+    void UpdateMeterEstimates(bool pretend_to_own_unowned_planets) {
         std::vector<TemporaryPtr<Planet> > unowned_planets;
         int player_id = -1;
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
-        if (pretend_unowned_planets_owned_by_this_ai_empire) {
-            // add this player ownership to all planets that the player can see but which aren't currently colonized.
-            // this way, any effects the player knows about that would act on those planets if the player colonized them
-            // include those planets in their scope.  This lets effects from techs the player knows alter the max
-            // population of planet that is displayed to the player, even if those effects have a condition that causes
-            // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
-            // tech that should only benefit him/herself)
+        if (pretend_to_own_unowned_planets) {
+            // Add this player ownership to all planets that the player can see
+            // but which aren't currently colonized.  This way, any effects the
+            // player knows about that would act on those planets if the player
+            // colonized them include those planets in their scope.  This lets
+            // effects from techs the player knows alter the max population of
+            // planet that is displayed to the player, even if those effects
+            // have a condition that causes them to only act on planets the
+            // player owns (so as to not improve enemy planets if a player
+            // reseraches a tech that should only benefit him/herself).
             player_id = AIInterface::PlayerID();
 
-            // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
-            // the current player's ownership to all, while remembering which planets this is done to
+            // get all planets the player knows about that aren't yet colonized
+            // (aren't owned by anyone).  Add this the current player's
+            // ownership to all, while remembering which planets this is done
+            // to.
             std::vector<TemporaryPtr<Planet> > all_planets = universe.Objects().FindObjects<Planet>();
             universe.InhibitUniverseObjectSignals(true);
             for (std::vector<TemporaryPtr<Planet> >::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
@@ -196,7 +201,7 @@ namespace AIInterface {
         // update meter estimates with temporary ownership
         universe.UpdateMeterEstimates();
 
-        if (pretend_unowned_planets_owned_by_this_ai_empire) {
+        if (pretend_to_own_unowned_planets) {
             // remove temporary ownership added above
             for (std::vector<TemporaryPtr<Planet> >::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
                 (*it)->SetOwner(ALL_EMPIRES);
