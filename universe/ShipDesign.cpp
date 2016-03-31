@@ -826,14 +826,15 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 
     const std::vector<HullType::Slot>& slots = hull_type->Slots();
 
+    std::string already_seen_hangar_name;
+
     // ensure all passed parts can be mounted in slots of type they were passed for
-    const PartTypeManager& part_manager = GetPartTypeManager();
     for (unsigned int i = 0; i < size; ++i) {
         const std::string& part_name = parts[i];
         if (part_name.empty())
             continue;   // if part slot is empty, ignore - doesn't invalidate design
 
-        const PartType* part = part_manager.GetPartType(part_name);
+        const PartType* part = GetPartType(part_name);
         if (!part) {
             DebugLogger() << "ShipDesign::ValidDesign: part not found: " << part_name;
             return false;
@@ -844,6 +845,16 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
         if (!(part->CanMountInSlotType(slot_type))) {
             DebugLogger() << "ShipDesign::ValidDesign: part " << part_name << " can't be mounted in " << boost::lexical_cast<std::string>(slot_type) << " slot";
             return false;
+        }
+
+        // if part is a hangar, must not be a different hangar from any others previously seen
+        if (part->Class() == PC_FIGHTER_HANGAR) {
+            if (already_seen_hangar_name.empty()) {
+                already_seen_hangar_name = part_name;
+                continue;
+            }
+            if (already_seen_hangar_name != part_name)
+                return false;
         }
     }
 
