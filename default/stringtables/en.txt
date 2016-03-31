@@ -3670,6 +3670,47 @@ ENC_AUTO_TIME_STR
 
 %1%'''
 
+#%1$.0f attack agains unshielded
+#%2$.0f attack agains shield 3
+#%3$.0f attack agains shield 5
+#%4$.0f attack agains shield 10
+#%5$.0f attack agains shield 15
+#%6% structure
+#%7% shield
+#%8% speed
+#%9% fuel
+#%10% detection
+#%11% stealth
+#%12% colony capacity
+#%13% troop capacity
+#%14$.2f combat strength agains unshielded
+#%15$.2f combat strength agains shield 3
+#%16$.2f combat strength agains shield 5
+#%17$.2f combat strength agains shield 10
+#%18$.2f combat strength agains shield 15
+#%19$.0f production cost
+#%20$.0f production time
+#%21$.2f production per turn
+#%22$.2f strength per PP
+DESIGN_SHIP_STATS_BASE_STR
+'''
+Generic
+ <s><rgba 0 255 0 255>Total Attack:</rgba></s> %1$.0f
+ <s><rgba 0 255 0 255>[[encyclopedia STRUCTURE_TITLE]]:</rgba></s> %6%
+ <s><rgba 0 255 0 255>[[encyclopedia SHIELDS_TITLE]]:</rgba></s> %7%
+ <s><rgba 0 255 0 255>[[encyclopedia STARLANE_SPEED_TITLE]]:</rgba></s> %8%
+ <s><rgba 0 255 0 255>[[encyclopedia FUEL_TITLE]] Capacity:</rgba></s> %9%
+ <s><rgba 0 255 0 255>[[encyclopedia DETECTION_RANGE_TITLE]]:</rgba></s> %10%
+ <s><rgba 0 255 0 255>[[encyclopedia STEALTH_TITLE]]:</rgba></s> %11%
+ <s><rgba 0 255 0 255>Colonization Capacity:</rgba></s> %12%
+ <s><rgba 0 255 0 255>[[encyclopedia TROOP_TITLE]]:</rgba></s> %13%
+ <s><rgba 0 255 0 255>combat strength:</rgba></s> %14$.2f
+ <s><rgba 0 255 0 255>strength per pp:</rgba></s> %22$.2f
+ <s><rgba 0 255 0 255>cost:</rgba></s> %19$.0f
+ <s><rgba 0 255 0 255>turns:</rgba></s> %20$.0f
+ <s><rgba 0 255 0 255>pp per turn:</rgba></s> %21$.2f
+'''
+
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
