@@ -171,19 +171,56 @@ class Reporter(object):
         print "\n============================"
         print "Collecting info to assess Planet Focus Changes\n"
 
-    def print_table_header(self, priorityRatio, ctRP0, ctPP0):
-        pp = sum(x.planet.currentMeterValue(fo.meterType.targetIndustry) for x in self.focus_manager.all_planet_info.values())
-        rp = sum(x.planet.currentMeterValue(fo.meterType.targetResearch) for x in self.focus_manager.all_planet_info.values())
+    @staticmethod
+    def print_table_header():
+        print "==================================="
+        print Reporter.table_format % ("Planet", "current RP/PP", "old target RP/PP"
+                                       , "current Focus", "newFocus", "new target RP/PP")
 
-        print "============================"
-        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" % (priorityRatio, rp / (pp + 0.0001), rp, pp)
-        print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" % (ctRP0 / (ctPP0 + 0.0001), ctRP0, ctPP0)
-        print "-------------------------------------"
-        print Reporter.table_format % ("                      Planet", "current RP/PP", "old target RP/PP", "current Focus", "newFocus", "new target RP/PP")
+    def print_table_footer(self, priorityRatio):
+        current_industry_target = 0
+        current_research_target = 0
+        all_industry_industry_target = 0
+        all_industry_research_target = 0
+        all_research_industry_target = 0
+        all_research_research_target = 0
+        total_changed = 0
+        for pinfo in self.focus_manager.all_planet_info.values():
+            if pinfo.current_focus != pinfo.future_focus:
+                total_changed += 1
 
-    def print_table(self, priorityRatio, ctRP0, ctPP0, curTargetRP, curTargetPP):
-        self.print_table_header(priorityRatio, ctRP0, ctPP0)
-        totalChanged = 0
+            planet = pinfo.planet
+            fPP, fRP = pinfo.possible_output[pinfo.future_focus]
+            current_industry_target += fPP
+            current_research_target += fRP
+
+            iPP, iRP = pinfo.possible_output[IFocus] if IFocus in planet.availableFoci else (fPP, fRP)
+            all_industry_industry_target += iPP
+            all_industry_research_target += iRP
+
+            rPP, rRP = pinfo.possible_output[RFocus] if RFocus in planet.availableFoci else (fPP, fRP)
+            all_research_industry_target += rPP
+            all_research_research_target += rRP
+
+        print "-----------------------------------"
+        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" \
+            % (priorityRatio, current_research_target / (current_industry_target + 0.0001)
+               , current_research_target, current_industry_target)
+        print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" \
+            % (all_industry_research_target / (all_industry_industry_target + 0.0001)
+               , all_industry_research_target, all_industry_industry_target)
+        print "Max Research assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" \
+            % (all_research_research_target / (all_research_industry_target + 0.0001)
+               , all_research_research_target, all_research_industry_target)
+        print "-----------------------------------"
+        print "Final Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes" \
+            % (fo.currentTurn(), current_research_target / (current_industry_target + 0.0001)
+               , current_research_target, current_industry_target, total_changed)
+
+    def print_table(self, priorityRatio):
+        """Prints a table of all of the captured sections of assignments"""
+        self.print_table_header()
+
         for title, id_set in self.sections:
             print Reporter.table_format % (("---------- "+title+" ------------------------------")[:33], "", "", "", "", "")
             id_set.sort()  #pay sort cost only when printing
@@ -191,8 +228,6 @@ class Reporter(object):
                 pinfo = self.focus_manager.baked_planet_info[pid]
                 oldFocus = pinfo.current_focus
                 newFocus = pinfo.future_focus
-                if oldFocus != newFocus:
-                    totalChanged += 1
                 cPP, cRP = pinfo.current_output[IFocus], pinfo.current_output[RFocus]
                 otPP, otRP = pinfo.possible_output.get(oldFocus, (0, 0))
                 ntPP, ntRP = pinfo.possible_output[newFocus]
@@ -203,8 +238,7 @@ class Reporter(object):
                         "cF: %8s" % fociMap.get(oldFocus, 'unknown'),
                         "nF: %8s" % fociMap.get(newFocus, 'unset'),
                         "cT: %5.1f / %5.1f" % (ntRP, ntPP)))
-        print "-------------------------------------"
-        print "Final Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes" % (fo.currentTurn(), curTargetRP / (curTargetPP + 0.0001), curTargetRP, curTargetPP, totalChanged)
+        self.print_table_footer(priorityRatio)
 
 
     @staticmethod
@@ -559,8 +593,6 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
         if pid in focus_manager.raw_planet_info:
             focus_manager.bake_future_focus(pid, IFocus, False)
 
-    return ctPP0, ctRP0, curTargetPP, curTargetRP
-
 
 def set_planet_resource_foci():
     """set resource focus of planets """
@@ -598,10 +630,10 @@ def set_planet_resource_foci():
         set_planet_happiness_foci(focus_manager)
         reporter.capture_section_info("Happiness")
 
-        ctPP0, ctRP0, curTargetPP, curTargetRP = set_planet_industry_and_research_foci(focus_manager, priorityRatio)
+        set_planet_industry_and_research_foci(focus_manager, priorityRatio)
         reporter.capture_section_info("Typical")
 
-        reporter.print_table(priorityRatio, ctRP0, ctPP0, curTargetRP, curTargetPP)
+        reporter.print_table(priorityRatio)
 
         resource_timer.end()
 
