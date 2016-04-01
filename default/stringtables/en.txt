@@ -9927,7 +9927,7 @@ FT_WEAPON_1_DESC
 Prototype weapon system for use with fighters. Does not function as a ship weapon.
 
 FT_BAY_1
-Fighter Bay
+Launch Bay
 FT_BAY_1_DESC
 Launch system for fighters.
 
@@ -9937,17 +9937,17 @@ FT_HANGAR_0_DESC
 Storage system for unarmed decoy craft.
 
 FT_HANGAR_1
-Hangar 1
+Interceptor Hangar
 FT_HANGAR_1_DESC
 Storage system for minimally armed fighters.
 
 FT_HANGAR_2
-Hangar 2
+Fighter Hangar
 FT_HANGAR_2_DESC
 Storage system for lightly armed fighters.
 
 FT_HANGAR_3
-Hangar 3
+Bomber Hangar
 FT_HANGAR_3_DESC
 Storage system for moderately armed fighters.
 
