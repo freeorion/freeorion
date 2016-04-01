@@ -193,7 +193,7 @@ inline void png_read_and_convert_image(const boost::filesystem::path& path,Image
     gil::png_read_and_convert_image(file,im);
     fclose(file);
 #else
-    std::string filename = path.generic_string());
+    std::string filename = path.generic_string();
     png_read_and_convert_image(filename.c_str(),im);
 #endif
 }

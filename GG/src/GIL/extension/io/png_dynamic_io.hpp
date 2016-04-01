@@ -138,7 +138,7 @@ inline void png_read_image(const boost::filesystem::path& path,any_image<Images>
     m.read_image(im);
     fclose(file);
 #else
-    std::string filename = path.generic_string());
+    std::string filename = path.generic_string();
     png_read_image(filename.c_str(),im);
 #endif
 }

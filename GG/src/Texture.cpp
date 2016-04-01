@@ -276,7 +276,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     std::string filename;
     utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(filename));
 #else
-    std::string filename = path.generic_string());
+    std::string filename = path.generic_string();
 #endif
 
 
