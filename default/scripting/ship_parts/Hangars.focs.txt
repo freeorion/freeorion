@@ -16,10 +16,10 @@ Part
     description = "FT_HANGAR_1_DESC"
     exclusions = [ "FT_HANGAR_0" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
-    capacity = 3
+    capacity = 4
     damage = 1
     mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
@@ -29,7 +29,7 @@ Part
     description = "FT_HANGAR_1_DESC"
     exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
-    capacity = 2
+    capacity = 3
     damage = 3
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
@@ -43,9 +43,9 @@ Part
     exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
-    damage = 6
+    damage = 5
     mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighters-1.png"
