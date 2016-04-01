@@ -664,7 +664,7 @@ void SaveFileDialog::Init() {
     GG::Connect(GG::GUI::GetGUI()->FocusChangedSignal,          boost::bind(&SaveFileDialog::UpdatePreviewList, this));
 
     if (!m_load_only) {
-        m_name_edit->SetText(std::string("save-") + FilenameTimestamp());
+        m_name_edit->SetText(std::string("save-") + FilenameTimestamp() + m_extension);
         m_name_edit->SelectAll();
     }
 
@@ -753,16 +753,18 @@ void SaveFileDialog::Confirm() {
         UpdateDirectory(PathString(chosen_full_path));
         return;
 
-    } else if (fs::is_regular_file(chosen_full_path)) {
+    } else if (!m_load_only) {
         DebugLogger() << "SaveFileDialog::Confirm: File " << PathString(chosen_full_path) << " chosen.";
-        if (!m_load_only && fs::exists(chosen_full_path)) {
-            // If not loading and file exists, ask to confirm override
+        // If not loading and file exists(and is regular file), ask to confirm override
+        if (fs::is_regular_file(chosen_full_path)) {
             std::string question = str((FlexibleFormat(UserString("SAVE_REALLY_OVERRIDE")) % choice));
             if (!Prompt(question))
                 return;
+        } else if (fs::exists(chosen_full_path)) {
+            ErrorLogger() << "SaveFileDialog::Confirm: Invalid status for file: " << Result();
+            return;
         }
-
-    } else {
+    } else if (!fs::is_regular_file(chosen_full_path)) {
         ErrorLogger() << "SaveFileDialog::Confirm: problem with result: " << Result();
         return;
     }
