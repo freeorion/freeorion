@@ -444,12 +444,12 @@ def set_planet_industry_and_research_foci(empirePlanetIDs, newFoci, priorityRati
                 printedHeader = True
                 print "Rejecting further Research Focus choices as too expensive:"
                 print "%34s|%20s|%15s |%15s|%15s |%15s |%15s" % ("                      Planet ", " current RP/PP ", " current target RP/PP ", "current Focus ", "  rejectedFocus ", " rejected target RP/PP ", "rejected RP-PP EQF")
-                oldFocus = currentFocus[pid]
-                cPP, cRP = currentOutput[pid][IFocus], currentOutput[pid][RFocus]
-                otPP, otRP = newTargets[pid].get(oldFocus, (0, 0))
-                ntPP, ntRP = newTargets[pid].get(RFocus, (0, 0))
-                print "pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f | %.2f" % (pid, planetMap[pid].name, cRP, cPP, otRP, otPP, fociMap.get(oldFocus, 'unknown'), fociMap[RFocus], ntRP, ntPP, ratio)
-                continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
+            oldFocus = currentFocus[pid]
+            cPP, cRP = currentOutput[pid][IFocus], currentOutput[pid][RFocus]
+            otPP, otRP = newTargets[pid].get(oldFocus, (0, 0))
+            ntPP, ntRP = newTargets[pid].get(RFocus, (0, 0))
+            print "pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f | %.2f" % (pid, planetMap[pid].name, cRP, cPP, otRP, otPP, fociMap.get(oldFocus, 'unknown'), fociMap[RFocus], ntRP, ntPP, ratio)
+            continue  # RP is getting too expensive, but might be willing to still allocate from a planet with less PP to lose
         # if planetMap[pid].currentMeterValue(fo.meterType.targetPopulation) >0: #only set to research if pop won't die out
         newFoci[pid] = RFocus
         curTargetRP += (RR - IR)
