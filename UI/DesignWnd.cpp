@@ -3186,37 +3186,59 @@ void DesignWnd::MainPanel::DesignChanged() {
             new TextBrowseWnd(UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME"))));
     }
     else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
-        // if a design has multiple different hangar types, highlight these, and indicate it on the button
+        // if a design has exclusion violations between parts and hull, highlight these and indicate it on the button
 
-        std::string already_seen_hangar_name;
+        std::pair<std::string, std::string> problematic_components;
+
+        // check hull exclusions against all parts...
+        const std::set<std::string>& hull_exclusions = m_hull->Exclusions();
         std::vector<std::string> parts = Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-            const std::string& part_name = *part_it;
-            if (part_name.empty())
+            if (part_it->empty())
                 continue;
-            const PartType* part_type = GetPartType(part_name);
-            if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
-                continue;
-            if (already_seen_hangar_name.empty()) {
-                already_seen_hangar_name = part_name;
-                continue;
-            }
-            if (already_seen_hangar_name != part_name) {
-                // a problem! multiple different hangar part types...
+            if (hull_exclusions.find(*part_it) != hull_exclusions.end()) {
                 m_disabled_by_part_conflict = true;
-
-                m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-                    new TextBrowseWnd(UserString("HANGAR_CONFLICT"),
-                    boost::io::str(FlexibleFormat(UserString("HANGAR_CONFLICT_DETAIL")) % design_name))));
-
-                m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-                    new TextBrowseWnd(UserString("HANGAR_CONFLICT"),
-                    boost::io::str(FlexibleFormat(UserString("HANGAR_CONFLICT_DETAIL")) % design_name))));
-
-                // todo: mark hangar parts somehow
-
-                break;
+                problematic_components.first = m_hull->Name();
+                problematic_components.second = *part_it;
             }
+        }
+
+        // check part exclusions against other parts and hull
+        std::set<std::string> already_seen_component_names;
+        already_seen_component_names.insert(m_hull->Name());
+        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+            if (m_disabled_by_part_conflict)
+                break;
+            const PartType* part_type = GetPartType(*part_it);
+            if (!part_type)
+                continue;
+            const std::set<std::string>& part_exclusions = part_type->Exclusions();
+            for (std::set<std::string>::const_iterator ex_it = part_exclusions.begin(); ex_it != part_exclusions.end(); ++ex_it) {
+                if (already_seen_component_names.find(*ex_it) != already_seen_component_names.end()) {
+                    m_disabled_by_part_conflict = true;
+                    problematic_components.first = *part_it;
+                    problematic_components.second = *ex_it;
+                    break;
+                }
+            }
+            already_seen_component_names.insert(*part_it);
+        }
+
+
+        if (m_disabled_by_part_conflict) {
+            m_replace_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                new TextBrowseWnd(UserString("DESIGN_COMPONENT_CONFLICT"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_COMPONENT_CONFLICT_DETAIL"))
+                               % UserString(problematic_components.first)
+                               % UserString(problematic_components.second)))));
+
+            m_confirm_button->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+                new TextBrowseWnd(UserString("DESIGN_COMPONENT_CONFLICT"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_COMPONENT_CONFLICT_DETAIL"))
+                               % UserString(problematic_components.first)
+                               % UserString(problematic_components.second)))));
+
+            // todo: mark conflicting parts somehow
         }
     }
     else if (CurrentDesignIsRegistered(design_name)) {
