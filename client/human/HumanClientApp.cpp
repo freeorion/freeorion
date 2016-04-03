@@ -203,7 +203,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
+    const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
 
     InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
 

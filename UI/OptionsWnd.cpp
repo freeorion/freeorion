@@ -609,7 +609,7 @@ OptionsWnd::OptionsWnd():
     // Directories tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
     DirectoryOption(current_page, 0, "resource-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
-    DirectoryOption(current_page, 0, "save-dir",     UserString("OPTIONS_FOLDER_SAVE"),     GetUserDir());
+    DirectoryOption(current_page, 0, "save-dir",     UserString("OPTIONS_FOLDER_SAVE"),     GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
     // Misc

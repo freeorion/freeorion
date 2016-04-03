@@ -116,7 +116,7 @@ namespace {
 
     const std::string DESIGN_FILENAME_EXTENSION = ".txt";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
-    boost::filesystem::path SavedDesignsDir() { return GetUserDir() / "shipdesigns"; }
+    boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns"; }
 
     class SavedDesignsManager {
     public:

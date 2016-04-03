@@ -100,7 +100,13 @@ void InitDirs(const std::string& argv0) {
     g_initialized = true;
 }
 
-const fs::path GetUserDir() {
+const fs::path GetUserConfigDir() {
+    if (!g_initialized)
+        InitDirs("");
+    return s_user_dir;
+}
+
+const fs::path GetUserDataDir() {
     if (!g_initialized)
         InitDirs("");
     return s_user_dir;
@@ -143,7 +149,12 @@ void InitDirs(const std::string& argv0) {
 
     br_init(0);
 
-    fs::path p = GetUserDir();
+    fs::path cp = GetUserConfigDir();
+    if (!exists(cp)) {
+        fs::create_directories(cp);
+    }
+
+    fs::path p = GetUserDataDir();
     if (!exists(p)) {
         fs::create_directories(p);
     }
@@ -158,8 +169,17 @@ void InitDirs(const std::string& argv0) {
     g_initialized = true;
 }
 
-const fs::path GetUserDir() {
-    static fs::path p = fs::path(getenv("HOME")) / ".freeorion";
+const fs::path GetUserConfigDir() {
+    static fs::path p = getenv("XDG_CONFIG_HOME")
+        ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".config" / "freeorion";
+    return p;
+}
+
+const fs::path GetUserDataDir() {
+    static fs::path p = getenv("XDG_DATA_HOME")
+        ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
     return p;
 }
 
@@ -241,7 +261,7 @@ void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
-    fs::path local_dir = GetUserDir();
+    fs::path local_dir = GetUserConfigDir();
     if (!exists(local_dir))
         fs::create_directories(local_dir);
 
@@ -254,7 +274,12 @@ void InitDirs(const std::string& argv0) {
     g_initialized = true;
 }
 
-const fs::path GetUserDir() {
+const fs::path GetUserConfigDir() {
+    static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
+    return p;
+}
+
+const fs::path GetUserDataDir() {
     static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
     return p;
 }
@@ -299,12 +324,12 @@ const fs::path GetResourceDir() {
 }
 
 const fs::path GetConfigPath() {
-    static const fs::path p = GetUserDir() / "config.xml";
+    static const fs::path p = GetUserConfigDir() / "config.xml";
     return p;
 }
 
 const fs::path GetPersistentConfigPath() {
-    static const fs::path p = GetUserDir() / "persistent_config.xml";
+    static const fs::path p = GetUserConfigDir() / "persistent_config.xml";
     return p;
 }
 
