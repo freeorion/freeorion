@@ -7,6 +7,8 @@ and finally the targetted ratio of research/production. Each decision on a plane
 transfers the planet from the raw list to the baked list, until all planets
 have their future focus decided.
 """
+#Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
+#      exactly the same colonies, but different pids may make different choices.
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -67,44 +69,42 @@ class PlanetFocusManager(object):
         resource_timer.start("getPlanets")
         planet_ids = list(PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs))
 
-        # resource_timer.start("Shuffle")
-        # shuffle(generalPlanetIDs)
-
         resource_timer.start("Targets")
-        planet_infos = [PlanetFocusInfo(universe.getPlanet(pid)) for pid in  planet_ids]
-        self.all_planet_info = {}
-        self.all_planet_info.update(zip(planet_ids, planet_infos))
+        self.all_planet_info = {pid: PlanetFocusInfo(universe.getPlanet(pid)) for pid in planet_ids}
 
         self.raw_planet_info = dict(self.all_planet_info)
-        self.baked_planet_info = dict()
+        self.baked_planet_info = {}
 
         for pid, pinfo in self.raw_planet_info.items():
             if not pinfo.can_change_focus():
                 self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
 
-
     def bake_future_focus(self, pid, focus, update=True):
         """Set the focus and moves it from the raw list to the baked list of planets
+
+        pid -- pid
+        focus -- future focus to use
+        update -- If update is True then the meters of the raw planets will be updated.
+                  If the planet's change of focus will have a global effect (growth,
+                  production or research special), then update should be True.
         Return success or failure
         """
         pinfo = self.raw_planet_info.get(pid)
-        success = (pinfo is not None and
-                   (pinfo.current_focus == focus
-                    or (focus in pinfo.planet.availableFoci
-                        and fo.issueChangeFocusOrder(pid, focus))))
+        success = bool(pinfo is not None and
+                       (pinfo.current_focus == focus
+                        or (focus in pinfo.planet.availableFoci
+                            and fo.issueChangeFocusOrder(pid, focus))))
         if success:
-            pinfo.future_focus = focus
-            self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
-
             if update and pinfo.current_focus != focus:
-                # TODO determine if this should update all planets (for reporting) or just the remaining unplaced planets
                 universe = fo.getUniverse()
                 universe.updateMeterEstimates(self.raw_planet_info.keys())
                 itarget = pinfo.planet.currentMeterValue(fo.meterType.targetIndustry)
                 rtarget = pinfo.planet.currentMeterValue(fo.meterType.targetResearch)
                 pinfo.possible_output[focus] = (itarget, rtarget)
-        return success
 
+            pinfo.future_focus = focus
+            self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
+        return success
 
     def calculate_planet_infos(self, pids):
         """ Calculates for each possible focus the target output of each planet and stores it in planet info
@@ -149,6 +149,7 @@ class PlanetFocusManager(object):
         # Protection focus will give the same off-focus Industry and Research targets as Growth Focus
         for pid, pinfo, planet in planet_infos:
             pinfo.possible_output[PFocus] = pinfo.possible_output[GFocus]
+
 
 class Reporter(object):
     """Reporter contains some file scope functions to report"""
@@ -224,8 +225,8 @@ class Reporter(object):
         self.print_table_header()
 
         for title, id_set in self.sections:
-            print Reporter.table_format % (("---------- "+title+" ------------------------------")[:33], "", "", "", "", "")
-            id_set.sort()  #pay sort cost only when printing
+            print Reporter.table_format % (("---------- " + title + " ------------------------------")[:33], "", "", "", "", "")
+            id_set.sort()  # pay sort cost only when printing
             for pid in id_set:
                 pinfo = self.focus_manager.baked_planet_info[pid]
                 oldFocus = pinfo.current_focus
@@ -242,7 +243,6 @@ class Reporter(object):
                         "cT: %5.1f / %5.1f" % (ntRP, ntPP)))
         self.print_table_footer(priorityRatio)
 
-
     @staticmethod
     def print_resource_ai_footer():
         empire = fo.getEmpire()
@@ -251,7 +251,6 @@ class Reporter(object):
         print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )" % (fo.currentTurn(), aRP / (aPP + 0.0001), aRP, aPP)
         print "------------------------"
         print "ResourcesAI Time Requirements:"
-
 
     @staticmethod
     def print_resources_priority():
@@ -392,7 +391,7 @@ def assess_protection_focus(pid, pinfo):
 
 
 def use_planet_growth_specials(focus_manager):
-    '''set resource foci of planets with potentially useful growth factors. Remove planets from list of candidates.'''
+    """set resource foci of planets with potentially useful growth factors. Remove planets from list of candidates."""
     if useGrowth:
         # TODO: also consider potential future benefit re currently unpopulated planets
         for metab, metabIncPop in ColonisationAI.empire_metabolisms.items():
@@ -427,7 +426,7 @@ def use_planet_growth_specials(focus_manager):
 
 
 def use_planet_production_and_research_specials(focus_manager):
-    '''Use production and research specials as appropriate.  Remove planets from list of candidates.'''
+    """Use production and research specials as appropriate.  Remove planets from list of candidates."""
     #TODO remove reliance on rules knowledge.  Just scan for specials with production
     #and research bonuses and use what you find. Perhaps maintain a list
     # of know types of specials
@@ -462,7 +461,7 @@ def use_planet_production_and_research_specials(focus_manager):
 
 
 def set_planet_protection_foci(focus_manager):
-    '''Assess and set protection foci'''
+    """Assess and set protection foci"""
     universe = fo.getUniverse()
     for pid, pinfo in focus_manager.raw_planet_info.items():
         planet = pinfo.planet
@@ -547,7 +546,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
                     curTargetRP += CR + 1
                     focus_manager.bake_future_focus(pid, RFocus, False)
                 continue
-            if adj_round == 4: #assume default IFocus
+            if adj_round == 4:  # assume default IFocus
                 curTargetPP += II  # icurTargets initially calculated by Industry focus, which will be our default focus
                 curTargetRP += IR
                 ratios.append((thisFactor, pid, pinfo))
