@@ -168,13 +168,13 @@ def cache_by_turn(function):
 
 
 def dict_to_tuple(dic):
-    return tuple([(k, v) for k, v in dic.iteritems()])
+    return tuple(dic.iteritems())
 
 
 def tuple_to_dict(tup):
     try:
-        return {k: v for k, v in tup}
-    except:
+        return dict(tup)
+    except TypeError:
         try:
             return {k: v for k, v in [tup]}
         except:

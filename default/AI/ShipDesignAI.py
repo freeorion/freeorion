@@ -84,7 +84,7 @@ INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSI
 
 # Potentially, not adding techs to AIDependencies is intended for testing purposes.
 # Therefore, chat the player only once to inform him about the issue to prevent spam.
-_raised_warnings = set()
+_reported_warnings = set()
 
 # string constants for better readability of the cache
 WITH_UPKEEP = "considering fleet upkeep"
@@ -602,7 +602,7 @@ class AdditionalSpecifications(object):
         self.minimum_fuel = 0
         self.minimum_speed = 0
         self.minimum_structure = 1
-        self.minimum_fighter_launchrate = 0
+        self.minimum_fighter_launch_rate = 0
         self.enemy_shields = 0
         self.max_enemy_weapon_strength = 0
         self.avg_enemy_weapon_strength = 0
@@ -709,7 +709,7 @@ class ShipDesigner(object):
         self.asteroid_stealth = 0
         self.solar_stealth = 0
         self.fighter_capacity = 0
-        self.fighter_launchrate = 0
+        self.fighter_launch_rate = 0
         self.fighter_damage = 0
 
     def evaluate(self):
@@ -729,7 +729,7 @@ class ShipDesigner(object):
         min_fuel = self._minimum_fuel()
         min_speed = self._minimum_speed()
         min_structure = self._minimum_structure()
-        min_fighter_launchrate = self._minimum_fighter_launchrate()
+        min_fighter_launch_rate = self._minimum_fighter_launch_rate()
         if self.fuel < min_fuel:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.fuel)
         if self.speed < min_speed:
@@ -738,8 +738,8 @@ class ShipDesigner(object):
                                self.organic_growth * self.additional_specifications.expected_turns_till_fight)
         if estimated_structure < min_structure:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
-        if self.fighter_launchrate < min_fighter_launchrate:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launchrate - self.fighter_launchrate)
+        if self.fighter_launch_rate < min_fighter_launch_rate:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launch_rate - self.fighter_launch_rate)
         if rating < 0:
             return rating
         else:
@@ -754,8 +754,8 @@ class ShipDesigner(object):
     def _minimum_structure(self):
         return self.additional_specifications.minimum_structure
 
-    def _minimum_fighter_launchrate(self):
-        return self.additional_specifications.minimum_fighter_launchrate
+    def _minimum_fighter_launch_rate(self):
+        return self.additional_specifications.minimum_fighter_launch_rate
 
     def _rating_function(self):
         """Rate the design according to current hull/part combo.
@@ -787,7 +787,7 @@ class ShipDesigner(object):
         self.asteroid_stealth = 0
         self.solar_stealth = 0
         self.fighter_capacity = 0
-        self.fighter_launchrate = 0
+        self.fighter_launch_rate = 0
         self.fighter_damage = 0
 
     def update_hull(self, hullname):
@@ -850,7 +850,7 @@ class ShipDesigner(object):
         self.solar_stealth = 0
 
         self.fighter_capacity = 0
-        self.fighter_launchrate = 0
+        self.fighter_launch_rate = 0
         self.fighter_damage = 0
 
         # read out part stats
@@ -898,7 +898,7 @@ class ShipDesigner(object):
                 else:
                     self.stealth = 0
             elif partclass in FIGHTER_BAY:
-                self.fighter_launchrate += capacity
+                self.fighter_launch_rate += capacity
             elif partclass in FIGHTER_HANGAR:
                 hangar_parts.add(part.name)
                 if len(hangar_parts) > 1:
@@ -1490,9 +1490,8 @@ class ShipDesigner(object):
         try:
             upgrades = AIDependencies.WEAPON_UPGRADE_DICT[weapon_name]
         except KeyError:
-            global _raised_warnings
-            if weapon_name not in _raised_warnings:
-                _raised_warnings.add(weapon_name)
+            if weapon_name not in _reported_warnings:
+                _reported_warnings.add(weapon_name)
                 print_error(("WARNING: Encountered unknown weapon (%s): "
                              "The AI will play on but damage estimates may be incorrect leading to worse performance. "
                              "Please update AIDependencies.py and "
@@ -1652,7 +1651,7 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
         self.additional_specifications.minimum_fuel = 1
         self.additional_specifications.minimum_speed = 30
         self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
-        self.additional_specifications.minimum_fighter_launchrate = 1
+        self.additional_specifications.minimum_fighter_launch_rate = 1
 
     def _rating_function(self):
         if self.fighter_capacity < 1:
@@ -1667,8 +1666,8 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
         remaining_growth = self.maximum_organic_growth - expected_growth
 
         # now, consider offensive potential of our fighters
-        launched_1st_bout = min(self.fighter_capacity, self.fighter_launchrate)
-        launched_2nd_bout = min(self.fighter_capacity - self.fighter_launchrate, self.fighter_launchrate)
+        launched_1st_bout = min(self.fighter_capacity, self.fighter_launch_rate)
+        launched_2nd_bout = min(self.fighter_capacity - self.fighter_launch_rate, self.fighter_launch_rate)
         survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
         total_fighter_damage = self.fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
         fighter_damage_per_bout = total_fighter_damage / 3
@@ -1708,7 +1707,7 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
         best_rating = INVALID_DESIGN_RATING
         best_partlist = [""] * len(self.hull.slots)
         for this_hangar_part in hangar_parts:
-            current_available_parts = dict()
+            current_available_parts = {}
             forbidden_hangar_parts = {part for part in hangar_parts if part != this_hangar_part}
             for slot, partlist in available_parts.iteritems():
                 current_available_parts[slot] = [part for part in partlist if part not in forbidden_hangar_parts]
@@ -1722,7 +1721,7 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
 
     def _calc_rating_for_name(self):
         base_rating = self.structure*self._total_dmg()*(1+self.shields/10)
-        fighter_rating = self.fighter_capacity * self.fighter_launchrate * (.1+self.fighter_damage)
+        fighter_rating = self.fighter_capacity * self.fighter_launch_rate * (.1+self.fighter_damage)
         return base_rating + fighter_rating
 
 

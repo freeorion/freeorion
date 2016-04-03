@@ -36,9 +36,9 @@ def default_ship_stats():
     structure = 15
     shields = 0
     fighters = 0
-    launchrate = 0
+    launch_rate = 0
     fighter_damage = 0
-    return ShipCombatStats(stats=(attacks, structure, shields, fighters, launchrate, fighter_damage))
+    return ShipCombatStats(stats=(attacks, structure, shields, fighters, launch_rate, fighter_damage))
 
 
 class ShipCombatStats(object):
@@ -128,7 +128,7 @@ class ShipCombatStats(object):
             structure = ship.currentMeterValue(fo.meterType.structure)
             shields = ship.currentMeterValue(fo.meterType.shield)
         attacks = {}
-        fighter_launchrate = 0
+        fighter_launch_rate = 0
         fighter_capacity = 0
         fighter_damage = 0
         design = ship.design
@@ -142,29 +142,30 @@ class ShipCombatStats(object):
                     damage = ship.currentPartMeterValue(meter_choice, partname)
                     attacks[damage] = attacks.get(damage, 0) + 1
                 elif pc == fo.shipPartClass.fighterBay:
-                    fighter_launchrate += ship.currentPartMeterValue(fo.meterType.capacity, partname)
+                    fighter_launch_rate += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 elif pc == fo.shipPartClass.fighterHangar:
                     fighter_capacity += ship.currentPartMeterValue(meter_choice, partname)
                     part_damage = ship.currentPartMeterValue(fo.meterType.secondaryStat, partname)
                     if part_damage != fighter_damage and fighter_damage > 0:
                         # the C++ code fails also in this regard, so FOCS content *should* not allow this.
                         # TODO: Depending on future implementation, might actually need to handle this case.
-                        print "WARNING: Multiple hangar types present on one ship, estimatates expected to be wrong."
+                        print "WARNING: Multiple hangar types present on one ship, estimates expected to be wrong."
                     fighter_damage = max(fighter_damage, part_damage)
         self._basic_stats = self.BasicStats(structure=structure, shields=shields, attacks=attacks)
-        self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launchrate, fighter_damage)
+        self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)
 
     def get_basic_stats(self, hashable=False):
         """Get non-fighter-related combat stats of the ship.
 
         :param hashable: if true, returns tuple instead of attacks-dict
         :return: attacks, structure, shields
+        :rtype: (dict|tuple, int, int)
         """
         return self._basic_stats.get_stats(hashable=hashable)
 
     def get_fighter_stats(self):
         """ Get fighter related combat stats
-        :return: capacity, launchrate, damage
+        :return: capacity, launch_rate, damage
         """
         return self._fighter_stats.get_stats()
 
@@ -195,9 +196,9 @@ class ShipCombatStats(object):
             my_structure += my_shields
 
         # consider fighter attacks
-        capacity, launchrate, fighter_damage = self.get_fighter_stats()
-        launched_1st_bout = min(capacity, launchrate)
-        launched_2nd_bout = min(max(capacity - launchrate, 0), launchrate)
+        capacity, launch_rate, fighter_damage = self.get_fighter_stats()
+        launched_1st_bout = min(capacity, launch_rate)
+        launched_2nd_bout = min(max(capacity - launch_rate, 0), launch_rate)
         survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
         total_fighter_damage = fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
         fighter_damage_per_bout = total_fighter_damage / 3
@@ -214,7 +215,7 @@ class ShipCombatStats(object):
         """ Get all combat related stats of the ship.
 
         :param hashable: if true, return tuple instead of dict for attacks
-        :return: attacks, structure, shields, fighter-capacity, fighter-launchrate, fighter-damage
+        :return: attacks, structure, shields, fighter-capacity, fighter-launch_rate, fighter-damage
         """
         return self.get_basic_stats(hashable=hashable)+self.get_fighter_stats()
 
