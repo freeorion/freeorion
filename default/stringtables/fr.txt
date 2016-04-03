@@ -3304,6 +3304,12 @@ Modèle déjà existant
 DESIGN_KNOWN_DETAIL
 Ce modèle est une réplique de "%1%".
 
+DESIGN_COMPONENT_CONFLICT
+Modèle incompatible
+
+DESIGN_COMPONENT_CONFLICT_DETAIL
+Un modèle d'astronef ne peut contenir à la fois les équipements %1% et %2%.
+
 DESIGN_OBSOLETE
 Modèle obsolète
 
@@ -3724,6 +3730,9 @@ ENC_UNLOCKS
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 '''Se monte dans : '''
+
+ENC_SHIP_EXCLUSIONS
+'''Est incompatible avec : '''
 
 ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''%1% %2%
