@@ -1,5 +1,5 @@
-"""ResourcesAI.py provides generate_resources_orders which sets the
-   focus for all of the planets in the empire
+"""
+ResourcesAI.py provides generate_resources_orders which sets the focus for all of the planets in the empire
 
 The method is to start with a raw list of all of the planets in the empire.
 It considers in turn growth factors, production specials, defense requirements
@@ -39,8 +39,7 @@ lastFociCheck = [0]
 
 
 class PlanetFocusInfo(object):
-    """ The current, possible and future foci and output of one planet
-    """
+    """ The current, possible and future foci and output of one planet."""
     def __init__(self, planet):
         self.planet = planet
         self.current_focus = planet.focus
@@ -82,12 +81,13 @@ class PlanetFocusManager(object):
 
     def bake_future_focus(self, pid, focus, update=True):
         """Set the focus and moves it from the raw list to the baked list of planets
-        Return success or failure"""
+        Return success or failure
+        """
         pinfo = self.raw_planet_info.get(pid)
-        success = (pinfo != None and
+        success = (pinfo is not None and
                    (pinfo.current_focus == focus
                     or (focus in pinfo.planet.availableFoci
-                        and fo.issueChangeFocusOrder(pid, focus) == 1)))
+                        and fo.issueChangeFocusOrder(pid, focus))))
         if success:
             pinfo.future_focus = focus
             self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
@@ -104,7 +104,7 @@ class PlanetFocusManager(object):
 
     def calculate_planet_infos(self, pids):
         """ Calculates for each possible focus the target output of each planet and stores it in planet info
-        It excludes baked planets from
+        It excludes baked planets from consideration.
         Note: The results will not be strictly correct if any planets have global effects
         """
         #TODO this function depends on the specific rule that off-focus meter value are always the minimum value
@@ -121,10 +121,10 @@ class PlanetFocusManager(object):
             rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
             if planet.focus == IFocus:
                 pinfo.possible_output[IFocus] = (itarget, rtarget)
-                pinfo.possible_output[GFocus] = [0, rtarget]
+                pinfo.possible_output[GFocus] = rtarget
             else:
                 pinfo.possible_output[IFocus] = (0, 0)
-                pinfo.possible_output[GFocus] = [0, 0]
+                pinfo.possible_output[GFocus] = 0
             if RFocus in planet.availableFoci and planet.focus != RFocus:
                 fo.issueChangeFocusOrder(pid, RFocus)  # may not be able to take, but try
 
@@ -135,10 +135,10 @@ class PlanetFocusManager(object):
             rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
             if planet.focus == RFocus:
                 pinfo.possible_output[RFocus] = (itarget, rtarget)
-                pinfo.possible_output[GFocus][0] = itarget
+                pinfo.possible_output[GFocus] = (itarget, pinfo.possible_output[GFocus])
             else:
                 pinfo.possible_output[RFocus] = (0, 0)
-                pinfo.possible_output[GFocus][0] = 0
+                pinfo.possible_output[GFocus] = (0, pinfo.possible_output[GFocus])
             if can_focus and pinfo.current_focus != planet.focus:
                 fo.issueChangeFocusOrder(pid, pinfo.current_focus)  # put it back to what it was
 
@@ -152,15 +152,14 @@ class Reporter(object):
 
     def __init__(self, focus_manager):
         self.focus_manager = focus_manager
-        self.sections = list()
+        self.sections = []
         self.captured_ids = set()
 
     def capture_section_info(self, title):
-        """Grab ids of all the newly baked planets
-        """
+        """Grab ids of all the newly baked planets."""
         new_captured_ids = set(self.focus_manager.baked_planet_info)
         new_ids = new_captured_ids - self.captured_ids
-        if len(new_ids) > 0:
+        if new_ids:
             self.captured_ids = new_captured_ids
             self.sections.append((title, list(new_ids)))
 
@@ -283,9 +282,7 @@ class Reporter(object):
             maxPop = planet.currentMeterValue(fo.meterType.targetPopulation)
             if maxPop < 1 and planetPopulation > 0:
                 warnings[planet.name] = (planetPopulation, maxPop)
-            statusStr = "  ID: " + str(planetID) + " Name: % 18s -- % 6s % 8s " % (str(planet.name), str(planet.size), str(planet.type))
-            statusStr += " Focus: % 8s" % ("_".join(str(planet.focus).split("_")[1:])[:8]) + " Species: " + str(planet.speciesName) + " Pop: %2d/%2d" % (planetPopulation, maxPop)
-            print statusStr
+            print "  ID: %d Name: % 18s -- % 6s % 8s  Focus: % 8s Species: %s Pop: %2d/%2d" % (planetID, planet.name, planet.size, planet.type, "_".join(str(planet.focus).split("_")[1:])[:8], planet.speciesName, planetPopulation, maxPop)
         print "\n\nEmpire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n" % (empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
         if warnings != {}:
             for pname in warnings:
