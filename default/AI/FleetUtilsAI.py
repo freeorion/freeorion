@@ -552,19 +552,13 @@ def get_fighter_capacity_of_fleet(fleet_id):
     """
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleet_id)
-    if not fleet:
-        return 0, 0
-
     cur_capacity = 0
     max_capacity = 0
-    for ship_id in fleet.shipIDs:
-        ship = universe.getShip(ship_id)
-        if not ship:
-            continue
-        design = ship.design
-        if not design or not design.isArmed:
-            continue
-        for partname in design.parts:
+    ships = (universe.getShip(ship_id) for ship_id in (fleet.shipIDs if fleet else []))
+    for ship in ships:
+        design = ship and ship.design
+        design_parts = design.parts if design and design.isArmed else []
+        for partname in design_parts:
             part = get_part_type(partname)
             if part and part.partClass == fo.shipPartClass.fighterHangar:
                 cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
