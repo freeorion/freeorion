@@ -27,15 +27,15 @@ BAD_WEAPONS
                 Or [
                     DesignHasPart name = "FT_HANGAR_1"
                     DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_3"
+                    DesignHasPart name = "FT_HANGAR_4"
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value - 1
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value - 2
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value - 3
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value - 4
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value - 0.5
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value - 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value - 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value - 3
             ]
 
         EffectsGroup
@@ -78,15 +78,15 @@ GOOD_WEAPONS
                 Or [
                     DesignHasPart name = "FT_HANGAR_1"
                     DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_3"
+                    DesignHasPart name = "FT_HANGAR_4"
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 4
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 0.5
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 3
             ]
 
         EffectsGroup
@@ -129,15 +129,15 @@ GREAT_WEAPONS
                 Or [
                     DesignHasPart name = "FT_HANGAR_1"
                     DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_3"
+                    DesignHasPart name = "FT_HANGAR_4"
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 2
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 4
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 6
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 8
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 5
             ]
 
         EffectsGroup
@@ -180,15 +180,15 @@ ULTIMATE_WEAPONS
                 Or [
                     DesignHasPart name = "FT_HANGAR_1"
                     DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
-                    DesignHasPart name = "FT_HANGAR_2"
+                    DesignHasPart name = "FT_HANGAR_3"
+                    DesignHasPart name = "FT_HANGAR_4"
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 3
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 6
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 9
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 12
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 4
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 6
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + 8
             ]
 
         EffectsGroup
