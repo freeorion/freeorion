@@ -40,8 +40,8 @@ namespace {
 
     const std::string SAVE_FILE_WND_NAME = "save-load";
 
-    const GG::X PROMT_WIDTH ( 200 );
-    const GG::Y PROMPT_HEIGHT ( 75 );
+    const GG::X PROMT_WIDTH(200);
+    const GG::Y PROMPT_HEIGHT(75);
 
     const double DEFAULT_STRETCH = 1.0;
 
@@ -143,9 +143,6 @@ namespace {
         }
         return false;
     }
-
-    bool IsValidUTF8(const std::string& in)
-    { return utf8::is_valid(in.begin(), in.end()); }
 }
 
 /** Describes how a column should be set up in the dialog */

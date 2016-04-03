@@ -20,6 +20,8 @@ FO_COMMON_API void InitDirs(const std::string& argv0);
   * <li>This directory is the only one that can be considered writable!</ul> */
 FO_COMMON_API const boost::filesystem::path GetUserDir();
 
+/** Converts UTF-8 string into a path, doing any required wide-character
+  * conversions as determined by the operating system / filesystem. */
 FO_COMMON_API const boost::filesystem::path FilenameToPath(const std::string& path_str);
 
 /** Returns the directory that contains all game content files, such as string
@@ -69,5 +71,9 @@ FO_COMMON_API boost::filesystem::path RelativePath(const boost::filesystem::path
 
 /** Returns a vector of files within \a path including a recursive search though sub-dirs */
 FO_COMMON_API std::vector<boost::filesystem::path> ListDir(const boost::filesystem::path& path);
+
+/** Returns true iff the string \a in is valid UTF-8. */
+FO_COMMON_API bool IsValidUTF8(const std::string& in);
+
 
 #endif

@@ -230,10 +230,11 @@ namespace GG {
                 // Extract the parameters from params_string to the tag_params map.
                 ExtractParameters(tag.tag_params, params);
 
-                BlockControl* block = FactoryMap()[tag.tag]->CreateFromTag(
-                    tag.tag, params, tag.content, m_font, m_color, m_format);
-                m_owner->AttachChild(block);
-                m_blocks.push_back(block);
+                BlockControl* block = FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format);
+                if (block) {
+                    m_owner->AttachChild(block);
+                    m_blocks.push_back(block);
+                }
             }
 
             DoLayout();
