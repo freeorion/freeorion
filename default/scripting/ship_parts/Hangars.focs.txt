@@ -9,7 +9,7 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/fighters-1.png"
+    icon = "icons/ship_parts/fighter05.png"
 
 Part
     name = "FT_HANGAR_1"
@@ -22,7 +22,7 @@ Part
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/fighters-1.png"
+    icon = "icons/ship_parts/fighter06.png"
 
 Part
     name = "FT_HANGAR_2"
@@ -35,7 +35,7 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/fighters-1.png"
+    icon = "icons/ship_parts/fighter02.png"
 
 Part
     name = "FT_HANGAR_3"
@@ -48,7 +48,7 @@ Part
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/fighters-1.png"
+    icon = "icons/ship_parts/fighter04.png"
 
 Part
     name = "FT_HANGAR_4"
@@ -61,7 +61,7 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/fighters-1.png"
+    icon = "icons/ship_parts/fighter01.png"
 
 Part
     name = "FT_KRILL"
