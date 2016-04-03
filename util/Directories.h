@@ -11,14 +11,26 @@
   * directories if they do not yet exist. */
 FO_COMMON_API void InitDirs(const std::string& argv0);
 
-/** Returns the directory where FreeOrion should store user specific data, like
-  * the configuration file and savegames.  Under Unix, this would be
-  * <tt>~/.freeorion</tt>, under Windows, this might be something along the
-  * lines of <tt>C:\\Documents and Settings\\Username\\FreeOrion</tt>
+/** Returns the directory where FreeOrion should store user specific
+  * configuration data , like the configuration file.  Under Unix, this
+  * would be <tt>$XDG_CONFIG_HOME/freeorion</tt>, under Windows, this
+  * might be something along the lines of
+  * <tt>C:\\Documents and Settings\\Username\\FreeOrion</tt>
   * or even <tt>\\\\Gandalf\\Users\\Frodo\\Settings\\FreeOrion</tt>.
   * \note <ul><li> If the directory does not exist, it will be created.
-  * <li>This directory is the only one that can be considered writable!</ul> */
-FO_COMMON_API const boost::filesystem::path GetUserDir();
+  * Under Windows and OSX it is the same as the GetUserDataDir()
+  * <li>This directory can be considered writable!</ul> */
+FO_COMMON_API const boost::filesystem::path GetUserConfigDir();
+
+/** Returns the directory where FreeOrion should store user specific data,
+  * like the savegames.  Under Unix, this would be
+  * <tt>$XDG_DATA_HOME/freeorion</tt>, under Windows, this might be something
+  * along the lines of <tt>C:\\Documents and Settings\\Username\\FreeOrion</tt>
+  * or even <tt>\\\\Gandalf\\Users\\Frodo\\Settings\\FreeOrion</tt>.
+  * \note <ul><li> If the directory does not exist, it will be created.
+  * Under Windows and OSX it is the same as the GetUserConfigDir()
+  * <li>This directory can be considered writable!</ul> */
+FO_COMMON_API const boost::filesystem::path GetUserDataDir();
 
 /** Converts UTF-8 string into a path, doing any required wide-character
   * conversions as determined by the operating system / filesystem. */
