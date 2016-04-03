@@ -43,9 +43,8 @@ class PlanetFocusInfo(object):
     def __init__(self, planet):
         self.planet = planet
         self.current_focus = planet.focus
-        self.current_output = {}
-        self.current_output[IFocus] = planet.currentMeterValue(fo.meterType.industry)
-        self.current_output[RFocus] = planet.currentMeterValue(fo.meterType.research)
+        self.current_output = (planet.currentMeterValue(fo.meterType.industry)
+                               , planet.currentMeterValue(fo.meterType.research))
         self.possible_output = {}
         itarget = planet.currentMeterValue(fo.meterType.targetIndustry)
         rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
@@ -227,7 +226,7 @@ class Reporter(object):
                 pinfo = self.focus_manager.baked_planet_info[pid]
                 oldFocus = pinfo.current_focus
                 newFocus = pinfo.future_focus
-                cPP, cRP = pinfo.current_output[IFocus], pinfo.current_output[RFocus]
+                cPP, cRP = pinfo.current_output
                 otPP, otRP = pinfo.possible_output.get(oldFocus, (0, 0))
                 ntPP, ntRP = pinfo.possible_output[newFocus]
                 print (Reporter.table_format %
@@ -312,7 +311,7 @@ def assess_protection_focus(pid, pinfo):
         if pinfo.current_focus == PFocus:
             print "Advising dropping Protection Focus at %s due to no regional threat" % this_planet
         return False
-    cur_prod_val = weighted_sum_output([pinfo.current_output[IFocus], pinfo.current_output[RFocus]])
+    cur_prod_val = weighted_sum_output(pinfo.current_output)
     target_prod_val = max(map(weighted_sum_output, [pinfo.possible_output[IFocus], pinfo.possible_output[RFocus]]))
     prot_prod_val = weighted_sum_output(pinfo.possible_output[PFocus])
     local_production_diff = 0.8 * cur_prod_val + 0.2 * target_prod_val - prot_prod_val
@@ -520,7 +519,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
         for pid, pinfo in focus_manager.raw_planet_info.items():
             II, IR = pinfo.possible_output[IFocus]
             RI, RR = pinfo.possible_output[RFocus]
-            CI, CR = pinfo.current_output[IFocus], pinfo.current_output[RFocus]
+            CI, CR = pinfo.current_output
             research_penalty = (pinfo.current_focus != RFocus)
             # calculate factor F at which II + F * IR == RI + F * RR =====> F = ( II-RI ) / (RR-IR)
             thisFactor = (II - RI) / max(0.01, RR - IR)  # don't let denominator be zero for planets where focus doesn't change RP
@@ -575,7 +574,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
                 print "Rejecting further Research Focus choices as too expensive:"
                 print "%34s|%20s|%15s |%15s|%15s |%15s |%15s" % ("                      Planet ", " current RP/PP ", " current target RP/PP ", "current Focus ", "  rejectedFocus ", " rejected target RP/PP ", "rejected RP-PP EQF")
             oldFocus = pinfo.current_focus
-            cPP, cRP = pinfo.current_output[IFocus], pinfo.current_output[RFocus]
+            cPP, cRP = pinfo.current_output
             otPP, otRP = pinfo.possible_output[oldFocus]
             ntPP, ntRP = pinfo.possible_output[RFocus]
             print "pID (%3d) %22s | c: %5.1f / %5.1f | cT: %5.1f / %5.1f |  cF: %8s | nF: %8s | cT: %5.1f / %5.1f | %.2f" % (pid, pinfo.planet.name, cRP, cPP, otRP, otPP, fociMap.get(oldFocus, 'unknown'), fociMap[RFocus], ntRP, ntPP, ratio)
