@@ -567,7 +567,7 @@ class ShipDesignCache(object):
                     if ship_design:
                         if _can_build(ship_design, empire_id, pid):
                             for slot in _get_part_type(partname).mountableSlotTypes:
-                                local_cache[slot].append(partname)
+                                local_cache.setdefault(slot, []).append(partname)
                                 local_ignore.update(self.strictly_worse_parts[partname])
                         break
                 if verbose and not ship_design:
