@@ -51,6 +51,12 @@ class PlanetFocusInfo(object):
         self.possible_output[self.current_focus] = (itarget, rtarget)
         self.future_focus = self.current_focus
 
+    def can_change_focus(self):
+        """Can the planet change focus?  Is it's population non zero?"""
+        #TODO Could this be changed to current population instead of target population?
+        #It uses the target population to avoid situations where an unsustainable population is dying?
+        return self.planet.currentMeterValue(fo.meterType.targetPopulation) > 0
+
 
 class PlanetFocusManager(object):
     """PlanetFocusManager tracks all of the empire's planets, what their current and future focus will be."""
@@ -73,8 +79,7 @@ class PlanetFocusManager(object):
         self.baked_planet_info = dict()
 
         for pid, pinfo in self.raw_planet_info.items():
-            focusable = pinfo.planet.currentMeterValue(fo.meterType.targetPopulation) > 0
-            if not focusable:
+            if not pinfo.can_change_focus():
                 self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
 
 
@@ -129,7 +134,6 @@ class PlanetFocusManager(object):
 
         universe.updateMeterEstimates(unbaked_pids)
         for pid, pinfo, planet in planet_infos:
-            can_focus = planet.currentMeterValue(fo.meterType.targetPopulation) > 0
             itarget = planet.currentMeterValue(fo.meterType.targetIndustry)
             rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
             if planet.focus == RFocus:
@@ -138,7 +142,7 @@ class PlanetFocusManager(object):
             else:
                 pinfo.possible_output[RFocus] = (0, 0)
                 pinfo.possible_output[GFocus] = (0, pinfo.possible_output[GFocus])
-            if can_focus and pinfo.current_focus != planet.focus:
+            if pinfo.can_change_focus() and pinfo.current_focus != planet.focus:
                 fo.issueChangeFocusOrder(pid, pinfo.current_focus)  # put it back to what it was
 
         universe.updateMeterEstimates(unbaked_pids)
