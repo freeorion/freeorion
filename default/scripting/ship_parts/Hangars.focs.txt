@@ -6,7 +6,7 @@ Part
     capacity = 2
     damage = 0
     mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter05.png"
@@ -19,7 +19,7 @@ Part
     capacity = 4
     damage = 1
     mountableSlotTypes = Internal
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter06.png"
@@ -45,7 +45,7 @@ Part
     capacity = 2
     damage = 5
     mountableSlotTypes = Internal
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter04.png"
@@ -58,7 +58,7 @@ Part
     capacity = 1
     damage = 10
     mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter01.png"
