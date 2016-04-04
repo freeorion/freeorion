@@ -7,8 +7,8 @@ and finally the targetted ratio of research/production. Each decision on a plane
 transfers the planet from the raw list to the baked list, until all planets
 have their future focus decided.
 """
-#Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
-#      exactly the same colonies, but different pids may make different choices.
+# Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
+#       exactly the same colonies, but different pids may make different choices.
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -23,7 +23,7 @@ from freeorion_tools import tech_is_complete
 
 resource_timer = Timer('timer_bucket')
 
-#Local Constants
+# Local Constants
 IFocus = FocusType.FOCUS_INDUSTRY
 RFocus = FocusType.FOCUS_RESEARCH
 MFocus = FocusType.FOCUS_MINING  # not currently used in content
@@ -31,7 +31,7 @@ GFocus = FocusType.FOCUS_GROWTH
 PFocus = FocusType.FOCUS_PROTECTION
 fociMap = {IFocus: "Industry", RFocus: "Research", MFocus: "Mining", GFocus: "Growth", PFocus: "Defense"}
 
-#TODO use the priorityRatio to weight
+# TODO use the priorityRatio to weight
 RESEARCH_WEIGHTING = 2.0
 
 useGrowth = True
@@ -45,8 +45,8 @@ class PlanetFocusInfo(object):
     def __init__(self, planet):
         self.planet = planet
         self.current_focus = planet.focus
-        self.current_output = (planet.currentMeterValue(fo.meterType.industry)
-                               , planet.currentMeterValue(fo.meterType.research))
+        self.current_output = (planet.currentMeterValue(fo.meterType.industry),
+                               planet.currentMeterValue(fo.meterType.research))
         self.possible_output = {}
         itarget = planet.currentMeterValue(fo.meterType.targetIndustry)
         rtarget = planet.currentMeterValue(fo.meterType.targetResearch)
@@ -55,8 +55,8 @@ class PlanetFocusInfo(object):
 
     def can_change_focus(self):
         """Can the planet change focus?  Is it's population non zero?"""
-        #TODO Could this be changed to current population instead of target population?
-        #It uses the target population to avoid situations where an unsustainable population is dying?
+        # It uses the target population versus current population to avoid situations
+        # where an unsustainable population is dying?
         return self.planet.currentMeterValue(fo.meterType.targetPopulation) > 0
 
 
@@ -111,7 +111,7 @@ class PlanetFocusManager(object):
         It excludes baked planets from consideration.
         Note: The results will not be strictly correct if any planets have global effects
         """
-        #TODO this function depends on the specific rule that off-focus meter value are always the minimum value
+        # TODO this function depends on the specific rule that off-focus meter value are always the minimum value
         universe = fo.getUniverse()
         unbaked_pids = [pid for pid in pids if not pid in self.baked_planet_info]
         planet_infos = [(pid, self.all_planet_info[pid], self.all_planet_info[pid].planet) for pid in unbaked_pids]
@@ -177,8 +177,8 @@ class Reporter(object):
     @staticmethod
     def print_table_header():
         print "==================================="
-        print Reporter.table_format % ("Planet", "current RP/PP", "old target RP/PP"
-                                       , "current Focus", "newFocus", "new target RP/PP")
+        print Reporter.table_format % ("Planet", "current RP/PP", "old target RP/PP",
+                                       "current Focus", "newFocus", "new target RP/PP")
 
     def print_table_footer(self, priorityRatio):
         current_industry_target = 0
@@ -207,18 +207,18 @@ class Reporter(object):
 
         print "-----------------------------------"
         print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" \
-            % (priorityRatio, current_research_target / (current_industry_target + 0.0001)
-               , current_research_target, current_industry_target)
+            % (priorityRatio, current_research_target / (current_industry_target + 0.0001),
+               current_research_target, current_industry_target)
         print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" \
-            % (all_industry_research_target / (all_industry_industry_target + 0.0001)
-               , all_industry_research_target, all_industry_industry_target)
+            % (all_industry_research_target / (all_industry_industry_target + 0.0001),
+               all_industry_research_target, all_industry_industry_target)
         print "Max Research assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" \
-            % (all_research_research_target / (all_research_industry_target + 0.0001)
-               , all_research_research_target, all_research_industry_target)
+            % (all_research_research_target / (all_research_industry_target + 0.0001),
+               all_research_research_target, all_research_industry_target)
         print "-----------------------------------"
         print "Final Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes" \
-            % (fo.currentTurn(), current_research_target / (current_industry_target + 0.0001)
-               , current_research_target, current_industry_target, total_changed)
+            % (fo.currentTurn(), current_research_target / (current_industry_target + 0.0001),
+               current_research_target, current_industry_target, total_changed)
 
     def print_table(self, priorityRatio):
         """Prints a table of all of the captured sections of assignments"""
@@ -276,7 +276,7 @@ class Reporter(object):
         # what is the focus of available resource centers?
         print
         warnings = {}
-        #TODO combine this with previous table to reduce report duplication?
+        # TODO combine this with previous table to reduce report duplication?
         print "Planet Resources Foci:"
         for planetID in empirePlanetIDs:
             planet = universe.getPlanet(planetID)
@@ -427,8 +427,8 @@ def use_planet_growth_specials(focus_manager):
 
 def use_planet_production_and_research_specials(focus_manager):
     """Use production and research specials as appropriate.  Remove planets from list of candidates."""
-    #TODO remove reliance on rules knowledge.  Just scan for specials with production
-    #and research bonuses and use what you find. Perhaps maintain a list
+    # TODO remove reliance on rules knowledge.  Just scan for specials with production
+    # and research bonuses and use what you find. Perhaps maintain a list
     # of know types of specials
     universe = fo.getUniverse()
     already_have_comp_moon = False
@@ -481,7 +481,7 @@ def set_planet_protection_foci(focus_manager):
 
 def set_planet_happiness_foci(focus_manager):
     """Assess and set planet focus to preferred focus depending on happiness"""
-    #TODO Assess need to set planet to preferred focus to improve happiness
+    # TODO Assess need to set planet to preferred focus to improve happiness
 
 
 def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
@@ -496,10 +496,10 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
     curTargetRP = 0.001
     resource_timer.start("Loop")  # loop
     has_force = tech_is_complete("CON_FRC_ENRG_STRC")
-    #cumulative all industry focus
+    # cumulative all industry focus
     ctPP0, ctRP0 = 0, 0
 
-    #Handle presets which only have possible output for preset focus
+    # Handle presets which only have possible output for preset focus
     for pid, pinfo in focus_manager.baked_planet_info.items():
         nPP, nRP = pinfo.possible_output[pinfo.future_focus]
         curTargetPP += nPP
@@ -515,7 +515,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
         if RFocus not in pinfo.planet.availableFoci:
             focus_manager.bake_future_focus(pid, pinfo.current_focus, False)
 
-    #smallest possible ratio of research to industry with an all industry focus
+    # smallest possible ratio of research to industry with an all industry focus
     maxi_ratio = ctRP0 / max(0.01, ctPP0)
 
     for adj_round in [2, 3, 4]:
@@ -587,7 +587,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
         curTargetRP += (RR - IR)
         curTargetPP -= (II - RI)
 
-    #Any planet in the ratios list and still raw is set to industry
+    # Any planet in the ratios list and still raw is set to industry
     for ratio, pid, pinfo in ratios:
         if pid in focus_manager.raw_planet_info:
             focus_manager.bake_future_focus(pid, IFocus, False)
