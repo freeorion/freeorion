@@ -135,7 +135,7 @@ def chat_human(message):
 def cache_by_session(function):
     """
     Cache a function value by session.
-    Wrap only functions with hashable arguments.
+    Wraps only functions with hashable arguments.
     """
     _cache = {}
 
