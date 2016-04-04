@@ -1146,14 +1146,16 @@ void ShipDesignOrder::ExecuteImpl() const {
 
     } else if (m_move_design) {
         //Move an existing design from its current location to just before the after_design
-          if (!empire->ShipDesignKept(m_design_id)) {
+        if (!empire->ShipDesignKept(m_design_id)) {
             ErrorLogger() << "Tried to move a ShipDesign that the empire wasn't remembering";
             return;
         }
+        if (m_design_id == m_design_id_after)
+            return;
+
         empire->RemoveShipDesign(m_design_id);
         empire->AddShipDesign(m_design_id, m_design_id_after);
         DebugLogger() << "Move Ship Design " << m_design_id << " to before " << m_design_id_after;
-
     } else {
         // player is ordering empire to retain a particular design, so that is can
         // be used to construct ships by that empire.

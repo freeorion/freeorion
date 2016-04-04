@@ -1194,7 +1194,7 @@ public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    BasesListBox(void);
+    BasesListBox(const std::string& drop_type = "");
     //@}
 
     /** \name Accessors */ //@{
@@ -1204,7 +1204,7 @@ public:
     /** \name Mutators */ //@{
     virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void                    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void                    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
+    void                            QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -1217,6 +1217,7 @@ public:
 
     void                            ShowAvailability(bool available, bool refresh_list = true);
     void                            HideAvailability(bool available, bool refresh_list = true);
+    virtual void                    EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -1288,8 +1289,6 @@ public:
 
 protected:
     virtual void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
-    virtual void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                 const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -1310,6 +1309,7 @@ private:
     bool                        m_showing_completed_designs;
     bool                        m_showing_saved_designs;
     bool                        m_showing_monsters;
+    bool                        m_enabled;          ///<active player (true) or observer (false)
 
     std::set<std::string>       m_hulls_in_list;
     std::set<std::string>       m_saved_desgins_in_list;
@@ -1444,22 +1444,22 @@ bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-BasesListBox::BasesListBox() :
-    QueueListBox(COMPLETE_DESIGN_ROW_DROP_STRING,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
+BasesListBox::BasesListBox(const std::string& drop_type) :
+    QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false),
     m_showing_saved_designs(false),
-    m_showing_monsters(false)
+    m_showing_monsters(false),
+    m_enabled(false)
 {
     InitRowSizes();
-    SetStyle(GG::LIST_NOSEL);
+    SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
     GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
     GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
-
-    EnableOrderIssuing(true);
+    GG::Connect(QueueItemMovedSignal,   &BasesListBox::QueueItemMoved,      this);
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
@@ -1476,6 +1476,8 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+    if (MatchesOrContains(this, destination))
+        return;
     if (wnds.empty())
         return;
     if (wnds.size() != 1)
@@ -1484,7 +1486,11 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
         return;
-    DetachChild(wnds.front());
+
+    Row* original_row = boost::polymorphic_downcast<Row*>(*wnds.begin());
+    iterator insertion_point = std::find(begin(), end(), original_row);
+    if (insertion_point != end())
+        ++insertion_point;
 
     // replace dragged-away control with new copy
     const GG::Pt row_size = ListRowSize();
@@ -1498,19 +1504,9 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
 
         int design_id = design_row->DesignID();
 
-        ListBox::iterator point;
-        for ( point = begin(); point != end(); ++point ) {
-            const BasesListBox::CompletedDesignListBoxRow* irow =
-                boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*point);
-            if( irow && irow->DesignID() == design_id ) {
-                ++point;
-                break;
-            }
-        }
-
         CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y,
                                                                        design_id);
-        Insert(row, point);
+        Insert(row, insertion_point);
         row->Resize(row_size);
 
     } else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
@@ -1521,9 +1517,8 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         const std::string& hull_name = design_row->Hull();
         HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y,
                                                                  hull_name, empty_parts_vec);
-        Insert(row);
+        Insert(row, insertion_point);
         row->Resize(row_size);
-        m_hulls_in_list.insert(hull_name);  // should be redundant
 
     } else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
         // find name of design that was dragged away, and replace
@@ -1533,69 +1528,37 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         const std::string& design_name = design_row->DesignName();
         SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y,
                                                                design_name);
-        Insert(row);
+        Insert(row, insertion_point);
         row->Resize(row_size);
-        m_saved_desgins_in_list.insert(design_name);
     }
 
     // remove dragged-away row from this ListBox
     CUIListBox::ChildrenDraggedAway(wnds, destination);
     DetachChild(wnds.front());
-
 }
 
+void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
+    BasesListBox::CompletedDesignListBoxRow* control =
+        boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(row);
+    Empire* empire = GetEmpire(m_empire_id_shown);
+    if (control && empire && position <= NumRows()) {
+        int design_id = control->DesignID();
 
-void BasesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
+        iterator insert_before_row = begin();
+        std::advance(insert_before_row, position);
 
-    if (std::distance(first, last) != 1) {
-        ErrorLogger() << "SavedDesignPanel::DropsAcceptable expects a single dropped item.";
-        return;
+        const BasesListBox::CompletedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? NULL :
+            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
+        int insert_before_id = insert_before_control
+            ? insert_before_control->DesignID() : ShipDesign::INVALID_DESIGN_ID;
+
+        if (design_id != insert_before_id)
+            //insert_before_row may be end() to insert as last item
+            Insert(control, insert_before_row);
+        control->Resize(ListRowSize());
+        HumanClientApp::GetApp()->Orders()
+            .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
     }
-
-    if (m_showing_completed_designs && first->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING)
-        first->second = true;
-}
-
-void BasesListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (wnds.empty()) return;
-
-    if (wnds.size() != 1) {
-        // delete any extra wnds that won't be processed below
-        std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
-        ++it;
-        for (; it != wnds.end(); ++it)
-            delete *it;
-        ErrorLogger() << "BasesListBox::AcceptDrops given multiple wnds unexpectedly...";
-    }
-
-    const GG::Wnd* wnd = *(wnds.begin());
-    if (!wnd)
-        return;
-
-    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-        const BasesListBox::CompletedDesignListBoxRow* control =
-            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
-        Empire* empire = GetEmpire(m_empire_id_shown);
-        if (control && empire) {
-            int design_id = control->DesignID();
-
-            iterator insert_before_row = RowUnderPt(pt);
-            const BasesListBox::CompletedDesignListBoxRow* insert_before_control =
-                boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
-            int insert_before_id = (insert_before_row == end() || !insert_before_control)
-                ? ShipDesign::INVALID_DESIGN_ID : insert_before_control->DesignID();
-
-            DebugLogger() << "Accepted Drop of id " << design_id << " before " << insert_before_id;
-
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
-        }
-    }
-
-    delete wnd;
 }
 
 void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
@@ -1987,6 +1950,7 @@ void BasesListBox::ShowEmptyHulls(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
+    EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
@@ -1996,6 +1960,7 @@ void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
     m_showing_completed_designs = true;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
+    EnableOrderIssuing(m_enabled);
     if (refresh_list)
         Populate();
 }
@@ -2005,6 +1970,7 @@ void BasesListBox::ShowSavedDesigns(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = true;
     m_showing_monsters = false;
+    EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
@@ -2014,6 +1980,7 @@ void BasesListBox::ShowMonsters(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
     m_showing_monsters = true;
+    EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
@@ -2050,6 +2017,11 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
     }
 }
 
+void BasesListBox::EnableOrderIssuing(bool enable/* = true*/) {
+    m_enabled = enable;
+    QueueListBox::EnableOrderIssuing(m_enabled && m_showing_completed_designs);
+}
+
 
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
@@ -2067,6 +2039,7 @@ public:
     void            SetEmpireShown(int empire_id, bool refresh_list);
     void            ShowAvailability(bool available, bool refresh_list);
     void            HideAvailability(bool available, bool refresh_list);
+    void            EnableOrderIssuing(bool enable/* = true*/);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -2123,7 +2096,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     GG::Connect(m_hulls_list->HullClickedSignal,                DesignWnd::BaseSelector::HullClickedSignal);
 
-    m_designs_list = new BasesListBox();
+    m_designs_list = new BasesListBox(COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
@@ -2213,6 +2186,17 @@ void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_li
         else
             ShowAvailability(false, refresh_list);
     }
+}
+
+void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
+    if (m_hulls_list)
+        m_hulls_list->EnableOrderIssuing(enable);
+    if (m_designs_list)
+        m_designs_list->EnableOrderIssuing(enable);
+    if (m_saved_designs_list)
+        m_saved_designs_list->EnableOrderIssuing(enable);
+    if (m_monsters_list)
+        m_monsters_list->EnableOrderIssuing(enable);
 }
 
 void DesignWnd::BaseSelector::DoLayout() {
@@ -3016,7 +3000,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     }
 
     m_complete_design_id = ship_design->ID();
-    m_replaced_design_id = ship_design->ID();
+    m_replaced_design_id = ship_design->IsMonster() ? ShipDesign::INVALID_DESIGN_ID : ship_design->ID();
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -3036,6 +3020,7 @@ void DesignWnd::MainPanel::SetDesign(int design_id)
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::vector<std::string>& parts)
 {
+    m_replaced_design_id = ShipDesign::INVALID_DESIGN_ID;
     SetHull(hull);
     SetParts(parts);
 }
@@ -3045,8 +3030,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::string& name,
                                                const std::string& desc)
 {
-    SetHull(hull);
-    SetParts(parts);
+    SetDesignComponents(hull, parts);
     m_design_name->SetText(name);
     m_design_description->SetText(desc);
 }
@@ -3270,7 +3254,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 }
 
 void DesignWnd::MainPanel::DesignNameChanged() {
-    if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()) || IsDesignNameValid())
+    if (m_disabled_by_name || (!IsDesignNameValid() && !m_confirm_button->Disabled()))
         DesignChangedSignal();
     else if (GetOptionsDB().Get<bool>("UI.design-pedia-dynamic"))
         DesignNameChangedSignal();
@@ -3575,4 +3559,4 @@ void DesignWnd::DesignNameChanged()
 { m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign()); }
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
-{}
+{ m_base_selector->EnableOrderIssuing(enable); }
