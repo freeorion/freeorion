@@ -2,7 +2,7 @@ Tech
     name = "SHP_FRC_ENRG_COMP"
     description = "SHP_FRC_ENRG_COMP_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    category = "HULLS_CATEGORY"
+    category = "SHIP_HULLS_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [

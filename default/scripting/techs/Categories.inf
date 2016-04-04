@@ -24,18 +24,18 @@ Category
     colour = (70, 80, 215, 255)
 
 Category 
-    name = "HULLS_CATEGORY"
-    graphic = "ships.png"
+    name = "SHIP_HULLS_CATEGORY"
+    graphic = "ship_hulls.png"
     colour = (255, 139, 85, 255)
 
 Category 
-    name = "PARTS_CATEGORY"
-    graphic = "ships.png"
+    name = "SHIP_PARTS_CATEGORY"
+    graphic = "ship_parts.png"
     colour = (255, 139, 85, 255)
 
 Category 
-    name = "WEAPONS_CATEGORY"
-    graphic = "ships.png"
+    name = "SHIP_WEAPONS_CATEGORY"
+    graphic = "ship_weapons.png"
     colour = (255, 139, 85, 255)
 
 Category 
