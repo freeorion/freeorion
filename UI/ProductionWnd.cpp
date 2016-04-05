@@ -330,7 +330,7 @@ namespace {
                 boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
             total_cost *= elem.blocksize;
             float per_turn_cost = total_cost / std::max(1, minimum_turns);
-            float progress = empire->ProductionStatus(queue_index);
+            float progress = empire ? empire->ProductionStatus(queue_index) : 0.0f;
             if (progress == -1.0f)
                 progress = 0.0f;
 
@@ -531,7 +531,9 @@ namespace {
         }
         if (m_block_size_selector) {
             m_block_size_selector->MoveTo(GG::Pt(left, GG::Y(MARGIN)));
-            left += m_quantity_selector->Width();
+            if (m_quantity_selector) {
+                left += m_quantity_selector->Width();
+            }
         }
 
         const GG::X NAME_WIDTH = Width() - left - MARGIN;

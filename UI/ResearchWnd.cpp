@@ -66,7 +66,7 @@ namespace {
             double per_turn_cost = tech ? tech->PerTurnCost(queue_element.empire_id) : 1;
             double progress = 0.0;
             if (empire && empire->TechResearched(tech_name))
-                progress = tech->ResearchCost(queue_element.empire_id);
+                progress = tech ? tech->ResearchCost(queue_element.empire_id) : 0.0;
             else if (empire)
                 progress = empire->ResearchProgress(tech_name);
 
@@ -137,7 +137,7 @@ namespace {
         top += m_name_text->Height();
 
         m_progress_bar = new MultiTurnProgressBar(tech ? tech->ResearchTime(m_empire_id) : 1,
-                                                  turns_completed, tech->ResearchCost(m_empire_id), turn_spending,
+                                                  turns_completed, tech ? tech->ResearchCost(m_empire_id) : 0.0, turn_spending,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
                                                   m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );
@@ -259,7 +259,8 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_research_info_panel(0),
     m_queue_wnd(0),
     m_tech_tree_wnd(0),
-    m_enabled(false)
+    m_enabled(false),
+    m_empire_shown_id(ALL_EMPIRES)
 {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);

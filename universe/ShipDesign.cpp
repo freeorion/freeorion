@@ -120,7 +120,7 @@ PartTypeManager::PartTypeManager() {
         parse::ship_parts(m_parts);
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship_parts.txt: error: " << e.what();
-        throw e;
+        throw;
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
@@ -450,7 +450,7 @@ HullTypeManager::HullTypeManager() {
         parse::ship_hulls(m_hulls);
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship_hulls.txt: error: " << e.what();
-        throw e;
+        throw;
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
@@ -495,7 +495,9 @@ const int       ShipDesign::MAX_ID            = 2000000000;
 ShipDesign::ShipDesign() :
     m_id(INVALID_OBJECT_ID),
     m_name(),
+    m_description(),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
+    m_designed_by_empire(ALL_EMPIRES),
     m_hull(),
     m_parts(),
     m_is_monster(false),
@@ -515,7 +517,8 @@ ShipDesign::ShipDesign() :
     m_research_generation(0.0),
     m_industry_generation(0.0),
     m_trade_generation(0.0),
-    m_is_production_location(false)
+    m_is_production_location(false),
+    m_producible(false)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description,
@@ -547,7 +550,8 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_research_generation(0.0),
     m_industry_generation(0.0),
     m_trade_generation(0.0),
-    m_is_production_location(false)
+    m_is_production_location(false),
+    m_producible(false)
 {
     // expand parts list to have empty values if fewer parts are given than hull has slots
     if (const HullType* hull_type = GetHullType(m_hull)) {
@@ -1022,14 +1026,14 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
         parse::ship_designs(m_ship_designs);
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing ship designs: error: " << e.what();
-        throw e;
+        throw;
     }
 
     try {
         parse::monster_designs(m_monster_designs);
     } catch (const std::exception& e) {
         ErrorLogger() << "Failed parsing monster designs: error: " << e.what();
-        throw e;
+        throw;
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {

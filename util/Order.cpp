@@ -104,7 +104,9 @@ void RenameOrder::ExecuteImpl() const {
 // CreateFleetOrder
 ////////////////////////////////////////////////
 NewFleetOrder::NewFleetOrder() :
-    Order()
+    Order(),
+    m_fleet_names(),
+    m_system_id(INVALID_OBJECT_ID)
 {}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
@@ -1014,6 +1016,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
 ShipDesignOrder::ShipDesignOrder() :
     Order(),
     m_design_id(INVALID_OBJECT_ID),
+    m_update_name_or_description(false),
     m_delete_design_from_empire(false),
     m_create_new_design(false),
     m_move_design(false),

@@ -6,7 +6,16 @@
 
 struct ValueRefUniverseObjectTypeFixture {
     ValueRefUniverseObjectTypeFixture():
-        result(0)
+        result(0),
+        operation1(0),
+        operation2(0),
+        operation3(0),
+        operation4(0),
+        operation5(0),
+        operation6(0),
+        value(0),
+        statistic(0),
+        variable(0)       
     {}
 
     ~ValueRefUniverseObjectTypeFixture() {

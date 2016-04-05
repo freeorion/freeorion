@@ -2690,6 +2690,8 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             const FleetWnd* parent_fleet_wnd = boost::dynamic_pointer_cast<const FleetWnd>(parent);
             if (!parent_fleet_wnd)
                 return;
+            if (!design)
+                return;
             CreateNewFleetFromShipsWithDesign(fleet->ShipIDs(), design->ID(),
                                               parent_fleet_wnd->GetNewFleetAggression());
             break;

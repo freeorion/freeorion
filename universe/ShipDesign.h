@@ -105,6 +105,7 @@ public:
         m_secondary_stat(1.0f),
         m_production_cost(0),
         m_production_time(0),
+        m_producible(false),
         m_mountable_slot_types(),
         m_tags(),
         m_production_meter_consumption(),

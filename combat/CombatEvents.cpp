@@ -54,7 +54,8 @@ AttackEvent::AttackEvent() :
     round(-1),
     attacker_id(INVALID_OBJECT_ID),
     target_id(INVALID_OBJECT_ID),
-    damage(0.0f)
+    damage(0.0f),
+    attacker_owner_id(ALL_EMPIRES)
 {}
 
 AttackEvent::AttackEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_, int attacker_owner_id_) :
@@ -110,7 +111,8 @@ void AttackEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, 
 //////////////////////////////////////////
 IncapacitationEvent::IncapacitationEvent() :
     bout(-1),
-    object_id(INVALID_OBJECT_ID)
+    object_id(INVALID_OBJECT_ID),
+    object_owner_id(ALL_EMPIRES)
 {}
 
 IncapacitationEvent::IncapacitationEvent(int bout_, int object_id_, int object_owner_id_) :
