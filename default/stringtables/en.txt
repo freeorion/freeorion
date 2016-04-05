@@ -5088,6 +5088,54 @@ Empire Eliminated
 BEGINNER_HINTS
 Random Game Hints
 
+BEGINNER_HINTS_TEXT
+'''These are a collection of Situation Reports aimed at helping beginners.
+One of these entries is selected randomly each turn, they are collected here for future reference.
+
+All random game hints:
+
+[[BEGINNER_HINT_01]]
+
+[[BEGINNER_HINT_02]]
+
+[[BEGINNER_HINT_03]]
+
+[[BEGINNER_HINT_04]]
+
+[[BEGINNER_HINT_05]]
+
+[[BEGINNER_HINT_06]]
+
+[[BEGINNER_HINT_07]]
+
+[[BEGINNER_HINT_08]]
+
+[[BEGINNER_HINT_09]]
+
+[[BEGINNER_HINT_10]]
+
+[[BEGINNER_HINT_11]]
+
+[[BEGINNER_HINT_12]]
+
+[[BEGINNER_HINT_13]]
+
+[[BEGINNER_HINT_14]]
+
+[[BEGINNER_HINT_15]]
+
+[[BEGINNER_HINT_16]]
+
+[[BEGINNER_HINT_17]]
+
+[[BEGINNER_HINT_18]]
+
+[[BEGINNER_HINT_19]]
+
+[[BEGINNER_HINT_20]]
+
+[[BEGINNER_HINT_21]]'''
+
 RANDOM_BEGINNER_HINT
 Hint #%rawtext%
 
@@ -5147,6 +5195,12 @@ BEGINNER_HINT_18
 
 BEGINNER_HINT_19
 19: A colony can be established on an [[encyclopedia OUTPOSTS_TITLE]] by constructing a colony building or by using a [[predefinedshipdesign SD_COLONY_SHIP]]. Most colony buildings require a [[encyclopedia SUPPLY_TITLE]] connection to a planet with at least 5 [[encyclopedia HAPPINESS_TITLE]], and 3 population. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
+
+BEGINNER_HINT_20
+20: Specific Situation Reports (like this one) can be temporarily hidden or dismissed by right clicking on their icon and selecting one of the options. Reports of a certain type may be filtered out on a more permanent basis using the Filters menu at the bottom of this window. These beginner game hints are grouped as [[encyclopedia BEGINNER_HINTS]] in the filter list.
+
+BEGINNER_HINT_21
+21: You can set a destination for a ship that is still in the production queue. With the production screen open: click on the target system in the galaxy map, then right click on the ship in the production queue. When a menu of choices for that ship pops up choose 'Rally to ' and it should have the name of the selected system where you want the ship to automatically go once construction completes.
 
 #############################################################
 ####                    S P E C I E S                    ####
