@@ -43,26 +43,20 @@ class ShipCombatStats(object):
     """Stores all relevant stats of a ship for combat strength evaluation."""
     class BasicStats(object):
         """Stores non-fighter-related stats."""
-        def __init__(self, stat_tuple=None, attacks=None, structure=1, shields=0):
+        def __init__(self, attacks, structure, shields):
             """
 
-            :param stat_tuple:
-             :type stat_tuple: tuple|None
             :param attacks:
             :type attacks: dict|None
             :param structure:
-            :type structure: int
+            :type structure: int|None
             :param shields:
-            :type shields: int
+            :type shields: int|None
             :return:
             """
-            if stat_tuple and isinstance(stat_tuple, tuple):
-                attack_tuple, self.structure, self.shields = stat_tuple
-                self.attacks = tuple_to_dict(attack_tuple)
-            else:
-                self.structure = structure
-                self.shields = shields
-                self.attacks = attacks or {}
+            self.structure = 1 if structure is None else structure
+            self.shields = 0 if shields is None else shields
+            self.attacks = {} if attacks is None else {}
 
         def get_stats(self, hashable=False):
             """
@@ -102,11 +96,11 @@ class ShipCombatStats(object):
         self._consider_refuel = consider_refuel
         if stats:
             print stats
-            self._basic_stats = self.BasicStats(stats[0:3])  # TODO: Should probably determine size dynamically
-            self._fighter_stats = self.FighterStats(stats[3:])
+            self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
+            self._fighter_stats = self.FighterStats(*stats[3:])
         else:
-            self._basic_stats = self.BasicStats()
-            self._fighter_stats = self.FighterStats()
+            self._basic_stats = self.BasicStats(None, None, None)
+            self._fighter_stats = self.FighterStats(None, None, None)
             self.__get_stats_from_ship()
 
     def __str__(self):
@@ -149,7 +143,7 @@ class ShipCombatStats(object):
                         # TODO: Depending on future implementation, might actually need to handle this case.
                         print "WARNING: Multiple hangar types present on one ship, estimates expected to be wrong."
                     fighter_damage = max(fighter_damage, part_damage)
-        self._basic_stats = self.BasicStats(structure=structure, shields=shields, attacks=attacks)
+        self._basic_stats = self.BasicStats(attacks, structure, shields)
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)
 
     def get_basic_stats(self, hashable=False):
