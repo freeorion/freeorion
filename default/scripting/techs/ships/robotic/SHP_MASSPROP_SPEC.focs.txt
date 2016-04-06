@@ -2,7 +2,7 @@ Tech
     name = "SHP_MASSPROP_SPEC"
     description = "SHP_MASSPROP_SPEC_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    category = "HULLS_CATEGORY"
+    category = "SHIP_HULLS_CATEGORY"
     researchcost = 800 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "SHP_CONTGRAV_MAINT"

@@ -2,7 +2,7 @@ Tech
     name = "SHP_CAMO_AST_HULL"
     description = "SHP_CAMO_AST_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    category = "HULLS_CATEGORY"
+    category = "SHIP_HULLS_CATEGORY"
     researchcost = 26 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_ASTEROID_HULLS"

@@ -2,7 +2,7 @@ Tech
     name = "SHP_GAL_EXPLO"
     description = "SHP_GAL_EXPLO_DESC"
     short_description = "THEORY_SHORT_DESC"
-    category = "PARTS_CATEGORY"
+    category = "SHIP_PARTS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 1
     tags = "THEORY"
