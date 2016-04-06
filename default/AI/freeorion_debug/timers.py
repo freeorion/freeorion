@@ -1,18 +1,30 @@
 import os
 import freeOrionAIInterface as fo
 from time import time
-from option_tools import get_option_dict, check_bool, TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
+from option_tools import get_option_dict, check_bool, _get_default_file_path
+from option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
 
 # setup module
 options = get_option_dict()
 
 USE_TIMERS = check_bool(options[TIMERS_USE_TIMERS])
 DUMP_TO_FILE = check_bool(options[TIMERS_TO_FILE])
-TIMERS_DIR = options[TIMERS_DUMP_FOLDER]
+TIMERS_DIR = os.path.join(_get_default_file_path(), options[TIMERS_DUMP_FOLDER])
 
 
 def make_header(*args):
     return ['%-8s ' % x for x in args]
+
+
+def _get_timers_dir():
+    try:
+        if os.path.isdir(fo.getUserDir()) and not os.path.isdir(TIMERS_DIR):
+            os.makedirs(TIMERS_DIR)
+    except OSError:
+        print ("AI Config Error: could not create path %s" % TIMERS_DIR)
+        return fo.getUserDir()
+
+    return TIMERS_DIR
 
 
 class DummyTimer(object):
@@ -69,7 +81,7 @@ class LogTimer(object):
     def _write(self, text):
         if not self.log_name:
             empaire_id = fo.getEmpire().empireID - 1
-            self.log_name = os.path.join(TIMERS_DIR, '%s-%02d.txt' % (self.timer_name, empaire_id))
+            self.log_name = os.path.join(_get_timers_dir(), '%s-%02d.txt' % (self.timer_name, empaire_id))
             mode = 'w'  # empty file
         else:
             mode = 'a'
@@ -90,10 +102,10 @@ class LogTimer(object):
         line_max_size = max_header + 14
         print
         print ('Timing for %s:' % self.timer_name)
-        print '=' * line_max_size
+        print ('=' * line_max_size)
         for name, val in self.timers:
-            print "%-*s %8d msec" % (max_header, name, val)
-        print '-' * line_max_size
+            print ("%-*s %8d msec" % (max_header, name, val))
+        print ('-' * line_max_size)
         print ("Total: %8d msec" % sum(x[1] for x in self.timers)).rjust(line_max_size)
 
         if self.write_log and DUMP_TO_FILE:
