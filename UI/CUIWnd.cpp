@@ -116,7 +116,7 @@ namespace {
 }
 
 const GG::Y CUIWnd::BUTTON_TOP_OFFSET(3);
-const GG::X CUIWnd::MINIMIZED_WND_WIDTH(150);
+const GG::X CUIWnd::MINIMIZED_WND_WIDTH(50);
 const GG::X CUIWnd::BORDER_LEFT(5);
 const GG::X CUIWnd::BORDER_RIGHT(5);
 const GG::Y CUIWnd::BORDER_BOTTOM(5);
