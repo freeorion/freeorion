@@ -21,6 +21,16 @@ Hull
     location = All
     effectsgroups = [
         [[GOOD_VISION]]
+        
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 3
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15
+                SetDamage partname = "SR_WEAPON_0_1" value = Value + 3
+                SetDamage partname = "SR_WEAPON_4_1" value = Value + 15
+            ]
     ]
     icon = ""
     graphic = "icons/monsters/warden.png"

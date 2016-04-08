@@ -18,6 +18,16 @@ Hull
     location = All
     effectsgroups = [
         [[GOOD_VISION]]
+        
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 1
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 5
+                SetDamage partname = "SR_WEAPON_0_1" value = Value + 1
+                SetDamage partname = "SR_WEAPON_4_1" value = Value + 5
+            ]
     ]
     icon = ""
     graphic = "icons/monsters/sentinel.png"
