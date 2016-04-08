@@ -88,7 +88,7 @@ namespace {
             m_category(category)
         {}
         void operator()(bool b) {
-            if (m_tree_wnd != 0)
+            if (!m_tree_wnd)
                 b ? m_tree_wnd->ShowCategory(m_category) : m_tree_wnd->HideCategory(m_category);
         }
         TechTreeWnd* const m_tree_wnd;
@@ -100,8 +100,8 @@ namespace {
             m_tree_wnd(tree_wnd)
         {}
         void operator()(bool b) {
-            if (m_tree_wnd != 0)
-                b? m_tree_wnd->ShowAllCategories() : m_tree_wnd->HideAllCategories();
+            if (!m_tree_wnd)
+                b ? m_tree_wnd->ShowAllCategories() : m_tree_wnd->HideAllCategories();
         }
         TechTreeWnd* const m_tree_wnd;
     };
@@ -111,8 +111,8 @@ namespace {
             m_tree_wnd(tree_wnd),
             m_status(status)
         {}
-        void operator()(bool b) { 
-            if (m_tree_wnd != 0)
+        void operator()(bool b) {
+            if (!m_tree_wnd)
                 b ? m_tree_wnd->ShowStatus(m_status) : m_tree_wnd->HideStatus(m_status);
         }
         TechTreeWnd* const m_tree_wnd;
@@ -255,7 +255,6 @@ private:
     // calculated by SizeMove, and stored, so that start and end positions don't need to be recalculated each
     // time Render is called.
 
-    boost::shared_ptr<GG::SubTexture>            GetManagedSubTexture(const std::string& fn);  ///< return a shared_ptr of a managed subtexture for tech controls
     GG::StateButton*                             m_view_type_button;
     GG::StateButton*                             m_all_cat_button;
     std::map<std::string, GG::StateButton*>      m_cat_buttons;
@@ -272,6 +271,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
+    const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
     for (unsigned int i = 0; i < cats.size(); ++i) {
         GG::Clr icon_clr = ClientUI::CategoryColor(cats[i]);
         boost::shared_ptr<GG::SubTexture> icon = boost::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(cats[i]));
@@ -284,40 +284,40 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
     // and one for "ALL"
     m_all_cat_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                           boost::make_shared<CUIToggleRepresenter>(GetManagedSubTexture("00_all_cats.png"), icon_color));
+                                           boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
     m_all_cat_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("ALL"), ""));
     m_all_cat_button->SetCheck(true);
     AttachChild(m_all_cat_button);
 
     // create a button for each tech status
     m_status_buttons[TS_UNRESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                              boost::make_shared<CUIToggleRepresenter>(GetManagedSubTexture("01_locked.png"), icon_color));
+                                                              boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(false);
     AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                                 boost::make_shared<CUIToggleRepresenter>(GetManagedSubTexture("02_partial.png"), icon_color));
+                                                                 boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(true);
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TS_RESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                            boost::make_shared<CUIToggleRepresenter>(GetManagedSubTexture("03_unlocked.png"), icon_color));
+                                                            boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_RESEARCHABLE]->SetCheck(true);
     AttachChild(m_status_buttons[TS_RESEARCHABLE]);
 
     m_status_buttons[TS_COMPLETE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                        boost::make_shared<CUIToggleRepresenter>(GetManagedSubTexture("04_completed.png"), icon_color));
+                                                        boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
     m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TS_COMPLETE]->SetCheck(true);
     AttachChild(m_status_buttons[TS_COMPLETE]);
 
     // create button to switch between tree and list views
     m_view_type_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                             boost::make_shared<CUIToggleRepresenter>(GetManagedSubTexture("06_view_tree.png"), icon_color,
-                                                                                      GetManagedSubTexture("05_view_list.png"), GG::Clr(110, 172, 150, 255)));
+                                             boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
+                                                                                      boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
     m_view_type_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
     m_view_type_button->SetCheck(false);
     AttachChild(m_view_type_button);
@@ -325,10 +325,6 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     SetChildClippingMode(ClipToClient);
     DoButtonLayout();
 }
-
-boost::shared_ptr<GG::SubTexture> TechTreeWnd::TechTreeControls::GetManagedSubTexture(const std::string& fn) {
-    return boost::make_shared<GG::SubTexture>(GG::GetTextureManager().GetTexture(PathString(ClientUI::ArtDir() / "icons" / "tech" / "controls" / fn)));
-};
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     const int PTS = ClientUI::Pts();
