@@ -114,6 +114,9 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         Hotkey::AddOptions(GetOptionsDB());
 
 
+        // TODO Code combining config, persistent_config and commandline args is copy-pasted
+        // slightly differently in chmain, dmain and camain.  Make it into a single function.
+
         // read config.xml and set options entries from it, if present
         {
             XMLDoc doc;
@@ -147,6 +150,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // override previously-saved and default options with command line parameters and flags
         GetOptionsDB().SetFromCommandLine(args);
 
+        CompleteXDGMigration();
 
         // Handle the case where the resource-dir does not exist anymore
         // gracefully by resetting it to the standard path into the
