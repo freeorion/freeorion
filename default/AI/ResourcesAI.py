@@ -53,12 +53,6 @@ class PlanetFocusInfo(object):
         self.possible_output[self.current_focus] = (itarget, rtarget)
         self.future_focus = self.current_focus
 
-    def can_change_focus(self):
-        """Can the planet change focus?  Is it's population non zero?"""
-        # It uses the target population versus current population to avoid situations
-        # where an unsustainable population is dying?
-        return self.planet.currentMeterValue(fo.meterType.targetPopulation) > 0
-
 
 class PlanetFocusManager(object):
     """PlanetFocusManager tracks all of the empire's planets, what their current and future focus will be."""
@@ -76,7 +70,7 @@ class PlanetFocusManager(object):
         self.baked_planet_info = {}
 
         for pid, pinfo in self.raw_planet_info.items():
-            if not pinfo.can_change_focus():
+            if not pinfo.planet.availableFoci:
                 self.baked_planet_info[pid] = self.raw_planet_info.pop(pid)
 
     def bake_future_focus(self, pid, focus, update=True):
@@ -142,7 +136,7 @@ class PlanetFocusManager(object):
             else:
                 pinfo.possible_output[RFocus] = (0, 0)
                 pinfo.possible_output[GFocus] = (0, pinfo.possible_output[GFocus])
-            if pinfo.can_change_focus() and pinfo.current_focus != planet.focus:
+            if pinfo.planet.availableFoci and pinfo.current_focus != planet.focus:
                 fo.issueChangeFocusOrder(pid, pinfo.current_focus)  # put it back to what it was
 
         universe.updateMeterEstimates(unbaked_pids)
