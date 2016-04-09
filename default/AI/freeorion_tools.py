@@ -132,6 +132,25 @@ def chat_human(message):
     print "\nChat Message to human: %s\n" % remove_tags(message)
 
 
+def cache_by_session(function):
+    """
+    Cache a function value by session.
+    Wraps only functions with hashable arguments.
+    """
+    _cache = {}
+
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        key = (function, args, tuple(kwargs.items()))
+        if key in _cache:
+            return _cache[key]
+        res = function(*args, **kwargs)
+        _cache[key] = res
+        return res
+    wrapper._cache = _cache
+    return wrapper
+
+
 def cache_by_turn(function):
     """
     Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
