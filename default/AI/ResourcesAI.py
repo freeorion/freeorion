@@ -555,8 +555,7 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
     printedHeader = False
     gotAlgo = tech_is_complete("LRN_ALGO_ELEGANCE")
     for ratio, pid, pinfo in ratios:
-        do_research = False  # (focus_manager.new_foci[pid]==RFocus)
-        if (priorityRatio < (curTargetRP / (curTargetPP + 0.0001))) and not do_research:  # we have enough RP
+        if priorityRatio < (curTargetRP / (curTargetPP + 0.0001)):  # we have enough RP
             if ratio < 1.1 and foAI.foAIstate.aggression > fo.aggression.cautious:  # but wait, RP is still super cheap relative to PP, maybe will take more RP
                 if priorityRatio < 1.5 * (curTargetRP / (curTargetPP + 0.0001)):  # yeah, really a glut of RP, stop taking RP
                     break
@@ -566,12 +565,11 @@ def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
         RI, RR = pinfo.possible_output[RFocus]
         # if focus_manager.current_focus[pid] == MFocus:
         # II = max( II, focus_manager.possible_output[MFocus][0] )
-        if (not do_research and (
-                (ratio > 2.0 and curTargetPP < 15 and gotAlgo) or
-                (ratio > 2.5 and curTargetPP < 25 and II > 5 and gotAlgo) or
-                (ratio > 3.0 and curTargetPP < 40 and II > 5 and gotAlgo) or
-                (ratio > 4.0 and curTargetPP < 100 and II > 10) or
-                ((curTargetRP + RR - IR) / max(0.001, curTargetPP - II + RI) > 2 * priorityRatio))):  # we already have algo elegance and more RP would be too expensive, or overkill
+        if ((ratio > 2.0 and curTargetPP < 15 and gotAlgo) or
+            (ratio > 2.5 and curTargetPP < 25 and II > 5 and gotAlgo) or
+            (ratio > 3.0 and curTargetPP < 40 and II > 5 and gotAlgo) or
+            (ratio > 4.0 and curTargetPP < 100 and II > 10) or
+            ((curTargetRP + RR - IR) / max(0.001, curTargetPP - II + RI) > 2 * priorityRatio)):  # we already have algo elegance and more RP would be too expensive, or overkill
             if not printedHeader:
                 printedHeader = True
                 print "Rejecting further Research Focus choices as too expensive:"
