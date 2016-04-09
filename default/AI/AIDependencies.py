@@ -351,10 +351,34 @@ WEAPON_UPGRADE_DICT = {
     "SR_WEAPON_3_1": tuple([("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]]),
     "SR_WEAPON_4_1": tuple([("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]]),
     "SR_WEAPON_0_1": tuple([]),
-    "FT_BAY_1": tuple([]),
-    "FT_WEAPON_1": tuple([]),
-    "FT_HANGAR_1": tuple([]),
     "SR_SPINAL_ANTIMATTER": tuple([])
+}
+
+PILOT_DAMAGE_MODIFIER_DICT = {
+    # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_1_1": -1, "SR_WEAPON_2_1": -2, "SR_WEAPON_3_1": -3, "SR_WEAPON_4_1": -5},
+    "GOOD":     {"SR_WEAPON_1_1":  1, "SR_WEAPON_2_1":  2, "SR_WEAPON_3_1":  3, "SR_WEAPON_4_1": 5},
+    "GREAT":    {"SR_WEAPON_1_1":  2, "SR_WEAPON_2_1":  4, "SR_WEAPON_3_1":  6, "SR_WEAPON_4_1": 10},
+    "ULTIMATE": {"SR_WEAPON_1_1":  3, "SR_WEAPON_2_1":  6, "SR_WEAPON_3_1":  9, "SR_WEAPON_4_1": 15, "SR_WEAPON_0_1": 1},
+}
+
+PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
+    # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
+    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
+    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
+    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
+}
+
+PILOT_ROF_MODIFIER_DICT = {
+    # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_0_1": -1},
+    "GOOD":     {"SR_WEAPON_0_1": 1},
+    "GREAT":    {"SR_WEAPON_0_1": 2},
+    "ULTIMATE": {"SR_WEAPON_0_1": 3},
 }
 
 # DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!

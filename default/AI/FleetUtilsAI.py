@@ -1,20 +1,12 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import MissionType, ShipRoleType, ExplorableSystemType
+import CombatRatingsAI
 import traceback
 from universe_object import Planet
+from ShipDesignAI import get_part_type
 
 __designStats = {}
-
-def combine_ratings(rating1, rating2):
-    return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
-
-
-def combine_ratings_list(ratings_list):
-    tally = 0
-    for rating in ratings_list:
-        tally = combine_ratings(tally, rating)
-    return tally
 
 
 def rating_needed(target, current=0):
@@ -157,10 +149,8 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
         if use_fleet:
             fleet_list.append(fleet_id)
             fleet_pool_set.remove(fleet_id)
-            this_rating = foAI.foAIstate.get_rating(fleet_id)
-            cur_stats['attack'] = cur_stats.get('attack', 0) + this_rating['attack']
-            cur_stats['health'] = cur_stats.get('health', 0) + this_rating['health']
-            cur_stats['rating'] = cur_stats['attack'] * cur_stats['health']
+            this_rating = foAI.foAIstate.get_rating(fleet_id)  # Done!
+            cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'troopCapacity' in target_stats:
                 # ToDo: Check if replaceable by troop_capacity
                 cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + count_troops_in_fleet(fleet_id)
@@ -212,7 +202,7 @@ def split_fleet(fleet_id):
                 print "Error: newly split fleet %d not available from universe" % new_fleet_id
             fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
             fo.issueAggressionOrder(new_fleet_id, True)
-            foAI.foAIstate.get_rating(new_fleet_id)
+            foAI.foAIstate.update_fleet_rating(new_fleet_id)
             newfleets.append(new_fleet_id)
             foAI.foAIstate.newlySplitFleets[new_fleet_id] = True
         else:
@@ -233,12 +223,8 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
     fleet_b = universe.getFleet(fleet_b_id)
     if not fleet_a or not fleet_b:
         return 0
-    success = True
-    init_rating = foAI.foAIstate.get_rating(fleet_a_id)
-    remaining_rating = init_rating.copy()
+    remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_a_id)
     transferred_rating = 0
-    transferred_attack = 0
-    transferred_health = 0
     b_has_monster = False
     for ship_id in fleet_b.shipIDs:
         this_ship = universe.getShip(ship_id)
@@ -249,31 +235,24 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
             break
     for ship_id in fleet_a.shipIDs:
         this_ship = universe.getShip(ship_id)
-        if not this_ship or this_ship.isMonster != b_has_monster:
+        if not this_ship or this_ship.isMonster != b_has_monster:  # TODO Is there any reason for the monster check?
             continue
-        stats = foAI.foAIstate.get_design_id_stats(this_ship.designID)
-        this_rating = stats['attack'] * (stats['structure'] + stats['shields'])
-        if (remaining_rating['attack'] - stats['attack']) * (remaining_rating['health'] - (stats['structure'] + stats['shields'])) < leave_rating:
+        this_rating = CombatRatingsAI.ShipCombatStats(ship_id).get_rating()
+        remaining_rating = rating_needed(remaining_rating, this_rating)
+        if remaining_rating < leave_rating:  # merging this would leave old fleet under minimum rating, try other ships.
             continue
-        # remaining_rating -= this_rating
-        remaining_rating['attack'] -= stats['attack']
-        remaining_rating['health'] -= stats['structure'] + stats['shields']
         transferred = fo.issueFleetTransferOrder(ship_id, fleet_b_id)
         if transferred:
-            transferred_rating += this_rating
-            transferred_attack += stats['attack']
-            transferred_health += stats['structure'] + stats['shields']
+            transferred_rating = CombatRatingsAI.combine_ratings(transferred_rating, this_rating)
         else:
             print "  *** attempted transfer of ship %4d, formerly of fleet %4d, into fleet %4d with result %d; %s" % (
                 ship_id, fleet_a_id, fleet_b_id, transferred, [" context is %s" % context, ""][context == ""])
-        success = success and transferred
-        if need_rating != 0 and need_rating <= transferred_attack * transferred_health:  # transferred_rating:
+        if need_rating != 0 and need_rating <= transferred_rating:
             break
     fleet_a = universe.getFleet(fleet_a_id)
     if not fleet_a or fleet_a.empty or fleet_a_id in universe.destroyedObjectIDs(fo.empireID()):
         foAI.foAIstate.delete_fleet_info(fleet_a_id)
     foAI.foAIstate.update_fleet_rating(fleet_b_id)
-    return transferred_attack * transferred_health, transferred_attack, transferred_health
 
 
 def fleet_has_ship_with_role(fleet_id, ship_role):
@@ -394,7 +373,7 @@ def assess_fleet_role(fleet_id):
 
 
 def assess_ship_design_role(design):
-    parts = [fo.getPartType(partname) for partname in design.parts if partname and fo.getPartType(partname)]
+    parts = [get_part_type(partname) for partname in design.parts if partname and get_part_type(partname)]
 
     if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
         if design.speed > 0:
@@ -420,9 +399,7 @@ def assess_ship_design_role(design):
         else:
             return ShipRoleType.INVALID
 
-    stats = foAI.foAIstate.get_design_id_stats(design.id)
-    rating = stats['attack'] * (stats['structure'] + stats['shields'])
-    if rating > 0:  # positive attack stat
+    if design.isArmed:
         return ShipRoleType.MILITARY
     if any(p.partClass == fo.shipPartClass.detection for p in parts):
         return ShipRoleType.CIVILIAN_EXPLORATION
@@ -564,3 +541,26 @@ def print_systems(system_ids):
         else:
             print "  S_%s<>" % system_id,
         print 'supplied' if system_id in fleet_supplyable_system_ids else ''
+
+
+def get_fighter_capacity_of_fleet(fleet_id):
+    """Return current and max fighter capacity
+
+    :param fleet_id:
+    :type fleet_id: int
+    :return: current and max fighter capacity
+    """
+    universe = fo.getUniverse()
+    fleet = universe.getFleet(fleet_id)
+    cur_capacity = 0
+    max_capacity = 0
+    ships = (universe.getShip(ship_id) for ship_id in (fleet.shipIDs if fleet else []))
+    for ship in ships:
+        design = ship and ship.design
+        design_parts = design.parts if design and design.isArmed else []
+        for partname in design_parts:
+            part = get_part_type(partname)
+            if part and part.partClass == fo.shipPartClass.fighterHangar:
+                cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
+                max_capacity += ship.currentPartMeterValue(fo.meterType.maxCapacity, partname)
+    return cur_capacity, max_capacity

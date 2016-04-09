@@ -146,3 +146,18 @@ def cache_by_turn(function):
             this_turn = fo.currentTurn()
             return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, function())
     return wrapper
+
+
+def dict_to_tuple(dic):
+    return tuple(dic.iteritems())
+
+
+def tuple_to_dict(tup):
+    try:
+        return dict(tup)
+    except TypeError:
+        try:
+            return {k: v for k, v in [tup]}
+        except:
+            print "Error: Can't convert tuple_list to dict: ", tup
+            return {}
