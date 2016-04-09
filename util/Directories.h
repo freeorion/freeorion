@@ -9,6 +9,12 @@
 /** This function must be called before any Get*Dir function is called. It
   * stores the current working directory as well as creating local
   * directories if they do not yet exist. */
+FO_COMMON_API void CompleteXDGMigration();
+
+/** This function completes the migration of directories to the XDG
+  * specified location by updating the save-dir option to the new location
+  * after the option is loaded from XML files.  It only updates the option
+  * if it is set to the old default option. */
 FO_COMMON_API void InitDirs(const std::string& argv0);
 
 /** Returns the directory where FreeOrion should store user specific
