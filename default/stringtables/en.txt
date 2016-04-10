@@ -5066,13 +5066,13 @@ Custom_4
 #############################################################
 
 VICTORY_TECH
-The %empire% has achieved a technological victory!
+VICTORY! The %empire% has transcended our reality and wins a technological victory.
 
 VICTORY_ALL_ENEMIES_ELIMINATED
-The %empire% has achieved a sole-survivor victory!
+VICTORY! The %empire% is the last surviving empire.
 
 VICTORY_EXPERIMENTOR_CAPTURE
-The %empire% has achieved victory by capturing the powerful Experimentors and ending the fearsome threat plaguing the galaxy!
+VICTORY! The %empire% has captured the powerful Experimentors and ended the fearsome threat plaguing the galaxy.
 
 SITREP_VICTORY_LABEL
 Victory
