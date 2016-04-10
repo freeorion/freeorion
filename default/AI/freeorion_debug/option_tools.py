@@ -2,11 +2,12 @@ import os
 from ConfigParser import SafeConfigParser
 from collections import OrderedDict as odict
 import platform
+import sys
 
 try:
     import freeOrionAIInterface as fo  # pylint: disable=import-error
 except ImportError:
-    print ("Executing outside of FreeOrion.")
+    sys.stderr.write("Executing outside of FreeOrion.")
 
 
 AI_SUB_DIR = 'AI'
@@ -61,7 +62,7 @@ def _parse_options():
         try:
             config = _create_default_config_file(default_file)
         except IOError:
-            print ("AI Config: default file is not present and not writable at location %s\n" % default_file)
+            sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
             config = _create_default_config_file(os.path.join(fo.getUserDir(), CONFIG_DEFAULT_FILE))
 
     option_file = _get_option_file()
@@ -72,10 +73,10 @@ def _parse_options():
     if option_file:
         config_files = [option_file]
         configs_read = config.read(config_files)
-        print ("AI Config read config file(s): %s" % configs_read)
+        print "AI Config read config file(s): %s" % configs_read
         if len(configs_read) != len(config_files):
-            print ("AI Config Error; could NOT read config file(s): %s"
-                   % list(set(config_files).difference(configs_read)))
+            sys.stderr.write("AI Config Error; could NOT read config file(s): %s"
+                             % list(set(config_files).difference(configs_read)))
     for section in config.sections():
         sectioned_options.setdefault(section, odict())
         for k, v in config.items(section):
@@ -98,7 +99,7 @@ def _get_default_file_path():
         if os.path.isdir(fo.getUserDir()) and not os.path.isdir(CONFIG_DEFAULT_DIR):
             os.makedirs(CONFIG_DEFAULT_DIR)
     except OSError:
-        print ("AI Config Error: could not create path %s" % CONFIG_DEFAULT_DIR)
+        sys.stderr.write("AI Config Error: could not create path %s" % CONFIG_DEFAULT_DIR)
         return fo.getUserDir()
 
     return CONFIG_DEFAULT_DIR
@@ -137,9 +138,6 @@ def _create_default_config_file(path):
     if path:
         with open(path, 'w') as configfile:
             config.write(configfile)
-        print ("default config is dumped to %s" % path)
+        print "default config is dumped to %s" % path
     return config
 
-
-if __name__ == '__main__':
-    _create_default_config_file(_get_option_file())

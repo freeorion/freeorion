@@ -3,6 +3,7 @@ import freeOrionAIInterface as fo
 from time import time
 from option_tools import get_option_dict, check_bool, _get_default_file_path
 from option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
+import sys
 
 # setup module
 options = get_option_dict()
@@ -21,8 +22,8 @@ def _get_timers_dir():
         if os.path.isdir(fo.getUserDir()) and not os.path.isdir(TIMERS_DIR):
             os.makedirs(TIMERS_DIR)
     except OSError:
-        print ("AI Config Error: could not create path %s" % TIMERS_DIR)
-        return fo.getUserDir()
+        sys.stderr.write("AI Config Error: could not create path %s" % TIMERS_DIR)
+        return False
 
     return TIMERS_DIR
 
@@ -79,6 +80,8 @@ class LogTimer(object):
         self.start_time = time()
 
     def _write(self, text):
+        if not _get_timers_dir():
+            return
         if not self.log_name:
             empaire_id = fo.getEmpire().empireID - 1
             self.log_name = os.path.join(_get_timers_dir(), '%s-%02d.txt' % (self.timer_name, empaire_id))
@@ -101,11 +104,11 @@ class LogTimer(object):
         max_header = max(len(x[0]) for x in self.timers)
         line_max_size = max_header + 14
         print
-        print ('Timing for %s:' % self.timer_name)
-        print ('=' * line_max_size)
+        print 'Timing for %s:' % self.timer_name
+        print '=' * line_max_size
         for name, val in self.timers:
-            print ("%-*s %8d msec" % (max_header, name, val))
-        print ('-' * line_max_size)
+            print "%-*s %8d msec" % (max_header, name, val)
+        print '-' * line_max_size
         print ("Total: %8d msec" % sum(x[1] for x in self.timers)).rjust(line_max_size)
 
         if self.write_log and DUMP_TO_FILE:
