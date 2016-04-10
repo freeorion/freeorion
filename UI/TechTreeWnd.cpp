@@ -35,9 +35,10 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.tech-layout-horz-spacing", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 1.0,  RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("UI.tech-layout-vert-spacing", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("UI.tech-layout-zoom-scale",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
+        db.Add("UI.tech-layout-horz-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 1.0,  RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("UI.tech-layout-vert-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
+        db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -80,22 +81,40 @@ namespace {
         return true;
     }
 
-    struct ToggleCategoryFunctor {
-        ToggleCategoryFunctor(TechTreeWnd* tree_wnd, const std::string& category) : m_tree_wnd(tree_wnd), m_category(category) {}
-        void operator()() { m_tree_wnd->ToggleCategory(m_category); }
+
+    struct SetCategoryViewFunctor {
+        SetCategoryViewFunctor(TechTreeWnd* tree_wnd, const std::string& category) :
+            m_tree_wnd(tree_wnd),
+            m_category(category)
+        {}
+        void operator()(bool b) {
+            if (m_tree_wnd)
+                b ? m_tree_wnd->ShowCategory(m_category) : m_tree_wnd->HideCategory(m_category);
+        }
         TechTreeWnd* const m_tree_wnd;
         const std::string m_category;
     };
 
-    struct ToggleAllCategoriesFunctor {
-        ToggleAllCategoriesFunctor(TechTreeWnd* tree_wnd) : m_tree_wnd(tree_wnd) {}
-        void operator()() { m_tree_wnd->ToggleAllCategories(); }
+    struct SetAllCategoryViewsFunctor {
+        SetAllCategoryViewsFunctor(TechTreeWnd* tree_wnd) :
+            m_tree_wnd(tree_wnd)
+        {}
+        void operator()(bool b) {
+            if (m_tree_wnd)
+                b ? m_tree_wnd->ShowAllCategories() : m_tree_wnd->HideAllCategories();
+        }
         TechTreeWnd* const m_tree_wnd;
     };
 
-    struct ToggleTechStatusFunctor {
-        ToggleTechStatusFunctor(TechTreeWnd* tree_wnd, TechStatus status) : m_tree_wnd(tree_wnd), m_status(status) {}
-        void operator()() { m_tree_wnd->ToggleStatus(m_status); }
+    struct SetTechStatusViewFunctor {
+        SetTechStatusViewFunctor(TechTreeWnd* tree_wnd, TechStatus status) :
+            m_tree_wnd(tree_wnd),
+            m_status(status)
+        {}
+        void operator()(bool b) {
+            if (m_tree_wnd)
+                b ? m_tree_wnd->ShowStatus(m_status) : m_tree_wnd->HideStatus(m_status);
+        }
         TechTreeWnd* const m_tree_wnd;
         const TechStatus m_status;
     };
@@ -226,8 +245,6 @@ private:
     int m_buttons_per_row;              // number of buttons that can fit into available horizontal space
     GG::X m_col_offset;                 // horizontal distance between each column of buttons
     GG::Y m_row_offset;                 // vertical distance between each row of buttons
-    int m_category_button_rows;         // number of rows used for category buttons
-    int m_status_button_rows;   // number of rows used for status buttons and for type buttons (both groups have the same number of buttons (three) so use the same number of rows)
 
     /** These values are used for rendering separator lines between groups of buttons */
     static const int BUTTON_SEPARATION; // vertical or horizontal sepration between adjacent buttons
@@ -238,139 +255,156 @@ private:
     // calculated by SizeMove, and stored, so that start and end positions don't need to be recalculated each
     // time Render is called.
 
-    std::vector<CUIButton*>             m_category_buttons;
-    std::map<TechStatus, CUIButton*>    m_tech_status_buttons;
-    CUIButton*                          m_list_view_button;
-    CUIButton*                          m_tree_view_button;
+    GG::StateButton*                             m_view_type_button;
+    GG::StateButton*                             m_all_cat_button;
+    std::map<std::string, GG::StateButton*>      m_cat_buttons;
+    std::map<TechStatus, GG::StateButton*>       m_status_buttons;
 
     friend class TechTreeWnd;               // so TechTreeWnd can access buttons
 };
-const int TechTreeWnd::TechTreeControls::BUTTON_SEPARATION = 3;
+
+const int TechTreeWnd::TechTreeControls::BUTTON_SEPARATION = 2;
 const int TechTreeWnd::TechTreeControls::UPPER_LEFT_PAD = 2;
 
 TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) :
-    CUIWnd(UserString("TECH_DISPLAY"),
-           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP,
-           config_name)
+    CUIWnd(UserString("TECH_DISPLAY"), GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP, config_name)
 {
+    const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
+
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     for (unsigned int i = 0; i < cats.size(); ++i) {
-        GG::Clr background_clr = ClientUI::CategoryColor(cats[i]);
-        GG::Clr border_clr     = background_clr;
-        AdjustBrightness(background_clr, -50);
-        m_category_buttons.push_back(new CUIButton(UserString(cats[i]), background_clr, border_clr));
-        AttachChild(m_category_buttons.back());
+        GG::Clr icon_clr = ClientUI::CategoryColor(cats[i]);
+        boost::shared_ptr<GG::SubTexture> icon = boost::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(cats[i]));
+        m_cat_buttons[cats[i]] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                                     boost::make_shared<CUIToggleRepresenter>(icon, icon_clr));
+        m_cat_buttons[cats[i]]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString(cats[i]), ""));
+        m_cat_buttons[cats[i]]->SetBrowseModeTime(tooltip_delay);
+        AttachChild(m_cat_buttons[cats[i]]);
     }
+
+    GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
     // and one for "ALL"
-    m_category_buttons.push_back(new CUIButton(UserString("ALL")));
-    AttachChild(m_category_buttons.back());
-    m_category_buttons.back()->SetCheck(false);
+    m_all_cat_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                           boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
+    m_all_cat_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("ALL"), ""));
+    m_all_cat_button->SetBrowseModeTime(tooltip_delay);
+    m_all_cat_button->SetCheck(true);
+    AttachChild(m_all_cat_button);
 
     // create a button for each tech status
-    m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_LOCKED"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
-    AttachChild(m_tech_status_buttons[TS_UNRESEARCHABLE]);
-    m_tech_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new CUIButton(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
-    AttachChild(m_tech_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
-    m_tech_status_buttons[TS_RESEARCHABLE] = new CUIButton(UserString("TECH_WND_STATUS_RESEARCHABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
-    AttachChild(m_tech_status_buttons[TS_RESEARCHABLE]);
-    m_tech_status_buttons[TS_COMPLETE] = new CUIButton(UserString("TECH_WND_STATUS_COMPLETED"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
-    AttachChild(m_tech_status_buttons[TS_COMPLETE]);
+    m_status_buttons[TS_UNRESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                                              boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
+    m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
+    m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(false);
+    AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
-    // create buttons to switch between tree and list views
-    m_list_view_button = new CUIButton(UserString("TECH_WND_LIST_VIEW"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
-    AttachChild(m_list_view_button);
-    m_tree_view_button = new CUIButton(UserString("TECH_WND_TREE_VIEW"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
-    AttachChild(m_tree_view_button);
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                                                 boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(true);
+    AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
+
+    m_status_buttons[TS_RESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                                            boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
+    m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
+    m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TS_RESEARCHABLE]->SetCheck(true);
+    AttachChild(m_status_buttons[TS_RESEARCHABLE]);
+
+    m_status_buttons[TS_COMPLETE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                                        boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
+    m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
+    m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
+    m_status_buttons[TS_COMPLETE]->SetCheck(true);
+    AttachChild(m_status_buttons[TS_COMPLETE]);
+
+    // create button to switch between tree and list views
+    m_view_type_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+                                             boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
+                                                                                      boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
+    m_view_type_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
+    m_view_type_button->SetBrowseModeTime(tooltip_delay);
+    m_view_type_button->SetCheck(false);
+    AttachChild(m_view_type_button);
 
     SetChildClippingMode(ClipToClient);
     DoButtonLayout();
 }
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout() {
-    const GG::X RIGHT_EDGE_PAD(8);
-    const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to do layout
     const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE(PTS/2);  // how wide per character the font needs... not sure how better to get this
-    const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*18;    // rough guesstimate...
-    const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
-
-    const float NUM_CATEGORY_BUTTONS = static_cast<float>(m_category_buttons.size());
-    const int ROWS = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / MAX_BUTTONS_PER_ROW));
-    m_buttons_per_row = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / ROWS));   // number of buttons in a typical row
-
-    const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (m_buttons_per_row - 1)*BUTTON_SEPARATION) / m_buttons_per_row;
-    const GG::Y BUTTON_HEIGHT = m_category_buttons.back()->MinUsableSize().y;
+    const GG::X RIGHT_EDGE_PAD(PTS / 3);
+    const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to do layout
+    const GG::X BUTTON_WIDTH = GG::X(PTS * std::max(GetOptionsDB().Get<double>("UI.tech-controls-graphic-size"), 0.5));
+    const GG::Y BUTTON_HEIGHT = GG::Y(Value(BUTTON_WIDTH));
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
+    m_buttons_per_row = std::max(Value(USABLE_WIDTH / (m_col_offset)), 1);
+
+    const int NUM_NON_CATEGORY_BUTTONS = 6;  //  ALL, Locked, Partial, Unlocked, Complete, ViewType
 
     // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
-    for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin();
-         it != m_category_buttons.end(); ++it)
+    for (std::map<std::string, GG::StateButton*>::iterator it = m_cat_buttons.begin();
+         it != m_cat_buttons.end(); ++it)
     {
-        ++col;
+         ++col;
         if (col >= m_buttons_per_row) {
             ++row;
             col = 0;
         }
-        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
-        GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        (*it)->SizeMove(ul, lr);
-    }
-
-    // rowbreak after category buttons, before type and status buttons
-    col = -1;
-    m_category_button_rows = ++row;
-
-    // place status buttons: fill each row completely before starting next row
-    for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin();
-         it != m_tech_status_buttons.end(); ++it)
-    {
-        ++col;
-        if (col >= m_buttons_per_row) {
-            ++row;
-            col = 0;
-        }
-        //std::cout << "row: " << row << "  col: " << col << std::endl;
         GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         it->second->SizeMove(ul, lr);
     }
 
-    // rowbreak after status buttons, before view toggles, if the list / tree buttons won't both fit
+    // add ALL button
     ++col;
-    if (col + 2 > m_buttons_per_row) {
-        col = 0;
-        ++row;
-    }
-    //std::cout << "row: " << row << "  col: " << col << std::endl;
-    // place view type buttons buttons
-    GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
-    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_list_view_button->SizeMove(ul, lr);
-    ++col;
-    //std::cout << "row: " << row << "  col: " << col << std::endl;
     if (col >= m_buttons_per_row) {
         ++row;
-        col = 0;
+        col =0;
     }
-    //std::cout << "row: " << row << "  col: " << col << std::endl;
-    ul = GG::Pt(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_tree_view_button->SizeMove(ul, lr);
+    GG::Pt all_cats_ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+    GG::Pt all_cats_lr = all_cats_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_all_cat_button->SizeMove(all_cats_ul, all_cats_lr);
 
-    // keep track of layout.  Used to draw lines between groups of buttons when rendering
-    if (m_buttons_per_row == 1)
-        m_status_button_rows = 4;   // four rows, one button per row
-    else if (m_buttons_per_row == 2)
-        m_status_button_rows = 2;   // two rows, two buttons per row
-    else
-        m_status_button_rows = 1;   // only one row, four buttons per row
+    // rowbreak after category buttons, before type and status buttons, unless all buttons fit on one row
+    if (m_buttons_per_row < (static_cast<int>(m_cat_buttons.size()) + NUM_NON_CATEGORY_BUTTONS)) {
+        col = -1;
+        ++row;
+    }
+
+    // place status buttons: fill each row completely before starting next row
+    for (std::map<TechStatus, GG::StateButton*>::iterator it = m_status_buttons.begin();
+         it != m_status_buttons.end(); ++it)
+    {
+        ++col;
+        if (col >= m_buttons_per_row) {
+            ++row;
+            col = 0;
+        }
+        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+        GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+        it->second->SizeMove(ul, lr);
+    }
+
+    // place view type button
+    ++col;
+    if (col + 1 > m_buttons_per_row) {
+        col = 0;
+        ++row;
+    }
+    GG::Pt view_type_ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+    GG::Pt view_type_lr = view_type_ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_view_type_button->SizeMove(view_type_ul, view_type_lr);
 
     // prevent window from being shrunk less than one button width, or current number of rows of height
-    SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD,
+    SetMinSize(GG::Pt(UPPER_LEFT_PAD + BUTTON_WIDTH + 3*RIGHT_EDGE_PAD,
                       TopBorder() + BottomBorder() + UPPER_LEFT_PAD + (++row)*m_row_offset));
 }
 
@@ -1784,20 +1818,21 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     AttachChild(m_enc_detail_panel);
     AttachChild(m_tech_tree_controls);
 
-    const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
     // connect category button clicks to update display
-    for (unsigned int i = 0; i < m_tech_tree_controls->m_category_buttons.size() - 1; ++i)
-        GG::Connect(m_tech_tree_controls->m_category_buttons[i]->LeftClickedSignal, ToggleCategoryFunctor(this, tech_categories[i]));
-    GG::Connect(m_tech_tree_controls->m_category_buttons.back()->LeftClickedSignal, ToggleAllCategoriesFunctor(this));  // last button should be "All" button
+    for (std::map<std::string, GG::StateButton*>::iterator it = m_tech_tree_controls->m_cat_buttons.begin();
+        it != m_tech_tree_controls->m_cat_buttons.end(); ++it)
+    { GG::Connect(it->second->CheckedSignal, SetCategoryViewFunctor(this, it->first)); }
+
+    // connect button for all categories to update display
+    GG::Connect(m_tech_tree_controls->m_all_cat_button->CheckedSignal, SetAllCategoryViewsFunctor(this));
 
     // connect status and type button clicks to update display
-    for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_tree_controls->m_tech_status_buttons.begin();
-         it != m_tech_tree_controls->m_tech_status_buttons.end(); ++it)
-    { GG::Connect(it->second->LeftClickedSignal, ToggleTechStatusFunctor(this, it->first)); }
+    for (std::map<TechStatus, GG::StateButton*>::iterator it = m_tech_tree_controls->m_status_buttons.begin();
+         it != m_tech_tree_controls->m_status_buttons.end(); ++it)
+    { GG::Connect(it->second->CheckedSignal, SetTechStatusViewFunctor(this, it->first)); }
 
-    // connect view type selectors
-    GG::Connect(m_tech_tree_controls->m_tree_view_button->LeftClickedSignal, &TechTreeWnd::ShowTreeView, this);
-    GG::Connect(m_tech_tree_controls->m_list_view_button->LeftClickedSignal, &TechTreeWnd::ShowListView, this);
+    // connect view type selector
+    GG::Connect(m_tech_tree_controls->m_view_type_button->CheckedSignal, &TechTreeWnd::ToggleViewType, this);
 
     ShowAllCategories();
     ShowStatus(TS_RESEARCHABLE);
@@ -1856,7 +1891,7 @@ void TechTreeWnd::InitializeWindows() {
     // Don't know this wnd's height in advance so place it off the bottom edge,
     // it subclasses CUIWnd so it will reposition itself to be visible.
     const GG::Pt controls_ul(GG::X1, m_layout_panel->Height());
-    const GG::Pt controls_wh(m_layout_panel->Width() - ClientUI::ScrollWidth(), GG::Y0);
+    const GG::Pt controls_wh((m_layout_panel->Width() * 0.6) - ClientUI::ScrollWidth(), GG::Y0);
 
     m_enc_detail_panel->InitSizeMove(pedia_ul,  pedia_ul + pedia_wh);
     m_tech_tree_controls->InitSizeMove(controls_ul,  controls_ul + controls_wh);
@@ -1865,53 +1900,29 @@ void TechTreeWnd::InitializeWindows() {
 void TechTreeWnd::ShowCategory(const std::string& category) {
     m_layout_panel->ShowCategory(category);
     m_tech_list->ShowCategory(category);
-
-    // colour category button with its category colour
-    const std::vector<std::string>& cats = GetTechManager().CategoryNames();
-    int i = 0;
-    for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        if (*cats_it == category) {
-            m_tech_tree_controls->m_category_buttons[i]->SetCheck();
-            break;
-        }
-    }
 }
 
 void TechTreeWnd::ShowAllCategories() {
     m_layout_panel->ShowAllCategories();
     m_tech_list->ShowAllCategories();
 
-    const std::vector<std::string>& cats = GetTechManager().CategoryNames();
-    int i = 0;
-    for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_tech_tree_controls->m_category_buttons[i]->SetCheck();
-    }
+    for (std::map<std::string, GG::StateButton*>::const_iterator it = m_tech_tree_controls->m_cat_buttons.begin();
+         it != m_tech_tree_controls->m_cat_buttons.end(); ++it)
+    { it->second->SetCheck(true); }
 }
 
 void TechTreeWnd::HideCategory(const std::string& category) {
     m_layout_panel->HideCategory(category);
     m_tech_list->HideCategory(category);
-
-    // colour category button to default colour, to indicate non-selection
-    const std::vector<std::string>& cats = GetTechManager().CategoryNames();
-    int i = 0;
-    for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        if (*cats_it == category) {
-            m_tech_tree_controls->m_category_buttons[i]->SetCheck(false);
-            break;
-        }
-    }
 }
 
 void TechTreeWnd::HideAllCategories() {
     m_layout_panel->HideAllCategories();
     m_tech_list->HideAllCategories();
 
-    const std::vector<std::string>& cats = GetTechManager().CategoryNames();
-    int i = 0;
-    for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_tech_tree_controls->m_category_buttons[i]->SetCheck(false);
-    }
+    for (std::map<std::string, GG::StateButton*>::const_iterator it = m_tech_tree_controls->m_cat_buttons.begin();
+         it != m_tech_tree_controls->m_cat_buttons.end(); ++it)
+    { it->second->SetCheck(false); }
 }
 
 void TechTreeWnd::ToggleAllCategories() {
@@ -1924,46 +1935,23 @@ void TechTreeWnd::ToggleAllCategories() {
         ShowAllCategories();
 }
 
-void TechTreeWnd::ToggleCategory(const std::string& category) {
-    std::set<std::string> shown_cats = m_layout_panel->GetCategoriesShown();
-
-    std::set<std::string>::const_iterator it = shown_cats.find(category);
-    if (it == shown_cats.end())
-        ShowCategory(category);
-    else
-        HideCategory(category);
-}
-
 void TechTreeWnd::ShowStatus(TechStatus status) {
     m_layout_panel->ShowStatus(status);
     m_tech_list->ShowStatus(status);
-
-    m_tech_tree_controls->m_tech_status_buttons[status]->SetCheck();
 }
 
 void TechTreeWnd::HideStatus(TechStatus status) {
     m_layout_panel->HideStatus(status);
     m_tech_list->HideStatus(status);
-
-    m_tech_tree_controls->m_tech_status_buttons[status]->SetCheck(false);
 }
 
-void TechTreeWnd::ToggleStatus(TechStatus status) {
-    std::set<TechStatus> statuses = m_layout_panel->GetTechStatusesShown();
-
-    std::set<TechStatus>::const_iterator it = statuses.find(status);
-    if (it == statuses.end())
-        ShowStatus(status);
-    else
-        HideStatus(status);
-}
+void TechTreeWnd::ToggleViewType(bool show_list_view)
+{ show_list_view ? ShowListView() : ShowTreeView(); }
 
 void TechTreeWnd::ShowTreeView() {
     AttachChild(m_layout_panel);
     MoveChildDown(m_layout_panel);
     DetachChild(m_tech_list);
-    m_tech_tree_controls->m_list_view_button->SetCheck(false);
-    m_tech_tree_controls->m_tree_view_button->SetCheck();
     MoveChildUp(m_tech_tree_controls);
 }
 
@@ -1972,8 +1960,6 @@ void TechTreeWnd::ShowListView() {
     AttachChild(m_tech_list);
     MoveChildDown(m_tech_list);
     DetachChild(m_layout_panel);
-    m_tech_tree_controls->m_list_view_button->SetCheck();
-    m_tech_tree_controls->m_tree_view_button->SetCheck(false);
     MoveChildUp(m_tech_tree_controls);
 }
 

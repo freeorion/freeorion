@@ -1373,6 +1373,9 @@ The vertical spacing to be placed between techs in the tech screen, in multiples
 OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
 Adjusts the scale to zoom the tech window.
 
+OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
+Adjusts the size of research screen controls, scaled with the text font size.
+
 OPTIONS_DB_SAVE_DIR
 The directory in which saved games are saved and from which they are loaded.
 
@@ -1998,20 +2001,23 @@ Window titles
 SHOW_FONT_TEXTURES
 Show Font Textures
 
-OPTIONS_TECH_SPACING
-Tech spacing
+OPTIONS_RESEARCH_WND
+Research Window
 
 OPTIONS_QUEUES
 Queues
 
-OPTIONS_HORIZONTAL
-Horizontal
+OPTIONS_TECH_SPACING_HORIZONTAL
+Horizontal Spacing
 
-OPTIONS_VERTICAL
-Vertical
+OPTIONS_TECH_SPACING_VERTICAL
+Vertical Spacing
 
-OPTIONS_ZOOM
+OPTIONS_TECH_LAYOUT_ZOOM
 Zoom
+
+OPTIONS_TECH_CTRL_ICON_SIZE
+Icon Size
 
 OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
@@ -3039,11 +3045,8 @@ Enqueued
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Unresearched Prerequisites: '''
 
-TECH_WND_LIST_VIEW
-List View
-
-TECH_WND_TREE_VIEW
-Tree View
+TECH_WND_VIEW_TYPE
+Tree View / List View
 
 TECH_WND_REQUIRES
 Requires
