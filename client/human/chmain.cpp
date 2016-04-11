@@ -19,6 +19,19 @@
 
 #include <iostream>
 
+#if defined(FREEORION_LINUX)
+/* Freeorion aims to have exceptions handled and operation continue normally.
+An example of good exception handling is the exceptions caught around config.xml loading.
+After catching and informing the user it continues normally with the default values.
+
+An exception that can not be handled should allow freeorion to crash and keep
+a complete stack trace of the intial exception.
+Some platforms do not support this behavior.
+
+When FREEORION_CHMAIN_KEEP_BACKTRACE is defined, do not catch an unhandled exceptions,
+unroll and hide the stack trace, print a message and still crash anyways. */
+#define FREEORION_CHMAIN_KEEP_STACKTRACE
+#endif
 
 // The STORE_FULLSCREEN_FLAG parameter below controls whether the fullscreen
 // option is stored in the XML config file.  On Win32 it is not, because the
@@ -92,7 +105,9 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     InitDirs((args.empty() ? "" : *args.begin()));
 
     // read and process command-line arguments, if any
+#ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     try {
+#endif
         // add entries in options DB that have no other obvious place
         GetOptionsDB().AddFlag('h', "help",                 UserStringNop("OPTIONS_DB_HELP"),                  false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
@@ -187,6 +202,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
             GetOptionsDB().Set<bool>("show-fps",                true);
         }
 
+#ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
         std::cerr << "main() caught exception(std::invalid_argument): " << e.what() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::seconds(3));
@@ -199,10 +215,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::seconds(3));
         return 1;
-    } catch (...) {
-        std::cerr << "main() caught unknown exception." << std::endl;
-        return 1;
     }
+#endif
 
     return 0;
 }
@@ -261,25 +275,28 @@ int mainSetupAndRun() {
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
         std::cout << "mainSetupAndRun caught CleanQuit" << std::endl;
-    } catch (const std::invalid_argument& e) {
+    }
+#ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
+    catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_argument): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
+        return 1;
     } catch (const std::runtime_error& e) {
         ErrorLogger() << "main() caught exception(std::runtime_error): " << e.what();
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
+        return 1;
     } catch (const  boost::io::format_error& e) {
         ErrorLogger() << "main() caught exception(boost::io::format_error): " << e.what();
         std::cerr << "main() caught exception(boost::io::format_error): " << e.what() << std::endl;
-    } catch (const GG::ExceptionBase& e) {
-        ErrorLogger() << "main() caught exception(" << e.type() << "): " << e.what();
-        std::cerr << "main() caught exception(" << e.type() << "): " << e.what() << std::endl;
+        return 1;
     } catch (const std::exception& e) {
         ErrorLogger() << "main() caught exception(std::exception): " << e.what();
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
-    } catch (...) {
-        ErrorLogger() << "main() caught unknown exception.";
-        std::cerr << "main() caught unknown exception." << std::endl;
+        return 1;
     }
+#endif
 
     return 0;
 }
+
+#undef FREEORION_CHMAIN_KEEP_STACKTRACE
