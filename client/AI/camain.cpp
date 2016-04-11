@@ -30,6 +30,8 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #endif
 
     try {
+        // TODO Code combining config, persistent_config and commandline args is copy-pasted
+        // slightly differently in chmain, dmain and camain.  Make it into a single function.
         XMLDoc doc;
         {
             boost::filesystem::ifstream ifs(GetConfigPath());

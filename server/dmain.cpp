@@ -33,6 +33,9 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
 
+        // TODO Code combining config, persistent_config and commandline args is copy-pasted
+        // slightly differently in chmain, dmain and camain.  Make it into a single function.
+
         // read config.xml and set options entries from it, if present
         XMLDoc doc;
         {

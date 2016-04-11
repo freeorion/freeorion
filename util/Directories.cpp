@@ -100,7 +100,13 @@ void InitDirs(const std::string& argv0) {
     g_initialized = true;
 }
 
-const fs::path GetUserDir() {
+const fs::path GetUserConfigDir() {
+    if (!g_initialized)
+        InitDirs("");
+    return s_user_dir;
+}
+
+const fs::path GetUserDataDir() {
     if (!g_initialized)
         InitDirs("");
     return s_user_dir;
@@ -127,6 +133,100 @@ const fs::path GetPythonHome() {
 #elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD)
 #include "binreloc.h"
 #include <unistd.h>
+#include <boost/filesystem/fstream.hpp>
+
+namespace {
+    /// Copy directory from to directory to only to a depth of safe_depth
+    void copy_directory_safe(fs::path from, fs::path to, int safe_depth) {
+        if (safe_depth < 0)
+            return;
+
+        fs::copy(from, to);
+        fs::directory_iterator it(from);
+        while (it != fs::directory_iterator()) {
+            const fs::path p = *it++;
+            if (fs::is_directory(p)) {
+                copy_directory_safe(p, to / p.filename(), safe_depth - 1);
+            } else {
+                fs::copy(p, to / p.filename());
+            }
+        }
+    }
+
+    /** If the old configuration directory exists, but neither
+        the XDG_CONFIG_DIR nor the XDG_DATA_DIR exist then
+        copy the config and data files and inform the user.
+
+        It also updates the data dir in the config.xml and persisten_config.xml files.
+     */
+    void MigrateOldConfigDirsToXDGLocation() {
+        const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
+        const fs::path config_path = GetUserConfigDir();
+        const fs::path data_path = GetUserDataDir();
+
+        bool dont_migrate = !exists(old_path) || exists(config_path) || exists(data_path);
+        if (dont_migrate)
+            return;
+
+        std::stringstream msg;
+        msg << "Freeorion added support for the XDG Base Directory Specification." << std::endl << std::endl
+            << "Configuration files and data were migrated from:" << std::endl
+            << old_path << std::endl << std::endl
+            << "Configuration were files copied to:" << std::endl << config_path << std::endl << std::endl
+            << "Data Files were copied to:" << std::endl << data_path << std::endl << std::endl
+            << "If your save-dir option in persistent_config.xml was ~/.config, then you need to update it."
+            << std::endl;
+
+        try {
+            fs::create_directories(config_path);
+            fs::create_directories(data_path);
+
+            const fs::path old_config_file = old_path / "config.xml";
+            const fs::path old_persistent_file = old_path / "persistent_config.xml";
+
+            if (exists(old_config_file))
+                fs::copy(old_config_file, config_path / old_config_file.filename());
+            if (exists(old_persistent_file))
+                fs::copy(old_persistent_file, config_path / old_persistent_file.filename());
+
+            fs::directory_iterator it(old_path);
+            while (it != fs::directory_iterator()) {
+                const fs::path p = *it++;
+                if (p == old_config_file || p == old_persistent_file)
+                    continue;
+
+                if (fs::is_directory(p)) {
+                    int arbitrary_safe_depth = 6;
+                    copy_directory_safe(p, data_path / p.filename(), arbitrary_safe_depth);
+                } else {
+                    fs::copy(p, data_path / p.filename());
+                }
+            }
+
+            //Start update of save-dir in config file and complete it in CompleteXDGMigration()
+            fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
+            if (!exists(sentinel)) {
+                fs::ofstream touchfile(sentinel);
+                touchfile << " ";
+            }
+
+            fs::ofstream msg_file(old_path / "README_CONFIGURATION_FILES_MIGRATED");
+            msg_file << msg.str() << std::endl
+                     << "You can delete this file it is a one time message." << std::endl << std::endl;
+
+        } catch(fs::filesystem_error const & e) {
+            std::cerr << "Error: Unable to migrate files from old config dir" << std::endl
+                      << old_path << std::endl
+                      << " to new XDG specified config dir" << std::endl << config_path << std::endl
+                      << " and data dir" << std::endl << data_path << std::endl
+                      << " because " << e.what()  << std::endl;
+            throw;
+        }
+
+        std::cout << msg.str();
+    }
+
+}
 
 void InitBinDir(const std::string& argv0);
 
@@ -143,7 +243,14 @@ void InitDirs(const std::string& argv0) {
 
     br_init(0);
 
-    fs::path p = GetUserDir();
+    MigrateOldConfigDirsToXDGLocation();
+
+    fs::path cp = GetUserConfigDir();
+    if (!exists(cp)) {
+        fs::create_directories(cp);
+    }
+
+    fs::path p = GetUserDataDir();
     if (!exists(p)) {
         fs::create_directories(p);
     }
@@ -158,8 +265,17 @@ void InitDirs(const std::string& argv0) {
     g_initialized = true;
 }
 
-const fs::path GetUserDir() {
-    static fs::path p = fs::path(getenv("HOME")) / ".freeorion";
+const fs::path GetUserConfigDir() {
+    static fs::path p = getenv("XDG_CONFIG_HOME")
+        ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".config" / "freeorion";
+    return p;
+}
+
+const fs::path GetUserDataDir() {
+    static fs::path p = getenv("XDG_DATA_HOME")
+        ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
     return p;
 }
 
@@ -241,7 +357,7 @@ void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
-    fs::path local_dir = GetUserDir();
+    fs::path local_dir = GetUserConfigDir();
     if (!exists(local_dir))
         fs::create_directories(local_dir);
 
@@ -254,7 +370,12 @@ void InitDirs(const std::string& argv0) {
     g_initialized = true;
 }
 
-const fs::path GetUserDir() {
+const fs::path GetUserConfigDir() {
+    static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
+    return p;
+}
+
+const fs::path GetUserDataDir() {
     static fs::path p = fs::path(std::wstring(_wgetenv(L"APPDATA"))) / "FreeOrion";
     return p;
 }
@@ -283,6 +404,18 @@ void InitBinDir(const std::string& argv0) {
 #  error Neither FREEORION_LINUX, FREEORION_FREEBSD nor FREEORION_WIN32 set
 #endif
 
+void CompleteXDGMigration() {
+    fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
+    if(exists(sentinel)){
+        fs::remove(sentinel);
+        //Update data dir in config file
+        const std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
+        const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
+        if (fs::path(options_save_dir) == old_path)
+            GetOptionsDB().Set<std::string>("save-dir", GetUserDataDir().string());
+    }
+}
+
 const fs::path GetResourceDir() {
     // if resource dir option has been set, use specified location. otherwise,
     // use default location
@@ -299,12 +432,12 @@ const fs::path GetResourceDir() {
 }
 
 const fs::path GetConfigPath() {
-    static const fs::path p = GetUserDir() / "config.xml";
+    static const fs::path p = GetUserConfigDir() / "config.xml";
     return p;
 }
 
 const fs::path GetPersistentConfigPath() {
-    static const fs::path p = GetUserDir() / "persistent_config.xml";
+    static const fs::path p = GetUserConfigDir() / "persistent_config.xml";
     return p;
 }
 

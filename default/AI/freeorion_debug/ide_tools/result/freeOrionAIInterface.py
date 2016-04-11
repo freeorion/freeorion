@@ -3242,9 +3242,9 @@ def getUniverse():
     return universe()
 
 
-def getUserDir():
+def getUserDataDir():
     """
-    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).
+    Returns path to directory where FreeOrion stores user specific data (saves, etc.).
 
     :rtype: str
     """
