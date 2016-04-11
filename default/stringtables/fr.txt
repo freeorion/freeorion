@@ -1365,13 +1365,16 @@ Il est conseillé d'avoir au moins un joueur pour chaque tranche de 15-30 systè
 Un trop grand nombre d'IAs peut causer de forts ralentissements du jeu, notamment en fin de partie.'''
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-L'espacement horizontal, dans l'arbre des technologies, des panneaux de technologies relativement à la largeur d'un panneau.
+L'espacement horizontal entre les panneaux de l'arbre des technologies dans la Fenêtre Recherche, en valeur multiple de la largeur d'un panneau.
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-L'espacement vertical, dans l'arbre des technologies, des panneaux de technologies relativement à la hauteur d'un panneau.
+L'espacement vertical entre les panneaux de l'arbre des technologies dans la Fenêtre Recherche, en valeur multiple de la hauteur d'un panneau.
 
 OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
-Ajuste l'échelle lors d'un zoom dans la Fenêtre Recherche.
+Ajuste la valeur du zoom par défaut dans la Fenêtre Recherche.
+
+OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
+Ajuste la taille des panneaux de technologies de la Fenêtre Recherche, en fonction de la taille du texte.
 
 OPTIONS_DB_SAVE_DIR
 L'adresse du répertoire où sauvegarder (et d'où charger) les parties.
@@ -1998,20 +2001,23 @@ Titres des fenêtres
 SHOW_FONT_TEXTURES
 Afficher les Polices de Caractères
 
-OPTIONS_TECH_SPACING
-Espacement entre technologies
+OPTIONS_RESEARCH_WND
+Fenêtre Recherche
 
 OPTIONS_QUEUES
 Files d'attente
 
-OPTIONS_HORIZONTAL  # translated
-Horizontal
+OPTIONS_TECH_SPACING_HORIZONTAL
+Espacement horizontal
 
-OPTIONS_VERTICAL  # translated
-Vertical
+OPTIONS_TECH_SPACING_VERTICAL
+Espacement vertical
 
-OPTIONS_ZOOM  # translated
+OPTIONS_TECH_LAYOUT_ZOOM
 Zoom
+
+OPTIONS_TECH_CTRL_ICON_SIZE
+Taille des icônes
 
 OPTIONS_TOOLTIP_DELAY
 Délai avant infobulle (ms)
@@ -3039,11 +3045,8 @@ En file d'attente
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Prérequis non acquis : '''
 
-TECH_WND_LIST_VIEW
-Vue en liste
-
-TECH_WND_TREE_VIEW
-Vue arborescente
+TECH_WND_VIEW_TYPE
+Arbre / Liste
 
 TECH_WND_REQUIRES
 Requiert
@@ -3193,10 +3196,10 @@ PRODUCTION_LOCATION_INVALID
 NE PEUT PAS être construit ici
 
 PRODUCTION_QUEUE_RALLIED_TO
-Rallié à %1%
+Ralliera %1%
 
 RALLY_QUEUE_ITEM
-Rallier à %1%
+Rallier %1%
 
 DELETE_QUEUE_ITEM
 <rgba 255 0 0 255>Retirer le projet de la file d'attente</rgba>
@@ -5066,13 +5069,13 @@ Custom_4
 #############################################################
 
 VICTORY_TECH
-L'empire %empire% a remporté une victoire technologique!
+VICTOIRE! L'empire %empire% a transcendé notre réalité et remporte une victoire technologique.
 
 VICTORY_ALL_ENEMIES_ELIMINATED
-L'empire %empire% a remporté une victoire en tant que dernier survivant!
+VICTOIRE! L'empire %empire% est l'ultime survivant.
 
 VICTORY_EXPERIMENTOR_CAPTURE
-L'empire %empire% a remporté la victoire en capturant les puissants Expérimentateurs, mettant ainsi un terme à l'effroyable fléau menaçant la galaxie!
+VICTOIRE! L'empire %empire% a capturé les puissants Expérimentateurs, mettant ainsi un terme à l'effroyable fléau menaçant la galaxie.
 
 SITREP_VICTORY_LABEL
 Victoire
@@ -5087,6 +5090,54 @@ Empire vaincu
 #############################################################
 BEGINNER_HINTS
 Astuces de Jeu
+
+BEGINNER_HINTS_TEXT
+'''Cette liste de Rapports de Situation aidera les débutants à découvrir les concepts, règles et astuces de FreeOrion.
+Une de ces entrées étant sélectionnée aléatoirement à chaque début de tour, cette liste permettra une consultation ultérieure de la totalité des entrées.
+
+Toutes les astuces de jeu:
+
+[[BEGINNER_HINT_01]]
+
+[[BEGINNER_HINT_02]]
+
+[[BEGINNER_HINT_03]]
+
+[[BEGINNER_HINT_04]]
+
+[[BEGINNER_HINT_05]]
+
+[[BEGINNER_HINT_06]]
+
+[[BEGINNER_HINT_07]]
+
+[[BEGINNER_HINT_08]]
+
+[[BEGINNER_HINT_09]]
+
+[[BEGINNER_HINT_10]]
+
+[[BEGINNER_HINT_11]]
+
+[[BEGINNER_HINT_12]]
+
+[[BEGINNER_HINT_13]]
+
+[[BEGINNER_HINT_14]]
+
+[[BEGINNER_HINT_15]]
+
+[[BEGINNER_HINT_16]]
+
+[[BEGINNER_HINT_17]]
+
+[[BEGINNER_HINT_18]]
+
+[[BEGINNER_HINT_19]]
+
+[[BEGINNER_HINT_20]]
+
+[[BEGINNER_HINT_21]]'''
 
 RANDOM_BEGINNER_HINT
 Astuce #%rawtext%
@@ -5147,6 +5198,12 @@ BEGINNER_HINT_18
 
 BEGINNER_HINT_19
 19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[encyclopedia SUPPLY_TITLE]] à une planète présentant un indicateur [[encyclopedia HAPPINESS_TITLE]] d'au moins 5, et une Population supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
+
+BEGINNER_HINT_20
+20: Les Rapports de Situation spécifiques (tel celui-ci) peuvent être temporairement masqués ou désactivés via un clic-droit sur leur icône, puis en sélectionnant une des options proposées. Les Rapports d'un certain type peuvent également être filtrés en utilisant le menu 'Filtres' de la Fenêtre 'Rapport de Situation'. Les astuces de jeu destinées aux débutants sont regroupées sous la dénomination [[encyclopedia BEGINNER_HINTS]] dans la liste de filtres.
+
+BEGINNER_HINT_21
+21: Il est possible de définir une destination pour un astronef se trouvant encore dans la file d'attente de Production. Lorsque la Fenêtre Production est ouverte, cliquez sur le système de destination sur la carte galactique, puis effectuez un clic-droit sur l'astronef présent dans la file d'attente. Parmi la liste des options proposées, choisissez 'Rallier' suivi du nom du système sélectionné, vers lequel l'astronef se rendra automatiquement une fois sa construction terminée.
 
 #############################################################
 ####                    S P E C I E S                    ####
