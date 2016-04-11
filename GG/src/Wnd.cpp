@@ -606,17 +606,26 @@ void Wnd::DetachChildren()
 
 void Wnd::DeleteChild(Wnd* wnd)
 {
-    if (wnd && std::find(m_children.begin(), m_children.end(), wnd) != m_children.end()) {
+    if (!wnd)
+        return;
+
+    if (wnd == m_layout)
+        RemoveLayout();
+    std::list<Wnd*>::iterator found = std::find(m_children.begin(), m_children.end(), wnd);
+    if (found != m_children.end()) {
+        m_children.erase(found);
         delete wnd;
     }
 }
 
 void Wnd::DeleteChildren()
 {
+    m_layout = 0;
     for (std::list<Wnd*>::iterator it = m_children.begin(); it != m_children.end();) {
         Wnd* wnd = *it++;
         delete wnd;
     }
+    m_children.clear();
 }
 
 void Wnd::InstallEventFilter(Wnd* wnd)
@@ -834,8 +843,10 @@ void Wnd::RemoveLayout()
         for (std::list<Wnd*>::iterator it = layout_children.begin(); it != layout_children.end(); ++it) {
             AttachChild(*it);
         }
-        DeleteChild(m_layout);
+        // prevent DeleteChild from recursively calling RemoveLayout
+        GG::Layout* temp_layout = m_layout;
         m_layout = 0;
+        DeleteChild(temp_layout);
     }
 }
 
