@@ -247,7 +247,6 @@
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		82682D8219C24DEC0041C465 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E250AD19C2317700F0E2F2 /* libGLEW.a */; };
 		82714D771ADABE680071A329 /* libboost_log.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82714D761ADABE680071A329 /* libboost_log.a */; };
-		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
 		8275F3F91AD31381003568FF /* AccordionPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3DD1AD31381003568FF /* AccordionPanel.cpp */; };
 		8275F3FA1AD31381003568FF /* BuildingsPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */; };
 		8275F3FB1AD31381003568FF /* CensusBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E11AD31381003568FF /* CensusBrowseWnd.cpp */; };
@@ -336,6 +335,7 @@
 		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
 		CE6730B01BC29F23004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
+		CE76B9CF1CBD7ACC0085A4DC /* ChangeLog.md in Resources */ = {isa = PBXBuildFile; fileRef = CE76B9CD1CBD7A990085A4DC /* ChangeLog.md */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */; };
 		CED6E5521C6DDC0F0085A4DC /* Fighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CED6E5501C6DDC0F0085A4DC /* Fighter.cpp */; };
@@ -982,7 +982,6 @@
 		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
 		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		82714D761ADABE680071A329 /* libboost_log.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_log.a; sourceTree = "<group>"; };
-		8273F49415DD7724000F6A09 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = changelog.txt; path = ../changelog.txt; sourceTree = SOURCE_ROOT; };
 		8275F3DD1AD31381003568FF /* AccordionPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccordionPanel.cpp; sourceTree = "<group>"; };
 		8275F3DE1AD31381003568FF /* AccordionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccordionPanel.h; sourceTree = "<group>"; };
 		8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuildingsPanel.cpp; sourceTree = "<group>"; };
@@ -1164,6 +1163,7 @@
 		CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPanel.cpp; sourceTree = "<group>"; };
 		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
 		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
+		CE76B9CD1CBD7A990085A4DC /* ChangeLog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = ChangeLog.md; path = ../ChangeLog.md; sourceTree = "<group>"; };
 		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 		CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AIFramework.cpp; sourceTree = "<group>"; };
 		CEC4ADC01BC13741000DFA9B /* AIFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFramework.h; sourceTree = "<group>"; };
@@ -1334,7 +1334,7 @@
 		34B9EBEF0F5E208F005BF6A4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8273F49415DD7724000F6A09 /* changelog.txt */,
+				CE76B9CD1CBD7A990085A4DC /* ChangeLog.md */,
 				825E7258196EC28A00F8114D /* default */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				34ACA40C0FFFABE600500F40 /* main.xib */,
@@ -2529,7 +2529,7 @@
 			files = (
 				825E7259196EC28A00F8114D /* default in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
-				8273F49515DD774C000F6A09 /* changelog.txt in Resources */,
+				CE76B9CF1CBD7ACC0085A4DC /* ChangeLog.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
