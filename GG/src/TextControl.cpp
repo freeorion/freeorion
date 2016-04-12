@@ -103,7 +103,7 @@ Clr TextControl::TextColor() const
 bool TextControl::ClipText() const
 { return m_clip_text; }
 
-bool TextControl::SetMinSize() const
+bool TextControl::IsResetMinSize() const
 { return m_set_min_size; }
 
 TextControl::operator const std::string&() const
@@ -253,7 +253,7 @@ void TextControl::SetColor(Clr c)
 void TextControl::ClipText(bool b)
 { m_clip_text = b; }
 
-void TextControl::SetMinSize(bool b)
+void TextControl::SetResetMinSize(bool b)
 {
     m_set_min_size = b;
     AdjustMinimumSize();

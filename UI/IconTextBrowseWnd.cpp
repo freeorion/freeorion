@@ -36,7 +36,7 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
     m_main_text = new CUILabel(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     m_main_text->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT));
     m_main_text->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT));
-    m_main_text->SetMinSize(true);
+    m_main_text->SetResetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
 
     AttachChild(m_title_text);

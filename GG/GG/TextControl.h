@@ -106,7 +106,7 @@ public:
         MinSize(), if any has been set.  Note that this operates independently
         of fit-to-text behavior, which sets the window size, not its minimum
         size. */
-    bool              SetMinSize() const;
+    bool              IsResetMinSize() const;
 
     /** Sets the value of \a t to the interpreted value of the control's text.
         If the control's text can be interpreted as an object of type T by
@@ -185,7 +185,7 @@ public:
 
     /** Enables/disables setting the minimum size of the window to be the text
         size. */
-    void         SetMinSize(bool b);
+    void         SetResetMinSize(bool b);
 
     /** Sets the value of the control's text to the stringified version of t.
         If t can be converted to a string representation by a

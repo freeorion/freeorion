@@ -28,7 +28,7 @@ TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& m
     m_main_text = new CUILabel(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     m_main_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y));
     m_main_text->Resize(GG::Pt(w, ICON_BROWSE_ICON_HEIGHT));
-    m_main_text->SetMinSize(true);
+    m_main_text->SetResetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
 
     AttachChild(m_main_text);
