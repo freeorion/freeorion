@@ -210,7 +210,7 @@ namespace {
                 touchfile << " ";
             }
 
-            fs::ofstream msg_file(old_path / "README_CONFIGURATION_FILES_MIGRATED");
+            fs::ofstream msg_file(old_path / "MIGRATION.README");
             msg_file << msg.str() << std::endl
                      << "You can delete this file it is a one time message." << std::endl << std::endl;
 
