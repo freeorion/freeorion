@@ -22,7 +22,7 @@ def _get_timers_dir():
         if os.path.isdir(fo.getUserDataDir()) and not os.path.isdir(TIMERS_DIR):
             os.makedirs(TIMERS_DIR)
     except OSError:
-        sys.stderr.write("AI Config Error: could not create path %s" % TIMERS_DIR)
+        sys.stderr.write("AI Config Error: could not create path %s\n" % TIMERS_DIR)
         return False
 
     return TIMERS_DIR

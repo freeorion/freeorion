@@ -7,7 +7,7 @@ import sys
 try:
     import freeOrionAIInterface as fo  # pylint: disable=import-error
 except ImportError:
-    sys.stderr.write("Executing outside of FreeOrion.")
+    sys.stderr.write("Executing outside of FreeOrion.\n")
 
 
 AI_SUB_DIR = 'AI'
@@ -75,7 +75,7 @@ def _parse_options():
         configs_read = config.read(config_files)
         print "AI Config read config file(s): %s" % configs_read
         if len(configs_read) != len(config_files):
-            sys.stderr.write("AI Config Error; could NOT read config file(s): %s"
+            sys.stderr.write("AI Config Error; could NOT read config file(s): %s\n"
                              % list(set(config_files).difference(configs_read)))
     for section in config.sections():
         sectioned_options.setdefault(section, odict())
@@ -99,7 +99,7 @@ def _get_default_file_path():
         if os.path.isdir(fo.getUserConfigDir()) and not os.path.isdir(CONFIG_DEFAULT_DIR):
             os.makedirs(CONFIG_DEFAULT_DIR)
     except OSError:
-        sys.stderr.write("AI Config Error: could not create path %s" % CONFIG_DEFAULT_DIR)
+        sys.stderr.write("AI Config Error: could not create path %s\n" % CONFIG_DEFAULT_DIR)
         return fo.getUserConfigDir()
 
     return CONFIG_DEFAULT_DIR
