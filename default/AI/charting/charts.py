@@ -20,7 +20,7 @@ import sys
 from glob import glob
 import traceback
 
-dataDir = os.environ.get('HOME', "") + "/.freeorion"
+dataDir = (os.environ.get('HOME', "") + "/.freeorion" ) if os.name != 'posix' else (os.environ.get('XDG_DATA_HOME', os.environ.get('HOME', "") + "/.local/share") + "/freeorion") 
 graphDir = dataDir
 
 fileRoot = "game1"

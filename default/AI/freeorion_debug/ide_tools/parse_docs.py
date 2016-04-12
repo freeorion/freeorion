@@ -200,14 +200,14 @@ if __name__ == '__main__':
     # example1 = """__delitem__( (IntBoolMap)arg1, (object)arg2) -> None"""
     example1 = """getEmpire() -> empire\n\ngetEmpire((int)star_name, (int)arg2, (int)arg3) -> empire"""
 
-    # example1 = ("""getUserDir() -> str :\n
-    #     Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.).
+    # example1 = ("""getUserDataDir() -> str :\n
+    #     Returns path to directory where FreeOrion stores user specific data (saves, etc.).
     #
-    #     getUserDir((int)args1) -> str :\n
+    #     getUserDataDir((int)args1) -> str :\n
     #         Unicorns.
     #     """)
     #
-    # example1 = """getUserDir() -> str :\n    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.)."""
+    # example1 = """getUserDataDir() -> str :\n    Returns path to directory where FreeOrion stores user specific data (config files, saves, etc.)."""
 
     info = Docs(example1, 1)
     print "=" * 100

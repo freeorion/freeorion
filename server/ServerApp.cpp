@@ -139,7 +139,7 @@ ServerApp::ServerApp() :
     m_current_turn(INVALID_GAME_TURN),
     m_single_player_game(false)
 {
-    const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
+    const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
 
     InitLogger(SERVER_LOG_FILENAME, "Server");
 
