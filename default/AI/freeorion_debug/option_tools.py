@@ -12,7 +12,7 @@ except ImportError:
 
 AI_SUB_DIR = 'AI'
 DEFAULT_SUB_DIR = os.path.join(AI_SUB_DIR, 'default')
-CONFIG_DEFAULT_DIR = os.path.join(fo.getUserDir(), DEFAULT_SUB_DIR)
+CONFIG_DEFAULT_DIR = os.path.join(fo.getUserConfigDir(), DEFAULT_SUB_DIR)
 CONFIG_DEFAULT_FILE = 'config.ini'
 
 # CONFIG KEYS
@@ -63,7 +63,7 @@ def _parse_options():
             config = _create_default_config_file(default_file)
         except IOError:
             sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
-            config = _create_default_config_file(os.path.join(fo.getUserDir(), CONFIG_DEFAULT_FILE))
+            config = _create_default_config_file(os.path.join(fo.getUserConfigDir(), CONFIG_DEFAULT_FILE))
 
     option_file = _get_option_file()
     # if not os.path.exists(option_path):
@@ -96,11 +96,11 @@ def _get_option_file():
 
 def _get_default_file_path():
     try:
-        if os.path.isdir(fo.getUserDir()) and not os.path.isdir(CONFIG_DEFAULT_DIR):
+        if os.path.isdir(fo.getUserConfigDir()) and not os.path.isdir(CONFIG_DEFAULT_DIR):
             os.makedirs(CONFIG_DEFAULT_DIR)
     except OSError:
         sys.stderr.write("AI Config Error: could not create path %s" % CONFIG_DEFAULT_DIR)
-        return fo.getUserDir()
+        return fo.getUserConfigDir()
 
     return CONFIG_DEFAULT_DIR
 

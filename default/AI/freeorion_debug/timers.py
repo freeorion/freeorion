@@ -1,7 +1,7 @@
 import os
 import freeOrionAIInterface as fo
 from time import time
-from option_tools import get_option_dict, check_bool, _get_default_file_path
+from option_tools import get_option_dict, check_bool, DEFAULT_SUB_DIR
 from option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
 import sys
 
@@ -10,7 +10,7 @@ options = get_option_dict()
 
 USE_TIMERS = check_bool(options[TIMERS_USE_TIMERS])
 DUMP_TO_FILE = check_bool(options[TIMERS_TO_FILE])
-TIMERS_DIR = os.path.join(_get_default_file_path(), options[TIMERS_DUMP_FOLDER])
+TIMERS_DIR = os.path.join(fo.getUserDataDir(), DEFAULT_SUB_DIR, options[TIMERS_DUMP_FOLDER])
 
 
 def make_header(*args):
@@ -19,7 +19,7 @@ def make_header(*args):
 
 def _get_timers_dir():
     try:
-        if os.path.isdir(fo.getUserDir()) and not os.path.isdir(TIMERS_DIR):
+        if os.path.isdir(fo.getUserDataDir()) and not os.path.isdir(TIMERS_DIR):
             os.makedirs(TIMERS_DIR)
     except OSError:
         sys.stderr.write("AI Config Error: could not create path %s" % TIMERS_DIR)
