@@ -2,14 +2,18 @@ import os
 from ConfigParser import SafeConfigParser
 from collections import OrderedDict as odict
 import platform
+import sys
 
 try:
     import freeOrionAIInterface as fo  # pylint: disable=import-error
 except ImportError:
-    print "Executing outside of FreeOrion."
+    sys.stderr.write("Executing outside of FreeOrion.\n")
 
 
-DEFAULT_CONFIG_FILE = 'default_config.ini'
+AI_SUB_DIR = 'AI'
+DEFAULT_SUB_DIR = os.path.join(AI_SUB_DIR, 'default')
+CONFIG_DEFAULT_DIR = os.path.join(fo.getUserConfigDir(), DEFAULT_SUB_DIR)
+CONFIG_DEFAULT_FILE = 'config.ini'
 
 # CONFIG KEYS
 TIMER_SECTION = 'Timers'
@@ -29,9 +33,9 @@ def check_bool(option):
 def get_option_dict():
     """
     Return options for AI
-    :return: ordered dict of options 
+    :return: ordered dict of options
     """
-    
+
     if not flat_options:
         _parse_options()
     return flat_options
@@ -42,7 +46,7 @@ def get_sectioned_option_dict():
     Return options for AI
     :return: ordered dict of ordered dicts of options
     """
-    
+
     if not sectioned_options:
         _parse_options()
     return sectioned_options
@@ -50,30 +54,29 @@ def get_sectioned_option_dict():
 
 def _parse_options():
     # get defaults; check if don't already exist and can write
-    default_file = _get_default_file_path()
+    default_file = _get_option_file()
     if os.path.exists(default_file):
         config = SafeConfigParser()
         config.read([default_file])
     else:
-        if platform.system() != "Linux":
-            default_file = ""
         try:
             config = _create_default_config_file(default_file)
         except IOError:
-            print "AI Config: default file is not present and not writable at location %s" % default_file
-            config = _create_default_config_file("")
+            sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
+            config = _create_default_config_file(os.path.join(fo.getUserConfigDir(), CONFIG_DEFAULT_FILE))
 
-    option_path = _get_option_file_path()
+    option_file = _get_option_file()
     # if not os.path.exists(option_path):
     #    raise Exception('Error, option path "%s" does not exists.' % option_path)
 
     # read the defaults and then the specified config path
-    if option_path:
-        config_files = [option_path]
+    if option_file:
+        config_files = [option_file]
         configs_read = config.read(config_files)
         print "AI Config read config file(s): %s" % configs_read
         if len(configs_read) != len(config_files):
-            print "AI Config Error; could NOT read config file(s): %s" % list(set(config_files).difference(configs_read))
+            sys.stderr.write("AI Config Error; could NOT read config file(s): %s\n"
+                             % list(set(config_files).difference(configs_read)))
     for section in config.sections():
         sectioned_options.setdefault(section, odict())
         for k, v in config.items(section):
@@ -81,10 +84,10 @@ def _parse_options():
             sectioned_options[section][k] = v
 
 
-def _get_option_file_path():
+def _get_option_file():
     # hack to allow lunch this code separately to dump default config
-    ai_path = fo.getAIDir()
-    option_file = fo.getAIConfigStr()
+    ai_path = _get_default_file_path()
+    option_file = CONFIG_DEFAULT_FILE
     if ai_path and option_file:
         return os.path.join(ai_path, option_file)
     else:
@@ -92,8 +95,14 @@ def _get_option_file_path():
 
 
 def _get_default_file_path():
-    # TODO: determine more robust treatment in case ResourceDir is not writable by user
-    return os.path.join(fo.getAIDir() or ".", DEFAULT_CONFIG_FILE)
+    try:
+        if os.path.isdir(fo.getUserConfigDir()) and not os.path.isdir(CONFIG_DEFAULT_DIR):
+            os.makedirs(CONFIG_DEFAULT_DIR)
+    except OSError:
+        sys.stderr.write("AI Config Error: could not create path %s\n" % CONFIG_DEFAULT_DIR)
+        return fo.getUserConfigDir()
+
+    return CONFIG_DEFAULT_DIR
 
 
 def _get_preset_default_ai_options():
@@ -132,6 +141,3 @@ def _create_default_config_file(path):
         print "default config is dumped to %s" % path
     return config
 
-
-if __name__ == '__main__':
-    _create_default_config_file(_get_default_file_path())

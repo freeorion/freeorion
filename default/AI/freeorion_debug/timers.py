@@ -1,18 +1,31 @@
 import os
 import freeOrionAIInterface as fo
 from time import time
-from option_tools import get_option_dict, check_bool, TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
+from option_tools import get_option_dict, check_bool, DEFAULT_SUB_DIR
+from option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
+import sys
 
 # setup module
 options = get_option_dict()
 
 USE_TIMERS = check_bool(options[TIMERS_USE_TIMERS])
 DUMP_TO_FILE = check_bool(options[TIMERS_TO_FILE])
-TIMERS_DIR = options[TIMERS_DUMP_FOLDER]
+TIMERS_DIR = os.path.join(fo.getUserDataDir(), DEFAULT_SUB_DIR, options[TIMERS_DUMP_FOLDER])
 
 
 def make_header(*args):
     return ['%-8s ' % x for x in args]
+
+
+def _get_timers_dir():
+    try:
+        if os.path.isdir(fo.getUserDataDir()) and not os.path.isdir(TIMERS_DIR):
+            os.makedirs(TIMERS_DIR)
+    except OSError:
+        sys.stderr.write("AI Config Error: could not create path %s\n" % TIMERS_DIR)
+        return False
+
+    return TIMERS_DIR
 
 
 class DummyTimer(object):
@@ -67,9 +80,11 @@ class LogTimer(object):
         self.start_time = time()
 
     def _write(self, text):
+        if not _get_timers_dir():
+            return
         if not self.log_name:
             empaire_id = fo.getEmpire().empireID - 1
-            self.log_name = os.path.join(TIMERS_DIR, '%s-%02d.txt' % (self.timer_name, empaire_id))
+            self.log_name = os.path.join(_get_timers_dir(), '%s-%02d.txt' % (self.timer_name, empaire_id))
             mode = 'w'  # empty file
         else:
             mode = 'a'
