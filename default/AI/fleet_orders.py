@@ -5,6 +5,7 @@ import FreeOrionAI as foAI
 import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
+import CombatRatingsAI
 from freeorion_tools import print_error
 from universe_object import Fleet, System, Planet
 
@@ -106,7 +107,7 @@ class OrderMove(AIFleetOrder):
         if system_id == self.target.get_system().id:
             return True  # TODO: already there, but could consider retreating
 
-        fleet_rating = foAI.foAIstate.get_rating(self.fleet.id).get('overall', 0)
+        fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
         target_sys_status = foAI.foAIstate.systemStatus.get(self.target.id, {})
         f_threat = target_sys_status.get('fleetThreat', 0)
         m_threat = target_sys_status.get('monsterThreat', 0)

@@ -8,6 +8,7 @@ import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
 import PlanetUtilsAI
+import CombatRatingsAI
 from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
 
@@ -108,7 +109,7 @@ class AIFleetMission(object):
             if fleet_role not in compatibileRolesMap[main_fleet_role]:  # TODO: if fleetRoles such as LongRange start being used, adjust this
                 continue  # will only considering subsuming fleets that have a compatible role
             fleet = universe.getFleet(fid)
-            if not (fleet and (fleet.systemID == system_id)):
+            if not (fleet and (fleet.systemID == system_id) and len(fleet.shipIDs) > 0):
                 continue
             if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
                 continue
@@ -142,8 +143,8 @@ class AIFleetMission(object):
                                     need_left = 1.5 * sum([sysStat.get('fleetThreat', 0) for sysStat in
                                                            [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in
                                                                                                           [nid for nid in foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', []) if nid != m_MT0_id]]])
-                                    fBRating = foAI.foAIstate.get_rating(fid)
-                                    if (need_left < fBRating.get('overall', 0)) and fBRating.get('nships', 0) > 1:
+                                    fleet_rating = CombatRatingsAI.get_fleet_rating(fid)
+                                    if need_left < fleet_rating:
                                         do_merge = True
             if do_merge:
                 FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
@@ -448,7 +449,9 @@ class AIFleetMission(object):
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
                 if repair_fleet_order.is_valid():
                     self.orders.append(repair_fleet_order)
-            if fleet.fuel < fleet.maxFuel and self.get_location_target().id not in fleet_supplyable_system_ids:
+            cur_fighter_capacity, max_fighter_capacity = FleetUtilsAI.get_fighter_capacity_of_fleet(fleet_id)
+            if (fleet.fuel < fleet.maxFuel or cur_fighter_capacity < max_fighter_capacity
+                    and self.get_location_target().id not in fleet_supplyable_system_ids):
                 resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.fleet, self.get_location_target())
                 if resupply_fleet_order.is_valid():
                     self.orders.append(resupply_fleet_order)
@@ -515,7 +518,7 @@ class AIFleetMission(object):
             return "%-20s [%10s mission]: %3d ships, total rating: %7d target: %s" % (fleet,
                                                                                       self.type,
                                                                                       (fleet and len(fleet.shipIDs)) or 0,
-                                                                                      foAI.foAIstate.get_rating(fleet_id).get('overall', 0),
+                                                                                      CombatRatingsAI.get_fleet_rating(fleet_id),
                                                                                       self.target)
         else:
             return 'Mission of %s without mission types' % fleet

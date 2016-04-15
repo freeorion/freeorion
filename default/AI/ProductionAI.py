@@ -18,19 +18,10 @@ from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_prior
                      FocusType, ShipRoleType, ShipDesignTypes)
 from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error
 from TechsListsAI import EXOBOT_TECH_NAME
+from operator import itemgetter
 
 best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
-shipTypeMap = {PriorityType.PRODUCTION_EXPLORATION: ShipDesignTypes.explorationShip,
-               PriorityType.PRODUCTION_OUTPOST: ShipDesignTypes.outpostShip,
-               PriorityType.PRODUCTION_ORBITAL_OUTPOST: ShipDesignTypes.outpostBase,
-               PriorityType.PRODUCTION_COLONISATION: ShipDesignTypes.colonyShip,
-               PriorityType.PRODUCTION_ORBITAL_COLONISATION: ShipDesignTypes.colonyBase,
-               PriorityType.PRODUCTION_INVASION: ShipDesignTypes.troopShip,
-               PriorityType.PRODUCTION_MILITARY: ShipDesignTypes.attackShip,
-               PriorityType.PRODUCTION_ORBITAL_DEFENSE: ShipDesignTypes.defenseBase,
-               PriorityType.PRODUCTION_ORBITAL_INVASION: ShipDesignTypes.troopBase,
-               }
 
 design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
@@ -44,7 +35,12 @@ def find_best_designs_this_turn():
     start = time.clock()
     ShipDesignAI.Cache.update_for_new_turn()
     design_cache.clear()
-    design_cache[PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    best_military_stats = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
+    best_stats = best_military_stats + best_carrier_stats
+    if best_stats:
+        best_stats.sort(key=itemgetter(0))
+    design_cache[PriorityType.PRODUCTION_MILITARY] = best_stats
     design_cache[PriorityType.PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
     design_cache[PriorityType.PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
     design_cache[PriorityType.PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
@@ -104,11 +100,8 @@ def cur_best_military_design_rating():
     if priority in design_cache:
         if design_cache[priority] and design_cache[priority][0]:
             rating, pid, design_id, cost = design_cache[priority][0]
-            pilots = fo.getUniverse().getPlanet(pid).speciesName
-            ship_id = -1  # no existing ship
-            design_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=[(ship_id, design_id, pilots)])['overall']
-            best_military_design_rating_cache[current_turn] = design_rating
-            return max(design_rating, 0.001)
+            best_military_design_rating_cache[current_turn] = rating
+            return max(rating, 0.001)
         else:
             return 0.001
     else:
