@@ -166,8 +166,10 @@ TechTreeArcs::~TechTreeArcs() {
     m_impl = 0;
 }
 
-void TechTreeArcs::Render(double scale)
-{ m_impl->Render(scale); }
+void TechTreeArcs::Render(double scale) {
+    if (m_impl)
+        m_impl->Render(scale);
+}
 
 void TechTreeArcs::Reset()
 { m_impl = 0; }
@@ -179,5 +181,3 @@ void TechTreeArcs::Reset(const TechTreeLayout& layout, const std::set< std::stri
     }
     m_impl = new TechTreeArcsImplementation(layout, techs_to_show);
 }
-
-
