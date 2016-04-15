@@ -160,10 +160,7 @@ TechTreeArcs::TechTreeArcs(const TechTreeLayout& layout, const std::set<std::str
 {}
 
 TechTreeArcs::~TechTreeArcs() {
-    if (m_impl != 0) {
-        delete m_impl;
-    }
-    m_impl = 0;
+    Reset();
 }
 
 void TechTreeArcs::Render(double scale) {
@@ -171,13 +168,13 @@ void TechTreeArcs::Render(double scale) {
         m_impl->Render(scale);
 }
 
-void TechTreeArcs::Reset()
-{ m_impl = 0; }
+void TechTreeArcs::Reset() {
+    if (m_impl)
+        delete m_impl;
+    m_impl = 0;
+}
 
 void TechTreeArcs::Reset(const TechTreeLayout& layout, const std::set< std::string >& techs_to_show) {
-    if (m_impl != 0) {
-        delete m_impl;
-        m_impl = 0;
-    }
+    Reset();
     m_impl = new TechTreeArcsImplementation(layout, techs_to_show);
 }
