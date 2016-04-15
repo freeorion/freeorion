@@ -58,6 +58,6 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/death-spore.png"
+    icon = "icons/ship_parts/sonic_wave.png"
 
 #include "/scripting/common/upkeep.macros"

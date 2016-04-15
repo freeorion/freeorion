@@ -180,7 +180,7 @@ Tech
         "LRN_FORCE_FIELD"
     ]
     unlock = Item type = ShipPart name = "SP_SONIC"
-    graphic = "icons/ship_parts/death-spore.png"
+    graphic = "icons/ship_parts/sonic_wave.png"
 
 Tech
     name = "SHP_GRV"
@@ -194,7 +194,7 @@ Tech
         "LRN_GRAVITONICS"
     ]
     unlock = Item type = ShipPart name = "SP_GRV"
-    graphic = "icons/ship_parts/bioterm.png"
+    graphic = "icons/ship_parts/gravitic_pulse.png"
 
 Tech
     name = "SHP_DARK_RAY"

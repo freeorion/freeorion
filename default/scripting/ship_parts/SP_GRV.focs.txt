@@ -58,6 +58,6 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/bioterm.png"
+    icon = "icons/ship_parts/gravitic_pulse.png"
 
 #include "/scripting/common/upkeep.macros"
