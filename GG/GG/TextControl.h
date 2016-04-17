@@ -80,6 +80,9 @@ public:
     /** \name Accessors */ ///@{
     virtual Pt        MinUsableSize() const;
 
+    /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
+    virtual Pt        MinUsableSize(X width) const;
+
     /** Returns the text displayed in this control. */
     const std::string& Text() const;
 
@@ -258,6 +261,9 @@ private:
     Pt                          m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                          m_text_lr;     ///< stored relative to the control's UpperLeft()
     Font::RenderCache*          m_render_cache;///< Cache much of text rendering.
+
+    mutable X                   m_cached_minusable_size_width;
+    mutable Pt                  m_cached_minusable_size;
 };
 
 typedef TextControl Label;

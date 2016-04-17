@@ -242,8 +242,10 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
         // only height-for-width Wnd type, doesn't get vertically squashed
         // down to 0-height cells.  Note that they can still get horizontally
         // squashed.
-        if (dynamic_cast<TextControl*>(it->first))
-            min_space_needed.y = std::max(min_space_needed.y, min_usable_size.y);
+        if (TextControl *text_control = dynamic_cast<TextControl*>(it->first)) {
+            min_space_needed.y = (text_control->MinUsableSize(Width()) + margin).y;
+            min_usable_size.y = min_space_needed.y;
+        }
 
         // adjust row minimums
         double total_stretch = 0.0;

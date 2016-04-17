@@ -47,7 +47,9 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     m_set_min_size(false),
     m_code_points(0),
     m_font(font),
-    m_render_cache(0)
+    m_render_cache(0),
+    m_cached_minusable_size_width(X0),
+    m_cached_minusable_size(Pt())
 {
     ValidateFormat();
     SetText(str);
@@ -61,6 +63,21 @@ TextControl::~TextControl()
 
 Pt TextControl::MinUsableSize() const
 { return m_text_lr - m_text_ul; }
+
+Pt TextControl::MinUsableSize(X width) const
+{
+    X min_delta = m_font->SpaceWidth();
+    X abs_delta_w = X(std::abs(Value(m_cached_minusable_size_width - width)));
+    if ( m_cached_minusable_size_width != X0 &&  abs_delta_w < min_delta)
+        return m_cached_minusable_size;
+
+    std::vector<Font::LineData> dummy_line_data;
+    Flags<TextFormat> dummy_format(m_format);
+    m_cached_minusable_size = m_font->DetermineLines(m_text, dummy_format, width, dummy_line_data)
+        + (ClientUpperLeft() - UpperLeft()) + (LowerRight() - ClientLowerRight());
+    m_cached_minusable_size_width = width;
+    return m_cached_minusable_size;
+}
 
 const std::string& TextControl::Text() const
 { return m_text; }
@@ -379,4 +396,5 @@ void TextControl::RecomputeTextBounds()
     else if (m_format & FORMAT_CENTER)
         m_text_ul.x = (Size().x - text_sz.x) / 2.0;
     m_text_lr = m_text_ul + text_sz;
+    AdjustMinimumSize();
 }

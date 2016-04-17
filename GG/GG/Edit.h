@@ -79,6 +79,9 @@ public:
     virtual Pt ClientUpperLeft() const;
     virtual Pt ClientLowerRight() const;
 
+    /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
+    virtual Pt MinUsableSize(X width) const;
+
     /** Returns the current position of the cursor (first selected character
         to one past the last selected one). */
     const std::pair<CPSize, CPSize>& CursorPosn() const;
