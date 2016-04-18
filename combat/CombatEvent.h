@@ -14,6 +14,11 @@ struct FO_COMMON_API CombatEvent {
     virtual ~CombatEvent() {}
     virtual std::string DebugString() const = 0;
 
+    /** Generate the combat log description.
+        Describe the result of a combat event (i.e. what happened). */
+    virtual std::string CombatLogDescription(int viewing_empire_id) const = 0;
+
+
 private:
     friend class boost::serialization::access;
     template <class Archive>

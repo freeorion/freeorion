@@ -20,6 +20,7 @@ struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
     virtual ~BoutBeginEvent() {}
 
     virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
 
     int bout;
 
@@ -37,6 +38,7 @@ struct FO_COMMON_API AttackEvent : public CombatEvent {
     virtual ~AttackEvent() {}
 
     virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
 
     int     bout;
     int     round;
@@ -59,6 +61,7 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     virtual ~IncapacitationEvent() {}
 
     virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
 
     int bout;
     int object_id;
@@ -77,6 +80,7 @@ struct FO_COMMON_API FighterAttackedEvent : public CombatEvent {
     virtual ~FighterAttackedEvent() {}
 
     virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
 
     int bout;
     int round;
@@ -97,6 +101,7 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     virtual ~FighterLaunchEvent() {}
 
     virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
 
     int bout;
     int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
