@@ -33,82 +33,7 @@ Special
                 SetShield value = Value + min(5.0, max(Value, 0.25*Target.Construction))
                 SetDefense value = Value + 1
             ]
-
-        // Mines Start
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Source
-                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
-                    ]
-                ]
-                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
-                Or [
-                    OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Unowned
-                ]
-            ]
-            effects = SetStructure value = Value - 3
-
-        EffectsGroup
-            scope = And [
-                Fleet
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Source
-                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
-                    ]
-                ]
-                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-            ]
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES"
-                    icon = "icons/sitrep/combat_damage.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "fleet" data = Target.ID
-                        tag = "rawtext" data = "3"
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-            ]
-
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Source
-                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
-                    ]
-                ]
-                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
-                Or [
-                    OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Unowned
-                ]
-                Structure high = 3
-            ]
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES_SHIP_DESTROYED"
-                    icon = "icons/sitrep/combat_destroyed.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "ship" data = Target.ID
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-                Destroy
-            ]
-        // Mines End
+        [[EG_SYSTEM_MINES(3, LATE_PRIORITY)]]
 
         EffectsGroup
             scope = Source
@@ -140,3 +65,7 @@ Special
             effects = CreateShip designname = "SM_GUARD_2"
         ]
         graphic = "icons/specials_huge/fortress.png"
+
+#include "/scripting/techs/defense/mines.macros"
+
+#include "/scripting/common/priorities.macros"

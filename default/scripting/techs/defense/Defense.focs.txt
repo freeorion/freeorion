@@ -28,77 +28,7 @@ Tech
     researchturns = 4
     prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                        Not HasSpecial name = "FORTRESS_SPECIAL"
-                    ]
-                ]
-                Or [
-                    OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Unowned
-                ]
-            ]
-            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
-            effects = SetStructure value = Value - 2
-        EffectsGroup
-            scope = And [
-                Fleet
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                        Not HasSpecial name = "FORTRESS_SPECIAL"
-                    ]
-                ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-            ]
-            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES"
-                    icon = "icons/sitrep/combat_damage.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "fleet" data = Target.ID
-                        tag = "rawtext" data = "2"
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-            ]
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                        Not HasSpecial name = "FORTRESS_SPECIAL"
-                    ]
-                ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-                Structure high = 2
-            ]
-            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES_SHIP_DESTROYED"
-                    icon = "icons/sitrep/combat_destroyed.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "ship" data = Target.ID
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-                Destroy
-            ]
+        [[EG_SYSTEM_MINES(2,VERY_LATE_PRIORITY)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
@@ -111,74 +41,7 @@ Tech
     researchturns = 6
     prerequisites = "DEF_SYST_DEF_MINE_1"
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
-                Or [
-                    OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Unowned
-                ]
-            ]
-            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
-            effects = SetStructure value = Value - 6
-        EffectsGroup
-            scope = And [
-                Fleet
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-            ]
-            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES"
-                    icon = "icons/sitrep/combat_damage.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "fleet" data = Target.ID
-                        tag = "rawtext" data = "6"
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-            ]
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-                Structure high = 6
-            ]
-            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES_SHIP_DESTROYED"
-                    icon = "icons/sitrep/combat_destroyed.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "ship" data = Target.ID
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-                Destroy
-            ]
+        [[EG_SYSTEM_MINES(6,DEFAULT_PRIORITY)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
@@ -191,72 +54,12 @@ Tech
     researchturns = 8
     prerequisites = "DEF_SYST_DEF_MINE_2"
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
-                Or [
-                    OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Unowned
-                ]
-            ]
-            effects = SetStructure value = Value - 14
-        EffectsGroup
-            scope = And [
-                Fleet
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-            ]
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES"
-                    icon = "icons/sitrep/combat_damage.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "fleet" data = Target.ID
-                        tag = "rawtext" data = "14"
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-            ]
-        EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-                Structure high = 14
-            ]
-            effects = [
-                GenerateSitRepMessage
-                    message = "EFFECT_MINES_SHIP_DESTROYED"
-                    icon = "icons/sitrep/combat_destroyed.png"
-                    parameters = [
-                        tag = "empire" data = Target.Owner
-                        tag = "ship" data = Target.ID
-                        tag = "system" data = Target.SystemID
-                    ]
-                    empire = Target.Owner
-                Destroy
-            ]
+        [[EG_SYSTEM_MINES(14,EARLY_PRIORITY)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
+
+#include "mines.macros"
+
+#include "/scripting/common/priorities.macros"
 
 #include "/scripting/common/base_prod.macros"

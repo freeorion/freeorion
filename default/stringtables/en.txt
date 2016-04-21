@@ -5038,13 +5038,22 @@ Psychogenic Domination
 
 EFFECT_MINES
 At %system%: Mines caused %rawtext% damage to the %empire% fleet %fleet%.
+EFFECT_MINES_SINGLE_SHIP
+At %system%: Mines caused %rawtext% damage to %ship%, a %shipdesign%.
 EFFECT_MINES_LABEL
 System Mines
 
 EFFECT_MINES_SHIP_DESTROYED
 At %system%: mines destroyed the %empire% ship %ship%.
+EFFECT_MINES_UNOWNED_DESTROYED
+At %system%: mines destroyed the ship %ship%, a %shipdesign%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
+
+EFFECT_MINES_UNKNOWN
+At %system%: An unknown object has triggered your mines.
+EFFECT_MINES_UNKNOWN_LABEL
+System Mines Unknown Ship
 
 EFFECT_FLEET_MOVED_TOWARDS
 At %planet%: [[tech LRN_SPATIAL_DISTORT_GEN]] moved %fleet% back towards %system%. They were initially %rawtext% uu apart.
