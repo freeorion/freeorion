@@ -48,6 +48,14 @@ Species
             effects = CreateShip designname = "SM_ACIREMA_GUARD" species = "SP_ACIREMA"
 
         EffectsGroup
+            scope = And [
+                Object id = Source.SystemID
+                System
+            ]
+            activation = Turn high = 0
+            effects = SetStarType type = Blue
+
+        EffectsGroup
             description = "GOOD_SHIP_SHIELD"
             scope = And [
                 Source
