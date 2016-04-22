@@ -908,7 +908,10 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
         // assuming enum values are ordered in increasing goodness...
         PlanetType preferred_planet_type = sept.rbegin()->second;
 
+        // both the current as well as the original type need to be set to the preferred type
         home_planet->SetType(preferred_planet_type);
+        home_planet->SetOriginalType(preferred_planet_type);
+        // set planet size according to planet type
         if (preferred_planet_type == PT_ASTEROIDS)
             home_planet->SetSize(SZ_ASTEROIDS);
         else if (preferred_planet_type == PT_GASGIANT)
