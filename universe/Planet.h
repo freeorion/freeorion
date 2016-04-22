@@ -141,6 +141,7 @@ public:
     virtual Meter*  GetMeter(MeterType type);
 
     void            SetType(PlanetType type);           ///< sets the type of this Planet to \a type
+    void            SetOriginalType(PlanetType type);   ///< sets the original type of this Planet to \a type
     void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
 
     void            SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet

@@ -538,6 +538,15 @@ void Planet::SetType(PlanetType type) {
     StateChangedSignal();
 }
 
+void Planet::SetOriginalType(PlanetType type) {
+    if (type <= INVALID_PLANET_TYPE)
+        type = PT_SWAMP;
+    if (NUM_PLANET_TYPES <= type)
+        type = PT_GASGIANT;
+    m_original_type = type;
+    StateChangedSignal();
+}
+
 void Planet::SetSize(PlanetSize size) {
     if (size <= SZ_NOWORLD)
         size = SZ_TINY;
