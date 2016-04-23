@@ -34,21 +34,6 @@ namespace {
         }
     }
 
-    /// Creates a link tag of the appropriate type for object_id,
-    /// with the content being the public name from the point of view of empire_id.
-    /// Returns not_found if object_id is not found.
-    std::string PublicNameLink(int empire_id, int object_id, const std::string& not_found) {
-        TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
-        if (object) {
-            const std::string& name = object->PublicName(empire_id);
-            const std::string& tag = LinkTag(object->ObjectType());
-            return "<" + tag + " " + boost::lexical_cast<std::string>(object_id) + ">" + name + "</" + tag + ">";
-        } else {
-            return not_found;
-        }
-    }
-
-
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
     std::string RgbaTagCopy(const GG::Clr& c, std::string const & text) {
         std::stringstream stream;
@@ -68,6 +53,29 @@ namespace {
         return RgbaTagCopy(empire->Color(), text);
     }
 
+    /// Creates a link tag of the appropriate type for object_id,
+    /// with the content being the public name from the point of view of empire_id.
+    /// Returns UserString("ENC_COMBAT_UNKNOWN_OBJECT") if object_id is not found.
+    std::string PublicNameLink(int empire_id, int object_id) {
+
+        TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
+        if (object) {
+            const std::string& name = object->PublicName(empire_id);
+            const std::string& tag = LinkTag(object->ObjectType());
+            return "<" + tag + " " + boost::lexical_cast<std::string>(object_id) + ">" + name + "</" + tag + ">";
+        } else {
+            return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+        }
+    }
+
+    /// Creates a link tag of the appropriate type for either a fighter or another object.
+    std::string FighterOrPublicNameLink(
+        int viewing_empire_id, int object_id, int object_empire_id) {
+        if (object_id >= 0)   // ship
+            return PublicNameLink(viewing_empire_id, object_id);
+        else                  // fighter
+            return EmpireColourWrappedText(object_empire_id, UserString("OBJ_FIGHTER"));
+    }
 }
 
 //////////////////////////////////////////
@@ -141,13 +149,8 @@ std::string AttackEvent::DebugString() const {
 }
 
 std::string AttackEvent::CombatLogDescription(int viewing_empire_id) const {
-    std::string attacker_link;
-    if (attacker_id >= 0)   // ship
-        attacker_link = PublicNameLink(viewing_empire_id, attacker_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-    else                            // fighter
-        attacker_link = EmpireColourWrappedText(attacker_owner_id, UserString("OBJ_FIGHTER"));
-
-    std::string target_link = PublicNameLink(viewing_empire_id, target_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+    std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id);
+    std::string target_link = PublicNameLink(viewing_empire_id, target_id);
 
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_STR");
 
@@ -227,11 +230,11 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) con
 
     } else if (object->ObjectType() == OBJ_PLANET) {
         template_str = UserString("ENC_COMBAT_PLANET_INCAPACITATED_STR");
-        object_str = PublicNameLink(viewing_empire_id, object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+        object_str = PublicNameLink(viewing_empire_id, object_id);
 
     } else {    // ships or other to-be-determined objects...
         template_str = UserString("ENC_COMBAT_DESTROYED_STR");
-        object_str = PublicNameLink(viewing_empire_id, object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+        object_str = PublicNameLink(viewing_empire_id, object_id);
     }
 
     std::string owner_string = " ";
@@ -294,11 +297,7 @@ std::string FighterAttackedEvent::DebugString() const {
 }
 
 std::string FighterAttackedEvent::CombatLogDescription(int viewing_empire_id) const {
-    std::string attacked_by;
-    if (attacked_by_object_id >= 0) // attacked by ship or planet
-        attacked_by = PublicNameLink(viewing_empire_id, attacked_by_object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-    else                                            // attacked by fighter
-        attacked_by = EmpireColourWrappedText(attacker_owner_empire_id, UserString("OBJ_FIGHTER"));
+    std::string attacked_by = FighterOrPublicNameLink(viewing_empire_id, attacked_by_object_id, attacker_owner_empire_id);
     std::string empire_coloured_attacked_fighter = EmpireColourWrappedText(attacked_owner_id, UserString("OBJ_FIGHTER"));
 
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_SIMPLE_STR");
@@ -358,7 +357,7 @@ std::string FighterLaunchEvent::DebugString() const {
 }
 
 std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id) const {
-    std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
+    std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id);
     std::string empire_coloured_fighter = EmpireColourWrappedText(fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
 
     // launching negative fighters indicates recovery of them by the ship
