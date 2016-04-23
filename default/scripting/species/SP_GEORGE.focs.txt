@@ -32,6 +32,18 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
         [[BROAD_EP]]
+
+        EffectsGroup
+            scope = And [
+                Planet
+                Species name = "SP_GEORGE"
+                Not OwnedBy empire = Source.Owner   // would be redundant to re-assign visbility to own planets
+            ]
+            activation = And [
+                Planet
+                Not Unowned
+            ]
+            effects = SetVisibility visibility = Full empire = Source.Owner
     ]
 
     [[TUNDRA_BROAD_EP]]
