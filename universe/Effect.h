@@ -984,16 +984,18 @@ private:
 class FO_COMMON_API SetVisibility : public EffectBase {
 public:
     SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
-                  ValueRef::ValueRefBase<int>* empire_id = 0);
+                  ValueRef::ValueRefBase<int>* empire_id = 0,
+                  Condition::ConditionBase* of_objects = 0);    // if not specified, acts on target. if specified, acts on all matching objects
     virtual ~SetVisibility();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
-    Visibility                      GetVisibility() const   { return m_vis; }
-    ValueRef::ValueRefBase<int>*    EmpireID() const        { return m_empire_id; }
-    EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
+    Visibility                      GetVisibility() const       { return m_vis; }
+    ValueRef::ValueRefBase<int>*    EmpireID() const            { return m_empire_id; }
+    EmpireAffiliationType           Affiliation() const         { return m_affiliation; }
+    Condition::ConditionBase*       OfObjectsCondition() const  { return m_condition; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -1001,6 +1003,7 @@ private:
     Visibility                      m_vis;
     ValueRef::ValueRefBase<int>*    m_empire_id;
     EmpireAffiliationType           m_affiliation;
+    Condition::ConditionBase*       m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1313,7 +1316,8 @@ void SetVisibility::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_vis)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_affiliation);
+        & BOOST_SERIALIZATION_NVP(m_affiliation),
+        & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>

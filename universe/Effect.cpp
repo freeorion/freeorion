@@ -3751,14 +3751,18 @@ std::string SetTexture::Dump() const
 // SetVisibility                                         //
 ///////////////////////////////////////////////////////////
 SetVisibility::SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
-                             ValueRef::ValueRefBase<int>* empire_id) :
+                             ValueRef::ValueRefBase<int>* empire_id,
+                             Condition::ConditionBase* of_objects) :
     m_vis(vis),
     m_empire_id(empire_id),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_condition(of_objects)
 {}
 
-SetVisibility::~SetVisibility()
-{ delete m_empire_id; }
+SetVisibility::~SetVisibility() {
+    delete m_empire_id;
+    delete m_condition;
+}
 
 void SetVisibility::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
@@ -3830,13 +3834,27 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     }
     }
 
+    // what to set visibility of?
+    std::set<int> object_ids;
+    if (!m_condition) {
+        object_ids.insert(context.effect_target->ID());
+    } else {
+        Condition::ObjectSet condition_matches;
+        m_condition->Eval(context, condition_matches);
+        for (Condition::ObjectSet::const_iterator obj_it = condition_matches.begin();
+             obj_it != condition_matches.end(); ++obj_it)
+        { object_ids.insert((*obj_it)->ID()); }
+    }
+
     for (std::set<int>::const_iterator emp_it = empire_ids.begin();
          emp_it != empire_ids.end(); ++emp_it)
     {
         Empire* empire = GetEmpire(*emp_it);
         if (!empire)
             continue;
-        GetUniverse().SetEffectDerivedVisibility(*emp_it, context.effect_target->ID(), m_vis);
+        for (std::set<int>::const_iterator obj_it = object_ids.begin();
+             obj_it != object_ids.end(); ++obj_it)
+        { GetUniverse().SetEffectDerivedVisibility(*emp_it, *obj_it, m_vis); }
     }
 }
 
@@ -3897,6 +3915,10 @@ std::string SetVisibility::Dump() const {
 
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump();
+
+    if (m_condition)
+        retval += " condition = " + m_condition->Dump();
+
     retval += "\n";
     return retval;
 }
@@ -3904,6 +3926,8 @@ std::string SetVisibility::Dump() const {
 void SetVisibility::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
+    if (m_condition)
+        m_condition->SetTopLevelContent(content_name);
 }
 
 

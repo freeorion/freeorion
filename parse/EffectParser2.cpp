@@ -3,6 +3,7 @@
 #include "EnumParser.h"
 #include "Label.h"
 #include "ValueRefParser.h"
+#include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -18,6 +19,7 @@ namespace {
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_d_type _d;
+            qi::_e_type _e;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -95,30 +97,31 @@ namespace {
 
             set_visibility
                 =    tok.SetVisibility_
-                >    parse::label(Visibility_token)
-                > (     tok.Invisible_  [ _c = VIS_NO_VISIBILITY ]
+                >   (
+                        parse::label(Visibility_token)
+                    > ( tok.Invisible_  [ _c = VIS_NO_VISIBILITY ]
                     |   tok.Basic_      [ _c = VIS_BASIC_VISIBILITY ]
                     |   tok.Partial_    [ _c = VIS_PARTIAL_VISIBILITY ]
                     |   tok.Full_       [ _c = VIS_FULL_VISIBILITY ]
-                  )
-                >  (
+                      )
+                    > (
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
                             (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
                             |   eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::label(Empire_token) > int_value_ref
-                            [ _val = new_<Effect::SetVisibility>(_c, _d, _1) ]
+                        >>  parse::label(Empire_token) > int_value_ref [ _b = _1 ]
                         )
-                   |    (   // no empire id or condition specified, with or without an
+                     |  (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
                             (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
                             |   eps [ _d = AFFIL_ANY ]
                             )
-                            [ _val = new_<Effect::SetVisibility>(_c, _d, _b) ]
                         )
-                   )
+                     )
+                    >-(parse::label(Condition_token) > parse::detail::condition_parser [ _e = _1 ])
+                    ) [ _val = new_<Effect::SetVisibility>(_c, _d, _b, _e) ]
                 ;
 
             start
@@ -177,7 +180,8 @@ namespace {
                 ResourceType,
                 ValueRef::ValueRefBase<int>*,
                 Visibility,
-                EmpireAffiliationType
+                EmpireAffiliationType,
+                Condition::ConditionBase*
             >,
             parse::skipper_type
         > set_stockpile_or_vis_rule;
