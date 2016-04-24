@@ -384,7 +384,7 @@ def assess_protection_focus(pid, pinfo):
     return use_protection
 
 
-def use_planet_growth_specials(focus_manager):
+def set_planet_growth_specials(focus_manager):
     """set resource foci of planets with potentially useful growth factors. Remove planets from list of candidates."""
     if useGrowth:
         # TODO: also consider potential future benefit re currently unpopulated planets
@@ -410,7 +410,7 @@ def use_planet_growth_specials(focus_manager):
                     continue
                 rankedPlanets.sort()
                 print "Considering Growth Focus choice for special %s; possible planet pop, id pairs are %s" % (metab, rankedPlanets)
-                for spSize, spPID, cur_focus in rankedPlanets:  # index 0 should be able to set focus, but just in case...
+                for _spPop, spPID, cur_focus in rankedPlanets:  # index 0 should be able to set focus, but just in case...
                     planet = focus_manager.all_planet_info[spPID].planet
                     if focus_manager.bake_future_focus(spPID, GFocus):
                         print "%s focus of planet %s (%d) at Growth Focus" % (["set", "left"][cur_focus == GFocus], planet.name, spPID)
@@ -419,11 +419,16 @@ def use_planet_growth_specials(focus_manager):
                         print "failed setting focus of planet %s (%d) at Growth Focus; focus left at %s" % (planet.name, spPID, planet.focus)
 
 
-def use_planet_production_and_research_specials(focus_manager):
-    """Use production and research specials as appropriate.  Remove planets from list of candidates."""
+def set_planet_production_and_research_specials(focus_manager):
+    """Set production and research specials.
+    Sets production/research specials for known (COMPUTRONIUM, HONEYCOMB and CONC_CAMP)
+    production/research specials.
+    Remove planets from list of candidates using bake_future_focus."""
     # TODO remove reliance on rules knowledge.  Just scan for specials with production
     # and research bonuses and use what you find. Perhaps maintain a list
     # of know types of specials
+    # TODO use "best" COMPUTRON planet instead of first found, where "best" means least industry loss,
+    # least threatened, no foci change penalty etc.
     universe = fo.getUniverse()
     already_have_comp_moon = False
     for pid, pinfo in focus_manager.raw_planet_info.items():
@@ -443,9 +448,6 @@ def use_planet_production_and_research_specials(focus_manager):
                   ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]] != []))
                 and IFocus in planet.availableFoci):
             if focus_manager.bake_future_focus(pid, IFocus):
-                if pinfo.current_focus != IFocus:
-                    print ("Tried setting %s for Concentration Camp planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
-                           (pinfo.future_focus, planet.name, pid, planet.speciesName, pinfo.current_focus, True, planet.focus))
                 print "%s focus of planet %s (%d) (with Concentration Camps/Remnants) at Industry Focus" % (["set", "left"][pinfo.current_focus == IFocus], planet.name, pid)
                 continue
             else:
@@ -476,6 +478,7 @@ def set_planet_protection_foci(focus_manager):
 def set_planet_happiness_foci(focus_manager):
     """Assess and set planet focus to preferred focus depending on happiness"""
     # TODO Assess need to set planet to preferred focus to improve happiness
+    pass
 
 
 def set_planet_industry_and_research_foci(focus_manager, priorityRatio):
@@ -609,8 +612,8 @@ def set_planet_resource_foci():
         reporter = Reporter(focus_manager)
         reporter.capture_section_info("Unfocusable")
 
-        use_planet_growth_specials(focus_manager)
-        use_planet_production_and_research_specials(focus_manager)
+        set_planet_growth_specials(focus_manager)
+        set_planet_production_and_research_specials(focus_manager)
         reporter.capture_section_info("Specials")
 
         focus_manager.calculate_planet_infos(focus_manager.raw_planet_info.keys())
