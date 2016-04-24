@@ -88,9 +88,7 @@ namespace GG {
         {
             // Get the path from the parameters.
             fs::path param_path = ExtractPath(params);
-            std::cout << "ImageBlockFactory param path: " << param_path.generic_string() << std::endl;
             fs::path combined_path = m_root_path / param_path;
-            std::cout << "ImageBlockFactory combined path: " << combined_path.generic_string() << "  exists?: " << fs::exists(combined_path) << std::endl;
 
             if (!fs::exists(combined_path))
                 return 0;
