@@ -10,6 +10,20 @@
 
 #include <boost/filesystem/fstream.hpp>
 
+#if defined(FREEORION_LINUX)
+/* Freeorion aims to have exceptions handled and operation continue normally.
+An example of good exception handling is the exceptions caught around config.xml loading.
+After catching and informing the user it continues normally with the default values.
+
+An exception that can not be handled should allow freeorion to crash and keep
+a complete stack trace of the intial exception.
+Some platforms do not support this behavior.
+
+When FREEORION_DMAIN_KEEP_BACKTRACE is defined, do not catch an unhandled exceptions,
+unroll and hide the stack trace, print a message and still crash anyways. */
+#define FREEORION_DMAIN_KEEP_STACKTRACE
+#endif
+
 #ifndef FREEORION_WIN32
 int main(int argc, char* argv[]) {
     InitDirs(argv[0]);
@@ -30,7 +44,9 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     InitDirs((args.empty() ? "" : *args.begin()));
 #endif
 
+#ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
+#endif
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
 
         // TODO Code combining config, persistent_config and commandline args is copy-pasted
@@ -69,6 +85,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         ServerApp g_app;
         g_app(); // Calls ServerApp::Run() to run app (intialization and main process loop)
 
+#ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
@@ -86,6 +103,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }
+#endif
 
     return 0;
 }
