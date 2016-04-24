@@ -15,19 +15,53 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
+        // Normal repair, completely restored
         EffectsGroup
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
                 OwnedBy empire = Source.Owner
-                Structure high = LocalCandidate.MaxStructure - 0.001
+                Structure low = LocalCandidate.MaxStructure - 
+                    [[ORB_DRYDOCK_REPAIR_VAL(LocalCandidate.MaxStructure)]] - 0.001
+                    high = LocalCandidate.MaxStructure - 0.001
+                Turn low = LocalCandidate.ArrivedOnTurn + 1
+                (Source.Planet.Happiness >= [[CONST_ORB_DRYDOCK_MIN_HAPPY]])
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 1
+            stackinggroup = "SHIP_REPAIR"
+            priority = [[VERY_EARLY_PRIORITY]]
             effects = [
-                //SetStructure value = Value + 10
                 SetStructure value = Target.MaxStructure
                 GenerateSitRepMessage
-                    message = "EFFECT_DRYDOCK_SHIP_REPAIR"
+                    message = "EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE"
+                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    icon = "icons/sitrep/ship-repair-complete.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "building" data = Source.ID
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
+        // Normal repair
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy empire = Source.Owner
+                Structure high = LocalCandidate.MaxStructure -
+                    [[ORB_DRYDOCK_REPAIR_VAL(LocalCandidate.MaxStructure)]]
+                Turn low = LocalCandidate.ArrivedOnTurn + 1
+                (Source.Planet.Happiness >= [[CONST_ORB_DRYDOCK_MIN_HAPPY]])
+            ]
+            activation = Turn low = Source.System.LastTurnBattleHere + 1
+            stackinggroup = "SHIP_REPAIR"
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = [
+                SetStructure value = Value + [[ORB_DRYDOCK_REPAIR_VAL(Target.MaxStructure)]]
+                GenerateSitRepMessage
+                    message = "EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL"
+                    label = "SITREP_SHIP_REPAIR_DOCK"
                     icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID
@@ -36,14 +70,60 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-
+        // No repair
         EffectsGroup
             scope = And [
-                Object id = Source.PlanetID
-                Planet
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy empire = Source.Owner
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                (Source.Planet.Happiness < [[CONST_ORB_DRYDOCK_MIN_HAPPY]])
             ]
-            effects = SetTargetConstruction value = Value - 15
-        ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_DRYDOCK_SHIP_REPAIR_NONE"
+                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    icon = "icons/sitrep/ship-repair.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "building" data = Source.ID
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
+    ]
     icon = "icons/building/shipyard-1.png"
 
+// No repairs below this happiness
+CONST_ORB_DRYDOCK_MIN_HAPPY
+'''5'''
+
+// Max repair at this happiness
+CONST_ORB_DRYDOCK_TARGET_HAPPY
+'''15.0'''
+
+// Minimum repair per turn, at target happiness
+CONST_ORB_DRYDOCK_MIN_REPAIR
+'''30.0'''
+
+// Max repair rate, based on MaxStructure
+CONST_ORB_DRYDOCK_TARGET_REPAIR
+'''0.25'''
+
+// Happiness rate formula
+ORB_DRYDOCK_HAPPY_RATE
+'''min(Source.Planet.Happiness / [[CONST_ORB_DRYDOCK_TARGET_HAPPY]], 1.0)'''
+
+// Repair rate formula
+// arg1 target max structure
+ORB_DRYDOCK_REPAIR_RATE
+'''max([[CONST_ORB_DRYDOCK_MIN_REPAIR]], @1@ * [[CONST_ORB_DRYDOCK_TARGET_REPAIR]])'''
+
+// Formula for amount of structure to repair
+// arg1 target max structure
+ORB_DRYDOCK_REPAIR_VAL
+'''[[ORB_DRYDOCK_HAPPY_RATE]] * [[ORB_DRYDOCK_REPAIR_RATE(@1@)]]'''
+
 #include "/scripting/common/enqueue.macros"
+
+#include "/scripting/common/priorities.macros"
