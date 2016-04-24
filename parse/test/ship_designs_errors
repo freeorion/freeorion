@@ -34,3 +34,15 @@ ShipDesign Name = "Foo 1" Description = "Bar" Hull = "Foo" Parts = [ "Foo" "Foo"
 ShipDesign Name = "Foo 1" Description = "Bar" Hull = "Foo" Parts = [ "Foo" "Foo" ] Graphic = "Baz"
 ShipDesign Name = "Foo 1" Description = "Bar" Hull = "Foo" Parts = [ "Foo" "Foo" ] Graphic = "Baz" Model
 ShipDesign Name = "Foo 1" Description = "Bar" Hull = "Foo" Parts = [ "Foo" "Foo" ] Graphic = "Baz" Model =
+ShipDesign Name = "Foo 2"
+ShipDesign Name = "Foo 2" Description
+ShipDesign Name = "Foo 2" Description =
+ShipDesign Name = "Foo 2" Description = "Bar"
+ShipDesign Name = "Foo 2" Description = "Bar" Hull
+ShipDesign Name = "Foo 2" Description = "Bar" Hull =
+ShipDesign Name = "Foo 2" Description = "Bar" Hull = "Foo"
+ShipDesign Name = "Foo 2" Description = "Bar" Hull = "Foo" Graphic
+ShipDesign Name = "Foo 2" Description = "Bar" Hull = "Foo" Graphic =
+ShipDesign Name = "Foo 2" Description = "Bar" Hull = "Foo" Graphic = "Baz"
+ShipDesign Name = "Foo 2" Description = "Bar" Hull = "Foo" Graphic = "Baz" Model
+ShipDesign Name = "Foo 2" Description = "Bar" Hull = "Foo" Graphic = "Baz" Model =

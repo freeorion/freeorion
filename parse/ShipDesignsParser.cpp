@@ -70,10 +70,12 @@ namespace {
 
             design
                 =    design_prefix(_a, _b, _c, _f)
-                >    parse::label(Parts_token)
-                >    (
+                >    -(
+                         parse::label(Parts_token)
+                     >   (
                             '[' > +tok.string [ push_back(_d, _1) ] > ']'
-                        |   tok.string [ push_back(_d, _1) ]
+                         |   tok.string [ push_back(_d, _1) ]
+                         )
                      )
                 >   -(
                         parse::label(Icon_token)     > tok.string [ _e = _1 ]
