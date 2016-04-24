@@ -28,13 +28,13 @@ XENOPHOBIC_SELF
                 SetTargetHappiness value = Value - (
                     Count condition = And [
                     PopulationCenter
-                    WithinStarlaneJumps jumps = 5 condition = Source
                     OwnedBy empire = Source.Owner
                     Not OR [ 
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
+                    WithinStarlaneJumps jumps = 5 condition = Source
                 ]
                 )
             ]
@@ -57,13 +57,24 @@ XENOPHOBIC_SELF
                     ]
                     Not Population high = 0
                     WithinStarlaneJumps jumps = 5 condition = Source
-                    WithinStarlaneJumps
-                                  jumps = 2
-                              condition = ExploredByEmpire
-                                          empire = Source.Owner
+                    WithinStarlaneJumps jumps = 2 condition = ExploredByEmpire empire = Source.Owner
                 ]
                 ) ) ), (Value - 3 * Target.SizeAsDouble)) // Sets the pop malus dependent on the number of other species nearby up to a max of the self sustaining bonus
 
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                Not OR [ 
+                    Species name = Source.Species
+                    Species name = "SP_EXOBOT"
+                ]
+                Not Population high = 0
+                WithinStarlaneJumps jumps = 5 condition = Source
+                Not VisibleToEmpire empire = Source.Owner
+            ]
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = SetVisibility visibility = Partial empire = Source.Owner
 '''
 
 // single argument should be the name of the species capitalized
