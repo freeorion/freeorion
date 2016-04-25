@@ -23,6 +23,11 @@ public:
     /** \name Mutators */ //@{
     //void                        Clear();            ///< cleans up contents
     TemporaryPtr<System>        GetSystem();        ///< returns System object in this CombatInfo's objects if one exists with id system_id
+
+    /**Reveal stealthed attacker to their target's empires.
+       Returns true and new visibility if update changed visibility.*/
+    std::pair<bool, Visibility> UpdateObjectVisibility(int attacker_id, int target_id);
+
     //@}
 
     int                                 turn;                       ///< main game turn
@@ -45,6 +50,8 @@ private:
     void    GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >&         filtered_destroyed_object_knowers,  int encoding_empire) const;
     void    GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&   filtered_empire_object_visibility,  int encoding_empire) const;
     void    GetCombatEventsToSerialize(          std::vector<CombatEventPtr>&           filtered_combat_events,             int encoding_empire) const;
+
+    void InitializeObjectVisibility();
 
     friend class boost::serialization::access;
     template<class Archive>

@@ -82,22 +82,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // objects again to assemble each participant empire's latest
     // known information about all objects in this battle
 
-    // system and empire visibility of all objects in it
-    std::set< int > local_object_ids = system->ContainedObjectIDs();
-    for (std::set<int>::const_iterator empire_it = empire_ids.begin();
-         empire_it != empire_ids.end(); ++empire_it)
-    {
-        int empire_id = *empire_it;
-        if (empire_id == ALL_EMPIRES)
-            continue;
-        empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
-        empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(empire_id, system->ID());
-        for (std::set< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); obj_it++) {
-            Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(empire_id, *obj_it);
-            if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
-                empire_object_visibility[empire_id][*obj_it] = obj_vis;
-        }
-    }
+    InitializeObjectVisibility();
 
     // ships
     for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
@@ -262,6 +247,43 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
     filtered_empire_object_visibility = this->empire_object_visibility;
 }
 
+/** Requires system_id, empire_ids are initialized*/
+void CombatInfo::InitializeObjectVisibility()
+{
+    // system and empire visibility of all objects in it
+    TemporaryPtr<System> system = ::GetSystem(system_id);
+    std::set< int > local_object_ids = system->ContainedObjectIDs();
+    for (std::set<int>::const_iterator empire_it = empire_ids.begin();
+         empire_it != empire_ids.end(); ++empire_it)
+    {
+        int empire_id = *empire_it;
+        if (empire_id == ALL_EMPIRES)
+            continue;
+        empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
+        empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(empire_id, system->ID());
+        for (std::set< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); obj_it++) {
+            Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(empire_id, *obj_it);
+            if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
+                empire_object_visibility[empire_id][*obj_it] = obj_vis;
+        }
+    }
+}
+
+std::pair<bool, Visibility> CombatInfo::UpdateObjectVisibility(int attacker_id, int target_id)
+{
+    TemporaryPtr<UniverseObject> attacker = objects.Object(attacker_id);
+    TemporaryPtr<UniverseObject> target = objects.Object(target_id);
+    // Also ensure that attacker (and their fleet if attacker was a ship) are
+    // revealed with at least BASIC_VISIBILITY to the taget empire
+    Visibility old_visibility = empire_object_visibility[target->Owner()][attacker->ID()];
+    Visibility new_visibility = std::max(empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
+    empire_object_visibility[target->Owner()][attacker->ID()] = new_visibility;
+    if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
+        empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] =
+            std::max(empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
+    }
+    return std::make_pair(old_visibility != new_visibility, new_visibility);
+}
 ////////////////////////////////////////////////
 // AutoResolveCombat
 ////////////////////////////////////////////////
@@ -1535,16 +1557,12 @@ namespace {
             // was not already attackable
             CombatEventPtr this_event = combat_info.combat_events[event_index];
             if (boost::shared_ptr<AttackEvent> this_attack = boost::dynamic_pointer_cast<AttackEvent>(this_event)) {
-                TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(this_attack->attacker_id);
-                TemporaryPtr<UniverseObject> target = combat_info.objects.Object(this_attack->target_id);
-                combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
-                // Also ensure that attacker (and their fleet if attacker was a ship) are
-                // revealed with at least BASIC_VISIBILITY to the taget empire
-                combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] =
-                    std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
-                if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
-                    combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] =
-                        std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
+                std::pair<bool,Visibility> visibility = combat_info.UpdateObjectVisibility(
+                    this_attack->attacker_id, this_attack->target_id);
+                if (visibility.first && visibility.second >= VIS_BASIC_VISIBILITY) {
+                    int attacker_empire = combat_info.objects.Object(this_attack->attacker_id)->Owner();
+                    int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
+                    combat_state.empire_infos[target_empire].target_ids.insert(this_attack->attacker_id);
                 }
             }
         }
