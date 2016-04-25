@@ -414,7 +414,7 @@ void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_xml_iarch
 //////////////////////////////////////////
 ///////// Attack Event////////////////////
 //////////////////////////////////////////
-AttackEvent::AttackEvent() :
+WeaponFireEvent::WeaponFireEvent() :
     bout(-1),
     round(-1),
     attacker_id(INVALID_OBJECT_ID),
@@ -423,7 +423,7 @@ AttackEvent::AttackEvent() :
     attacker_owner_id(ALL_EMPIRES)
 {}
 
-AttackEvent::AttackEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_, int attacker_owner_id_) :
+WeaponFireEvent::WeaponFireEvent(int bout_, int round_, int attacker_id_, int target_id_, float damage_, int attacker_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_id(attacker_id_),
@@ -432,7 +432,7 @@ AttackEvent::AttackEvent(int bout_, int round_, int attacker_id_, int target_id_
     attacker_owner_id(attacker_owner_id_)
 {}
 
-std::string AttackEvent::DebugString() const {
+std::string WeaponFireEvent::DebugString() const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
        << attacker_id << " -> " << target_id << " : "
@@ -440,7 +440,7 @@ std::string AttackEvent::DebugString() const {
     return ss.str();
 }
 
-std::string AttackEvent::CombatLogDescription(int viewing_empire_id) const {
+std::string WeaponFireEvent::CombatLogDescription(int viewing_empire_id) const {
     std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id);
     std::string target_link = PublicNameLink(viewing_empire_id, target_id);
 
@@ -455,7 +455,7 @@ std::string AttackEvent::CombatLogDescription(int viewing_empire_id) const {
 }
 
 template <class Archive>
-void AttackEvent::serialize(Archive& ar, const unsigned int version) {
+void WeaponFireEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
        & BOOST_SERIALIZATION_NVP(round)
@@ -470,20 +470,20 @@ void AttackEvent::serialize(Archive& ar, const unsigned int version) {
     }
 }
 
-BOOST_CLASS_VERSION(AttackEvent, 4)
-BOOST_CLASS_EXPORT(AttackEvent)
+BOOST_CLASS_VERSION(WeaponFireEvent, 4)
+BOOST_CLASS_EXPORT(WeaponFireEvent)
 
 template
-void AttackEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+void WeaponFireEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
 
 template
-void AttackEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+void WeaponFireEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
 
 template
-void AttackEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+void WeaponFireEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 template
-void AttackEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+void WeaponFireEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 //////////////////////////////////////////
 ///////// IncapacitationEvent/////////////

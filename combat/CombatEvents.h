@@ -102,11 +102,11 @@ private:
 };
 
 /// An event that describes a single attack by one object or fighter against another object or fighter
-struct FO_COMMON_API AttackEvent : public CombatEvent {
-    AttackEvent();
-    AttackEvent(int bout, int round, int attacker_id, int target_id, float damage_, int attacker_owner_id_);
+struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
+    WeaponFireEvent();
+    WeaponFireEvent(int bout, int round, int attacker_id, int target_id, float damage_, int attacker_owner_id_);
 
-    virtual ~AttackEvent() {}
+    virtual ~WeaponFireEvent() {}
 
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;

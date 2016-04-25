@@ -1973,11 +1973,11 @@ namespace {
             for (std::vector<CombatEventPtr>::const_iterator it = attacks.begin();
                  it != attacks.end(); ++it)
             {
-                const AttackEvent* maybe_attack = dynamic_cast<AttackEvent*>(it->get());
+                const WeaponFireEvent* maybe_attack = dynamic_cast<WeaponFireEvent*>(it->get());
                 if(!maybe_attack){
                     continue;
                 }
-                const AttackEvent& attack = *maybe_attack;
+                const WeaponFireEvent& attack = *maybe_attack;
                 // Check that the thing that was hurt died
                 if (combat_info.destroyed_object_ids.find(attack.target_id) == combat_info.destroyed_object_ids.end())
                     continue;

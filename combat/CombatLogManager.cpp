@@ -117,7 +117,7 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
     // pointers to their base class.
     // Therefore we need to manually register their types
     // in the archive.
-    ar.template register_type<AttackEvent>();
+    ar.template register_type<WeaponFireEvent>();
     ar.template register_type<IncapacitationEvent>();
     ar.template register_type<BoutBeginEvent>();
     ar.template register_type<InitialStealthEvent>();

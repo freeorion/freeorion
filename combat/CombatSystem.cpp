@@ -346,7 +346,7 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
@@ -419,7 +419,7 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
@@ -472,7 +472,7 @@ namespace {
                 DebugLogger() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
@@ -528,7 +528,7 @@ namespace {
                 DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<AttackEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
@@ -1641,7 +1641,7 @@ namespace {
             // of visibility the attacker can be counter-attacked in subsequent rounds if it
             // was not already attackable
             CombatEventPtr this_event = combat_info.combat_events[event_index];
-            if (boost::shared_ptr<AttackEvent> this_attack = boost::dynamic_pointer_cast<AttackEvent>(this_event)) {
+            if (boost::shared_ptr<WeaponFireEvent> this_attack = boost::dynamic_pointer_cast<WeaponFireEvent>(this_event)) {
                 combat_info.ForceAtLeastBasicVisibility(this_attack->attacker_id, this_attack->target_id);
                 int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
                 std::set<int>::iterator attacker_targettable_it
