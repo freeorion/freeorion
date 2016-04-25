@@ -5,6 +5,7 @@
 #include <list>
 
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "Export.h"
 
@@ -43,5 +44,107 @@ FO_COMMON_API std::string DoubleToString(double val, int digits, bool always_sho
   * larger than SMALL VALUE, and returns 0 for zero values or values with
   * absolute value less than SMALL_UI_DISPLAY_VALUE */
 FO_COMMON_API int EffectiveSign(double val);
+
+/** returns a boost::format pre-filled with a list of up to 10 items with some introductory text similar to
+ These are 3 fruit: apples, pears and bananas.
+ The Container types need to support size(), begin() and end().
+ The headers are boost::format strings fed the size of the words list and then any header words passed in.
+ TODO: Adopt an out of house i18n framework and handle of empty, singular, pairs, triplets etc. correctly. */
+
+template<typename HeaderContainer, typename ListContainer>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const HeaderContainer& header_words
+    , const ListContainer& words
+    , const std::string& plural_header_template
+    , const std::string& single_header_template
+    , const std::string& empty_header_template
+    , const std::string& dual_header_template )
+{
+    std::string header_template;
+    switch (words.size()) {
+    case 0:
+        header_template = empty_header_template;
+        break;
+    case 1:
+        header_template = single_header_template;
+        break;
+    case 2:
+        header_template = dual_header_template;
+        break;
+    default:
+        header_template = plural_header_template;
+    }
+
+    boost::format header_fmt = FlexibleFormat(header_template) % boost::lexical_cast<std::string>(words.size());
+
+    for (typename HeaderContainer::const_iterator it = header_words.begin(); it != header_words.end(); ++it) {
+        header_fmt % *it;
+    }
+
+    std::string template_str = words.size()<=10
+        ? UserString("FORMAT_LIST_" + boost::lexical_cast<std::string>(words.size()) + "_ITEMS")
+        : UserString("FORMAT_LIST_MANY_ITEMS");
+
+    boost::format fmt = FlexibleFormat(template_str) % header_fmt.str();
+
+    for (typename ListContainer::const_iterator it = words.begin(); it != words.end(); ++it) {
+        fmt % *it;
+    }
+
+    return fmt;
+}
+
+template<typename Container>
+FO_COMMON_API boost::format FlexibleFormatList(const Container& words) {
+    return FlexibleFormatList(std::vector<std::string>(), words
+                              , UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER")
+                              , UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER")
+                              , UserString("FORMAT_LIST_DEFAULT_EMPTY_HEADER")
+                              , UserString("FORMAT_LIST_DEFAULT_DUAL_HEADER"));
+}
+
+template<typename Container>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const Container& words, const std::string& all_header) {
+    return FlexibleFormatList(std::vector<std::string>(), words, all_header, all_header, all_header, all_header);
+}
+template<typename Container>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const Container& words, const std::string& plural_header, const std::string& single_header) {
+    return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, plural_header, plural_header);
+}
+template<typename Container>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const Container& words, const std::string& plural_header
+    , const std::string& single_header, const std::string& empty_header) {
+    return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, empty_header, plural_header);
+}
+
+template<typename T1, typename T2>
+FO_COMMON_API boost::format FlexibleFormatList(const T2& header_words, const T1& words) {
+    return FlexibleFormatList(header_words, words
+                              , UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER")
+                              , UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER")
+                              , UserString("FORMAT_LIST_DEFAULT_EMPTY_HEADER")
+                              , UserString("FORMAT_LIST_DEFAULT_DUAL_HEADER"));
+}
+
+template<typename T1, typename T2>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const T2& header_words, const T1& words, const std::string& all_header) {
+    return FlexibleFormatList(header_words, words, all_header, all_header, all_header, all_header);
+}
+template<typename T1, typename T2>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const T2& header_words, const T1& words, const std::string& plural_header, const std::string& single_header) {
+    return FlexibleFormatList(header_words, words, plural_header, single_header, plural_header, plural_header);
+}
+
+template<typename T1, typename T2>
+FO_COMMON_API boost::format FlexibleFormatList(
+    const T2& header_words, const T1& words, const std::string& plural_header
+    , const std::string& single_header, const std::string& empty_header) {
+    return FlexibleFormatList(header_words, words, plural_header, single_header, empty_header, plural_header);
+}
 
 #endif // _I18N_h_

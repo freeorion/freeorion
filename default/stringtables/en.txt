@@ -207,6 +207,63 @@ Unowned
 NOWHERE
 Cannot be produced
 
+################################## 
+# FORMAT_LIST items are for lists of the form
+# FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
+# i.e.
+# There is none.
+# There is only: banana
+# There are: apple and banana
+##################################
+
+FORMAT_LIST_DEFAULT_PLURAL_HEADER
+There are:
+
+FORMAT_LIST_DEFAULT_SINGLE_HEADER
+There is one:
+
+FORMAT_LIST_DEFAULT_EMPTY_HEADER
+There is none.
+
+FORMAT_LIST_DEFAULT_DUAL_HEADER
+There are:
+
+FORMAT_LIST_0_ITEMS
+%1%
+
+FORMAT_LIST_1_ITEMS
+%1% %2%.
+
+FORMAT_LIST_2_ITEMS
+%1% %2% and %3%.
+
+FORMAT_LIST_3_ITEMS
+%1% %2%, %3% and %4%.
+
+FORMAT_LIST_4_ITEMS
+%1% %2%, %3%, %4% and %5%.
+
+FORMAT_LIST_5_ITEMS
+%1% %2%, %3%, %4%, %5% and %6%.
+
+FORMAT_LIST_6_ITEMS
+%1% %2%, %3%, %4%, %5%, %6% and %7%.
+
+FORMAT_LIST_7_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7% and %8%.
+
+FORMAT_LIST_8_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8% and %9%.
+
+FORMAT_LIST_9_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9% and %10%.
+
+FORMAT_LIST_10_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% and %11%.
+
+FORMAT_LIST_MANY_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
+
 ###########################
 # Predefined Ship Designs #
 ###########################

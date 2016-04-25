@@ -263,3 +263,4 @@ int EffectiveSign(double val) {
     else
         return 0;
 }
+
