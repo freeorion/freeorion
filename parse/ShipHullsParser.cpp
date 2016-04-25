@@ -107,7 +107,7 @@ namespace {
                 >   parse::detail::common_params_parser()       [ _d = _1 ]
                 >   parse::label(Icon_token)    > tok.string    [ _f = _1 ]
                 >   parse::label(Graphic_token) > tok.string
-                    [ insert_hull(_r1, new_<HullType>(_c, _d, _a, _e, _1, _f)) ]
+                    [ insert_hull(_r1, new_<HullType>(_c, _d, _a, _e, _f, _1)) ]
                 ;
 
             start
