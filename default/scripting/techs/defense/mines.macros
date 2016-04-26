@@ -8,9 +8,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 Or [
@@ -31,9 +34,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 Or [
@@ -54,9 +60,12 @@ EG_SYSTEM_MINES
                 Fleet
                 ContainedBy And [
                     System
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -82,9 +91,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 Unowned
@@ -112,9 +124,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 Unowned
@@ -141,9 +156,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -169,9 +187,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 Or [
@@ -197,9 +218,12 @@ EG_SYSTEM_MINES
                 Fleet
                 ContainedBy And [
                     System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -223,9 +247,12 @@ EG_SYSTEM_MINES
                 Ship
                 ContainedBy And [
                     System 
-                    Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        Source
+                        And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                        ]
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
