@@ -1316,7 +1316,7 @@ void SetVisibility::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_vis)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_affiliation),
+        & BOOST_SERIALIZATION_NVP(m_affiliation)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
