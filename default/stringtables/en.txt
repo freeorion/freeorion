@@ -4269,6 +4269,17 @@ AI_Error: AI script error
 SERVER_MESSAGE_NOT_UNDERSTOOD
 The server sent a message that could not be understood.
 
+ORBITAL_DRYDOCK_REPAIR_TITLE
+Orbital Drydock Repair
+ORBITAL_DRYDOCK_REPAIR_TEXT
+'''The [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]] is considered the best repair facility available, able to restore a ship to pristine condition.
+
+When the planet [[encyclopedia HAPPINESS_TITLE]] is below 15, repairs at this facility are not as efficient.  If the planet drops below 5 happiness, the drydock is not able to perform any repairs that turn.
+
+Repairs are delayed for one turn for ships just entering the system. Ships need time to dock, and the drydock needs time to prepare both the necessary tooling and the ship itself.
+
+Any combat in the system will disrupt repairs for that turn.'''
+
 
 ####################
 # Combat Messages  #
@@ -4896,10 +4907,14 @@ At %planet%: depopulation is complete.
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Ethnic Cleansing
 
-EFFECT_DRYDOCK_SHIP_REPAIR
-On %planet%: the %building% repaired the %ship%.
-EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Drydock Repair
+SITREP_SHIP_REPAIR_DOCK
+Orbital Dock Ship Repairs
+EFFECT_DRYDOCK_SHIP_REPAIR_NONE
+On %planet%: The %building% could not start repairs on %ship%, due to low [[encyclopedia HAPPINESS_TITLE]].
+EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
+On %planet%: the %building% performed partial repairs on the %ship%.
+EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
+On %planet%: the %building% completed repairs on the %ship%.
 
 EFFECT_MONSTER_SPAWNING
 In %system%: A %predefinedshipdesign% was spawned.
@@ -5149,7 +5164,7 @@ BEGINNER_HINT_02
 2: Each species has its own planet preference. If you can conquer a planet with a different species, you can colonize other planets with them as well, allowing you to secure a system faster. Keep in mind that not all species can colonize and that some can not build ships.
 
 BEGINNER_HINT_03
-3: Ships will be repaired in a single turn at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there are no enemies in the system that turn.
+3: Ships can be repaired at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there was no combat in the system last turn, and the planet has a happiness score of 5 or more.  Ships will need to wait one turn in the system before repairs can begin.
 
 BEGINNER_HINT_04
 4: Systems that are connected by thick lines are [[encyclopedia SUPPLY_TITLE]] line linked and they share [[encyclopedia INDUSTRY_TITLE]] Production Points (PP).
@@ -9256,7 +9271,9 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbital Drydock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, fully repairing all structural damage each turn, as long as no combat has taken place in system that turn.
+'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, repairing structural damage each turn.
+
+[[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] can be hindered due to the planets [[encyclopedia HAPPINESS_TITLE]], or from combat in the system.
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 

@@ -1,5 +1,8 @@
 // Default = 100
 
+VERY_EARLY_PRIORITY
+'''80'''
+
 EARLY_PRIORITY
 '''90'''
 
