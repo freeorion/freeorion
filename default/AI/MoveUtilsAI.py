@@ -165,9 +165,24 @@ def get_nearest_supplied_system(start_system_id):
 
 
 def get_nearest_drydock_system_id(start_system_id):
-    """ Return systemAITarget of nearest supplied system from starting system startSystemID."""
-    drydock_system_ids = ColonisationAI.empire_dry_docks.keys()
+    """Get system_id of nearest drydock capable of repair.
+
+    This function does not consider starlane obstruction!
+
+     :param start_system_id: current location of fleet - used to find closest target
+     :type start_system_id: int
+     :return: closest system_id capable of repairing
+     :rtype: int
+     """
+    # TODO consider starlane obstruction
     universe = fo.getUniverse()
+    drydock_system_ids = set()
+    for sys_id, pids in ColonisationAI.empire_dry_docks.iteritems():
+        for pid in pids:
+            planet = universe.getPlanet(pid)
+            if planet and planet.currentMeterValue(fo.meterType.happiness) >= 5:
+                drydock_system_ids.add(sys_id)
+                continue
     if start_system_id in drydock_system_ids:
         return start_system_id
     else:
@@ -292,6 +307,7 @@ def get_repair_fleet_order(fleet_target, current_sys_id):
     :return: order to repair
     :rtype fleet_orders.OrderRepair
     """
+    # TODO Cover new mechanics where happiness increases repair rate - don't always use nearest system!
     # find nearest supplied system
     drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
     print "ordering fleet %d to %s for repair" % (fleet_target.id, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
