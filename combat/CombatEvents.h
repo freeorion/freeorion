@@ -103,6 +103,9 @@ private:
 
 /// An event that describes a single attack by one object or fighter against another object or fighter
 struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
+    typedef boost::shared_ptr<WeaponFireEvent> WeaponFireEventPtr;
+    typedef boost::shared_ptr<const WeaponFireEvent> ConstWeaponFireEventPtr;
+
     WeaponFireEvent();
     WeaponFireEvent(int bout, int round, int attacker_id, int target_id, float damage_, int attacker_owner_id_);
 
@@ -180,6 +183,35 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     int number_launched;
 
 private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** WeaponsPlatformEvent describes a ship or planet with zero or more weapons firing its weapons in combat.
+   It may have some WeaponFire sub-events.*/
+struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
+    typedef boost::shared_ptr<WeaponsPlatformEvent> WeaponsPlatformEventPtr;
+    typedef boost::shared_ptr<const WeaponsPlatformEvent> ConstWeaponsPlatformEventPtr;
+
+    WeaponsPlatformEvent();
+    WeaponsPlatformEvent(int bout, int attacker_id, int attacker_owner_id_);
+
+    virtual ~WeaponsPlatformEvent() {}
+
+    void AddEvent(int round, int target_id, float damage_);
+
+    virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
+
+    int bout;
+    int attacker_id;
+    int attacker_owner_id;
+
+private:
+    std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> > events;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);

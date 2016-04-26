@@ -3878,6 +3878,18 @@ ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
 %2% empire can now target:
 
+ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
+%2% damages the
+
+ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
+%2% damages %1% targets:
+
+ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
+%2% could not damage the
+
+ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
+%2% could not damage %1% targets:
+
 
 ###########################################
 # Combat Report #

@@ -1963,24 +1963,47 @@ namespace {
         for (std::vector<CombatInfo>::const_iterator it = combats.begin();
              it != combats.end(); ++it)
         {
-            const std::vector<CombatEventPtr>& attacks = it->combat_events;
             const CombatInfo& combat_info = *it;
+            const std::vector<CombatEventPtr>& attacks = it->combat_events;
+
+            std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
+            for (std::vector<CombatEventPtr>::const_iterator event_it = attacks.begin();
+                 event_it != attacks.end(); ++event_it)
+            {
+                WeaponsPlatformEvent::ConstWeaponsPlatformEventPtr maybe_attacker
+                    = boost::dynamic_pointer_cast<WeaponsPlatformEvent>(*event_it);
+                if (maybe_attacker) {
+                    std::vector<ConstCombatEventPtr>sub_events
+                        = maybe_attacker->SubEvents(maybe_attacker->attacker_owner_id);
+                    for (std::vector<ConstCombatEventPtr>::const_iterator weapon_it
+                             = sub_events.begin(); weapon_it != sub_events.end(); ++weapon_it) {
+                        const WeaponFireEvent::ConstWeaponFireEventPtr maybe_fire_event
+                            = boost::dynamic_pointer_cast<const WeaponFireEvent>(*weapon_it);
+                        if (maybe_fire_event
+                            && combat_info.destroyed_object_ids.find(maybe_fire_event->target_id)
+                            != combat_info.destroyed_object_ids.end())
+                            events_that_killed.push_back(maybe_fire_event);
+                    }
+                }
+
+                const WeaponFireEvent::ConstWeaponFireEventPtr maybe_fire_event
+                    = boost::dynamic_pointer_cast<const WeaponFireEvent>(*event_it);
+                if (maybe_fire_event
+                    && combat_info.destroyed_object_ids.find(maybe_fire_event->target_id)
+                            != combat_info.destroyed_object_ids.end())
+                            events_that_killed.push_back(maybe_fire_event);
+            }
+
             // If a ship was attacked multiple times during a combat in which it dies, it will get
             // processed multiple times here.  The below set will keep it from being logged as
             // multiple destroyed ships for its owner.
             // TODO: fix similar issue for overlogging on attacker side
             std::set<int> already_logged__target_ships;
-            for (std::vector<CombatEventPtr>::const_iterator it = attacks.begin();
-                 it != attacks.end(); ++it)
+            for (std::vector<WeaponFireEvent::ConstWeaponFireEventPtr>::const_iterator kill_shot_it
+                     = events_that_killed.begin();
+                 kill_shot_it != events_that_killed.end(); ++kill_shot_it)
             {
-                const WeaponFireEvent* maybe_attack = dynamic_cast<WeaponFireEvent*>(it->get());
-                if(!maybe_attack){
-                    continue;
-                }
-                const WeaponFireEvent& attack = *maybe_attack;
-                // Check that the thing that was hurt died
-                if (combat_info.destroyed_object_ids.find(attack.target_id) == combat_info.destroyed_object_ids.end())
-                    continue;
+                const WeaponFireEvent& attack = *(kill_shot_it->get());
                 TemporaryPtr<const UniverseObject> attacker = GetUniverseObject(attack.attacker_id);
                 if (!attacker)
                     continue;

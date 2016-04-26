@@ -317,7 +317,8 @@ namespace {
     };
 
     void AttackShipShip(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Ship> target,
-                        CombatInfo& combat_info, int bout, int round)
+                        CombatInfo& combat_info, int bout, int round,
+                        WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
 
@@ -346,14 +347,15 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_event->AddEvent(round, target->ID(), damage);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
     void AttackShipPlanet(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Planet> target,
-                          CombatInfo& combat_info, int bout, int round)
+                          CombatInfo& combat_info, int bout, int round,
+                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
         if (damage <= 0.0f)
@@ -419,24 +421,28 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_event->AddEvent(round, target->ID(), damage);
+
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
     void AttackShipFighter(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Fighter> target,
-                           CombatInfo& combat_info, int bout, int round)
+                           CombatInfo& combat_info, int bout, int round,
+                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f) {
             // any damage is enough to kill any fighter
             target->SetDestroyed();
         }
+        combat_event->AddEvent(round, target->ID(), damage);
         combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
     void AttackPlanetShip(TemporaryPtr<Planet> attacker, TemporaryPtr<Ship> target,
-                          CombatInfo& combat_info, int bout, int round)
+                          CombatInfo& combat_info, int bout, int round,
+                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
@@ -472,12 +478,14 @@ namespace {
                 DebugLogger() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_event->AddEvent(round, target->ID(), damage);
+
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
     void AttackPlanetFighter(TemporaryPtr<Planet> attacker, TemporaryPtr<Fighter> target,
-                             CombatInfo& combat_info, int bout, int round)
+                             CombatInfo& combat_info, int bout, int round,
+                             WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
 
@@ -548,7 +556,8 @@ namespace {
     }
 
     void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon,
-                TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round)
+                TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round,
+                WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event)
     {
         TemporaryPtr<Ship>      attack_ship =   boost::dynamic_pointer_cast<Ship>(attacker);
         TemporaryPtr<Planet>    attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
@@ -558,17 +567,17 @@ namespace {
         TemporaryPtr<Fighter>   target_fighter =boost::dynamic_pointer_cast<Fighter>(target);
 
         if (attack_ship && target_ship) {
-            AttackShipShip(attack_ship, weapon.part_attack, target_ship, combat_info, bout, round);
+            AttackShipShip(attack_ship, weapon.part_attack, target_ship, combat_info, bout, round, platform_event);
         } else if (attack_ship && target_planet) {
-            AttackShipPlanet(attack_ship, weapon.part_attack, target_planet, combat_info, bout, round);
+            AttackShipPlanet(attack_ship, weapon.part_attack, target_planet, combat_info, bout, round, platform_event);
         } else if (attack_ship && target_fighter) {
-            AttackShipFighter(attack_ship, weapon.part_attack, target_fighter, combat_info, bout, round);
+            AttackShipFighter(attack_ship, weapon.part_attack, target_fighter, combat_info, bout, round, platform_event);
         } else if (attack_planet && target_ship) {
-            AttackPlanetShip(attack_planet, target_ship, combat_info, bout, round);
+            AttackPlanetShip(attack_planet, target_ship, combat_info, bout, round, platform_event);
         } else if (attack_planet && target_planet) {
             // Planets don't attack each other, silly
         } else if (attack_planet && target_fighter) {
-            AttackPlanetFighter(attack_planet, target_fighter, combat_info, bout, round);
+            AttackPlanetFighter(attack_planet, target_fighter, combat_info, bout, round, platform_event);
         } else if (attack_fighter && target_ship) {
             AttackFighterShip(attack_fighter, target_ship, combat_info, bout, round);
         } else if (attack_fighter && target_planet) {
@@ -1233,7 +1242,8 @@ namespace {
     }
 
     void ShootAllWeapons(TemporaryPtr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
-                         AutoresolveInfo& combat_state, int bout, int round)
+                         AutoresolveInfo& combat_state, int bout, int round,
+                         WeaponsPlatformEvent::WeaponsPlatformEventPtr &platform_event)
     {
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                GetOptionsDB().Get<bool>("verbose-combat-logging");
@@ -1307,7 +1317,7 @@ namespace {
                 DebugLogger() << "Target: " << target->Name();
 
             // do actual attacks
-            Attack(attacker, *weapon_it, target, combat_state.combat_info, bout, round);
+            Attack(attacker, *weapon_it, target, combat_state.combat_info, bout, round, platform_event);
 
         } // end for over weapons
     }
@@ -1569,7 +1579,10 @@ namespace {
                 DebugLogger() << "Planet: " << attacker->Name();
 
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker); // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
-            ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
+            WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
+                = boost::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
+            combat_info.combat_events.push_back(platform_event);
+            ShootAllWeapons(attacker, weapons, combat_state, bout, round++, platform_event);
         }
 
         // now process ship and fighter attacks
@@ -1597,7 +1610,11 @@ namespace {
             // loop over weapons of the attacking object.  each gets a shot at a
             // randomly selected target object
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);  // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
-            ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
+            WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
+                = boost::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
+            ShootAllWeapons(attacker, weapons, combat_state, bout, round++, platform_event);
+            if (!platform_event->SubEvents(attacker->Owner()).empty())
+                combat_info.combat_events.push_back(platform_event);
         }
 
         // now launch fighters (which can attack in any subsequent combat bouts)
@@ -1640,17 +1657,34 @@ namespace {
             // mark attacker as valid target for attacked object's owner, so that regardless
             // of visibility the attacker can be counter-attacked in subsequent rounds if it
             // was not already attackable
-            CombatEventPtr this_event = combat_info.combat_events[event_index];
-            if (boost::shared_ptr<WeaponFireEvent> this_attack = boost::dynamic_pointer_cast<WeaponFireEvent>(this_event)) {
-                combat_info.ForceAtLeastBasicVisibility(this_attack->attacker_id, this_attack->target_id);
-                int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
+            ConstCombatEventPtr this_event = combat_info.combat_events[event_index];
+            std::vector<boost::shared_ptr<const WeaponFireEvent> > weapon_fire_events;
+            if (boost::shared_ptr<const WeaponFireEvent> naked_fire_event
+                = boost::dynamic_pointer_cast<const WeaponFireEvent>(this_event)) {
+                weapon_fire_events.push_back(naked_fire_event);
+            } else if (boost::shared_ptr<const WeaponsPlatformEvent> weapons_platform
+                       = boost::dynamic_pointer_cast<const WeaponsPlatformEvent>(this_event)) {
+                std::vector<ConstCombatEventPtr> more_events = weapons_platform->SubEvents(ALL_EMPIRES);
+                for (std::vector<ConstCombatEventPtr>::const_iterator more_event = more_events.begin();
+                     more_event != more_events.end(); ++more_event){
+                    if (boost::shared_ptr<const WeaponFireEvent> this_attack
+                        = boost::dynamic_pointer_cast<const WeaponFireEvent>(*more_event)) {
+                        weapon_fire_events.push_back(this_attack);
+                    }
+                }
+            }
+
+            for (std::vector<boost::shared_ptr<const WeaponFireEvent> >::const_iterator this_attack
+                     = weapon_fire_events.begin(); this_attack != weapon_fire_events.end(); ++this_attack) {
+                combat_info.ForceAtLeastBasicVisibility((*this_attack)->attacker_id, (*this_attack)->target_id);
+                int target_empire = combat_info.objects.Object((*this_attack)->target_id)->Owner();
                 std::set<int>::iterator attacker_targettable_it
-                    = combat_state.empire_infos[target_empire].target_ids.find(this_attack->attacker_id);
+                    = combat_state.empire_infos[target_empire].target_ids.find((*this_attack)->attacker_id);
                 if (attacker_targettable_it == combat_state.empire_infos[target_empire].target_ids.end()) {
                     combat_state.empire_infos[target_empire].target_ids.insert(
-                        attacker_targettable_it, this_attack->attacker_id);
-                    int attacker_empire = combat_info.objects.Object(this_attack->attacker_id)->Owner();
-                    stealth_change_event->AddEvent(this_attack->attacker_id, this_attack->target_id,
+                        attacker_targettable_it, (*this_attack)->attacker_id);
+                    int attacker_empire = combat_info.objects.Object((*this_attack)->attacker_id)->Owner();
+                    stealth_change_event->AddEvent((*this_attack)->attacker_id, (*this_attack)->target_id,
                                                    attacker_empire, target_empire, VIS_BASIC_VISIBILITY);
                 }
             }

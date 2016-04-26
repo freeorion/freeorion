@@ -688,4 +688,121 @@ void FighterLaunchEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchiv
 
 
 
+//////////////////////////////////////////
+///////// WeaponsPlatformEvent /////////////
+//////////////////////////////////////////
 
+WeaponsPlatformEvent::WeaponsPlatformEvent() :
+    bout(-1),
+    attacker_id(INVALID_OBJECT_ID),
+    attacker_owner_id(INVALID_OBJECT_ID),
+    events()
+{}
+
+WeaponsPlatformEvent::WeaponsPlatformEvent(int bout_, int attacker_id_, int attacker_owner_id_) :
+    bout(bout_),
+    attacker_id(attacker_id_),
+    attacker_owner_id(attacker_owner_id_),
+    events()
+{}
+
+void WeaponsPlatformEvent::AddEvent(int round_, int target_id_, float damage_) {
+    events[target_id_].push_back(
+        boost::make_shared<WeaponFireEvent>(
+            bout, round_, attacker_id, target_id_, damage_, attacker_owner_id));
+}
+
+std::string WeaponsPlatformEvent::DebugString() const {
+    return "WeaponsPlatformEvent";
+}
+
+std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) const {
+    if (events.empty())
+        return "";
+
+    std::map<int, double> damaged;
+    std::set<int> did_not_damage;
+
+    for (std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> >::const_iterator target_it = events.begin()
+             ; target_it != events.end(); target_it++) {
+        double damage = 0.0f;
+        for (std::vector<WeaponFireEvent::WeaponFireEventPtr>::const_iterator attack_it = target_it->second.begin();
+             attack_it != target_it->second.end(); attack_it++) {
+            damage += (*attack_it)->damage;
+        }
+        if (damage <= 0.0f) {
+            did_not_damage.insert(target_it->first);
+        } else {
+            damaged[target_it->first] = damage;
+        }
+    }
+
+    std::string desc = "";
+
+    const std::vector<std::string> attacker_link(
+        1, FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id));
+
+    if (!damaged.empty() ) {
+        std::vector<std::string> target_links;
+        for (std::map<int, double>::iterator target_it = damaged.begin();
+             target_it != damaged.end(); ++target_it) {
+            target_links.push_back( PublicNameLink(viewing_empire_id, target_it->first));
+        }
+
+        desc += FlexibleFormatList(attacker_link, target_links
+                                   , UserString("ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS")
+                                   , UserString("ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS")).str();
+
+        if (!did_not_damage.empty())
+            desc += "\n";
+    }
+    if (!did_not_damage.empty()) {
+        std::vector<std::string> target_links;
+        for (std::set<int>::iterator target_it = did_not_damage.begin();
+             target_it != did_not_damage.end(); ++target_it) {
+            target_links.push_back( PublicNameLink(viewing_empire_id, *target_it));
+        }
+
+        desc += FlexibleFormatList(attacker_link, target_links
+                                   , UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS")
+                                   , UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS")).str();
+    }
+    return desc;
+}
+
+std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_empire_id) const {
+    std::vector<ConstCombatEventPtr> all_events;
+    for (std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> >::const_iterator target_it = events.begin();
+         target_it != events.end(); ++target_it) {
+
+        for (std::vector<WeaponFireEvent::WeaponFireEventPtr>::const_iterator event_it = target_it->second.begin();
+             event_it != target_it->second.end(); ++event_it){
+            all_events.push_back(boost::dynamic_pointer_cast<CombatEvent>(*event_it));
+        }
+    }
+    return all_events;
+}
+
+template <class Archive>
+void WeaponsPlatformEvent::serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(bout)
+        & BOOST_SERIALIZATION_NVP(attacker_id)
+        & BOOST_SERIALIZATION_NVP(attacker_owner_id)
+        & BOOST_SERIALIZATION_NVP(events);
+}
+
+BOOST_CLASS_VERSION(WeaponsPlatformEvent, 4)
+BOOST_CLASS_EXPORT(WeaponsPlatformEvent)
+
+template
+void WeaponsPlatformEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void WeaponsPlatformEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void WeaponsPlatformEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void WeaponsPlatformEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
