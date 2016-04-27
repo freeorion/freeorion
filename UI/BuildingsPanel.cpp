@@ -50,7 +50,7 @@ namespace {
 }
 
 BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
-    AccordionPanel(w),
+    AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_planet_id(planet_id),
     m_columns(columns),
     m_building_indicators()
