@@ -27,12 +27,12 @@ Species
         [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 
-        [[GREAT_DETECTION]]
+        [[GOOD_DETECTION]]
         [[GOOD_STEALTH]]
 
         [[XENOPHOBIC_SELF]]
-
         [[XENOPHOBIC_OTHER(TRITH)]]
+        [[TELEPATHIC_DETECTION(5)]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]

@@ -11237,6 +11237,11 @@ GREAT_ASTEROID_INDUSTRY
 
 LIGHT_SENSITIVE
 −	Light Sensitive: Population is reduced in systems with blue and to a lesser extend white stars.
+
+TELEPATHIC_DETECTION
++	Telepathic Detection: can sense nearby populated planets.
+
+
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
