@@ -108,17 +108,21 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     typedef boost::shared_ptr<const WeaponFireEvent> ConstWeaponFireEventPtr;
 
     WeaponFireEvent();
-    WeaponFireEvent(int bout, int round, int attacker_id, int target_id, float damage_, int attacker_owner_id_);
+    WeaponFireEvent(int bout, int round, int attacker_id, int target_id
+                    , float power_, float shield_, float damage_, int attacker_owner_id_);
 
     virtual ~WeaponFireEvent() {}
 
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual std::string CombatLogDetails(int viewing_empire_id) const;
 
     int     bout;
     int     round;
     int     attacker_id;
     int     target_id;
+    float   power;
+    float   shield;
     float   damage;
     int     attacker_owner_id;
 
@@ -200,7 +204,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
 
     virtual ~WeaponsPlatformEvent() {}
 
-    void AddEvent(int round, int target_id, float damage_);
+    void AddEvent(int round, int target_id, float power_, float shield_, float damage_);
 
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;

@@ -26,7 +26,7 @@ struct FO_COMMON_API CombatEvent {
 
     /** Generate the combat log details.
         Describe how it happened in enough detail to avoid a trip to the Pedia. */
-    virtual std::string CombatLogDetails(int empire_id) const
+    virtual std::string CombatLogDetails(int viewing_empire_id) const
     { return std::string(""); }
 
     /** If the combat event is composed of smaller events then return a vector of the sub events,

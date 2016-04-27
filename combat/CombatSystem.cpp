@@ -316,7 +316,7 @@ namespace {
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
     };
 
-    void AttackShipShip(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Ship> target,
+    void AttackShipShip(TemporaryPtr<Ship> attacker, float power, TemporaryPtr<Ship> target,
                         CombatInfo& combat_info, int bout, int round,
                         WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
@@ -334,11 +334,11 @@ namespace {
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
-        DebugLogger() << "AttackShipShip: attacker: " << attacker->Name() << " damage: " << damage
+        DebugLogger() << "AttackShipShip: attacker: " << attacker->Name() << " power: " << power
                       << "  target: " << target->Name() << " shield: " << target_shield->Current()
                       << " structure: " << target_structure->Current();
 
-        damage = std::max(0.0f, damage - shield);
+        float damage = std::max(0.0f, power - shield);
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
@@ -347,18 +347,18 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), damage);
+        combat_event->AddEvent(round, target->ID(), power, shield, damage);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Planet> target,
+    void AttackShipPlanet(TemporaryPtr<Ship> attacker, float power, TemporaryPtr<Planet> target,
                           CombatInfo& combat_info, int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
-        if (damage <= 0.0f)
+        if (power <= 0.0f)
             return;
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
@@ -385,7 +385,7 @@ namespace {
         }
 
         if (verbose_logging) {
-            DebugLogger() << "AttackShipPlanet: attacker: " << attacker->Name() << " damage: " << damage
+            DebugLogger() << "AttackShipPlanet: attacker: " << attacker->Name() << " power: " << power
                           << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
                           << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
         }
@@ -393,17 +393,17 @@ namespace {
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to defense.
         // remaining damage, if any, above defense current value goes to construction
-        float shield_damage = std::min(target_shield->Current(), damage);
+        float shield_damage = std::min(target_shield->Current(), power);
         float defense_damage = 0.0f;
         float construction_damage = 0.0f;
         if (shield_damage >= target_shield->Current())
-            defense_damage = std::min(target_defense->Current(), damage - shield_damage);
+            defense_damage = std::min(target_defense->Current(), power - shield_damage);
 
-        if (damage > 0)
+        if (power > 0)
             damaged_object_ids.insert(target->ID());
 
         if (defense_damage >= target_defense->Current())
-            construction_damage = std::min(target_construction->Current(), damage - shield_damage - defense_damage);
+            construction_damage = std::min(target_construction->Current(), power - shield_damage - defense_damage);
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
@@ -421,13 +421,15 @@ namespace {
                 DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), damage);
+        //TODO report the planet damage details more clearly
+        float total_damage = shield_damage + defense_damage + construction_damage;
+        combat_event->AddEvent(round, target->ID(), power, 0.0f, total_damage);
 
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackShipFighter(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Fighter> target,
+    void AttackShipFighter(TemporaryPtr<Ship> attacker, float power, TemporaryPtr<Fighter> target,
                            CombatInfo& combat_info, int bout, int round,
                            WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
@@ -435,7 +437,7 @@ namespace {
             // any damage is enough to kill any fighter
             target->SetDestroyed();
         }
-        combat_event->AddEvent(round, target->ID(), damage);
+        combat_event->AddEvent(round, target->ID(), power, 0.0f, 1.0f);
         combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -447,10 +449,10 @@ namespace {
         if (!attacker || !target) return;
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
-        float damage = 0.0f;
+        float power = 0.0f;
         const Meter* attacker_damage = attacker->UniverseObject::GetMeter(METER_DEFENSE);
         if (attacker_damage)
-            damage = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
+            power = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
@@ -464,12 +466,12 @@ namespace {
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
         if (verbose_logging) {
-            DebugLogger() << "AttackPlanetShip: attacker: " << attacker->Name() << " damage: " << damage
+            DebugLogger() << "AttackPlanetShip: attacker: " << attacker->Name() << " power: " << power
                           << "  target: " << target->Name() << " shield: " << target_shield->Current()
                           << " structure: " << target_structure->Current();
         }
 
-        damage = std::max(0.0f, damage - shield);
+        float damage = std::max(0.0f, power - shield);
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
@@ -478,7 +480,7 @@ namespace {
                 DebugLogger() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), damage);
+        combat_event->AddEvent(round, target->ID(), power, shield, damage);
 
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
@@ -489,16 +491,17 @@ namespace {
     {
         if (!attacker || !target) return;
 
-        float damage = 0.0f;
+        float power = 0.0f;
         const Meter* attacker_damage = attacker->UniverseObject::GetMeter(METER_DEFENSE);
         if (attacker_damage)
-            damage = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
+            power = attacker_damage->Current();   // planet "Defense" meter is actually its attack power
 
-        if (damage > 0.0f) {
+        if (power > 0.0f) {
             // any damage is enough to destroy any fighter
             target->SetDestroyed();
         }
 
+        combat_event->AddEvent(round, target->ID(), power, 0.0f, 1.0f);
         combat_info.combat_events.push_back(boost::make_shared<FighterAttackedEvent>(bout, round, attacker->ID(), attacker->Owner(), target->Owner()));
     }
 
@@ -508,7 +511,7 @@ namespace {
         if (!attacker || !target) return;
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
-        float damage = attacker->Damage();
+        float power = attacker->Damage();
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
@@ -522,12 +525,12 @@ namespace {
         float shield = 0.0f; //(target_shield ? target_shield->Current() : 0.0f);
 
         if (verbose_logging) {
-            DebugLogger() << "AttackFighterShip: Fighter of empire " << attacker->Owner() << " damage: " << damage
+            DebugLogger() << "AttackFighterShip: Fighter of empire " << attacker->Owner() << " power: " << power
                           << "  target: " << target->Name() //<< " shield: " << target_shield->Current()
                           << " structure: " << target_structure->Current();
         }
 
-        damage = std::max(0.0f, damage - shield);
+        float damage = std::max(0.0f, power - shield);
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
@@ -536,7 +539,9 @@ namespace {
                 DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_info.combat_events.push_back(boost::make_shared<WeaponFireEvent>(bout, round, attacker->ID(), target->ID(), damage, attacker->Owner()));
+        combat_info.combat_events.push_back(
+            boost::make_shared<WeaponFireEvent>(
+                bout, round, attacker->ID(), target->ID(), power, shield, damage, attacker->Owner()));
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
@@ -1759,9 +1764,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     if (verbose_logging) {
         DebugLogger() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
-        DebugLogger() << "combat event log:";
+        DebugLogger() << "combat event log start:";
         for (std::vector<CombatEventPtr>::const_iterator it = combat_info.combat_events.begin();
              it != combat_info.combat_events.end(); ++it)
         { DebugLogger() << (*it)->DebugString(); }
+        DebugLogger() << "combat event log end:";
     }
 }
