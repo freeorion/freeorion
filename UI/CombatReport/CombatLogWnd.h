@@ -8,7 +8,6 @@ class CombatLogWnd : public GG::Wnd {
 public:
     CombatLogWnd(GG::X w, GG::Y h);
 
-
     /** \name Accessors */ ///@{
     virtual GG::Pt ClientUpperLeft() const;
     virtual GG::Pt ClientLowerRight() const;
@@ -32,11 +31,11 @@ public:
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
     void HandleLinkRightClick(const std::string& link_type, const std::string& data);
 
-private:
     /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
         \a and_flags are anded to the default flags. */
     LinkText * DecorateLinkText(std::string const & text);
 
+private:
     /** Add a row at the end of the combat report*/
     void AddRow(GG::Wnd * wnd);
 
@@ -46,6 +45,7 @@ private:
     ///default flags for a text link log segment
     GG::Flags<GG::TextFormat> m_text_format_flags;
     boost::shared_ptr<GG::Font> m_font;
+
     };
 
 #endif // COMBATLOGWND_H

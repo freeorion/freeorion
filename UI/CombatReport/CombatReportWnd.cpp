@@ -23,6 +23,8 @@ public:
         m_log(new CombatLogWnd(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
         m_min_size(GG::X0, GG::Y0)
     {
+        m_log->SetFont(ClientUI::GetFont());
+
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
         m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
@@ -44,6 +46,7 @@ public:
 
     void SetLog(int log_id) {
         m_graphical->SetLog(log_id);
+        m_log->SetFont(ClientUI::GetFont());
         m_log->SetLog(log_id);
     }
 
