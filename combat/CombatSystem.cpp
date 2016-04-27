@@ -1613,7 +1613,7 @@ namespace {
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
                 = boost::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++, platform_event);
-            if (!platform_event->SubEvents(attacker->Owner()).empty())
+            if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
                 combat_info.combat_events.push_back(platform_event);
         }
 
@@ -1689,7 +1689,8 @@ namespace {
                 }
             }
         }
-        combat_info.combat_events.push_back(stealth_change_event);
+        if (!stealth_change_event->AreSubEventsEmpty(ALL_EMPIRES))
+            combat_info.combat_events.push_back(stealth_change_event);
 
         /// Remove all who died in the bout
         combat_state.CullTheDead(bout);

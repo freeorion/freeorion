@@ -70,6 +70,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
     virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
+    virtual bool AreSubEventsEmpty(int viewing_empire_id) const;
 
     struct StealthChangeEventDetail;
     typedef boost::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
@@ -204,6 +205,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
     virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
+    virtual bool AreSubEventsEmpty(int viewing_empire_id) const;
 
     int bout;
     int attacker_id;

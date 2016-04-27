@@ -352,6 +352,9 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id) cons
     return desc;
 }
 
+bool StealthChangeEvent::AreSubEventsEmpty(int viewing_empire_id) const {
+    return events.empty();
+}
 std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empire_id) const {
     std::vector<ConstCombatEventPtr> all_events;
     for (std::map<int, std::vector<StealthChangeEventDetailPtr> >::const_iterator target_it = events.begin();
@@ -768,6 +771,10 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
                                    , UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS")).str();
     }
     return desc;
+}
+
+bool WeaponsPlatformEvent::AreSubEventsEmpty(int viewing_empire_id) const {
+    return events.empty();
 }
 
 std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_empire_id) const {

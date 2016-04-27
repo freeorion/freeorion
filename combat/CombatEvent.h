@@ -35,6 +35,11 @@ struct FO_COMMON_API CombatEvent {
     virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
     { return std::vector<ConstCombatEventPtr>(); }
 
+    /** Return true if there are no sub events;
+    */
+    virtual bool AreSubEventsEmpty(int viewing_empire_id) const
+    { return true; }
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
