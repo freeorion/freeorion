@@ -2108,7 +2108,6 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
-        species_list.insert(species_list.begin(), "");
         // detailed_description = GetDetailedDescription(temp, design, cost);
         detailed_description = GetDetailedDescriptionBase(design);
 
@@ -2116,6 +2115,11 @@ namespace {
         // temporary ship to use for estimating design's meter values
         TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "",
                                                            client_empire_id, TEMPORARY_OBJECT_ID);
+
+        // apply empty species for 'Generic' entry
+        GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+        temp->Resupply();
+        detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); spec_it++) {
@@ -2227,13 +2231,17 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
-        species_list.insert(species_list.begin(), "");
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 
 
         // temporary ship to use for estimating design's meter values
         TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "",
                                                            client_empire_id, TEMPORARY_OBJECT_ID);
+
+        // apply empty species for 'Generic' entry
+        GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+        temp->Resupply();
+        detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(), enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); spec_it++) {
