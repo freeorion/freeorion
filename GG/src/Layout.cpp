@@ -289,18 +289,27 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
     // determine final effective minimums, preserving stretch ratios
     double greatest_min_over_stretch_ratio = 0.0;
     double greatest_usable_min_over_stretch_ratio = 0.0;
+    bool is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (m_row_params[i].stretch) {
+            is_zero_total_stretch = false;
             greatest_min_over_stretch_ratio = std::max(greatest_min_over_stretch_ratio, m_row_params[i].effective_min / m_row_params[i].stretch);
             greatest_usable_min_over_stretch_ratio = std::max(greatest_usable_min_over_stretch_ratio, row_effective_min_usable_sizes[i] / m_row_params[i].stretch);
         }
     }
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
-        m_row_params[i].effective_min = std::max(m_row_params[i].effective_min, static_cast<unsigned int>(m_row_params[i].stretch * greatest_min_over_stretch_ratio));
-        row_effective_min_usable_sizes[i] = std::max(row_effective_min_usable_sizes[i], static_cast<unsigned int>(m_row_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        if (is_zero_total_stretch || m_row_params[i].stretch) {
+            m_row_params[i].effective_min = std::max(
+                m_row_params[i].effective_min,
+                static_cast<unsigned int>(m_row_params[i].stretch * greatest_min_over_stretch_ratio));
+            row_effective_min_usable_sizes[i] = std::max(
+                row_effective_min_usable_sizes[i],
+                static_cast<unsigned int>(m_row_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        }
     }
     greatest_min_over_stretch_ratio = 0.0;
     greatest_usable_min_over_stretch_ratio = 0.0;
+    is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
         if (m_column_params[i].stretch) {
             greatest_min_over_stretch_ratio = std::max(greatest_min_over_stretch_ratio, m_column_params[i].effective_min / m_column_params[i].stretch);
@@ -308,10 +317,17 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
         }
     }
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
-        m_column_params[i].effective_min = std::max(m_column_params[i].effective_min, static_cast<unsigned int>(m_column_params[i].stretch * greatest_min_over_stretch_ratio));
-        column_effective_min_usable_sizes[i] = std::max(column_effective_min_usable_sizes[i], static_cast<unsigned int>(m_column_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        if (is_zero_total_stretch || m_column_params[i].stretch) {
+            m_column_params[i].effective_min = std::max(
+                m_column_params[i].effective_min,
+                static_cast<unsigned int>(m_column_params[i].stretch * greatest_min_over_stretch_ratio));
+            column_effective_min_usable_sizes[i] = std::max(
+                column_effective_min_usable_sizes[i],
+                static_cast<unsigned int>(m_column_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        }
     }
 
+    //TODO Determine min usable size before stretching to fit space requested
     m_min_usable_size.x = X(2 * m_border_margin);
     for (std::size_t i = 0; i < column_effective_min_usable_sizes.size(); ++i) {
         m_min_usable_size.x += static_cast<int>(column_effective_min_usable_sizes[i]);
