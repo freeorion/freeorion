@@ -1,18 +1,117 @@
+// Create 0-5 planet bodies dependent on planet density setting
 CREATE_PLANETS
-'''      EffectsGroup
+'''        EffectsGroup  // Low density: max 3 bodies: 0-3 planet, 0-1 asteroid, 0-1 gasgiant (none: 24.84+%)
             scope = And [
                 System
                 Object id = Source.SystemID
             ]
-            activation = Size high = 5
-            effects = [
-                If condition = Random probability = 0.5
-                    effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
-                If condition = Random probability = 0.6
-                    effects = CreatePlanet type = OneOf(Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra) planetsize = OneOf(tiny, small, medium, large) name = UserString("NEW_PLANET_NAME") % Target.Name
-                else = If condition = Random probability = 0.4
-                    effects = CreatePlanet type = GasGiant planetsize = GasGiant name = UserString("NEW_PLANET_NAME") % Target.Name
-                If condition = Random probability = 0.3
-                    effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
+            activation = And [
+                Size high = 5
+                (GalaxyPlanetDensity = 1)
             ]
+            effects = [
+                // 8% planet = 92% none
+                If condition = Random probability = 0.08
+                    effects = [[EFFECT_CREATE_PLANET]]
+                // 50% asteroid, 10% planet = 40% none
+                If condition = Random probability = 0.5
+                    effects = [[EFFECT_CREATE_ASTEROID]]
+                else = If condition = Random probability = 0.2
+                    effects = [[EFFECT_CREATE_PLANET]]
+                // 10% planet, 22.5% gasgiant = 67.5% none
+                If condition = Random probability = 0.1
+                    effects = [[EFFECT_CREATE_PLANET]]
+                else = If condition = Random probability = 0.25
+                    effects = [[EFFECT_CREATE_GASGIANT]]
+            ]
+        EffectsGroup  // Medium density: max 4 bodies: 0-3 planet, 0-2 asteroid, 0-2 gasgiant (none: 15.53+%)
+            scope = And [
+                System
+                Object id = Source.SystemID
+            ]
+            activation = And [
+                Size high = 5
+                (GalaxyPlanetDensity = 2)
+            ]
+            effects = [
+                // 15% asteroid, 17% planet = 68% none
+                If condition = Random probability = 0.15
+                    effects = [[EFFECT_CREATE_ASTEROID]]
+                else = If condition = Random probability = 0.2
+                    effects = [[EFFECT_CREATE_PLANET]]
+                // 30% planet = 70% none
+                If condition = Random probability = 0.3
+                    effects = [[EFFECT_CREATE_PLANET]]
+                // 20% planet, 25.6% gasgiant = 54.4% none
+                If condition = Random probability = 0.2
+                    effects = [[EFFECT_CREATE_PLANET]]
+                else = If condition = Random probability = 0.32
+                    effects = [[EFFECT_CREATE_GASGIANT]]
+                // 20% asteroid, 20% gasgiant = 60% none
+                If condition = Random probability = 0.2
+                    effects = [[EFFECT_CREATE_ASTEROID]]
+                else = If condition = Random probability = 0.25
+                    effects = [[EFFECT_CREATE_GASGIANT]]
+            ]
+        EffectsGroup  // High density: max 5 bodies: 0-5 planet, 0-3 asteroid, 0-2 gasgiant (none: 4.39+%)
+            scope = And [
+                System
+                Object id = Source.SystemID
+            ]
+            activation = And [
+                Size high = 5
+                (GalaxyPlanetDensity = 3)
+            ]
+            effects = [
+                // 50% asteroid, 12.5% planet 37.5% none
+                If condition = Random probability = 0.5
+                    effects = [[EFFECT_CREATE_ASTEROID]]
+                else = If condition = Random probability = 0.25
+                    effects = [[EFFECT_CREATE_PLANET]]
+                // 30% 2xplanet, 14% planet+asteroid, 10% asteroid = 46% none
+                If condition = Random probability = 0.5
+                    effects = If condition = Random probability = 0.6
+                            effects = [
+                                [[EFFECT_CREATE_PLANET]]
+                                [[EFFECT_CREATE_PLANET]]
+                            ]
+                        else = If condition = Random probability = 0.7
+                            effects = [
+                                [[EFFECT_CREATE_PLANET]]
+                                [[EFFECT_CREATE_ASTEROID]]
+                            ]
+                else = If condition = Random probability = 0.2
+                    effects = [[EFFECT_CREATE_ASTEROID]]
+                // 35% planet, 19.5% gasgiant = 45.5% none
+                If condition = Random probability = 0.35
+                    effects = [[EFFECT_CREATE_PLANET]]
+                else = If condition = Random probability = 0.3
+                    effects = [[EFFECT_CREATE_GASGIANT]]
+                // 20% planet, 24% gasgiant = 56% none
+                If condition = Random probability = 0.2
+                    effects = [[EFFECT_CREATE_PLANET]]
+                else = If condition = Random probability = 0.3
+                    effects = [[EFFECT_CREATE_GASGIANT]]
+            ]
+'''
+
+EFFECT_CREATE_PLANET
+'''CreatePlanet
+    type = OneOf(Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra)
+    planetsize = OneOf(tiny, small, medium, large)
+    name = UserString("NEW_PLANET_NAME") % Target.Name
+'''
+
+EFFECT_CREATE_ASTEROID
+'''CreatePlanet
+    type = asteroids
+    planetsize = asteroids
+    name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
+'''
+
+EFFECT_CREATE_GASGIANT
+'''CreatePlanet
+    type = GasGiant
+    planetsize = GasGiant
+    name = UserString("NEW_PLANET_NAME") % Target.Name
 '''
