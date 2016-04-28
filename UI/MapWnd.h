@@ -70,6 +70,16 @@ public:
       * production screen */
     bool                        InProductionViewMode() const;
 
+    /** returns true iff this MapWnd is visible and usable for interaction, but
+      * the allowed interactions are restricted to those appropriate to the
+      * research screen */
+    bool                        InResearchViewMode() const;
+
+    /** returns true iff this MapWnd is visible and usable for interaction, but
+      * the allowed interactions are restricted to those appropriate to the
+      * design screen */
+    bool                        InDesignViewMode() const;
+
     /** returns the currently set moderator action in this MapWnd's
       * ModeratorActionsWnd. */
     ModeratorActionSetting      GetModeratorActionSetting() const;
