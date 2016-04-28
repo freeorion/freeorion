@@ -230,7 +230,6 @@ void CombatLogWnd::SetLog(int log_id) {
     //Add a dummy row that the layout manager can use to add space.
     AddRow(DecorateLinkText(""));
     layout->SetRowStretch(layout->Rows() - 1, 1);
-
 }
 
 GG::Pt CombatLogWnd::ClientUpperLeft() const
@@ -239,11 +238,6 @@ GG::Pt CombatLogWnd::ClientUpperLeft() const
 GG::Pt CombatLogWnd::ClientLowerRight() const
 { return LowerRight() - GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
 
-void CombatLogWnd::Render() {
-    GG::Clr interior_color =  ClientUI::CtrlColor();
-    GG::Clr border_color = ClientUI::CtrlBorderColor();
-
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-
-    FlatRectangle(ul, lr, interior_color, border_color, 1);
+GG::Pt CombatLogWnd::MinUsableSize() const {
+    return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
 }

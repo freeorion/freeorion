@@ -11,14 +11,13 @@ public:
     /** \name Accessors */ ///@{
     virtual GG::Pt ClientUpperLeft() const;
     virtual GG::Pt ClientLowerRight() const;
+    virtual GG::Pt MinUsableSize() const;
     //@}
 
     /** \name Mutators */ //@{
     void SetFont(boost::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
-
-    void Render();
     //@}
 
     ///link clicked signals: first string is the link type, second string is the specific item clicked

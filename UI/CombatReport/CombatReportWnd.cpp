@@ -9,6 +9,7 @@
 #include "GraphicalSummary.h"
 #include "CombatLogWnd.h"
 
+#include <GG/ScrollPanel.h>
 #include <GG/TabWnd.h>
 #include <GG/Layout.h>
 
@@ -21,12 +22,14 @@ public:
                               ClientUI::CtrlColor(), ClientUI::TextColor())),
         m_graphical(new GraphicalSummaryWnd()),
         m_log(new CombatLogWnd(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
+        m_log_scroller(new GG::ScrollPanel(GG::X(0), GG::Y(0), m_wnd.ClientWidth(), m_wnd.ClientHeight(), m_log)),
         m_min_size(GG::X0, GG::Y0)
     {
         m_log->SetFont(ClientUI::GetFont());
+        m_log_scroller->SetBackgroundColor(ClientUI::CtrlColor());
 
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
-        m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
+        m_tabs->AddWnd(m_log_scroller, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
 
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
@@ -60,6 +63,9 @@ public:
         if (GraphicalSummaryWnd* graphical_wnd =
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
             graphical_wnd->DoLayout();
+        } else {
+            //try to force a re-layout to prevent initial sizing error when switching tabs
+            m_log_scroller->SizeMove(m_tabs->ClientUpperLeft(), m_tabs->ClientLowerRight());
         }
     }
 
@@ -129,6 +135,7 @@ private:
     GG::TabWnd*             m_tabs;
     GraphicalSummaryWnd*    m_graphical;//< Graphical summary
     CombatLogWnd*           m_log;      //< Detailed log
+    GG::ScrollPanel*        m_log_scroller;
     GG::Pt                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
     void SetFocus(int id)
@@ -148,7 +155,14 @@ private:
         // dealing with the children of m_tabs directly, but that checks the
         // MinUsableSize of _all_ child windows, not just the currently
         // selected one.
-        m_min_size += m_tabs->CurrentWnd()->MinUsableSize();
+        if (GraphicalSummaryWnd* graphical_wnd =
+               dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
+            m_min_size += graphical_wnd->MinUsableSize();
+        } else {
+            // The log uses the GG::Layout which incorrectly reports
+            // the current size as the minimum size.
+            m_min_size += m_log->MinUsableSize();
+        }
 
         std::list<GG::Wnd*>::const_iterator layout_begin =
             m_tabs->GetLayout()->Children().begin();
