@@ -329,7 +329,7 @@ Pt Wnd::MaxSize() const
 { return m_max_size; }
 
 Pt Wnd::MinUsableSize() const
-{ return Size(); }
+{ return m_layout ? m_layout->MinUsableSize() : Size(); }
 
 Pt Wnd::ClientUpperLeft() const
 { return UpperLeft(); }
