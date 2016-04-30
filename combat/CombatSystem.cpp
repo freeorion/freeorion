@@ -269,20 +269,19 @@ void CombatInfo::InitializeObjectVisibility()
     }
 }
 
-std::pair<bool, Visibility> CombatInfo::UpdateObjectVisibility(int attacker_id, int target_id)
+void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 {
     TemporaryPtr<UniverseObject> attacker = objects.Object(attacker_id);
     TemporaryPtr<UniverseObject> target = objects.Object(target_id);
     // Also ensure that attacker (and their fleet if attacker was a ship) are
-    // revealed with at least BASIC_VISIBILITY to the taget empire
+    // revealed with at least BASIC_VISIBILITY to the target empire
     Visibility old_visibility = empire_object_visibility[target->Owner()][attacker->ID()];
-    Visibility new_visibility = std::max(empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
+    Visibility new_visibility = std::max(old_visibility, VIS_BASIC_VISIBILITY);
     empire_object_visibility[target->Owner()][attacker->ID()] = new_visibility;
     if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
         empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] =
             std::max(empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
     }
-    return std::make_pair(old_visibility != new_visibility, new_visibility);
 }
 
 ////////////////////////////////////////////////
@@ -1634,6 +1633,7 @@ namespace {
 
         // Stealthed attackers have now revealed themselves to their targets.
         // Process this for each new combat event.
+        boost::shared_ptr<StealthChangeEvent> stealth_change_event = boost::make_shared<StealthChangeEvent>(bout);
         for (unsigned int event_index = init_event_index;
              event_index < combat_info.combat_events.size(); event_index++)
         {
@@ -1642,15 +1642,20 @@ namespace {
             // was not already attackable
             CombatEventPtr this_event = combat_info.combat_events[event_index];
             if (boost::shared_ptr<AttackEvent> this_attack = boost::dynamic_pointer_cast<AttackEvent>(this_event)) {
-                std::pair<bool,Visibility> visibility = combat_info.UpdateObjectVisibility(
-                    this_attack->attacker_id, this_attack->target_id);
-                if (visibility.first && visibility.second >= VIS_BASIC_VISIBILITY) {
+                combat_info.ForceAtLeastBasicVisibility(this_attack->attacker_id, this_attack->target_id);
+                int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
+                std::set<int>::iterator attacker_targettable_it
+                    = combat_state.empire_infos[target_empire].target_ids.find(this_attack->attacker_id);
+                if (attacker_targettable_it == combat_state.empire_infos[target_empire].target_ids.end()) {
+                    combat_state.empire_infos[target_empire].target_ids.insert(
+                        attacker_targettable_it, this_attack->attacker_id);
                     int attacker_empire = combat_info.objects.Object(this_attack->attacker_id)->Owner();
-                    int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
-                    combat_state.empire_infos[target_empire].target_ids.insert(this_attack->attacker_id);
+                    stealth_change_event->AddEvent(this_attack->attacker_id, this_attack->target_id,
+                                                   attacker_empire, target_empire, VIS_BASIC_VISIBILITY);
                 }
             }
         }
+        combat_info.combat_events.push_back(stealth_change_event);
 
         /// Remove all who died in the bout
         combat_state.CullTheDead(bout);

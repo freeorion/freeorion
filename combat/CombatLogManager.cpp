@@ -121,6 +121,8 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
     ar.template register_type<IncapacitationEvent>();
     ar.template register_type<BoutBeginEvent>();
     ar.template register_type<InitialStealthEvent>();
+    ar.template register_type<StealthChangeEvent>();
+
     ar  & BOOST_SERIALIZATION_NVP(turn)
     & BOOST_SERIALIZATION_NVP(system_id)
     & BOOST_SERIALIZATION_NVP(empire_ids)

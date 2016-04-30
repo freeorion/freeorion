@@ -3868,6 +3868,17 @@ The%1%ship %2% was destroyed
 ENC_COMBAT_INITIAL_STEALTH_LIST
 %2% empire can not target:
 
+# %1 attacker %2 defender %3 empire
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK
+%1% decloaks while attacking %2%.
+
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
+%2% empire can now target,
+
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
+%2% empire can now target:
+
+
 ###########################################
 # Combat Report #
 ###########################################

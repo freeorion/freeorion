@@ -25,9 +25,8 @@ public:
     //void                        Clear();            ///< cleans up contents
     TemporaryPtr<System>        GetSystem();        ///< returns System object in this CombatInfo's objects if one exists with id system_id
 
-    /**Reveal stealthed attacker to their target's empires.
-       Returns true and new visibility if update changed visibility.*/
-    std::pair<bool, Visibility> UpdateObjectVisibility(int attacker_id, int target_id);
+    /** Reveal stealthed attacker to their target's empires. */
+    void ForceAtLeastBasicVisibility(int attacker_id, int target_id);
 
     //@}
 

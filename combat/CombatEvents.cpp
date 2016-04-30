@@ -249,6 +249,169 @@ void InitialStealthEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchi
 
 
 //////////////////////////////////////////
+///////// StealthChangeEvent /////////////
+//////////////////////////////////////////
+
+StealthChangeEvent::StealthChangeEvent() :
+    bout(-1),
+    events()
+{}
+
+StealthChangeEvent::StealthChangeEvent(int bout_) :
+    bout(bout_),
+    events()
+{}
+
+StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail() :
+    attacker_id(INVALID_OBJECT_ID),
+    target_id(INVALID_OBJECT_ID),
+    attacker_empire_id(INVALID_OBJECT_ID),
+    target_empire_id(INVALID_OBJECT_ID),
+    visibility()
+{}
+
+StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail(
+    int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_) :
+    attacker_id(attacker_id_),
+    target_id(target_id_),
+    attacker_empire_id(attacker_empire_),
+    target_empire_id(target_empire_),
+    visibility(new_visibility_)
+{}
+
+std::string StealthChangeEvent::StealthChangeEventDetail::DebugString() const {
+    std::stringstream ss;
+    ss << "StealthChangeDetailEvent"
+       <<  FighterOrPublicNameLink(ALL_EMPIRES, attacker_id, attacker_empire_id)
+       << "->" << visibility << " ";
+    return ss.str();
+}
+
+std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(int viewing_empire_id) const {
+
+    std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_empire_id);
+    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_empire_id);
+    std::string empire_link = EmpireLink(target_empire_id);
+    const std::string& template_str = UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK");
+
+    return str(FlexibleFormat(template_str)
+               % attacker_link
+               % target_link
+               % empire_link);
+    return "";
+}
+
+
+void StealthChangeEvent::AddEvent(int attacker_id_, int target_id_, int attacker_empire_
+                             , int target_empire_, Visibility new_visibility_) {
+    events[target_empire_].push_back(
+        boost::make_shared<StealthChangeEventDetail>(
+            attacker_id_, target_id_, attacker_empire_, target_empire_, new_visibility_));
+}
+
+std::string StealthChangeEvent::DebugString() const {
+    std::stringstream ss;
+    ss << "StealthChangeEvent";
+    for (std::map<int, std::vector<StealthChangeEventDetailPtr> >::const_iterator target_it = events.begin();
+         target_it != events.end(); ++target_it) {
+        ss << "Target Empire: " << EmpireLink(target_it->first) << "\n";
+
+        for (std::vector<StealthChangeEventDetailPtr>::const_iterator event_it = target_it->second.begin();
+             event_it != target_it->second.end(); ++event_it){
+            ss << (*event_it)->DebugString();
+        }
+    }
+    return ss.str();
+}
+
+std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id) const {
+    if (events.empty())
+        return "";
+
+    std::string desc = "";
+    for (std::map<int, std::vector<StealthChangeEventDetailPtr> >::const_iterator target_it = events.begin();
+         target_it != events.end(); ++target_it) {
+        std::vector<std::string> uncloaked_attackers;
+        for (std::vector<StealthChangeEventDetailPtr>::const_iterator event_it = target_it->second.begin();
+             event_it != target_it->second.end(); ++event_it){
+            const StealthChangeEvent::StealthChangeEventDetail & e(**event_it);
+            uncloaked_attackers.push_back( FighterOrPublicNameLink(viewing_empire_id, e.attacker_id, e.attacker_empire_id));
+        }
+
+        if (!uncloaked_attackers.empty()) {
+            if (!desc.empty())
+                desc += "\n";
+            std::vector<std::string> target_empire_link(1, EmpireLink(target_it->first));
+
+            desc += FlexibleFormatList(target_empire_link, uncloaked_attackers
+                                       , UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS")
+                                       , UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS")).str();
+        }
+    }
+
+    return desc;
+}
+
+std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empire_id) const {
+    std::vector<ConstCombatEventPtr> all_events;
+    for (std::map<int, std::vector<StealthChangeEventDetailPtr> >::const_iterator target_it = events.begin();
+         target_it != events.end(); ++target_it) {
+
+        for (std::vector<StealthChangeEventDetailPtr>::const_iterator event_it = target_it->second.begin();
+             event_it != target_it->second.end(); ++event_it){
+            all_events.push_back(boost::dynamic_pointer_cast<CombatEvent>(*event_it));
+        }
+    }
+    return all_events;
+}
+
+template <class Archive>
+void StealthChangeEvent::serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(bout)
+       & BOOST_SERIALIZATION_NVP(events);
+}
+
+BOOST_CLASS_VERSION(StealthChangeEvent, 4)
+BOOST_CLASS_EXPORT(StealthChangeEvent)
+
+template
+void StealthChangeEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void StealthChangeEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void StealthChangeEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void StealthChangeEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+template <class Archive>
+void StealthChangeEvent::StealthChangeEventDetail::serialize(Archive& ar, const unsigned int version) {
+    ar  & BOOST_SERIALIZATION_NVP(attacker_id)
+        & BOOST_SERIALIZATION_NVP(target_id)
+        & BOOST_SERIALIZATION_NVP(attacker_empire_id)
+        & BOOST_SERIALIZATION_NVP(target_empire_id)
+        & BOOST_SERIALIZATION_NVP(visibility);
+}
+
+BOOST_CLASS_VERSION(StealthChangeEvent::StealthChangeEventDetail, 4)
+BOOST_CLASS_EXPORT(StealthChangeEvent::StealthChangeEventDetail)
+
+template
+void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void StealthChangeEvent::StealthChangeEventDetail::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+//////////////////////////////////////////
 ///////// Attack Event////////////////////
 //////////////////////////////////////////
 AttackEvent::AttackEvent() :

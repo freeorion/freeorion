@@ -57,6 +57,50 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/**StealthChangeEvent describes changes in the visibility of objects during combat.
+ At this time always decloaking.*/
+struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
+    StealthChangeEvent();
+    StealthChangeEvent(int bout);
+
+    virtual ~StealthChangeEvent() {}
+
+    void AddEvent(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
+
+    virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
+
+    struct StealthChangeEventDetail;
+    typedef boost::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
+    typedef boost::shared_ptr<const StealthChangeEventDetail> ConstStealthChangeEventDetailPtr;
+    struct StealthChangeEventDetail : public CombatEvent {
+        int attacker_id;
+        int target_id;
+        int attacker_empire_id;
+        int target_empire_id;
+        Visibility visibility;
+        StealthChangeEventDetail();
+        StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
+
+        virtual std::string DebugString() const;
+        virtual std::string CombatLogDescription(int viewing_empire_id) const;
+
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+
+private:
+    int     bout;
+
+    std::map<int, std::vector<StealthChangeEventDetailPtr> > events;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /// An event that describes a single attack by one object or fighter against another object or fighter
 struct FO_COMMON_API AttackEvent : public CombatEvent {
     AttackEvent();
