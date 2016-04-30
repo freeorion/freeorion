@@ -578,7 +578,7 @@ namespace {
         }
     }
 
-    bool ObjectCanBeAttacked(TemporaryPtr<const UniverseObject> obj) {
+    bool ObjectTypeCanBeAttacked(TemporaryPtr<const UniverseObject> obj) {
         if (!obj)
             return false;
 
@@ -596,9 +596,9 @@ namespace {
         return false;
     }
 
-    bool ObjectAttackableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                               GetOptionsDB().Get<bool>("verbose-combat-logging");
+    bool ObjectDiplomaticallyAttackableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
+        if (!obj)
+            return false;
         if (obj->OwnedBy(empire_id))
             return false;
         if (obj->Unowned() && empire_id == ALL_EMPIRES)
@@ -608,25 +608,38 @@ namespace {
             Empires().GetDiplomaticStatus(empire_id, obj->Owner()) != DIPLO_WAR)
         { return false; }
 
+        return true;
+    }
+
+    bool ObjectTargettableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
+        if (!obj)
+            return false;
         if (obj->ObjectType() != OBJ_FIGHTER &&
             GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) <= VIS_BASIC_VISIBILITY)
         {
+            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
+                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
             if (verbose_logging)
                 DebugLogger() << obj->Name() << " not sufficiently visible to empire " << empire_id;
             return false;
         }
 
-        return ObjectCanBeAttacked(obj);
+        return true;
+    }
+
+    bool ObjectAttackableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
+        return ObjectTypeCanBeAttacked(obj)
+            && ObjectDiplomaticallyAttackableByEmpire(obj, empire_id)
+            && ObjectTargettableByEmpire(obj, empire_id);
     }
 
     // monsters / natives can attack any planet, but can only attack
     // visible ships or ships that are in aggressive fleets
-    bool ObjectAttackableByMonsters(TemporaryPtr<const UniverseObject> obj, float monster_detection = 0.0f) {
-        if (obj->Unowned())
-            return false;
+    bool ObjectDiplomaticallyAttackableByMonsters(TemporaryPtr<const UniverseObject> obj) {
+        return (!obj->Unowned());
+    }
 
-        //DebugLogger() << "Testing if object " << obj->Name() << " is attackable by monsters";
-
+    bool ObjectTargettableByMonsters(TemporaryPtr<const UniverseObject> obj, float monster_detection = 0.0f) {
         UniverseObjectType obj_type = obj->ObjectType();
         if (obj_type == OBJ_PLANET || obj_type == OBJ_FIGHTER) {
             return true;
@@ -637,6 +650,12 @@ namespace {
         }
         //DebugLogger() << "... ... is NOT attackable by monsters";
         return false;
+    }
+
+    bool ObjectAttackableByMonsters(TemporaryPtr<const UniverseObject> obj, float monster_detection = 0.0f) {
+        return ObjectTypeCanBeAttacked(obj)
+            && ObjectDiplomaticallyAttackableByMonsters(obj)
+            && ObjectTargettableByMonsters(obj, monster_detection);
     }
 
     bool ObjectCanAttack(TemporaryPtr<const UniverseObject> obj) {
@@ -769,7 +788,7 @@ namespace {
                 valid_attacker_object_ids.insert(it->ID());
                 empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
             }
-            if (ObjectCanBeAttacked(obj)) {
+            if (ObjectTypeCanBeAttacked(obj)) {
                 //DebugLogger() << "... can be attacked";
                 valid_target_object_ids.insert(it->ID());
             }
@@ -1047,7 +1066,7 @@ namespace {
                     valid_attacker_object_ids.insert(it->ID());
                     empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
                 }
-                if (ObjectCanBeAttacked(obj)) {
+                if (ObjectTypeCanBeAttacked(obj)) {
                     obj_status += "... can be attacked";
                     valid_target_object_ids.insert(it->ID());
                 }
