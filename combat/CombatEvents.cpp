@@ -76,6 +76,14 @@ namespace {
         else                  // fighter
             return EmpireColourWrappedText(object_empire_id, UserString("OBJ_FIGHTER"));
     }
+
+    std::string EmpireLink(int empire_id) {
+        Empire* empire(0);
+        const std::string name = (empire = GetEmpire(empire_id)) ? empire->Name() : UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+
+        const std::string& tag = VarText::EMPIRE_ID_TAG;
+        return "<" + tag + " " + boost::lexical_cast<std::string>(empire_id) + ">" + name + "</" + tag + ">";
+    }
 }
 
 //////////////////////////////////////////
@@ -118,6 +126,127 @@ void BoutBeginEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& a
 
 template
 void BoutBeginEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+
+//////////////////////////////////////////
+///////// InitialStealthEvent /////////////
+//////////////////////////////////////////
+
+InitialStealthEvent::InitialStealthEvent() :
+    target_empire_id_to_invisble_obj_id()
+{}
+
+InitialStealthEvent::InitialStealthEvent(const StealthInvisbleMap &x) :
+    target_empire_id_to_invisble_obj_id(x)
+{}
+
+std::string InitialStealthEvent::DebugString() const {
+    std::stringstream ss;
+    ss << "InitialStealthEvent: ";
+    for (StealthInvisbleMap::const_iterator attack_empire = target_empire_id_to_invisble_obj_id.begin();
+         attack_empire != target_empire_id_to_invisble_obj_id.end(); ++attack_empire) {
+        ss << " Attacking Empire: " << EmpireLink(attack_empire->first) << "\n";
+        for (std::map<int, std::set<std::pair<int, Visibility> > >::const_iterator
+                 target_empire = attack_empire->second.begin();
+             target_empire != attack_empire->second.end(); ++target_empire) {
+            ss << " Target Empire: " << EmpireLink(target_empire->first) << " Targets: ";
+
+            for (std::set<std::pair<int, Visibility> >::const_iterator attacker_it = target_empire->second.begin();
+                 attacker_it != target_empire->second.end(); ++attacker_it) {
+                ss << FighterOrPublicNameLink(ALL_EMPIRES, attacker_it->first, target_empire->first);
+            }
+            ss << "\n";
+        }
+    }
+    return ss.str();
+}
+
+std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) const {
+    std::string desc = "";
+
+    //Viewing empire stealth first
+    for (StealthInvisbleMap::const_iterator attack_empire = target_empire_id_to_invisble_obj_id.begin();
+         attack_empire != target_empire_id_to_invisble_obj_id.end(); ++attack_empire) {
+        if (attack_empire->first == viewing_empire_id)
+            continue;
+
+        std::map<int, std::set<std::pair<int, Visibility> > >::const_iterator target_empire
+            = attack_empire->second.find(viewing_empire_id);
+        if (target_empire != attack_empire->second.end()
+            && !target_empire->second.empty()) {
+
+            std::vector<std::string> cloaked_attackers;
+            for (std::set<std::pair<int, Visibility> >::const_iterator attacker_it = target_empire->second.begin();
+                 attacker_it != target_empire->second.end(); ++attacker_it) {
+                 std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_it->first, viewing_empire_id);
+                // It doesn't matter if targets of viewing empire have no_visibility or basic_visibility
+                 cloaked_attackers.push_back(attacker_link);
+            }
+
+            if (!cloaked_attackers.empty()) {
+                desc += "\n"; //< Add \n at start of the report and between each empire
+                std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire->first));
+                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers
+                                           , UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
+            }
+        }
+    }
+
+    //Viewing empire defending
+    StealthInvisbleMap::const_iterator attack_empire
+        = target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
+    if (attack_empire != target_empire_id_to_invisble_obj_id.end()
+        && !attack_empire->second.empty()) {
+        for (std::map<int, std::set<std::pair<int, Visibility> > >::const_iterator
+                 target_empire = attack_empire->second.begin();
+             target_empire != attack_empire->second.end(); ++target_empire) {
+            if (target_empire->first == viewing_empire_id)
+                continue;
+
+            std::vector<std::string> cloaked_attackers;
+            for (std::set<std::pair<int, Visibility> >::const_iterator attacker_it = target_empire->second.begin();
+            attacker_it != target_empire->second.end(); ++attacker_it) {
+                 std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_it->first, viewing_empire_id);
+                // Don't even report on targets with no_visibility it is supposed to be a surprise
+                if (attacker_it->second >= VIS_BASIC_VISIBILITY ) {
+                    cloaked_attackers.push_back(attacker_link);
+                }
+            }
+
+            if (!cloaked_attackers.empty()) {
+                if (!desc.empty())
+                    desc += "\n";
+                std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire->first));
+                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers
+                                           , UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
+            }
+        }
+    }
+
+    return desc;
+}
+
+template <class Archive>
+void InitialStealthEvent::serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(target_empire_id_to_invisble_obj_id);
+}
+
+BOOST_CLASS_VERSION(InitialStealthEvent, 4)
+BOOST_CLASS_EXPORT(InitialStealthEvent)
+
+template
+void InitialStealthEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void InitialStealthEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void InitialStealthEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void InitialStealthEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
 
 //////////////////////////////////////////
 ///////// Attack Event////////////////////

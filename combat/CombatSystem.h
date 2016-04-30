@@ -4,6 +4,7 @@
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "CombatEvent.h"
+#include "CombatEvents.h"
 
 #include <boost/serialization/version.hpp>
 

@@ -1,11 +1,13 @@
 #ifndef COMBATEVENTS_H
 #define COMBATEVENTS_H
 
+#include <set>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
 #include "../util/Export.h"
+#include "../universe/Enums.h"
 
 #include "CombatEvent.h"
 
@@ -25,6 +27,31 @@ struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
     int bout;
 
 private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** InitialStealthEvent describes the initially stealthy combatants.
+    Note:  Because it is initialized with the unfiltered stealth information it
+    contains information not availble to all empires. */
+struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
+
+    /// a map of attacker empire id -> defender empire id -> set of (attacker ids, visibility)
+    typedef std::map<int, std::map< int, std::set< std::pair<int, Visibility> > > > StealthInvisbleMap;
+
+    InitialStealthEvent();
+    InitialStealthEvent(const StealthInvisbleMap &);
+
+    virtual ~InitialStealthEvent() {}
+
+    virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+
+private:
+
+    StealthInvisbleMap target_empire_id_to_invisble_obj_id;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);

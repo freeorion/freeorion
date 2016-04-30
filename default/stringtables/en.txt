@@ -3865,6 +3865,9 @@ The%1%planet %2% was incapacitated
 ENC_COMBAT_DESTROYED_STR
 The%1%ship %2% was destroyed
 
+ENC_COMBAT_INITIAL_STEALTH_LIST
+%2% empire can not target:
+
 ###########################################
 # Combat Report #
 ###########################################
