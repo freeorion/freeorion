@@ -6011,9 +6011,9 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
+'''Terraforms planets then increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
 
-This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population.'''
+This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a Good environment a substantial population bonus is added, if it is not then it will slowly terraform itself in stages to eventually reach Good (NB: [[species SP_EXOBOT]] do not have a Good environment so it cannot improve beyond Adequate for them).''' 
 
 WORLDTREE_SPECIAL
 World Tree
@@ -9433,7 +9433,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Adds the [[encyclopedia GAIA_SPECIAL]] to the planet which increases max Population for Good environments according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -9607,7 +9607,7 @@ BLD_ART_PARADISE_PLANET
 Artificial Paradise World
 
 BLD_ART_PARADISE_PLANET_DESC
-Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it to suit its inhabitants. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it in stages to eventually perfectly suit its inhabitants. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_MOON
 Artificial Moon
@@ -9617,7 +9617,7 @@ BLD_ART_MOON_DESC
 
 This cannot be constructed at a Gas Giant or Asteroid Belt.
 
-Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period. Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below.'''
+Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period. Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below. Ships orbiting the planet would also be able to hide more effectively from aggressors.'''
 
 BLD_SOL_REJUV
 Solar Rejuvenator
