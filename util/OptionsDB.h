@@ -113,7 +113,8 @@ public:
     bool        OptionExists(const std::string& name) const
     { return m_options.find(name) != m_options.end() && m_options.at(name).recognized; }
 
-    /** write back the optionDB's state to the XML config file */
+    /** write back the optionDB's state to the XML config file
+        if it has changed since it was last saved. */
     void        Commit();
 
     /** validates a value for an option. throws std::runtime_error if no option
@@ -199,6 +200,7 @@ public:
             }
         }
         m_options[name] = Option(static_cast<char>(0), name, value, default_value, description, validator.Clone(), storable, false, true);
+        m_dirty = true;
         OptionAddedSignal(name);
     }
 
@@ -226,6 +228,7 @@ public:
             }
         }
         m_options[name] = Option(short_name, name, value, default_value, description, validator.Clone(), storable, false, true);
+        m_dirty = true;
         OptionAddedSignal(name);
     }
 
@@ -247,6 +250,7 @@ public:
         }
         m_options[name] = Option(static_cast<char>(0), name, value, boost::lexical_cast<std::string>(false),
                                  description, 0, storable, true, true);
+        m_dirty = true;
         OptionAddedSignal(name);
     }
 
@@ -268,6 +272,7 @@ public:
         }
         m_options[name] = Option(short_name, name, value, boost::lexical_cast<std::string>(false),
                                  description, 0, storable, true, true);
+        m_dirty = true;
         OptionAddedSignal(name);
     }
 
@@ -285,10 +290,7 @@ public:
         std::map<std::string, Option>::iterator it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Set<>() : Attempted to set nonexistent option \"" + name + "\".");
-        if (it->second.value.type() != typeid(T))
-            throw boost::bad_any_cast();
-        it->second.value = value;
-        (*it->second.option_changed_sig_ptr)();
+        m_dirty |= it->second.SetFromValue(value);
     }
 
     /** fills some or all of the options of the DB from values passed in from
@@ -306,7 +308,11 @@ private:
                const boost::any& default_value_, const std::string& description_,
                const ValidatorBase *validator_, bool storable_, bool flag_, bool recognized_);
 
-        void            SetFromString(const std::string& str);
+        // SetFromValue returns true if value changed
+        template <typename T>
+        bool            SetFromValue(const T& value);
+        // SetFromString returns true if value changed
+        bool            SetFromString(const std::string& str);
         std::string     ValueToString() const;
         std::string     DefaultValueToString() const;
 
@@ -338,8 +344,23 @@ private:
 
     std::map<std::string, Option>   m_options;
     static OptionsDB*               s_options_db;
+    bool                            m_dirty; //< has OptionsDB changed since last Commit()
 
     friend OptionsDB& GetOptionsDB();
 };
+
+template <typename T>
+bool OptionsDB::Option::SetFromValue(const T& value_) {
+    if (value.type() != typeid(T))
+        throw boost::bad_any_cast();
+    bool changed = validator->String(value) != validator->String(value_);
+    if (changed) {
+        value = value_;
+        (*option_changed_sig_ptr)();
+    }
+    return changed;
+}
+
+
 
 #endif // _OptionsDB_h_
