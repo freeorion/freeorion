@@ -4269,6 +4269,17 @@ Erreur_IA : Erreur de script d'IA
 SERVER_MESSAGE_NOT_UNDERSTOOD
 Le serveur a envoyé un message ne pouvant être interprété.
 
+ORBITAL_DRYDOCK_REPAIR_TITLE
+Réparation en Cale Sèche
+ORBITAL_DRYDOCK_REPAIR_TEXT
+'''La [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]] est considérée comme la meilleure structure de réparation, capable de remettre à neuf tout astronef endommagé.
+
+Lorsque que l'indicateur [[encyclopedia HAPPINESS_TITLE]] d'une planète est inférieur à 15, les réparations effectuées via une Cale Sèche Orbitale seront moins efficaces. Si l'indicateur Bonheur chute au-dessous de 5, aucune réparation ne pourra y être entreprise pour le tour en cours.
+
+Les réparations sont différées d'un tour pour les astronefs pénétrant tout juste dans un système. En effet, la manœuvre d'accostage d'un astronef ainsi que la préparation des outils et pièces nécessaires à la réparation nécessitent un certain temps.
+
+Tout combat au sein d'un système interrompt les réparations pour le tour en cours.'''
+
 
 ####################
 # Combat Messages  #
@@ -4896,10 +4907,14 @@ L'épuration ethnique est achevée sur la planète %planet%.
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Épuration ethnique
 
-EFFECT_DRYDOCK_SHIP_REPAIR
-Sur %planet% : la structure %building% a réparé l'astronef '%ship%'.
-EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
+SITREP_SHIP_REPAIR_DOCK
 Réparation en Cale Sèche
+EFFECT_DRYDOCK_SHIP_REPAIR_NONE
+Sur %planet% : la structure %building% ne peut démarrer les réparations sur l'astronef %ship%, en raison d'un indicateur [[encyclopedia HAPPINESS_TITLE]] trop faible.
+EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
+Sur %planet% : la structure %building% a partiellement réparé l'astronef %ship%.
+EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
+Sur %planet% : la structure %building% a entièrement réparé l'astronef %ship%.
 
 EFFECT_MONSTER_SPAWNING
 Dans %system% : un %predefinedshipdesign% a fait son apparition.
@@ -5023,13 +5038,22 @@ Contrôle psychique
 
 EFFECT_MINES
 Dans %system% : des mines ont causé %rawtext% de dommages à la flotte %fleet% de %empire%.
+EFFECT_MINES_SINGLE_SHIP
+Dans %system% : des mines ont causé %rawtext% de dommages à l'astronef %ship%, de type %shipdesign%.
 EFFECT_MINES_LABEL
 Dégâts de mines
 
 EFFECT_MINES_SHIP_DESTROYED
 Dans %system% : des mines ont détruit l'astronef '%ship%' de %empire%.
+EFFECT_MINES_UNOWNED_DESTROYED
+Dans %system% : des mines ont détruit l'astronef %ship%, de type %shipdesign%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
+
+EFFECT_MINES_UNKNOWN
+Dans %system% : un objet non-identifié a déclenché vos mines.
+EFFECT_MINES_UNKNOWN_LABEL
+Enclenchement mines par astronef inconnu
 
 EFFECT_FLEET_MOVED_TOWARDS
 Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a repoussé la flotte %fleet% vers le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
@@ -5149,7 +5173,7 @@ BEGINNER_HINT_02
 2: Chaque espèce est adaptée à un environnement planétaire favori. Si vous parvenez à conquérir une planète peuplée par une autre espèce, vous pouvez utiliser cette dernière pour coloniser d'autres planètes, vous permettant ainsi de sécuriser rapidement un système. Cependant, gardez à l'esprit que certaines espèces ne peuvent pas coloniser d'autres mondes ou sont incapables de construire des astronefs.
 
 BEGINNER_HINT_03
-3: Les astronefs peuvent être réparés en un seul tour dans un système abritant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] alliée, et ce, si aucun ennemi ne se trouve dans ce système pour le tour en question.
+3: Les astronefs peuvent être réparés au sein d'un système abritant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] alliée, si aucun combat ne s'y est déroulé le tour précédent, et si la planète hôte présente un indicateur [[encyclopedia HAPPINESS_TITLE]] égal ou supérieur à 5. Les astronefs doivent patienter un tour au sein d'un système avant que les réparations ne puissent démarrer.
 
 BEGINNER_HINT_04
 4: Les systèmes reliés par des lignes d'une épaisseur plus importante sont connectés par lignes d'[[encyclopedia SUPPLY_TITLE]] et partagent ainsi leur Points de Production (PP) d'[[encyclopedia INDUSTRY_TITLE]].
@@ -5987,9 +6011,9 @@ GAIA_SPECIAL  # translated
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Accroît le plafond de Population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Terraforme la planète puis accroît son plafond de Population selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
-Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population.'''
+Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population. Si l'environnement atteint est Parfait, un bonus susbstantiel de Population est acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre l'environnement Parfait (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade Convenable).'''
 
 WORLDTREE_SPECIAL
 Arbre Planétaire
@@ -9256,7 +9280,9 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 Cale Sèche Orbitale
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise avant toute autre construction de structures additionnelles supplémentaires. Cette amélioration permet également la réparation des astronefs endommagés, restaurant à chaque tour la totalité de la [[encyclopedia STRUCTURE_TITLE]] d'un astronef, si aucun combat n'a lieu dans ce système durant le tour en question.
+'''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise avant toute autre construction de structures additionnelles supplémentaires. Cette amélioration permet également la réparation des astronefs endommagés, restaurant à chaque tour la [[encyclopedia STRUCTURE_TITLE]] d'un astronef.
+
+La bonne marche de la [[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] peut être entravée par l'indicateur [[encyclopedia HAPPINESS_TITLE]] de la planète hôte, ou par tout combat se déroulant au sein du système.
 
 Lors de la construction d'un imposant vaisseau interstellaire, il est peu pratique de déplacer chaque composant via des ascenseurs spatiaux en vue de l'assemblage orbital. De ce fait, il s'avère bien plus judicieux de fabriquer chaque élément et de les assembler au sein de la même structure orbitale, supprimant ainsi le problème du transport des éléments volumineux à partir de la surface planétaire.'''
 
@@ -9407,7 +9433,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Accroît le plafond de Population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Dote une planète de la Particularité [[encyclopedia GAIA_SPECIAL]] et accroît le plafond de Population (pour les environnements Parfaits) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
@@ -9581,7 +9607,7 @@ BLD_ART_PARADISE_PLANET
 Planète Paradisiaque Artificielle
 
 BLD_ART_PARADISE_PLANET_DESC
-Forme une planète paradisiaque artificielle à partir d'une ceinture d'astéroïdes ou d'une géante gazeuse. Les astéroïdes donnent naissance à des minuscules planètes stériles tandis que les géantes gazeuses deviennent d'immenses planètes stériles. La planète ainsi formée sera doté de la Particularité [[special GAIA_SPECIAL]], laquelle permettra de terraformer de la planète afin de mieux l'adapter à ses habitants. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]], une géante gazeuse ou une ceinture d'astéroïdes.
+Forme une planète paradisiaque artificielle à partir d'une ceinture d'astéroïdes ou d'une géante gazeuse. Les astéroïdes donnent naissance à des minuscules planètes stériles tandis que les géantes gazeuses deviennent d'immenses planètes stériles. La planète ainsi formée sera dotée de la Particularité [[special GAIA_SPECIAL]], laquelle permettra de terraformer la planète par paliers, pour au final l'adapter parfaitement à ses habitants. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]], une géante gazeuse ou une ceinture d'astéroïdes.
 
 BLD_ART_MOON
 Lune Artificielle
@@ -9591,7 +9617,7 @@ BLD_ART_MOON_DESC
 
 Cette structure ne peut pas être construite en orbite autour d'une géante gazeuse ou dans une ceinture d'astéroïdes.
 
-Bien que les satellites naturels soient relativement communs parmi les corps planétaires, les lunes dont la période de rotation équivaut à la période de révolution sont plutôt rares, car cela nécessite l'absence de toute perturbation externe. Ces satellites ont une face constamment à l'opposé de celle de la planète, permettant la construction d'installations massives - lesquelles, dans des circonstances normales, seraient facilement visibles depuis la surface de la planète - en toute discrétion et dans le secret le plus total, car toute structure s'avère alors totalement invisible pour la population planétaire peu suspicieuse.'''
+Bien que les satellites naturels soient relativement communs parmi les corps planétaires, les lunes dont la période de rotation équivaut à la période de révolution sont plutôt rares, car cela nécessite l'absence de toute perturbation externe. Ces satellites ont une face constamment à l'opposé de celle de la planète, permettant la construction d'installations massives - lesquelles, dans des circonstances normales, seraient facilement visibles depuis la surface de la planète - en toute discrétion et dans le secret le plus total, car toute structure s'avère alors totalement invisible pour la population planétaire peu suspicieuse. Les astronefs orbitant autour de la planète seraient également en mesure de se dissimuler bien plus efficacement à la vue d'éventuels agresseurs.'''
 
 BLD_SOL_REJUV
 Fontaine de Jouvence Solaire
