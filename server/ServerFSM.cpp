@@ -139,6 +139,28 @@ namespace {
             return UserString("EMPIRE");
         }
     }
+
+
+    void HandleErrorMessage(const Error& msg, ServerApp &server) {
+        std::string problem;
+        bool fatal;
+        ExtractMessageData(msg.m_message, problem, fatal);
+
+        std::stringstream ss;
+
+        ss << "Server received from player "
+           << msg.m_player_connection << (fatal?"a fatal":"an")
+           << " error message: " << problem;
+
+        if (fatal) {
+            FatalLogger() << ss.str();
+            SendMessageToAllPlayers(msg.m_message);
+            boost::this_thread::sleep_for(boost::chrono::seconds(2));
+            server.Exit(1);
+        }
+
+        ErrorLogger() << ss.str();
+    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -301,6 +323,10 @@ sc::result Idle::react(const HostSPGame& msg) {
     return transit<WaitingForSPGameJoiners>();
 }
 
+sc::result Idle::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // MPLobby
@@ -773,6 +799,10 @@ sc::result MPLobby::react(const HostSPGame& msg) {
     return discard_event();
 }
 
+sc::result MPLobby::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // WaitingForSPGameJoiners
@@ -955,6 +985,10 @@ sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
     return transit<Idle>();
 }
 
+sc::result WaitingForSPGameJoiners::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}
 
 ////////////////////////////////////////////////////////////
 // WaitingForMPGameJoiners
@@ -1069,6 +1103,11 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     return discard_event();
 }
 
+sc::result WaitingForMPGameJoiners::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // PlayingGame
@@ -1140,6 +1179,11 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
 
     delete action;
 
+    return discard_event();
+}
+
+sc::result PlayingGame::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
     return discard_event();
 }
 
@@ -1290,6 +1334,11 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     return discard_event();
 }
 
+sc::result WaitingForTurnEnd::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEndIdle
@@ -1319,6 +1368,11 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     context<WaitingForTurnEnd>().m_save_filename = message.Text();  // store requested save file name in Base state context so that sibling state can retreive it
 
     return transit<WaitingForSaveData>();
+}
+
+sc::result WaitingForTurnEndIdle::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
 }
 
 
@@ -1433,6 +1487,11 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     return discard_event();
 }
 
+sc::result WaitingForSaveData::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // ProcessingTurn
@@ -1487,3 +1546,7 @@ sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
     return discard_event();
 }
 
+sc::result ProcessingTurn::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}

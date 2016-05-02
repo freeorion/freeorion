@@ -318,7 +318,6 @@ int ServerApp::GetNewDesignID()
 
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
-    std::cout << "FreeOrion server waiting for network events" << std::endl;
     while (1) {
         if (m_io_service.run_one())
             m_networking.HandleNextEvent();
@@ -437,6 +436,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
     case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
     case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
     case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
+    case Message::ERROR_MSG:    m_fsm->process_event(Error(msg, player_connection));        break;
     case Message::DEBUG:        break;
     default:
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
