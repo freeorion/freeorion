@@ -6,6 +6,7 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Serialize.h"
+#include "../../util/i18n.h"
 #include "../../network/Message.h"
 #include "../util/Random.h"
 
@@ -44,14 +45,6 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 
     InitLogger(AICLIENT_LOG_FILENAME, "AI");
     DebugLogger() << PlayerName() + " logger initialized.";
-
-    PythonAI* python_ai = new PythonAI();
-    if (!(python_ai->Initialize())) {
-        const std::string err_msg = "AIClientApp::AIClientApp : Failed to initialize Python AI.  Exiting.";
-        ErrorLogger() << err_msg;
-        throw std::runtime_error(err_msg);
-    }
-    m_AI = python_ai;
 }
 
 AIClientApp::~AIClientApp() {
@@ -77,6 +70,29 @@ const AIBase* AIClientApp::GetAI()
 { return m_AI; }
 
 void AIClientApp::Run() {
+
+    ConnectToServer();
+
+    StartPythonAI();
+
+    // join game
+    Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
+
+    // respond to messages until disconnected
+    while (1) {
+        if (!Networking().Connected())
+            break;
+        if (Networking().MessageAvailable()) {
+            Message msg;
+            Networking().GetMessage(msg);
+            HandleMessage(msg);
+        } else {
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
+        }
+    }
+}
+
+void AIClientApp::ConnectToServer() {
     // connect
     const int MAX_TRIES = 10;
     int tries = 0;
@@ -96,22 +112,21 @@ void AIClientApp::Run() {
         ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
         Exit(1);
     }
+}
 
-    // join game
-    Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
-
-    // respond to messages until disconnected
-    while (1) {
-        if (!Networking().Connected())
-            break;
-        if (Networking().MessageAvailable()) {
-            Message msg;
-            Networking().GetMessage(msg);
-            HandleMessage(msg);
-        } else {
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
-        }
+void AIClientApp::StartPythonAI() {
+    PythonAI* python_ai = new PythonAI();
+    if (!(python_ai->Initialize())) {
+        const std::string err_msg = "AIClientApp::AIClientApp : Failed to initialize Python AI.  Exiting Soon.";
+        ErrorLogger() << err_msg;
+        Networking().SendMessage(
+            ErrorMessage(str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
+        boost::this_thread::sleep_for(boost::chrono::seconds(2));
+        Networking().DisconnectFromServer();
+        throw std::runtime_error(err_msg);
     }
+    m_AI = python_ai;
+
 }
 
 void AIClientApp::HandleMessage(const Message& msg) {

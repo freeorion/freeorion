@@ -31,7 +31,10 @@ public:
 
 private:
     void                Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())
+    void                ConnectToServer();
+    void                StartPythonAI();
     void                HandleMessage(const Message& msg);
+
 
     AIBase*             m_AI;           ///< implementation of AI logic
     std::string         m_player_name;

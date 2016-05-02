@@ -51,8 +51,6 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 
         AIClientApp g_app(args);
 
-        DebugLogger() << "AIClientApp and logging initialized.  Running app.";
-
         g_app();
 
     } catch (const std::invalid_argument& e) {
