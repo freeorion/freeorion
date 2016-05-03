@@ -13,7 +13,6 @@ Tech
     ]
     unlock = [
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
     graphic = "icons/ship_hulls/scattered_asteroid_hull_small.png"
 

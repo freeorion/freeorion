@@ -9,7 +9,6 @@ Tech
     unlock = [
         Item type = ShipHull name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
         Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST"
     ]
     graphic = "icons/ship_hulls/camouflage_asteroid_hull_small.png"
 

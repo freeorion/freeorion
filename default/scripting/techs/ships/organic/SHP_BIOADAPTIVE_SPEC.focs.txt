@@ -11,7 +11,6 @@ Tech
     ]
     unlock = [
         Item type = ShipHull name = "SH_BIOADAPTIVE"
-        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
     graphic = "icons/ship_hulls/bio_adaptive_hull_small.png"
 

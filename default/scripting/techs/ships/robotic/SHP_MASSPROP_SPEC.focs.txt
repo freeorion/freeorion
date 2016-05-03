@@ -8,7 +8,6 @@ Tech
     prerequisites = "SHP_CONTGRAV_MAINT"
     unlock = [
         Item type = ShipHull name = "SH_TITANIC"
-        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
     ]
     graphic = "icons/ship_hulls/titanic_hull_small.png"
 

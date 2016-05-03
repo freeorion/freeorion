@@ -8,7 +8,6 @@ Tech
     prerequisites = "SHP_ASTEROID_REFORM"
     unlock = [
         Item type = ShipHull name = "SH_MINIASTEROID_SWARM"
-        Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
     graphic = "icons/ship_hulls/mini_asteroid_swarm_small.png"
 

@@ -12,9 +12,6 @@ Tech
     ]
     unlock = [
         Item type = ShipHull name = "SH_LOGISTICS_FACILITATOR"
-        Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
-        Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
-        Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
     graphic = "icons/ship_hulls/logistics_facilitator_hull_small.png"
 

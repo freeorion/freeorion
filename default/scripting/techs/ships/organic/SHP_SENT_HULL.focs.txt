@@ -11,8 +11,6 @@ Tech
     ]
     unlock = [
         Item type = ShipHull name = "SH_SENTIENT"
-        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
     graphic = "icons/ship_hulls/sentient_hull_small.png"
 
