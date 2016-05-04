@@ -39,6 +39,7 @@ namespace {
         db.Add("UI.tech-layout-vert-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
+        db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1804,8 +1805,10 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_tech_list->TechRightClickedSignal,    &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal,   &TechTreeWnd::TechDoubleClickedSlot,    this);
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, RES_PEDIA_WND_NAME);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
     m_tech_tree_controls = new TechTreeControls(RES_CONTROLS_WND_NAME);
+
+    GG::Connect(m_enc_detail_panel->ClosingSignal, boost::bind(&TechTreeWnd::HidePedia, this));
 
     InitializeWindows();
     // Make sure the controls don't overlap the bottom scrollbar
@@ -1984,6 +1987,31 @@ void TechTreeWnd::SetEncyclopediaTech(const std::string& tech_name)
 
 void TechTreeWnd::SelectTech(const std::string& tech_name)
 { m_layout_panel->ShowTech(tech_name); }
+
+void TechTreeWnd::ShowPedia() {
+    m_enc_detail_panel->Refresh();
+    m_enc_detail_panel->Show();
+
+    OptionsDB& db = GetOptionsDB();
+    db.Set("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", false);
+}
+
+void TechTreeWnd::HidePedia() {
+    m_enc_detail_panel->Hide();
+
+    OptionsDB& db = GetOptionsDB();
+    db.Set("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", true);
+}
+
+void TechTreeWnd::TogglePedia() {
+    if (!m_enc_detail_panel->Visible())
+        ShowPedia();
+    else
+        HidePedia();
+}
+
+bool TechTreeWnd::PediaVisible()
+{ return m_enc_detail_panel->Visible(); }
 
 void TechTreeWnd::TechBrowsedSlot(const std::string& tech_name)
 { TechBrowsedSignal(tech_name); }

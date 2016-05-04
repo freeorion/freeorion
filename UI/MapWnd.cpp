@@ -5492,6 +5492,11 @@ void MapWnd::ShowPedia() {
         return;
     }
 
+    if (m_research_wnd->Visible()) {
+        m_research_wnd->TogglePedia();
+        return;
+    }
+
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
@@ -5555,6 +5560,10 @@ void MapWnd::ShowResearch() {
     // show the research window
     m_research_wnd->Show();
     GG::GUI::GetGUI()->MoveUp(m_research_wnd);
+
+    // hide pedia again if it is supposed to be hidden persistently
+    if (GetOptionsDB().Get<bool>("UI.windows.research.pedia.persistently-hidden"))
+        m_research_wnd->HidePedia();
 
     // indicate selection on button
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));

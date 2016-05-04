@@ -19,6 +19,7 @@ public:
 
     /** \name Accessors */ //@{
     int     ShownEmpireID() const;
+    bool    PediaVisible();
     //@}
 
     /** \name Mutators */ //@{
@@ -36,6 +37,10 @@ public:
     void    ShowTech(const std::string& tech_name);
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void    Sanitize();
+
+    void    ShowPedia();
+    void    HidePedia();
+    void    TogglePedia();
 
     /** Enables, or disables if \a enable is false, issuing orders via this ResearchWnd. */
     void    EnableOrderIssuing(bool enable = true);
