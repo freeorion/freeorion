@@ -5365,9 +5365,6 @@ void MapWnd::ShowSitRep() {
     HideProduction();
     HideDesign();
 
-    // update sitrep window
-    m_sitrep_panel->Update();
-
     // show the sitrep window
     m_sitrep_panel->Show();
     GG::GUI::GetGUI()->MoveUp(m_sitrep_panel);

@@ -487,19 +487,16 @@ void SitRepPanel::CloseClicked()
 
 void SitRepPanel::PrevClicked() {
     std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
-    m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false);
-    Update();
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false));
 }
 
 void SitRepPanel::NextClicked() {
     std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
-    m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true);
-    Update();
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true));
 }
 
 void SitRepPanel::LastClicked() {
-    m_showing_turn = CurrentTurn();
-    Update();
+    ShowSitRepsForTurn(CurrentTurn());
 }
 
 void SitRepPanel::FilterClicked() {
@@ -635,6 +632,8 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
 
 void SitRepPanel::Update() {
     DebugLogger() << "SitRepPanel::Update()";
+
+    std::size_t first_visible_row = std::distance(m_sitreps_lb->begin(), m_sitreps_lb->FirstRowShown());
     m_sitreps_lb->Clear();
 
     // Get back to sane default
@@ -689,6 +688,12 @@ void SitRepPanel::Update() {
          sitrep_it != orderedSitreps.end(); sitrep_it++)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
 
+    if (m_sitreps_lb->NumRows() > first_visible_row) {
+        m_sitreps_lb->SetFirstRowShown(boost::next(m_sitreps_lb->begin(), first_visible_row));
+    } else if (!m_sitreps_lb->Empty()) {
+        m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
+    }
+
     // if at first turn with visible sitreps, disable back button
     int firstTurnWithSR = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false);
     if ((m_showing_turn < 1) || (turns.size() < 2) || (m_showing_turn == firstTurnWithSR)) {
@@ -708,8 +713,13 @@ void SitRepPanel::Update() {
     }
 }
 
-void SitRepPanel::ShowSitRepsForTurn(int turn)
-{ m_showing_turn = turn; }
+void SitRepPanel::ShowSitRepsForTurn(int turn) {
+     bool is_different_turn(m_showing_turn != turn);
+     m_showing_turn = turn;
+     Update();
+     if (is_different_turn)
+         m_sitreps_lb->SetFirstRowShown(m_sitreps_lb->begin());
+}
 
 void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& templates) {
     std::set<std::string> old_hidden_sitrep_templates = m_hidden_sitrep_templates;
