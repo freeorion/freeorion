@@ -70,7 +70,6 @@ const AIBase* AIClientApp::GetAI()
 { return m_AI; }
 
 void AIClientApp::Run() {
-
     ConnectToServer();
 
     StartPythonAI();
