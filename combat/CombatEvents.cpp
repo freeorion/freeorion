@@ -775,7 +775,9 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
         std::vector<std::string> target_links;
         for (std::map<int, double>::iterator target_it = damaged.begin();
              target_it != damaged.end(); ++target_it) {
-            target_links.push_back( PublicNameLink(viewing_empire_id, target_it->first));
+            target_links.push_back(
+                str(FlexibleFormat(UserString("ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE"))
+                    % PublicNameLink(viewing_empire_id, target_it->first) % target_it->second));
         }
 
         desc += FlexibleFormatList(attacker_link, target_links

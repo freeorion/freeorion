@@ -161,7 +161,7 @@ private:
         } else {
             // The log uses the GG::Layout which incorrectly reports
             // the current size as the minimum size.
-            m_min_size += m_log->MinUsableSize();
+            m_min_size += m_log_scroller->MinUsableSize();
         }
 
         std::list<GG::Wnd*>::const_iterator layout_begin =

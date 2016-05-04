@@ -211,7 +211,7 @@ Cannot be produced
 # FORMAT_LIST items are for lists of the form
 # FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
 # i.e.
-# There is none.
+# There are none.
 # There is only: banana
 # There are: apple and banana
 ##################################
@@ -223,7 +223,7 @@ FORMAT_LIST_DEFAULT_SINGLE_HEADER
 There is one:
 
 FORMAT_LIST_DEFAULT_EMPTY_HEADER
-There is none.
+There are none.
 
 FORMAT_LIST_DEFAULT_DUAL_HEADER
 There are:
@@ -3838,7 +3838,7 @@ ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
 
 ENC_COMBAT_ATTACK_DETAILS
-Attack strength: %1%  Shield strength: %2%  Final damage: %3%
+Attack strength: %1%  Shield strength: %2%  Damage: %3%
 
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attacks %2%
@@ -3873,22 +3873,26 @@ ENC_COMBAT_INITIAL_STEALTH_LIST
 
 # %1 attacker %2 defender %3 empire
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK
-%1% decloaks while attacking %2%.
+%2% detects %1% during attack.
 
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
-%2% empire can now target,
+%2% detects
 
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
-%2% empire can now target:
+%2% detects:
 
 ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
-%2% damages the
+%2% damages
 
 ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
 %2% damages %1% targets:
 
+# %1 defender %2 damage
+ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
+%1% for %2% damage
+
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
-%2% could not damage the
+%2% could not damage
 
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% could not damage %1% targets:

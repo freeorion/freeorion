@@ -230,6 +230,10 @@ void CombatLogWnd::SetLog(int log_id) {
     //Add a dummy row that the layout manager can use to add space.
     AddRow(DecorateLinkText(""));
     layout->SetRowStretch(layout->Rows() - 1, 1);
+
+    if (Parent()) {
+        SizeMove(Parent()->ClientUpperLeft(), Parent()->ClientLowerRight());
+    }
 }
 
 GG::Pt CombatLogWnd::ClientUpperLeft() const

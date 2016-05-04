@@ -53,12 +53,12 @@ FO_COMMON_API int EffectiveSign(double val);
 
 template<typename HeaderContainer, typename ListContainer>
 FO_COMMON_API boost::format FlexibleFormatList(
-    const HeaderContainer& header_words
-    , const ListContainer& words
-    , const std::string& plural_header_template
-    , const std::string& single_header_template
-    , const std::string& empty_header_template
-    , const std::string& dual_header_template )
+    const HeaderContainer& header_words,
+    const ListContainer& words,
+    const std::string& plural_header_template,
+    const std::string& single_header_template,
+    const std::string& empty_header_template,
+    const std::string& dual_header_template )
 {
     std::string header_template;
     switch (words.size()) {
@@ -81,7 +81,7 @@ FO_COMMON_API boost::format FlexibleFormatList(
         header_fmt % *it;
     }
 
-    std::string template_str = words.size()<=10
+    std::string template_str = words.size() <= 10
         ? UserString("FORMAT_LIST_" + boost::lexical_cast<std::string>(words.size()) + "_ITEMS")
         : UserString("FORMAT_LIST_MANY_ITEMS");
 
@@ -96,11 +96,11 @@ FO_COMMON_API boost::format FlexibleFormatList(
 
 template<typename Container>
 FO_COMMON_API boost::format FlexibleFormatList(const Container& words) {
-    return FlexibleFormatList(std::vector<std::string>(), words
-                              , UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER")
-                              , UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER")
-                              , UserString("FORMAT_LIST_DEFAULT_EMPTY_HEADER")
-                              , UserString("FORMAT_LIST_DEFAULT_DUAL_HEADER"));
+    return FlexibleFormatList(std::vector<std::string>(), words,
+                              UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER"),
+                              UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER"),
+                              UserString("FORMAT_LIST_DEFAULT_EMPTY_HEADER"),
+                              UserString("FORMAT_LIST_DEFAULT_DUAL_HEADER"));
 }
 
 template<typename Container>
