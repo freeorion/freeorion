@@ -13,7 +13,7 @@ from specials import distribute_specials
 from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import statistics
-
+from timers import Timer
 
 class PyGalaxySetupData:
     """
@@ -61,6 +61,9 @@ def create_universe(psd_map):
     """
     print "Python Universe Generator"
 
+    create_universe_timer = Timer('create_universe_bucket')
+    create_universe_timer.start("Initialization")
+
     # fetch universe and player setup data
     gsd = PyGalaxySetupData(fo.get_galaxy_setup_data())
     gsd.dump()
@@ -82,21 +85,25 @@ def create_universe(psd_map):
     print "Creating universe with %d systems for %d players" % (gsd.size, total_players)
 
     # calculate star system positions
+    create_universe_timer.start("Position")
     seed_rng(seed_pool.pop())
     system_positions = calc_star_system_positions(gsd)
     size = len(system_positions)
     print gsd.shape, "Star system positions calculated, final number of systems:", size
 
     # generate and populate systems
+    create_universe_timer.start("Populate")
     seed_rng(seed_pool.pop())
     systems = generate_systems(system_positions, gsd)
     print len(systems), "systems generated and populated"
 
     # generate Starlanes
+    create_universe_timer.start("Starlanes")
     seed_rng(seed_pool.pop())
     fo.generate_starlanes(MAX_JUMPS_BETWEEN_SYSTEMS[gsd.starlane_frequency], MAX_STARLANE_LENGTH)
     print "Starlanes generated"
 
+    create_universe_timer.start("Empires")
     print "Compile list of home systems..."
     seed_rng(seed_pool.pop())
     home_systems = compile_home_system_list(total_players, systems, gsd)
@@ -116,6 +123,7 @@ def create_universe(psd_map):
     # this needs to be done after all systems have been generated and empire home systems have been set, as
     # only after all that is finished star types as well as planet sizes and types are fixed, and the naming
     # process depends on that
+    create_universe_timer.start("Naming")
     print "Assign star system names"
     seed_rng(seed_pool.pop())
     name_star_systems(systems)
@@ -123,21 +131,27 @@ def create_universe(psd_map):
     for system in systems:
         name_planets(system)
 
+    create_universe_timer.start("Fields")
     print "Generating stationary fields in systems"
     seed_rng(seed_pool.pop())
     generate_fields(systems)
 
+    create_universe_timer.start("Natives")
     print "Generating Natives"
     seed_rng(seed_pool.pop())
     generate_natives(gsd.native_frequency, systems, home_systems)
 
+    create_universe_timer.start("Monsters")
     print "Generating Space Monsters"
     seed_rng(seed_pool.pop())
     generate_monsters(gsd.monster_frequency, systems)
 
+    create_universe_timer.start("Specials")
     print "Distributing Starting Specials"
     seed_rng(seed_pool.pop())
     distribute_specials(gsd.specials_frequency, fo.get_all_objects())
+
+    create_universe_timer.end()
 
     # finally, write some statistics to the log file
     print "############################################################"
