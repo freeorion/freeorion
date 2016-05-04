@@ -184,18 +184,23 @@ def disc_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def cluster_galaxy_calc_positions(positions, clusters, size, width):
+def cluster_galaxy_calc_positions(positions, size, width):
     """
     Calculate positions for the cluster galaxy shape.
     """
     if size < 1:
-        print >> sys.stderr, "Cluster galaxy requested for 0 stars"
+        print >> sys.stderr, "Cluster galaxy requested for less than 1 star"
         return
-    if clusters < 1:
-        print >> sys.stderr, "Cluster galaxy requested for 0 clusters, defaulting to 1"
-        clusters = 1
 
-    adjacency_grid = AdjacencyGrid(width)
+    if size == 1:
+        pos = (width / 2.0, width / 2.0)
+        positions.append(pos)
+        return
+
+    # Typically a galaxy with 100 systems should have ~5 clusters
+    avg_clusters = max(2, round(size / 20))
+    # Add a bit of random variation (+/- 20%)
+    clusters = max(2, randint(round((avg_clusters * 8) / 10), round((avg_clusters * 12) / 10)))
 
     # probability of systems which don't belong to a cluster
     system_noise = 0.15
@@ -205,6 +210,8 @@ def cluster_galaxy_calc_positions(positions, clusters, size, width):
     clusters_position = []
 
     random_angle = lambda: uniform(0.0, 2.0*pi)
+
+    adjacency_grid = AdjacencyGrid(width)
 
     for i in range(clusters):
         attempts = 100
@@ -436,14 +443,7 @@ def calc_star_system_positions(gsd):
     elif gsd.shape == fo.galaxyShape.disc:
         disc_galaxy_calc_positions(positions, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.cluster:
-        # Typically a galaxy with 100 systems should have ~5 clusters
-        avg_clusters = gsd.size / 20
-        if avg_clusters < 2:
-            avg_clusters = 2
-        # Add a bit of random variation (+/- 20%)
-        clusters = randint((avg_clusters * 8) / 10, (avg_clusters * 12) / 10)
-        if clusters >= 2:
-            cluster_galaxy_calc_positions(positions, clusters, gsd.size, width)
+        cluster_galaxy_calc_positions(positions, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.ring:
         ring_galaxy_calc_positions(positions, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.irregular:
