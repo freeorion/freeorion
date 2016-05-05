@@ -496,6 +496,7 @@ public:
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechRightClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
+    mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
     //@}
 
     //! \name Mutators //@{
@@ -558,6 +559,7 @@ private:
                               const GG::Flags<GG::ModKey>& modkeys);
     void TechDoubleClickedSlot(const std::string& tech_name,
                                const GG::Flags<GG::ModKey>& modkeys);
+    void TechPediaDisplaySlot(const std::string& tech_name);
 
     void TreeDraggedSlot(const GG::Pt& move);
     void TreeDragBegin(const GG::Pt& move);
@@ -620,6 +622,7 @@ public:
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechRightClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
+    mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
 
 private:
     void            InitBuffers();
@@ -825,13 +828,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
 {
     TechRightClickedSignal(m_tech_name, mod_keys);
 
-    if (m_enqueued)
-        return;
-    if (m_status == TS_COMPLETE)
-        return;
-
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+    if (!(m_enqueued) && !(m_status == TS_COMPLETE))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
+    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -840,6 +842,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
         switch (popup.MenuID()) {
         case 1: {
             LDoubleClick(pt, mod_keys);
+            break;
+        }
+        case 2: {
+            TechPediaDisplaySignal(m_tech_name);
             break;
         }
         default:
@@ -1331,6 +1337,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         GG::Connect(tech_panel->TechLeftClickedSignal,      &TechTreeWnd::LayoutPanel::TechLeftClickedSlot,     this);
         GG::Connect(tech_panel->TechRightClickedSignal,     &TechTreeWnd::LayoutPanel::TechRightClickedSlot,    this);
         GG::Connect(tech_panel->TechDoubleClickedSignal,    &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
+        GG::Connect(tech_panel->TechPediaDisplaySignal,     &TechTreeWnd::LayoutPanel::TechPediaDisplaySlot,    this);
 
         visible_techs.insert(tech_name);
     }
@@ -1406,6 +1413,10 @@ void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const std::string& tech_nam
                                                      const GG::Flags<GG::ModKey>& modkeys)
 { TechDoubleClickedSignal(tech_name, modkeys); }
 
+void TechTreeWnd::LayoutPanel::TechPediaDisplaySlot(const std::string& tech_name)
+{ TechPediaDisplaySignal(tech_name); }
+
+
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move) {
     m_hscroll->ScrollTo(m_drag_scroll_position_x - Value(move.x / m_scale));
     m_vscroll->ScrollTo(m_drag_scroll_position_y - Value(move.y / m_scale));
@@ -1469,6 +1480,7 @@ public:
     mutable TechClickSignalType TechLeftClickedSignal;  ///< emitted when a technology is single-left-clicked
     mutable TechClickSignalType TechRightClickedSignal; ///< emitted when a technology is single-right-clicked
     mutable TechClickSignalType TechDoubleClickedSignal;///< emitted when a technology is double-clicked
+    mutable TechSignalType      TechPediaDisplaySignal; ///< emitted when requesting a pedia lookup
 
 private:
     class TechRow : public CUIListBox::Row {
@@ -1487,6 +1499,7 @@ private:
     void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechPediaDisplay(const std::string& tech_name);
 
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
@@ -1747,15 +1760,17 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
         return;
     const std::string& tech_name = tech_row->GetTech();
 
-    if (empire->TechResearched(tech_name))
-        return;
-
     const ResearchQueue& rq = empire->GetResearchQueue();
     if (rq.find(tech_name) != rq.end())
         return;
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+
+    if (!empire->TechResearched(tech_name))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
+    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -1766,10 +1781,18 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
             TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>());
             break;
         }
+        case 2: {
+            TechPediaDisplay(tech_name);
+            break;
+        }
         default:
             break;
         }
     }
+}
+
+void TechTreeWnd::TechListBox::TechPediaDisplay(const std::string& tech_name) {
+    TechPediaDisplaySignal(tech_name);
 }
 
 void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -1797,6 +1820,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_layout_panel->TechLeftClickedSignal,  &TechTreeWnd::TechLeftClickedSlot,      this);
     GG::Connect(m_layout_panel->TechRightClickedSignal, &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_layout_panel->TechDoubleClickedSignal,&TechTreeWnd::TechDoubleClickedSlot,    this);
+    GG::Connect(m_layout_panel->TechPediaDisplaySignal, &TechTreeWnd::TechPediaDisplaySlot,     this);
     AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(w, h);
@@ -1804,6 +1828,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_tech_list->TechLeftClickedSignal,     &TechTreeWnd::TechLeftClickedSlot,      this);
     GG::Connect(m_tech_list->TechRightClickedSignal,    &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal,   &TechTreeWnd::TechDoubleClickedSlot,    this);
+    GG::Connect(m_tech_list->TechPediaDisplaySignal,    &TechTreeWnd::TechPediaDisplaySlot,     this);
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
     m_tech_tree_controls = new TechTreeControls(RES_CONTROLS_WND_NAME);
@@ -2062,4 +2087,10 @@ void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
     std::vector<std::string> tech_vec = manager.RecursivePrereqs(tech_name, empire_id);
     tech_vec.push_back(tech_name);
     AddTechsToQueueSignal(tech_vec, queue_pos);
+}
+
+void TechTreeWnd::TechPediaDisplaySlot(const std::string& tech_name) {
+    SetEncyclopediaTech(tech_name);
+    if (!PediaVisible())
+        ShowPedia();
 }
