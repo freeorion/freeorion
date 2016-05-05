@@ -65,19 +65,22 @@ public:
       * save-and-load cycle */
     void                        GetSaveGameUIData(SaveGameUIData& data) const;
 
-    /** returns true iff this MapWnd is visible and usable for interaction, but
-      * the allowed interactions are restricted to those appropriate to the
-      * production screen */
+    /** returns true if MapWnd is visible and usable behind a production window.
+     * MapWnd interactions are restricted to those appropriate to the production window */
     bool                        InProductionViewMode() const;
 
-    /** returns true iff this MapWnd is visible and usable for interaction, but
-      * the allowed interactions are restricted to those appropriate to the
-      * research screen */
+    /** returns true if MapWnd is visible and usable behind a research window.
+     * MapWnd interactions are restricted to those appropriate to the research window.
+     * Currently, there are no interactions with the MapWnd while the research window
+     * is visible because although the MapWnd is visible the research window is opaque
+     * and on top.*/
     bool                        InResearchViewMode() const;
 
-    /** returns true iff this MapWnd is visible and usable for interaction, but
-      * the allowed interactions are restricted to those appropriate to the
-      * design screen */
+    /** returns true if MapWnd is visible and usable behind a design window.
+     * MapWnd interactions are restricted to those appropriate to the design window
+     * Currently, there are no interactions with the MapWnd while the design window
+     * is visible because although the MapWnd is visible the design window is opaque
+     * and on top.*/
     bool                        InDesignViewMode() const;
 
     /** returns the currently set moderator action in this MapWnd's

@@ -6086,10 +6086,10 @@ namespace {
     /// On when the MapWnd window is visible and not covered
     //  by one of the full screen covering windows
     class VisibleMapWndCondition : public HotkeyCondition {
-        protected:
+    protected:
         const MapWnd& target;
 
-        public:
+    public:
         VisibleMapWndCondition(const MapWnd& tg) : target(tg) {}
         virtual bool IsActive() const {
             return target.Visible() && !target.InResearchViewMode() && !target.InDesignViewMode();
