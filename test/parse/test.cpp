@@ -1,12 +1,12 @@
 #include "test.h"
 
-#include "../ConditionParser.h"
-#include "../EffectParser.h"
-#include "../EnumParser.h"
-#include "../Parse.h"
-#include "../ReportParseError.h"
-#include "../Empire/Empire.h"
-#include "../universe/ValueRef.h"
+#include "parse/ConditionParser.h"
+#include "parse/EffectParser.h"
+#include "parse/EnumParser.h"
+#include "parse/Parse.h"
+#include "parse/ReportParseError.h"
+#include "Empire/Empire.h"
+#include "universe/ValueRef.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>

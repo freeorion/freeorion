@@ -102,7 +102,3 @@ install(
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
-
-if (BUILD_TESTS)
-    add_subdirectory(test)
-endif ()

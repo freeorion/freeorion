@@ -3,13 +3,6 @@ cmake_minimum_required(VERSION 2.8.5)
 add_definitions(-DFREEORION_BUILD_SERVER)
 
 add_executable(test_parsers
-    ../../combat/CombatSystem.cpp
-    ../../network/ServerNetworking.cpp
-    ../../server/SaveLoad.cpp
-    ../../server/ServerApp.cpp
-    ../../server/ServerFSM.cpp
-    ../../universe/UniverseObject.cpp
-    ../../universe/Universe.cpp
     test.cpp
     lexer_test_rules.cpp
 )
@@ -25,7 +18,7 @@ find_package (Boost REQUIRED COMPONENTS unit_test_framework)
 
 include_directories (
     ${Boost_UNIT_TEST_FRAMEWORK_INCLUDES}
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../
 )
 
 add_executable(test_parsers_boost
