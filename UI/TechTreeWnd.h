@@ -28,6 +28,7 @@ public:
     double                  Scale() const;
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
+    bool                    PediaVisible();
     //@}
 
     //! \name Mutators //@{
@@ -53,6 +54,10 @@ public:
     void            CenterOnTech(const std::string& tech_name);
     void            SetEncyclopediaTech(const std::string& tech_name);
     void            SelectTech(const std::string& tech_name);
+
+    void            ShowPedia();
+    void            HidePedia();
+    void            TogglePedia();
     //@}
 
     mutable TechSignalType          TechBrowsedSignal;
@@ -71,6 +76,7 @@ private:
                                  const GG::Flags<GG::ModKey>& modkeys);
     void    TechDoubleClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys);
+    void    TechPediaDisplaySlot(const std::string& tech_name);
 
     void    InitializeWindows();
 

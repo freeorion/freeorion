@@ -343,6 +343,19 @@ void ResearchWnd::ShowTech(const std::string& tech_name) {
     m_tech_tree_wnd->SelectTech(tech_name);
 }
 
+void ResearchWnd::ShowPedia()
+{ m_tech_tree_wnd->ShowPedia(); }
+
+void ResearchWnd::HidePedia()
+{ m_tech_tree_wnd->HidePedia(); }
+
+void ResearchWnd::TogglePedia()
+{ m_tech_tree_wnd->TogglePedia(); }
+
+bool ResearchWnd::PediaVisible()
+{ return m_tech_tree_wnd->PediaVisible(); }
+
+
 void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row)) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
