@@ -116,13 +116,16 @@ void AIClientApp::ConnectToServer() {
 void AIClientApp::StartPythonAI() {
     PythonAI* python_ai = new PythonAI();
     if (!(python_ai->Initialize())) {
-        const std::string err_msg = "AIClientApp::AIClientApp : Failed to initialize Python AI.  Exiting Soon.";
-        ErrorLogger() << err_msg;
+        //Note: At this point in the initialization the AI has not been associated with a PlayerConnection
+        //so the server will no know the AI's PlayerName.
+        std::stringstream err_msg;
+        err_msg << "AIClientApp::AIClientApp: Failed to initialize Python AI for " << PlayerName() << ".  Exiting Soon.";
+        ErrorLogger() << err_msg.str();
         Networking().SendMessage(
             ErrorMessage(str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
         boost::this_thread::sleep_for(boost::chrono::seconds(2));
         Networking().DisconnectFromServer();
-        throw std::runtime_error(err_msg);
+        throw std::runtime_error(err_msg.str());
     }
     m_AI = python_ai;
 

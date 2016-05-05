@@ -141,6 +141,7 @@ namespace {
     }
 
 
+    /** Note:  This Exits on fatal errors and does not return.*/
     void HandleErrorMessage(const Error& msg, ServerApp &server) {
         std::string problem;
         bool fatal;
@@ -149,7 +150,9 @@ namespace {
         std::stringstream ss;
 
         ss << "Server received from player "
-           << msg.m_player_connection << (fatal?"a fatal":"an")
+           << msg.m_player_connection->PlayerName() << "("
+           << msg.m_player_connection->PlayerID() << ")"
+           << (fatal?" a fatal":" an")
            << " error message: " << problem;
 
         if (fatal) {

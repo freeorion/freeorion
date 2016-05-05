@@ -318,6 +318,7 @@ int ServerApp::GetNewDesignID()
 
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
+    std::cout << "FreeOrion server waiting for network events" << std::endl;
     while (1) {
         if (m_io_service.run_one())
             m_networking.HandleNextEvent();

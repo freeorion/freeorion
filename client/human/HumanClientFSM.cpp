@@ -476,10 +476,12 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
     boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-    ClientUI::MessageBox(UserString(problem), true);
+    ClientUI::MessageBox(UserString(problem), false);
 
     if (fatal) {
         Client().EndGame(true);
+        Client().GetClientUI()->GetMessageWnd()->Hide();
+        Client().GetClientUI()->GetPlayerListWnd()->Hide();
         Client().Remove(Client().GetClientUI()->GetMapWnd());
         Client().GetClientUI()->GetMapWnd()->RemoveWindows();
         Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
