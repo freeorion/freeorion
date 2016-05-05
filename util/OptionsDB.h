@@ -308,10 +308,10 @@ private:
                const boost::any& default_value_, const std::string& description_,
                const ValidatorBase *validator_, bool storable_, bool flag_, bool recognized_);
 
-        // SetFromValue returns true if value changed
+        // SetFromValue returns true if this->value is successfully changed
         template <typename T>
-        bool            SetFromValue(const T& value);
-        // SetFromString returns true if value changed
+        bool            SetFromValue(const T& value_);
+        // SetFromString returns true if this->value is successfully changed
         bool            SetFromString(const std::string& str);
         std::string     ValueToString() const;
         std::string     DefaultValueToString() const;
