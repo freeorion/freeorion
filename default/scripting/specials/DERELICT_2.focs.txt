@@ -27,6 +27,7 @@ Special
                     Or [
                         System
                         Planet
+                        Monster
                     ]
                     WithinStarlaneJumps jumps = 3 condition = Source
                 ]
