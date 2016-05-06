@@ -75,6 +75,12 @@ endif ()
 
 target_link_libraries(GiGi ${GiGi_LINK_LIBS})
 
+set_target_properties(GiGi
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+)
+
 install(
     TARGETS GiGi
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

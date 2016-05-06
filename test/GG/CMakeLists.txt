@@ -29,6 +29,8 @@ macro (make_gigi_test name)
     set_target_properties(${name}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ..
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED YES
     )
 endmacro ()
 

@@ -50,6 +50,12 @@ target_link_libraries(freeorionca
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+set_target_properties(freeorionca
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+)
+
 install(
     TARGETS freeorionca
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

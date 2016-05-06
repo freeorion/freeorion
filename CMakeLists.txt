@@ -352,6 +352,8 @@ target_link_libraries(freeorioncommon
 set_target_properties(freeorioncommon
     PROPERTIES
     DEFINE_SYMBOL "FREEORION_BUILD_COMMON"
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
 )
 
 ########################################

@@ -19,6 +19,12 @@ endif ()
 
 target_link_libraries(GiGiSDL ${GiGiSDL_LINK_LIBS})
 
+set_target_properties(GiGiSDL
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+)
+
 install(
     TARGETS GiGiSDL
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
