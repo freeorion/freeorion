@@ -243,18 +243,12 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
         std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
         // TODO: add other command line args to AI client invocation as needed
-        std::vector<std::string> args;
-        args.push_back("\"" + AI_CLIENT_EXE + "\"");
-        args.push_back(player_name);
         std::stringstream maxAggrStr;
         maxAggrStr << max_aggression;
-        args.push_back(maxAggrStr.str());
-        args.push_back("--resource-dir");
-        args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
-        args.push_back("--log-level");
-        args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-        args.push_back("--ai-path");
-        args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
+        std::vector<std::string> args = {
+            ("\"" + AI_CLIENT_EXE + "\""), player_name, maxAggrStr.str(), "--resource-dir",
+            ("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\""), "--log-level",
+            GetOptionsDB().Get<std::string>("log-level"), "--ai-path", GetOptionsDB().Get<std::string>("ai-path")};
         DebugLogger() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
         DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
         if (!ai_config.empty()) {
