@@ -89,38 +89,38 @@ public:
     explicit SDLGUI(int w = 1024, int h = 768, bool calc_FPS = false, const std::string& app_name = "GG",
                     int x = SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, bool fullscreen = false,
                     bool fake_mode_change = false); ///< ctor
-    virtual ~SDLGUI();
+    virtual ~SDLGUI() override;
     //@}
 
     /** \name Accessors */ ///@{
-    virtual X               AppWidth() const;
-    virtual Y               AppHeight() const;
-    virtual unsigned int    Ticks() const;
+    virtual X               AppWidth() const override;
+    virtual Y               AppHeight() const override;
+    virtual unsigned int    Ticks() const override;
     virtual bool            Fullscreen() const;
     virtual bool            FakeModeChange() const;
-    virtual std::string     ClipboardText() const;
+    virtual std::string     ClipboardText() const override;
     //@}
 
     /** \name Mutators */ ///@{
     void            operator()();      ///< external interface to Run()
-    virtual void    Exit(int code);
+    virtual void    Exit(int code) override;
 
     void            SetWindowTitle(const std::string& title);
     void            SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change);
-    virtual bool    SetClipboardText(const std::string& text);
+    virtual bool    SetClipboardText(const std::string& text) override;
     //@}
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
     GG::Key         GGKeyFromSDLKey(const SDL_Keysym& key); ///< gives the GGKey equivalent of key
 
-    virtual void    Enter2DMode();
-    virtual void    Exit2DMode();
+    virtual void    Enter2DMode() override;
+    virtual void    Exit2DMode() override;
 
     // \override
-    virtual std::vector<std::string> GetSupportedResolutions() const;
+    virtual std::vector<std::string> GetSupportedResolutions() const override;
 
     // \override
-    virtual Pt      GetDefaultResolution (int display_id);
+    virtual Pt      GetDefaultResolution (int display_id) override;
     static  Pt      GetDefaultResolutionStatic(int display_id);
     static int      NumVideoDisplaysStatic();
     virtual bool    FramebuffersAvailable() const;
@@ -137,19 +137,19 @@ protected:
     // these are called at the beginning of the gui's execution
     virtual void    SDLInit();        ///< initializes SDL, FE, and SDL OpenGL functionality
     virtual void    GLInit();         ///< allows user to specify OpenGL initialization code; called at the end of SDLInit()
-    virtual void    Initialize() = 0; ///< provides one-time gui initialization
+    virtual void    Initialize() = 0 ; ///< provides one-time gui initialization
 
-    virtual void    HandleSystemEvents();
+    virtual void    HandleSystemEvents() override;
     virtual void    HandleNonGGEvent(const SDL_Event& event); ///< event handler for all SDL events that are not GG-related
 
-    virtual void    RenderBegin();
-    virtual void    RenderEnd();
+    virtual void    RenderBegin() override;
+    virtual void    RenderEnd() override;
 
     // these are called at the end of the gui's execution
     virtual void    FinalCleanup();   ///< provides one-time gui cleanup
     virtual void    SDLQuit();        ///< cleans up SDL and (if used) FE
 
-    virtual void    Run();
+    virtual void    Run() override;
 
     void            ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
 
