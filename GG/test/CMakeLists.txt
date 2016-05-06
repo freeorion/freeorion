@@ -10,11 +10,6 @@ set(GiGi_TESTS
 
 foreach(_TEST ${GiGi_TESTS})
     add_executable(test_${_TEST} EXCLUDE_FROM_ALL ${_TEST}.cpp)
-    set_target_properties(test_${_TEST}
-        PROPERTIES
-        CXX_STANDARD_REQUIRED ON
-        CXX_STANDARD 11
-    )
     target_compile_definitions(test_${_TEST}
         PRIVATE
             -DBOOST_TEST_DYN_LINK

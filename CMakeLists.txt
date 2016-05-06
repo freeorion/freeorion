@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 if(POLICY CMP0044)
     cmake_policy(SET CMP0044 OLD)
@@ -23,6 +23,9 @@ project(FreeOrion)
 include(GNUInstallDirs)
 
 set(FreeOrion_VERSION 0.4.6+)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
