@@ -265,8 +265,7 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
         sc::custom_reaction<TurnOrders>,
         sc::custom_reaction<RequestObjectID>,
         sc::custom_reaction<RequestDesignID>,
-        sc::custom_reaction<CheckTurnEndConditions>,
-        sc::custom_reaction<Error>
+        sc::custom_reaction<CheckTurnEndConditions>
     > reactions;
 
     WaitingForTurnEnd(my_context c);
@@ -276,7 +275,6 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
     sc::result react(const RequestObjectID& msg);
     sc::result react(const RequestDesignID& msg);
     sc::result react(const CheckTurnEndConditions& c);
-    sc::result react(const Error& msg);
 
     std::string m_save_filename;
 
@@ -287,15 +285,13 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
 /** The default substate of WaitingForTurnEnd. */
 struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEnd> {
     typedef boost::mpl::list<
-        sc::custom_reaction<SaveGameRequest>,
-        sc::custom_reaction<Error>
+        sc::custom_reaction<SaveGameRequest>
     > reactions;
 
     WaitingForTurnEndIdle(my_context c);
     ~WaitingForTurnEndIdle();
 
     sc::result react(const SaveGameRequest& msg);
-    sc::result react(const Error& msg);
 
     SERVER_ACCESSOR
 };
@@ -310,15 +306,13 @@ struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd> {
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
         sc::deferral<PlayerChat>,
-        sc::deferral<Diplomacy>,
-        sc::custom_reaction<Error>
+        sc::deferral<Diplomacy>
     > reactions;
 
     WaitingForSaveData(my_context c);
     ~WaitingForSaveData();
 
     sc::result react(const ClientSaveData& msg);
-    sc::result react(const Error& msg);
 
     std::set<int>                   m_needed_reponses;
     std::set<int>                   m_players_responded;
@@ -339,8 +333,7 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
         sc::deferral<Diplomacy>,
-        sc::custom_reaction<CheckTurnEndConditions>,
-        sc::custom_reaction<Error>
+        sc::custom_reaction<CheckTurnEndConditions>
     > reactions;
 
     ProcessingTurn(my_context c);
@@ -348,7 +341,6 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
 
     sc::result react(const ProcessTurn& u);
     sc::result react(const CheckTurnEndConditions& c);
-    sc::result react(const Error& msg);
 
     SERVER_ACCESSOR
 };

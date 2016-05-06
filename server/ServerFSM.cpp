@@ -1337,11 +1337,6 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     return discard_event();
 }
 
-sc::result WaitingForTurnEnd::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
-    return discard_event();
-}
-
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEndIdle
@@ -1371,11 +1366,6 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     context<WaitingForTurnEnd>().m_save_filename = message.Text();  // store requested save file name in Base state context so that sibling state can retreive it
 
     return transit<WaitingForSaveData>();
-}
-
-sc::result WaitingForTurnEndIdle::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
-    return discard_event();
 }
 
 
@@ -1490,11 +1480,6 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     return discard_event();
 }
 
-sc::result WaitingForSaveData::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
-    return discard_event();
-}
-
 
 ////////////////////////////////////////////////////////////
 // ProcessingTurn
@@ -1546,10 +1531,5 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
 
 sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ProcessingTurn.CheckTurnEndConditions";
-    return discard_event();
-}
-
-sc::result ProcessingTurn::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
     return discard_event();
 }
