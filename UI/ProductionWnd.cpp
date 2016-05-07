@@ -605,6 +605,7 @@ namespace {
         {}
 
         boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
+        boost::signals2::signal<void ()>                             ShowPediaSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -625,6 +626,15 @@ namespace {
                     menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,                   4, false, false));
                 }
             }
+            // pedia lookup
+            std::string item_name = "";
+            if (build_type == BT_BUILDING)
+                item_name = queue_row->m_build.item.name;
+            if (build_type == BT_SHIP)
+                item_name = GetShipDesign(queue_row->m_build.item.design_id)->Name(false);
+
+            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(item_name));
+            menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
 
             GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                                 ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -650,7 +660,11 @@ namespace {
                     this->QueueItemRalliedToSignal(it, SidePanel::SystemID());
                     break;
                 }
-
+                case 5: { // pedia lookup
+                    ShowPediaSignal();
+                    this->LeftClickedSignal(it, pt, modkeys);
+                    break;
+                }
                 default:
                     break;
                 }
@@ -743,6 +757,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,          &ProductionWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,        &ProductionWnd::QueueItemDoubleClickedSlot, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal,   &ProductionWnd::QueueItemRallied, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->ShowPediaSignal,            &ProductionWnd::ShowPedia, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
