@@ -12,7 +12,11 @@ Special
             Planet
             Not Unowned
         ]
-    ]   
+        Not ContainedBy Contains Or [
+            Design name = "SM_EXP_OUTPOST"
+            Building name = "BLD_EXPERIMENTOR_OUTPOST"
+        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source
