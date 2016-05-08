@@ -1,16 +1,18 @@
 import sys
 from random import random, uniform, randint, gauss, choice
-from math import pi, sin, cos, sqrt
+from math import pi, sin, cos, acos, asin, sqrt, ceil, floor
 
 import freeorion as fo
 import util
 import universe_tables
 
 
-class AdjacencyGrid:
+class AdjacencyGrid(object):
     def __init__(self, universe_width):
+        assert universe_tables.MIN_SYSTEM_SEPARATION < universe_tables.MAX_STARLANE_LENGTH
         self.min_dist = universe_tables.MIN_SYSTEM_SEPARATION
-        self.cell_size = max(universe_width / 50, self.min_dist)
+        self.max_dist = universe_tables.MAX_STARLANE_LENGTH
+        self.cell_size = min(max(universe_width / 50, self.min_dist), self.max_dist/sqrt(2))
         self.width = int(universe_width / self.cell_size) + 1
         self.grid = [[[] for _ in range(self.width)] for _ in range(self.width)]
         print "Adjacency Grid: width", self.width, ", cell size", self.cell_size
@@ -18,18 +20,63 @@ class AdjacencyGrid:
     def insert_pos(self, pos):
         self.grid[int(pos[0] / self.cell_size)][int(pos[1] / self.cell_size)].append(pos)
 
+    def remove(self, pos):
+        self.grid[int(pos[0] / self.cell_size)][int(pos[1] / self.cell_size)].remove(pos)
+
+    def _square_indices_containing_point(self, (cell_x, cell_y), radius):
+        upper_left_x = max(0, cell_x - radius)
+        upper_left_y = max(0, cell_y - radius)
+        lower_right_x = min(self.width - 1, cell_x + radius)
+        lower_right_y = min(self.width - 1, cell_y + radius)
+        return [(x, y) for x in range(upper_left_x, lower_right_x + 1)
+                for y in range(upper_left_y, lower_right_y + 1)]
+
+    def _generate_rings_around_point(self, (x, y), max_radius=None):
+        cell_x = int(x / self.cell_size)
+        cell_y = int(y / self.cell_size)
+
+        i_radius = 0
+        i_radius_max = ceil(max_radius / self.cell_size) if max_radius else (self.width + 1)
+        outer = set()
+        ring = set([1])
+        while ring and i_radius <= i_radius_max:
+            inner = outer
+            outer = set(self._square_indices_containing_point((cell_x, cell_y), i_radius))
+            ring = outer - inner
+            yield ring
+            i_radius += 1
+
+    # All neighbors within max_dist
+    def neighbors(self, p):
+        _neighbors = []
+        i_radius_close_enough = floor(self.max_dist / self.cell_size)
+        for i, ring in enumerate(self._generate_rings_around_point(p, self.max_dist)):
+            if i <= i_radius_close_enough:
+                _neighbors += [pos for (cx, cy) in ring for pos in self.grid[cx][cy]]
+            else:
+                _neighbors += [pos for (cx, cy) in ring for pos in self.grid[cx][cy] if
+                               util.distance(pos, p) <= self.max_dist]
+        return _neighbors
+
+    # nearest neighbor at any distance
+    def nearest_neighbor(self, p):
+        for ring in self._generate_rings_around_point(p):
+            candidates = [pos for (cx, cy) in ring for pos in self.grid[cx][cy]]
+            if candidates:
+                (_, pt) = min((util.distance(pos, p), pos) for pos in candidates)
+                return [pt]
+        return []
+
     def too_close_to_other_positions(self, x, y):
         """
         Checks if the specified position is too close to the positions stored in the grid
         """
         cell_x = int(x / self.cell_size)
         cell_y = int(y / self.cell_size)
-        upper_left_x = max(0, cell_x - 1)
-        upper_left_y = max(0, cell_y - 1)
-        lower_right_x = min(self.width - 1, cell_x + 1)
-        lower_right_y = min(self.width - 1, cell_y + 1)
-        return any(util.distance(pos, (x, y)) < self.min_dist for cx in range(upper_left_x, lower_right_x + 1)
-                   for cy in range(upper_left_y, lower_right_y + 1) for pos in self.grid[cx][cy])
+        return any(util.distance(pos, (x, y)) < self.min_dist
+                   for (cx, cy) in self._square_indices_containing_point((cell_x, cell_y), 1)
+                   for pos in self.grid[cx][cy])
+
 
 
 def calc_universe_width(shape, size):
