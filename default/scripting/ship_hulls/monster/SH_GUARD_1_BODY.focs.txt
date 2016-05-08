@@ -15,7 +15,7 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        [[GOOD_VISION]]
+        [[UNOWNED_OWNED_VISION_BONUS(POOR,20,20)]]
     ]
     icon = ""
     graphic = "icons/monsters/sentry.png"

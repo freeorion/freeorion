@@ -58,6 +58,31 @@ EXCELLENT_VISION
         effects = SetDetection value = Value + 150
 '''
 
+//  Macro to set vision bonus to separate values with same label
+// arg1 label: WEAK, POOR, MODERATE, GOOD, EXCELLENT
+// arg2 detection strength when unowned
+// arg3 vision range when owned
+UNOWNED_OWNED_VISION_BONUS
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Source
+            Unowned
+        ]
+        stackinggroup = "@1@_VISION_BONUS"
+        accountinglabel = "@1@_VISION_LABEL"
+        effects = SetDetection value = Value + @2@
+EffectsGroup
+        scope = Source
+        activation = And [
+            Source
+            Not Unowned
+        ]
+        stackinggroup = "@1@_VISION_BONUS"
+        accountinglabel = "@1@_VISION_LABEL"
+        effects = SetDetection value = Value + @3@
+'''
+
 UNOWNED_GOOD_VISION
 '''EffectsGroup
         scope = Source

@@ -11429,6 +11429,9 @@ N-Dimensional Structures
 WEAK_VISION_LABEL
 Weak Vision
 
+POOR_VISION_LABEL
+Poor Vision
+
 MODERATE_VISION_LABEL
 Moderate Vision
 

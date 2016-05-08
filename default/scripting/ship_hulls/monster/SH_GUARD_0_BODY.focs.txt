@@ -15,7 +15,7 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        [[GOOD_VISION]]
+        [[UNOWNED_OWNED_VISION_BONUS(WEAK,10,10)]]
     ]
     icon = ""
     graphic = "icons/monsters/maintenance_ship.png"
