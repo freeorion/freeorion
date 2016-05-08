@@ -27,7 +27,7 @@ def seed_rng(seed):
     # random.jumpahead(999999)
 
 
-def distance(x1, y1, x2, y2):
+def distance((x1, y1), (x2, y2)):
     """
     Calculates linear distance between two coordinates.
     """

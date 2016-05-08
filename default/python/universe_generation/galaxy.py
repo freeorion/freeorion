@@ -28,7 +28,7 @@ class AdjacencyGrid:
         upper_left_y = max(0, cell_y - 1)
         lower_right_x = min(self.width - 1, cell_x + 1)
         lower_right_y = min(self.width - 1, cell_y + 1)
-        return any(util.distance(pos[0], pos[1], x, y) < self.min_dist for cx in range(upper_left_x, lower_right_x + 1)
+        return any(util.distance(pos, (x, y)) < self.min_dist for cx in range(upper_left_x, lower_right_x + 1)
                    for cy in range(upper_left_y, lower_right_y + 1) for pos in self.grid[cx][cy])
 
 
@@ -359,7 +359,7 @@ def irregular_galaxy_calc_positions(positions, size, width):
             attempts -= 1
             x = prev_x + uniform(-max_delta, max_delta)
             y = prev_y + uniform(-max_delta, max_delta)
-            if util.distance(x, y, origin_x, origin_y) > width * 0.45:
+            if util.distance((x, y), (origin_x, origin_y)) > width * 0.45:
                 prev_x, prev_y = origin_x, origin_y
                 reset_to_origin += 1
                 continue
