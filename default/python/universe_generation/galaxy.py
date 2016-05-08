@@ -1,6 +1,6 @@
 import sys
-from random import random, uniform, randint, gauss, choice
-from math import pi, sin, cos, acos, asin, sqrt, ceil, floor
+from random import random, uniform, randint, gauss
+from math import pi, sin, cos, acos, sqrt, ceil, floor
 from collections import defaultdict
 
 import freeorion as fo
@@ -366,7 +366,7 @@ def elliptical_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
     # random number generators
     radius_dist = lambda: uniform(0.0, gap_constant)
-    random_angle  = lambda: uniform(0.0, 2.0 * pi)
+    random_angle = lambda: uniform(0.0, 2.0 * pi)
 
     for i in range(size):
         attempts = 100
@@ -374,7 +374,7 @@ def elliptical_galaxy_calc_positions(positions, adjacency_grid, size, width):
             radius = radius_dist()
             # adjust for bigger density near center and create gap
             radius = radius * radius * radius + gap_size
-            angle  = random_angle()
+            angle = random_angle()
 
             # rotate for individual angle and apply elliptical shape
             x1 = radius * cos(angle)
@@ -419,7 +419,7 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
         attempts = 100
         while attempts > 0:
             radius = uniform(0.0, width / 2.0)
-            angle = uniform (0.0, 2.0 * pi)
+            angle = uniform(0.0, 2.0 * pi)
             x = center_x + radius * cos(angle)
             y = center_y + radius * sin(angle)
 
@@ -463,7 +463,7 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
 
     # probability of systems which don't belong to a cluster
     system_noise = 0.15
-    ellipse_width_vs_height = uniform(0.2,0.5)
+    ellipse_width_vs_height = uniform(0.2, 0.5)
     # a list of tuples of tuples: first tuple holds cluster position,
     # second tuple stores help values for cluster rotation (sin,cos)
     clusters_position = []
@@ -482,7 +482,7 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 break
             attempts -= 1
         rotation = uniform(0.0, pi)
-        clusters_position.append(((x, y), (sin(rotation),cos(rotation))))
+        clusters_position.append(((x, y), (sin(rotation), cos(rotation))))
 
     for i in range(size):
         attempts = 100
@@ -605,7 +605,7 @@ def irregular_galaxy_calc_positions(positions, adjacency_grid, size, width):
     origin_x, origin_y = width / 2.0, width / 2.0
     prev_x, prev_y = origin_x, origin_y
     reset_to_origin = 0
-    for n in range(size):
+    for _ in range(size):
         attempts = 100
         found = False
         while (attempts > 0) and not found:
