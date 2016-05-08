@@ -192,6 +192,31 @@ class DisjointSets(object):
         return ret.values()
 
 
+class Clusterer(object):
+    """
+    Computes all clusters of positions separated by more than MAX_STARLANE_LENGTH
+
+    This creates a disjoint set of all of the positions
+    Adds all of the seperations less than MAX_STARLANE_LENGTH
+    Then returns the clusters of stars when requested
+    """
+    def __init__(self, positions, adjacency_grid):
+        self.adjacency_grid = adjacency_grid
+        self.dsets = DisjointSets()
+
+        for pos in positions:
+            self.add(pos)
+
+    def add(self, pos):
+        for neighbor in self.adjacency_grid.neighbors(pos):
+            # print "Clusterer adding ", pos,  " and ", neighbor
+            self.dsets.link(pos, neighbor)
+
+    def clusters(self):
+        """Returns a list of lists of the clusters of positions"""
+        return self.dsets.complete_sets()
+
+
 def calc_universe_width(shape, size):
     """
     Calculates typical universe width based on galaxy shape and number of star systems.
