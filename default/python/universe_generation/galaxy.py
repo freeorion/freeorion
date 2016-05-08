@@ -15,16 +15,19 @@ class AdjacencyGrid(object):
         self.max_dist = universe_tables.MAX_STARLANE_LENGTH
         self.cell_size = min(max(universe_width / 50, self.min_dist), self.max_dist/sqrt(2))
         self.width = int(universe_width / self.cell_size) + 1
-        self.grid = [[[] for _ in range(self.width)] for _ in range(self.width)]
+        self.grid = defaultdict(list)
         print "Adjacency Grid: width", self.width, ", cell size", self.cell_size
 
+    def cell(self, pos):
+        return (int(pos[0] / self.cell_size), int(pos[1] / self.cell_size))
+
     def insert_pos(self, pos):
-        self.grid[int(pos[0] / self.cell_size)][int(pos[1] / self.cell_size)].append(pos)
+        self.grid[self.cell(pos)].append(pos)
 
     def remove(self, pos):
-        self.grid[int(pos[0] / self.cell_size)][int(pos[1] / self.cell_size)].remove(pos)
+        self.grid[self.cell(pos)].remove(pos)
 
-    def _square_indices_containing_point(self, (cell_x, cell_y), radius):
+    def _square_indices_containing_cell(self, (cell_x, cell_y), radius):
         upper_left_x = max(0, cell_x - radius)
         upper_left_y = max(0, cell_y - radius)
         lower_right_x = min(self.width - 1, cell_x + radius)
@@ -32,17 +35,15 @@ class AdjacencyGrid(object):
         return [(x, y) for x in range(upper_left_x, lower_right_x + 1)
                 for y in range(upper_left_y, lower_right_y + 1)]
 
-    def _generate_rings_around_point(self, (x, y), max_radius=None):
-        cell_x = int(x / self.cell_size)
-        cell_y = int(y / self.cell_size)
-
+    def _generate_rings_around_point(self, pos, max_radius=None):
+        cell = self.cell(pos)
         i_radius = 0
         i_radius_max = ceil(max_radius / self.cell_size) if max_radius else (self.width + 1)
         outer = set()
         ring = set([1])
         while ring and i_radius <= i_radius_max:
             inner = outer
-            outer = set(self._square_indices_containing_point((cell_x, cell_y), i_radius))
+            outer = set(self._square_indices_containing_cell(cell, i_radius))
             ring = outer - inner
             yield ring
             i_radius += 1
@@ -53,30 +54,29 @@ class AdjacencyGrid(object):
         i_radius_close_enough = floor(self.max_dist / self.cell_size)
         for i, ring in enumerate(self._generate_rings_around_point(p, self.max_dist)):
             if i <= i_radius_close_enough:
-                _neighbors += [pos for (cx, cy) in ring for pos in self.grid[cx][cy]]
+                _neighbors += [pos for cell in ring for pos in self.grid[cell]]
             else:
-                _neighbors += [pos for (cx, cy) in ring for pos in self.grid[cx][cy] if
+                _neighbors += [pos for cell in ring for pos in self.grid[cell] if
                                util.distance(pos, p) <= self.max_dist]
         return _neighbors
 
     # nearest neighbor at any distance
     def nearest_neighbor(self, p):
         for ring in self._generate_rings_around_point(p):
-            candidates = [pos for (cx, cy) in ring for pos in self.grid[cx][cy]]
+            candidates = [pos for cell in ring for pos in self.grid[cell]]
             if candidates:
                 (_, pt) = min((util.distance(pos, p), pos) for pos in candidates)
                 return [pt]
         return []
 
-    def too_close_to_other_positions(self, x, y):
+    def too_close_to_other_positions(self, pos):
         """
         Checks if the specified position is too close to the positions stored in the grid
         """
-        cell_x = int(x / self.cell_size)
-        cell_y = int(y / self.cell_size)
-        return any(util.distance(pos, (x, y)) < self.min_dist
-                   for (cx, cy) in self._square_indices_containing_point((cell_x, cell_y), 1)
-                   for pos in self.grid[cx][cy])
+        pos_cell = self.cell(pos)
+        return any(util.distance(p2, pos) < self.min_dist
+                   for p2_cell in self._square_indices_containing_cell(pos_cell, 1)
+                   for p2 in self.grid[p2_cell])
 
 
 class DSet(object):
@@ -338,7 +338,7 @@ def spiral_galaxy_calc_positions(positions, adjacency_grid, arms, size, width):
 
             # see if new star is too close to any existing star.
             # if so, we try again or give up
-            if adjacency_grid.too_close_to_other_positions(x, y):
+            if adjacency_grid.too_close_to_other_positions((x, y)):
                 attempts -= 1
                 continue
 
@@ -394,7 +394,7 @@ def elliptical_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 continue
 
             # see if new star is too close to any existing star; if so, we try again
-            if adjacency_grid.too_close_to_other_positions(x, y):
+            if adjacency_grid.too_close_to_other_positions((x, y)):
                 attempts -= 1
                 continue
 
@@ -428,7 +428,7 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 continue
 
             # see if new star is too close to any existing star; if so, we try again
-            if adjacency_grid.too_close_to_other_positions(x, y):
+            if adjacency_grid.too_close_to_other_positions((x, y)):
                 attempts -= 1
                 continue
 
@@ -512,7 +512,7 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 continue
 
             # see if new star is too close to any existing star; if so, we try again
-            if adjacency_grid.too_close_to_other_positions(x, y):
+            if adjacency_grid.too_close_to_other_positions((x, y)):
                 attempts -= 1
                 continue
 
@@ -551,7 +551,7 @@ def ring_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 continue
 
             # see if new star is too close to any existing star; if so, we try again
-            if adjacency_grid.too_close_to_other_positions(x, y):
+            if adjacency_grid.too_close_to_other_positions((x, y)):
                 attempts -= 1
                 continue
 
@@ -581,7 +581,7 @@ def box_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 continue
 
             # see if new star is too close to any existing star; if so, we try again
-            if adjacency_grid.too_close_to_other_positions(x, y):
+            if adjacency_grid.too_close_to_other_positions((x, y)):
                 attempts -= 1
                 continue
 
@@ -616,7 +616,7 @@ def irregular_galaxy_calc_positions(positions, adjacency_grid, size, width):
                 prev_x, prev_y = origin_x, origin_y
                 reset_to_origin += 1
                 continue
-            found = not adjacency_grid.too_close_to_other_positions(x, y)
+            found = not adjacency_grid.too_close_to_other_positions((x, y))
             if attempts % 10:
                 prev_x, prev_y = x, y
         if found:
