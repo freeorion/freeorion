@@ -144,6 +144,7 @@ MAX_JUMPS_BETWEEN_SYSTEMS = {
 }
 
 # The maximum length of any starlane the galaxy generator can create (in uu).
+# MAX_STARLANE_LENGTH >= 2 * MIN_SYSTEM_SEPARATION
 MAX_STARLANE_LENGTH = 120
 
 # This is the minimum distance between two star systems (in uu).

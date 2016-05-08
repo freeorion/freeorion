@@ -217,6 +217,83 @@ class Clusterer(object):
         return self.dsets.complete_sets()
 
 
+def stitching_positions(p1, p2):
+    """
+    Returns a list of positions between p1 and p2 between MIN_SYSTEM_SEPARATION and MAX_STARLANE_LENGTH apart
+    """
+    assert 2 * universe_tables.MIN_SYSTEM_SEPARATION < universe_tables.MAX_STARLANE_LENGTH,\
+        "MAX_STARLANE_LENGTH must be twice MIN_SYSTEM_SEPARATION to allow extra positions to \
+        be added to enforce MAX_STARLANE_LENGTH"
+    max_dist = universe_tables.MAX_STARLANE_LENGTH
+    min_dist = universe_tables.MIN_SYSTEM_SEPARATION
+    p1_p2_dist = util.distance(p1, p2)
+    if p1_p2_dist < max_dist:
+        return []
+
+    # Pick a random point in an 2:1 ratio ellipse and then rotate and slide it in between p1 and p2
+    p1_p2_theta = acos((p2[0] - p1[0]) / p1_p2_dist)
+    p1_p2_scale = (p1_p2_dist - 2 * min_dist)/2
+    p1_p2_translation = ((p1[0] + p2[0])/2, (p1[1] + p2[1])/2)
+
+    radius_0space = uniform(0.0, 1.0)
+    angle_0space = uniform(0.0, 2.0 * pi)
+    rotated_point = (radius_0space * p1_p2_scale * cos(angle_0space + p1_p2_theta),
+                     radius_0space * p1_p2_scale * sin(angle_0space + p1_p2_theta))
+
+    p3 = (rotated_point[0] + p1_p2_translation[0], rotated_point[1] + p1_p2_translation[1])
+
+    return [p3] + stitching_positions(p1, p3) + stitching_positions(p2, p3)
+
+
+def enforce_max_distance(positions, adjacency_grid):
+    """
+    Inserts extra planets to guarrantee that no clusters of planets
+    are separated from all other clusters of planets by more than
+    universe_tables.MAX_STARLANE_LENGTH
+
+    Find all clusters of planets.
+    For each cluster
+      Remove it from the adjacency grid and find its nearest neighbor
+      Add planets to make all spacing less than the maximum
+    """
+    # Find all clusters
+    clusterer = Clusterer(positions, adjacency_grid)
+    clusters = sorted(clusterer.clusters(), key=len)
+
+    if len(clusters) == 1:
+        print "All systems positioned in a single connected cluster"
+    else:
+        print len(clusters), "clusters separated by more the MAX_STARLANE_LENGTH.  Starting to fill gaps."
+        print clusters[0]
+
+    while len(clusters) > 1:
+        smallest_cluster = clusters[0]
+        print "Searching for nearest neighbor position to a cluster with", len(smallest_cluster), "positions."
+        for pos in smallest_cluster:
+            adjacency_grid.remove(pos)
+        # Find nearest neighbour
+        (_, p1, p2) = min([(util.distance(pos, nn), pos, nn)
+                           for nn in adjacency_grid.nearest_neighbor(pos)
+                           for pos in smallest_cluster])
+
+        for pos in smallest_cluster:
+            adjacency_grid.insert_pos(pos)
+        # Add extra planets
+        extra_planets = stitching_positions(p1, p2)
+        for i_extra, p3 in enumerate(extra_planets):
+            print "Adding", i_extra, "of", len(extra_planets), "extra planets at",\
+                p3, "to fix max spacing error between", p1, "and", p2
+            adjacency_grid.insert_pos(p3)
+            positions.append(p3)
+            clusterer.add(p3)
+        clusters = sorted(clusterer.clusters(), key=len)
+
+        if len(clusters) == 1:
+            print "All systems now positioned in a single connected cluster"
+        else:
+            print len(clusters), "clusters separated by more the MAX_STARLANE_LENGTH.  Continuing to fill gaps."
+
+
 def calc_universe_width(shape, size):
     """
     Calculates typical universe width based on galaxy shape and number of star systems.
@@ -453,7 +530,7 @@ def cluster_galaxy_calc_positions(positions, size, width):
         if not attempts:
             print "Cluster galaxy shape: giving up on placing star", i,\
                   ", can't find position sufficiently far from other systems"
-
+    enforce_max_distance(positions, adjacency_grid)
 
 def ring_galaxy_calc_positions(positions, size, width):
     """
