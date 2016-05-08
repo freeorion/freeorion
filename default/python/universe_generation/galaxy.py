@@ -1,6 +1,7 @@
 import sys
 from random import random, uniform, randint, gauss, choice
 from math import pi, sin, cos, acos, asin, sqrt, ceil, floor
+from collections import defaultdict
 
 import freeorion as fo
 import util
@@ -77,6 +78,118 @@ class AdjacencyGrid(object):
                    for (cx, cy) in self._square_indices_containing_point((cell_x, cell_y), 1)
                    for pos in self.grid[cx][cy])
 
+
+class DSet(object):
+    """
+    A set of pos that is disjoint (not connected) to other sets.
+
+    If the set is of one item then it has no parent. parent equals None.
+    Otherwise the set points to the root/representative item of the set via parent.
+
+    A private child class of DisjointSets to store the parent and rank of a disjoint set object
+    """
+    def __init__(self, pos):
+        self.pos = pos
+
+        # stores None or the parent
+        self.parent = None
+
+        # starts at 0, never decreases and only increases
+        # when this object is the parent and two equal rank sets are merged
+        self.rank = 0
+
+    def bind_parent(self, parent):
+        assert self != parent
+        self.parent = parent
+
+    def inc_rank(self):
+        self.rank += 1
+
+
+class DisjointSets(object):
+    """
+    A set of disjoint sets.
+
+    It suuports the operations of:
+    add(pos)      -- Creates a new single item set containing pos if it isn't already a set. O(1)
+    link(p1, p2)  -- Links two sets containing p1 and p2 together.
+                     This will add(p1) and add(p2) if necessary. O(1)
+    root(pos)     -- Gets the root/representative object for the set.
+                     Creates a new set with pos if not already a set. O(1)
+    complete_sets -- Returns a list of list of all sets. O(n)
+
+    See https://en.wikipedia.org/wiki/Disjoint-set_data_structure
+    """
+    def __init__(self):
+        self.dsets = {}
+
+    def add(self, pos):
+        if pos not in self.dsets:
+            self.dsets[pos] = DSet(pos)
+
+    # Creates a link between the sets containing p1 and p2
+    def link(self, p1, p2):
+        root1 = self.root(p1)
+        if p1 == p2:
+            # print " self link"
+            return
+        root2 = self.root(p2)
+        if root1 == root2:
+            # print " same discrete set link"
+            return
+        ds1 = self.dsets[root1]
+        ds2 = self.dsets[root2]
+        assert not ds1.parent and not ds2.parent
+
+        # Always attach the "smaller" lower rank as the child of the "larger" higher rank tree
+        if ds1.rank > ds2.rank:
+            # print " left link"
+            ds2.bind_parent(ds1)
+        else:
+            # print " right link"
+            ds1.bind_parent(ds2)
+            if ds1.rank == ds2.rank:
+                # print " even link"
+                ds2.inc_rank()
+
+    # Returns the key position of the cluster containing pos
+    # Adds pos if absent
+    def root(self, pos):
+        root = self._has_root(pos)
+        if root:
+            return root[0]
+        self.add(pos)
+        return pos
+
+    # Check if pos is the root of a cluster otherwise shorten
+    # the tree while tranversing it and return the root
+    def _has_root(self, pos):
+        # traverse tree and fetch parents for compression
+        def parents(p1, children):
+            # print "pp p1 ", p1.pos, " children a ", children
+            if p1.parent:
+                # print "pp deeper ", p1.pos, " chlidren b ", children
+                children.append(p1)
+                return parents(p1.parent, children)
+            else:
+                # print "pp done p1 ", p1.pos, " children c ", children
+                return (p1, children)
+
+        if pos not in self.dsets:
+            return []
+
+        (root, children) = parents(self.dsets[pos], [])
+        # squash the chain of children
+        for child in children:
+            child.bind_parent(root)
+        return [root.pos]
+
+    # returns a list of list of all sets O(n)
+    def complete_sets(self):
+        ret = defaultdict(list)
+        for pos in self.dsets.keys():
+            ret[self.root(pos)].append(pos)
+        return ret.values()
 
 
 def calc_universe_width(shape, size):
