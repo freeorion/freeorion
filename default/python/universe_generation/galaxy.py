@@ -307,11 +307,10 @@ def calc_universe_width(shape, size):
     return width
 
 
-def spiral_galaxy_calc_positions(positions, arms, size, width):
+def spiral_galaxy_calc_positions(positions, adjacency_grid, arms, size, width):
     """
     Calculate positions for the spiral galaxy shapes.
     """
-    adjacency_grid = AdjacencyGrid(width)
     arm_offset = uniform(0.0, 2.0 * pi)
     arm_angle = (2.0 * pi) / float(arms)
     arm_spread = (0.3 * pi) / float(arms)
@@ -354,11 +353,10 @@ def spiral_galaxy_calc_positions(positions, arms, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def elliptical_galaxy_calc_positions(positions, size, width):
+def elliptical_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the elliptical galaxy shape.
     """
-    adjacency_grid = AdjacencyGrid(width)
     ellipse_width_vs_height = uniform(0.4, 0.6)
     rotation = uniform(0.0, pi)
     rotation_sin = sin(rotation)
@@ -411,11 +409,10 @@ def elliptical_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def disc_galaxy_calc_positions(positions, size, width):
+def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the disc galaxy shape.
     """
-    adjacency_grid = AdjacencyGrid(width)
     center_x, center_y = width / 2.0, width / 2.0
 
     for i in range(size):
@@ -446,7 +443,7 @@ def disc_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def cluster_galaxy_calc_positions(positions, size, width):
+def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the cluster galaxy shape.
     """
@@ -472,8 +469,6 @@ def cluster_galaxy_calc_positions(positions, size, width):
     clusters_position = []
 
     random_angle = lambda: uniform(0.0, 2.0*pi)
-
-    adjacency_grid = AdjacencyGrid(width)
 
     for i in range(clusters):
         attempts = 100
@@ -530,13 +525,12 @@ def cluster_galaxy_calc_positions(positions, size, width):
         if not attempts:
             print "Cluster galaxy shape: giving up on placing star", i,\
                   ", can't find position sufficiently far from other systems"
-    enforce_max_distance(positions, adjacency_grid)
 
-def ring_galaxy_calc_positions(positions, size, width):
+
+def ring_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the ring galaxy shape.
     """
-    adjacency_grid = AdjacencyGrid(width)
     ring_width = width / 4.0
     ring_radius = (width - ring_width) / 2.0
 
@@ -572,12 +566,10 @@ def ring_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def box_galaxy_calc_positions(positions, size, width):
+def box_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the box galaxy shape.
     """
-    adjacency_grid = AdjacencyGrid(width)
-
     for i in range(size):
         attempts = 100
         while attempts > 0:
@@ -604,11 +596,10 @@ def box_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def irregular_galaxy_calc_positions(positions, size, width):
+def irregular_galaxy_calc_positions(positions, adjacency_grid, size, width):
     """
     Calculate positions for the irregular galaxy shape.
     """
-    adjacency_grid = AdjacencyGrid(width)
     max_delta = max(min(float(universe_tables.MAX_STARLANE_LENGTH), width / 10.0), adjacency_grid.min_dist * 2.0)
     print "Irregular galaxy shape: max delta distance =", max_delta
     origin_x, origin_y = width / 2.0, width / 2.0
@@ -692,29 +683,32 @@ def calc_star_system_positions(gsd):
     fo.set_universe_width(width)
 
     positions = []
+    adjacency_grid = AdjacencyGrid(width)
 
     print "Creating", gsd.shape, "galaxy shape"
     if gsd.shape == fo.galaxyShape.spiral2:
-        spiral_galaxy_calc_positions(positions, 2, gsd.size, width)
+        spiral_galaxy_calc_positions(positions, adjacency_grid, 2, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.spiral3:
-        spiral_galaxy_calc_positions(positions, 3, gsd.size, width)
+        spiral_galaxy_calc_positions(positions, adjacency_grid, 3, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.spiral4:
-        spiral_galaxy_calc_positions(positions, 4, gsd.size, width)
+        spiral_galaxy_calc_positions(positions, adjacency_grid, 4, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.elliptical:
-        elliptical_galaxy_calc_positions(positions, gsd.size, width)
+        elliptical_galaxy_calc_positions(positions, adjacency_grid, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.disc:
-        disc_galaxy_calc_positions(positions, gsd.size, width)
+        disc_galaxy_calc_positions(positions, adjacency_grid, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.cluster:
-        cluster_galaxy_calc_positions(positions, gsd.size, width)
+        cluster_galaxy_calc_positions(positions, adjacency_grid, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.ring:
-        ring_galaxy_calc_positions(positions, gsd.size, width)
+        ring_galaxy_calc_positions(positions, adjacency_grid, gsd.size, width)
     elif gsd.shape == fo.galaxyShape.irregular:
-        irregular_galaxy_calc_positions(positions, gsd.size, width)
+        irregular_galaxy_calc_positions(positions, adjacency_grid, gsd.size, width)
 
     # Check if any positions have been calculated...
     if not positions:
         # ...if not, fall back on box shape
-        box_galaxy_calc_positions(positions, gsd.size, width)
+        box_galaxy_calc_positions(positions, adjacency_grid, gsd.size, width)
+
+    enforce_max_distance(positions, adjacency_grid)
 
     # to avoid having too much "extra space" around the system positions of our galaxy map, recalculate the universe
     # width and shift all positions accordingly
