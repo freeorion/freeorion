@@ -1287,6 +1287,8 @@ void BuildDesignatorWnd::ShowFieldTypeInEncyclopedia(const std::string& field_ty
 { m_enc_detail_panel->SetFieldType(field_type_name); }
 
 void BuildDesignatorWnd::ShowPedia() {
+    MoveChildUp(m_enc_detail_panel);
+    MoveChildUp(m_build_selector);
     m_enc_detail_panel->Refresh();
     m_enc_detail_panel->Show();
 
@@ -1295,6 +1297,7 @@ void BuildDesignatorWnd::ShowPedia() {
 }
 
 void BuildDesignatorWnd::HidePedia() {
+    MoveChildDown(m_enc_detail_panel);
     m_enc_detail_panel->Hide();
 
     OptionsDB& db = GetOptionsDB();
