@@ -79,6 +79,7 @@ BuildingType
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 (Source.Planet.Happiness < [[CONST_ORB_DRYDOCK_MIN_HAPPY]])
             ]
+            activation = Turn low = Source.System.LastTurnBattleHere + 1
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_NONE"
