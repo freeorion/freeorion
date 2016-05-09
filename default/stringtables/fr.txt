@@ -1365,16 +1365,16 @@ Il est conseillé d'avoir au moins un joueur pour chaque tranche de 15-30 systè
 Un trop grand nombre d'IAs peut causer de forts ralentissements du jeu, notamment en fin de partie.'''
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-L'espacement horizontal entre les panneaux de l'arbre des technologies dans la Fenêtre Recherche, en valeur multiple de la largeur d'un panneau.
+L'espacement horizontal entre chaque panneau de l'arbre des technologies dans la Fenêtre Recherche, en valeur multiple de la largeur d'un panneau.
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-L'espacement vertical entre les panneaux de l'arbre des technologies dans la Fenêtre Recherche, en valeur multiple de la hauteur d'un panneau.
+L'espacement vertical entre chaque panneau de l'arbre des technologies dans la Fenêtre Recherche, en valeur multiple de la hauteur d'un panneau.
 
 OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
 Ajuste la valeur du zoom par défaut dans la Fenêtre Recherche.
 
 OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
-Ajuste la taille des panneaux de technologies de la Fenêtre Recherche, en fonction de la taille du texte.
+Ajuste la taille des icônes de la barre d'affichage des technologies dans la Fenêtre Recherche.
 
 OPTIONS_DB_SAVE_DIR
 L'adresse du répertoire où sauvegarder (et d'où charger) les parties.
@@ -1506,7 +1506,10 @@ OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC
 Modèles cachés de Sitreps
 
 OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN
-Vrai si le joueur a fermé manuellement le panneau Encyclopédie dans la fenêtre de Production.
+Vrai si le joueur a fermé manuellement le panneau Encyclopédie dans la fenêtre Production.
+
+OPTIONS_DB_RESEARCH_PEDIA_HIDDEN
+Vrai si le joueur a fermé manuellement le panneau Encyclopédie dans la fenêtre Recherche.
 
 OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY
 Délai avant infobulle Fenêtre de sauvegarde
@@ -11234,6 +11237,11 @@ GREAT_ASTEROID_INDUSTRY
 
 LIGHT_SENSITIVE
 −	Sensibilité à la lumière: la Population est réduite dans les systèmes abritant une Étoile Bleue, et dans une moindre mesure, une Étoile Blanche.
+
+TELEPATHIC_DETECTION
++	Détection Télépathique: peut percevoir les planètes habitées proches.
+
+
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
@@ -11420,6 +11428,9 @@ Structures multidimensionnelles
 
 WEAK_VISION_LABEL
 Faible Vision
+
+POOR_VISION_LABEL
+Étroite Vision
 
 MODERATE_VISION_LABEL
 Moyenne Vision
