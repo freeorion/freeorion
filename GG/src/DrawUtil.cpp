@@ -712,7 +712,8 @@ namespace GG {
 
     void Line(X x1, Y y1, X x2, Y y2)
     {
-        GLfloat vertices[4] = {Value(x1), Value(y1), Value(x2), Value(y2)};
+        GLfloat vertices[4] = {GLfloat(Value(x1)), GLfloat(Value(y1)),
+                               GLfloat(Value(x2)), GLfloat(Value(y2))};
 
         glDisable(GL_TEXTURE_2D);
 
@@ -731,7 +732,8 @@ namespace GG {
 
     void Triangle(Pt pt1, Pt pt2, Pt pt3, Clr color, Clr border_color, float border_thick)
     {
-        GLfloat vertices[6] = {Value(pt1.x), Value(pt1.y), Value(pt2.x), Value(pt2.y), Value(pt3.x), Value(pt3.y)};
+        GLfloat vertices[6] = {GLfloat(Value(pt1.x)), GLfloat(Value(pt1.y)), GLfloat(Value(pt2.x)),
+                               GLfloat(Value(pt2.y)), GLfloat(Value(pt3.x)), GLfloat(Value(pt3.y))};
 
         glDisable(GL_TEXTURE_2D);
 
@@ -758,7 +760,8 @@ namespace GG {
 
     void Triangle(X x1, Y y1, X x2, Y y2, X x3, Y y3, bool filled)
     {
-        GLfloat vertices[6] = {Value(x1), Value(y1), Value(x2), Value(y2), Value(x3), Value(y3)};
+        GLfloat vertices[6] = {GLfloat(Value(x1)), GLfloat(Value(y1)), GLfloat(Value(x2)),
+                               GLfloat(Value(y2)), GLfloat(Value(x3)), GLfloat(Value(y3))};
 
         glDisable(GL_TEXTURE_2D);
 
