@@ -24,7 +24,7 @@ class AdjacencyGrid(object):
     def insert_pos(self, pos):
         self.grid[self.cell(pos)].append(pos)
 
-    def remove(self, pos):
+    def remove_pos(self, pos):
         self.grid[self.cell(pos)].remove(pos)
 
     def _square_indices_containing_cell(self, (cell_x, cell_y), radius):
@@ -48,8 +48,8 @@ class AdjacencyGrid(object):
             yield ring
             i_radius += 1
 
-    # All neighbors within max_dist
     def neighbors(self, p):
+        '''Return all neighbors within max_dist'''
         _neighbors = []
         i_radius_close_enough = floor(self.max_dist / self.cell_size)
         for i, ring in enumerate(self._generate_rings_around_point(p, self.max_dist)):
@@ -60,8 +60,8 @@ class AdjacencyGrid(object):
                                util.distance(pos, p) <= self.max_dist]
         return _neighbors
 
-    # nearest neighbor at any distance
     def nearest_neighbor(self, p):
+        ''' Return nearest neighbor at any distance'''
         for ring in self._generate_rings_around_point(p):
             candidates = [pos for cell in ring for pos in self.grid[cell]]
             if candidates:
@@ -99,7 +99,7 @@ class DSet(object):
         self.rank = 0
 
     def bind_parent(self, parent):
-        assert self != parent
+        assert self is not parent
         self.parent = parent
 
     def inc_rank(self):
@@ -110,7 +110,7 @@ class DisjointSets(object):
     """
     A set of disjoint sets.
 
-    It suuports the operations of:
+    It supports the operations of:
     add(pos)      -- Creates a new single item set containing pos if it isn't already a set. O(1)
     link(p1, p2)  -- Links two sets containing p1 and p2 together.
                      This will add(p1) and add(p2) if necessary. O(1)
@@ -127,8 +127,8 @@ class DisjointSets(object):
         if pos not in self.dsets:
             self.dsets[pos] = DSet(pos)
 
-    # Creates a link between the sets containing p1 and p2
     def link(self, p1, p2):
+        ''' Creates a link between the sets containing p1 and p2'''
         root1 = self.root(p1)
         if p1 == p2:
             # print " self link"
@@ -152,18 +152,22 @@ class DisjointSets(object):
                 # print " even link"
                 ds2.inc_rank()
 
-    # Returns the key position of the cluster containing pos
-    # Adds pos if absent
     def root(self, pos):
+        '''
+        Returns the key position of the cluster containing pos
+        Adds pos if absent
+        '''
         root = self._has_root(pos)
         if root:
             return root[0]
         self.add(pos)
         return pos
 
-    # Check if pos is the root of a cluster otherwise shorten
-    # the tree while tranversing it and return the root
     def _has_root(self, pos):
+        '''
+        Check if pos is the root of a cluster otherwise shorten
+        the tree while tranversing it and return the root
+        '''
         # traverse tree and fetch parents for compression
         def parents(p1, children):
             # print "pp p1 ", p1.pos, " children a ", children
@@ -184,8 +188,8 @@ class DisjointSets(object):
             child.bind_parent(root)
         return [root.pos]
 
-    # returns a list of list of all sets O(n)
     def complete_sets(self):
+        ''' returns a list of list of all sets O(n) '''
         ret = defaultdict(list)
         for pos in self.dsets.keys():
             ret[self.root(pos)].append(pos)
@@ -280,14 +284,20 @@ def stitching_positions(p1, p2):
 
 def enforce_max_distance(positions, adjacency_grid):
     """
-    Inserts extra planets to guarrantee that no clusters of planets
-    are separated from all other clusters of planets by more than
-    universe_tables.MAX_STARLANE_LENGTH
+    Adds extra positions between groups of positions to guarrantee
+    that no groups of positions are separated from all other groups
+    of positions by more than universe_tables.MAX_STARLANE_LENGTH
 
-    Find all clusters of planets.
-    For each cluster
-      Remove it from the adjacency grid and find its nearest neighbor
-      Add planets to make all spacing less than the maximum
+    Find all groups of positions, where every member is within
+    MAX_STARLANE_LENGTH of at least one other member of the group,
+    but all members of the group are more than MAX_STARLANE_LENGTH
+    from all positions in other groups.
+
+    For each group:
+      - Remove it from the adjacency grid and find its nearest neighboring position.
+      - Add positions between the nearest neighbor and the group to
+        ensure every position has at least one neighbor within
+        MAX_STARLANE_LENGTH.
     """
     # Find all clusters
     clusterer = Clusterer(positions, adjacency_grid)
