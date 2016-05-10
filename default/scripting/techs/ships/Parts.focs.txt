@@ -117,7 +117,7 @@ Tech
     description = "SHP_DEATH_SPORE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
         "SHP_BOMBARD"
@@ -131,7 +131,7 @@ Tech
     description = "SHP_BIOTERM_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
         "SHP_DEATH_SPORE"
@@ -145,7 +145,7 @@ Tech
     description = "SHP_EMP_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
         "SHP_BOMBARD"
@@ -159,7 +159,7 @@ Tech
     description = "SHP_EMO_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
         "SHP_EMP"
@@ -173,7 +173,7 @@ Tech
     description = "SHP_SONIC_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
         "SHP_BOMBARD"
@@ -187,7 +187,7 @@ Tech
     description = "SHP_GRV_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
         "SHP_SONIC"
@@ -201,7 +201,7 @@ Tech
     description = "SHP_DARK_RAY_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
         "SHP_BOMBARD"
@@ -215,7 +215,7 @@ Tech
     description = "SHP_VOID_SHADOW_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = [
         "SHP_DARK_RAY"
