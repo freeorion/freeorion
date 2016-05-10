@@ -191,6 +191,8 @@ Wnd* ZList::PickWithinWindow(const Pt& pt, Wnd* wnd, const std::set<Wnd*>* ignor
     // any of them (or their children)
     std::list<Wnd*>::reverse_iterator end_it = wnd->m_children.rend();
     for (std::list<Wnd*>::reverse_iterator it = wnd->m_children.rbegin(); it != end_it; ++it) {
+        if (!(*it)->Visible())
+            continue;
         Wnd* temp = 0;
         if ((*it)->InWindow(pt) && (temp = PickWithinWindow(pt, *it, ignore))) {
             retval = temp;
