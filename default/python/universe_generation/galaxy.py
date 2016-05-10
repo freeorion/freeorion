@@ -205,16 +205,49 @@ class Clusterer(object):
         self.dsets = DisjointSets()
 
         for pos in positions:
-            self.add(pos)
+            self._add(pos)
 
-    def add(self, pos):
+        self.clusters = set()
+        for cluster in self.dsets.complete_sets():
+            self.clusters.add((len(cluster), frozenset(cluster)))
+
+    def __len__(self):
+        return len(self.clusters)
+
+    def _add(self, pos):
         for neighbor in self.adjacency_grid.neighbors(pos):
             # print "Clusterer adding ", pos,  " and ", neighbor
             self.dsets.link(pos, neighbor)
 
-    def clusters(self):
-        """Returns a list of lists of the clusters of positions"""
-        return self.dsets.complete_sets()
+    def smallest_isolated_cluster(self):
+        """
+        Return None if all of the positions are in one cluster
+        or the smallest cluster
+        """
+        return None if len(self.clusters) < 2 else min(self.clusters)[1]
+
+    def stitch_clusters(self, p1, p2, stitches):
+        """
+        Join the clusters containing ''p1'' and ''p2''
+        with the positions in ''stitches''
+
+        This assumes that the stitching is correctly formed.
+        ''p1'' and ''p2'' are the closest positions between
+        the clusters and the positions in ''stitches'' are only
+        between ''p1'' and ''p2''
+        """
+        len_dset1 = None
+        len_dset2 = None
+        for len_dset in self.clusters:
+            if p1 in len_dset[1]:
+                len_dset1 = len_dset
+            if p2 in len_dset[1]:
+                len_dset2 = len_dset
+        assert len_dset1 and len_dset2, "p1 and p2 must be points in disjoint sets of positions"
+        self.clusters.remove(len_dset1)
+        self.clusters.remove(len_dset2)
+        new_set = len_dset1[1].union(len_dset2[1]).union(frozenset(stitches))
+        self.clusters.add((len(new_set), new_set))
 
 
 def stitching_positions(p1, p2):
@@ -258,19 +291,17 @@ def enforce_max_distance(positions, adjacency_grid):
     """
     # Find all clusters
     clusterer = Clusterer(positions, adjacency_grid)
-    clusters = sorted(clusterer.clusters(), key=len)
 
-    if len(clusters) == 1:
+    if len(clusterer) == 1:
         print "All systems positioned in a single connected cluster"
     else:
-        print len(clusters), "clusters separated by more the MAX_STARLANE_LENGTH.  Starting to fill gaps."
-        print clusters[0]
+        print len(clusterer), "clusters separated by more the MAX_STARLANE_LENGTH.  Starting to fill gaps."
 
-    while len(clusters) > 1:
-        smallest_cluster = clusters[0]
+    while len(clusterer) > 1:
+        smallest_cluster = clusterer.smallest_isolated_cluster()
         print "Searching for nearest neighbor position to a cluster with", len(smallest_cluster), "positions."
         for pos in smallest_cluster:
-            adjacency_grid.remove(pos)
+            adjacency_grid.remove_pos(pos)
         # Find nearest neighbour
         (_, p1, p2) = min([(util.distance(pos, nn), pos, nn)
                            for nn in adjacency_grid.nearest_neighbor(pos)
@@ -278,20 +309,19 @@ def enforce_max_distance(positions, adjacency_grid):
 
         for pos in smallest_cluster:
             adjacency_grid.insert_pos(pos)
-        # Add extra planets
-        extra_planets = stitching_positions(p1, p2)
-        for i_extra, p3 in enumerate(extra_planets):
-            print "Adding", i_extra, "of", len(extra_planets), "extra planets at",\
+        # Add extra positions
+        extra_positions = stitching_positions(p1, p2)
+        for i_extra, p3 in enumerate(extra_positions):
+            print "Adding", i_extra, "of", len(extra_positions), "extra positions at",\
                 p3, "to fix max spacing error between", p1, "and", p2
             adjacency_grid.insert_pos(p3)
             positions.append(p3)
-            clusterer.add(p3)
-        clusters = sorted(clusterer.clusters(), key=len)
+        clusterer.stitch_clusters(p1, p2, extra_positions)
 
-        if len(clusters) == 1:
+        if len(clusterer) == 1:
             print "All systems now positioned in a single connected cluster"
         else:
-            print len(clusters), "clusters separated by more the MAX_STARLANE_LENGTH.  Continuing to fill gaps."
+            print len(clusterer), "clusters separated by more the MAX_STARLANE_LENGTH.  Continuing to fill gaps."
 
 
 def calc_universe_width(shape, size):
