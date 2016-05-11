@@ -10,8 +10,8 @@
 #include "parse/Lexer.h"
 
 namespace std {
-    std::ostream& operator << (std::ostream& stream, const std::type_info& type);
-    std::ostream& operator << (std::ostream& stream, const ValueRef::OpType& type);
+    std::ostream& operator<<(std::ostream& stream, const std::type_info& type);
+    std::ostream& operator<<(std::ostream& stream, const ValueRef::OpType& type);
 }
 
 void print_expectation_failure(const boost::spirit::qi::expectation_failure<parse::token_iterator>& ex);

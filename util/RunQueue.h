@@ -24,7 +24,7 @@ struct ThreadQueue : public boost::noncopyable {
     boost::thread           thread;
 
     ThreadQueue(RunQueue<WorkItem>* the_global_queue);
-    void operator ()();
+    void operator()();
 };
 
 template <class WorkItem>

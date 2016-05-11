@@ -324,7 +324,7 @@ public:
     template <typename Scalar2> const Derived& operator/=(Scalar2 v) const { set(get()/v); return derived(); }
 
     operator integer_t() const { return get(); }
-    data_ptr_t operator &() const {return _data_ptr;}
+    data_ptr_t operator&() const {return _data_ptr;}
 protected:
 
     typedef  typename detail::num_value_fn< NumBits >::type num_value_t;

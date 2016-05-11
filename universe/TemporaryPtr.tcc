@@ -53,23 +53,23 @@ TemporaryPtr<T>& TemporaryPtr<T>::internal_assign(const P& rhs) {
 
 
 template <class Y, class R>
-bool operator ==(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second)
+bool operator==(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second)
 { return first.get() == second.get(); }
 
 template <class Y, class R>
-bool operator ==(const TemporaryPtr<Y>& first, R* second)
+bool operator==(const TemporaryPtr<Y>& first, R* second)
 { return first.get() == second; }
 
 template <class Y, class R>
-bool operator <(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second)
+bool operator<(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second)
 { return first.get() < second.get(); }
 
 template <class Y, class R>
-bool operator <(const TemporaryPtr<Y>& first, R* second)
+bool operator<(const TemporaryPtr<Y>& first, R* second)
 { return first.get() < second; }
 
 template <class Y, class R>
-bool operator <(Y* first, const TemporaryPtr<R>& second)
+bool operator<(Y* first, const TemporaryPtr<R>& second)
 { return first < second.get(); }
 
 //@}
@@ -78,7 +78,7 @@ bool operator <(Y* first, const TemporaryPtr<R>& second)
 //@{
 
 template <class Y, class R>
-bool operator ==(Y* first, const TemporaryPtr<R>& second)
+bool operator==(Y* first, const TemporaryPtr<R>& second)
 { return second == first; }
 
 #define TEMPORARY_PTR_OP(result_type, op, body) \

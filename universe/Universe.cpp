@@ -1613,7 +1613,7 @@ namespace {
             ConditionCache&                                         the_invariant_cached_condition_matches,
             boost::shared_mutex&                                    the_global_mutex
         );
-        void operator ()();
+        void operator()();
     private:
         // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
         boost::shared_ptr<Effect::EffectsGroup>                 m_effects_group;

@@ -7,7 +7,7 @@
 
 #include <boost/preprocessor.hpp>
 
-std::ostream& std::operator << (std::ostream& stream, const std::type_info& type) {
+std::ostream& std::operator<<(std::ostream& stream, const std::type_info& type) {
 #ifdef __GNUG__
     int status = -4;
     char* res = abi::__cxa_demangle(type.name(), NULL, NULL, &status);
@@ -19,7 +19,7 @@ std::ostream& std::operator << (std::ostream& stream, const std::type_info& type
     return stream;
 }
 
-std::ostream& std::operator << (std::ostream& stream, const ValueRef::OpType& type) {
+std::ostream& std::operator<<(std::ostream& stream, const ValueRef::OpType& type) {
 #define VALUE_REF_BRANCH(unused,data,elem) \
     if(type == ValueRef::elem) stream << BOOST_PP_STRINGIZE(elem);
 

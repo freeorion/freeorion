@@ -15,7 +15,7 @@ ThreadQueue<WorkItem>::ThreadQueue(RunQueue<WorkItem>* the_global_queue) : work_
 }
 
 template <class WorkItem>
-void ThreadQueue<WorkItem>::operator ()() {
+void ThreadQueue<WorkItem>::operator()() {
     while (true) {
         while (running_queue_size) {
             WorkItem* current_item = (*running_queue)[running_queue_size - 1];
