@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include "EnumParser.h"
+#include "parse/EnumParser.h"
 
 struct EnumParserFixture {
     template <class Type>
