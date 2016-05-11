@@ -1,3 +1,5 @@
+from collections import Counter
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import sys
 
@@ -13,15 +15,14 @@ def get_empire_standard_fighter():
     :return: Stats of most common fighter in the empire
     :rtype: ShipCombatStats
     """
-    stats_dict = {}
+    stats_dict = Counter()
     for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY):
         ship_stats = FleetCombatStats(fleet_id, consider_refuel=True).get_ship_combat_stats()
-        for this_stats in ship_stats:
-            stats_tuple = this_stats.get_stats(hashable=True)
-            stats_dict[stats_tuple] = stats_dict.get(stats_tuple, 0) + 1
-    if stats_dict:
-        standard_fighter_stats = sorted([(v, k) for k, v in stats_dict.items()])[-1][1]
-        return ShipCombatStats(stats=standard_fighter_stats)
+        stats_dict.update(ship_stats)
+
+    most_commons = stats_dict.most_common(1)
+    if most_commons:
+        return most_commons[0][0]
     else:
         return default_ship_stats()
 
@@ -104,6 +105,9 @@ class ShipCombatStats(object):
             self._basic_stats = self.BasicStats(None, None, None)
             self._fighter_stats = self.FighterStats(None, None, None)
             self.__get_stats_from_ship()
+
+    def __hash__(self):
+        return hash(self.get_basic_stats(hashable=True))
 
     def __str__(self):
         return str(self.get_stats())
@@ -211,7 +215,7 @@ class ShipCombatStats(object):
         :param hashable: if true, return tuple instead of dict for attacks
         :return: attacks, structure, shields, fighter-capacity, fighter-launch_rate, fighter-damage
         """
-        return self.get_basic_stats(hashable=hashable)+self.get_fighter_stats()
+        return self.get_basic_stats(hashable=hashable) + self.get_fighter_stats()
 
 
 class FleetCombatStats(object):
