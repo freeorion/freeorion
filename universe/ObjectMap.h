@@ -13,6 +13,8 @@
 #include "../util/Export.h"
 #include "TemporaryPtr.h"
 
+#include "UniverseObject.h"
+
 struct UniverseObjectVisitor;
 
 class UniverseObject;
