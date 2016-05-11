@@ -26,7 +26,7 @@
 #include "TagParser.h"
 
 
-#include <boost/regex.hpp>
+#include <regex>
 
 namespace GG {
 
@@ -100,20 +100,20 @@ namespace GG {
                                                       std::vector<RichTextTag>* tags)
             {
                 std::string::const_iterator current = start;
-                boost::match_results<std::string::const_iterator> match;
-                boost::match_flag_type flags = boost::match_default;
+                std::match_results<std::string::const_iterator> match;
 
                 // The regular expression for matching begin and end tags. Also extracts parameters from start tags.
-                typedef boost::basic_regex<char, boost::regex_traits<char>> regex;
-                const static regex tag("<(?<begin_tag>\\w+)( "
-                                       "(?<params>[^>]+))?>|</"
-                                       "(?<end_tag>\\w+)>");
+                typedef std::basic_regex<char, std::regex_traits<char>> regex;
+                const static regex tag(R"(<(\w+)( [^>]+)?>|</(\w+)>)");
+                const int begin_tag_capture = 1;
+                const int params_capture = 2;
+                const int end_tag_capture = 3;
 
                 // Find all tags on this nesting level.
-                while (boost::regex_search(current, end, match, tag, flags)) {
+                while (std::regex_search(current, end, match, tag, std::regex_constants::match_default)) {
                     //Found a new tag. Recurse if begin tag, return if end tag.
-                    const boost::ssub_match& begin_match = match["begin_tag"];
-                    const boost::ssub_match& end_match = match["end_tag"];
+                    const std::ssub_match& begin_match = match[begin_tag_capture];
+                    const std::ssub_match& end_match = match[end_tag_capture];
 
                     if (begin_match.matched) {
                         // A new tag begins. Finish current plaintext tag if it is non-empty.
@@ -124,7 +124,7 @@ namespace GG {
                         }
 
                         // Recurse to the next nesting level.
-                        current = FinishTag(begin_match, match["params"],
+                        current = FinishTag(begin_match, match[params_capture],
                                             current + match.position() + match.length(), end, tags);
                     } else if (end_match.matched) {
                         // An end tag encountered. Stop parsing here.
@@ -132,7 +132,7 @@ namespace GG {
                     } else {
                         // This really shouldn't happen.
                         std::stringstream error;
-                        error << "Error parsing rich text tags: match not begin or end tag:" << match;
+                        error << "Error parsing rich text tags: matches neither begin or end tag:" << match.format("[$&]");
                         throw std::runtime_error(error.str());
                     }
                 }
