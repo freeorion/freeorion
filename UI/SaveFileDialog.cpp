@@ -915,7 +915,10 @@ bool SaveFileDialog::CheckChoiceValidity() {
             m_confirm_btn->Disable(false);
             return true;
         }
-    } else {
+    } else {  // append appropriate extension for saving
+        std::string chosen_ext = fs::path(m_name_edit->Text()).extension().string();
+        if (m_extension != chosen_ext)
+            m_name_edit->SetText(m_name_edit->Text() + m_extension);
         return true;
     }
 }
@@ -988,13 +991,6 @@ std::string SaveFileDialog::Result() const {
     if (choice.empty()) {
         return "";
     }
-
-    //// Ensure the file has an extension
-    //std::string::size_type end = choice.length();
-    //std::size_t ext_length = m_extension.length();
-    //if (choice.length() < ext_length || choice.substr(end-ext_length, ext_length) != m_extension) {
-    //    choice.append(m_extension);
-    //}
 
     fs::path choice_path = FilenameToPath(choice);
     fs::path current_dir = FilenameToPath(GetDirPath());
