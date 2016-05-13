@@ -11,6 +11,10 @@ BuildingType
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy empire = Source.Owner
         ]
+        Or [
+            Star type = [White Blue BlackHole]
+            Enqueued type = Building name = "BLD_ART_BLACK_HOLE"
+            ]
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
