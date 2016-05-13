@@ -11,7 +11,14 @@ BuildingType
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy empire = Source.Owner
         ]
+        Number low = 1 high = 999 condition = And [
+            OwnedBy empire = Source.Owner
+            Or [
+                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
+                Building name = "BLD_NEUTRONIUM_SYNTH"
+            ]
         OwnedBy empire = Source.Owner
+        ]
         TargetPopulation low = 1
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]

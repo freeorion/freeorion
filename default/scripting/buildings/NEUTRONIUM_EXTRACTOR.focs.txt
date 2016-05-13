@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_NEUTRONIUM_EXTRACTOR"
     description = "BLD_NEUTRONIUM_EXTRACTOR_DESC"
     buildcost = 25
-    buildtime = 8
+    buildtime = 5
     tags = "ORBITAL"
     location = AND [
         Planet
