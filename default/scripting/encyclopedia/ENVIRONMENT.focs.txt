@@ -1,0 +1,6 @@
+Article
+    name = "ENVIRONMENT_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "ENVIRONMENT_TITLE"
+    description = "ENVIRONMENT_TEXT"
+    icon = "icons/tech/terraform.png"
