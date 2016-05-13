@@ -4,8 +4,11 @@ import pickle  # Python object serialization library
 import sys
 import random
 
-from common.configure_logging import redirect_logging_to_freeorion_logger
-redirect_logging_to_freeorion_logger()
+from common import configure_logging
+configure_logging.redirect_logging_to_freeorion_logger(__name__)
+
+import logging
+logger = logging.getLogger(__name__)
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
