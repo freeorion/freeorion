@@ -1,5 +1,8 @@
 import random
 
+from common import configure_logging
+configure_logging.redirect_logging_to_freeorion_logger()
+
 import freeorion as fo
 
 from starnames import name_star_systems

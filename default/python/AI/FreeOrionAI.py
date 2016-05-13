@@ -4,6 +4,9 @@ import pickle  # Python object serialization library
 import sys
 import random
 
+from common import configure_logging
+configure_logging.redirect_logging_to_freeorion_logger()
+
 # IMPORTANT! this import also execute python code to update freeOrionAIInterface interface,
 # removing this import will brake AI in unexpected way.
 

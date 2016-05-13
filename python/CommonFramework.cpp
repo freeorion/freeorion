@@ -74,6 +74,10 @@ bool PythonBase::Initialize()
         return false;
     }
 
+    // add the directory containing common Python modules used by all Python scripts to Python sys.path
+    if (!AddToSysPath(GetPythonCommonDir()))
+        return false;
+
     // allow the "freeorion_logger" C++ module to be imported within Python code
     try {
         initfreeorion_logger();
@@ -81,27 +85,6 @@ bool PythonBase::Initialize()
         ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
         return false;
     }
-
-    // set up logging by redirecting stdout and stderr to exposed logging functions
-    std::string script = "import sys\n"
-    "import freeorion_logger\n"
-    "class dbgLogger:\n"
-    "  def write(self, msg):\n"
-    "    freeorion_logger.log(msg)\n"
-    "class errLogger:\n"
-    "  def write(self, msg):\n"
-    "    freeorion_logger.error(msg)\n"
-    "sys.stdout = dbgLogger()\n"
-    "sys.stderr = errLogger()\n"
-    "print('Python stdout and stderr redirected')";
-    if (!ExecScript(script)) {
-        ErrorLogger() << "Unable to redirect Python stdout and stderr";
-        return false;
-    }
-
-    // add the directory containing common Python modules used by all Python scripts to Python sys.path
-    if (!AddToSysPath(GetPythonCommonDir()))
-        return false;
 
     // Allow C++ modules implemented by derived classes to be imported within Python code
     if (!InitModules()) {
@@ -144,7 +127,8 @@ bool PythonBase::SetCurrentDir(const std::string dir) {
 }
 
 bool PythonBase::AddToSysPath(const std::string dir) {
-    std::string command = "sys.path.append(r'" + dir + "')";
+    std::string command = "import sys\n"
+        "sys.path.append(r'" + dir + "')";
     if (!ExecScript(command)) {
         ErrorLogger() << "Unable to add " << dir << " to sys.path";
         return false;
