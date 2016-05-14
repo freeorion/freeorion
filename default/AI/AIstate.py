@@ -188,7 +188,7 @@ class AIstate(object):
             nametags.append("ID:%4d -- %-20s" % (sys_id, (newsys and newsys.name) or "name unknown"))  # an explored system *should* always be able to be gotten
         if newly_explored:
             print "-------------------------------------------------"
-            print "Newly explored systems:\n"+"\n".join(nametags)
+            print "Newly explored systems:\n%s" % "\n".join(nametags)
             print "-------------------------------------------------"
         # cleanup fleet roles
         # self.update_fleet_locs()
@@ -422,7 +422,7 @@ class AIstate(object):
             phealth = 0
             mypattack, myphealth = 0, 0
             for pid in system.planetIDs:
-                prating = self.assess_planet_threat(pid, sighting_age=current_turn-partial_vis_turn)
+                prating = self.assess_planet_threat(pid, sighting_age=current_turn - partial_vis_turn)
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
@@ -437,7 +437,7 @@ class AIstate(object):
             sys_status['planetThreat'] = pattack * phealth
             sys_status['mydefenses'] = {'overall': mypattack * myphealth, 'attack': mypattack, 'health': myphealth}
 
-            if max(sys_status.get('totalThreat', 0), pattack*phealth) >= 0.6 * lost_fleet_rating:  # previous threat assessment could account for losses, ignore the losses now
+            if max(sys_status.get('totalThreat', 0), pattack * phealth) >= 0.6 * lost_fleet_rating:  # previous threat assessment could account for losses, ignore the losses now
                 lost_fleet_rating = 0
 
             # TODO use sitrep combat info rather than estimating stealthed enemies by fleets lost to them
@@ -448,18 +448,18 @@ class AIstate(object):
                 print "System %s currently not visible" % system
                 sys_status.setdefault('local_fleet_threats', set())
                 # print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sys_id, sys_status.get('name', "name unknown"), partial_vis_turn, currentTurn)
-                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 0.98*sys_status.get('fleetThreat', 0), 2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
-                sys_status['enemy_threat'] = int(max(enemy_rating, 0.98*sys_status.get('enemy_threat', 0), 1.1 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
-                sys_status['monsterThreat'] = int(max(monster_rating, 0.98*sys_status.get('monsterThreat', 0)))
+                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 0.98 * sys_status.get('fleetThreat', 0), 2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
+                sys_status['enemy_threat'] = int(max(enemy_rating, 0.98 * sys_status.get('enemy_threat', 0), 1.1 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
+                sys_status['monsterThreat'] = int(max(monster_rating, 0.98 * sys_status.get('monsterThreat', 0)))
                 # sys_status['totalThreat'] = ((pattack + enemy_attack + monster_attack) ** 0.8) * ((phealth + enemy_health + monster_health)** 0.6)  # reevaluate this
-                sys_status['totalThreat'] = max(FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]), 2*lost_fleet_rating, 0.98*sys_status.get('totalThreat', 0))
+                sys_status['totalThreat'] = max(FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]), 2 * lost_fleet_rating, 0.98 * sys_status.get('totalThreat', 0))
             else:  # system considered visible #TODO: reevaluate as visibility rules change
                 print "System %s currently visible" % system
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
-                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating))  # includes mobile monsters
+                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 2 * lost_fleet_rating - monster_rating))  # includes mobile monsters
                 if verbose:
                     print "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (enemy_rating, lost_fleet_rating, monster_rating)
-                sys_status['enemy_threat'] = int(max(enemy_rating, 2*lost_fleet_rating - monster_rating))  # does NOT include mobile monsters
+                sys_status['enemy_threat'] = int(max(enemy_rating, 2 * lost_fleet_rating - monster_rating))  # does NOT include mobile monsters
                 sys_status['monsterThreat'] = monster_rating
                 sys_status['totalThreat'] = FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth])
             sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()
@@ -506,13 +506,11 @@ class AIstate(object):
             sys_status['2jump_ring'] = jump2ring
             sys_status['3jump_ring'] = jump3ring
             sys_status['4jump_ring'] = jump4ring
-            threat, max_threat, myrating, j1_threats = self.area_ratings(neighbors,
-                         ref_sys_name="neighbors " + str(this_system)) if verbose else self.area_ratings(neighbors)
+            threat, max_threat, myrating, j1_threats = self.area_ratings(neighbors, ref_sys_name="neighbors %s" % this_system) if verbose else self.area_ratings(neighbors)
             sys_status['neighborThreat'] = threat
             sys_status['max_neighbor_threat'] = max_threat
             sys_status['my_neighbor_rating'] = myrating
-            threat, max_threat, myrating, j2_threats = self.area_ratings(jump2ring,
-                         ref_sys_name="jump2 " + str(this_system)) if verbose else self.area_ratings(jump2ring)
+            threat, max_threat, myrating, j2_threats = self.area_ratings(jump2ring, ref_sys_name="jump2 %s" % this_system) if verbose else self.area_ratings(jump2ring)
             sys_status['jump2_threat'] = threat
             sys_status['my_jump2_rating'] = myrating
             threat, max_threat, myrating, j3_threats = self.area_ratings(jump3ring)
@@ -846,8 +844,8 @@ class AIstate(object):
             part_types = [fo.getPartType(part) for part in parts if part]
             shield_parts = [part for part in part_types if part.partClass == fo.shipPartClass.shields]
             shields = max([part.capacity for part in shield_parts]) if shield_parts else 0
-            detector_parts = [part for part in part_types if part.partClass == fo.shipPartClass.detection]
-            detect_bonus = max([part.capacity for part in detector_parts]) if detector_parts else 0
+            # detector_parts = [part for part in part_types if part.partClass == fo.shipPartClass.detection]
+            # detect_bonus = max([part.capacity for part in detector_parts]) if detector_parts else 0
             # stats = {'attack':design.attack, 'structure':(design.structure + detect_bonus), 'shields':shields, 'attacks':attacks}
             stats = {'attack': design.attack, 'structure': design.structure, 'shields': shields, 
                      'attacks': attacks, 'tact_adj': self.calc_tactical_rating_adjustment(parts)}
@@ -1044,9 +1042,9 @@ class AIstate(object):
                     if main_mission_type != -1:
                         targets = main_missin.getAITargets(main_mission_type)
                         if targets:
-                            mMT0 = targets[0]
-                            if isinstance(mMT0.target_type, System):
-                                status['sysID'] = mMT0.target.id  # hmm, but might still be a fair ways from here
+                            m_mt0 = targets[0]
+                            if isinstance(m_mt0.target_type, System):
+                                status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
         self.shipCount = ship_count
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
         self.empire_standard_fighter = std_fighter
