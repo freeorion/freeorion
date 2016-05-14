@@ -96,16 +96,17 @@ class AIFleetMission(object):
 
         # TODO consider establishing an AI strategy & tactics planning document for discussing & planning
         # high level considerations for issues like fleet merger
-        compatibileRolesMap = {MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
-                               MissionType.MILITARY: [MissionType.MILITARY],
-                               MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
-                               MissionType.INVASION: [MissionType.INVASION],
-                               }
+        compatible_roles_map = {
+            MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
+            MissionType.MILITARY: [MissionType.MILITARY],
+            MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
+            MissionType.INVASION: [MissionType.INVASION],
+        }
 
         main_fleet_role = foAI.foAIstate.get_fleet_role(fleet_id)
         for fid in other_fleets_here:
             fleet_role = foAI.foAIstate.get_fleet_role(fid)
-            if fleet_role not in compatibileRolesMap[main_fleet_role]:  # TODO: if fleetRoles such as LongRange start being used, adjust this
+            if fleet_role not in compatible_roles_map[main_fleet_role]:  # TODO: if fleetRoles such as LongRange start being used, adjust this
                 continue  # will only considering subsuming fleets that have a compatible role
             fleet = universe.getFleet(fid)
             if not (fleet and (fleet.systemID == system_id)):
@@ -138,12 +139,12 @@ class AIFleetMission(object):
                             if self.type in (MissionType.MILITARY,
                                              MissionType.SECURE):
                                 # continue
-                                if self.type == MissionType.SECURE:  # actually, currently this is probably the onle one of all four that should really be possibile in this situation
+                                if self.type == MissionType.SECURE:  # actually, currently this is probably the only one of all four that should really be possible in this situation
                                     need_left = 1.5 * sum([sysStat.get('fleetThreat', 0) for sysStat in
                                                            [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in
                                                                                                           [nid for nid in foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', []) if nid != m_MT0_id]]])
-                                    fBRating = foAI.foAIstate.get_rating(fid)
-                                    if (need_left < fBRating.get('overall', 0)) and fBRating.get('nships', 0) > 1:
+                                    fb_rating = foAI.foAIstate.get_rating(fid)
+                                    if (need_left < fb_rating.get('overall', 0)) and fb_rating.get('nships', 0) > 1:
                                         do_merge = True
             if do_merge:
                 FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
@@ -357,13 +358,13 @@ class AIFleetMission(object):
                     if planet_partial_vis_turn == sys_partial_vis_turn and not planet.currentMeterValue(fo.meterType.population):
                         print "Potential Error: Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.fleet.id
                         print "    Order details are %s" % last_order
-                        print "    Order is valid: %s ; is Executed : %s; is execution completed: %s " % (last_order.is_valid(), last_order.isExecuted(), last_order.isExecutionCompleted())
+                        print "    Order is valid: %s; issued: %s; executed: %s" % (last_order.is_valid(), last_order.order_issued, last_order.executed)
                         if not last_order.is_valid():
                             source_target = last_order.fleet
                             target_target = last_order.target
                             print "        source target validity: %s; target target validity: %s " % (bool(source_target), bool(target_target))
                         return  # colonize order must not have completed yet
-                clearAll = True
+                clear_all = True
                 last_sys_target = -1
                 if last_order and isinstance(last_order, OrderMilitary):
                     last_sys_target = last_order.target.id
@@ -381,9 +382,9 @@ class AIFleetMission(object):
                         else:
                             secure_type = "Unidentified"
                         print "Fleet %d has completed initial stage of its mission to secure system %d (targeted for %s), may release a portion of ships" % (self.fleet.id, last_sys_target, secure_type)
-                        clearAll = False
+                        clear_all = False
                 fleet_id = self.fleet.id
-                if clearAll:
+                if clear_all:
                     if orders:
                         print "Fleet %d has completed its mission; clearing all orders and targets." % self.fleet.id
                         print "Full set of orders were:"
