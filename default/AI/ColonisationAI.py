@@ -391,7 +391,7 @@ def survey_universe():
             this_spec = fo.getSpecies(spec_name)
             owner_id = planet.owner
             planet_population = planet.currentMeterValue(fo.meterType.population)
-            buildings_here = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
+            buildings_here = [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]
             ship_facilities = set(AIDependencies.SHIP_FACILITIES).intersection(buildings_here)
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
@@ -894,8 +894,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     homeworld = universe.getPlanet(capital_id)
     planet = universe.getPlanet(planet_id)
 
-    if (spec_name != planet.speciesName and planet.speciesName and
-                mission_type != MissionType.INVASION):
+    if spec_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0
 
     planet_size = planet.size
@@ -936,7 +935,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
     sys_supply = system_supply.get(this_sysid, -99)
     planet_supply = AIDependencies.supply_by_size.get(int(planet_size), 0)
-    bld_types = set(universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
+    bld_types = set(universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
         AIDependencies.building_supply)
     planet_supply += sum(AIDependencies.building_supply[bld_type].get(int(psize), 0)
                          for psize in [-1, planet.size] for bld_type in bld_types)
