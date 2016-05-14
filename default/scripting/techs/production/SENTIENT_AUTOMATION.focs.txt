@@ -15,9 +15,11 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 NOT TargetPopulation low = 0 high = 0
-             ]
-             effects = SetTargetIndustry value = Value + 5
+            ]
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetIndustry value = Value + 5
     ]
     graphic = "icons/tech/basic_autofactories.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

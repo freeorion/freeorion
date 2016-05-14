@@ -21,6 +21,7 @@ BuildingType
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 10
         EffectsGroup
             scope = Source
@@ -30,3 +31,4 @@ BuildingType
     icon = "icons/building/gas-giant-generator.png"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"

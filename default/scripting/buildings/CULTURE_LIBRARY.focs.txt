@@ -11,6 +11,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + 5
 
         EffectsGroup    // Destroy cultural library when the species is no longer present
@@ -22,3 +23,5 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/archive.png"
+
+#include "/scripting/common/priorities.macros"

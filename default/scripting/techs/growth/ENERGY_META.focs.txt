@@ -27,6 +27,7 @@ Tech
                 Focus type = "FOCUS_INDUSTRY"
 
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -36,8 +37,10 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
 
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

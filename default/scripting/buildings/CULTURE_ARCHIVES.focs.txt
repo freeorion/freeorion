@@ -59,6 +59,7 @@ BuildingType
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[VERY_LATE_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + 5
                 SetTargetIndustry value = Value + Target.Population / 2

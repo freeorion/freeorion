@@ -20,6 +20,7 @@ BuildingType
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -38,6 +39,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -56,10 +58,12 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/miniature_sun.png"
 
 #include "/scripting/common/enqueue.macros"
 
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"

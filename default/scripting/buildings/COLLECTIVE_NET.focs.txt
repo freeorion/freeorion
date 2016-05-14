@@ -22,6 +22,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -35,6 +36,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     icon = "icons/building/psi-corps.png"
@@ -42,3 +44,4 @@ BuildingType
 #include "/scripting/common/base_prod.macros"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"

@@ -19,6 +19,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
         EffectsGroup
             scope = And [
@@ -56,6 +57,7 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
+            priority = 150 //after everything else is resolved
             effects = [
                 [[NEXT_TURN_POPULATION_REDUCE_BY(3)]]
                 SetIndustry value = Target.TargetIndustry
@@ -68,3 +70,4 @@ BuildingType
     icon = "icons/building/concentration-camp.png"
 
 #include "/scripting/common/*.macros"
+#include "/scripting/common/priorities.macros"

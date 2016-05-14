@@ -21,8 +21,10 @@ Tech
                 ]
                 Focus type = "FOCUS_INDUSTRY"
             ]
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 5
     ]
     graphic = "icons/tech/microgravity_manufacturing.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

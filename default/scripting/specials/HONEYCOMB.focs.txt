@@ -70,9 +70,11 @@ Special
             ]
             activation = Focus type = "FOCUS_INDUSTRY"
             stackinggroup = "HONEYCOMB_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
 
     ]
     graphic = "icons/specials_huge/honeycomb.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

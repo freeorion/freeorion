@@ -21,6 +21,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -32,6 +33,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
             ]
             activation = Source
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value - 5
     ]
     icon = "icons/building/blackhole.png"
@@ -39,3 +41,4 @@ BuildingType
 #include "/scripting/common/enqueue.macros"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
