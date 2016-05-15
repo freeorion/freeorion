@@ -22,7 +22,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserStringList, chat_on_error, print_error
+from freeorion_tools import UserStringList, chat_on_error, print_error, UserString
 from freeorion_debug import Timer
 
 main_timer = Timer('timer', write_log=True)
@@ -39,8 +39,8 @@ except:
 
 _aggression_names = {fo.aggression.beginner: "GSETUP_BEGINNER",
                      fo.aggression.turtle: "GSETUP_TURTLE",
-                     fo.aggression.cautious: "GSETUP_CAUTIOUS",
-                     fo.aggression.typical: "GSETUP_TYPICAL",
+                     fo.aggression.cautious: "GSETUP_DEFENSIVE",
+                     fo.aggression.typical: "GSETUP_MODERATE",
                      fo.aggression.aggressive: "GSETUP_AGGRESSIVE",
                      fo.aggression.maniacal: "GSETUP_MANIACAL"}
 
@@ -75,7 +75,7 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
         return
 
     turn_timer.start("Server Processing")
-    print "New game started, AI Aggression level %d" % aggression
+    print "New game started, AI Aggression level %d (%s)" % (aggression, UserString(_aggression_names[aggression]))
 
     # initialize AIstate
     global foAIstate
