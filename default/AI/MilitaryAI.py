@@ -814,7 +814,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
         thisround = "Extras Remaining Round %d" % round if round < last_round else last_round_name
         if avail_mil_fleet_ids:
             print "Still have available military fleets: %s" % avail_mil_fleet_ids
-            allocations = get_military_fleets(military_fleets_ids=avail_mil_fleet_ids, tryReset=False, thisround=thisround)
+            allocations = get_military_fleets(milFleetIDs=avail_mil_fleet_ids, tryReset=False, thisround=thisround)
         if allocations:
             assign_military_fleets_to_systems(useFleetIDList=avail_mil_fleet_ids, allocations=allocations, round=round)
 
