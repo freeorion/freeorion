@@ -26,6 +26,7 @@ def distribute_specials(specials_freq, universe_objects):
         print "...", special, ": spawn rate", fo.special_spawn_rate(special),\
               "/ spawn limit", fo.special_spawn_limit(special)
 
+    random.shuffle(universe_objects)
     # attempt to apply a special to each universe object in the list that has been passed to this function
     # by finding a special that can be applied to it and hasn't been added too many times, and then attempt
     # to add that special by testing its spawn rate

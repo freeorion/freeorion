@@ -147,6 +147,7 @@ def generate_monsters(monster_freq, systems):
     # for each system in the list that has been passed to this function, find a monster fleet that can be spawned at
     # the system and which hasn't already been added too many times, then attempt to add that monster fleet by
     # testing the spawn rate chance
+    random.shuffle(systems)
     for system in systems:
         # collect info for tracked monster nest valid locations
         for planet in fo.sys_get_planets(system):
