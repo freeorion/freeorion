@@ -206,6 +206,42 @@ namespace {
         return species_list;
     }
 
+    //Checks the condition against many objects at once.
+    //Checking many systems is more efficient because for example monster fleet plans
+    //typically uses WithinStarLaneJumps to exclude placement near empires.
+    list FilterIDsWithCondition(const Condition::ConditionBase* cond, const list &obj_ids) {
+        list permitted_ids;
+
+        Condition::ObjectSet objs;
+        boost::python::stl_input_iterator<int> end;
+        for (boost::python::stl_input_iterator<int> id(obj_ids);
+             id != end; ++id) {
+            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*id))
+                objs.push_back(obj);
+            else
+                ErrorLogger() << "FilterIDsWithCondition:: Passed an invalid universe object id " << *id;
+        }
+        if (objs.empty()) {
+            ErrorLogger() << "FilterIDsWithCondition:: Couldn't get any valid objects";
+            return permitted_ids;
+        }
+
+        Condition::ObjectSet permitted_objs;
+
+        // get location condition and evaluate it with the specified universe object
+        // if no location condition has been defined, all objects matches
+        if (cond)
+            cond->Eval(ScriptingContext(), permitted_objs, objs);
+        else
+            permitted_objs = objs;
+
+        for (auto id : permitted_objs) {
+            permitted_ids.append(id->ID());
+        }
+
+        return permitted_ids;
+    }
+
     // Wrappers for Specials / SpecialManager functions
     double SpecialSpawnRate(const std::string special_name) {
         const Special* special = GetSpecial(special_name);
@@ -244,6 +280,17 @@ namespace {
         // if no location condition has been defined, no object matches
         const Condition::ConditionBase* location_test = special->Location();
         return (location_test && location_test->Eval(obj));
+    }
+
+    list SpecialLocations(const std::string special_name, list object_ids) {
+        // get special and check if it exists
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
+            ErrorLogger() << "SpecialLocation: couldn't get special " << special_name;
+            return list();
+        }
+
+        return FilterIDsWithCondition(special->Location(), object_ids);
     }
 
     bool SpecialHasLocation(const std::string special_name) {
@@ -476,41 +523,8 @@ namespace {
         int SpawnLimit()
         { return m_monster_fleet_plan->SpawnLimit(); }
 
-        //Checks the possiblity of placement of many systems at once.
-        //Checking many systems is more efficient because monster fleet plans
-        //typically use WithinStarLaneJumps to exclude placement near empires.
         list Locations(list systems) {
-            list locations_of_permitted_systems;
-
-            Condition::ObjectSet objs;
-            boost::python::stl_input_iterator<int> end;
-            for (boost::python::stl_input_iterator<int> sys_id(systems);
-                 sys_id != end; ++sys_id) {
-                if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*sys_id))
-                    objs.push_back(obj);
-            }
-            if (objs.empty()) {
-                ErrorLogger() << "MonsterFleetPlanWrapper::Locations: Couldn't get any objects";
-                return locations_of_permitted_systems;
-            }
-
-            Condition::ObjectSet permitted_systems;
-
-            // get location condition and evaluate it with the specified universe object
-            // if no location condition has been defined, any object matches
-            const Condition::ConditionBase* location_test = m_monster_fleet_plan->Location();
-
-            if (location_test)
-                location_test->Eval(ScriptingContext(), permitted_systems, objs);
-            else
-                permitted_systems = objs;
-
-            for (Condition::ObjectSet::const_iterator system = permitted_systems.begin();
-                 system != permitted_systems.end(); ++system) {
-                locations_of_permitted_systems.append((*system)->ID());
-            }
-
-            return locations_of_permitted_systems;
+            return FilterIDsWithCondition(m_monster_fleet_plan->Location(), systems);
         }
 
         const MonsterFleetPlan& GetMonsterFleetPlan()
@@ -1275,6 +1289,7 @@ namespace FreeOrionPython {
         def("special_spawn_rate",                   SpecialSpawnRate);
         def("special_spawn_limit",                  SpecialSpawnLimit);
         def("special_location",                     SpecialLocation);
+        def("special_locations",                    SpecialLocations);
         def("special_has_location",                 SpecialHasLocation);
         def("get_all_specials",                     GetAllSpecials);
 

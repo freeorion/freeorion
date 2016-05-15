@@ -425,13 +425,15 @@ class MonsterFleetPlan(object):
         """
         return int()
 
-    def location(self, number):
+    def locations(self, item_list):
         """
-        :param number:
-        :type number: int
-        :rtype: bool
+        :param string:
+        :type string: str
+        :param item_list:
+        :type item_list: list
+        :rtype: list
         """
-        return bool()
+        return list()
 
     def name(self):
         """
@@ -3516,15 +3518,15 @@ def special_has_location(string):
     return bool()
 
 
-def special_location(string, number):
+def special_locations(string, item_list):
     """
     :param string:
     :type string: str
-    :param number:
-    :type number: int
-    :rtype: bool
+    :param item_list:
+    :type item_list: list
+    :rtype: list
     """
-    return bool()
+    return list()
 
 
 def special_spawn_limit(string):
