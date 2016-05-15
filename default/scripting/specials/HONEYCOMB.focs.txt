@@ -7,13 +7,6 @@ Special
     location = And [
         Planet
         Not Planet type = Asteroids
-        Not WithinStarlaneJumps jumps = 5 condition = And [
-            System
-            Contains And [
-                Planet
-                OwnedBy affiliation = AnyEmpire
-            ]
-        ]
         Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
@@ -22,6 +15,13 @@ Special
                     Species
                     HasSpecial
                 ]
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 5 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
