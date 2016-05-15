@@ -191,11 +191,11 @@ class Reporter(object):
             current_industry_target += fPP
             current_research_target += fRP
 
-            iPP, iRP = pinfo.possible_output[IFocus] if IFocus in planet.availableFoci else (fPP, fRP)
+            iPP, iRP = pinfo.possible_output[IFocus] if IFocus in pinfo.possible_output else (fPP, fRP)
             all_industry_industry_target += iPP
             all_industry_research_target += iRP
 
-            rPP, rRP = pinfo.possible_output[RFocus] if RFocus in planet.availableFoci else (fPP, fRP)
+            rPP, rRP = pinfo.possible_output[RFocus] if RFocus in pinfo.possible_output else (fPP, fRP)
             all_research_industry_target += rPP
             all_research_research_target += rRP
 
