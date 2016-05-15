@@ -239,7 +239,7 @@ def generateProductionOrders():
     for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
         planet = universe.getPlanet(pid)
         if planet:
-            print "%30s: %s" % (planet.name, [universe.getObject(bldg).name for bldg in planet.buildingIDs])
+            print "%30s: %s" % (planet.name, [universe.getBuilding(bldg).name for bldg in planet.buildingIDs])
     print
 
     if not homeworld:
