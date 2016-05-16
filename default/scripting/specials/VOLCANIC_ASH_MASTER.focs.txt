@@ -11,6 +11,6 @@ Special
 
         [[REMOVE_CLOUD_COVER]]
     ]
-    graphic = "icons/specials_huge/volcanic_ash.png"
+    graphic = "icons/monsters/volcanic_ash.png"
 
 #include "remove_stealth.macros"

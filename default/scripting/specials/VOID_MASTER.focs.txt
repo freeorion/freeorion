@@ -13,6 +13,6 @@ Special
         [[REMOVE_ASH]]
         [[REMOVE_DIM]]
     ]
-    graphic = "icons/specials_huge/void.png"
+    graphic = "icons/monsters/void.png"
 
 #include "remove_stealth.macros"

@@ -15,6 +15,6 @@ Special
         [[REMOVE_CLOUD_COVER]]
         [[REMOVE_ASH]]
     ]
-    graphic = "icons/specials_huge/dim_rift.png"
+    graphic = "icons/monsters/dim_rift.png"
 
 #include "remove_stealth.macros"
