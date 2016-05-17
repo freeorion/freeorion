@@ -3,6 +3,7 @@ import random
 
 import freeorion as fo
 
+from galaxy import get_systems_within_jumps
 from starsystems import star_types_real, pick_star_type
 from planets import planet_sizes_real, planet_types_real, calc_planet_size, calc_planet_type
 from names import get_name_list, random_name
@@ -236,27 +237,6 @@ def add_planets_to_vicinity(vicinity, num_planets, gsd):
 
         # continue with next planet
         num_planets -= 1
-
-
-def get_systems_within_jumps(origin_system, jumps):
-    """
-    Returns all systems within jumps jumps of system origin_system (including origin_system).
-    If jumps is 0, return list that only contains system origin_system.
-    If jumps is negative, return empty list.
-    """
-    if jumps < 0:
-        return []
-    matching_systems = [origin_system]
-    next_origin_systems = [origin_system]
-    while jumps > 0:
-        origin_systems = list(next_origin_systems)
-        next_origin_systems = []
-        for system in origin_systems:
-            neighbor_systems = [s for s in fo.sys_get_starlanes(system) if s not in matching_systems]
-            next_origin_systems.extend(neighbor_systems)
-            matching_systems.extend(neighbor_systems)
-        jumps -= 1
-    return matching_systems
 
 
 def compile_home_system_list(num_home_systems, systems, gsd):
