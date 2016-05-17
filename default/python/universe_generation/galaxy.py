@@ -15,7 +15,7 @@ class AdjacencyGrid(object):
         self.max_dist = universe_tables.MAX_STARLANE_LENGTH
         self.cell_size = min(max(universe_width / 50, self.min_dist), self.max_dist/sqrt(2))
         self.width = int(universe_width / self.cell_size) + 1
-        self.grid = defaultdict(list)
+        self.grid = defaultdict(set)
         print "Adjacency Grid: width {}, cell size {}".format(self.width, self.cell_size)
 
     def cell(self, pos):
@@ -24,11 +24,11 @@ class AdjacencyGrid(object):
 
     def insert_pos(self, pos):
         """Inserts pos"""
-        self.grid[self.cell(pos)].append(pos)
+        self.grid[self.cell(pos)].add(pos)
 
     def remove_pos(self, pos):
         """Removes pos"""
-        self.grid[self.cell(pos)].remove(pos)
+        self.grid[self.cell(pos)].discard(pos)
 
     def _square_indices_containing_cell(self, (cell_x, cell_y), radius):
         """Return a square of indices containing cell"""
