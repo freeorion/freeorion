@@ -19,15 +19,19 @@ class AdjacencyGrid(object):
         print "Adjacency Grid: width {}, cell size {}".format(self.width, self.cell_size)
 
     def cell(self, pos):
+        """Returns cell index"""
         return (int(pos[0] / self.cell_size), int(pos[1] / self.cell_size))
 
     def insert_pos(self, pos):
+        """Inserts pos"""
         self.grid[self.cell(pos)].append(pos)
 
     def remove_pos(self, pos):
+        """Removes pos"""
         self.grid[self.cell(pos)].remove(pos)
 
     def _square_indices_containing_cell(self, (cell_x, cell_y), radius):
+        """Return a square of indices containing cell"""
         upper_left_x = max(0, cell_x - radius)
         upper_left_y = max(0, cell_y - radius)
         lower_right_x = min(self.width - 1, cell_x + radius)
@@ -36,6 +40,7 @@ class AdjacencyGrid(object):
                 for y in range(upper_left_y, lower_right_y + 1)]
 
     def _generate_rings_around_point(self, pos, max_radius=None):
+        """Yields successive rings of indices containing cell"""
         cell = self.cell(pos)
         i_radius = 0
         i_radius_max = ceil(max_radius / self.cell_size) if max_radius else (self.width + 1)
@@ -49,7 +54,7 @@ class AdjacencyGrid(object):
             i_radius += 1
 
     def neighbors(self, p):
-        '''Return all neighbors within max_dist'''
+        """Return all neighbors within max_dist"""
         _neighbors = []
         i_radius_close_enough = floor(self.max_dist / self.cell_size)
         for i, ring in enumerate(self._generate_rings_around_point(p, self.max_dist)):
@@ -61,7 +66,7 @@ class AdjacencyGrid(object):
         return _neighbors
 
     def nearest_neighbor(self, p):
-        ''' Return nearest neighbor at any distance'''
+        """ Return nearest neighbor at any distance"""
         for ring in self._generate_rings_around_point(p):
             candidates = [pos for cell in ring for pos in self.grid[cell]]
             if candidates:
@@ -99,10 +104,12 @@ class DSet(object):
         self.rank = 0
 
     def bind_parent(self, parent):
+        """Bind to parent."""
         assert self is not parent
         self.parent = parent
 
     def inc_rank(self):
+        """Increment rank."""
         self.rank += 1
 
 
@@ -124,11 +131,12 @@ class DisjointSets(object):
         self.dsets = {}
 
     def add(self, pos):
+        """Creates a new single item set containing pos if it isn't already a set. O(1)"""
         if pos not in self.dsets:
             self.dsets[pos] = DSet(pos)
 
     def link(self, p1, p2):
-        ''' Creates a link between the sets containing p1 and p2'''
+        """ Creates a link between the sets containing p1 and p2"""
         root1 = self.root(p1)
         if p1 == p2:
             # print " self link"
@@ -153,10 +161,10 @@ class DisjointSets(object):
                 ds2.inc_rank()
 
     def root(self, pos):
-        '''
+        """
         Returns the key position of the cluster containing pos
         Adds pos if absent
-        '''
+        """
         root = self._has_root(pos)
         if root:
             return root[0]
@@ -164,10 +172,10 @@ class DisjointSets(object):
         return pos
 
     def _has_root(self, pos):
-        '''
+        """
         Check if pos is the root of a cluster otherwise shorten
         the tree while tranversing it and return the root
-        '''
+        """
         # traverse tree and fetch parents for compression
         def parents(p1, children):
             # print "pp p1 ", p1.pos, " children a ", children
@@ -189,7 +197,7 @@ class DisjointSets(object):
         return [root.pos]
 
     def complete_sets(self):
-        ''' returns a list of list of all sets O(n) '''
+        """ returns a list of list of all sets O(n) """
         ret = defaultdict(list)
         for pos in self.dsets.keys():
             ret[self.root(pos)].append(pos)
@@ -219,6 +227,7 @@ class Clusterer(object):
         return len(self.clusters)
 
     def _add(self, pos):
+        """Adds pos."""
         for neighbor in self.adjacency_grid.neighbors(pos):
             # print "Clusterer adding ", pos,  " and ", neighbor
             self.dsets.link(pos, neighbor)
