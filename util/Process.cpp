@@ -206,8 +206,7 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
         break;
     }
 
-    default: // original process side of fork (execution continues after a set-up wait)
-        sleep(1); // wait a second to let the child process set up
+    default:
         break;
     }
 }

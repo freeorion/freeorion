@@ -49,7 +49,9 @@ public:
         name. The first token on the command line must be the name of the executable of the process to be created.  Example: 
         cmd: "/usr/bin/cvs", argv: "cvs update -C project_file.cpp". Of course, each arg should be in its own string within 
         argv, and argv strings containing spaces must be enclosed in quotes.  \throw std::runtime_error Throws 
-        std::runtime_error if the process cannot be successfully created.*/
+        std::runtime_error if the process cannot be successfully created.
+
+        Process returns immediately.*/
     Process(const std::string& cmd, const std::vector<std::string>& argv);
     //@}
 
