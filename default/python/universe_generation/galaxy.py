@@ -19,19 +19,19 @@ class AdjacencyGrid(object):
         print "Adjacency Grid: width {}, cell size {}".format(self.width, self.cell_size)
 
     def cell(self, pos):
-        """Returns cell index"""
+        """Returns cell index."""
         return (int(pos[0] / self.cell_size), int(pos[1] / self.cell_size))
 
     def insert_pos(self, pos):
-        """Inserts pos"""
+        """Inserts pos."""
         self.grid[self.cell(pos)].add(pos)
 
     def remove_pos(self, pos):
-        """Removes pos"""
+        """Removes pos."""
         self.grid[self.cell(pos)].discard(pos)
 
     def _square_indices_containing_cell(self, (cell_x, cell_y), radius):
-        """Return a square of indices containing cell"""
+        """Return a square of indices containing cell."""
         upper_left_x = max(0, cell_x - radius)
         upper_left_y = max(0, cell_y - radius)
         lower_right_x = min(self.width - 1, cell_x + radius)
@@ -40,7 +40,7 @@ class AdjacencyGrid(object):
                 for y in range(upper_left_y, lower_right_y + 1)]
 
     def _generate_rings_around_point(self, pos, max_radius=None):
-        """Yields successive rings of indices containing cell"""
+        """Yields successive rings of indices containing cell."""
         cell = self.cell(pos)
         i_radius = 0
         i_radius_max = ceil(max_radius / self.cell_size) if max_radius else (self.width + 1)
@@ -54,7 +54,7 @@ class AdjacencyGrid(object):
             i_radius += 1
 
     def neighbors(self, p):
-        """Return all neighbors within max_dist"""
+        """Return all neighbors within max_dist."""
         _neighbors = []
         i_radius_close_enough = floor(self.max_dist / self.cell_size)
         for i, ring in enumerate(self._generate_rings_around_point(p, self.max_dist)):
@@ -66,7 +66,7 @@ class AdjacencyGrid(object):
         return _neighbors
 
     def nearest_neighbor(self, p):
-        """ Return nearest neighbor at any distance"""
+        """ Return nearest neighbor at any distance."""
         for ring in self._generate_rings_around_point(p):
             candidates = [pos for cell in ring for pos in self.grid[cell]]
             if candidates:
@@ -197,7 +197,7 @@ class DisjointSets(object):
         return [root.pos]
 
     def complete_sets(self):
-        """ returns a list of list of all sets O(n) """
+        """ returns a list of list of all sets O(n)."""
         ret = defaultdict(list)
         for pos in self.dsets.keys():
             ret[self.root(pos)].append(pos)
@@ -221,6 +221,7 @@ class Clusterer(object):
 
         self.clusters = set()
         for cluster in self.dsets.complete_sets():
+            # Decorate each cluster with its length to speed sorting
             self.clusters.add((len(cluster), frozenset(cluster)))
 
     def __len__(self):
@@ -237,12 +238,13 @@ class Clusterer(object):
         Return None if all of the positions are in one cluster
         or the smallest cluster
         """
+        # Sort (min) and return the undecorated cluster.
         return None if len(self.clusters) < 2 else min(self.clusters)[1]
 
     def stitch_clusters(self, p1, p2, stitches):
         """
-        Join the clusters containing ''p1'' and ''p2''
-        with the positions in ''stitches''
+        Stitch the clusters containing ''p1'' and ''p2''
+        together with the positions in ''stitches''
 
         This assumes that the stitching is correctly formed.
         ''p1'' and ''p2'' are the closest positions between
@@ -259,6 +261,7 @@ class Clusterer(object):
         assert len_dset1 and len_dset2, "p1 and p2 must be points in disjoint sets of positions"
         self.clusters.remove(len_dset1)
         self.clusters.remove(len_dset2)
+        # Decorate the new cluster with its length to speed sorting
         new_set = len_dset1[1].union(len_dset2[1]).union(frozenset(stitches))
         self.clusters.add((len(new_set), new_set))
 
@@ -331,7 +334,7 @@ def enforce_max_distance(positions, adjacency_grid):
         # Add extra positions
         extra_positions = stitching_positions(p1, p2)
         for i_extra, p3 in enumerate(extra_positions):
-            print "Adding {} of {} extra positions at {} to fix max spacing error between {} and {}."\
+            print "Adding {} of {} extra positions at {} to enforce max spacing between {} and {}."\
                 .format(i_extra, len(extra_positions), p3, p1, p2)
             adjacency_grid.insert_pos(p3)
             positions.append(p3)
