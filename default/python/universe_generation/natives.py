@@ -1,25 +1,15 @@
 import random
+import itertools
 
 import freeorion as fo
 
 import planets
 import statistics
 import universe_tables
+from galaxy_topology import get_systems_within_jumps
 
 natives_for_planet_type = {}
 planet_types_for_natives = {}
-
-
-def is_too_close_to_empire_home_systems(system, home_systems):
-    """
-    Checks if a system is too close to the player home systems.
-
-    Player home systems should be at least 2 jumps away.
-    """
-    for home_system in home_systems:
-        if fo.jump_distance(system, home_system) < 2:
-            return True
-    return False
 
 
 def generate_natives(native_freq, systems, empire_home_systems):
@@ -36,11 +26,14 @@ def generate_natives(native_freq, systems, empire_home_systems):
 
     # compile a list of planets where natives can be placed
     # select only planets sufficiently far away from player home systems
-    native_safe_planets = []  # list of planets safe for natives
-    for candidate in systems:
-        if not is_too_close_to_empire_home_systems(candidate, empire_home_systems):
-            # this system is sufficiently far away from all player homeworlds, so add it's planets to our list
-            native_safe_planets += fo.sys_get_planets(candidate)
+    # list of planets safe for natives
+    EMPIRE_TO_NATIVE_MIN_DIST = 2
+    empire_exclusions = set(list(itertools.chain.from_iterable(
+        [get_systems_within_jumps(e, EMPIRE_TO_NATIVE_MIN_DIST)
+         for e in empire_home_systems])))
+    native_safe_planets = set(itertools.chain.from_iterable(
+        [fo.sys_get_planets(s) for s in systems if s not in empire_exclusions]))
+
     print "Number of planets far enough from players for natives to be allowed:", len(native_safe_planets)
     # if there are no "native safe" planets at all, we can stop here
     if not native_safe_planets:
