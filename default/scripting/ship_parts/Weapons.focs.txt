@@ -19,7 +19,7 @@ Part
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser.png"
+    icon = "icons/ship_parts/flak.png"
 
 Part
     name = "SR_WEAPON_2_1"
