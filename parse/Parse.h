@@ -42,6 +42,8 @@ namespace parse {
 
     FO_PARSE_API bool items(std::vector<ItemSpec>& items_);
 
+    FO_PARSE_API bool unlocked_buildings(std::vector<ItemSpec>& unlocked_buildings_);
+
     FO_PARSE_API bool ship_parts(std::map<std::string, PartType*>& parts);
 
     FO_PARSE_API bool ship_hulls(std::map<std::string, HullType*>& hulls);

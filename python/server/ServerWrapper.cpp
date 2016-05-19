@@ -321,6 +321,18 @@ namespace {
         return py_items;
     }
 
+    // Wrapper for preunlocked buildings
+    list LoadUnlockedBuildings() {
+        list py_items;
+        std::vector<ItemSpec> buildings;
+        parse::unlocked_buildings(buildings);
+        for (std::vector<ItemSpec>::const_iterator building = buildings.begin()
+                 ; building != buildings.end(); ++building) {
+            py_items.append(object(*building));
+        }
+        return py_items;
+    }
+
     // Wrappers for ship designs and premade ship designs
     bool ShipDesignCreate(const std::string& name, const std::string& description, const std::string& hull,
                           const list& py_parts,    const std::string& icon,        const std::string& model,
@@ -1264,6 +1276,7 @@ namespace FreeOrionPython {
         def("design_get_monster_list",              ShipDesignGetMonsterList);
 
         def("load_item_spec_list",                  LoadItemSpecList);
+        def("load_unlocked_buildings",              LoadUnlockedBuildings);
         def("load_fleet_plan_list",                 LoadFleetPlanList);
         def("load_monster_fleet_plan_list",         LoadMonsterFleetPlanList);
 

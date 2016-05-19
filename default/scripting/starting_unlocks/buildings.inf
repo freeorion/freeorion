@@ -1,4 +1,4 @@
-"BLD_SHIPYARD_BASE"
-"BLD_SHIPYARD_ORBITAL_DRYDOCK"
-"BLD_CULTURE_ARCHIVES"
-"BLD_IMPERIAL_PALACE"
+Item type = Building name = "BLD_SHIPYARD_BASE"
+Item type = Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+Item type = Building name = "BLD_CULTURE_ARCHIVES"
+Item type = Building name = "BLD_IMPERIAL_PALACE"
