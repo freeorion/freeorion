@@ -3,7 +3,7 @@ import random
 
 import freeorion as fo
 
-from galaxy import get_systems_within_jumps
+from galaxy_topology import get_systems_within_jumps
 from starsystems import star_types_real, pick_star_type
 from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
 from names import get_name_list, random_name
