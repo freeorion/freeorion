@@ -191,15 +191,13 @@ class Reporter(object):
             current_industry_target += future_pp
             current_research_target += future_rp
 
-            industry_pp, industry_rp = info.possible_output[INDUSTRY] if INDUSTRY in planet.possible_output else (future_pp, future_rp)
+            industry_pp, industry_rp = info.possible_output[INDUSTRY] if INDUSTRY in info.possible_output else (future_pp, future_rp)
             all_industry_industry_target += industry_pp
             all_industry_research_target += industry_rp
 
-            research_pp, research_rp = info.possible_output[RESEARCH] if RESEARCH in planet.possible_output else (future_pp, future_rp)
+            research_pp, research_rp = info.possible_output[RESEARCH] if RESEARCH in info.possible_output else (future_pp, future_rp)
             all_research_industry_target += research_pp
             all_research_research_target += research_rp
-
-
 
         print "-----------------------------------"
         print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" \
