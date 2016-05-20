@@ -11,8 +11,6 @@ import PriorityAI
 import ColonisationAI
 import MilitaryAI
 import ShipDesignAI
-import time
-import cProfile, pstats, StringIO
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
                      FocusType, ShipRoleType, ShipDesignTypes)
@@ -39,9 +37,6 @@ _CHAT_DEBUG = False
 
 def find_best_designs_this_turn():
     """Calculate the best designs for each ship class available at this turn."""
-    pr = cProfile.Profile()
-    pr.enable()
-    start = time.clock()
     ShipDesignAI.Cache.update_for_new_turn()
     design_cache.clear()
     design_cache[PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
@@ -54,16 +49,6 @@ def find_best_designs_this_turn():
     design_cache[PriorityType.PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
     design_cache[PriorityType.PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
-    end = time.clock()
-    print "DEBUG INFORMATION: The design evaluations took %f s" % (end - start)
-    print "-----"
-    pr.disable()
-    s = StringIO.StringIO()
-    sort_by = 'cumulative'
-    ps = pstats.Stats(pr, stream=s).sort_stats(sort_by)
-    ps.print_stats()
-    print s.getvalue()
-    print "-----"
     if fo.currentTurn() % 10 == 0:
         ShipDesignAI.Cache.print_best_designs()
 
