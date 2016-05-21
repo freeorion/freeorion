@@ -1,3 +1,46 @@
+"""
+configure_logging redirects print and the logger to use the freeorion server.
+
+Output redirected to the freeorion server prints in the appropriate log:
+freeorion.log freeoriond.log or AI_<N>.log.
+
+logging messages of levels warning and above are decorated with module name, file name, function name and line number.
+
+Usage:
+
+import logging
+import utils.configure_logging
+< Use python logging or print and have it re-directed >
+
+Notes on using the standard python logger:
+The python standard library is composed of two basic parts: loggers and handlers.
+Loggers generate the log and associate a whole bunch of level, timing, file, function and
+other information with the log.  Handlers do somthing like stream to file, console or email.
+
+* The simplest is to use the root logger.
+logging.debug(msg)
+logging.info(msg)
+logging.warn(msg)
+logging.error(msg)
+logging.fatal(msg)
+
+* Loggers can have arbitrary hierarchical names,
+  created globally when you call getLogger() from anywhere.
+logging.getLogger("toplevel.2ndlevel")
+
+* Loggers can be filtered by log level.  For example turn off logging below warning level.
+  This is hierarchical.  The following turns off logging below warning level
+  for name.subname and also name.subname.subsubname.
+logging.getLogger(name.subname).setLevel(logging.WARN)
+
+* Logger formats string using the old format style.
+  It only formats the string if that level of debugging is enabled.
+logging("A formatted %s contained the number nine %d", "string", 9)
+
+
+For more information see https://docs.python.org/2/howto/logging.html
+
+"""
 import sys
 import logging
 import freeorion_logger  # pylint: disable=import-error
