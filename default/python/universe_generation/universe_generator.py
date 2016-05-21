@@ -1,7 +1,6 @@
 import random
 
 from common import configure_logging
-configure_logging.redirect_logging_to_freeorion_logger(__name__)
 
 import freeorion as fo
 

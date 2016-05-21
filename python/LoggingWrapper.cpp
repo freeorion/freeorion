@@ -45,7 +45,8 @@ namespace {
 
     // info logger
     void PythonLoggerCoreInfo(const std::string &s) {
-        InfoLogger() << s;
+        // The extra space aligns info messages with debug messages.
+            InfoLogger() << " " << s;
     }
     void PythonLoggerInfo(const std::string & text) {
         static std::stringstream log_stream("");
