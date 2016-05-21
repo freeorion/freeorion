@@ -43,12 +43,17 @@ class _SingleLevelFilter(logging.Filter):
         return record.levelno == self.level
 
 
+_error_formatter = logging.Formatter('Module %(module)s, File %(filename)s,  Function %(funcName)s():%(lineno)d  - %(message)s')
+
+
 def _create_narrow_handler(level):
     """Create a handler for logger that forwards a single level of log
     to the appropriate stream in the C++ app"""
     h = logging.StreamHandler(_streamlikeLogger(level))
     h.addFilter(_SingleLevelFilter(level))
     h.setLevel(level)
+    if level > logging.INFO:
+        h.setFormatter(_error_formatter)
     return h
 
 
