@@ -47,21 +47,21 @@ import freeorion_logger  # pylint: disable=import-error
 
 
 class _stdoutLikeStream(object):
-    """A stream-like object to redirect stdout to C++ process"""
+    """A stream-like object to redirect stdout to C++ process."""
     @staticmethod
     def write(msg):
         freeorion_logger.debug(msg)
 
 
 class _stderrLikeStream(object):
-    """A stream-like object to redirect stdout to C++ process"""
+    """A stream-like object to redirect stdout to C++ process."""
     @staticmethod
     def write(msg):
         freeorion_logger.error(msg)
 
 
 class _streamlikeLogger(object):
-    """A stream-like object to redirect stdout to C++ process for logger"""
+    """A stream-like object to redirect stdout to C++ process for logger."""
     def __init__(self, level):
         self.logger = {
             logging.DEBUG: freeorion_logger.debug,
@@ -77,7 +77,7 @@ class _streamlikeLogger(object):
 
 
 class _SingleLevelFilter(logging.Filter):
-    """This filter selects for only one log level"""
+    """This filter selects for only one log level."""
     def __init__(self, _level):
         super(_SingleLevelFilter, self).__init__()
         self.level = _level
@@ -91,7 +91,7 @@ _error_formatter = logging.Formatter('Module %(module)s, File %(filename)s,  Fun
 
 def _create_narrow_handler(level):
     """Create a handler for logger that forwards a single level of log
-    to the appropriate stream in the C++ app"""
+    to the appropriate stream in the C++ app."""
     h = logging.StreamHandler(_streamlikeLogger(level))
     h.addFilter(_SingleLevelFilter(level))
     h.setLevel(level)
@@ -101,7 +101,7 @@ def _create_narrow_handler(level):
 
 
 def _redirect_logging_to_freeorion_logger():
-    """Redirect stdout, stderr and the logging.logger to hosting process' freeorion_logger"""
+    """Redirect stdout, stderr and the logging.logger to hosting process' freeorion_logger."""
 
     if not hasattr(_redirect_logging_to_freeorion_logger, "only_redirect_once"):
         sys.stdout = _stdoutLikeStream()
