@@ -77,12 +77,12 @@ def conditional_priority(func_if_true, func_if_false, cond_func):
     :type cond_func:(str) -> bool
     :rtype float
     """
-    def get_priority(tech_name=""):
+    def get_conditial_priority(tech_name=""):
         if cond_func():
             return execute(func_if_true, tech_name=tech_name)
         else:
             return execute(func_if_false, tech_name=tech_name)
-    return get_priority
+    return get_conditial_priority
 
 
 def get_main_ship_designer_list():
@@ -436,7 +436,7 @@ def generate_research_orders():
     print "\nTotal Current Research Points: %.2f\n" % resource_production
     print "Techs researched and available for use:"
     completed_techs = sorted(list(get_completed_techs()))
-    tlist = completed_techs+3*[" "]
+    tlist = completed_techs + [" "] * 3
     tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
     for tline in tlines:
         print "%-25s %-25s %-25s" % tline
@@ -524,7 +524,7 @@ def generate_research_orders():
 
     if missing_prereq_list:
         print 'Prerequirements seeming out of order:'
-        print "  %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio",  "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+        print "  %-25s %8s %8s %8s %8s %-25s %s" % ("Name", "Priority", "Base Prio", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
         for tech_name in missing_prereq_list:
             tech_info = research_reqs[tech_name]
             print "  %-25s %8.4f %8.4f %8.2f %8.2f %-25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
@@ -626,7 +626,7 @@ def generate_classic_research_orders():
     print "\nTotal Current Research Points: %.2f\n" % resource_production
     print "Techs researched and available for use:"
     completed_techs = sorted(list(get_completed_techs()))
-    tlist = completed_techs + 3*[" "]
+    tlist = completed_techs + [" "] * 3
     tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
     for tline in tlines:
         print "%25s %25s %25s" % tline
@@ -883,7 +883,7 @@ def generate_classic_research_orders():
                 if target_index <= num_techs_accelerated:
                     num_techs_accelerated += 1
                 if move_tech not in research_queue_list[:1 + target_index]:
-                    res = fo.issueEnqueueTechOrder(move_tech, target_index)
+                    fo.issueEnqueueTechOrder(move_tech, target_index)
                     msg = "Research: To prioritize %s, have advanced %s to slot %d" % (tech, move_tech, target_index)
                     if report_adjustments:
                         chat_human(msg)

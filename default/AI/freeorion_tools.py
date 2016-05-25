@@ -35,12 +35,13 @@ def get_ai_tag_grade(tag_list, tag_type):
 
 
 def UserString(label, default=None):  # this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
-    '''
+    """
     A translation assistance tool is intended to search for this method to identify translatable strings.
+
     :param label: a UserString key
     :param default: a default value to return if there is a key error
     :return: a translated string for the label
-    '''
+    """
 
     table_string = fo.userString(label)
 
@@ -51,11 +52,12 @@ def UserString(label, default=None):  # this name left with C naming style for c
 
 
 def UserStringList(label):  # this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
-    '''
+    """
     A translation assistance tool is intended to search for this method to identify translatable strings.
+
     :param label: a UserString key
     :return: a python list of translated strings from the UserString list identified by the label
-    '''
+    """
 
     return fo.userStringList(label)
 

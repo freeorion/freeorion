@@ -6,6 +6,7 @@ from universe_object import Planet
 
 __designStats = {}
 
+
 def combine_ratings(rating1, rating2):
     return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
 
@@ -21,7 +22,7 @@ def rating_needed(target, current=0):
     if current >= target or target <= 0:
         return 0
     else:
-        return target + current - 2*(target*current)**0.5
+        return target + current - 2 * (target * current)**0.5
 
 
 def stats_meet_reqs(stats, reqs):
@@ -108,8 +109,7 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
             print "no more systems or fleets to check"
         if take_any:
             return fleet_list
-        elif (stats_meet_reqs(cur_stats, min_stats)
-              and sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships):
+        elif (stats_meet_reqs(cur_stats, min_stats) and sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships):
             return fleet_list
         else:
             return []
@@ -152,8 +152,8 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
         if needs_troops:
             troop_capacity = count_troops_in_fleet(fleet_id)
 
-        use_fleet = ((not needs_species and not has_species) or meets_species_req)\
-                    and ((needs_troops and troop_capacity > 0) or (not needs_troops and not troop_capacity))
+        use_fleet = (((not needs_species and not has_species) or meets_species_req) and
+                     ((needs_troops and troop_capacity > 0) or (not needs_troops and not troop_capacity)))
         if use_fleet:
             fleet_list.append(fleet_id)
             fleet_pool_set.remove(fleet_id)
@@ -172,8 +172,11 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
     # finished loop without meeting reqs
     if extend_search:
         for neighbor_id in [el.key() for el in universe.getSystemNeighborsMap(this_system_id, foAI.foAIstate.empireID)]:
-            if (neighbor_id not in systems_checked and neighbor_id not in systems_to_check
-                and neighbor_id in foAI.foAIstate.exploredSystemIDs):
+            if all((
+                neighbor_id not in systems_checked,
+                neighbor_id not in systems_to_check,
+                neighbor_id in foAI.foAIstate.exploredSystemIDs
+            )):
                 systems_to_check.append(neighbor_id)
     try:
         return get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check,
@@ -264,8 +267,8 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
             transferred_attack += stats['attack']
             transferred_health += stats['structure'] + stats['shields']
         else:
-            print "  *** attempted transfer of ship %4d, formerly of fleet %4d, into fleet %4d with result %d; %s" % (
-                ship_id, fleet_a_id, fleet_b_id, transferred, [" context is %s" % context, ""][context == ""])
+            print "  *** transfer of ship %4d, formerly of fleet %4d, into fleet %4d failed; %s" % (
+                ship_id, fleet_a_id, fleet_b_id, [" context is %s" % context, ""][context == ""])
         success = success and transferred
         if need_rating != 0 and need_rating <= transferred_attack * transferred_health:  # transferred_rating:
             break

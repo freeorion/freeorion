@@ -121,29 +121,33 @@ class OrderMove(AIFleetOrder):
         else:
             sys1 = universe.getSystem(system_id)
             sys1_name = sys1 and sys1.name or "unknown"
-            targ1 = self.target.get_system()
-            targ1_name = (targ1 and targ1.get_object().name) or "unknown"
+            target_system = self.target.get_system()
+            target_system_name = (target_system and target_system.get_object().name) or "unknown"
             # following line was poor because AIstate.militaryFleetIDs only covers fleets without current missions
             # my_other_fleet_rating = sum([foAI.foAIstate.fleetStatus.get(fleet_id, {}).get('rating', 0) for fleet_id in foAI.foAIstate.militaryFleetIDs if ( foAI.foAIstate.fleetStatus.get(fleet_id, {}).get('sysID', -1) == thisSystemID ) ])
             # myOtherFleetsRatings = [foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', {}) for fid in foAI.foAIstate.systemStatus.get(target_id, {}).get('myfleets', [])]
             # my_other_fleet_rating = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0) for fid in foAI.foAIstate.systemStatus.get( target_id, {}).get('myfleets', []) ])
             my_other_fleet_rating = foAI.foAIstate.systemStatus.get(self.target.id, {}).get('myFleetRating', 0)  # TODO: adjust calc for any departing fleets
             is_military = foAI.foAIstate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
-            if ((my_other_fleet_rating > 3 * safety_factor * threat) or
-                        (is_military and my_other_fleet_rating + fleet_rating > safety_factor * threat) or
-                        (is_military and my_other_fleet_rating + fleet_rating > 0.8 * safety_factor * threat and fleet_rating > 0.2 * threat)):
+
+            total_rating = my_other_fleet_rating + fleet_rating
+            if any((
+                (my_other_fleet_rating > 3 * safety_factor * threat),
+                (is_military and total_rating > safety_factor * threat),
+                (is_military and total_rating > 0.8 * safety_factor * threat and fleet_rating > 0.2 * threat)
+            )):
                 if verbose:
                     print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at destination" % (
-                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, targ1_name, threat)
+                        self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
                 return True
             elif threat == p_threat and not self.fleet.get_object().aggressive and not my_other_fleet_rating and not target_sys_status.get('localEnemyFleetIDs', [-1]):
                 if verbose:
                     print ("\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with planet threat %d because nonaggressive" +
-                           " and no other fleets present to trigger combat") % (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, targ1_name, threat)
+                           " and no other fleets present to trigger combat") % (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
                 return True
             else:
                 if verbose:
-                    print "\tHolding fleet %d (rating %d) at system %d (%s) before travelling to system %d (%s) with threat %d" % (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, targ1_name, threat)
+                    print "\tHolding fleet %d (rating %d) at system %d (%s) before travelling to system %d (%s) with threat %d" % (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)
                 needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
                 if self.target.id not in needs_vis:
                     needs_vis.append(self.target.id)
@@ -369,8 +373,12 @@ class OrderInvade(AIFleetOrder):
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
         planet = self.target.get_object()
-        return ship is not None and self.fleet.get_system().id == planet.systemID \
-               and ship.canInvade and not planet.currentMeterValue(fo.meterType.shield)
+        return all((
+            ship is not None,
+            self.fleet.get_system().id == planet.systemID,
+            ship.canInvade,
+            not planet.currentMeterValue(fo.meterType.shield)
+        ))
 
     def issue_order(self):
         if not super(OrderInvade, self).can_issue_order():
@@ -392,9 +400,9 @@ class OrderInvade(AIFleetOrder):
                 shields = planet.currentMeterValue(fo.meterType.shield)
                 owner = planet.owner
                 if not result:
-                    pstealth = planet.currentMeterValue(fo.meterType.stealth)
+                    planet_stealth = planet.currentMeterValue(fo.meterType.stealth)
                     pop = planet.currentMeterValue(fo.meterType.population)
-                    detail_str = " -- planet has %.1f stealth, shields %.1f, %.1f population and is owned by empire %d" % (pstealth, shields, pop, owner)
+                    detail_str = " -- planet has %.1f stealth, shields %.1f, %.1f population and is owned by empire %d" % (planet_stealth, shields, pop, owner)
                 print "Ordered troop ship ID %d to invade %s, got result %d" % (ship_id, planet_name, result), detail_str
                 if not result:
                     if 'needsEmergencyExploration' not in dir(foAI.foAIstate):

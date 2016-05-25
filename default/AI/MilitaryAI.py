@@ -261,7 +261,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             allocation_groups.setdefault('capitol', []).append((capital_sys_id, new_alloc, True, max_alloc))
             if verbose_mil_reporting:
                 report_format = ("\tAt Capital system %s, local threat %.1f, regional threat %.1f, local support %.1f, "
-                                 + "base_needed_rating %.1f, needed_rating %.1f, new allocation %.1f")
+                                 "base_needed_rating %.1f, needed_rating %.1f, new allocation %.1f")
                 print report_format % (universe.getSystem(capital_sys_id), capital_threat,
                                        capital_sys_status['regional_threat'], local_support,
                                        base_needed_rating, needed_rating, new_alloc)
@@ -295,8 +295,10 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
                                                    already_assigned_rating[sys_id]])
             threat_details[sys_id] = (sys_threat, enemy_sup_factor[sys_id] * 0.5 * enemy_rating,
                                       j2_threat, local_defenses)
-            oc_sys_tot_threat.append((sys_id, sys_threat + max(0, enemy_sup_factor[sys_id] * 0.5 * enemy_rating +
-                                                             j2_threat - local_defenses)))
+            oc_sys_tot_threat.append((sys_id, sys_threat + max(0,
+                                                               enemy_sup_factor[sys_id] * 0.5 * enemy_rating +
+                                                               j2_threat - local_defenses
+                                                               )))
 
         oc_sys_alloc = 0
         for sid, thrt in oc_sys_tot_threat:
@@ -801,15 +803,15 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
 
     if doing_main:
         print "---------------------------------"
-    LAST_ROUND = 3
-    LAST_ROUND_NAME = "LastRound"
-    if round <= LAST_ROUND:
+    last_round = 3
+    last_round_name = "LastRound"
+    if round <= last_round:
         # check if any fleets remain unassigned
         all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
         avail_mil_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
         allocations = []
         round += 1
-        thisround = "Extras Remaining Round %d" % round if round < LAST_ROUND else LAST_ROUND_NAME
+        thisround = "Extras Remaining Round %d" % round if round < last_round else last_round_name
         if avail_mil_fleet_ids:
             print "Still have available military fleets: %s" % avail_mil_fleet_ids
             allocations = get_military_fleets(milFleetIDs=avail_mil_fleet_ids, tryReset=False, thisround=thisround)

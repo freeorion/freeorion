@@ -303,7 +303,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
         pop_val = ColonisationAI.evaluate_planet(planet_id, MissionType.INVASION, species_name, empire, detail)
 
     bld_tally = 0
-    for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
+    for bldType in [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]:
         bval = building_values.get(bldType, 50)
         bld_tally += bval
         detail.append("%s: %d" % (bldType, bval))
