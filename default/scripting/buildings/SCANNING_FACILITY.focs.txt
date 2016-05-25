@@ -17,6 +17,6 @@ BuildingType
             ]
             effects = SetDetection value = Value + 75
     ]
-    icon = "icons/building/lighthouse.png"
+    icon = "icons/building/scanning-facility.png"
 
 #include "/scripting/common/enqueue.macros"
