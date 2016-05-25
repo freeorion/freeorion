@@ -1,13 +1,13 @@
 import os
 from ConfigParser import SafeConfigParser
 from collections import OrderedDict as odict
-import platform
 import sys
 
 try:
     import freeOrionAIInterface as fo  # pylint: disable=import-error
 except ImportError:
     sys.stderr.write("Executing outside of FreeOrion.\n")
+    raise 
 
 
 AI_SUB_DIR = 'AI'

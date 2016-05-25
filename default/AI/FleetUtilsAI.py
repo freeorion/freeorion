@@ -87,7 +87,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
 
 
 def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked,
-                           fleet_pool_set, fleet_list, take_any=False, extend_search=True, tried_fleets=None,
+                           fleet_pool_set, fleet_list, take_any=False, extend_search=True,
                            verbose=False, depth=0):
     """
     Implements breadth-first search through systems
@@ -109,7 +109,7 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
             print "no more systems or fleets to check"
         if take_any:
             return fleet_list
-        elif (stats_meet_reqs(cur_stats, min_stats) and sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships):
+        elif stats_meet_reqs(cur_stats, min_stats) and sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships:
             return fleet_list
         else:
             return []

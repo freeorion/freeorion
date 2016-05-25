@@ -90,9 +90,9 @@ class AIFleetMission(object):
             return  # nothing of record to merge with
 
         if not self.target:
-            m_MT0_id = None
+            m_mt0_id = None
         else:
-            m_MT0_id = self.target.id
+            m_mt0_id = self.target.id
 
         # TODO consider establishing an AI strategy & tactics planning document for discussing & planning
         # high level considerations for issues like fleet merger
@@ -130,19 +130,19 @@ class AIFleetMission(object):
                     do_merge = True
                 else:
                     target = fleet_mission.target.id if fleet_mission.target else None
-                    if target == m_MT0_id:
+                    if target == m_mt0_id:
                         print "Military fleet %d has same target as %s fleet %d and will (at least temporarily) be merged into the latter" % (fid, fleet_role, fleet_id)
                         do_merge = True  # TODO: should probably ensure that fleetA has aggression on now
                     elif main_fleet.speed > 0:
                         neighbors = foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', [])
-                        if (target == system_id) and m_MT0_id in neighbors:  # consider 'borrowing' for work in neighbor system  # TODO check condition
+                        if (target == system_id) and m_mt0_id in neighbors:  # consider 'borrowing' for work in neighbor system  # TODO check condition
                             if self.type in (MissionType.MILITARY,
                                              MissionType.SECURE):
                                 # continue
                                 if self.type == MissionType.SECURE:  # actually, currently this is probably the only one of all four that should really be possible in this situation
                                     need_left = 1.5 * sum([sysStat.get('fleetThreat', 0) for sysStat in
                                                            [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in
-                                                                                                          [nid for nid in foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', []) if nid != m_MT0_id]]])
+                                                                                                          [nid for nid in foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', []) if nid != m_mt0_id]]])
                                     fb_rating = foAI.foAIstate.get_rating(fid)
                                     if (need_left < fb_rating.get('overall', 0)) and fb_rating.get('nships', 0) > 1:
                                         do_merge = True
@@ -255,9 +255,7 @@ class AIFleetMission(object):
         best_score = -1
         target_troops = 0
         #
-        fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
-        fleet_supplyable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_supplyable_system_ids)
-        for pid, rating in InvasionAI.assign_invasion_values(open_targets, MissionType.INVASION, fleet_supplyable_planet_ids, empire).items():
+        for pid, rating in InvasionAI.assign_invasion_values(open_targets, empire).items():
             p_score, p_troops = rating
             if p_score > best_score:
                 if p_troops >= troops_in_fleet:
@@ -394,9 +392,9 @@ class AIFleetMission(object):
                         self.clear_target()
                         if foAI.foAIstate.get_fleet_role(fleet_id) in (MissionType.MILITARY,
                                                                        MissionType.SECURE):
-                            allocations = MilitaryAI.get_military_fleets(milFleetIDs=[fleet_id], tryReset=False, thisround="Fleet %d Reassignment" % fleet_id)
+                            allocations = MilitaryAI.get_military_fleets(mil_fleets_ids=[fleet_id], try_reset=False, thisround="Fleet %d Reassignment" % fleet_id)
                             if allocations:
-                                MilitaryAI.assign_military_fleets_to_systems(useFleetIDList=[fleet_id], allocations=allocations)
+                                MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=[fleet_id], allocations=allocations)
                     else:  # no orders
                         print "No Current Orders"
                 else:
@@ -422,9 +420,9 @@ class AIFleetMission(object):
                             new_military_fleets.append(fleet_id)
                     allocations = []
                     if new_military_fleets:
-                        allocations = MilitaryAI.get_military_fleets(milFleetIDs=new_military_fleets, tryReset=False, thisround="Fleet Reassignment %s" % new_military_fleets)
+                        allocations = MilitaryAI.get_military_fleets(mil_fleets_ids=new_military_fleets, try_reset=False, thisround="Fleet Reassignment %s" % new_military_fleets)
                     if allocations:
-                        MilitaryAI.assign_military_fleets_to_systems(useFleetIDList=new_military_fleets, allocations=allocations)
+                        MilitaryAI.assign_military_fleets_to_systems(use_fleet_id_list=new_military_fleets, allocations=allocations)
 
     def generate_fleet_orders(self):
         """generates AIFleetOrders from fleets targets to accomplish"""
@@ -497,7 +495,7 @@ class AIFleetMission(object):
             repair_limit = 0.99
         # if combat fleet, use military repair check
         if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
-            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], False, bool(self.orders),
+            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], on_mission=bool(self.orders),
                                                                    repair_limit=repair_limit)[0]
         # TODO: Allow to split fleet to send only damaged ships to repair
         fleet = universe.getFleet(fleet_id)

@@ -10,7 +10,7 @@ import ProductionAI
 import TechsListsAI
 import MilitaryAI
 from EnumsAI import MissionType, ExplorableSystemType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, ppstring, cache_by_turn
+from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn
 from freeorion_debug import Timer
 
 colonization_timer = Timer('getColonyFleets()')
@@ -1507,7 +1507,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
                                                                   species=this_spec, systems_to_check=[sys_id],
                                                                   systems_checked=[],
                                                                   fleet_pool_set=fleet_pool, fleet_list=found_fleets,
-                                                                  tried_fleets=set(), verbose=False)
+                                                                  verbose=False)
         except:
             continue
         if not this_fleet_list:

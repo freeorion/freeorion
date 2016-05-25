@@ -237,7 +237,7 @@ def generateOrders():  # pylint: disable=invalid-name
                    FleetUtilsAI.generate_fleet_orders_for_fleet_missions,
                    FleetUtilsAI.issue_fleet_orders_for_fleet_missions,
                    ResearchAI.generate_research_orders,
-                   ProductionAI.generateProductionOrders,
+                   ProductionAI.generate_production_orders,
                    ResourcesAI.generate_resources_orders,
                    foAIstate.after_turn_cleanup,
                    ]

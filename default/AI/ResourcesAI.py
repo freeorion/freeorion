@@ -186,7 +186,6 @@ class Reporter(object):
             if info.current_focus != info.future_focus:
                 total_changed += 1
 
-            planet = info.planet
             future_pp, future_rp = info.possible_output[info.future_focus]
             current_industry_target += future_pp
             current_research_target += future_rp

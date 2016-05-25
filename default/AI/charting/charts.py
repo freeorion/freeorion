@@ -72,11 +72,11 @@ def parse_file(file_name, ai=True):
                     parts = info.split(')')
                     data['turnsP'].append((int(parts[0])))
                     data['turnPP'].append((int(parts[0]), float(parts[1].split('/')[-1])))
-                    RPPP = parts[1].split('(')[-1].split('/')
-                    data['PP'].append(float(RPPP[1]))
-                    data['RP'].append(float(RPPP[0]))
-                    data['PP + 2RP'].append(float(RPPP[1]) + 2 * float(RPPP[0]))
-                    data['RP_Ratio'].append(float(RPPP[0]) / (float(RPPP[1]) + 0.001))
+                    rppp = parts[1].split('(')[-1].split('/')
+                    data['PP'].append(float(rppp[1]))
+                    data['RP'].append(float(rppp[0]))
+                    data['PP + 2RP'].append(float(rppp[1]) + 2 * float(rppp[0]))
+                    data['RP_Ratio'].append(float(rppp[0]) / (float(rppp[1]) + 0.001))
                 if "Empire Ship Count:" in line:
                     data['ShipCount'].append(int(line.split("Empire Ship Count:")[1]))
         return data, details

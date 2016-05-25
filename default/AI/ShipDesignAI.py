@@ -1980,7 +1980,7 @@ def _update_design_by_name_cache(design_name, verbose=False):
     return design
 
 
-def _get_design_by_name(design_name, verbose=False, update_invalid=False):
+def _get_design_by_name(design_name, update_invalid=False):
     """Return the shipDesign object of the design with the name design_name.
 
     Results are cached for performance improvements. The cache is to be
