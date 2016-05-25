@@ -1,0 +1,12 @@
+To run tests from freeorion/default/python you first need to set the
+python path to include AI.  For example:
+
+linux:
+PYTHONPATH=../AI bash -c 'py.test'
+
+OSX:
+PYTHONPATH=../AI bash -c 'py.test'
+
+windows:
+
+
