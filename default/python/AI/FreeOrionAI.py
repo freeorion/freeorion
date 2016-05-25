@@ -44,8 +44,6 @@ except ImportError:
     pass
 
 
-ai_config = fo.getAIConfigStr()
-print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
 user_dir = fo.getUserDataDir()
 print "Path to folder for user specific data: %s" % user_dir
 print 'Python paths', sys.path
