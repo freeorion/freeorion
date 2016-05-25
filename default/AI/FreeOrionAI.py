@@ -33,7 +33,7 @@ try:
     import statprof
     # statprof.start()
     # using_statprof = True
-except:
+except ImportError:
     pass
 
 
