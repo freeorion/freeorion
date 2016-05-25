@@ -9582,11 +9582,11 @@ BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but not on an asteroid belt.
+'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but cannot be used unless the planet is colonised.
 
-Due to a lack of UI targeting, a second building is currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
+Due to a lack of UI targeting, either a [[buildingtype BLD_PLANET_BEACON]] or a ship equipped with a [[shippart SP_PLANET_BEACON]] currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
-To use this building, set the planet to Planet Drive focus, and construct a [[buildingtype BLD_PLANET_BEACON]] in an adjacent system. The planet will then be moved to that system.'''
+To use this building, either construct a [[buildingtype BLD_PLANET_BEACON]] in the adjacent destination system or move your ship with a [[shippart SP_PLANET_BEACON]] there, then set the planet to Planet Drive focus. The planet will then be moved to that system. Note the needs to have been in system for a turn, the drive will not work on the turn the building is completed or on the turn the ship arrives. Also note, a [[buildingtype BLD_TRANSFORMER]] can be used to replicate the effects of this building.'''
 
 BLD_PLANET_BEACON
 Planetary Beacon
@@ -10366,6 +10366,12 @@ GT_TROOP_POD_2_DESC
 
   * The troops can only be used for one invasion.
   * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+
+SP_PLANET_BEACON
+Mobile Planetary Beacon
+
+SP_PLANET_BEACON_DESC
+Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. The ship must remain in place for a turn for the drive to work, and the planet must be moving from a directly linked system.
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator

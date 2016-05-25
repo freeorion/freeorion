@@ -59,15 +59,30 @@ ADVANCED_FOCUS_EFFECTS
             activation = And [
                 Planet
                 Focus type = "FOCUS_PLANET_DRIVE"
+                Or [
                 WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+                WithinStarlaneJumps jumps = 1 condition = Contains And [
+                    Ship 
+                    OwnedBy empire = Source.Owner
+                    DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                    Turn low = LocalCandidate.ArrivedOnTurn + 1
+                    ]
+                ]
             ]
             effects = [
                 MoveTo destination = And [
                     OwnedBy empire = Source.Owner
                     WithinStarlaneJumps jumps = 1 condition = Source
-                    Contains And [
-                        Building name = "BLD_PLANET_BEACON"
-                        OwnedBy empire = Source.Owner
+                    Contains Or [
+                        And [
+                            Building name = "BLD_PLANET_BEACON"
+                            OwnedBy empire = Source.Owner
+                        ]
+                        And [
+                            Ship 
+                            OwnedBy empire = Source.Owner
+                            DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                        ]
                     ]
                 ]
                 GenerateSitRepMessage

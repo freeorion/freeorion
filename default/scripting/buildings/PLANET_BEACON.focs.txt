@@ -11,7 +11,10 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_DRIVE"
+            activation = WithinStarlaneJumps jumps = 0 condition = And [
+                Planet
+                Focus type = "FOCUS_PLANET_DRIVE"
+                ]
             effects = Destroy
     icon = "icons/building/beacon.png"
 
