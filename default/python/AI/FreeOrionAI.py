@@ -9,7 +9,7 @@ from common import configure_logging
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 from common.option_tools import parse_config
-parse_config(fo.getAIConfigStr(), fo.getUserConfigDir())
+parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
 from freeorion_tools import patch_interface
 patch_interface()
@@ -275,4 +275,4 @@ def declare_war_on_all():  # pylint: disable=invalid-name
             fo.sendDiplomaticMessage(msg)
 
 
-init_handlers(fo.getAIConfigStr(), fo.getAIDir())
+init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())

@@ -144,8 +144,6 @@ namespace AIInterface {
     int CurrentTurn()
     { return AIClientApp::GetApp()->CurrentTurn(); }
 
-    std::string GetAIConfigStr()
-    { return GetOptionsDB().Get<std::string>("ai-config"); }
     object GetOptionsDBOptionStr(std::string const &option)
     { return GetOptionsDB().OptionExists(option) ? str(GetOptionsDB().Get<std::string>(option)) : str(); }
 

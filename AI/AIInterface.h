@@ -223,15 +223,11 @@ namespace AIInterface {
      */
     int CurrentTurn();
 
-    /** @brief Return the value of the ::OptionsDB `ai-config` key
     /** @brief Return the OptionsDB option @a option
      *
-     * @return An UTF-8 encoded and NUL terminated string containing the path
-     *      to an optional ai configuration file or an empty string if not set.
      * @return Return the OptionsDB option @a option or None if not set.
      * @ throw boost::bad_any_cast if option exists but is not a string
      */
-    std::string GetAIConfigStr();
     boost::python::object GetOptionsDBOptionStr(std::string const &option);
 
     /** @brief Return the OptionsDB option @a option
