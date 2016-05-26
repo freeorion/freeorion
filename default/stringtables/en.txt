@@ -4071,6 +4071,20 @@ TROOP_TEXT
 
 The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.  Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[encyclopedia SHIELDS_TITLE]].'''
 
+ENVIRONMENT_TITLE
+Environment
+
+ENVIRONMENT_TEXT
+'''Different environments can be encountered when exploring the planetary systems on the galactic map: [[PT_INFERNO]], [[PT_RADIATED]], [[PT_TOXIC]], [[PT_BARREN]], [[PT_DESERT]], [[PT_TUNDRA]], [[PT_SWAMP]], [[PT_TERRAN]], [[PT_OCEAN]], [[PT_ASTEROIDS]], and [[PT_GASGIANT]].
+
+Each [[encyclopedia ENC_SPECIES]] has its own environmental preferences, which determine on each planet type the suitability for the species, according to the following list (from worst to best):
+
+[[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
+
+The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the max population bonus value if the species colonizes the planet, whereas a red number indicates that the population will stay idle or will decrease, to finally perish if the species attempts to colonize the planet.
+
+When terraforming a planet (by research or if the planet has the [[encyclopedia GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the Good suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed in the Planet Suitability report.'''
+
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
 ORGANIC_SPECIES_TEXT
