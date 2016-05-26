@@ -32,3 +32,20 @@ class CharacterTable(object):
         return elem
 
 
+_aggression_label_suffix = {fo.aggression.beginner: "_BEGINNER",
+                            fo.aggression.turtle: "_TURTLE",
+                            fo.aggression.cautious: "_CAUTIOUS",
+                            fo.aggression.typical: "_TYPICAL",
+                            fo.aggression.aggressive: "_AGGRESSIVE",
+                            fo.aggression.maniacal: "_MANIACAL"}
+
+
+def make_aggression_table(prefix, post_process_func=None):
+    """Make an aggression CharacterTable"""
+    table = {key: "%s%s" % (prefix, suffix) for (key, suffix) in _aggression_label_suffix.items()}
+    table[None] = "UNKNOWN_VALUE_SYMBOL"
+    return CharacterTable(Behavior.Character.Aggression, table, post_process_func)
+
+aggression_name = make_aggression_table("GSETUP", fo.userString)
+aggression_capitals = make_aggression_table("AI_CAPITOL_NAMES", fo.userStringList)
+aggression_greetings = make_aggression_table("AI_FIRST_TURN_GREETING_LIST", fo.userStringList)

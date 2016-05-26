@@ -22,7 +22,6 @@ prioritiees_timer = Timer('calculate_priorities()')
 allottedInvasionTargets = 0
 allottedColonyTargets = 0
 allotted_outpost_targets = 0
-colony_growth_barrier = 2
 scoutsNeeded = 0
 unmetThreat = 0
 
@@ -124,11 +123,10 @@ def _calculate_research_priority():
 
     total_pp = empire.productionPoints
     total_rp = empire.resourceProduction(fo.resourceType.research)
-    industry_surge = ((foAI.foAIstate.aggression > fo.aggression.cautious) and
-                     ((total_pp + 1.6 * total_rp) < (50 * foAI.foAIstate.aggression)) and
-                     (((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and state.have_gas_giant) or
-                      ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and state.have_asteroids)) and
-                     (not (len(AIstate.popCtrIDs) >= 12)))
+    industry_surge = (foAI.foAIstate.character.may_surge_industry(total_pp, total_rp) and
+                      (((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and state.have_gas_giant) or
+                       ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and state.have_asteroids)) and
+                      (not (len(AIstate.popCtrIDs) >= 12)))
     # get current industry production & Target
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, owned_planet_ids)
@@ -137,7 +135,7 @@ def _calculate_research_priority():
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
 
     style_index = empire_id % 2
-    if foAI.foAIstate.aggression >= fo.aggression.maniacal:
+    if foAI.foAIstate.character.may_maximize_research():
         style_index += 1
 
     cutoff_sets = [[25, 45, 70, 110], [30, 45, 70, 150], [25, 40, 80, 160]]
@@ -172,7 +170,7 @@ def _calculate_research_priority():
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
             tech_is_complete(AIDependencies.PROD_AUTO_NAME)):
-        # industry_factor = [ [0.25, 0.2], [0.3, 0.25], [0.3, 0.25] ][styleIndex ]
+        # industry_factor = [ [0.25, 0.2], [0.3, 0.25], [0.3, 0.25] ][style_index ]
         # researchPriority = min(researchPriority, industry_factor[got_solar_gen]*industryPriority)
         research_priority *= 0.9
     if got_quant:
@@ -224,13 +222,12 @@ def _calculate_exploration_priority():
 
 def _calculate_colonisation_priority():
     """Calculates the demand for colony ships by colonisable planets."""
-    global allottedColonyTargets, colony_growth_barrier
+    global allottedColonyTargets
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     total_pp = fo.getEmpire().productionPoints
     num_colonies = len(list(AIstate.popCtrIDs))
-    # significant growth barrier for low aggression, negligible for high aggression
-    colony_growth_barrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0
+    colony_growth_barrier = foAI.foAIstate.character.max_number_colonies()
     colony_cost = AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
     turns_to_build = 8  # TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
@@ -282,7 +279,7 @@ def _calculate_outpost_priority():
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     total_pp = fo.getEmpire().productionPoints
     num_colonies = len(list(AIstate.popCtrIDs))
-    # significant growth barrier for low aggression, negligible for high aggression
+    colony_growth_barrier = foAI.foAIstate.character.max_number_colonies()
     if num_colonies > colony_growth_barrier:
         return 0.0
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
@@ -324,13 +321,14 @@ def _calculate_invasion_priority():
     """Calculates the demand for troop ships by opponent planets."""
     
     global allottedInvasionTargets
-    if foAI.foAIstate.aggression <= fo.aggression.turtle:
+    if not foAI.foAIstate.character.may_invade():
         return 0
     
     empire = fo.getEmpire()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
     multiplier = 1
     num_colonies = len(list(AIstate.popCtrIDs))
+    colony_growth_barrier = foAI.foAIstate.character.max_number_colonies()
     if num_colonies > colony_growth_barrier:
         return 0.0
     
@@ -338,9 +336,6 @@ def _calculate_invasion_priority():
         best_colony_score = max(2, foAI.foAIstate.colonisablePlanetIDs.items()[0][1][0])
     else:
         best_colony_score = 2
-
-    if foAI.foAIstate.aggression == fo.aggression.beginner and fo.currentTurn() < 150:
-        return 0
 
     allottedInvasionTargets = 1 + int(fo.currentTurn() / 25)
     total_val = 0
@@ -391,10 +386,8 @@ def _calculate_invasion_priority():
         
     if invasion_priority < 0:
         return 0
-    if foAI.foAIstate.aggression == fo.aggression.beginner:
-        return 0.5 * invasion_priority
-    else:
-        return invasion_priority
+
+    return invasion_priority * foAI.foAIstate.character.invasion_priority_scaling()
 
 
 def _calculate_military_priority():
@@ -464,8 +457,7 @@ def _calculate_military_priority():
     print fmt_string % (military_priority, ships_needed, defense_ships_needed, cur_ship_rating, have_l1_weaps, enemies_sighted)
     print "Source of milship demand: ", ships_needed_allocation
     
-    if foAI.foAIstate.aggression < fo.aggression.typical:
-        military_priority *= (1.0 + foAI.foAIstate.aggression) / (1.0 + fo.aggression.typical)
+    military_priority *= foAI.foAIstate.character.military_priority_scaling()
     return max(military_priority, 0)
 
 

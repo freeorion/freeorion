@@ -226,6 +226,130 @@ class Behavior(object):
         return True
 
 
+class Aggression(Behavior):
+    """A behavior that models level of difficulty and aggression."""
+    # TODO copy all aggression decisions into this class
+    # TODO break this class into two behaviors: level of difficulty and aggression
+
+    def __init__(self, aggression):
+        self.aggression = aggression
+
+    @property
+    def key(self):
+        return self.aggression
+
+    def may_explore_system(self, monster_threat):
+        return monster_threat < 2000 * self.aggression
+
+    def may_surge_industry(self, total_pp, total_rp):
+        return ((self.aggression > fo.aggression.cautious) and
+                ((total_pp + 1.6 * total_rp) < (50 * self.aggression)))
+
+    def may_maximize_research(self):
+        return self.aggression >= fo.aggression.maniacal
+
+    def max_number_colonies(self):
+        # significant growth barrier for low aggression, negligible for high aggression
+        return 2 + ((0.5+self.aggression)**2)*fo.currentTurn()/50.0
+
+    def may_invade(self):
+        return (self.aggression > fo.aggression.turtle
+                and not (self.aggression == fo.aggression.beginner and fo.currentTurn() < 150))
+
+    def may_invade_with_bases(self):
+        return self.aggression > fo.aggression.typical
+
+    def invasion_priority_scaling(self):
+        return 0.5 if self.aggression == fo.aggression.beginner else 1.0
+
+    def military_priority_scaling(self):
+        return 1.0 if self.aggression > fo.aggression.typical else ((1.0 + self.aggression) / (1.0 + fo.aggression.typical))
+
+    def max_defense_portion(self):
+        return [0.7, 0.4, 0.3, 0.2, 0.1, 0.0][self.aggression]
+
+    def check_orbital_production(self):
+        aggression_index = max(1, self.aggression)
+        return ((fo.currentTurn() % aggression_index) == 0) and self.aggression < fo.aggression.maniacal
+
+    def target_number_of_orbitals(self):
+        aggression_index = max(1, self.aggression)
+        return min(int(((fo.currentTurn() + 4) / (8.0 * aggression_index**1.5))**0.8), fo.aggression.maniacal - aggression_index)
+
+    building_table_static = {"BLD_SHIPYARD_AST": fo.aggression.beginner,
+                             "BLD_GAS_GIANT_GEN": fo.aggression.beginner,
+                             "BLD_SOL_ORB_GEN": fo.aggression.turtle,
+                             "BLD_ART_BLACK_HOLE": fo.aggression.typical,
+                             "BLD_BLACK_HOLE_POW_GEN": fo.aggression.cautious,
+                             "BLD_CONC_CAMP": fo.aggression.typical,
+                             "BLD_SHIPYARD_CON_NANOROBO": fo.aggression.aggressive,
+                             "BLD_SHIPYARD_CON_GEOINT": fo.aggression.aggressive,
+                             # TODO determine which duplicate of BLD_SHIPYARD_AST is correct
+                             # "BLD_SHIPYARD_AST": fo.aggression.typical,
+                             "BLD_SHIPYARD_AST_REF": fo.aggression.maniacal,
+                             "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": fo.aggression.aggressive,
+                             "BLD_SHIPYARD_ORG_XENO_FAC": fo.aggression.aggressive,
+                             "BLD_SHIPYARD_ENRG_COMP": fo.aggression.aggressive,
+                             "BLD_SHIPYARD_ENRG_SOLAR": fo.aggression.maniacal,
+                             "BLD_NEUTRONIUM_FORGE": fo.aggression.cautious}
+
+    @property
+    def building_table(self):
+        return type(self).building_table_static
+
+    def may_build_building(self, building):
+        return self.aggression > self.building_table.get(building, fo.aggression.beginner)
+
+    def may_produce_troops(self):
+        # TODO check if this is consitent with may invade
+        return self.aggression >= fo.aggression.typical
+
+    def military_safety_factor(self):
+        return [4.0, 3.0, 2.0, 1.5, 1.2, 1.0][self.aggression]
+
+    def may_dither_focus_to_gain_research(self):
+        return self.aggression < fo.aggression.aggressive
+
+    def may_research_heavily(self):
+        return self.aggression > fo.aggression.cautious
+
+    def may_research_xeno_genetics_variances(self):
+        return self.aggression >= fo.aggression.cautious
+
+    def prefer_research_defensive(self):
+        return self.aggression <= fo.aggression.cautious
+
+    def prefer_research_low_aggression(self):
+        return self.aggression < fo.aggression.typical
+
+    tech_lower_threshold_static = {"LRN_TRANSCEND": fo.aggression.aggressive}
+
+    def may_research_tech(self, tech):
+        return type(self).tech_lower_threshold_static.get(tech, fo.aggression.beginner) <= self.aggression
+
+    tech_upper_threshold_classic_static = {"DEF_DEFENSE_NET_1": fo.aggression.cautious,
+                                           "DEF_GARRISON_1": fo.aggression.cautious,
+                                           "GRO_XENO_GENETICS": fo.aggression.cautious,
+                                           "GRO_GENETIC_ENG": fo.aggression.cautious}
+
+    tech_lower_threshold_classic_static = {"SHP_DEFLECTOR_SHIELD": fo.aggression.aggressive,
+                                           "CON_ARCH_PSYCH": fo.aggression.aggressive,
+                                           "CON_CONC_CAMP": fo.aggression.aggressive,
+                                           "LRN_XENOARCH": fo.aggression.typical,
+                                           "LRN_PHYS_BRAIN": fo.aggression.typical,
+                                           "LRN_TRANSLING_THT": fo.aggression.typical,
+                                           "LRN_PSIONICS": fo.aggression.typical,
+                                           "LRN_DISTRIB_THOUGHT": fo.aggression.typical,
+                                           "LRN_QUANT_NET": fo.aggression.typical,
+                                           "PRO_SINGULAR_GEN": fo.aggression.typical,
+                                           "LRN_TRANSCEND": fo.aggression.typical}
+
+    def may_research_tech_classic(self, tech):
+        return (type(self).tech_lower_threshold_classic_static.get(tech, fo.aggression.beginner)
+                <= self.aggression <=
+                type(self).tech_upper_threshold_classic_static.get(tech, fo.aggression.maniacal))
+
+
 class Character(Behavior):
     """
     A collection of behaviours.
@@ -303,3 +427,8 @@ for funcname in ["preferred_research_cutoff", "preferred_colonization_portion",
     setattr(Character, funcname, _make_most_preferred_combiner(funcname))
 
 
+def create_character(aggression=fo.aggression.maniacal):
+    """Create a character."""
+    # TODO add the mandatory (Difficulty) and optional/random (everything
+    # else) interface to Character creation.
+    return Character([Aggression(aggression)])

@@ -16,6 +16,7 @@ import PlanetUtilsAI
 from freeorion_tools import dict_from_map
 from universe_object import System
 from AIDependencies import INVALID_ID
+from Behavior.Character import create_character
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -84,6 +85,8 @@ class AIstate(object):
         self.needsEmergencyExploration = []
         self.newlySplitFleets = {}
         self.aggression = int(aggression)
+        self.character = create_character(aggression)
+        self.militaryRating = 0
         self.shipCount = 4
         self.misc = {}
         self.qualifyingColonyBaseTargets = {}
