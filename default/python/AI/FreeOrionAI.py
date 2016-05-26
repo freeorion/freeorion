@@ -30,6 +30,7 @@ import TechsListsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
+from Behavior.Character import Aggression
 from Behavior.CharacterStrings import aggression_name, aggression_capitals
 
 main_timer = Timer('timer', write_log=True)
@@ -59,7 +60,7 @@ diplomatic_corp = None
 
 
 @chat_on_error
-def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name
+def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
@@ -72,8 +73,10 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     # initialize AIstate
     global foAIstate
     print "Initializing foAIstate..."
-    foAIstate = AIstate.AIstate(aggression)
-    print "New game started, AI Aggression level %d (%s)" % (aggression, aggression_name[foAIstate.character])
+    foAIstate = AIstate.AIstate(_aggression)
+    aggression = foAIstate.character.get_behavior(Aggression)
+    print "New game started, AI Aggression level %d (%s)" % (
+        aggression.key, aggression_name[foAIstate.character])
     foAIstate.session_start_cleanup()
     print "Initialization of foAIstate complete!"
     print "Trying to rename our homeworld..."
@@ -90,8 +93,7 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(aggression, DiplomaticCorp.DiplomaticCorp)()
-    TechsListsAI.test_tech_integrity()
+    diplomatic_corp = diplomatic_corp_configs.get(aggression.key, DiplomaticCorp.DiplomaticCorp)()
 
 
 @chat_on_error
