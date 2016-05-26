@@ -57,13 +57,7 @@ HIGH = 42
 
 # TODO research AI no longer use this method, rename and move this method elsewhere
 def get_research_index():
-    empire_id = fo.empireID()
-    research_index = empire_id % 2
-    if foAI.foAIstate.aggression >= fo.aggression.aggressive:  # maniacal
-        research_index = 2 + (empire_id % 3)  # so indices [2,3,4]
-    elif foAI.foAIstate.aggression >= fo.aggression.typical:
-        research_index += 1
-    return research_index
+    return foAI.foAIstate.character.get_research_index()
 
 
 def has_low_aggression():

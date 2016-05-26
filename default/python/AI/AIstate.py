@@ -85,7 +85,7 @@ class AIstate(object):
         self.needsEmergencyExploration = []
         self.newlySplitFleets = {}
         self.aggression = int(aggression)
-        self.character = create_character(aggression)
+        self.character = create_character(aggression, self.empireID)
         self.militaryRating = 0
         self.shipCount = 4
         self.misc = {}

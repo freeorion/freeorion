@@ -134,7 +134,7 @@ def _calculate_research_priority():
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
 
-    style_index = empire_id % 2
+    style_index = foAI.foAIstate.character.preferred_research_cutoff([0, 1])
     if foAI.foAIstate.character.may_maximize_research():
         style_index += 1
 
@@ -232,7 +232,8 @@ def _calculate_colonisation_priority():
     turns_to_build = 8  # TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
     allotted_portion = ([[[0.6, 0.8], [0.3, 0.4]], [[0.8, 0.9], [0.3, 0.4]]][galaxy_is_sparse]
-                       [any(enemies_sighted)][fo.empireID() % 2])
+                       [any(enemies_sighted)])
+    allotted_portion = foAI.foAIstate.character.preferred_colonization_portion(allotted_portion)
     # if ( foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     # > 2 * foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     # allotted_portion *= 1.5
@@ -284,14 +285,14 @@ def _calculate_outpost_priority():
         return 0.0
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
 
-    not_sparse, enemy_unseen = 0, 0
-    is_sparse, enemy_seen = 1, 1
-    allotted_portion = {
-        (not_sparse, enemy_unseen): (0.6, 0.8),
-        (not_sparse, enemy_seen): (0.3, 0.4),
-        (is_sparse, enemy_unseen): (0.8, 0.9),
-        (is_sparse, enemy_seen): (0.3, 0.4),
-    }[(galaxy_is_sparse, any(enemies_sighted))][fo.empireID() % 2]
+    not_sparce, enemy_unseen = 0, 0
+    is_sparce, enemy_seen = 1, 1
+    allotted_portion = {(not_sparce, enemy_unseen): (0.6, 0.8),
+                        (not_sparce, enemy_seen): (0.3, 0.4),
+                        (is_sparce, enemy_unseen): (0.8, 0.9),
+                        (is_sparce, enemy_seen): (0.3, 0.4), }[
+        (galaxy_is_sparse, any(enemies_sighted))]
+    allotted_portion = foAI.foAIstate.character.preferred_outpost_portion(allotted_portion)
     if mil_prio < 100:
         allotted_portion *= 2
     elif mil_prio < 200:

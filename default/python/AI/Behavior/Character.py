@@ -350,6 +350,64 @@ class Aggression(Behavior):
                 type(self).tech_upper_threshold_classic_static.get(tech, fo.aggression.maniacal))
 
 
+class EmpireIDBehavior(Behavior):
+    """A behavior that models empire id influence.
+    Mostly some modulo 2 effects."""
+    # TODO: Stop using modulo empire id as a character component.
+    # Empire id is a game mechanic.  It is not something that a player
+    # can describe, "Look the 'Continuum' is behaving like a 1 modulo 2 character."
+
+    def __init__(self, empire_id, aggression):
+        self.id = empire_id
+        self.aggression = aggression  # TODO remove when old research style get_research_index is removed
+
+    @property
+    def key(self):
+        return self.id % 2
+
+    def preferred_research_cutoff(self, alternatives):
+        print "Incomming ", alternatives
+        if not alternatives:
+            return None
+        print "Out going ", alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+
+    def preferred_colonization_portion(self, alternatives):
+        if not alternatives:
+            return None
+        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+
+    def preferred_outpost_portion(self, alternatives):
+        if not alternatives:
+            return None
+        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+
+    def preferred_building_ratio(self, alternatives):
+        if not alternatives:
+            return None
+        return alternatives[self.id % 3] if len(alternatives) >= 3 else alternatives[self.id % len(alternatives)]
+
+    def preferred_discount_multiplier(self, alternatives):
+        if not alternatives:
+            return None
+        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+
+    def may_travel_beyond_supply(self, distance):
+        return (distance < 2
+                or distance <= 2 and self.aggression >= fo.aggression.typical
+                or self.aggression >= fo.aggression.aggressive)
+
+    # TODO remove this function as soon as old style research is gone
+    # It defeats the orthogonality goal of character components for little gain
+    def get_research_index(self):
+        research_index = self.id % 2
+        if self.aggression >= fo.aggression.aggressive:
+            research_index = 2 + (self.id % 3)  # so indices [2,3,4]
+        elif self.aggression >= fo.aggression.typical:
+            research_index += 1
+        return research_index
+
+
 class Character(Behavior):
     """
     A collection of behaviours.
@@ -427,8 +485,8 @@ for funcname in ["preferred_research_cutoff", "preferred_colonization_portion",
     setattr(Character, funcname, _make_most_preferred_combiner(funcname))
 
 
-def create_character(aggression=fo.aggression.maniacal):
+def create_character(aggression=fo.aggression.maniacal, empire_id=0):
     """Create a character."""
     # TODO add the mandatory (Difficulty) and optional/random (everything
     # else) interface to Character creation.
-    return Character([Aggression(aggression)])
+    return Character([Aggression(aggression), EmpireIDBehavior(empire_id, aggression)])

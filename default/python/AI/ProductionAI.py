@@ -227,7 +227,7 @@ def generate_production_orders():
         fo.updateProductionQueue()
 
     building_expense = 0.0
-    building_ratio = [0.4, 0.35, 0.30][fo.empireID() % 3]
+    building_ratio = foAI.foAIstate.character.preferred_building_ratio([0.4, 0.35, 0.30])
     print "Buildings present on all owned planets:"
     for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
         planet = universe.getPlanet(pid)
