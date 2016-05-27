@@ -11,6 +11,15 @@ BuildingType
         Not Planet type = [Asteroids GasGiant]
         Not Planet type = LocalCandidate.OriginalType
     ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_TERRAFORM"
+        Not Contains Building name = "BLD_GAIA_TRANS"
+        Not HasSpecial name = "GAIA_SPECIAL"
+        Not Enqueued type = Building name = "BLD_TERRAFORM"
+        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [

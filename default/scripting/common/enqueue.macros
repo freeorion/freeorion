@@ -5,3 +5,12 @@ ENQUEUE_BUILD_ONE_PER_PLANET
         OwnedBy empire = Source.Owner
     ]'''
 
+ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION
+'''And [
+        Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
+        Not Enqueued type = Building name = "BLD_ART_PLANET"
+        Not Enqueued type = Building name = "BLD_ART_FACTORY_PLANET"
+        Not Enqueued type = Building name = "BLD_ART_PARADISE_PLANET"
+    ]'''

@@ -16,6 +16,15 @@ BuildingType
             Planet environment = Adequate
         ]
     ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_TERRAFORM_REVERT"
+        Not Contains Building name = "BLD_GAIA_TRANS"
+        Not HasSpecial name = "GAIA_SPECIAL"
+        Not Enqueued type = Building name = "BLD_TERRAFORM_REVERT"
+        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
+    ]
     effectsgroups = [
         EffectsGroup
             scope = And [
