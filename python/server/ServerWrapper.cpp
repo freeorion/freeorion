@@ -944,6 +944,22 @@ namespace {
         return field->ID();
     }
 
+    // Wrappers for Object class member functions
+    list ObjectsGetSystems(list obj_ids) {
+        list py_systems;
+        boost::python::stl_input_iterator<int> end;
+        for (boost::python::stl_input_iterator<int> id(obj_ids);
+             id != end; ++id) {
+            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*id)) {
+                py_systems.append(obj->SystemID());
+            } else {
+                ErrorLogger() << "Passed an invalid universe object id " << *id;
+                py_systems.append(INVALID_OBJECT_ID);
+            }
+        }
+        return py_systems;
+    }
+
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
         std::shared_ptr<System> system = GetSystem(system_id);
@@ -1330,6 +1346,8 @@ namespace FreeOrionPython {
         def("create_monster",                       CreateMonster);
         def("create_field",                         CreateField);
         def("create_field_in_system",               CreateFieldInSystem);
+
+        def("objs_get_systems",                     ObjectsGetSystems);
 
         def("sys_get_star_type",                    SystemGetStarType);
         def("sys_set_star_type",                    SystemSetStarType);
