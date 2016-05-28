@@ -11,6 +11,7 @@ import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
+from print_utils import print_in_columns
 
 AIDependencies = Dep  # TODO: fix remaining references and remove this line
 
@@ -435,12 +436,7 @@ def generate_research_orders():
     resource_production = empire.resourceProduction(fo.resourceType.research)
     print "\nTotal Current Research Points: %.2f\n" % resource_production
     print "Techs researched and available for use:"
-    completed_techs = sorted(list(get_completed_techs()))
-    tlist = completed_techs + [" "] * 3
-    tlines = zip(tlist[0::3], tlist[1::3], tlist[2::3])
-    for tline in tlines:
-        print "%-25s %-25s %-25s" % tline
-    print
+    print_in_columns(sorted(get_completed_techs()))
 
     #
     # report techs currently at head of research queue
@@ -701,14 +697,16 @@ def generate_classic_research_orders():
                 print "    Error: failed attempt to enqueued Tech: " + name
                 print "    Error: exception triggered and caught: ", traceback.format_exc()
 
-        print "\n\nAll techs:"
-        alltechs = fo.techs()  # returns names of all techs
-        for tname in alltechs:
-            print tname
-        print "\n-------------------------------\nAll unqueued techs:"
+        print '\n\nAll techs:'
+        print '=' * 20
+        alltechs = fo.techs()
+        print_in_columns(sorted(fo.techs()), columns=3)
+
+        print '\n\nAll unqueued techs:'
+        print '=' * 20
         # coveredTechs = new_tech+completed_techs
-        for tname in [tn for tn in alltechs if tn not in tech_base]:
-            print tname
+        print_in_columns([tn for tn in alltechs if tn not in tech_base], columns=3)
+        print
 
         if fo.currentTurn() == 1:
             return
