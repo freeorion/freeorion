@@ -11,6 +11,7 @@
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <list>
 #include <map>
@@ -27,6 +28,7 @@ struct UniverseObjectVisitor;
 class XMLElement;
 class ShipDesign;
 class System;
+class Pathfinder;
 namespace Condition {
     struct ConditionBase;
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
@@ -461,32 +463,9 @@ public:
     //@}
 
 private:
-    /// minimal public interface for distance caches
-    template <class T> struct distance_matrix_storage {
-        typedef T value_type;
-        typedef std::vector<T>& row_ref;
-
-        distance_matrix_storage() {};
-        distance_matrix_storage(const distance_matrix_storage<T>& src)
-        { resize(src.m_data.size()); };
-
-        size_t size() 
-        { return m_data.size(); }
-
-        void resize(size_t a_size) {
-            const size_t old_size = size();
-
-            m_data.clear();
-            m_data.resize(a_size);
-            m_row_mutexes.resize(a_size);
-            for (size_t i = old_size; i < a_size; ++i)
-                m_row_mutexes[i] = std::make_shared<boost::shared_mutex>();
-        }
-
-        std::vector< std::vector<T> > m_data;
-        std::vector<std::shared_ptr<boost::shared_mutex>> m_row_mutexes;
-        boost::shared_mutex m_mutex;
-    };
+    /* Pathfinder setup for the viewing empire
+     */
+    boost::shared_ptr<Pathfinder> const m_pathfinder;
 
     /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */
@@ -499,8 +478,6 @@ private:
       * to be consistent on client and server */
     template <class T>
     std::shared_ptr<T> InsertID(T* obj, int id);
-
-    struct GraphImpl;
 
     /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
@@ -548,14 +525,6 @@ private:
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
-
-    mutable distance_matrix_storage<short>  m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-
-    /** A graph in which the systems are vertices and the starlanes are edges.
-     */
-    std::shared_ptr<GraphImpl> m_graph_impl;
-
-    boost::unordered_map<int, size_t>       m_system_id_to_graph_index;
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
