@@ -30,7 +30,6 @@ annexable_system_ids = set()
 annexable_ring1 = set()
 annexable_ring2 = set()
 annexable_ring3 = set()
-annexable_planet_ids = set()
 systems_by_supply_tier = {}
 system_supply = {}
 planet_supply_cache = {}  # includes system supply
@@ -211,7 +210,6 @@ def check_supply():
     annexable_ring1.clear()
     annexable_ring2.clear()
     annexable_ring3.clear()
-    annexable_planet_ids.clear()
     systems_by_supply_tier.clear()
     system_supply.clear()
     supply_distance = get_supply_tech_range()
@@ -245,7 +243,6 @@ def check_supply():
                 annexable_ring3.add(nID)
         annexable_ring3.difference_update(annexable_system_ids)
         annexable_system_ids.update(annexable_ring3)
-    annexable_planet_ids.update(PlanetUtilsAI.get_planets_in__systems_ids(annexable_system_ids))
     print "First Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring1))
     print "Second Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring2))
     print "Third Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring3))
