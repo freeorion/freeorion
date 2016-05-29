@@ -209,15 +209,6 @@ def check_supply():
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
     systems_by_supply_tier.clear()
     system_supply.clear()
-    supply_distance = get_supply_tech_range()
-    # extra potential supply contributions:
-    # 3 for up to Ultimate supply species
-    # 2 for possible tiny planets
-    # 1 for World Tree
-    # TODO: +3 to consider capturing planets with Elevators
-    supply_distance += 6
-    # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
-    # supply_distance += 1
 
     print "Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
@@ -240,6 +231,19 @@ def check_supply():
     annexable_ring2.update(systems_by_supply_tier.get(-2, []))
     annexable_ring3.update(systems_by_supply_tier.get(-3, []))
     # annexableSystemIDs.update(systems_by_supply_tier.get(0, []), annexableRing1, annexableRing2, annexableRing3)
+
+    supply_distance = get_supply_tech_range()
+    # extra potential supply contributions:
+    # 3 for up to Ultimate supply species
+    # 2 for possible tiny planets
+    # 1 for World Tree
+    # TODO: +3 to consider capturing planets with Elevators
+    # TODO consider that this should not be more then maximal value in empire.systemSupplyRanges
+    supply_distance += 6 # should not be more then max value in supplyProjections
+    # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
+    # supply_distance += 1
+
+    # we should not rely on constant here, for sys, supply in supplyProjections need to add systems in supply range
     for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
         annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
     colonization_timer.stop()
