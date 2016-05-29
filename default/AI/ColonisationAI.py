@@ -240,7 +240,7 @@ def check_supply():
     annexable_ring2.update(systems_by_supply_tier.get(-2, []))
     annexable_ring3.update(systems_by_supply_tier.get(-3, []))
     # annexableSystemIDs.update(systems_by_supply_tier.get(0, []), annexableRing1, annexableRing2, annexableRing3)
-    for jumps in range(0, -1 - supply_distance, -1):
+    for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
         annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
     colonization_timer.stop()
     return fleet_suppliable_planet_ids
