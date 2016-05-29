@@ -5,7 +5,7 @@ import freeOrionAIInterface as fo
 from freeorion_debug.ide_tools import inspect
 
 
-def inspect_FreeOrionAIInterface():
+def inspect_ai_interface():
     capital_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
     fleets_int_vector = universe.fleetIDs
@@ -65,4 +65,4 @@ def inspect_FreeOrionAIInterface():
 
 from freeorion_debug.listeners import register_pre_handler
 
-register_pre_handler('generateOrders', inspect_FreeOrionAIInterface)
+register_pre_handler('generateOrders', inspect_ai_interface)

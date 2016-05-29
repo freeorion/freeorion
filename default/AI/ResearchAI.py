@@ -484,11 +484,11 @@ def generate_research_orders():
         base_priorities[tech_name] = priorities[tech_name] = get_priority(tech_name)
 
     # inherited priorities are modestly attenuated by total time
-    TIMESCALE_PERIOD = 30.0
+    timescale_period = 30.0
     for tech_name, priority in base_priorities.iteritems():
         if priority >= 0:
             turns_needed = max(research_reqs[tech_name][REQS_TIME_IDX], math.ceil(float(research_reqs[tech_name][REQS_COST_IDX]) / total_rp))
-            time_attenuation = 2**(-max(0.0, turns_needed - 5) / TIMESCALE_PERIOD)
+            time_attenuation = 2**(-max(0.0, turns_needed - 5) / timescale_period)
             attenuated_priority = priority * time_attenuation
             for prereq in research_reqs.get(tech_name, ([], 0, 0, 0))[REQS_PREREQS_IDX]:
                 if prereq in priorities and attenuated_priority > priorities[prereq]:  # checking like this to keep finished techs out of priorities

@@ -187,7 +187,7 @@ def get_best_ship_ratings(planet_ids):
         return []
 
 
-def generateProductionOrders():
+def generate_production_orders():
     """generate production orders"""
     # first check ship designs
     # next check for buildings etc that could be placed on queue regardless of locally available PP

@@ -1,5 +1,5 @@
 import os
-from inspect import getmembers, getdoc, isroutine
+from inspect import getdoc, isroutine
 from generate_stub import make_stub
 
 
@@ -30,17 +30,17 @@ def get_member_info(member):
     return info
 
 
-def getmembers(object, predicate=None):
+def getmembers(obj, predicate=None):
     """Return all members of an object as (name, value) pairs sorted by name.
     Optionally, only return members that satisfy a given predicate."""
     results = []
-    for key in dir(object):
+    for key in dir(obj):
         try:
-            value = getattr(object, key)
+            value = getattr(obj, key)
         except AttributeError:
             continue
         except Exception as e:
-            print 'Error in "%s.%s": %s' % (object.__class__.__name__, key, e)
+            print 'Error in "%s.%s": %s' % (obj.__class__.__name__, key, e)
             continue
         if not predicate or predicate(value):
             results.append((key, value))
