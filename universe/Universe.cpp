@@ -334,193 +334,25 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
     return m_pathfinder->ShortestPath(system1_id, system2_id, empire_id);
 }
 
+double Universe::ShortestPathDistance(int object1_id, int object2_id) const {
+    return m_pathfinder->ShortestPathDistance(object1_id,  object2_id);
+}
+
 std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/,
                                                         int max_jumps/* = INT_MAX*/) const {
     return m_pathfinder->LeastJumpsPath(system1_id, system2_id, empire_id, max_jumps);
 }
 
-namespace {
-    std::shared_ptr<const Fleet> FleetFromObject(std::shared_ptr<const UniverseObject> obj) {
-        std::shared_ptr<const Fleet> retval = std::dynamic_pointer_cast<const Fleet>(obj);
-        if (!retval) {
-            if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj))
-                retval = GetFleet(ship->FleetID());
-        }
-        return retval;
-    }
-}
-
 int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
-    if (!obj1)
-        return INT_MAX;
-
-    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
-    if (!obj2)
-        return INT_MAX;
-
-    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
-
-    if (system_one && system_two) {
-        // both condition-matching object and candidate are / in systems.
-        // can just find the shortest path between the two systems
-        short jumps = -1;
-        try {
-            jumps = JumpDistanceBetweenSystems(system_one->ID(), system_two->ID());
-        } catch (...) {
-            ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-        }
-        if (jumps != -1)    // if jumps is -1, no path exists between the systems
-            return static_cast<int>(jumps);
-        else
-            return INT_MAX;
-
-    } else if (system_one) {
-        // just object one is / in a system.
-        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj2)) {
-            // other object is a fleet that is between systems
-            // need to check shortest path from systems on either side of starlane fleet is on
-            short jumps1 = -1, jumps2 = -1;
-            try {
-                if (fleet->PreviousSystemID() != -1)
-                    jumps1 = JumpDistanceBetweenSystems(system_one->ID(), fleet->PreviousSystemID());
-                if (fleet->NextSystemID() != -1)
-                    jumps2 = JumpDistanceBetweenSystems(system_one->ID(), fleet->NextSystemID());
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, jumps2));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
-
-    } else if (system_two) {
-        // just object two is a system.
-        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj1)) {
-            // other object is a fleet that is between systems
-            // need to check shortest path from systems on either side of starlane fleet is on
-            short jumps1 = -1, jumps2 = -1;
-            try {
-                if (fleet->PreviousSystemID() != -1)
-                    jumps1 = JumpDistanceBetweenSystems(system_two->ID(), fleet->PreviousSystemID());
-                if (fleet->NextSystemID() != -1)
-                    jumps2 = JumpDistanceBetweenSystems(system_two->ID(), fleet->NextSystemID());
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, jumps2));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
-    } else {
-        // neither object is / in a system
-
-        std::shared_ptr<const Fleet> fleet_one = FleetFromObject(obj1);
-        std::shared_ptr<const Fleet> fleet_two = FleetFromObject(obj2);
-
-        if (fleet_one && fleet_two) {
-            // both objects are / in a fleet.
-            // need to check all combinations of systems on either sides of
-            // starlanes condition-matching object and candidate are on
-            int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
-            int fleet_one_next_system_id = fleet_one->NextSystemID();
-            int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
-            int fleet_two_next_system_id = fleet_two->NextSystemID();
-            short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
-            try {
-                if (fleet_one_prev_system_id != -1 && fleet_two_prev_system_id != -1)
-                    jumps1 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_prev_system_id);
-                if (fleet_one_prev_system_id != -1 && fleet_two_next_system_id != -1)
-                    jumps2 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_next_system_id);
-                if (fleet_one_next_system_id != -1 && fleet_two_prev_system_id != -1)
-                    jumps3 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_prev_system_id);
-                if (fleet_one_next_system_id != -1 && fleet_two_next_system_id != -1)
-                    jumps4 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_next_system_id);
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
-    }
-    return INT_MAX;
-}
-
-double Universe::ShortestPathDistance(int object1_id, int object2_id) const {
-    // If one or both objects are (in) a fleet between systems, use the destination system
-    // and add the distance from the fleet to the destination system, essentially calculating
-    // the distance travelled until both could be in the same system.
-    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
-    if (!obj1)
-        return -1;
-
-    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
-    if (!obj2)
-        return -1;
-
-    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
-    std::pair< std::list< int >, double > path_len_pair;
-    double dist1(0.0), dist2(0.0);
-    std::shared_ptr<const Fleet> fleet;
-
-    if (!system_one) {
-        fleet = FleetFromObject(obj1);
-        if (!fleet)
-            return -1;
-        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
-            system_one = next_sys;
-            dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
-        }
-    }
-
-    if (!system_two) {
-        fleet = FleetFromObject(obj2);
-        if (!fleet)
-            return -1;
-        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
-            system_two = next_sys;
-            dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
-        }
-    }
-
-    try {
-        path_len_pair = ShortestPath(system_one->ID(), system_two->ID());
-    } catch (...) {
-        ErrorLogger() << "ShortestPathDistance caught exception when calling ShortestPath";
-        return -1;
-    }
-    return path_len_pair.second + dist1 + dist2;
+    return m_pathfinder->JumpDistanceBetweenObjects(object1_id, object2_id);
 }
 
 bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
-    //DebugLogger() << "SystemsConnected(" << system1_id << ", " << system2_id << ", " << empire_id << ")";
-    std::pair<std::list<int>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);
-    //DebugLogger() << "SystemsConnected returned path of size: " << path.first.size();
-    bool retval = !path.first.empty();
-    //DebugLogger() << "SystemsConnected retval: " << retval;
-    return retval;
+    return m_pathfinder->SystemsConnected(system1_id, system2_id, empire_id);
 }
 
 bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (std::shared_ptr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
-        if (!system->StarlanesWormholes().empty())
-            return true;
-    return false;
+    return m_pathfinder->SystemHasVisibleStarlanes(system_id, empire_id);
 }
 
 std::multimap<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
@@ -528,21 +360,7 @@ std::multimap<double, int> Universe::ImmediateNeighbors(int system_id, int empir
 }
 
 int Universe::NearestSystemTo(double x, double y) const {
-    double min_dist2 = DBL_MAX;
-    int min_dist2_sys_id = INVALID_OBJECT_ID;
-
-    for (std::shared_ptr<const System> system : m_objects.FindObjects<System>()) {
-        double xs = system->X();
-        double ys = system->Y();
-        double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);
-        if (dist2 == 0.0) {
-            return system->ID();
-        } else if (dist2 < min_dist2) {
-            min_dist2 = dist2;
-            min_dist2_sys_id = system->ID();
-        }
-    }
-    return min_dist2_sys_id;
+    return m_pathfinder->NearestSystemTo(x, y);
 }
 
 const int Universe::GetNumCombatRounds() const

@@ -424,9 +424,9 @@ class Pathfinder::PathfinderImpl {
 
     double LinearDistance(int object1_id, int object2_id) const;
     short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
-    //TODO smokeun int                     JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+    int JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
     std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
-    //TODO smokeun double                  ShortestPathDistance(int object1_id, int object2_id) const;
+    double ShortestPathDistance(int object1_id, int object2_id) const;
     std::pair<std::list<int>, int> LeastJumpsPath(
         int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
     bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
@@ -557,6 +557,16 @@ namespace {
     };
 }
 
+namespace {
+    TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
+        TemporaryPtr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
+        if (!retval) {
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
+                retval = GetFleet(ship->FleetID());
+        }
+        return retval;
+    }
+}
 
 double Pathfinder::LinearDistance(int system1_id, int system2_id) const {
     return pimpl->LinearDistance(system1_id, system2_id);
@@ -627,6 +637,123 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
     }
 }
 
+int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
+    return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id);
+}
+
+int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
+    TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    if (!obj1)
+        return INT_MAX;
+
+    TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    if (!obj2)
+        return INT_MAX;
+
+    TemporaryPtr<const System> system_one = GetSystem(obj1->SystemID());
+    TemporaryPtr<const System> system_two = GetSystem(obj2->SystemID());
+
+    if (system_one && system_two) {
+        // both condition-matching object and candidate are / in systems.
+        // can just find the shortest path between the two systems
+        short jumps = -1;
+        try {
+            jumps = JumpDistanceBetweenSystems(system_one->ID(), system_two->ID());
+        } catch (...) {
+            ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+        }
+        if (jumps != -1)    // if jumps is -1, no path exists between the systems
+            return static_cast<int>(jumps);
+        else
+            return INT_MAX;
+
+    } else if (system_one) {
+        // just object one is / in a system.
+        // TODO generalize Object to report multiple systems for things
+        // like fleets in transit
+        if (TemporaryPtr<const Fleet> fleet = FleetFromObject(obj2)) {
+            // other object is a fleet that is between systems
+            // need to check shortest path from systems on either side of starlane fleet is on
+            short jumps1 = -1, jumps2 = -1;
+            try {
+                if (fleet->PreviousSystemID() != -1)
+                    jumps1 = JumpDistanceBetweenSystems(system_one->ID(), fleet->PreviousSystemID());
+                if (fleet->NextSystemID() != -1)
+                    jumps2 = JumpDistanceBetweenSystems(system_one->ID(), fleet->NextSystemID());
+            } catch (...) {
+                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            }
+            int jumps = static_cast<int>(std::max(jumps1, jumps2));
+            if (jumps != -1) {
+                return jumps - 1;
+            } else {
+                // no path
+                return INT_MAX;
+            }
+        }
+
+    } else if (system_two) {
+        // just object two is a system.
+        if (TemporaryPtr<const Fleet> fleet = FleetFromObject(obj1)) {
+            // other object is a fleet that is between systems
+            // need to check shortest path from systems on either side of starlane fleet is on
+            short jumps1 = -1, jumps2 = -1;
+            try {
+                if (fleet->PreviousSystemID() != -1)
+                    jumps1 = JumpDistanceBetweenSystems(system_two->ID(), fleet->PreviousSystemID());
+                if (fleet->NextSystemID() != -1)
+                    jumps2 = JumpDistanceBetweenSystems(system_two->ID(), fleet->NextSystemID());
+            } catch (...) {
+                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            }
+            int jumps = static_cast<int>(std::max(jumps1, jumps2));
+            if (jumps != -1) {
+                return jumps - 1;
+            } else {
+                // no path
+                return INT_MAX;
+            }
+        }
+    } else {
+        // neither object is / in a system
+
+        TemporaryPtr<const Fleet> fleet_one = FleetFromObject(obj1);
+        TemporaryPtr<const Fleet> fleet_two = FleetFromObject(obj2);
+
+        if (fleet_one && fleet_two) {
+            // both objects are / in a fleet.
+            // need to check all combinations of systems on either sides of
+            // starlanes condition-matching object and candidate are on
+            int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
+            int fleet_one_next_system_id = fleet_one->NextSystemID();
+            int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
+            int fleet_two_next_system_id = fleet_two->NextSystemID();
+            short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
+            try {
+                if (fleet_one_prev_system_id != -1 && fleet_two_prev_system_id != -1)
+                    jumps1 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_prev_system_id);
+                if (fleet_one_prev_system_id != -1 && fleet_two_next_system_id != -1)
+                    jumps2 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_next_system_id);
+                if (fleet_one_next_system_id != -1 && fleet_two_prev_system_id != -1)
+                    jumps3 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_prev_system_id);
+                if (fleet_one_next_system_id != -1 && fleet_two_next_system_id != -1)
+                    jumps4 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_next_system_id);
+            } catch (...) {
+                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            }
+            int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
+            if (jumps != -1) {
+                return jumps - 1;
+            } else {
+                // no path
+                return INT_MAX;
+            }
+        }
+    }
+    return INT_MAX;
+}
+
+
 std::pair<std::list<int>, double> Pathfinder::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const {
     return pimpl->ShortestPath(system1_id, system2_id, empire_id);
 }
@@ -661,6 +788,57 @@ std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(int s
                       << system1_id << " & " << system2_id;
         throw;
     }
+}
+
+double Pathfinder::ShortestPathDistance(int object1_id, int object2_id) const {
+    return pimpl->ShortestPathDistance(object1_id, object2_id);
+}
+
+double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int object2_id) const {
+    // If one or both objects are (in) a fleet between systems, use the destination system
+    // and add the distance from the fleet to the destination system, essentially calculating
+    // the distance travelled until both could be in the same system.
+    TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    if (!obj1)
+        return -1;
+
+    TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    if (!obj2)
+        return -1;
+
+    TemporaryPtr<const System> system_one = GetSystem(obj1->SystemID());
+    TemporaryPtr<const System> system_two = GetSystem(obj2->SystemID());
+    std::pair< std::list< int >, double > path_len_pair;
+    double dist1(0.0), dist2(0.0);
+    TemporaryPtr<const Fleet> fleet;
+
+    if (!system_one) {
+        fleet = FleetFromObject(obj1);
+        if (!fleet)
+            return -1;
+        if (TemporaryPtr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+            system_one = next_sys;
+            dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+        }
+    }
+
+    if (!system_two) {
+        fleet = FleetFromObject(obj2);
+        if (!fleet)
+            return -1;
+        if (TemporaryPtr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+            system_two = next_sys;
+            dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+        }
+    }
+
+    try {
+        path_len_pair = ShortestPath(system_one->ID(), system_two->ID());
+    } catch (...) {
+        ErrorLogger() << "ShortestPathDistance caught exception when calling ShortestPath";
+        return -1;
+    }
+    return path_len_pair.second + dist1 + dist2;
 }
 
 std::pair<std::list<int>, int> Pathfinder::LeastJumpsPath(
@@ -700,6 +878,30 @@ std::pair<std::list<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
     }
 }
 
+bool Pathfinder::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
+    return pimpl->SystemsConnected(system1_id, system2_id, empire_id);
+}
+
+bool Pathfinder::PathfinderImpl::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
+    //DebugLogger() << "SystemsConnected(" << system1_id << ", " << system2_id << ", " << empire_id << ")";
+    std::pair<std::list<int>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);
+    //DebugLogger() << "SystemsConnected returned path of size: " << path.first.size();
+    bool retval = !path.first.empty();
+    //DebugLogger() << "SystemsConnected retval: " << retval;
+    return retval;
+}
+
+bool Pathfinder::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
+    return pimpl->SystemHasVisibleStarlanes(system_id, empire_id);
+}
+
+bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
+    if (TemporaryPtr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
+        if (!system->StarlanesWormholes().empty())
+            return true;
+    return false;
+}
+
 std::multimap<double, int> Pathfinder::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
     return pimpl->ImmediateNeighbors(system_id, empire_id);
 }
@@ -714,6 +916,33 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
     }
     return std::multimap<double, int>();
 }
+
+int Pathfinder::NearestSystemTo(double x, double y) const {
+    return pimpl->NearestSystemTo(x, y);
+}
+
+int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
+    double min_dist2 = DBL_MAX;
+    int min_dist2_sys_id = INVALID_OBJECT_ID;
+
+    std::vector<TemporaryPtr<System> > systems = Objects().FindObjects<System>();
+
+    for (std::vector<TemporaryPtr< System> >::const_iterator sys_it = systems.begin();
+         sys_it != systems.end(); ++sys_it)
+    {
+        double xs = (*sys_it)->X();
+        double ys = (*sys_it)->Y();
+        double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);
+        if (dist2 == 0.0) {
+            return (*sys_it)->ID();
+        } else if (dist2 < min_dist2) {
+            min_dist2 = dist2;
+            min_dist2_sys_id = (*sys_it)->ID();
+        }
+    }
+    return min_dist2_sys_id;
+}
+
 
 void Pathfinder::InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id) {
     return pimpl->InitializeSystemGraph(system_ids, for_empire_id);

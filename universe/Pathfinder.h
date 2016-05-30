@@ -42,6 +42,8 @@ class System;
 class FO_COMMON_API Pathfinder {
 public:
 
+    typedef boost::shared_ptr<const Pathfinder> ConstPtr;
+
     /** \name Structors */ //@{
     Pathfinder();                                     ///< default ctor
     virtual ~Pathfinder();                            ///< dtor
@@ -64,7 +66,7 @@ public:
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns INT_MAX when no path exists, or either object does not
       * exist. */
-    //TODO smokeun int                     JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+    int                     JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
 
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to
@@ -82,7 +84,7 @@ public:
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns -1 when no path exists, or either object does not
       * exist. */
-    //TODO smokeun double                  ShortestPathDistance(int object1_id, int object2_id) const;
+    double                  ShortestPathDistance(int object1_id, int object2_id) const;
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
