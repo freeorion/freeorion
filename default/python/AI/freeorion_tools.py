@@ -3,7 +3,6 @@ import re
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import FreeOrionAI as foAI
 from functools import wraps
 from traceback import format_exc
 
@@ -159,6 +158,9 @@ def cache_by_turn(function):
     is keyed by the original function name.  Wraps only functions without arguments.
     Cache result is stored in savegame, will crash with picle error if result contains any boost object.
     """
+    # avoid circular import
+    import FreeOrionAI as foAI
+
     @wraps(function)
     def wrapper():
         if foAI.foAIstate is None:
