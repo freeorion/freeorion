@@ -1,3 +1,4 @@
+#include "../universe/Pathfinder.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Fleet.h"
@@ -100,19 +101,19 @@ namespace {
 
     double                  LinearDistance(const Universe& universe, int system1_id, int system2_id) {
         double retval = 9999999.9;  // arbitrary large value
-        retval = universe.LinearDistance(system1_id, system2_id);
+        retval = universe.GetPathfinder()->LinearDistance(system1_id, system2_id);
         return retval;
     }
     boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
 
     int                     JumpDistanceBetweenSystems(const Universe& universe, int system1_id, int system2_id) {
-        return universe.JumpDistanceBetweenSystems(system1_id, system2_id);
+        return universe.GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id);
     }
     boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistanceBetweenSystems;
 
     std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
-        std::pair<std::list<int>, int> path = universe.ShortestPath(start_sys, end_sys, empire_id);
+        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(start_sys, end_sys, empire_id);
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
@@ -120,7 +121,7 @@ namespace {
 
     std::vector<int>        LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
-        std::pair<std::list<int>, int> path = universe.LeastJumpsPath(start_sys, end_sys, empire_id);
+        std::pair<std::list<int>, int> path = universe.GetPathfinder()->LeastJumpsPath(start_sys, end_sys, empire_id);
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
@@ -128,15 +129,20 @@ namespace {
 
     bool                    SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
         //DebugLogger() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
-        bool retval = universe.SystemsConnected(system1_id, system2_id, empire_id);
+        bool retval = universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id);
         //DebugLogger() << "SystemsConnected! retval: " << retval;
         return retval;
     }
     boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
 
+    bool                    SystemHasVisibleStarlanesP(const Universe& universe, int system_id, int empire_id = ALL_EMPIRES) {
+        return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id);
+    }
+    boost::function<bool(const Universe&, int, int)> SystemHasVisibleStarlanesFunc =            &SystemHasVisibleStarlanesP;
+
     std::vector<int>        ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::vector<int> retval;
-        for (const std::multimap<double, int>::value_type& entry : universe.ImmediateNeighbors(system1_id, empire_id))
+        for (const std::multimap<double, int>::value_type& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval.push_back(entry.second); }
         return retval;
     }
@@ -144,7 +150,7 @@ namespace {
 
     std::map<int,double>    SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::map<int,double> retval;
-        for (const std::multimap<double, int>::value_type& entry : universe.ImmediateNeighbors(system1_id, empire_id))
+        for (const std::multimap<double, int>::value_type& entry : universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id))
         { retval[entry.second] = entry.first; }
         return retval;
     }
@@ -307,7 +313,11 @@ namespace FreeOrionPython {
             .def("destroyedObjectIDs",          make_function(&Universe::EmpireKnownDestroyedObjectIDs,
                                                                                     return_value_policy<return_by_value>()))
 
-            .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
+            .def("systemHasStarlane",           make_function(
+                                                    SystemHasVisibleStarlanesFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<bool, const Universe&, int, int>()
+                                                ))
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
 

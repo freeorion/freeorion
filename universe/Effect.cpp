@@ -10,6 +10,7 @@
 #include "../Empire/Empire.h"
 #include "ValueRef.h"
 #include "Condition.h"
+#include "Pathfinder.h"
 #include "Universe.h"
 #include "UniverseObject.h"
 #include "Building.h"
@@ -128,7 +129,7 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair = GetUniverse().ShortestPath(start_system, dest_system, fleet->Owner());
+        std::pair<std::list<int>, double> route_pair = GetUniverse().GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner());
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
@@ -2664,7 +2665,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
         return;
 
     // find shortest path for fleet's owner
-    std::pair<std::list<int>, double> short_path = universe.ShortestPath(start_system_id, destination_system_id, target_fleet->Owner());
+    std::pair<std::list<int>, double> short_path = universe.GetPathfinder()->ShortestPath(start_system_id, destination_system_id, target_fleet->Owner());
     const std::list<int>& route_list = short_path.first;
 
     // reject empty move paths (no path exists).

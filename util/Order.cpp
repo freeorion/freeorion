@@ -10,6 +10,7 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Pathfinder.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
@@ -277,7 +278,7 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
         return;
     }
 
-    std::pair<std::list<int>, double> short_path = GetUniverse().ShortestPath(m_start_system, m_dest_system, empire);
+    std::pair<std::list<int>, double> short_path = GetUniverse().GetPathfinder()->ShortestPath(m_start_system, m_dest_system, empire);
 
     m_route.clear();
     std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));

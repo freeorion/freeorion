@@ -322,47 +322,6 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
     }
 }
 
-double Universe::LinearDistance(int system1_id, int system2_id) const {
-    return m_pathfinder->LinearDistance(system1_id, system2_id);
-}
-
-short Universe::JumpDistanceBetweenSystems(int system1_id, int system2_id) const {
-    return m_pathfinder->JumpDistanceBetweenSystems(system1_id, system2_id);
-}
-
-std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const {
-    return m_pathfinder->ShortestPath(system1_id, system2_id, empire_id);
-}
-
-double Universe::ShortestPathDistance(int object1_id, int object2_id) const {
-    return m_pathfinder->ShortestPathDistance(object1_id,  object2_id);
-}
-
-std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/,
-                                                        int max_jumps/* = INT_MAX*/) const {
-    return m_pathfinder->LeastJumpsPath(system1_id, system2_id, empire_id, max_jumps);
-}
-
-int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    return m_pathfinder->JumpDistanceBetweenObjects(object1_id, object2_id);
-}
-
-bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
-    return m_pathfinder->SystemsConnected(system1_id, system2_id, empire_id);
-}
-
-bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    return m_pathfinder->SystemHasVisibleStarlanes(system_id, empire_id);
-}
-
-std::multimap<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const {
-    return m_pathfinder->ImmediateNeighbors(system_id, empire_id);
-}
-
-int Universe::NearestSystemTo(double x, double y) const {
-    return m_pathfinder->NearestSystemTo(x, y);
-}
-
 const int Universe::GetNumCombatRounds() const
 { return 3; }
 
@@ -2788,6 +2747,8 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
     m_pathfinder->InitializeSystemGraph(system_ids, for_empire_id);
 }
 
+//TODO Universe::UpdateEmpireVisibilityFilteredSystemGraphs is never
+//used.  Decide if the functionality permanently belongs in Pathfinder
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int empire_id) {
     m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empire_id);
 }

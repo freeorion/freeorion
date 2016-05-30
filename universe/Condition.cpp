@@ -4,6 +4,7 @@
 #include "../util/Random.h"
 #include "../util/i18n.h"
 #include "UniverseObject.h"
+#include "Pathfinder.h"
 #include "Universe.h"
 #include "Building.h"
 #include "Fleet.h"
@@ -6607,7 +6608,7 @@ namespace {
 
             // is candidate object close enough to any subcondition matches?
             for (std::shared_ptr<const UniverseObject> obj : m_from_objects) {
-                int jumps = GetUniverse().JumpDistanceBetweenObjects(obj->ID(), candidate->ID());
+                int jumps = GetUniverse().GetPathfinder()->JumpDistanceBetweenObjects(obj->ID(), candidate->ID());
                 if (jumps != -1 && jumps <= m_jump_limit)
                     return true;
             }

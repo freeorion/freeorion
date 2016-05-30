@@ -11,6 +11,7 @@
 #include "../../universe/Ship.h"
 #include "../../universe/Field.h"
 #include "../../universe/Tech.h"
+#include "../../universe/Pathfinder.h"
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
 #include "../../universe/Enums.h"
@@ -608,10 +609,10 @@ namespace {
     { GetUniverse().SetUniverseWidth(width); }
 
     double LinearDistance(int system1_id, int system2_id)
-    { return GetUniverse().LinearDistance(system1_id, system2_id); }
+    { return GetUniverse().GetPathfinder()->LinearDistance(system1_id, system2_id); }
 
     int JumpDistanceBetweenSystems(int system1_id, int system2_id)
-    { return GetUniverse().JumpDistanceBetweenSystems(system1_id, system2_id); }
+    { return GetUniverse().GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id); }
 
     list GetAllObjects() {
         list py_all_objects;
