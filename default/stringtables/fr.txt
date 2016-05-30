@@ -4071,6 +4071,20 @@ TROOP_TEXT
 
 L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète. Les astronefs doivent être dotés d'équipements spécifiques permettant le transport de l'Infanterie, et les troupes en question ne peuvent envahir une planète tant que cette dernière dispose de [[encyclopedia SHIELDS_TITLE]] actifs.'''
 
+ENVIRONMENT_TITLE
+Environnement
+
+ENVIRONMENT_TEXT
+'''Différents environnements peuvent être rencontrés lors de l'exploration des systèmes planétaires sur la carte galactique. Une planète peut être [[PT_INFERNO]], [[PT_RADIATED]], [[PT_TOXIC]], [[PT_BARREN]], [[PT_DESERT]], [[PT_TUNDRA]], [[PT_SWAMP]], [[PT_TERRAN]], [[PT_OCEAN]], de type [[PT_ASTEROIDS]] ou [[PT_GASGIANT]].
+
+Chaque [[encyclopedia ENC_SPECIES]] a ses propres préférences environnementales, lesquelles déterminent sur chaque type de planète l'Habitabilité pour l'espèce en question, selon la liste suivante (du plus mauvais environnement au meilleur):
+
+[[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
+
+Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit sur une planète dans le panneau latéral. À la suite de la donnée d'Habitabilité, un nombre de couleur verte indique la population maximale pouvant être atteinte si l'espèce colonise la planète, tandis qu'un nombre de couleur rouge indique que la population n'évoluera pas ou diminuera, pour finalement disparaître si l'espèce tente de coloniser la planète.
+
+Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[encyclopedia RESEARCH_TITLE]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité Parfaite pour l'espèce désirant vivre sur la planète. Les étapes de terraformation peuvent être consultées dans le rapport d'Habitabilité d'une planète sous la forme d'une représentation circulaire des différents types d'environnement.'''
+
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 ORGANIC_SPECIES_TEXT
@@ -4930,7 +4944,7 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 Terraformation Gaia
 
 EFFECT_GAIA
-Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
+Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[special GAIA_SPECIAL]].
 EFFECT_GAIA_LABEL
 Paradis Gaia
 
@@ -9436,7 +9450,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Dote une planète de la Particularité [[encyclopedia GAIA_SPECIAL]] et accroît le plafond de Population (pour les environnements Parfaits) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît le plafond de Population (pour les environnements Parfaits) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
@@ -9573,7 +9587,7 @@ BLD_BLACK_HOLE_POW_GEN
 Générateur de Singularité
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de 1.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] et étant réglées sur le Focus Industrie.
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de 1 par Population sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais doit se trouver dans un système abritant un Trou Noir.'''
@@ -9582,11 +9596,11 @@ BLD_PLANET_DRIVE
 Navigateur Planétaire
 
 BLD_PLANET_DRIVE_DESC
-'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais pas dans une ceinture d'astéroïdes.
+'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais ne peut pas être utilisée à moins que la planète ne soit colonisée.
 
-En raison d'un manque de précision du dispostif de navigation, une seconde structure est requise et doit se trouver à l'arrivée de la Voie spatiale empruntée. Cette structure s'auto-détruira une fois utilisée, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
+En raison d'un manque de précision du dispositif de navigation, une [[buildingtype BLD_PLANET_BEACON]], ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
-Pour utiliser le Navigateur Planétaire, la planète doit être réglée sur le Focus Navigation Planétaire, et une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système d'arrivée, afin que la planète s'y dirige.'''
+Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver. Enfin, la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que le Navigateur ne fonctionnera pas durant le tour où s'achève sa construction, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. Enfin, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.'''
 
 BLD_PLANET_BEACON
 Balise Planétaire
@@ -9632,7 +9646,7 @@ BLD_TRANSFORMER
 Transformeur
 
 BLD_TRANSFORMER_DESC
-'''Une structure très coûteuse mais d'une polyvalence à toute épreuve permettant d'obtenir les mêmes effets qu'un bon nombre d'autres structures. Le Transformeur s'active en réglant sur le Focus approprié la planète sur laquelle il est construite, et à condition que l'empire ait déjà débloqué la structure que le Transformeur doit imiter.
+'''Une structure très coûteuse mais d'une polyvalence à toute épreuve permettant d'obtenir les mêmes effets qu'un bon nombre d'autres structures. Le Transformeur s'active en réglant sur le Focus approprié la planète sur laquelle il est construit, et à condition que l'empire ait déjà débloqué la structure que le Transformeur doit imiter.
 
 Cette structure peut reproduire les effets d'une [[buildingtype BLD_BIOTERROR_PROJECTOR]], d'un [[buildingtype BLD_STARGATE]], d'un [[buildingtype BLD_PLANET_DRIVE]], ou d'un [[buildingtype BLD_SPATIAL_DISTORT_GEN]], à condition que l'empire ait déjà assimilé la technologie appropriée.'''
 
@@ -10366,6 +10380,12 @@ GT_TROOP_POD_2_DESC
 
   * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.
   * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et dangereux, les rendant inutilisables par la suite.'''
+
+SP_PLANET_BEACON
+Balise Planétaire Mobile
+
+SP_PLANET_BEACON_DESC
+Indique le système cible pour le [[buildingtype BLD_PLANET_DRIVE]]. L'astronef qui en est équipé doit rester stationnaire pendant un tour afin que le dispositif fonctionne, et la planète migrante doit provenir d'un système directement relié.
 
 SP_DISTORTION_MODULATOR
 Modulateur de Distorsion
