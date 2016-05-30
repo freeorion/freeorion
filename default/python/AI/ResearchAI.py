@@ -984,7 +984,7 @@ def generate_classic_research_orders():
                 insert_idx = num_techs_accelerated
                 for dt_ech in ["LRN_PHYS_BRAIN", "LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_DISTRIB_THOUGHT"]:
                     if (dt_ech not in research_queue_list[:insert_idx + 2] and not tech_is_complete(dt_ech)
-                        and foAI.foAIstate.character.may_research_tech_classic(dt_tech)):
+                        and foAI.foAIstate.character.may_research_tech_classic(dt_ech)):
                         res = fo.issueEnqueueTechOrder(dt_ech, insert_idx)
                         num_techs_accelerated += 1
                         insert_idx += 1

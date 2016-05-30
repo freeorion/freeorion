@@ -3,6 +3,7 @@
 import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
+from Behavior.Character import Aggression
 from Behavior.CharacterStrings import aggression_greetings
 from freeorion_tools import UserStringList, chat_on_error
 
@@ -39,7 +40,8 @@ class DiplomaticCorp(object):
             proposal_sender_player = fo.empirePlayerID(message.sender)
             attitude = self.evaluate_diplomatic_attitude(message.sender)
             possible_acknowledgments = []
-            if foAI.foAIstate.aggression <= fo.aggression.typical:
+            aggression = foAI.foAIstate.character.get_behavior(Aggression)
+            if aggression.key <= fo.aggression.typical:
                 possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
                 if attitude > 0:
                     possible_replies = UserStringList("AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST")
@@ -99,7 +101,8 @@ class DiplomaticCorp(object):
         num_peace_requests = len(foAI.foAIstate.diplomatic_logs.get('peace_requests', {}).get(log_index, []))
         num_war_declarations = len(foAI.foAIstate.diplomatic_logs.get('war_declarations', {}).get(log_index, []))
         # Too many requests for peace irritate the AI, as do any war declarations
-        irritation = (foAI.foAIstate.aggression * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
+        aggression = foAI.foAIstate.character.get_behavior(Aggression)
+        irritation = (aggression.key * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
         attitude = 10 * random.random() - irritation
         return min(10, max(-10, attitude))
 

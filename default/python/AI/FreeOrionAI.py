@@ -113,10 +113,11 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate.session_start_cleanup()
         print_error("Fail to load aiState form saved game: %s" % e)
 
+    aggression = foAIstate.character.get_behavior(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(foAIstate.aggression, DiplomaticCorp.DiplomaticCorp)()
+    diplomatic_corp = diplomatic_corp_configs.get(aggression.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
 
 
