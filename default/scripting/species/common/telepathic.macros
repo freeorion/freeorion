@@ -4,9 +4,11 @@ TELEPATHIC_DETECTION
             scope = And [
                 PopulationCenter
                 Not Population high = 0
-                WithinStarlaneJumps jumps = @1@ condition = Source
                 Not VisibleToEmpire empire = Source.Owner
+                Not OwnedBy empire = Source.Owner
+                WithinStarlaneJumps jumps = @1@ condition = Source
             ]
-            activation = OwnedBy affiliation = AnyEmpire
+            // Activate the turn after source creation to allow regular vision to prevail
+            activation = Turn low = Source.CreationTurn + 1
             effects = SetVisibility visibility = Basic empire = Source.Owner
 '''
