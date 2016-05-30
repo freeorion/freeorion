@@ -76,67 +76,46 @@ namespace {
 
     double                  LinearDistance(const Universe& universe, int system1_id, int system2_id) {
         double retval = 9999999.9;  // arbitrary large value
-        try {
-            retval = universe.LinearDistance(system1_id, system2_id);
-        } catch (...) {
-        }
+        retval = universe.LinearDistance(system1_id, system2_id);
         return retval;
     }
     boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
 
     int                     JumpDistanceBetweenSystems(const Universe& universe, int system1_id, int system2_id) {
-        try {
-            return universe.JumpDistanceBetweenSystems(system1_id, system2_id);
-        } catch (...) {
-        }
-        return -1;
+        return universe.JumpDistanceBetweenSystems(system1_id, system2_id);
     }
     boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistanceBetweenSystems;
 
     std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
-        try {
-            std::pair<std::list<int>, int> path = universe.ShortestPath(start_sys, end_sys, empire_id);
-            std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
-        } catch (...) {
-        }
+        std::pair<std::list<int>, int> path = universe.ShortestPath(start_sys, end_sys, empire_id);
+        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
 
     std::vector<int>        LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
-        try {
-            std::pair<std::list<int>, int> path = universe.LeastJumpsPath(start_sys, end_sys, empire_id);
-            std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
-        } catch (...) {
-        }
+        std::pair<std::list<int>, int> path = universe.LeastJumpsPath(start_sys, end_sys, empire_id);
+        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
     bool                    SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
         //DebugLogger() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
-        try {
-            bool retval = universe.SystemsConnected(system1_id, system2_id, empire_id);
-            //DebugLogger() << "SystemsConnected! retval: " << retval;
-            return retval;
-        } catch (...) {
-        }
-        return false;
+        bool retval = universe.SystemsConnected(system1_id, system2_id, empire_id);
+        //DebugLogger() << "SystemsConnected! retval: " << retval;
+        return retval;
     }
     boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
 
     std::vector<int>        ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::multimap<double, int> lanemap;
         std::vector<int> retval;
-        try {
-            lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
-            for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
-            { retval.push_back(it->second); }
-            return retval;
-        } catch (...) {
-        }
+        lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
+        for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
+        { retval.push_back(it->second); }
         return retval;
     }
     boost::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc =      &ImmediateNeighborsP;
@@ -144,13 +123,9 @@ namespace {
     std::map<int,double>    SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
         std::multimap<double, int> lanemap;
         std::map<int,double> retval;
-        try {
-            lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
-            for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
-            { retval[it->second] = it->first; }
-            return retval;
-        } catch (...) {
-        }
+        lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
+        for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
+        { retval[it->second] = it->first; }
         return retval;
     }
     boost::function<std::map<int, double> (const Universe&, int, int)> SystemNeighborsMapFunc = &SystemNeighborsMapP;
