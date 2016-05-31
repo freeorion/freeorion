@@ -730,7 +730,7 @@ def generate_production_orders():
                         if species and "PHOTOTROPHIC" in list(species.tags):
                             break
                 else:
-                    use_loc = (
+                    use_loc = list(
                         set(red_pilots).intersection(AIstate.colonizedSystems[sys_id]) or AIstate.colonizedSystems[sys_id]
                     )[0]
                 if use_loc is not None:
