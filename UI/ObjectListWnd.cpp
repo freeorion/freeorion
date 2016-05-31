@@ -2409,9 +2409,15 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
 
     const int MENUITEM_SET_FOCUS_BASE = 20;
+    const int MENUITEM_SET_SHIP_BASE = 50;
+    const int MENUITEM_SET_BUILDING_BASE = 250;
     int menuitem_id = MENUITEM_SET_FOCUS_BASE;
-    std::map<std::string, int> all_foci;
+    int ship_menuitem_id = MENUITEM_SET_SHIP_BASE;
+    int bld_menuitem_id = MENUITEM_SET_BUILDING_BASE;
+    std::map<std::string, int> all_foci, avail_blds;
+    std::map<int, int> avail_designs;
     UniverseObjectType type = obj->ObjectType();
+    Empire* cur_empire = GetEmpire(app->EmpireID());
     if (type == OBJ_PLANET) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
 
@@ -2424,6 +2430,23 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     std::vector<std::string> planet_foci = one_planet->AvailableFoci();
                     for (std::vector<std::string>::iterator it = planet_foci.begin(); it != planet_foci.end(); ++it)
                         all_foci[*it]++;
+
+                    std::set<int> ship_designs = cur_empire->AvailableShipDesigns();
+                    for (std::set<int>::iterator sd_it = ship_designs.begin(); sd_it != ship_designs.end(); ++sd_it) {
+                        if (cur_empire->ProducibleItem(BT_SHIP, *sd_it, row->ObjectID()))
+                            avail_designs[*sd_it]++;
+                    }
+
+                    const std::set<std::string>& building_types = cur_empire->AvailableBuildingTypes();
+                    for (std::set<std::string>::const_iterator bld_it = building_types.begin();
+                         bld_it != building_types.end(); ++bld_it)
+                    {
+                        if (cur_empire->EnqueuableItem(BT_BUILDING, *bld_it, row->ObjectID()) &&
+                            cur_empire->ProducibleItem(BT_BUILDING, *bld_it, row->ObjectID()))
+                        {
+                            avail_blds[*bld_it]++;
+                        }
+                    }
                 }
             }
         }
@@ -2436,6 +2459,30 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
             menu_contents.next_level.push_back(focusMenuItem);
+
+        GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), 4, false, false);
+        for (std::map<int, int>::iterator it = avail_designs.begin();
+             it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++it)
+        {
+            ship_menuitem_id++;
+            std::stringstream out;
+            out << GetShipDesign(it->first)->Name() << " (" << it->second << ")";
+            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), ship_menuitem_id, false, false));
+        }
+
+        if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE)
+            menu_contents.next_level.push_back(ship_menu_item);
+
+        GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), 5, false, false);
+        for (std::map<std::string, int>::iterator it = avail_blds.begin(); it != avail_blds.end(); ++it) {
+            bld_menuitem_id++;
+            std::stringstream out;
+            out << UserString(it->first) << " (" << it->second << ")";
+            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), bld_menuitem_id, false, false));
+        }
+
+        if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE)
+            menu_contents.next_level.push_back(building_menu_item);
     }
     // moderator actions...
     if (moderator) {
@@ -2485,7 +2532,44 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                          }
                     }
                 }
+            } else if (id > MENUITEM_SET_SHIP_BASE && id <= ship_menuitem_id) {
+                std::map<int, int>::iterator it = avail_designs.begin();
+                std::advance(it, id - MENUITEM_SET_SHIP_BASE - 1);
+                int ship_design = it->first;
+                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                    if (!row)
+                        continue;
+                    TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
+                        continue;
+                    ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
+                    app->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(app->EmpireID(), ship_item, 1, row->ObjectID())));
+                    cur_empire->UpdateProductionQueue();
+                }
+            } else if (id > MENUITEM_SET_BUILDING_BASE && id <= bld_menuitem_id) {
+                std::map<std::string, int>::iterator it = avail_blds.begin();
+                std::advance(it, id - MENUITEM_SET_BUILDING_BASE - 1);
+                std::string bld = it->first;
+                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                    if (!row)
+                        continue;
+                    TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
+                       || !cur_empire->EnqueuableItem(BT_BUILDING, bld, row->ObjectID())
+                       || !cur_empire->ProducibleItem(BT_BUILDING, bld, row->ObjectID()))
+                    {
+                        continue;
+                    }
+                    ProductionQueue::ProductionItem bld_item(BT_BUILDING, bld);
+                    app->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(app->EmpireID(), bld_item, 1, row->ObjectID())));
+                    cur_empire->UpdateProductionQueue();
+                }
             }
+
             std::set<int> sel_ids = SelectedObjectIDs();
             Refresh();
             SetSelectedObjects(sel_ids);
