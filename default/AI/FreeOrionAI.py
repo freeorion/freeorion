@@ -39,8 +39,8 @@ except ImportError:
 
 _aggression_names = {fo.aggression.beginner: "GSETUP_BEGINNER",
                      fo.aggression.turtle: "GSETUP_TURTLE",
-                     fo.aggression.cautious: "GSETUP_DEFENSIVE",
-                     fo.aggression.typical: "GSETUP_MODERATE",
+                     fo.aggression.cautious: "GSETUP_CAUTIOUS",
+                     fo.aggression.typical: "GSETUP_TYPICAL",
                      fo.aggression.aggressive: "GSETUP_AGGRESSIVE",
                      fo.aggression.maniacal: "GSETUP_MANIACAL"}
 

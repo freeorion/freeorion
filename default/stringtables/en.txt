@@ -1803,9 +1803,9 @@ GSETUP_BEGINNER
 Beginner Mode
 GSETUP_TURTLE
 Turtle
-GSETUP_DEFENSIVE
+GSETUP_CAUTIOUS
 Cautious
-GSETUP_MODERATE
+GSETUP_TYPICAL
 Typical
 GSETUP_AGGRESSIVE
 Aggressive
@@ -11766,7 +11766,7 @@ AI_FIRST_TURN_GREETING_MSG608
 Sending you to your ancestors is our sacred duty!
 
 # NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI agression level.
+# The following lists group the AI turn 1 greetings by AI aggression level.
 # These are functional lists that must not be translated!
 
 AI_FIRST_TURN_GREETING_LIST_BEGINNER

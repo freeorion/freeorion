@@ -37,8 +37,8 @@ const std::string& TextForAIAggression(Aggression a) {
     switch (a) {
         case BEGINNER:      return UserString("GSETUP_BEGINNER");
         case TURTLE:        return UserString("GSETUP_TURTLE");
-        case CAUTIOUS:      return UserString("GSETUP_DEFENSIVE");
-        case TYPICAL:       return UserString("GSETUP_MODERATE");
+        case CAUTIOUS:      return UserString("GSETUP_CAUTIOUS");
+        case TYPICAL:       return UserString("GSETUP_TYPICAL");
         case AGGRESSIVE:    return UserString("GSETUP_AGGRESSIVE");
         case MANIACAL:      return UserString("GSETUP_MANIACAL");
         default:            return EMPTY_STRING;

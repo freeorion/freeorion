@@ -266,8 +266,8 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
 
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BEGINNER")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TURTLE")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_DEFENSIVE")));
-    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MODERATE")));
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_CAUTIOUS")));
+    m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_TYPICAL")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_AGGRESSIVE")));
     m_ai_aggression_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MANIACAL")));
 
