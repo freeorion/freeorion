@@ -49,6 +49,179 @@ namespace {
     const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 }
 
+extern const int ALL_EMPIRES;
+
+namespace {
+
+    /** distance_matrix_storage implements the storage and the mutexes
+        for distance in number of hops from system to system.
+
+        For N systems there are N rows of N integer types T.
+        Each row has a mutex and the whole table has a mutex.
+
+        The table is assumed symmetric.  If present row i element j will
+        equal row j element i.
+     */
+    template <class T> struct distance_matrix_storage {
+        typedef T value_type;  ///< An integral type for number of hops.
+        typedef std::vector<T>& row_ref; ///< A row type protected by a mutex.
+
+        distance_matrix_storage() {};
+        distance_matrix_storage(const distance_matrix_storage<T>& src)
+        { resize(src.m_data.size()); };
+        //TODO C++11 Move Constructor.
+
+        /**Number of rows and columns. (N)*/
+        size_t size()
+        { return m_data.size(); }
+
+        /**Resize and clear all mutexes.  Assumes that table is locked.*/
+        void resize(size_t a_size) {
+            const size_t old_size = size();
+
+            m_data.clear();
+            m_data.resize(a_size);
+            m_row_mutexes.resize(a_size);
+            for (size_t i = old_size; i < a_size; ++i)
+                m_row_mutexes[i] = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
+        }
+
+        /**N x N table of hop distances in row column form.*/
+        std::vector< std::vector<T> > m_data;
+        /**Per row mutexes.*/
+        std::vector< boost::shared_ptr<boost::shared_mutex> > m_row_mutexes;
+        /**Table mutex*/
+        boost::shared_mutex m_mutex;
+    };
+
+
+    /**distance_matrix_cache is a cache of symmetric hop distances
+       based on distance_matrix_storage.
+
+    It enforces the locking convention with get_or_row_lock which
+    returns either a single intgral value or an entire write locked
+    row.
+
+    All operations first lock the table and then when necessary the row.
+    */
+    //TODO: Consider replacing this scheme with thread local storage.  It
+    //may be true that because this is a computed value that depends on
+    //the system topology that almost never changes that the
+    //synchronization costs way out-weight the save computation costs.
+    template <class Storage, class T = typename Storage::value_type, class Row = typename Storage::row_ref>
+    class distance_matrix_cache {
+        public:
+        distance_matrix_cache(Storage& the_storage) : m_storage(the_storage) {}
+        /**Read lock the table and return the size N.*/
+        size_t size() {
+            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+            return m_storage.size();
+        }
+        /**Write lock the table and resize to N = \p a_size.*/
+        void resize(size_t a_size) {
+            boost::unique_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+            m_storage.resize(a_size);
+        }
+
+        /**row_lock has a mutex for the whole table and for the given row.*/
+        class row_lock {
+            private:
+            /**Table lock.*/
+            boost::shared_lock<boost::shared_mutex> m_lock;
+            /**Row lock.*/
+            boost::unique_lock<boost::shared_mutex> m_row_lock;
+
+            /**Swap the table lock with \p guard and the row lock with
+               \p row_guard.*/
+            void swap(boost::shared_lock<boost::shared_mutex>& guard, boost::unique_lock<boost::shared_mutex>& row_guard) {
+                m_lock.swap(guard);
+                m_row_lock.swap(row_guard);
+            }
+            friend class distance_matrix_cache<Storage, T, Row>;
+
+            public:
+            row_lock() {};
+            /**Swap locks with \p other row_lock.*/
+            void swap(row_lock& other) {
+                m_lock.swap(other.m_lock);
+                m_row_lock.swap(other.m_row_lock);
+            }
+            /**Unlock.*/
+            void unlock() {
+                m_row_lock.unlock();
+                m_lock.unlock();
+            }
+        };
+
+        public:
+        /** try to retrieve an element, lock the whole row on cache miss
+          * if \p lock already holds a lock, it will be unlocked after locking the row.
+          */
+        boost::optional<T> get_or_lock_row(size_t row_index, size_t column_index, row_lock& lock) const {
+            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+
+            if (row_index < m_storage.size() && column_index < m_storage.size()) {
+                {
+                    boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[row_index]);
+                    Row row_data = m_storage.m_data[row_index];
+
+                    if (column_index < row_data.size())
+                        return row_data[column_index];
+                }
+                {
+                    boost::shared_lock<boost::shared_mutex> column_guard(*m_storage.m_row_mutexes[column_index]);
+                    Row column_data = m_storage.m_data[column_index];
+
+                    if (row_index < column_data.size())
+                        return column_data[row_index];
+                }
+                {
+                    boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[row_index]);
+                    Row row_data = m_storage.m_data[row_index];
+
+                    if (column_index < row_data.size()) {
+                        return row_data[column_index];
+                    } else {
+                        lock.swap(guard, row_guard);
+
+                        return boost::optional<T>();
+                    }
+                }
+            } else {
+                ErrorLogger() << "distance_matrix_cache::get_or_lock_row passed invalid node indices: "
+                              << row_index << "," << column_index << " matrix size: " << m_storage.size();
+                if (row_index < m_storage.size())
+                    throw std::out_of_range("column_index invalid");
+                else
+                    throw std::out_of_range("row_index invalid");
+            }
+
+            return boost::optional<T>(); // unreachable
+        }
+
+        /** replace the contents of a row with \p new_data.
+          * precondition: \p lock must hold a lock to the specified row.
+          */
+        void swap_and_unlock_row(size_t row_index, Row new_data, row_lock& lock) {
+            if (row_index < m_storage.size()) {
+                Row row_data = m_storage.m_data[row_index];
+
+                row_data.swap(new_data);
+            } else {
+                ErrorLogger() << "distance_matrix_cache::swap_and_unlock_row passed invalid node index: "
+                              << row_index << " matrix size: " << m_storage.size();
+                throw std::out_of_range("row_index invalid");
+            }
+
+            lock.unlock(); // only unlock on success
+        }
+    private:
+        Storage& m_storage;
+    };
+
+}
+
+
 namespace SystemPathing {
     /** Used to short-circuit the use of BFS (breadth-first search) or
       * Dijkstra's algorithm for pathfinding when it finds the desired
@@ -308,37 +481,7 @@ namespace SystemPathing {
 }
 using namespace SystemPathing;  // to keep GCC 4.2 on OSX happy
 
-extern const int ALL_EMPIRES;
-
 namespace {
-
-    /// minimal public interface for distance caches
-    template <class T> struct distance_matrix_storage {
-        typedef T value_type;
-        typedef std::vector<T>& row_ref;
-
-        distance_matrix_storage() {};
-        distance_matrix_storage(const distance_matrix_storage<T>& src)
-        { resize(src.m_data.size()); };
-
-        size_t size()
-        { return m_data.size(); }
-
-        void resize(size_t a_size) {
-            const size_t old_size = size();
-
-            m_data.clear();
-            m_data.resize(a_size);
-            m_row_mutexes.resize(a_size);
-            for (size_t i = old_size; i < a_size; ++i)
-                m_row_mutexes[i] = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
-        }
-
-        std::vector< std::vector<T> > m_data;
-        std::vector< boost::shared_ptr<boost::shared_mutex> > m_row_mutexes;
-        boost::shared_mutex m_mutex;
-    };
-
     /////////////////////////////////////////////
     // struct GraphImpl
     /////////////////////////////////////////////
@@ -450,111 +593,6 @@ Pathfinder::Pathfinder() :
 {}
 
 Pathfinder::~Pathfinder() {
-}
-
-namespace {
-    // wrapper around Pathfinder::distance_matrix_storage
-    // implementing functionality outside the public header
-    // the cache assumes the matrix to be symmetric
-    template <class Storage, class T = typename Storage::value_type, class Row = typename Storage::row_ref>
-    class distance_matrix_cache {
-    public:
-        distance_matrix_cache(Storage& the_storage) : m_storage(the_storage) {}
-        size_t size() {
-            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
-            return m_storage.size();
-        }
-        void resize(size_t a_size) {
-            boost::unique_lock<boost::shared_mutex> guard(m_storage.m_mutex);
-            m_storage.resize(a_size);
-        }
-
-        class row_lock {
-        private:
-            boost::shared_lock<boost::shared_mutex> m_lock;
-            boost::unique_lock<boost::shared_mutex> m_row_lock;
-
-            void swap(boost::shared_lock<boost::shared_mutex>& guard, boost::unique_lock<boost::shared_mutex>& row_guard) {
-                m_lock.swap(guard);
-                m_row_lock.swap(row_guard);
-            }
-            friend class distance_matrix_cache<Storage, T, Row>;
-
-        public:
-            row_lock() {};
-            void swap(row_lock& other) {
-                m_lock.swap(other.m_lock);
-                m_row_lock.swap(other.m_row_lock);
-            }
-            void unlock() {
-                m_row_lock.unlock();
-                m_lock.unlock();
-            }
-        };
-
-    public:
-        /** try to retrieve an element, lock the whole row on cache miss
-          * if \a lock already holds a lock, it will be unlocked after locking the row.
-          */
-        boost::optional<T> get_or_lock_row(size_t row_index, size_t column_index, row_lock& lock) const {
-            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
-
-            if (row_index < m_storage.size() && column_index < m_storage.size()) {
-                {
-                    boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[row_index]);
-                    Row row_data = m_storage.m_data[row_index];
-
-                    if (column_index < row_data.size())
-                        return row_data[column_index];
-                }
-                {
-                    boost::shared_lock<boost::shared_mutex> column_guard(*m_storage.m_row_mutexes[column_index]);
-                    Row column_data = m_storage.m_data[column_index];
-
-                    if (row_index < column_data.size())
-                        return column_data[row_index];
-                }
-                {
-                    boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[row_index]);
-                    Row row_data = m_storage.m_data[row_index];
-
-                    if (column_index < row_data.size()) {
-                        return row_data[column_index];
-                    } else {
-                        lock.swap(guard, row_guard);
-
-                        return boost::optional<T>();
-                    }
-                }
-            } else {
-                ErrorLogger() << "distance_matrix_cache::get_or_lock_row passed invalid node indices: " << row_index << "," << column_index << " matrix size: " << m_storage.size();
-                if (row_index < m_storage.size())
-                    throw std::out_of_range("column_index invalid");
-                else
-                    throw std::out_of_range("row_index invalid");
-            }
-
-            return boost::optional<T>(); // unreachable
-        }
-
-        /** replace the contents of a row with \a new_data.
-          * precondition: \a lock must hold a lock to the specified row.
-          */
-        void swap_and_unlock_row(size_t row_index, Row new_data, row_lock& lock) {
-            if (row_index < m_storage.size()) {
-                Row row_data = m_storage.m_data[row_index];
-
-                row_data.swap(new_data);
-            } else {
-                ErrorLogger() << "distance_matrix_cache::swap_and_unlock_row passed invalid node index: " << row_index << " matrix size: " << m_storage.size();
-                throw std::out_of_range("row_index invalid");
-            }
-
-            lock.unlock(); // only unlock on success
-        }
-    private:
-        Storage& m_storage;
-    };
 }
 
 namespace {
