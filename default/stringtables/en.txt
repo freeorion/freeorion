@@ -2655,6 +2655,12 @@ Latest known [[encyclopedia STEALTH_TITLE]] is out of date. Actual stealth excee
 MENUITEM_SET_FOCUS
 Set focus
 
+MENUITEM_ENQUEUE_BUILDING
+Queue Building
+
+MENUITEM_ENQUEUE_SHIPDESIGN
+Queue Ship
+
 ## Resources Panel ##########
 
 RP_FOCUS_TOOLTIP
