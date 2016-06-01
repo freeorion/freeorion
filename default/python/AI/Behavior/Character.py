@@ -421,10 +421,6 @@ class Character(Behavior):
         if not all([isinstance(x, Behavior) for x in behaviors]):
             raise TypeError("All behaviors must be sub-classes of Behavior")
 
-    @property
-    def key(self):
-        return super.key
-
     def get_behavior(self, type_of_behavior):
         """Return the requested behavior or None"""
         behavior = [x for x in self.behaviors if isinstance(x, type_of_behavior)]
