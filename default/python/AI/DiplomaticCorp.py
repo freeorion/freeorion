@@ -38,7 +38,7 @@ class DiplomaticCorp(object):
         if message.type == fo.diplomaticMessageType.peaceProposal:
             foAI.foAIstate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
-            attitude = self.evaluate_diplomatic_attitude(message.sender)
+            attitude = foAI.foAIstate.character.attitude_to_empire(message.sender, foAI.foAIstate.diplomatic_logs)
             possible_acknowledgments = []
             aggression = foAI.foAIstate.character.get_behavior(Aggression)
             if aggression.key <= fo.aggression.typical:
@@ -88,24 +88,6 @@ class DiplomaticCorp(object):
         if status_update.empire2 == fo.empireID() and status_update.status == fo.diplomaticStatus.war:
             foAI.foAIstate.log_war_declaration(status_update.empire1, status_update.empire2)
 
-    @chat_on_error
-    def evaluate_diplomatic_attitude(self, other_empire_id):
-        """Evaluate this empire's diplomatic attitude regarding the other empire.
-        :param other_empire_id: integer
-        :return: a numeric rating, currently in the range [-10 : 10]
-        """
-
-        # TODO: consider proximity, competitive needs, relations with other empires, past history with this empire, etc.
-        # in the meantime, somewhat random
-        log_index = (other_empire_id, fo.empireID())
-        num_peace_requests = len(foAI.foAIstate.diplomatic_logs.get('peace_requests', {}).get(log_index, []))
-        num_war_declarations = len(foAI.foAIstate.diplomatic_logs.get('war_declarations', {}).get(log_index, []))
-        # Too many requests for peace irritate the AI, as do any war declarations
-        aggression = foAI.foAIstate.character.get_behavior(Aggression)
-        irritation = (aggression.key * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
-        attitude = 10 * random.random() - irritation
-        return min(10, max(-10, attitude))
-
     def handle_midgame_chat(self, sender_player_id, message_txt):
         print "Midgame chat received from player %d, message: %s" % (sender_player_id, message_txt)
         if fo.playerIsAI(sender_player_id) or not self.be_chatty:
@@ -129,14 +111,10 @@ class DiplomaticCorp(object):
 
 
 class BeginnerDiplomaticCorp(DiplomaticCorp):
-    def evaluate_diplomatic_attitude(self, other_empire_id):
-        return 9
-
+    pass
 
 class ManiacalDiplomaticCorp(DiplomaticCorp):
     def __init__(self):
         DiplomaticCorp.__init__(self)
         self.be_chatty = False
 
-    def evaluate_diplomatic_attitude(self, other_empire_id):
-        return -9

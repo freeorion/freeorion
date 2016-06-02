@@ -91,6 +91,7 @@ of a playable species.
 
 import abc
 from collections import defaultdict, Counter
+import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -225,6 +226,10 @@ class Behavior(object):
         """Return True if permitted to research ''tech'' in the classic algorithm"""
         return True
 
+    def attitude_to_empire(self, other_empire_id, diplomatic_logs):  # pylint: disable=no-self-use,unused-argument
+        """Return a value from [-10 .. 10] representing attitude towards other empire."""
+        return None
+
 
 class Aggression(Behavior):
     """A behavior that models level of difficulty and aggression."""
@@ -350,6 +355,26 @@ class Aggression(Behavior):
                 type(self).tech_upper_threshold_classic_static.get(tech, fo.aggression.maniacal))
 
 
+    def attitude_to_empire(self, other_empire_id, diplomatic_logs):
+        # TODO: In other behaviors consider proximity, competitive
+        # needs, relations with other empires, past history with this
+        # empire, etc.
+        # in the meantime, somewhat random
+        # TODO: Move the diplomatic log portion of this behavior back
+        # into diplomacy where it belongs.
+        if self.aggression == fo.aggression.maniacal:
+            return -9
+        if self.aggression == fo.aggression.beginner:
+            return 9
+        log_index = (other_empire_id, fo.empireID())
+        num_peace_requests = len(diplomatic_logs.get('peace_requests', {}).get(log_index, []))
+        num_war_declarations = len(diplomatic_logs.get('war_declarations', {}).get(log_index, []))
+        # Too many requests for peace irritate the AI, as do any war declarations
+        irritation = (self.aggression * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
+        attitude = 10 * random.random() - irritation
+        return min(10, max(-10, attitude))
+
+
 class EmpireIDBehavior(Behavior):
     """A behavior that models empire id influence.
     Mostly some modulo 2 effects."""
@@ -456,6 +481,14 @@ for funcname in ["target_number_of_orbitals", "military_safety_factor", "get_res
 # Create combiners for behaviors that take any result
 for funcname in ["check_orbital_production"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, any))
+
+# Create combiners for behaviors that averages all not None results
+def average_not_none(llin):
+    ll = [x for x in llin if x]
+    return sum(ll)/len(ll)
+
+for funcname in ["attitude_to_empire"]:
+    setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
 
 
 def _make_most_preferred_combiner(funcnamei):
