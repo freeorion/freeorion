@@ -1,23 +1,15 @@
 #ifndef _Pathfinder_h_
 #define _Pathfinder_h_
 
-
 #include "Enums.h"
 #include "ObjectMap.h"
-#include "TemporaryPtr.h"
 #include "UniverseObject.h"
 
-#include <boost/signals2/signal.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/numeric/ublas/symmetric.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/thread/shared_mutex.hpp>
 #include <boost/scoped_ptr.hpp>
 
 #include <vector>
-#include <list>
 #include <map>
-#include <string>
 #include <set>
 
 #ifdef FREEORION_WIN32

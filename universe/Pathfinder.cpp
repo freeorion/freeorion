@@ -1,48 +1,24 @@
 #include "Pathfinder.h"
 
-#include "../util/OptionsDB.h"
-#include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/Random.h"
-#include "../util/RunQueue.h"
 #include "../util/ScopedTimer.h"
-#include "../parse/Parse.h"
-#include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "Building.h"
 #include "Fleet.h"
-#include "Planet.h"
 #include "Ship.h"
-#include "ShipDesign.h"
 #include "System.h"
-#include "Field.h"
 #include "UniverseObject.h"
-#include "Predicates.h"
-#include "Special.h"
-#include "Species.h"
-#include "Condition.h"
 #include "ValueRef.h"
 #include "Universe.h"
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/optional/optional.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/thread/condition_variable.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
-#include <boost/timer.hpp>
 
 #include <algorithm>
-#include <cmath>
-#include <list>
 #include <stdexcept>
 
 namespace {
