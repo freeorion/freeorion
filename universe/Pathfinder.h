@@ -101,6 +101,8 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the  system
       * ID is out of range. */
+    //TODO empire_id is never set to anything other than self, which in
+    //the AI's is the same as ALL_EMPIRES
     std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the id of the System object that is closest to the specified

@@ -157,6 +157,50 @@ namespace {
             }
         }
 
+        /** Retrieve a single row at \p ii.
+          * On cache miss call \p fill_row which must fill the row
+          * at \p ii with NN items.
+          * On cache hit call \p see_row to handle the cache hit
+          * Throws if index is out of range or if \p fill_row
+          * does not fill the row  on a cache miss.
+          */
+        void examine_row(size_t ii, cache_miss_handler fill_row, cache_hit_handler use_row) const {
+            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+
+            size_t NN = m_storage.size();
+            if (ii >= NN) {
+                ErrorLogger() << "distance_matrix_cache::get_row passed invalid index: "
+                              << ii << " matrix size: " << NN;
+                throw std::out_of_range("row index is invalid.");
+            }
+            {
+                boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                const Row &row_data = m_storage.m_data[ii];
+
+                if (NN == row_data.size())
+                    return use_row(ii, row_data);
+            }
+            {
+                boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                Row &row_data = m_storage.m_data[ii];
+
+                if (NN == row_data.size()) {
+                    return use_row(ii, row_data);
+                } else {
+                    fill_row(ii, row_data);
+                    if (row_data.size() != NN) {
+                        std::stringstream ss;
+                        ss << "Cache miss handler only filled cache row with "
+                           << row_data.size() << " items when " << NN
+                           << " items where expected ";
+                        ErrorLogger() << ss.str();
+                        throw std::range_error(ss.str());
+                    }
+                    return use_row(ii, row_data);
+                }
+            }
+        }
+
     private:
         Storage& m_storage;
     };
@@ -521,6 +565,14 @@ class Pathfinder::PathfinderImpl {
     bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     bool SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
     std::multimap<double, int> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+
+    boost::unordered_multimap<int, int> Neighbors(
+        int system_id, size_t n_outer = 1, size_t n_inner = 0) const;
+    /** When a cache hit occurs use \p row to populate and return the
+        multimap for Neighbors.*/
+     void NeighborsCacheHit(
+         boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
+         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y) const;
     void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
@@ -906,6 +958,7 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
     }
     return std::multimap<double, int>();
 }
+
 
 int Pathfinder::NearestSystemTo(double x, double y) const {
     return pimpl->NearestSystemTo(x, y);
