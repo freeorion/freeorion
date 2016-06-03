@@ -3,9 +3,11 @@ TELEPATHIC_DETECTION
             description = "TELEPATHIC_DETECTION"
             scope = And [
                 PopulationCenter
+                Not VisibleToEmpire empire = Source.Owner
+                Not Source
+                Not OwnedBy empire = Source.Owner
                 Not Population high = 0
                 WithinStarlaneJumps jumps = @1@ condition = Source
-                Not VisibleToEmpire empire = Source.Owner
             ]
             activation = OwnedBy affiliation = AnyEmpire
             effects = SetVisibility visibility = Basic empire = Source.Owner
