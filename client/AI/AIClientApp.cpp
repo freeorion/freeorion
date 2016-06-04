@@ -116,6 +116,7 @@ void AIClientApp::ConnectToServer() {
 void AIClientApp::StartPythonAI() {
     PythonAI* python_ai = new PythonAI();
     if (!(python_ai->Initialize())) {
+        delete python_ai;  //TODO use smart pointer
         //Note: At this point in the initialization the AI has not been associated with a PlayerConnection
         //so the server will no know the AI's PlayerName.
         std::stringstream err_msg;
