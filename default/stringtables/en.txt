@@ -4230,6 +4230,39 @@ Next are icons showing the player empire total [[encyclopedia INDUSTRY_TITLE]], 
 
 On the right hand side of the control bar are a number of icons for toggling display of other significant UI windows. Tooltips are available for these.'''
 
+DESIGN_WINDOW_ARTICLE_TITLE
+Design Window
+DESIGN_WINDOW_ARTICLE_TEXT
+'''The design window is for viewing or altering the designs of monsters or ships.
+
+There are four sub windows:  Design Starts, Ship Parts, Design Details and the Pedia.
+
+
+Design Starts has four tabs: empty Hulls, Finished designs, Saved designs from previous games and Monster designs for inspection.  Drag or double click hulls, designs or monsters to edit/examine them on the workbench.
+
+Finished designs appear in the same order as on the Production Window.  Designs can be drag-and-dropped within the list to change their order.  Delete designs with Obsolete from the context menu.  Ships already queued for production will continue to be built with the old design.  Save designs to disk for future games with Save from the context menu.
+
+Right click Saved designs and copy a single or all saved designs to the empire's known designs.
+
+
+Ship Parts displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
+
+The Available and Unavailable filters on Design Starts and Ship Parts toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated technologies.
+
+The Ship Parts window has filters to display/hide entire categories of parts.
+
+
+Design Details is the workbench for the current design.
+
+The current design may have internal, external and/or core slots.  Drag and drop or double click parts from Ship Parts to add/remove them to/from the current design.
+
+Add a name and optionally a description to the design.
+
+Click Add New Design to add the design to the end of the list of Finished designs.
+
+Click Update Old Design to replace the most recently selected finished design with a new design.  Update Old Design is only active if this design was started from a design in the Finished list.  Update Old Design only changes the design, any ships already queued for production or already produced will continue to use the old design.
+'''
+
 FLEET_MOVEMENT_ARTICLE_TITLE
 Fleet Movement
 FLEET_MOVEMENT_ARTICLE_TEXT
