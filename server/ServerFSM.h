@@ -66,7 +66,8 @@ struct MessageEventBase {
     (RequestDesignID)                       \
     (PlayerChat)                            \
     (Diplomacy)                             \
-    (ModeratorAct)
+    (ModeratorAct)                          \
+    (Error)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                                    \
@@ -124,7 +125,8 @@ private:
 struct Idle : sc::state<Idle, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<HostMPGame>,
-        sc::custom_reaction<HostSPGame>
+        sc::custom_reaction<HostSPGame>,
+        sc::custom_reaction<Error>
     > reactions;
 
     Idle(my_context c);
@@ -132,6 +134,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
 
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
+    sc::result react(const Error& msg);
 
     SERVER_ACCESSOR
 };
@@ -146,7 +149,8 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<LobbyChat>,
         sc::custom_reaction<StartMPGame>,
         sc::custom_reaction<HostMPGame>,
-        sc::custom_reaction<HostSPGame>
+        sc::custom_reaction<HostSPGame>,
+        sc::custom_reaction<Error>
     > reactions;
 
     MPLobby(my_context c);
@@ -159,6 +163,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const StartMPGame& msg);
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
+    sc::result react(const Error& msg);
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
@@ -175,7 +180,8 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM> {
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
         sc::custom_reaction<CheckStartConditions>,
-        sc::custom_reaction<LoadSaveFileFailed>
+        sc::custom_reaction<LoadSaveFileFailed>,
+        sc::custom_reaction<Error>
     > reactions;
 
     WaitingForSPGameJoiners(my_context c);
@@ -186,6 +192,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM> {
     // in SP games, save data is loaded when setting up AI clients, in order to
     // know which / how many to set up.  Loading might fail.
     sc::result react(const LoadSaveFileFailed& u);
+    sc::result react(const Error& msg);
 
     boost::shared_ptr<SinglePlayerSetupData> m_single_player_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;
@@ -203,7 +210,8 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
-        sc::custom_reaction<CheckStartConditions>
+        sc::custom_reaction<CheckStartConditions>,
+        sc::custom_reaction<Error>
     > reactions;
 
     WaitingForMPGameJoiners(my_context c);
@@ -214,6 +222,7 @@ struct WaitingForMPGameJoiners : sc::state<WaitingForMPGameJoiners, ServerFSM> {
     // unlike in SP game setup, no save file data needs to be loaded in this
     // state, as all the relevant info about AIs is provided by the lobby data.
     // as such, no file load error handling reaction is needed in this state.
+    sc::result react(const Error& msg);
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
@@ -232,7 +241,8 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<PlayerChat>,
         sc::custom_reaction<Diplomacy>,
-        sc::custom_reaction<ModeratorAct>
+        sc::custom_reaction<ModeratorAct>,
+        sc::custom_reaction<Error>
     > reactions;
 
     PlayingGame(my_context c);
@@ -241,6 +251,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const PlayerChat& msg);
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
+    sc::result react(const Error& msg);
 
     SERVER_ACCESSOR
 };
