@@ -605,6 +605,12 @@ void SaveFileDialog::Init() {
     GG::Button* cancel_btn = new CUIButton(UserString("CANCEL"));
 
     m_name_edit = new CUIEdit("");
+    if (m_extension != MP_SAVE_FILE_EXTENSION && m_extension != SP_SAVE_FILE_EXTENSION) {
+        std::string savefile_ext = HumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
+        DebugLogger() << "SaveFileDialog passed invalid extension " << m_extension << ", changing to " << savefile_ext;
+        m_extension = savefile_ext;
+    }
+
     GG::Label* filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
     GG::Label* directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
     //std::cout << "pathstrnig: " << PathString(GetSaveDir()) << std::endl;
@@ -751,6 +757,13 @@ void SaveFileDialog::Confirm() {
         return;
 
     } else if (!m_load_only) {
+        // append appropriate extension if invalid
+        std::string chosen_ext = fs::path(chosen_full_path).extension().string();
+        if (chosen_ext != m_extension) {
+            choice += m_extension;
+            chosen_full_path += m_extension;
+            m_name_edit->SetText(m_name_edit->Text() + m_extension);
+        }
         DebugLogger() << "SaveFileDialog::Confirm: File " << PathString(chosen_full_path) << " chosen.";
         // If not loading and file exists(and is regular file), ask to confirm override
         if (fs::is_regular_file(chosen_full_path)) {
@@ -915,12 +928,9 @@ bool SaveFileDialog::CheckChoiceValidity() {
             m_confirm_btn->Disable(false);
             return true;
         }
-    } else {  // append appropriate extension for saving
-        std::string chosen_ext = fs::path(m_name_edit->Text()).extension().string();
-        if (m_extension != chosen_ext)
-            m_name_edit->SetText(m_name_edit->Text() + m_extension);
-        return true;
     }
+
+    return true;
 }
 
 void SaveFileDialog::FileNameEdited(const std::string& filename)
