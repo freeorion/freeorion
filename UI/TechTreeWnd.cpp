@@ -18,6 +18,7 @@
 #include "../Empire/Empire.h"
 #include "TechTreeLayout.h"
 #include "TechTreeArcs.h"
+#include "Hotkeys.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
@@ -567,6 +568,9 @@ private:
     void TreeZoomedSlot(int move);
     void TreeZoomInClicked();
     void TreeZoomOutClicked();
+    bool TreeZoomInKeyboard();
+    bool TreeZoomOutKeyboard();
+    void ConnectKeyboardAcceleratorSignals();
 
     double                  m_scale;
     std::set<std::string>   m_categories_shown;
@@ -1053,6 +1057,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     GG::Connect(m_zoom_in_button->LeftClickedSignal,    &TechTreeWnd::LayoutPanel::TreeZoomInClicked,   this);
     GG::Connect(m_zoom_out_button->LeftClickedSignal,   &TechTreeWnd::LayoutPanel::TreeZoomOutClicked,  this);
 
+    ConnectKeyboardAcceleratorSignals();
 
     // show all categories...
     m_categories_shown.clear();
@@ -1065,6 +1070,17 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     //m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
+}
+
+void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
+    HotkeyManager* hkm = HotkeyManager::GetManager();
+
+    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomInKeyboard,         "map.zoom_in",          new VisibleWindowCondition(this));
+    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomInKeyboard,         "map.zoom_in_alt",      new VisibleWindowCondition(this));
+    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard,        "map.zoom_out",         new VisibleWindowCondition(this));
+    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard,        "map.zoom_out_alt",     new VisibleWindowCondition(this));
+
+    hkm->RebuildShortcuts();
 }
 
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
@@ -1448,6 +1464,16 @@ void TechTreeWnd::LayoutPanel::TreeZoomInClicked()
 void TechTreeWnd::LayoutPanel::TreeZoomOutClicked()
 { TreeZoomedSlot(-1); }
 
+// The bool return value is to re-use the MapWnd::KeyboardZoomIn hotkey
+bool TechTreeWnd::LayoutPanel::TreeZoomInKeyboard() {
+    TreeZoomedSlot(1);
+    return true;
+}
+
+bool TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard() {
+    TreeZoomedSlot(-1);
+    return true;
+}
 
 //////////////////////////////////////////////////
 // TechTreeWnd::TechListBox                     //

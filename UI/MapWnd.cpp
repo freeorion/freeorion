@@ -1377,6 +1377,12 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
 bool MapWnd::InProductionViewMode() const
 { return m_in_production_view_mode; }
 
+bool MapWnd::InResearchViewMode() const
+{ return m_research_wnd->Visible(); }
+
+bool MapWnd::InDesignViewMode() const
+{ return m_design_wnd->Visible(); }
+
 ModeratorActionSetting MapWnd::GetModeratorActionSetting() const
 { return m_moderator_wnd->SelectedAction(); }
 
@@ -6075,6 +6081,22 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     return false;
 }
 
+namespace {
+
+    /// On when the MapWnd window is visible and not covered
+    //  by one of the full screen covering windows
+    class VisibleMapWndCondition : public HotkeyCondition {
+    protected:
+        const MapWnd& target;
+
+    public:
+        VisibleMapWndCondition(const MapWnd& tg) : target(tg) {}
+        virtual bool IsActive() const {
+            return target.Visible() && !target.InResearchViewMode() && !target.InDesignViewMode();
+        };
+    };
+}
+
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
@@ -6087,13 +6109,13 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design",           new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::ToggleObjects,          "map.objects",          new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu",             new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in",          new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt",      new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out",         new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out_alt",     new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system", new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_system", new VisibleWindowCondition(this));
-    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_system", new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in",          new VisibleMapWndCondition(*this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt",      new VisibleMapWndCondition(*this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out",         new VisibleMapWndCondition(*this));
+    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out_alt",     new VisibleMapWndCondition(*this));
+    hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system", new VisibleMapWndCondition(*this));
+    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_system", new VisibleMapWndCondition(*this));
+    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_system", new VisibleMapWndCondition(*this));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
     std::list<GG::Wnd*> bl;
