@@ -508,6 +508,7 @@ public:
     mutable boost::signals2::signal<void (const BuildingType*)>                DisplayBuildingTypeSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>                  DisplayShipDesignSignal;
     mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int)> RequestBuildItemSignal;
+    mutable boost::signals2::signal<void ()>                                   ShowPediaSignal;
 
 private:
     static const GG::X TEXT_MARGIN_X;
@@ -953,12 +954,26 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
                                                               const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
-    if ((*it)->Disabled())
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
+    if (!item_row)
         return;
+    const ProductionQueue::ProductionItem& item = item_row->Item();
+
+    std::string item_name = "";
+    if (item.build_type == BT_BUILDING)
+        item_name = item.name;
+    if (item.build_type == BT_SHIP)
+        item_name = GetShipDesign(item.design_id)->Name(false);
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),   2, false, false));
+
+    if (!((*it)->Disabled())) {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),   2, false, false));
+    }
+
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(item_name));
+    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 3, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -971,6 +986,11 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
         }
         case 2: { // add item to top of queue
             AddBuildItemToQueue(it, true);
+            break;
+        }
+        case 3: { // pedia lookup
+            ShowPediaSignal();
+            BuildItemLeftClicked(it, pt, modkeys);
             break;
         }
         default:
@@ -1003,6 +1023,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),  m_enc_detail_panel);
     GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),    m_enc_detail_panel);
 
+    GG::Connect(m_build_selector->ShowPediaSignal,        &BuildDesignatorWnd::ShowPedia,          this);
     GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
 
     GG::Connect(m_side_panel->PlanetSelectedSignal, PlanetSelectedSignal);
