@@ -3330,8 +3330,6 @@ METER_STEALTH
 Tarnung
 METER_DETECTION
 Aufklärungsreichweite
-METER_DAMAGE
-Schaden
 METER_SPEED
 Geschwindigkeit
 METER_CAPACITY
