@@ -1332,8 +1332,6 @@ GROWTH_CATEGORY
 Vývoj
 ECONOMICS_CATEGORY
 Ekonomika
-SHIPS_CATEGORY
-Lodě
 
 #############################################################
 ####               T E C H   T H E O R I E S             ####

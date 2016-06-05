@@ -2203,8 +2203,6 @@ GROWTH_CATEGORY
 Kasvu
 ECONOMICS_CATEGORY
 Talous
-SHIPS_CATEGORY
-Alukset
 
 #############################################################
 ####               T E C H   T H E O R I E S             ####

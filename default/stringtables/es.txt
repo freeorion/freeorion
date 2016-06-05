@@ -2502,8 +2502,6 @@ GROWTH_CATEGORY
 Crecimiento
 ECONOMICS_CATEGORY
 Economía
-SHIPS_CATEGORY
-Naves
 
 #############################################################
 ####               T E C H   T H E O R I E S             ####

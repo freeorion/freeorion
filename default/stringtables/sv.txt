@@ -1282,8 +1282,6 @@ GROWTH_CATEGORY
 Tillväxt
 ECONOMICS_CATEGORY
 Ekonomi
-SHIPS_CATEGORY
-Skepp
 
 #############################################################
 ####                  B U I L D I N G S                  ####
