@@ -218,7 +218,7 @@ SD_CARRIER_DESC
 Modèle prototype propulsant des chasseurs en cours de bataille en lieu et place d'une puissance de feu directe.
 
 SD_FLAK
-Prototype Antiaérien 
+Prototype Antiaérien
 SD_FLAK_DESC
 Modèle prototype équipé de canons antiaériens comme moyen de riposte contre les chasseurs.
 
@@ -889,6 +889,9 @@ L'Univers généré contient des erreurs. Consultez le fichier log pour le déta
 SERVER_TURN_EVENTS_ERRORS
 Les événements de tour scriptés contiennent des erreurs. Consultez le fichier log pour le détail des messages d'erreur. La partie peut continuer, mais le gameplay en sera probablement impacté.
 
+#ERROR_PYTHON_AI_CRASHED
+#Python AI for %1% crashed.
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
@@ -1525,7 +1528,6 @@ Fenêtre Objets [on/off]
 
 OPTIONS_DB_FLEET_WND_AGGRESSION
 Comportement par défaut des Flottes
-
 
 #################
 # File Dialog   #
@@ -2497,8 +2499,6 @@ Messages
 MAP_PRODUCTION_TITLE  # translated
 Production
 
-
-
 MAP_PROD_WASTED_TITLE
 Production inutilisée
 
@@ -2654,6 +2654,12 @@ La dernière [[encyclopedia STEALTH_TITLE]] connue est obsolète.  La furtivité
 
 MENUITEM_SET_FOCUS
 Régler Focus
+
+#MENUITEM_ENQUEUE_BUILDING
+#Queue Building
+
+#MENUITEM_ENQUEUE_SHIPDESIGN
+#Queue Ship
 
 ## Resources Panel ##########
 
@@ -4258,7 +4264,6 @@ Salutations Noble Voyageur Cosmique, et Bienvenue dans l'Univers Freeorion!
 GREETINGS_GUIDE_REFERENCE
 Les nouveaux venus dans l'Univers Freeorion peuvent consulter le [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
-
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
 
@@ -4296,7 +4301,6 @@ Lorsque que l'indicateur [[encyclopedia HAPPINESS_TITLE]] d'une planète est inf
 Les réparations sont différées d'un tour pour les astronefs pénétrant tout juste dans un système. En effet, la manœuvre d'accostage d'un astronef ainsi que la préparation des outils et pièces nécessaires à la réparation nécessitent un certain temps.
 
 Tout combat au sein d'un système interrompt les réparations pour le tour en cours.'''
-
 
 ####################
 # Combat Messages  #
@@ -4656,13 +4660,13 @@ SITREP_SNOOZE_CLEAR_ALL
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_WELCOME  # translated
-'''[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]'''
+[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]
 
 SITREP_WELCOME_LABEL
 Bienvenue
 
 SITREP_GAS_GIANT_GENERATION_REMINDER
-'''La planète %planet% est un emplacement favorable pour la structure %buildingtype%, mais aucune n'y est construite à ce jour.'''
+La planète %planet% est un emplacement favorable pour la structure %buildingtype%, mais aucune n'y est construite à ce jour.
 
 SITREP_SHIP_BUILT
 Dans %system% : un astronef %shipdesign%, baptisé '%ship%', a été produit.
@@ -6060,40 +6064,40 @@ EXTINCT_BANFORO_SPECIAL
 Restes Banforo
 
 EXTINCT_BANFORO_SPECIAL_DESC
-'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_BANFORO]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_BANFORO]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_BANFORO]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_BANFORO]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].
 
 TECH_COL_BANFORO
 Séquençage Banforo
 
 TECH_COL_BANFORO_DESC
-'''Permet la reconstitution de l'espèce éteinte [[species SP_BANFORO]].'''
+Permet la reconstitution de l'espèce éteinte [[species SP_BANFORO]].
 
 EXTINCT_KILANDOW_SPECIAL
 Restes Kilandow
 
 EXTINCT_KILANDOW_SPECIAL_DESC
-'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_KILANDOW]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_KILANDOW]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_KILANDOW]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_KILANDOW]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].
 
 TECH_COL_KILANDOW
 Séquençage Kilandow
 
 TECH_COL_KILANDOW_DESC
-'''Permet la reconstitution de l'espèce éteinte [[species SP_KILANDOW]].'''
+Permet la reconstitution de l'espèce éteinte [[species SP_KILANDOW]].
 
 EXTINCT_MISIORLA_SPECIAL
 Restes Misiorla
 
 EXTINCT_MISIORLA_SPECIAL_DESC
-'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_MISIORLA]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_MISIORLA]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_MISIORLA]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_MISIORLA]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].
 
 TECH_COL_MISIORLA
 Séquençage Misiorla
 
 TECH_COL_MISIORLA_DESC
-'''Permet la reconstitution de l'espèce éteinte [[species SP_MISIORLA]].'''
+Permet la reconstitution de l'espèce éteinte [[species SP_MISIORLA]].
 
 EXTINCT_UNLOCK_SHORT_DESC
-'''Débloque une espèce éteinte'''
+Débloque une espèce éteinte
 
 PANOPTICON_SPECIAL
 Complexe Panoptique
@@ -6727,7 +6731,6 @@ Partielle
 VIS_FULL_VISIBILITY
 Complète
 
-
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
@@ -7319,16 +7322,16 @@ DESC_SPECIES_NOT
 
 DESC_ENQUEUED
 ''' où l'empire %1% a entre %2% et %3% projets dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_NOT
 ''' où l'empire %1% n'a pas entre %2% et %3% projets dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_BUILDING
 ''' où l'empire %1% a entre %2% et %3% structures %4% dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_BUILDING_NOT
 ''' où l'empire %1% n'a pas entre %2% et %3% structures %4% dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_DESIGN
 ''' où l'empire %1% a entre %2% et %3% %4% astronefs dans la file d'attente de production'''
 
@@ -7484,7 +7487,7 @@ DESC_CAN_PRODUCE_SHIPS
 
 DESC_CAN_PRODUCE_SHIPS_NOT
 ''' avec une espèce ne pouvant produire d'astronefs'''
- 
+
 DESC_SUPPLY_CONNECTED_FLEET
 ''' qui est dans un sytème où l'empire %1% peut l'approvisionner'''
 
@@ -8930,7 +8933,7 @@ Cendres Volcaniques Planétaires
 SPY_STEALTH_2_DESC
 '''Confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.''' 
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_2
 Absorption Radiative
@@ -9543,7 +9546,7 @@ BLD_REMOTE_TERRAFORM_DESC
 Terraforme une planète en un type d'environnement un palier plus proche de l'environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 MACRO_NEUTRONIUM_BUILDINGS
-'''Afin d'exploiter le Neutronium, un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] est requis au sein d'un système abritant une Étoile à Neutrons, ou bien l'empire doit avoir découvert un [[buildingtype BLD_NEUTRONIUM_SYNTH]]. Une [[buildingtype BLD_NEUTRONIUM_FORGE]] est également requise sur la planète où le Neutronium sera utilisé'''
+Afin d'exploiter le Neutronium, un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] est requis au sein d'un système abritant une Étoile à Neutrons, ou bien l'empire doit avoir découvert un [[buildingtype BLD_NEUTRONIUM_SYNTH]]. Une [[buildingtype BLD_NEUTRONIUM_FORGE]] est également requise sur la planète où le Neutronium sera utilisé
 
 BLD_NEUTRONIUM_EXTRACTOR
 Extracteur Neutronium
@@ -9932,7 +9935,6 @@ Tirs par Attaque : %2%'''
 PART_DESC_HANGAR_STATS
 '''[[encyclopedia DAMAGE_TITLE]] par tir : %2%
 Capacité Chasseurs : %1%'''
-
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -10454,7 +10456,7 @@ SP_VOID_SHADOW_DESC
 Une puissante arme d'énergie négative réduisant rapidement les populations phototropiques des planètes ennemies.
 
 SP_CHAOS_WAVE
-Vague du Chaos 
+Vague du Chaos
 
 SP_CHAOS_WAVE_DESC
 Une puissante arme réduisant rapidement tout type de population. AVERTISSEMENT: Anéantit également les Particularités [[special GAIA_SPECIAL]].
@@ -11261,7 +11263,6 @@ LIGHT_SENSITIVE
 TELEPATHIC_DETECTION
 +	Détection Télépathique: peut percevoir les planètes habitées proches.
 
-
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
@@ -11574,8 +11575,8 @@ Invincible'''
 ### End of Capital Names Lists
 
 ### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
-### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 #AI_SHIPDESIGN_NAME_INVALID
 #Invalid Design
 
@@ -11620,7 +11621,7 @@ Invincible'''
 #Outposter
 
 #AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
-#'''Comsat
+#'''ComSat
 #Starbase'''
 
 #AI_SHIPDESIGN_NAME_SCOUT
@@ -11766,7 +11767,7 @@ AI_FIRST_TURN_GREETING_MSG608
 Annihilez votre espèce est pour nous un devoir sacré!
 
 # NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI agression level.
+# The following lists group the AI turn 1 greetings by AI aggression level.
 # These are functional lists that must not be translated!
 
 #AI_FIRST_TURN_GREETING_LIST_BEGINNER
