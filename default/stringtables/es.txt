@@ -3840,26 +3840,6 @@ Alcance: %3%'''
 # Rate of Fire: %2% shots/turn
 # Range: %3%
 
-PART_DESC_LR_STATS
-'''Daño: %1%
-Cadencia de Disparo: %2% misiles/turno
-Alcance: %3%
-Velocidad del Misil: %4%
-Salud del Misil: %5%
-Ocultación del Misil: %6%
-Capacidad: %7% misiles'''
-
-PART_DESC_FIGHTER_STATS
-'''Tipo de Caza: %1%
-Caza Anti-Caza Daño: %2%
-Caza Anti-Nave Daño: %3%
-Caza Cadencia de Lanzamiento: %4% cazas/turno
-Caza Velocidad: %6%
-Caza Salud: %7%
-Caza Ocultación: %8%
-Caza Detección: %9%
-Capacidad: %10% Cazas'''
-
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################

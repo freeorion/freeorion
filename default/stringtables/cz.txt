@@ -1577,23 +1577,3 @@ Kapacita: %1%
 PART_DESC_STRENGTH
 Pevnost: %1%
 
-PART_DESC_LR_STATS
-'''Poškození: %1%
-Rychlost střelby: %2% missiles/turn
-Rozsah: %3%
-Protiraketová rychlost: %4%
-Protiraketové zdraví: %5%
-Protiraketové utajení: %6%
-Kapacita: %7% missiles'''
-
-PART_DESC_FIGHTER_STATS
-'''Fighter Type: %1%
-Fighter Anti-Fighter Damage: %2%
-Fighter Anti-Ship Damage: %3%
-Fighter Launch Rate: %4% fighters/turn
-Fighter Speed: %6%
-Fighter Health: %7%
-Fighter Stealth: %8%
-Fighter Detection: %9%
-Capacity: %10% fighters'''
-

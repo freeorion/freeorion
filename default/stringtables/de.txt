@@ -4935,26 +4935,6 @@ Angriffsschaden: %1%
 # Rate of Fire: %2% shots/turn
 # Range: %3%
 
-PART_DESC_LR_STATS
-'''Schaden: %1%
-Schusskadenz: %2% Raketen/Runde
-Reichweite: %3%
-Raketen Geschwindigkeit: %4%
-Raketen Struktur: %5%
-Raketen [[encyclopedia STEALTH_TITLE]]: %6%
-Fassungsvermögen: %7% Raketen'''
-
-PART_DESC_FIGHTER_STATS
-'''Abfangjägertyp: %1%
-Abfangjäger Schaden gegen Abfangjäger: %3%
-Abfangjäger Schaden gegen Schiffe: %2%
-Abfangjäger Startkadenz: %4% Abfangjäger/Runde
-Abfangjäger Geschwindigkeit: %5%
-Abfangjäger Struktur: %6%
-Abfangjäger [[encyclopedia STEALTH_TITLE]]: %7%
-Abfangjäger Aufklärungsreichweite: %8%
-Fassungsvermögen: %9% Abfangjäger'''
-
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################

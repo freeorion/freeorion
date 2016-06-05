@@ -3824,30 +3824,9 @@ Resistenza: %1%
 PART_DESC_DIRECT_FIRE_STATS
 '''Danno Attacco: %1%
 
-
-PART_DESC_LR_STATS
-'''Danno: %1%
-Velocità di Fuoco: %2% missili/turno
-Gittata: %3%
-Velocità Missili: %4%
-Struttura Missili: %5%
-Missili [[encyclopedia STEALTH_TITLE]]: %6%
-Capacità: %7% missili'''
-
 ## TEMPORARILY HIDDEN
 # Rate of Fire: %2% shots/turn
 # Range: %3%
-
-PART_DESC_FIGHTER_STATS
-'''Tipo di Caccia: %1%
-Danno Anti-Caccia del Caccia: %2%
-Danno Anti-Nave del Caccia: %3%
-Frequenza di lancio Caccia: %4% caccia/turno
-Velocità Caccia: %6%
-Resistenza Caccia: %7%
-Occultamento Caccia: %8%
-Capacità di rilevamento: %9%
-Capacità: %10% caccia'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####

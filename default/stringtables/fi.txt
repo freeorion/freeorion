@@ -2307,26 +2307,6 @@ Kantama: %3%'''
 # Rate of Fire: %2% shots/turn
 # Range: %3%
 
-PART_DESC_LR_STATS
-'''Vahinko: %1%
-Tulinopeus: %2% ohjusta/vuoro
-Kantama: %3%
-Ohjuksen nopeus: %4%
-Ohjuksen kestävyys: %5%
-Ohjuksen häivetaso: %6%
-Kapasiteetti: %7% ohjusta'''
-
-PART_DESC_FIGHTER_STATS
-'''Hävittäjä tyyppi: %1%
-Hävittäjän hävittäjiä vastaan tekemä vahinko: %2%
-Hävittäjän aluksia vastaan tekemä vahinko: %3%
-Hävittäjien laukaisutahti: %4% hävittäjää/vuoro
-Hävittäjän nopeus: %6%
-Hävittäjän kestävyys: %7%
-Hävittäjän häivetaso: %8%
-Hävittäjän havainnointitaso: %9%
-Kapasiteetti: %10% hävittäjää'''
-
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################
