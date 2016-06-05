@@ -16,6 +16,8 @@ from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_prior
                      FocusType, ShipRoleType, ShipDesignTypes)
 from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error
 from TechsListsAI import EXOBOT_TECH_NAME
+from print_utils import Table, Sequence, Text
+
 
 best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -230,12 +232,28 @@ def generate_production_orders():
         print "if no capital, no place to build, should get around to capturing or colonizing a new one"  # TODO
     else:
         print "Empire priority_id %d has current Capital %s:" % (empire.empireID, homeworld.name)
-        print "Buildings present at empire Capital (priority_id, Name, Type, Tags, Specials, Owned by Empire):"
-        for bldg in homeworld.buildingIDs:
-            this_building = universe.getBuilding(bldg)
-            tags = ",".join(this_building.tags)
-            specials = ",".join(this_building.specials)
-            print "%8s | %20s | type:%20s | tags:%20s | specials: %20s | owner:%d " % (bldg, this_building.name, "_".join(this_building.buildingTypeName.split("_")[-2:])[:20], tags, specials, this_building.owner)
+        table = Table([
+            Text('Id', align='<', description='Building id'),
+            Text('Name'),
+            Text('Type'),
+            Sequence('Tags'),
+            Sequence('Specials'),
+            Text('Owner Id'),
+        ], table_name='Buildings present at empire Capital')
+
+        for building_id in homeworld.buildingIDs:
+            building = universe.getBuilding(building_id)
+
+            table.add_row((
+                building_id,
+                building.name,
+                "_".join(building.buildingTypeName.split("_")[-2:]),
+                sorted(building.tags),
+                sorted(building.specials),
+                building.owner
+            ))
+
+        table.print_table()
         print 
         capital_buildings = [universe.getBuilding(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
