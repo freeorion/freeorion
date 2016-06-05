@@ -633,7 +633,10 @@ namespace {
             if (build_type == BT_SHIP)
                 item_name = GetShipDesign(queue_row->m_build.item.design_id)->Name(false);
 
-            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(item_name));
+            if (UserStringExists(item_name))
+                item_name = UserString(item_name);
+
+            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
             menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
 
             GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
