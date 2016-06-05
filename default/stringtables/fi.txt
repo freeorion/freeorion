@@ -1877,12 +1877,6 @@ Sisäinen
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Lyhyt kantama
-PC_MISSILES
-Ohjukset
-PC_POINT_DEFENSE
-Lähipuolustus
 PC_SHIELD
 Suojakentät
 PC_ARMOUR

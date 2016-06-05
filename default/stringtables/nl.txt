@@ -1394,12 +1394,6 @@ Intern
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Kort bereik
-PC_MISSILES
-Raketten
-PC_SHIELD
-Schilden
 PC_ARMOUR
 Bepansering
 PC_DETECTION

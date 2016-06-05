@@ -1192,12 +1192,6 @@ Intern
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Kortvidd
-PC_MISSILES
-Missiler
-PC_SHIELD
-Sköldar
 PC_ARMOUR
 Bepansring
 PC_DETECTION

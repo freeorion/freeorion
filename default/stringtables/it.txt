@@ -1406,9 +1406,6 @@ Guida
 MAP_PRODUCTION_TITLE
 Produzione
 
-MAP_PRODUCTION_TEXT
-Produzione totale impero
-
 MAP_PROD_WASTED_TITLE
 Produzione Inutilizzata
 
@@ -1420,9 +1417,6 @@ Click qui per aprire il menu di produzione'''
 
 MAP_RESEARCH_TITLE
 Ricerca
-
-MAP_RESEARCH_TEXT
-Ricerca totale impero
 
 MAP_RES_WASTED_TITLE
 Ricerca Inutilizzata
@@ -2952,12 +2946,6 @@ Vuoto
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Corto raggio
-PC_MISSILES
-Missili
-PC_POINT_DEFENSE
-Punti Difesa
 PC_SHIELD
 Scudi
 PC_ARMOUR

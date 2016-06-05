@@ -1669,9 +1669,6 @@ Schiffsdesign
 MAP_PRODUCTION_TITLE
 Produktion
 
-MAP_PRODUCTION_TEXT
-Produktionsleistung des gesamten Imperiums
-
 MAP_PROD_WASTED_TITLE
 Ungenutzte Produktion
 
@@ -1683,9 +1680,6 @@ Hier anklicken um das Produktionsmenü zu öffnen'''
 
 MAP_RESEARCH_TITLE
 Forschung
-
-MAP_RESEARCH_TEXT
-Forschungsleistung des gesamten Imperiums
 
 MAP_RES_WASTED_TITLE
 Ungenutzte Forschung
@@ -3469,12 +3463,6 @@ Leer
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Waffen
-PC_MISSILES
-Raketen
-PC_POINT_DEFENSE
-Punktverteidigung
 PC_SHIELD
 Schilde
 PC_ARMOUR
