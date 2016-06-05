@@ -923,9 +923,6 @@ Texto
 OPTIONS_FONT_TITLE
 Títulos de ventanas
 
-OPTIONS_TECH_SPACING
-Espacio de tecnología
-
 OPTIONS_TOOLTIP_DELAY
 Retraso de las sugerencias (ms)
 
