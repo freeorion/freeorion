@@ -1037,9 +1037,6 @@ Centreer op Bouwen
 PRODUCTION_WND_TITLE
 Productie
 
-PRODUCTION_INFO_PANEL_TITLE
-Productie
-
 ###############
 #  DesignWnd  #
 ###############

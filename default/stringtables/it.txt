@@ -1918,9 +1918,6 @@ Doppio click su un elemento disponibile per aggiungerlo alla coda di produzione.
 PRODUCTION_WND_TITLE
 Produzione
 
-PRODUCTION_INFO_PANEL_TITLE
-Produzione
-
 PRODUCTION_QUEUE_EMPTY
 '''La coda di produzione dell'impero è vuota.
 

@@ -2210,9 +2210,6 @@ Doppelklick auf ein verfügbares Objekt um es zur Produktionswarteschlange hinzu
 PRODUCTION_WND_TITLE
 Produktion
 
-PRODUCTION_INFO_PANEL_TITLE
-Produktion
-
 PRODUCTION_QUEUE_EMPTY
 '''Die Produktionswarteschlange des Imperiums ist leer.
 

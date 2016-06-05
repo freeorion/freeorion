@@ -1583,9 +1583,6 @@ Centrar en construcción
 PRODUCTION_WND_TITLE
 Producción
 
-PRODUCTION_INFO_PANEL_TITLE
-Producción
-
 PRODUCTION_QUEUE_MULTIPLES
 %1%x
 

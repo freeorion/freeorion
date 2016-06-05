@@ -959,9 +959,6 @@ Přidat do řady
 PRODUCTION_WND_TITLE
 Produkce
 
-PRODUCTION_INFO_PANEL_TITLE
-Produkce
-
 ###########################################
 # ARTICLES #
 ###########################################

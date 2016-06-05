@@ -867,9 +867,6 @@ Centrera tillverkning
 PRODUCTION_WND_TITLE
 Produktion
 
-PRODUCTION_INFO_PANEL_TITLE
-Produktion
-
 ###############
 #  DesignWnd  #
 ###############
