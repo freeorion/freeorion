@@ -628,10 +628,14 @@ namespace {
             }
             // pedia lookup
             std::string item_name = "";
-            if (build_type == BT_BUILDING)
+            if (build_type == BT_BUILDING) {
                 item_name = queue_row->m_build.item.name;
-            if (build_type == BT_SHIP)
+            } else if (build_type == BT_SHIP) {
                 item_name = GetShipDesign(queue_row->m_build.item.design_id)->Name(false);
+            } else {
+                ErrorLogger() << "Invalid build type (" << build_type << ") for row item";
+                return;
+            }
 
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);

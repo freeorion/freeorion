@@ -960,10 +960,14 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
     std::string item_name = "";
-    if (item.build_type == BT_BUILDING)
+    if (item.build_type == BT_BUILDING) {
         item_name = item.name;
-    if (item.build_type == BT_SHIP)
+    } else if (item.build_type == BT_SHIP) {
         item_name = GetShipDesign(item.design_id)->Name(false);
+    } else {
+        ErrorLogger() << "Invalid build type (" << item.build_type << ") for item";
+        return;
+    }
 
     GG::MenuItem menu_contents;
 
