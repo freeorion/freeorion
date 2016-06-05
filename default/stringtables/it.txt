@@ -1835,11 +1835,8 @@ Accodato
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Prerequisiti Non Ricercati: '''
 
-TECH_WND_LIST_VIEW
-Visualizza come Lista
-
-TECH_WND_TREE_VIEW
-Vista ad Albero
+TECH_WND_VIEW_TYPE
+Ad Albero / Come Lista
 
 TECH_WND_REQUIRES
 Richiede

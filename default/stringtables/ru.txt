@@ -2175,11 +2175,8 @@ TECH_WND_ENQUEUED
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Необходимо Исследовать: '''
 
-TECH_WND_LIST_VIEW
-Просмотр списком
-
-TECH_WND_TREE_VIEW
-Просмотр в виде дерева
+TECH_WND_VIEW_TYPE
+Список / Дерево
 
 TECH_WND_REQUIRES
 Необходимы

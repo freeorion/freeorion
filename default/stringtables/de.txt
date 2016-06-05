@@ -2127,11 +2127,8 @@ In der Warteschlange
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Unerforschte Voraussetzungen: '''
 
-TECH_WND_LIST_VIEW
-Listenansicht
-
-TECH_WND_TREE_VIEW
-Baumansicht
+TECH_WND_VIEW_TYPE
+Baumansicht / Listenansicht
 
 TECH_WND_REQUIRES
 Benötigt

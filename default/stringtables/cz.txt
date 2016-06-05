@@ -889,11 +889,8 @@ Kompletní
 TECH_WND_STATUS_RESEARCHABLE
 Vyzkoumatelné
 
-TECH_WND_LIST_VIEW
-Zobrazení seznamu
-
-TECH_WND_TREE_VIEW
-Zobrazení stromu
+TECH_WND_VIEW_TYPE
+Stromu / Seznamu
 
 TECH_WND_REQUIRES
 Potřebuje

@@ -1513,11 +1513,8 @@ Completado
 TECH_WND_STATUS_RESEARCHABLE
 Investigable
 
-TECH_WND_LIST_VIEW
-Vista de Lista
-
-TECH_WND_TREE_VIEW
-Vista de Árbol
+TECH_WND_VIEW_TYPE
+Vde Árbol / De Lista
 
 TECH_WND_REQUIRES
 Requiere

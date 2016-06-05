@@ -1267,11 +1267,8 @@ Valmis
 TECH_WND_STATUS_RESEARCHABLE
 Mahdollinen tutkia
 
-TECH_WND_LIST_VIEW
-Listanäkymä
-
-TECH_WND_TREE_VIEW
-Puunäkymä
+TECH_WND_VIEW_TYPE
+Puunäkymä / Listanäkymä
 
 TECH_WND_REQUIRES
 Vaatii
