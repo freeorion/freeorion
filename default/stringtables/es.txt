@@ -1545,9 +1545,6 @@ Proyectos en cola
 RESEARCH_WND_TITLE
 Investigación
 
-RESEARCH_INFO_PANEL_TITLE
-Investigación
-
 ####################
 # BuildSelectorWnd #
 ####################

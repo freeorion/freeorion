@@ -2166,9 +2166,6 @@ Anzahl der Projekte
 RESEARCH_WND_TITLE
 Forschung
 
-RESEARCH_INFO_PANEL_TITLE
-Forschung
-
 RESEARCH_INFO_RP
 FP
 

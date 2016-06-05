@@ -820,9 +820,6 @@ Köade projekt
 RESEARCH_WND_TITLE
 Forskning
 
-RESEARCH_INFO_PANEL_TITLE
-Forskning
-
 RESEARCH_INFO_RP
 FP
 

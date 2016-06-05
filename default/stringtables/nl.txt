@@ -987,9 +987,6 @@ Projecten in Wachtrij
 RESEARCH_WND_TITLE
 Onderzoek
 
-RESEARCH_INFO_PANEL_TITLE
-Onderzoek
-
 RESEARCH_INFO_RP
 OP
 

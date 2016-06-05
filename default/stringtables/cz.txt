@@ -924,9 +924,6 @@ Projekty ve frontě
 RESEARCH_WND_TITLE
 Výzkum
 
-RESEARCH_INFO_PANEL_TITLE
-Výzkum
-
 ####################
 # BuildSelectorWnd #
 ####################

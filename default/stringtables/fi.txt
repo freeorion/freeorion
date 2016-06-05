@@ -1302,9 +1302,6 @@ Jonossa olevat projektit
 RESEARCH_WND_TITLE
 Tutkimus
 
-RESEARCH_INFO_PANEL_TITLE
-Tutkimus
-
 RESEARCH_INFO_RP
 TP
 
