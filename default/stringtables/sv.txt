@@ -990,13 +990,6 @@ Erhåller nya speldata ...
 SITREP_PANEL_TITLE
 Situationsrapport
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
-## these sitreps to be presented in the SitrepPanel in the order set below.
-## Sitreps not specified below will appear in the SitrepPanel following those below.
-
-## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
-## END OF SITREP_PRIORITY_ORDER
-
 SITREP_SHIP_BUILT
 %ship%, ett nytt skepp, har blivit tillverkat i %system%-systemet.
 

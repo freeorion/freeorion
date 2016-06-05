@@ -1041,13 +1041,6 @@ Stahuji nový herní stav
 SITREP_PANEL_TITLE
 Zprávy z říše
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
-## these sitreps to be presented in the SitrepPanel in the order set below.
-## Sitreps not specified below will appear in the SitrepPanel following those below.
-
-## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
-## END OF SITREP_PRIORITY_ORDER
-
 SITREP_SHIP_BUILT
 Loď "%ship%" byla vyrobena v sestému "%system%"".
 
