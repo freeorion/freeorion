@@ -4932,21 +4932,6 @@ Massenkatapult 1
 SR_WEAPON_1_1_DESC
 Der Massenkatapult, eine Standardwaffe.
 
-SR_WEAPON_1_2
-Massenkatapult 2
-SR_WEAPON_1_2_DESC
-Der Massenkatapult, auf Stufe 2 verbessert.
-
-SR_WEAPON_1_3
-Massenkatapult 3
-SR_WEAPON_1_3_DESC
-Der Massenkatapult, auf Stufe 3 verbessert.
-
-SR_WEAPON_1_4
-Massenkatapult 4
-SR_WEAPON_1_4_DESC
-Der Massenkatapult, auf Stufe 4 verbessert.
-
 SR_WEAPON_2_1_DESC
 Der Laser, eine viel leistungsfähigere Schiffswaffe als der Massenkatapult.
 
