@@ -3329,8 +3329,6 @@ EFFECT_CONC_CAMP_COMLETE_LABEL
 
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% починен в %building% на %planet%.
-EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Ремонт Сухой Док
 
 EFFECT_MONSTER_SPAWNING
 %predefinedshipdesign% Появился в %system%!

@@ -3011,8 +3011,6 @@ Fremde Flotte ist angekommen
 
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% ist im %building% auf %planet% repariert worden.
-EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Trockendockreparatur
 
 EFFECT_MONSTER_SPAWNING
 Ein %predefinedshipdesign% ist in %system% aufgetaucht!
