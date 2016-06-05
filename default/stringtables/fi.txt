@@ -1881,8 +1881,6 @@ PC_SHORT_RANGE
 Lyhyt kantama
 PC_MISSILES
 Ohjukset
-PC_FIGHTERS
-Hävittäjät
 PC_POINT_DEFENSE
 Lähipuolustus
 PC_SHIELD

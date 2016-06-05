@@ -2956,8 +2956,6 @@ PC_SHORT_RANGE
 Corto raggio
 PC_MISSILES
 Missili
-PC_FIGHTERS
-Combattenti
 PC_POINT_DEFENSE
 Punti Difesa
 PC_SHIELD

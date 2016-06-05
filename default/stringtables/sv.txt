@@ -1196,8 +1196,6 @@ PC_SHORT_RANGE
 Kortvidd
 PC_MISSILES
 Missiler
-PC_FIGHTERS
-Jaktskepp
 PC_SHIELD
 Sköldar
 PC_ARMOUR

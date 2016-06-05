@@ -4305,8 +4305,6 @@ SL_TOOLTIP_DESC
 
 # Ship Part Classes
 
-PC_FIGHTERS
-Истребители
 PC_SHIELD
 Щиты
 PC_ARMOUR

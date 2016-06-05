@@ -3473,8 +3473,6 @@ PC_SHORT_RANGE
 Waffen
 PC_MISSILES
 Raketen
-PC_FIGHTERS
-Abfangjäger
 PC_POINT_DEFENSE
 Punktverteidigung
 PC_SHIELD
