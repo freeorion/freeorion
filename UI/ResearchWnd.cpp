@@ -196,12 +196,78 @@ namespace {
 }
 
 //////////////////////////////////////////////////
+// ResearchQueueListBox                         //
+//////////////////////////////////////////////////
+class ResearchQueueListBox : public QueueListBox {
+public:
+    ResearchQueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+        QueueListBox(drop_type_str, prompt_str)
+    {}
+
+    boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
+    boost::signals2::signal<void ()>                             ShowPediaSignal;
+
+protected:
+    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+        // mostly duplicated equivalent in QueueListBox, but with an extra command...
+
+        GG::MenuItem menu_contents;
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
+
+        GG::ListBox::Row* row = *it;
+        QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : 0;
+
+        // pedia lookup
+        std::string tech_name = queue_row->tech_name;
+        if (tech_name == "") {
+            ErrorLogger() << "Empty tech name referenced during right click";
+            return;
+        }
+
+        if (UserStringExists(tech_name))
+            tech_name = UserString(tech_name);
+
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
+        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 4, false, false));
+
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
+            case 1: { // move item to top
+                if (GG::ListBox::Row* row = *it)
+                    this->QueueItemMovedSignal(row, 0);
+                break;
+            }
+            case 2: { // move item to bottom
+                if (GG::ListBox::Row* row = *it)
+                    this->QueueItemMovedSignal(row, NumRows());
+                break;
+            }
+            case 3: { // delete item
+                this->QueueItemDeletedSignal(it);
+                break;
+            }
+            case 4: { // pedia lookup
+                this->LeftClickedSignal(it, pt, modkeys);
+                ShowPediaSignal();
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+};
+
+//////////////////////////////////////////////////
 // ResearchQueueWnd                             //
 //////////////////////////////////////////////////
 class ResearchQueueWnd : public CUIWnd {
 public:
-    typedef QueueListBox ResearchQueueListBox;
-
     /** \name Structors */ //@{
     ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
@@ -274,6 +340,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal, &ResearchWnd::DeleteQueueItem,              this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ResearchWnd::QueueItemClickedSlot,         this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ResearchWnd::QueueItemDoubleClickedSlot,   this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->ShowPediaSignal,        &ResearchWnd::ShowPedia,                    this);
     GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal,                 &ResearchWnd::AddTechsToQueueSlot,          this);
 
     AttachChild(m_research_info_panel);
