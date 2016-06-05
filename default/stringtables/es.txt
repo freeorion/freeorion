@@ -249,9 +249,6 @@ Mostrar línea de escala para la distancia del universo en el mapa de galaxia.
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Alterna entre enseñar o no la barra de nivel de zoom en el mapa de galaxia.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Usar renderizado vistoso optimizado de OpenGL 1.5 para los sistemas en el mapa de galaxia.  Es posible que no funcione con una tarjeta gráfica antigua.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Establece el ancho para renderizar las líneas de suministro en pixeles.
 
@@ -973,9 +970,6 @@ Descripciones de Contenidos
 
 OPTIONS_SYSTEM_ICONS
 Iconos de Sistema
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Sistema optimizado de renderizado
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Tamaño del Icono de Sistema

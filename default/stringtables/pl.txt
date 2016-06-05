@@ -142,9 +142,6 @@ Rysowanie pól gwiazd wokół systemów planetarnych. W starszych systemach moż
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Pokaż linię skali dla odległości wszechświata na mapie galaktyki.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Do rysowania systemów planetarnych na pamie galaktyki używa funkcji OpenGL 1.5. Na starszych kartach graficznych może powodować kłopoty.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Określa szerokość (w pikselach) rysowanych szlaków gwiezdnych.
 

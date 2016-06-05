@@ -542,9 +542,6 @@ Entscheidet ob der Vergrösserungsregler auf der Galaxiekarte angezeigt wird.
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Entscheidet ob ein Kontextmenü in der Galaxiekarte angezeigt werden soll.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Verwende schicke optimierte OpenGL 1.5 Zeicheneffekte für Systeme auf der Galaxiekarte. Kann bei älteren Grafikkarten Abstürze verursachen.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Setzt die Breite der Sternstraßen in Pixeln fest.
 
@@ -1336,9 +1333,6 @@ Inhaltsbeschreibung
 
 OPTIONS_SYSTEM_ICONS
 Systemsymbole
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimiertes Zeichnen
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Systemsymbolgröße

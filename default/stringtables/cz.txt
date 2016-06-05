@@ -185,9 +185,6 @@ Zobrazení měřítka mapy galaxie.
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Zobrazení přibližovací posuvník na mapě galaxie.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Použít luxusně optimalizovaný OpenGL 1.5 pro vykreslování systému galktické mapy.  Může být nefunkční na starších kartách .
-
 OPTIONS_DB_STARLANE_THICKNESS
 Nastavuje šířku mezihvězdných drah pro vykreslení (pixely).
 

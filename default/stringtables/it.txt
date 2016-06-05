@@ -343,9 +343,6 @@ Rendering del campo stellare intorno al sistema. Può rallentare il rendering su
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Visualizza la scala per le distanze dell'universo sulla mappa della galassia.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Usa l'ottimizzazione OpenGL 1.5 nel rendering del sistema nella mappa della galassia. Può provocare crash con vecchie schede video.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Imposta la larghezza in pixel da visualizzare per la rotta stellare.
 
@@ -1085,9 +1082,6 @@ Descrizione contesto
 
 OPTIONS_SYSTEM_ICONS
 Icone sistema
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Sistema di rendering ottimizzato
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Dimensione icone del sistema

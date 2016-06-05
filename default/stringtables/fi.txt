@@ -185,9 +185,6 @@ Renderöi tähtikentät tähtijärjestelmien ympärille. Voi hidastaa renderöin
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Valitsee näytetäänkö tarkennuksen säätöpalkkia galaksin kartalla.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Käytä optimoitua OpenGL 1.5 renderöintiä tähtijärjestelmiin galaksin kartalla. Voi aiheuttaa ongelmia vanhemmilla näytönohjaimilla.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Asettaa kuinka leveiksi tähtilinjat renderöidään pikseleissä.
 
@@ -790,9 +787,6 @@ Sisällön kuvaukset
 
 OPTIONS_SYSTEM_ICONS
 Järjestelmä ikonit
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimoitu tähtijärjestelmän renderöinti
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Järjestelmäikonien koko
