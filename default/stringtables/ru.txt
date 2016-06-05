@@ -1154,9 +1154,9 @@ GSETUP_ELLIPTICAL
 Эллиптическая
 GSETUP_RING
 Кольцо
+
 GSETUP_RANDOM
 Случайно
-
 GSETUP_NONE
 Нет
 GSETUP_LOW
@@ -2348,8 +2348,6 @@ DESIGN_KNOWN_DETAIL
 ## Statistics ##
 ################
 
-    
-
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
@@ -3371,6 +3369,10 @@ SITREP_EMPIRE_ELIMINATED_LABEL
 Империя Уничтожена.
 
 #############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
+
+#############################################################
 ####                    S P E C I E S                    ####
 #############################################################
 
@@ -4318,6 +4320,8 @@ PC_GENERAL
 PC_BOMBARD
 Бомбардировка
 
+# Visibility levels
+
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
@@ -4692,8 +4696,6 @@ DESC_SPECIES
 DESC_SPECIES_NOT
 ''' у этого нет артефакта %1%'''
 
- 
-
 DESC_FOCUS_TYPE
 ''' это имеет цель %1%'''
 
@@ -4831,7 +4833,7 @@ DESC_CAN_PRODUCE_SHIPS
 
 DESC_CAN_PRODUCE_SHIPS_NOT
 ''' виды, которые не могут производить суда'''
- 
+
 DESC_SUPPLY_CONNECTED_FLEET
 ''' находится в системе, где империя %1% может осуществлять снабжение флота'''
 
@@ -6264,14 +6266,8 @@ PART_DESC_CAPACITY
 PART_DESC_STRENGTH
 Сила: %1%
 
-# Detection Strength: %1%
-
 PART_DESC_DIRECT_FIRE_STATS
 Урон при атаке: %1%
-
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -7321,9 +7317,13 @@ AI_CAPITOL_NAMES_TURTLE
 
 ### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists 
+### AI Diplomacy Strings and Lists
 ### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
 ### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
 
 ### End of AI Diplomacy Message Lists
 

@@ -107,7 +107,16 @@ Flotta %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotta
 
-# used to generate name for effect-created planets. %1% is the system name.
+# new asteroids or new planet names...
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
+
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 EMPTY_SPACE
 Spazio Profondo
@@ -660,26 +669,11 @@ Imposta il numero di turnida attendere fra due salvataggi automatici.
 OPTIONS_DB_MUSIC_VOLUME
 Il volume (da 0 a 255) per la musica durante la partita.
 
-OPTIONS_DB_COMBAT_ENABLE_GLOW
-Attiva gli effetti luminosi.
-
-OPTIONS_DB_COMBAT_ENABLE_SKYBOX
-Attiva lo sfondo del cielo.
-
-OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
-Attiva l'effetto lente.
-
-OPTIONS_DB_COMBAT_FILLED_SELECTION
-Usa un'effetto riempimento invece di contorno sugli oggetti selezionati.
-
 OPTIONS_DB_QUICKSTART
 Avvio veloce senza mostrare il menu.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
 Alterna l'inclusione di testo generato automaticamente in tecnologia, edilizia o descrizioni di parti della nave.
-
-OPTIONS_DB_TECH_DEMO
-Prova la demo di combattimento 3D tecnologico.
 
 #################
 # File Dialog   #
@@ -897,9 +891,9 @@ GSETUP_ELLIPTICAL
 Ellittica
 GSETUP_RING
 Ad anello
+
 GSETUP_RANDOM
 Casuale
-
 GSETUP_NONE
 Nessuna
 GSETUP_LOW
@@ -970,6 +964,10 @@ Abbandona
 
 GAME_MENU_SAVE_FILES
 Salvataggi
+
+###########################
+# Save Game Dialog        #
+###########################
 
 ###########################
 # Game Options            #
@@ -1293,9 +1291,6 @@ Interfaccia utente
 OPTIONS_PAGE_COLORS
 Colori
 
-OPTIONS_PAGE_COMBAT
-Combattimento
-
 OPTIONS_PAGE_DIRECTORIES
 Cartelle
 
@@ -1323,18 +1318,6 @@ Colore barra
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Sfondo
 
-OPTIONS_COMBAT_ENABLE_GLOW
-Effetti luminosi
-
-OPTIONS_COMBAT_ENABLE_SKYBOX
-Sfondo del cielo
-
-OPTIONS_COMBAT_ENABLE_LENS_FLARES
-Effetto lente
-
-OPTIONS_COMBAT_FILLED_SELECTION
-Effetto riempimento selezione
-
 OPTIONS_ANY_FILE
 Tutti i file
 
@@ -1361,16 +1344,6 @@ Registrazione messaggi dettagliata per debug
 
 OPTIONS_VERBOSE_SITREP_DESC
 Rapporti sulla situazione con errori
-
-##################
-# CombatSetupWnd #
-##################
-
-AUTO_PLACE_SHIPS
-Posizionamento Automatico Navi
-
-REDO_PLACEMENTS
-Ripristina Posizionamenti
 
 #################
 # Main Map      #
@@ -1513,6 +1486,8 @@ Seleziona nave colonizzatrice per colonizzare.
 
 RP_FOCUS_TOOLTIP
 Obbiettivo: %1%
+
+## Specials Panel ##########
 
 ## Buildings Panel##########
 
@@ -1846,15 +1821,6 @@ Totale Punti Disponibili
 PRODUCTION_INFO_WASTED_PS_LABEL
 Punti Sprecati
 
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Progetti in Corso
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Progetto Sottofinanziato
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Progetti in coda
-
 ###############
 # ResearchWnd #
 ###############
@@ -1973,6 +1939,10 @@ Rimuovi Parti
 
 DESIGN_DELETE
 Cancella Progetto
+
+################
+## Statistics ##
+################
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -2167,6 +2137,10 @@ ENC_COMBAT_UNKNOWN_OBJECT
 Sconosciuto
 
 ###########################################
+# Combat Report #
+###########################################
+
+###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
@@ -2337,6 +2311,10 @@ Mantenimento della Flotta
 EVACUATION_TITLE
 Evacuazione
 
+#
+# Guides
+#
+
 ####################
 # Combat Messages  #
 ####################
@@ -2453,6 +2431,10 @@ Comprimi Tutto
 EXPAND_ALL
 Espandi Tutto
 
+#####################
+## Objects Columns ##
+#####################
+
 ####################
 ## Filters Dialog ##
 ####################
@@ -2528,6 +2510,8 @@ Si è verificato un evento sconosciuto.
 
 FILTERS
 Filtri
+
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 Il progetto %shipdesign% '%ship%' è stato prodotto in %system%.
@@ -2678,6 +2662,9 @@ La nave dell'impero %empire% della flotta %fleet% ha subito %rawtext% punti di d
 EFFECT_MINES_LABEL
 Mine di Sistema
 
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
@@ -2695,6 +2682,10 @@ SITREP_EMPIRE_ELIMINATED
 %empire% è stato eliminato.
 SITREP_EMPIRE_ELIMINATED_LABEL
 Impero Eliminato
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -2944,6 +2935,8 @@ PC_FUEL
 Carburante
 PC_COLONY
 Colonizzazione
+
+# Visibility levels
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -3791,18 +3784,10 @@ Capacità: %1%
 PART_DESC_STRENGTH
 Resistenza: %1%
 
-# Detection Range: %2%
-
 PART_DESC_DIRECT_FIRE_STATS
 '''Danno Attacco: %1%
 
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
 
 SR_WEAPON_2_DESC
 Bassa potenza e massa
@@ -3847,6 +3832,10 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''Increases Starlane speed by 15. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
+
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
 
 FU_SINGULARITY_ENGINE_CORE_DESC
 '''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. '''
@@ -3903,6 +3892,22 @@ SH_TITANIC
 Scafo Titanico
 
 #############################################################
+####              B U I L D I N G  M A C R O S           ####
+#############################################################
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
 
@@ -3912,14 +3917,6 @@ ENV_ENCAPSUL_LABEL
 #############################################################
 ####                       T A G S                       ####
 #############################################################
-
-## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census pop-up, and specifies order in which they will be displayed.
-## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.
-
-## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
-##STYLISH  // add to tag order list if ever this tag is given a function
 
 ANTIQUATED
 Antiquato
@@ -3945,3 +3942,43 @@ Telepatico
 ORBITAL
 Orbitale
 
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"

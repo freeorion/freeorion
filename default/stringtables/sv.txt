@@ -57,6 +57,36 @@ Ange nytt namn
 CHAT_WHISPER
 viska
 
+# used to generate names for new fleets when they are created
+
+# new asteroids or new planet names...
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
+
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
+
+###########################
+# Predefined Ship Designs #
+###########################
+# in premade_ship_designs.txt
+
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
+
+##############################
+# Predefined Starting Fleets #
+##############################
+
 ##########################
 # Status Update Messages #
 ##########################
@@ -203,6 +233,10 @@ FILE_DLG_FILENAME_IS_A_DIRECTORY
 
 FILE_DLG_FILE_DOES_NOT_EXIST
 Fil "%1%"\nexisterar inte.
+
+#################
+# Color Dialog  #
+#################
 
 #################
 # Intro Screen  #
@@ -402,6 +436,10 @@ Resignera
 
 GAME_MENU_SAVE_FILES
 Sparfiler
+
+###########################
+# Save Game Dialog        #
+###########################
 
 ###########################
 # Game Options            #
@@ -665,6 +703,10 @@ Storlek
 PL_COLONIZE
 Kolonisera
 
+## Resources Panel ##########
+
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -738,9 +780,21 @@ Stridsflotta
 FW_FOREIGN_FLEET
 Främmande flotta
 
+# the name that is used for fleets that no player controls
+
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
 Främmande skepp
+
+# the name that is used for ships that no player controls
+
+###############
+#  Moderator  #
+###############
+
+###############
+#  Diplomacy  #
+###############
 
 ###############
 # TechTreeWnd #
@@ -803,15 +857,6 @@ Tillgängliga poäng totalt
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Förspillda poäng
-
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Pågående projekt
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Underfinansierade projekt
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Köade projekt
 
 ###############
 # ResearchWnd #
@@ -904,6 +949,10 @@ Bekräfta ny ritning
 DESIGN_WND_CLEAR
 Rensa från delar
 
+################
+## Statistics ##
+################
+
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
@@ -921,6 +970,55 @@ Teknologi
 
 ENC_BUILDING
 Building
+
+# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
+# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
+# %1% may be an empty string for most general types of things that can be shown.
+
+# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
+# be produced or researched (e.g. specials)
+# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
+# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
+# %3% will be the minimum number of turns it takes to produce or research the thing shown
+
+# auto-generated location condition description
+
+# auto-generated effects description. %1% will be the auto-generated effects text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+
+###########################################
+# Combat Report #
+###########################################
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
+###########################################
+# ARTICLES #
+###########################################
+
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
+
+#
+# Guides
+#
 
 ####################
 # Combat Messages  #
@@ -978,6 +1076,26 @@ Utför order ...
 TURN_PROGRESS_PHASE_DOWNLOADING
 Erhåller nya speldata ...
 
+########################
+# Messages Panel       #
+########################
+
+########################
+# Players List         #
+########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
@@ -986,6 +1104,8 @@ Erhåller nya speldata ...
 
 SITREP_PANEL_TITLE
 Situationsrapport
+
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 %ship%, ett nytt skepp, har blivit tillverkat i %system%-systemet.
@@ -1004,6 +1124,21 @@ SITREP_PLANET_COLONIZED
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% har anlänt vid %system%-systemet och inväntar ytterligare order.
+
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
+#############################################################
+####           V I C T O R Y   /   D E F E A T           ####
+#############################################################
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
+
+#############################################################
+####                    S P E C I E S                    ####
+#############################################################
 
 #############################################################
 ####                   S P E C I A L S                   ####
@@ -1193,6 +1328,8 @@ Bränsle
 PC_COLONY
 Kolonisering
 
+# Visibility levels
+
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
@@ -1233,6 +1370,18 @@ handelsreserv
 DESC_VAR_OWNER
 ägare
 
+# this one is intentionally left empty
+
+# six is probably more than will be needed, but just in case ...
+
+# Effects
+
+# SetMeter
+
+# others
+
+# Object Creation
+
 # Conditions
 
 DESC_ALL
@@ -1263,9 +1412,97 @@ ECONOMICS_CATEGORY
 Ekonomi
 
 #############################################################
+####               T E C H   T H E O R I E S             ####
+#############################################################
+
+#############################################################
+####          T E C H   A P P L I C A T I O N S          ####
+#############################################################
+
+#############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
+
+#############################################################
 ####                  B U I L D I N G S                  ####
 #############################################################
 
 BLD_IMPERIAL_PALACE
 Imperiepalats
 
+#############################################################
+####           Hull/Part Description Templates           ####
+#############################################################
+
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
+
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
+
+#############################################################
+####              B U I L D I N G  M A C R O S           ####
+#############################################################
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"

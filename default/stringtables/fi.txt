@@ -75,7 +75,16 @@ Uusi Laivasto %1%
 NEW_FLEET_NAME_NO_NUMBER
 Uusi Laivasto
 
-# used to generate name for effect-created planets. %1% is the system name.
+# new asteroids or new planet names...
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
+
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 BOMBER
 Pommittaja
@@ -103,6 +112,14 @@ SD_COLONY_SHIP
 Kolonisaatioalus
 SD_COLONY_SHIP_DESC
 Valtava aseistamaton alus, joka kykenee toimittamaan miljoonia kansalaisia uusille planeetoille.
+
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
 
 ##############################
 # Predefined Starting Fleets #
@@ -410,12 +427,6 @@ Aloittaa uuden nopean aloituksen pelin sivuuttaen päävalikon.
 OPTIONS_DB_AUTO_EFFECT_DESC
 Valitsee käytetäänkö automaattisesti luotuja tekstejä tekniikoiden, rakennusten ja alusten osia kuvailtaessa.
 
-OPTIONS_DB_TECH_DEMO
-Kokeile 3D taistelujen tekniikkademoa.
-
-OPTIONS_DB_TEST_3D_COMBAT
-Testaa 3D taistelujen resoluutio.
-
 OPTIONS_DB_LOAD
 Lataa tietyn yksinpeli tallennuksen.
 
@@ -698,6 +709,10 @@ GAME_MENU_SAVE_FILES
 Tallennetut pelitiedostot
 
 ###########################
+# Save Game Dialog        #
+###########################
+
+###########################
 # Game Options            #
 ###########################
 
@@ -929,9 +944,6 @@ Käyttöliittymä
 OPTIONS_PAGE_COLORS
 Värit
 
-OPTIONS_PAGE_COMBAT
-Taistelu
-
 OPTIONS_PAGE_DIRECTORIES
 Tiedostot
 
@@ -982,16 +994,6 @@ OPTIONS_SOUND_FILE
 
 OPTIONS_AUTO_EFFECT_DESC
 Automaattisesti luodut vaikutus kuvaukset
-
-##################
-# CombatSetupWnd #
-##################
-
-AUTO_PLACE_SHIPS
-Sijoittele alukset automaattisesti
-
-REDO_PLACEMENTS
-Uudelleen sijoittele
 
 #################
 # Main Map      #
@@ -1074,6 +1076,8 @@ Valitse kolonisaatioalus kolonisoidaksesi.
 
 RP_FOCUS_TOOLTIP
 Painotus: %1%
+
+## Specials Panel ##########
 
 ## Buildings Panel##########
 
@@ -1219,6 +1223,14 @@ ORDER_CANCEL_SHIP_SCRAP
 Peruuta aluksen purkaminen
 
 ###############
+#  Moderator  #
+###############
+
+###############
+#  Diplomacy  #
+###############
+
+###############
 # TechTreeWnd #
 ###############
 
@@ -1279,15 +1291,6 @@ Käytettävissä olevat pisteet
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Hukatut pisteet
-
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Keskeneräiset projektit
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Rahoittamattomat projektit
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Jonossa olevat projektit
 
 ###############
 # ResearchWnd #
@@ -1408,7 +1411,6 @@ Poista suunitelma
 ################
 ## Statistics ##
 ################
-    
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -1510,6 +1512,24 @@ Häivetaso: %13%
 
 # will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
+###########################################
+# Combat Report #
+###########################################
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
+###########################################
+# ARTICLES #
+###########################################
+
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
+
+#
+# Guides
+#
+
 ####################
 # Combat Messages  #
 ####################
@@ -1569,6 +1589,26 @@ Toteutetaan käskyjä...
 TURN_PROGRESS_PHASE_DOWNLOADING
 Ladataan uutta pelitilaa ...
 
+########################
+# Messages Panel       #
+########################
+
+########################
+# Players List         #
+########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
@@ -1580,6 +1620,8 @@ Tilanneraportti
 
 SITREP_ERROR
 Tuntematon tapahtuma.
+
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 %ship%, uusi alus,on saatu valmiiksi %system% tähtijärjestelmässä.
@@ -1605,6 +1647,9 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% on saapunut %system% tähtijärjestelmään.
 
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
@@ -1617,6 +1662,10 @@ VICTORY_ALL_ENEMIES_ELIMINATED
 
 SITREP_EMPIRE_ELIMINATED
 %empire% imperiumi on tuhottu.
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -1872,6 +1921,8 @@ Polttoaine
 PC_COLONY
 Kolonisaatio
 
+# Visibility levels
+
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
 #############################################################
@@ -2066,8 +2117,6 @@ jolla on %1% lajia
 DESC_SPECIES_NOT
 jolla ei ole %1% lajia
 
- 
-
 DESC_FOCUS_TYPE
 jolla on fokus %1%
 
@@ -2133,8 +2182,6 @@ joka on paikallaan
 
 DESC_STATIONARY_NOT
 joka on liikkeessä
-
- 
 
 DESC_AND_BETWEEN_OPERANDS
 ''' ja'''
@@ -2250,6 +2297,10 @@ SHP_DEUTERIUM_TANK_DESC
 Avaa Deuteriumtankin, aluksen osa.
 
 #############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
+
+#############################################################
 ####                  B U I L D I N G S                  ####
 #############################################################
 
@@ -2272,16 +2323,10 @@ Kapasiteetti: %1%
 PART_DESC_STRENGTH
 Vahvuus: %1%
 
-# Detection Range: %2%
-
 PART_DESC_DIRECT_FIRE_STATS
 '''Vahinko: %1%
 Tulinopeus: %2% laukausta/vuoro
 Kantama: %3%'''
-
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -2317,3 +2362,71 @@ Puolustusverkko
 SH_DEFENSE_GRID_DESC
 Heikko puolustus, joka ei tuo lisämassaa
 
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
+
+#############################################################
+####              B U I L D I N G  M A C R O S           ####
+#############################################################
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"

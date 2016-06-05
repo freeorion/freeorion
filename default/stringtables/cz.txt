@@ -75,7 +75,16 @@ Nové loďstvo %1%
 NEW_FLEET_NAME_NO_NUMBER
 Nové loďstvo
 
-# used to generate name for effect-created planets. %1% is the system name.
+# new asteroids or new planet names...
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
+
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 BOMBER
 Bombardér
@@ -115,6 +124,14 @@ SD_COLONY_SHIP
 Kolonizační loď
 SD_COLONY_SHIP_DESC
 Obrovské neozbrojené plavidlo schopné bezpečně dovážet milionů občanů na nové kolonie.
+
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
 
 ##############################
 # Predefined Starting Fleets #
@@ -319,9 +336,6 @@ Nastaví UI control barvu okraje.
 
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Nastaví velikost systémových ikon.
-
-OPTIONS_DB_TEST_3D_COMBAT
-Testovat 3D bojovou mezihru.
 
 #################
 # File Dialog   #
@@ -588,6 +602,10 @@ GAME_MENU_RESIGN
 Vzdát to!
 
 ###########################
+# Save Game Dialog        #
+###########################
+
+###########################
 # Game Options            #
 ###########################
 
@@ -797,6 +815,12 @@ Velikost
 PL_COLONIZE
 Kolonizovat (%1%)
 
+## Resources Panel ##########
+
+## Specials Panel ##########
+
+## Buildings Panel##########
+
 ## General Tooltips#########
 
 TT_UNKNOWN
@@ -842,6 +866,14 @@ Neznámý Desing
 
 SHIP_SPEED_STAT_TITLE
 Rychlost
+
+###############
+#  Moderator  #
+###############
+
+###############
+#  Diplomacy  #
+###############
 
 ###############
 # TechTreeWnd #
@@ -905,15 +937,6 @@ Všechny dostupné body
 PRODUCTION_INFO_WASTED_PS_LABEL
 Využité body
 
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Rozpracované projekty
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Zafinancované projekty
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Projekty ve frontě
-
 ###############
 # ResearchWnd #
 ###############
@@ -959,13 +982,68 @@ Přidat do řady
 PRODUCTION_WND_TITLE
 Produkce
 
+###############
+#  DesignWnd  #
+###############
+
+################
+## Statistics ##
+################
+
+#############################################################
+####               E N C Y C L O P E D I A               ####
+#############################################################
+
+# types of things that can be shown in encyclopedia
+
+# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
+# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
+# %1% may be an empty string for most general types of things that can be shown.
+
+# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
+# be produced or researched (e.g. specials)
+# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
+# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
+# %3% will be the minimum number of turns it takes to produce or research the thing shown
+
+# auto-generated location condition description
+
+# auto-generated effects description. %1% will be the auto-generated effects text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+
+###########################################
+# Combat Report #
+###########################################
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
 ###########################################
 # ARTICLES #
 ###########################################
 
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
+#
+# Guides
+#
 
 ####################
 # Combat Messages  #
@@ -1026,6 +1104,26 @@ Provádění příkazů
 TURN_PROGRESS_PHASE_DOWNLOADING
 Stahuji nový herní stav
 
+########################
+# Messages Panel       #
+########################
+
+########################
+# Players List         #
+########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
@@ -1034,6 +1132,8 @@ Stahuji nový herní stav
 
 SITREP_PANEL_TITLE
 Zprávy z říše
+
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 Loď "%ship%" byla vyrobena v sestému "%system%"".
@@ -1059,6 +1159,9 @@ Planeta "%planet%" byla kolonizována.
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 Loďstvo "%fleet%" odletělo do systému "%system%".
 
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
@@ -1071,6 +1174,14 @@ VICTORY_ALL_ENEMIES_ELIMINATED
 
 SITREP_EMPIRE_ELIMINATED
 Říše "%empire%" byla zničena.
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
+
+#############################################################
+####                    S P E C I E S                    ####
+#############################################################
 
 #############################################################
 ####                   S P E C I A L S                   ####
@@ -1281,6 +1392,8 @@ SL_INTERNAL
 Vnitřní
 
 # Ship Part Classes
+
+# Visibility levels
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -1521,6 +1634,10 @@ CON_ORBITAL_CON
 Orbitální stavebnictví
 
 #############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
+
+#############################################################
 ####                  B U I L D I N G S                  ####
 #############################################################
 
@@ -1564,3 +1681,75 @@ Kapacita: %1%
 PART_DESC_STRENGTH
 Pevnost: %1%
 
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
+
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
+
+#############################################################
+####              B U I L D I N G  M A C R O S           ####
+#############################################################
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"
