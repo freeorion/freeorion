@@ -2580,14 +2580,14 @@ void ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Stationary::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_aggressive);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
 
 template <class Archive>
 void Aggressive::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_aggressive);
 }
 
 template <class Archive>
