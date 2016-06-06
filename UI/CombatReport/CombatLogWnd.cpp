@@ -78,7 +78,7 @@ namespace {
 
     CombatLogAccordionPanel::CombatLogAccordionPanel(
         GG::X w, CombatLogWnd &log_, int viewing_empire_id_, ConstCombatEventPtr event_) :
-        AccordionPanel(w, GG::Y(ClientUI::Pts())),
+        AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
         log(log_),
         viewing_empire_id(viewing_empire_id_),
         event(event_),

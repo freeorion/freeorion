@@ -3,10 +3,11 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 
-AccordionPanel::AccordionPanel(GG::X w, GG::Y h) :
+AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= false*/) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_expand_button(0),
     m_collapsed(true),
+    m_is_left(is_button_on_left),
     m_interior_color(ClientUI::WndColor())
 {
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
@@ -38,8 +39,11 @@ void AccordionPanel::InitBuffer() {
     m_border_buffer.createServerBuffer();
 }
 
+GG::Pt AccordionPanel::ClientUpperLeft() const
+{ return UpperLeft() + GG::Pt((m_is_left ? GG::X(EXPAND_BUTTON_SIZE) : GG::X0), GG::Y0); }
+
 GG::Pt AccordionPanel::ClientLowerRight() const
-{ return LowerRight() - GG::Pt(GG::X(EXPAND_BUTTON_SIZE), GG::Y0); }
+{ return LowerRight() - GG::Pt((m_is_left ? GG::X0 : GG::X(EXPAND_BUTTON_SIZE)), GG::Y0); }
 
 void AccordionPanel::SetInteriorColor(GG::Clr c)
 { m_interior_color = c; }
@@ -104,7 +108,7 @@ bool AccordionPanel::IsCollapsed() const {
 }
 
 void AccordionPanel::DoLayout() {
-    GG::Pt expand_button_ul(Width() - EXPAND_BUTTON_SIZE, GG::Y0);
+    GG::Pt expand_button_ul(m_is_left ? GG::X(-EXPAND_BUTTON_SIZE) : (Width() - EXPAND_BUTTON_SIZE), GG::Y0);
     GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(EXPAND_BUTTON_SIZE), GG::Y(EXPAND_BUTTON_SIZE));
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
 }

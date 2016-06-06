@@ -11,10 +11,11 @@ public:
     static const int EXPAND_BUTTON_SIZE = 16;
 
     /** \name Structors */ //@{
-    AccordionPanel(GG::X w, GG::Y h);
+    AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left = false);
     virtual ~AccordionPanel();
     //@}
 
+    virtual GG::Pt ClientUpperLeft() const;
     virtual GG::Pt ClientLowerRight() const;
 
     /** \name Mutators */ //@{
@@ -37,8 +38,9 @@ protected:
     virtual void    DoLayout();
     virtual void    InitBuffer();
 
-    GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*             m_expand_button;    ///< at top right/left of panel, toggles the panel open/closed to show details or minimal summary
     bool                    m_collapsed;
+    bool                    m_is_left; ///< Is expand button on the left?
 
     GG::Clr                 m_interior_color;
 };
