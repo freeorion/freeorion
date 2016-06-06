@@ -889,6 +889,10 @@ L'Univers généré contient des erreurs. Consultez le fichier log pour le déta
 SERVER_TURN_EVENTS_ERRORS
 Les événements de tour scriptés contiennent des erreurs. Consultez le fichier log pour le détail des messages d'erreur. La partie peut continuer, mais le gameplay en sera probablement impacté.
 
+ERROR_PYTHON_AI_CRASHED
+L'IA Python pour %1% a rencontré une erreur fatale.
+
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
@@ -2655,6 +2659,12 @@ La dernière [[encyclopedia STEALTH_TITLE]] connue est obsolète.  La furtivité
 MENUITEM_SET_FOCUS
 Régler Focus
 
+MENUITEM_ENQUEUE_BUILDING
+Produire Structure
+
+MENUITEM_ENQUEUE_SHIPDESIGN
+Produire Astronef
+
 ## Resources Panel ##########
 
 RP_FOCUS_TOOLTIP
@@ -2789,7 +2799,7 @@ FW_AGGRESSIVE_DESC
 La Flotte assure le blocus des systèmes ennemis et engage le combat contre tout ennemi tentant d'entrer dans un système de l'empire.
 
 FW_PASSIVE
-Discrétion
+Passivité
 
 FW_PASSIVE_DESC
 La Flotte tente de passer inaperçue dans un système ennemi et n'engage aucun combat dans un système de l'empire.
@@ -3428,7 +3438,7 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 
 ENC_SUITABILITY_REPORT_WHEEL_INTRO
 '''
-L'Habitabilité est définie par la distance au type d'environnement favori sur cette représentation circulaire:
+L'Habitabilité est définie par la distance au type d'[[encyclopedia ENVIRONMENT_TITLE]] favori sur cette représentation circulaire:
 '''
 
 # types of things that can be shown in encyclopedia
@@ -4075,15 +4085,15 @@ ENVIRONMENT_TITLE
 Environnement
 
 ENVIRONMENT_TEXT
-'''Différents environnements peuvent être rencontrés lors de l'exploration des systèmes planétaires sur la carte galactique. Une planète peut être [[PT_INFERNO]], [[PT_RADIATED]], [[PT_TOXIC]], [[PT_BARREN]], [[PT_DESERT]], [[PT_TUNDRA]], [[PT_SWAMP]], [[PT_TERRAN]], [[PT_OCEAN]], de type [[PT_ASTEROIDS]] ou [[PT_GASGIANT]].
+'''Différents Environnements peuvent être rencontrés lors de l'exploration des systèmes planétaires sur la carte galactique. Une planète peut être [[PT_INFERNO]], [[PT_RADIATED]], [[PT_TOXIC]], [[PT_BARREN]], [[PT_DESERT]], [[PT_TUNDRA]], [[PT_SWAMP]], [[PT_TERRAN]], [[PT_OCEAN]], de type [[PT_ASTEROIDS]] ou [[PT_GASGIANT]].
 
-Chaque [[encyclopedia ENC_SPECIES]] a ses propres préférences environnementales, lesquelles déterminent sur chaque type de planète l'Habitabilité pour l'espèce en question, selon la liste suivante (du plus mauvais environnement au meilleur):
+Chaque [[encyclopedia ENC_SPECIES]] a ses propres préférences environnementales, lesquelles déterminent sur chaque type de planète l'Habitabilité pour l'espèce en question, selon la liste suivante (du plus mauvais Environnement au meilleur):
 
 [[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
 
 Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit sur une planète dans le panneau latéral. À la suite de la donnée d'Habitabilité, un nombre de couleur verte indique la population maximale pouvant être atteinte si l'espèce colonise la planète, tandis qu'un nombre de couleur rouge indique que la population n'évoluera pas ou diminuera, pour finalement disparaître si l'espèce tente de coloniser la planète.
 
-Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[encyclopedia RESEARCH_TITLE]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité Parfaite pour l'espèce désirant vivre sur la planète. Les étapes de terraformation peuvent être consultées dans le rapport d'Habitabilité d'une planète sous la forme d'une représentation circulaire des différents types d'environnement.'''
+Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[encyclopedia RESEARCH_TITLE]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les étapes de terraformation peuvent être consultées dans le rapport d'Habitabilité d'une planète sous la forme d'une représentation circulaire des différents types d'Environnement.'''
 
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
@@ -4177,7 +4187,7 @@ Prudent:
 Entreprenant:
 [[AI_CAPITOL_NAMES_TYPICAL]]
 
-Aggressif:
+Agressif:
 [[AI_CAPITOL_NAMES_AGGRESSIVE]]
 
 Maniaque:
@@ -4218,7 +4228,7 @@ Pour ordonner à une flotte sélectionnée de se déplacer vers un autre systèm
 
 Les flottes peuvent être composées d'un nombre illimité d'astronefs, divisées en flottes plus petites ou bien fusionnées avec d'autres flottes se trouvant dans le même système. Un glisser-déposer permet également de déplacer un astronef d'une flotte à une autre.
 
-Chaque flotte dispose de deux types de conduite pouvant être activés/désactivés: 'Discrétion' (symbole Oeil) ou 'Agression' (symbole Poing).
+Chaque flotte dispose de deux types de conduite pouvant être activés/désactivés: '[[FW_PASSIVE]]' (symbole Oeil) ou '[[FW_AGGRESSIVE]]' (symbole Poing).
 
 Un clic-droit sur une flotte dans la Fenêtre Flottes donne accès aux options additionnelles telles que l'auto-exploration, renommer ou supprimer une flotte.'''
 
@@ -4533,7 +4543,7 @@ PLANET_SIZE
 Taille Planète
 
 PLANET_ENVIRONMENT
-Environnement Planètaire
+Environnement Planétaire
 
 STAR_TYPE
 Type d'Étoile
@@ -4574,6 +4584,9 @@ Monstre
 
 CONDITION_STATIONARY
 Stationnaire
+
+CONDITION_AGGRESSIVE
+Agressif
 
 CONDITION_CANCOLONIZE
 Espèce pouvant coloniser
@@ -5187,7 +5200,7 @@ BEGINNER_HINT_01
 1: Au commencement d'une partie, la production de plusieurs [[predefinedshipdesign SD_SCOUT]]s peut faciliter l'exploration de la région aux alentours de votre Planète Natale.
 
 BEGINNER_HINT_02
-2: Chaque espèce est adaptée à un environnement planétaire favori. Si vous parvenez à conquérir une planète peuplée par une autre espèce, vous pouvez utiliser cette dernière pour coloniser d'autres planètes, vous permettant ainsi de sécuriser rapidement un système. Cependant, gardez à l'esprit que certaines espèces ne peuvent pas coloniser d'autres mondes ou sont incapables de construire des astronefs.
+2: Chaque espèce est adaptée à un [[encyclopedia ENVIRONMENT_TITLE]] planétaire favori. Si vous parvenez à conquérir une planète peuplée par une autre espèce, vous pouvez utiliser cette dernière pour coloniser d'autres planètes, vous permettant ainsi de sécuriser rapidement un système. Cependant, gardez à l'esprit que certaines espèces ne peuvent pas coloniser d'autres mondes ou sont incapables de construire des astronefs.
 
 BEGINNER_HINT_03
 3: Les astronefs peuvent être réparés au sein d'un système abritant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] alliée, si aucun combat ne s'y est déroulé le tour précédent, et si la planète hôte présente un indicateur [[encyclopedia HAPPINESS_TITLE]] égal ou supérieur à 5. Les astronefs doivent patienter un tour au sein d'un système avant que les réparations ne puissent démarrer.
@@ -5275,7 +5288,7 @@ OCCUPIED_PLANETS
 Planètes habitées
 
 ENVIRONMENTAL_PREFERENCES
-Adaptabilité environnementale :
+Adaptabilité [[encyclopedia ENVIRONMENT_TITLE]]ale :
 
 FOCUS_PREFERENCE
 '''Focus favori : '''
@@ -5299,7 +5312,7 @@ SP_HUMAN_DESC
 Les humains sont bipèdes, omnivores, organisés en clans ou tribus, et sont dotés d'une endurance supérieure à la moyenne. Ils développent des outils évolués afin de mieux chasser leurs proies, et peuvent poursuivre un gros gibier durant des jours si nécessaire, dans le but de l'abattre et de s'en nourrir. Les humains modernes possèdent toujours un sens du combat aiguisé et un instinct de préservation très développé. Lorsqu'une menace ne peut être gérée par un seul individu, les humains s'organisent en groupe pour neutraliser tout danger grâce à une force supérieure en nombre. Les humains sont connus pour consommer de la nourriture considérée pourtant comme indigeste, simplement pour prouver qu'ils en sont capables, et utilisent des substances toxiques pour agrémenter le goût de leur alimentation quotidienne.
 
 Société:
-Les humains modernes ont formé géographiquement des états-nations, chacun étant basé sur une histoire et culture communes. Ces états sont en compétition perpétuelle les uns avec les autres, parfois par le biais de guerres, mais peuvent également coopérer sur certains problèmes communs. Les différences concernant la religion, l'accès aux ressources et leur utilisation, et même la façon de préparer un plat, sont souvent la justification d'un comportement aggressif, ces guerres s'avérant généralement propices à de grandes avancées technologiques.
+Les humains modernes ont formé géographiquement des états-nations, chacun étant basé sur une histoire et culture communes. Ces états sont en compétition perpétuelle les uns avec les autres, parfois par le biais de guerres, mais peuvent également coopérer sur certains problèmes communs. Les différences concernant la religion, l'accès aux ressources et leur utilisation, et même la façon de préparer un plat, sont souvent la justification d'un comportement agressif, ces guerres s'avérant généralement propices à de grandes avancées technologiques.
 '''
 
 SP_SCYLIOR  # translated
@@ -6030,7 +6043,7 @@ Gaia
 GAIA_SPECIAL_DESC
 '''Terraforme la planète puis accroît son plafond de Population selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
-Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population. Si l'environnement atteint est Parfait, un bonus susbstantiel de Population est acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre l'environnement Parfait (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade Convenable).'''
+Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population. Si l'[[encyclopedia ENVIRONMENT_TITLE]] devient parfait pour l'espèce, un bonus susbstantiel de Population sera acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre une Habitabilité [[PE_GOOD]] pour l'espèce (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun Environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade [[PE_ADEQUATE]]).'''
 
 WORLDTREE_SPECIAL
 Arbre Planétaire
@@ -6415,15 +6428,15 @@ Géante Gazeuse
 SZ_NOWORLD
 Rien à voir ici, circulez.
 SZ_TINY
-Minuscule,
+Minuscule
 SZ_SMALL
-Petite,
+Petite
 SZ_MEDIUM
-Moyenne,
+Moyenne
 SZ_LARGE
-Grande,
+Grande
 SZ_HUGE
-Immense,
+Immense
 SZ_ASTEROIDS
 Astéroïdes
 SZ_GASGIANT
@@ -7473,6 +7486,18 @@ DESC_STATIONARY
 DESC_STATIONARY_NOT
 ''' qui est en mouvement'''
 
+DESC_AGGRESSIVE
+''' qui est agressif'''
+
+DESC_AGGRESSIVE_NOT
+''' qui n'est pas agressif'''
+
+DESC_PASSIVE
+''' qui est passif'''
+
+DESC_PASSIVE_NOT
+''' qui n'est pas passif'''
+
 DESC_CAN_COLONIZE
 ''' avec une espèce pouvant coloniser'''
 
@@ -7781,7 +7806,7 @@ GRO_PLANET_ECOL
 Écologie Planétaire
 
 GRO_PLANET_ECOL_DESC
-'''Accroît de 1 le plafond de Population des planètes parfaites et convenables. Ce bonus ne s'additionne pas avec la technologie de [[tech GRO_SYMBIOTIC_BIO]].
+'''Accroît de 1 le plafond de Population des Planètes [[PE_GOOD]]s et [[PE_ADEQUATE]]s. Ce bonus ne s'additionne pas avec la technologie de [[tech GRO_SYMBIOTIC_BIO]].
 
 L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.'''
 
@@ -7801,7 +7826,7 @@ GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-Accroît le plafond de Population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+Accroît le plafond de Population des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 GRO_GENETIC_MED
 Médecine Génétique
@@ -7829,7 +7854,7 @@ GRO_XENO_GENETICS
 Génétique Xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Accroît le plafond de Population des planètes convenables et pauvres selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10 et celui des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+'''Accroît le plafond de Population des Planètes [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10 et celui des Planètes [[PE_HOSTILE]]s selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 L'étude d'autres formes de vie révèle souvent les faiblesses inhérentes de sa propre espèce. Analyser les caractéristiques d'autres formes de vie et utiliser les connaissances acquises afin d'améliorer son propre code génétique, permet le développement de nouvelles capacités d'adaptation, qui autrement relèveraient de l'impossible.
 
@@ -7853,7 +7878,7 @@ GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Accroît le plafond de Population des planètes pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5 et celui des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
+'''Accroît le plafond de Population des Planètes [[PE_POOR]]s selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5 et celui des Planètes [[PE_HOSTILE]]s selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
 
 La plupart du temps, la faune native d'une planète est beaucoup mieux adaptée à l'environnement d'une planète que tout colons qui tenteraient de la peupler. Pour une espèce exogène, l'hostilité d'un environnement regroupe de nombreuses causes, des cycles météorologiques en passant par la taille de la planète. Grâce à l'hybridation xénobiologique, il est possible de créer une espèce colonisatrice adaptée génétiquement car disposant des caractéritiques avantageuses de la faune native, rendant ainsi plus facile et efficace la colonisation d'une planète peu accueillante.
 
@@ -7914,7 +7939,7 @@ Bien qu'un haut niveau en conception et en configuration d'usine requiert toujou
 PRO_EXOBOTS  # translated
 Exobots
 PRO_EXOBOTS_DESC
-Permet la construction de colonies d'[[species SP_EXOBOT]]s optimisés pour l'industrie sur les planètes hostiles.
+Permet la construction de colonies d'[[species SP_EXOBOT]]s optimisés pour l'industrie sur les Planètes [[PE_HOSTILE]]s.
 
 PRO_RAPID_EXO_PROD
 Production Accélérée d'Exobots
@@ -8441,7 +8466,7 @@ GRO_REMOTE_TERRAFORM
 Terraformation à Distance
 
 GRO_REMOTE_TERRAFORM_DESC
-Les méthodes traditionnelles de terraformation considèrent la planète comme une structure et modifient son environnement à l'aide de processus physiques et chimiques. Cela nécessite que la majorité de la planète soit accessible à l'espèce opérant la terraformation, ce qui généralement limite l'efficacité de l'entreprise. En envisageant la planète comme un organisme et en modifiant en quelque sorte sa physiologie, il est alors possible d'avoir recours à moins de main-d'œuvre, bien que la terraformation prenne alors plus de temps, mais permettant ainsi aux avant-postes se trouvant sur des planètes à l'environnement pauvre ou hostile, d'enclencher un processus de terraformation.
+Les méthodes traditionnelles de terraformation considèrent la planète comme une structure et modifient son environnement à l'aide de processus physiques et chimiques. Cela nécessite que la majorité de la planète soit accessible à l'espèce opérant la terraformation, ce qui généralement limite l'efficacité de l'entreprise. En envisageant la planète comme un organisme et en modifiant en quelque sorte sa physiologie, il est alors possible d'avoir recours à moins de main-d'œuvre, bien que la terraformation prenne alors plus de temps, mais permettant ainsi aux avant-postes se trouvant sur des planètes à environnement pauvre ou hostile, d'enclencher un processus de terraformation.
 
 GRO_BIOTERROR
 Complexe Bioterroriste
@@ -8456,7 +8481,7 @@ GRO_CYBORG  # translated
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît le plafond de Population des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes.
+'''Accroît le plafond de Population des Planètes [[PE_HOSTILE]]s selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes.
 
 Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
 
@@ -9248,7 +9273,7 @@ BLD_EVACUATION
 Évacuation
 
 BLD_EVACUATION_DESC
-Extrait la population de cette planète sur plusieurs tours. Si une planète de remplacement à l'environnement approprié est disponible, déjà peuplée par la même espèce, et disposant de suffisamment de place libre, la population y sera transférée.
+Extrait la population de cette planète sur plusieurs tours. Si une planète de remplacement à l'[[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible, déjà peuplée par la même espèce, et disposant de suffisamment de place libre, la population y sera transférée.
 
 BLD_OBSERVATORY
 Observatoire
@@ -9450,7 +9475,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît le plafond de Population (pour les environnements Parfaits) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît le plafond de Population (pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]]) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
@@ -9528,19 +9553,19 @@ BLD_TERRAFORM
 Terraformeur
 
 BLD_TERRAFORM_DESC
-Terraforme une planète en un type d'environnement un palier plus proche de l'environnement favori de l'espèce.
+Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce.
 
 BLD_TERRAFORM_REVERT
 Terraformeur Inversé
 
 BLD_TERRAFORM_REVERT_DESC
-Terraforme une planète en un type d'environnement un palier plus proche de l'environnement planétaire d'origine.
+Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement planétaire d'origine.
 
 BLD_REMOTE_TERRAFORM
 Terraformeur à Distance
 
 BLD_REMOTE_TERRAFORM_DESC
-Terraforme une planète en un type d'environnement un palier plus proche de l'environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
+Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 MACRO_NEUTRONIUM_BUILDINGS
 '''Afin d'exploiter le Neutronium, un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] est requis au sein d'un système abritant une Étoile à Neutrons, ou bien l'empire doit avoir découvert un [[buildingtype BLD_NEUTRONIUM_SYNTH]]. Une [[buildingtype BLD_NEUTRONIUM_FORGE]] est également requise sur la planète où le Neutronium sera utilisé'''
@@ -11073,7 +11098,7 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''habitant cette planète verront leur plafond de Population augmenter selon la taille de la planète (Minuscule : +1, Petite : +2, Moyenne : +3, Grande : +4, Immense : +5), quel que soit l'environnement planétaire.
+'''habitant cette planète verront leur plafond de Population augmenter selon la taille de la planète (Minuscule : +1, Petite : +2, Moyenne : +3, Grande : +4, Immense : +5), quel que soit l'[[encyclopedia ENVIRONMENT_TITLE]] planétaire.
 
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[encyclopedia SUPPLY_TITLE]] et peuplés d'espèces à'''
 
@@ -11270,28 +11295,28 @@ STANDARD_CONSTRUCTION_LABEL
 %1% [[encyclopedia INFRASTRUCTURE_TITLE]] normale
 
 GOOD_ENVIRONMENT_LABEL
-%1% Environnement parfait
+%1% Environnement Parfait
 
 ADEQUATE_ENVIRONMENT_LABEL
-%1% Environnement correct
+%1% Environnement Convenable
 
 POOR_ENVIRONMENT_LABEL
-%1% Environnement pauvre
+%1% Environnement Pauvre
 
 HOSTILE_ENVIRONMENT_LABEL
-%1% Environnement hostile
+%1% Environnement Hostile
 
 UNINHABTIABLE_ENVIRONMENT_LABEL
-%1% Environnement inhabitable
+%1% Environnement Inhabitable
 
 ENV_ENCAPSUL_LABEL
-%1% Encapsulation de l'environnement
+%1% Encapsulation de l'Environnement
 
 SELF_SUSTAINING_LABEL
 Autosuffisant
 
 SUBTERRANEAN_LABEL
-Bonus Habitat souterrain
+Bonus Habitat Souterrain
 
 GAIA_LABEL
 Bonus Gaia
@@ -11766,7 +11791,7 @@ AI_FIRST_TURN_GREETING_MSG608
 Annihilez votre espèce est pour nous un devoir sacré!
 
 # NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI agression level.
+# The following lists group the AI turn 1 greetings by AI aggression level.
 # These are functional lists that must not be translated!
 
 #AI_FIRST_TURN_GREETING_LIST_BEGINNER
