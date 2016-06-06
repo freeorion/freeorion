@@ -43,7 +43,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
-    SetChildClippingMode(ClipToClient);
+    SetChildClippingMode(ClipToClientAndWindowSeparately);
 
     GG::Connect(m_expand_button->LeftClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
