@@ -15,6 +15,7 @@
     (Adequate)                                  \
     (Affiliation)                               \
     (Age)                                       \
+    (Aggressive)                                \
     (Alignment)                                 \
     (AlignmentEffects)                          \
     (All)                                       \
@@ -276,6 +277,7 @@
     (Parts)                                     \
     (PartClassInShipDesign)                     \
     (PartsInShipDesign)                         \
+    (Passive)                                   \
     (Planet)                                    \
     (Planetbound)                               \
     (PlanetEnvironment)                         \

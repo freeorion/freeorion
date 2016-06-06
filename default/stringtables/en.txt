@@ -4585,6 +4585,9 @@ Monster
 CONDITION_STATIONARY
 Stationary
 
+CONDITION_AGGRESSIVE
+Aggressive
+
 CONDITION_CANCOLONIZE
 Species Can Colonize
 
@@ -7482,6 +7485,18 @@ DESC_STATIONARY
 
 DESC_STATIONARY_NOT
 ''' that is moving'''
+
+DESC_AGGRESSIVE
+''' that is aggressive'''
+
+DESC_AGGRESSIVE_NOT
+''' that is not aggressive'''
+
+DESC_PASSIVE
+''' that is passive'''
+
+DESC_PASSIVE_NOT
+''' that is not passive'''
 
 DESC_CAN_COLONIZE
 ''' with a species that can colonize'''

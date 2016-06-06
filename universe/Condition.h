@@ -1870,6 +1870,36 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches objects that are aggressive fleets or are in aggressive fleets. */
+struct FO_COMMON_API Aggressive: public ConditionBase {
+    explicit Aggressive() :
+        ConditionBase(),
+        m_aggressive(true)
+    {}
+    explicit Aggressive(bool aggressive) :
+        ConditionBase(),
+        m_aggressive(aggressive)
+    {}
+    virtual bool        operator==(const ConditionBase& rhs) const;
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+    bool                GetAggressive() const { return m_aggressive; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    bool    m_aggressive;   // false to match passive ships/fleets
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
 struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
@@ -2549,6 +2579,13 @@ void ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void Stationary::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_aggressive);
+}
+
+template <class Archive>
+void Aggressive::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }

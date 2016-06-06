@@ -7342,6 +7342,47 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
 }
 
 ///////////////////////////////////////////////////////////
+// Aggressive                                            //
+///////////////////////////////////////////////////////////
+bool Aggressive::operator==(const ConditionBase& rhs) const
+{ return ConditionBase::operator==(rhs); }
+
+std::string Aggressive::Description(bool negated/* = false*/) const {
+    if (m_aggressive)
+        return (!negated)
+            ? UserString("DESC_AGGRESSIVE")
+            : UserString("DESC_AGGRESSIVE_NOT");
+    else
+        return (!negated)
+            ? UserString("DESC_PASSIVE")
+            : UserString("DESC_PASSIVE_NOT");
+}
+
+std::string Aggressive::Dump() const
+{ return DumpIndent() + (m_aggressive ? "Aggressive\n" : "Passive\n"); }
+
+bool Aggressive::Match(const ScriptingContext& local_context) const {
+    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "Aggressive::Match passed no candidate object";
+        return false;
+    }
+
+    // the only objects that can be aggressive are fleets and the ships in them.
+    // so, attempt to cast the candidate object to a fleet or ship, and if it's
+    // a ship get the fleet of that ship
+    TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(candidate);
+    if (!fleet)
+        if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
+            fleet = GetFleet(ship->FleetID());
+
+    if (!fleet)
+        return false;
+
+    return m_aggressive == fleet->Aggressive();
+}
+
+///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
 FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
