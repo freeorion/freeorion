@@ -92,11 +92,14 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
         short_names[short_name_] = name;
 }
 
-void OptionsDB::Option::SetFromString(const std::string& str) {
-    if (!flag)
-        value = validator->Validate(str);
-    else
-        value = boost::lexical_cast<bool>(str);
+bool OptionsDB::Option::SetFromString(const std::string& str) {
+    boost::any value_ = flag ? boost::lexical_cast<bool>(str) : validator->Validate(str);
+    bool changed =  validator->String(value) != validator->String(value_);
+    if (changed) {
+        value = value_;
+        (*option_changed_sig_ptr)();
+    }
+    return changed;
 }
 
 std::string OptionsDB::Option::ValueToString() const {
@@ -129,9 +132,12 @@ OptionsDB::OptionsDB() {
 
 void OptionsDB::Commit()
 {
+    if (!m_dirty)
+        return;
     boost::filesystem::ofstream ofs(GetConfigPath());
     if (ofs) {
         GetOptionsDB().GetXML().WriteDoc(ofs);
+        m_dirty = false;
     } else {
         std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
         std::cerr << PathString(GetConfigPath()) << std::endl;
@@ -301,6 +307,7 @@ void OptionsDB::Remove(const std::string& name) {
     if (it != m_options.end()) {
         Option::short_names.erase(it->second.short_name);
         m_options.erase(it);
+        m_dirty = true;
     }
     OptionRemovedSignal(name);
 }
@@ -370,7 +377,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                             throw std::runtime_error("the option \"" + option.name +
                                                      "\" was followed by the parameter \"" + value_str +
                                                      "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
-                        option.SetFromString(value_str);
+                        m_dirty |= option.SetFromString(value_str);
                     } catch (const std::exception& e) {
                         throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attempting to set option \"" + option.name + "\": " + e.what() + "\n\n");
                     }
@@ -409,7 +416,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         if (j < single_char_options.size() - 1)
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                         else
-                            option.SetFromString(args[++i]);
+                            m_dirty |= option.SetFromString(args[++i]);
                     } else {
                         option.value = true;
                     }
@@ -425,7 +432,6 @@ void OptionsDB::SetFromXML(const XMLDoc& doc) {
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
-    //DebugLogger() << "Setting from XML";
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     if (elem.NumChildren()) {
@@ -446,6 +452,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
             }
             if (GetOptionsDB().Get<bool>("verbose-logging"))
                 DebugLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
+            m_dirty = true;
             return;
         }
 
@@ -459,7 +466,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
             option.value = true;
         } else {
             try {
-                option.SetFromString(elem.Text());
+                m_dirty |= option.SetFromString(elem.Text());
             } catch (const std::exception& e) {
                 ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attempting to set option \"" << option_name << "\": " << e.what();
             }
