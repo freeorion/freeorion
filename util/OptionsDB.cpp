@@ -93,8 +93,18 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 }
 
 bool OptionsDB::Option::SetFromString(const std::string& str) {
-    boost::any value_ = flag ? boost::lexical_cast<bool>(str) : validator->Validate(str);
-    bool changed =  validator->String(value) != validator->String(value_);
+    bool changed = false;
+    boost::any value_;
+
+    if (!flag) {
+        value_ = validator->Validate(str);
+        changed = validator->String(value) != validator->String(value_);
+    } else {
+        value_ = boost::lexical_cast<bool>(str);
+        changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
+                   != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
+    }
+
     if (changed) {
         value = value_;
         (*option_changed_sig_ptr)();
