@@ -353,7 +353,16 @@ template <typename T>
 bool OptionsDB::Option::SetFromValue(const T& value_) {
     if (value.type() != typeid(T))
         throw boost::bad_any_cast();
-    bool changed = validator->String(value) != validator->String(value_);
+
+    bool changed = false;
+
+    if (!flag) {
+        changed =  validator->String(value) != validator->String(value_);
+    } else {
+        changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
+                   != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
+    }
+
     if (changed) {
         value = value_;
         (*option_changed_sig_ptr)();
