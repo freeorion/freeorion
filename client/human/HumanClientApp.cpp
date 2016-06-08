@@ -785,9 +785,9 @@ void HumanClientApp::StartTurn() {
         const GG::Clr color = empire->Color();
         DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
         DebugLogger() << "EmpireColors: " << static_cast<int>(color.r)
-                                          << " " << static_cast<int>(color.g)
-                                          << " " << static_cast<int>(color.b)
-                                          << " " << static_cast<int>(color.a);
+                      << " " << static_cast<int>(color.g)
+                      << " " << static_cast<int>(color.b)
+                      << " " << static_cast<int>(color.a);
     }
 
     ClientApp::StartTurn();
@@ -795,7 +795,11 @@ void HumanClientApp::StartTurn() {
 }
 
 void HumanClientApp::HandleSystemEvents() {
-    SDLGUI::HandleSystemEvents();
+    try {
+        SDLGUI::HandleSystemEvents();
+    } catch (const utf8::invalid_utf8& e) {
+        ErrorLogger() << "UTF-8 error handling system event: " << e.what();
+    }
     if (m_connected && !m_networking.Connected()) {
         m_connected = false;
         DisconnectedFromServer();
