@@ -1,10 +1,12 @@
+from collections import Counter
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+import sys
+
 import FleetUtilsAI
 from EnumsAI import MissionType
-from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict
+from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
-
-piloting_grades = {}
 
 
 def get_empire_standard_fighter():
@@ -13,15 +15,14 @@ def get_empire_standard_fighter():
     :return: Stats of most common fighter in the empire
     :rtype: ShipCombatStats
     """
-    stats_dict = {}
+    stats_dict = Counter()
     for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY):
         ship_stats = FleetCombatStats(fleet_id, consider_refuel=True).get_ship_combat_stats()
-        for this_stats in ship_stats:
-            stats_tuple = this_stats.get_stats(hashable=True)
-            stats_dict[stats_tuple] = stats_dict.get(stats_tuple, 0) + 1
-    if stats_dict:
-        standard_fighter_stats = sorted([(v, k) for k, v in stats_dict.items()])[-1][1]
-        return ShipCombatStats(stats=standard_fighter_stats)
+        stats_dict.update(ship_stats)
+
+    most_commons = stats_dict.most_common(1)
+    if most_commons:
+        return most_commons[0][0]
     else:
         return default_ship_stats()
 
@@ -45,26 +46,20 @@ class ShipCombatStats(object):
     """Stores all relevant stats of a ship for combat strength evaluation."""
     class BasicStats(object):
         """Stores non-fighter-related stats."""
-        def __init__(self, stat_tuple=None, attacks=None, structure=1, shields=0):
+        def __init__(self, attacks, structure, shields):
             """
 
-            :param stat_tuple:
-             :type stat_tuple: tuple|None
             :param attacks:
             :type attacks: dict|None
             :param structure:
-            :type structure: int
+            :type structure: int|None
             :param shields:
-            :type shields: int
+            :type shields: int|None
             :return:
             """
-            if stat_tuple and isinstance(stat_tuple, tuple):
-                attack_tuple, self.structure, self.shields = stat_tuple
-                self.attacks = tuple_to_dict(attack_tuple)
-            else:
-                self.structure = structure
-                self.shields = shields
-                self.attacks = attacks or {}
+            self.structure = 1 if structure is None else structure
+            self.shields = 0 if shields is None else shields
+            self.attacks = {} if attacks is None else attacks
 
         def get_stats(self, hashable=False):
             """
@@ -104,12 +99,15 @@ class ShipCombatStats(object):
         self._consider_refuel = consider_refuel
         if stats:
             print stats
-            self._basic_stats = self.BasicStats(stats[0:3])  # TODO: Should probably determine size dynamically
-            self._fighter_stats = self.FighterStats(stats[3:])
+            self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
+            self._fighter_stats = self.FighterStats(*stats[3:])
         else:
-            self._basic_stats = self.BasicStats()
-            self._fighter_stats = self.FighterStats()
+            self._basic_stats = self.BasicStats(None, None, None)
+            self._fighter_stats = self.FighterStats(None, None, None)
             self.__get_stats_from_ship()
+
+    def __hash__(self):
+        return hash(self.get_basic_stats(hashable=True))
 
     def __str__(self):
         return str(self.get_stats())
@@ -151,7 +149,7 @@ class ShipCombatStats(object):
                         # TODO: Depending on future implementation, might actually need to handle this case.
                         print "WARNING: Multiple hangar types present on one ship, estimates expected to be wrong."
                     fighter_damage = max(fighter_damage, part_damage)
-        self._basic_stats = self.BasicStats(structure=structure, shields=shields, attacks=attacks)
+        self._basic_stats = self.BasicStats(attacks, structure, shields)
         self._fighter_stats = self.FighterStats(fighter_capacity, fighter_launch_rate, fighter_damage)
 
     def get_basic_stats(self, hashable=False):
@@ -217,7 +215,7 @@ class ShipCombatStats(object):
         :param hashable: if true, return tuple instead of dict for attacks
         :return: attacks, structure, shields, fighter-capacity, fighter-launch_rate, fighter-damage
         """
-        return self.get_basic_stats(hashable=hashable)+self.get_fighter_stats()
+        return self.get_basic_stats(hashable=hashable) + self.get_fighter_stats()
 
 
 class FleetCombatStats(object):
@@ -275,26 +273,43 @@ def get_fleet_rating(fleet_id, enemy_stats=None):
     return FleetCombatStats(fleet_id, consider_refuel=False).get_rating(enemy_stats)
 
 
-def get_piloting_grades(species_name):
-    """Get species modifier.
+@cache_by_session
+def _get_species_grades(species_name, grade_type):
+    spec_tags = []
+    if species_name:
+        species = fo.getSpecies(species_name)
+        if species:
+            spec_tags = species.tags
+        else:
+            sys.stderr.write("Error: get_species_grades couldn't retrieve species '%s'\n" % species_name)
+    return get_ai_tag_grade(spec_tags, grade_type)
 
-    :param species_name:
-    :type species_name: str
-    :return: 3 strings: weapons_grade, shield_grade, attacktroops_grade
+
+def get_pilot_weapons_grade(species_name):
     """
-    if species_name not in piloting_grades:
-        spec_tags = []
-        if species_name:
-            species = fo.getSpecies(species_name)
-            if species:
-                spec_tags = species.tags
-            else:
-                print "Error: get_piloting_grades couldn't retrieve species '%s'" % species_name
-        piloting_grades[species_name] = (get_ai_tag_grade(spec_tags, 'WEAPONS'),
-                                         get_ai_tag_grade(spec_tags, 'SHIELDS'),
-                                         get_ai_tag_grade(spec_tags, 'ATTACKTROOPS'),
-                                         )
-    return piloting_grades[species_name]
+    Return pilot grade string.
+
+    :rtype str
+    """
+    return _get_species_grades(species_name, 'WEAPONS')
+
+
+def get_species_troops_grade(species_name):
+    """
+    Return troop grade string.
+
+    :rtype str
+    """
+    return _get_species_grades(species_name, 'ATTACKTROOPS')
+
+
+def get_species_shield_grade(species_name):
+    """
+    Return shield grade string.
+
+    :rtype str
+    """
+    return _get_species_grades(species_name, 'SHIELDS')
 
 
 def weight_attack_troops(troops, grade):
