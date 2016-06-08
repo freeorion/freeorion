@@ -1,26 +1,19 @@
+//#debug_macros "mines_macro.log"
 // EffectsGroups for System Defense Mines
 // arg1 total damage
 // arg2 priority
+// arg3 scope of systems effected: SOURCE, EMPIRE
 EG_SYSTEM_MINES
 '''        // damage ship; sitreps issued below
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System 
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
                 ]
-                (RootCandidate.Owner != Source.Owner)
+                Not OwnedBy empire = Source.Owner
                 Structure low = @1@ + 0.0001
             ]
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
@@ -32,21 +25,12 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System 
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
                 ]
-                (RootCandidate.Owner != Source.Owner)
+                Not OwnedBy empire = Source.Owner
                 Structure high = @1@
             ]
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
@@ -58,16 +42,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Fleet
-                ContainedBy And [
-                    System
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 VisibleToEmpire empire = Source.Owner
             ]
@@ -89,16 +64,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 Unowned
                 VisibleToEmpire empire = Source.Owner
                 Structure low = @1@ + 0.0001
@@ -122,16 +88,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 Unowned
                 VisibleToEmpire empire = Source.Owner
                 Structure high = @1@
@@ -154,16 +111,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = @1@
                 VisibleToEmpire empire = Source.Owner
@@ -185,16 +133,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
@@ -216,16 +155,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Fleet
-                ContainedBy And [
-                    System 
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_FLEET_STACK"
@@ -245,16 +175,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                ContainedBy And [
-                    System 
-                    Contains Or [
-                        Source
-                        And [
-                            Planet
-                            OwnedBy empire = Source.Owner
-                        ]
-                    ]
-                ]
+                [[SYSTEM_MINES_SCOPE(@3@)]]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = @1@
             ]
@@ -271,3 +192,18 @@ EG_SYSTEM_MINES
                     empire = Target.Owner
             ]
 '''
+
+SYSTEM_MINES_SCOPE
+'''[[SYSTEM_MINES_SCOPE_@1@]]'''
+
+SYSTEM_MINES_SCOPE_SOURCE
+'''InSystem id = Source.SystemID'''
+
+SYSTEM_MINES_SCOPE_EMPIRE
+'''ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]'''

@@ -33,7 +33,7 @@ Special
                 SetShield value = Value + min(5.0, max(Value, 0.25*Target.Construction))
                 SetDefense value = Value + 1
             ]
-        [[EG_SYSTEM_MINES(3, LATE_PRIORITY)]]
+        [[EG_SYSTEM_MINES(3,LATE_PRIORITY,SOURCE)]]
 
         EffectsGroup
             scope = Source
