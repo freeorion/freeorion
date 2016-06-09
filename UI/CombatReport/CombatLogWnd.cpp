@@ -70,6 +70,7 @@ namespace {
         public:
         CombatLogAccordionPanel(GG::X w, CombatLogWnd &log_, int viewing_empire_id_, ConstCombatEventPtr event_);
         ~CombatLogAccordionPanel();
+
         private:
         /** toggles panel expanded or collapsed */
         void ToggleExpansion();
@@ -94,6 +95,7 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         GG::Connect(m_expand_button->LeftClickedSignal, &CombatLogAccordionPanel::ToggleExpansion, this);
+        GG::Connect(this->ExpandCollapseSignal, &CombatLogWnd::HandleWndChanged, &log);
 
         SetLayout(new GG::Layout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
@@ -196,6 +198,14 @@ void CombatLogWnd::HandleLinkDoubleClick(const std::string& link_type, const std
 void CombatLogWnd::HandleLinkRightClick(const std::string& link_type, const std::string& data)
 { LinkRightClickedSignal(link_type, data); }
 
+void CombatLogWnd::HandleWndChanged() {
+    // Trigger Layout to redraw the window
+    if (Parent()) {
+        SizeMove(Parent()->ClientUpperLeft(), Parent()->ClientLowerRight());
+    }
+    WndChangedSignal();
+}
+
 
 LinkText * CombatLogWnd::DecorateLinkText(std::string const & text) {
     LinkText * links = new LinkText(GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
@@ -236,6 +246,7 @@ void CombatLogWnd::SetLog(int log_id) {
     const CombatLog& log = GetCombatLog(log_id);
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
+    // Write Header text
     DebugLogger() << "Setting log with " << log.combat_events.size() << " events";
 
     TemporaryPtr<const System> system = GetSystem(log.system_id);
@@ -253,6 +264,7 @@ void CombatLogWnd::SetLog(int log_id) {
                  << std::endl << CountsToText(CountByOwner(log.empire_ids, log.destroyed_object_ids));
     AddRow(DecorateLinkText(summary_text.str()));
 
+    // Write Logs
     for (std::vector<CombatEventPtr>::const_iterator it = log.combat_events.begin();
          it != log.combat_events.end(); ++it) {
         DebugLogger() << "event debug info: " << it->get()->DebugString();
@@ -269,9 +281,7 @@ void CombatLogWnd::SetLog(int log_id) {
     AddRow(DecorateLinkText(""));
     layout->SetRowStretch(layout->Rows() - 1, 1);
 
-    if (Parent()) {
-        SizeMove(Parent()->ClientUpperLeft(), Parent()->ClientLowerRight());
-    }
+    HandleWndChanged();
 }
 
 GG::Pt CombatLogWnd::ClientUpperLeft() const

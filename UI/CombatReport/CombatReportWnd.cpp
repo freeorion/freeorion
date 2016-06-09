@@ -22,7 +22,7 @@ public:
                               ClientUI::CtrlColor(), ClientUI::TextColor())),
         m_graphical(new GraphicalSummaryWnd()),
         m_log(new CombatLogWnd(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
-        m_log_scroller(new GG::ScrollPanel(GG::X(0), GG::Y(0), m_wnd.ClientWidth(), m_wnd.ClientHeight(), m_log)),
+        m_log_scroller(new GG::ScrollPanel(GG::X(0), GG::Y(0), m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
         m_min_size(GG::X0, GG::Y0)
     {
         m_log->SetFont(ClientUI::GetFont());
@@ -35,16 +35,15 @@ public:
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
         GG::Connect(m_log->LinkRightClickedSignal,  &CombatReportPrivate::HandleLinkDoubleClick,    this);
+        GG::Connect(m_log->WndChangedSignal,        &CombatReportPrivate::HandleWindowChanged,      this);
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
-        GG::Connect(m_tabs->WndChangedSignal,
-                    boost::bind(&CombatReportPrivate::HandleTabChanged, this));
+        GG::Connect(m_tabs->WndChangedSignal, boost::bind(&CombatReportPrivate::HandleWindowChanged, this));
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
-        GG::Connect(m_graphical->MinSizeChangedSignal,
-                    boost::bind(&CombatReportPrivate::UpdateMinSize, this));
+        GG::Connect(m_graphical->MinSizeChangedSignal, &CombatReportPrivate::UpdateMinSize, this);
     }
 
     void SetLog(int log_id) {
@@ -184,12 +183,9 @@ private:
         }
     }
 
-    void HandleTabChanged() {
+    void HandleWindowChanged() {
         // Use the minimum size of the newly selected window.
         UpdateMinSize();
-
-        // Make sure that the newly selected window gets an update.
-        DoLayout();
     }
 };
 

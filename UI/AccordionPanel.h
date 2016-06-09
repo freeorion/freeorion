@@ -28,7 +28,8 @@ public:
 
     //@}
 
-    mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
+    typedef boost::signals2::signal<void ()> ExpandCollapseSignalType;
+    mutable ExpandCollapseSignalType ExpandCollapseSignal;
 
 protected:
     GG::GL2DVertexBuffer    m_border_buffer;

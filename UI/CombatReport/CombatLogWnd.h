@@ -24,11 +24,13 @@ public:
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkDoubleClickedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
+    mutable boost::signals2::signal<void ()> WndChangedSignal;
 
-    /**These handlers just echo the signals from contained CUILinkTextMultiEdit objects to the above signals*/
+    /**These handlers just echo the signals from contained log objects to the above signals*/
     void HandleLinkClick(const std::string& link_type, const std::string& data);
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
     void HandleLinkRightClick(const std::string& link_type, const std::string& data);
+    void HandleWndChanged();
 
     /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
         \a and_flags are anded to the default flags. */
