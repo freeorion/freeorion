@@ -45,7 +45,9 @@ namespace {
         for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
             std::string owner_string = UserString("NEUTRAL");
             if (const Empire* owner = GetEmpire(it->first))
-                owner_string = GG::RgbaTag(owner->Color()) + owner->Name() + "</rgba>";
+                owner_string = GG::RgbaTag(owner->Color()) + "<" + VarText::EMPIRE_ID_TAG + " "
+                    + boost::lexical_cast<std::string>(owner->EmpireID()) + ">" + owner->Name()
+                    + "</" + VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
             ss << owner_string << ": " << it->second;
             ++it;
             if (it != count_per_empire.end())
@@ -214,6 +216,8 @@ LinkText * CombatLogWnd::DecorateLinkText(std::string const & text) {
 
     links->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
     links->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
+    links->SetDecorator(VarText::SYSTEM_ID_TAG, new ColorByOwner());
+    links->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorByOwner());
 
     GG::Connect(links->LinkClickedSignal,       &CombatLogWnd::HandleLinkClick,          this);
     GG::Connect(links->LinkDoubleClickedSignal, &CombatLogWnd::HandleLinkDoubleClick,    this);

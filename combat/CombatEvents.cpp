@@ -82,7 +82,17 @@ namespace {
         const std::string name = (empire = GetEmpire(empire_id)) ? empire->Name() : UserString("ENC_COMBAT_UNKNOWN_OBJECT");
 
         const std::string& tag = VarText::EMPIRE_ID_TAG;
-        return "<" + tag + " " + boost::lexical_cast<std::string>(empire_id) + ">" + name + "</" + tag + ">";
+        std::string empire_wrapped = "<" + tag + " " + boost::lexical_cast<std::string>(empire_id) + ">" + name + "</" + tag + ">";
+        //TODO refactor this to somewhere that links with the UI code.
+        GG::Clr c = ((empire = GetEmpire(empire_id)) ? empire->Color() : GG::Clr(80,255,128,255));
+        std::stringstream color_wrapped;
+        color_wrapped << "<rgba "
+                      << static_cast<int>(c.r) << " "
+                      << static_cast<int>(c.g) << " "
+                      << static_cast<int>(c.b) << " "
+                      << static_cast<int>(c.a) << ">"
+                      << empire_wrapped << "</rgba>";
+        return color_wrapped.str();
     }
 }
 
