@@ -159,8 +159,10 @@ private:
             m_min_size += graphical_wnd->MinUsableSize();
         } else {
             // The log uses the GG::Layout which incorrectly reports
-            // the current size as the minimum size.
-            m_min_size += m_log_scroller->MinUsableSize();
+            // the current size as the minimum size. So use an arbitrary
+            // minimum size of 20 characters by 1 line height
+            // m_min_size += m_log_scroller->MinUsableSize();
+            m_min_size += GG::Pt(ClientUI::GetFont()->SpaceWidth()*20, ClientUI::GetFont()->Height());
         }
 
         std::list<GG::Wnd*>::const_iterator layout_begin =
@@ -186,6 +188,8 @@ private:
     void HandleWindowChanged() {
         // Use the minimum size of the newly selected window.
         UpdateMinSize();
+
+        DoLayout();
     }
 };
 
