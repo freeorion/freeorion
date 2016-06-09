@@ -4,6 +4,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
+#include <boost/optional/optional.hpp>
 #include <vector>
 
 #include "../util/Export.h"
@@ -39,6 +40,20 @@ struct FO_COMMON_API CombatEvent {
     */
     virtual bool AreSubEventsEmpty(int viewing_empire_id) const
     { return true; }
+
+    /** Return true if sub events are to be flattened on display;
+    */
+    virtual bool FlattenSubEvents() const
+    { return false; }
+
+    /** Return principal faction.
+
+        PrincipalFaction is used by UnorderedEvents to sort the display
+        of events by Facton.  The principal faction should be the
+        faction most active in the event (i.e. the attacker in a WeaponEvent).
+        It is from the perspective of the \p viewing_empire_id. Some events
+        like BoutBegin are not associated with any faction.*/
+    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
 private:
     friend class boost::serialization::access;
