@@ -703,7 +703,11 @@ void Layout::ValidateAlignment(Flags<Alignment>& alignment)
 }
 
 void Layout::RedoLayout()
-{ Resize(Size()); }
+{
+    //Bug:  This does nothing if the size has not changed.  Fixing it to
+    //use Layout::SizeMove breaks all text boxes.
+    Resize(Size());
+}
 
 void Layout::ChildSizeOrMinSizeOrMaxSizeChanged()
 {
