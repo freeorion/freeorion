@@ -54,8 +54,14 @@ namespace {
         return ss.str();
     }
 
+    /** Fill \p new_logs with pointers to the flat log contents of \p
+        event using the pre-calculated \p details.*/
+    void PopulateWithFlatLogs(GG::X w, CombatLogWnd &log, int viewing_empire_id,
+                              std::vector<GG::Wnd *> &new_logs,
+                              ConstCombatEventPtr &event, std::string &details);
+
     //Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-    GG::Wnd * MakeCombatLogPanel(
+    std::vector<GG::Wnd *> MakeCombatLogPanel(
         GG::X w, CombatLogWnd &log, int viewing_empire_id, ConstCombatEventPtr event);
 
     /// A Single section in the CombatLog showing general outline of a ship's combat
@@ -112,16 +118,7 @@ namespace {
         } else {
             if (details.empty()) {
                 std::string detail_text = event->CombatLogDetails(viewing_empire_id);
-                if (!detail_text.empty()){
-                    details.push_back(log.DecorateLinkText(detail_text));
-                }
-                if (!event->AreSubEventsEmpty(viewing_empire_id)) {
-                    std::vector<ConstCombatEventPtr> sub_events = event->SubEvents(viewing_empire_id);
-                    for (std::vector<ConstCombatEventPtr>::iterator sub_event_it = sub_events.begin();
-                         sub_event_it != sub_events.end(); ++sub_event_it) {
-                        details.push_back(MakeCombatLogPanel(Width(), log, viewing_empire_id, *sub_event_it));
-                    }
-                }
+                PopulateWithFlatLogs(Width(), log, viewing_empire_id, details, event, detail_text);
             }
 
             for (std::vector<GG::Wnd *>::iterator it = details.begin(); it != details.end(); ++it) {
@@ -131,21 +128,57 @@ namespace {
         SetCollapsed(new_collapsed);
     }
 
-    //Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-    GG::Wnd * MakeCombatLogPanel(
-        GG::X w, CombatLogWnd &log, int viewing_empire_id, ConstCombatEventPtr event) {
+    /** Fill \p new_logs with pointers to the flat log contents of \p
+        event using the pre-calculated \p details.*/
+    void PopulateWithFlatLogs(GG::X w, CombatLogWnd &log, int viewing_empire_id,
+                              std::vector<GG::Wnd *> &new_logs,
+                              ConstCombatEventPtr &event, std::string &details) {
+        if (!details.empty()) {
+            new_logs.push_back(log.DecorateLinkText(details));
+        }
+
         if (!event->AreSubEventsEmpty(viewing_empire_id)) {
-            return new CombatLogAccordionPanel(w, log, viewing_empire_id, event);
+            std::vector<ConstCombatEventPtr> sub_events = event->SubEvents(viewing_empire_id);
+            for (std::vector<ConstCombatEventPtr>::iterator sub_event_it = sub_events.begin();
+                 sub_event_it != sub_events.end(); ++sub_event_it) {
+                std::vector<GG::Wnd *> flat_logs =
+                    MakeCombatLogPanel(w, log, viewing_empire_id, *sub_event_it);
+                new_logs.insert(new_logs.end(), flat_logs.begin(), flat_logs.end());
+            }
+        }
+    }
+
+
+    //Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
+    std::vector<GG::Wnd *> MakeCombatLogPanel(
+        GG::X w, CombatLogWnd &log, int viewing_empire_id, ConstCombatEventPtr event) {
+        std::vector<GG::Wnd *> new_logs;
+
+        //Create and accordion log if there are detail or sub events and
+        //the log isn't explicitly flatten.  Otherwise, flatten the log,
+        //details and sub events.
+
+        if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
+            new_logs.push_back(new CombatLogAccordionPanel(w, log, viewing_empire_id, event));
+            return new_logs;
         }
 
         //Note:: detail string is parsed again in the AccordionPanel
         std::string details = event->CombatLogDetails(viewing_empire_id);
-        if (!details.empty() ) {
-            return new CombatLogAccordionPanel(w, log, viewing_empire_id, event);
+        if (!event->FlattenSubEvents() && !details.empty()) {
+            new_logs.push_back(new CombatLogAccordionPanel(w, log, viewing_empire_id, event));
+            return new_logs;
         }
 
-        return log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id));
+        std::string title = event->CombatLogDescription(viewing_empire_id);
+        if (!(event->FlattenSubEvents() && title.empty()))
+            new_logs.push_back(log.DecorateLinkText(title));
+
+        PopulateWithFlatLogs(w, log, viewing_empire_id, new_logs, event, details);
+
+        return new_logs;
     }
+
 }
 
 CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
@@ -224,7 +257,12 @@ void CombatLogWnd::SetLog(int log_id) {
          it != log.combat_events.end(); ++it) {
         DebugLogger() << "event debug info: " << it->get()->DebugString();
 
-        AddRow(MakeCombatLogPanel(m_font->SpaceWidth()*10, *this, client_empire_id, *it));
+        std::vector<GG::Wnd *> flat_logs =
+            MakeCombatLogPanel(m_font->SpaceWidth()*10, *this, client_empire_id, *it);
+        for (std::vector<GG::Wnd *>::iterator log_it = flat_logs.begin();
+             log_it != flat_logs.end(); ++log_it) {
+            AddRow(*log_it);
+        }
     }
 
     //Add a dummy row that the layout manager can use to add space.
