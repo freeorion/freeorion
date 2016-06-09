@@ -32,6 +32,77 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** BoutEvent describes all the events that happen in one bout of combat.
+   It may have some sub-events and the sub-events will be ordered.*/
+struct FO_COMMON_API BoutEvent : public CombatEvent {
+    typedef boost::shared_ptr<BoutEvent> BoutEventPtr;
+
+    BoutEvent();
+    BoutEvent(int bout);
+
+    virtual ~BoutEvent() {}
+
+    void AddEvent(CombatEventPtr & event);
+
+    virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
+    virtual bool AreSubEventsEmpty(int viewing_empire_id) const
+    { return events.empty();}
+    virtual bool AreSubEventsOrdered() const
+    { return true; }
+    virtual bool FlattenSubEvents() const
+    { return true; }
+
+private:
+    int bout;
+
+    std::vector<CombatEventPtr> events;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** SimultaneousEvents describes a set of simultaneous events in one bout of combat.
+   It may have some sub-events and the sub-events will be shown in
+   viewing empire first followed by ALL_EMPIRES and then other empires.*/
+struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
+    typedef boost::shared_ptr<SimultaneousEvents> SimultaneousEventsPtr;
+
+    SimultaneousEvents();
+
+    virtual ~SimultaneousEvents() {}
+
+    void AddEvent(CombatEventPtr &event);
+
+    virtual std::string DebugString() const;
+    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
+    virtual bool AreSubEventsEmpty(int viewing_empire_id) const
+    { return events.empty();}
+    virtual bool FlattenSubEvents() const
+    { return true; }
+
+protected:
+    std::vector<CombatEventPtr> events;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
+typedef SimultaneousEvents AttacksEvent;
+typedef boost::shared_ptr<AttacksEvent> AttacksEventPtr;
+
+typedef SimultaneousEvents IncapacitationsEvent;
+typedef boost::shared_ptr<IncapacitationsEvent> IncapacitationsEventPtr;
+
+typedef SimultaneousEvents FighterLaunchesEvent;
+typedef boost::shared_ptr<FighterLaunchesEvent> FighterLaunchesEventPtr;
+
+
 /** InitialStealthEvent describes the initially stealthy combatants.
     Note:  Because it is initialized with the unfiltered stealth information it
     contains information not availble to all empires. */
@@ -116,6 +187,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
     virtual std::string CombatLogDetails(int viewing_empire_id) const;
+    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
     int     bout;
     int     round;
@@ -141,6 +213,7 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
 
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
     int bout;
     int object_id;
@@ -154,12 +227,15 @@ private:
 
 /// Created when an fighter is destroyed
 struct FO_COMMON_API FighterAttackedEvent : public CombatEvent {
+    typedef boost::shared_ptr<FighterAttackedEvent> FighterAttackedEventPtr;
+
     FighterAttackedEvent();
     FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_, int attacker_owner_empire_id_, int attacked_owner_id_);
     virtual ~FighterAttackedEvent() {}
 
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
     int bout;
     int round;
@@ -175,12 +251,15 @@ private:
 
 /// Created when an fighter is launched
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
+    typedef boost::shared_ptr<FighterLaunchEvent> FighterLaunchEventPtr;
+
     FighterLaunchEvent();
     FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_);
     virtual ~FighterLaunchEvent() {}
 
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
     int bout;
     int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
@@ -210,6 +289,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
     virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
     virtual bool AreSubEventsEmpty(int viewing_empire_id) const;
+    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
     int bout;
     int attacker_id;

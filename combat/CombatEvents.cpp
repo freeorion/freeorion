@@ -129,6 +129,141 @@ void BoutBeginEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& a
 
 
 //////////////////////////////////////////
+///////// BoutEvent /////////////
+//////////////////////////////////////////
+BoutEvent::BoutEvent():
+    bout(-1), events() {}
+
+BoutEvent::BoutEvent(int _bout):
+    bout(_bout), events() {}
+
+void BoutEvent::AddEvent(CombatEventPtr &event)
+{ events.push_back(event); }
+
+std::string BoutEvent::DebugString() const {
+    std::stringstream ss;
+    ss << "Bout " << bout << " has " << events.size() << " events";
+    return ss.str();
+}
+
+std::string BoutEvent::CombatLogDescription(int viewing_empire_id) const {
+    return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout);
+}
+
+std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int viewing_empire_id) const {
+    std::vector<ConstCombatEventPtr> all_events;
+    for (std::vector<CombatEventPtr>::const_iterator it = events.begin();
+         it != events.end(); ++it) {
+        all_events.push_back(*it);
+    }
+    return all_events;
+}
+
+template <class Archive>
+void BoutEvent::serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(bout)
+        & BOOST_SERIALIZATION_NVP(events);
+}
+
+BOOST_CLASS_VERSION(BoutEvent, 4)
+BOOST_CLASS_EXPORT(BoutEvent)
+
+template
+void BoutEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void BoutEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void BoutEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void BoutEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+
+//////////////////////////////////////////
+///////// SimultaneousEvents ///////////////////
+//////////////////////////////////////////
+
+SimultaneousEvents::SimultaneousEvents() :
+    events() {}
+
+void SimultaneousEvents::AddEvent(CombatEventPtr &event)
+{ events.push_back(event); }
+
+std::string SimultaneousEvents::DebugString() const {
+    std::stringstream ss;
+    ss << "SimultaneousEvents has " << events.size() << " events";
+    return ss.str();
+}
+
+std::string SimultaneousEvents::CombatLogDescription(int viewing_empire_id) const {
+    return "";
+}
+
+std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
+    // Sort the events by viewing empire, then ALL_EMPIRES and then
+    // other empires.
+    std::multimap<int, ConstCombatEventPtr> empire_to_event;
+    typedef std::multimap<int, ConstCombatEventPtr>::iterator iterator;
+    typedef std::pair<iterator, iterator> range;
+
+    for (std::vector<CombatEventPtr>::const_iterator it = events.begin();
+         it != events.end(); ++it) {
+        boost::optional<int> maybe_faction = (*it)->PrincipalFaction(viewing_empire_id);
+        int faction = maybe_faction.get_value_or(ALL_EMPIRES);
+        empire_to_event.insert(std::make_pair(faction, *it));
+    }
+
+    std::vector<ConstCombatEventPtr> ordered_events;
+
+    range viewing_empire_events = empire_to_event.equal_range(viewing_empire_id);
+    range all_empire_events = empire_to_event.equal_range(ALL_EMPIRES);
+
+    for (iterator it = viewing_empire_events.first;
+         it != viewing_empire_events.second; ++it) {
+        ordered_events.push_back(it->second);
+    }
+
+    for (iterator it = all_empire_events.first;
+         it != all_empire_events.second; ++it) {
+        ordered_events.push_back(it->second);
+    }
+
+    for (iterator it = empire_to_event.begin();
+         it != empire_to_event.end(); ++it) {
+        if (it->first != viewing_empire_id && it->first != ALL_EMPIRES)
+            ordered_events.push_back(it->second);
+    }
+
+    return ordered_events;
+}
+
+
+template <class Archive>
+void SimultaneousEvents::serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(events);
+}
+
+BOOST_CLASS_VERSION(SimultaneousEvents, 4)
+BOOST_CLASS_EXPORT(SimultaneousEvents)
+
+template
+void SimultaneousEvents::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void SimultaneousEvents::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void SimultaneousEvents::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void SimultaneousEvents::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+
+//////////////////////////////////////////
 ///////// InitialStealthEvent /////////////
 //////////////////////////////////////////
 
@@ -471,6 +606,11 @@ std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
                % damage);
 }
 
+boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) const {
+    return attacker_id;
+}
+
+
 template <class Archive>
 void WeaponFireEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
@@ -555,6 +695,10 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) con
     return str(FlexibleFormat(template_str) % owner_string % object_str);
 }
 
+boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id) const {
+    return object_owner_id;
+}
+
 
 template <class Archive>
 void IncapacitationEvent::serialize (Archive& ar, const unsigned int version) {
@@ -617,6 +761,11 @@ std::string FighterAttackedEvent::CombatLogDescription(int viewing_empire_id) co
                                 % attacked_by
                                 % empire_coloured_attacked_fighter);
 }
+
+boost::optional<int> FighterAttackedEvent::PrincipalFaction(int viewing_empire_id) const {
+    return attacker_owner_empire_id;
+}
+
 template <class Archive>
 void FighterAttackedEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
@@ -680,6 +829,10 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id) cons
               % launched_from_link
               % empire_coloured_fighter
               % std::abs(number_launched));
+}
+
+boost::optional<int> FighterLaunchEvent::PrincipalFaction(int viewing_empire_id) const {
+    return fighter_owner_empire_id;
 }
 
 template <class Archive>
@@ -816,6 +969,10 @@ std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_emp
         }
     }
     return all_events;
+}
+
+boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int viewing_empire_id) const {
+    return attacker_owner_id;
 }
 
 template <class Archive>
