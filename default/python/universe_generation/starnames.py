@@ -1,5 +1,5 @@
 import random
-import freeorion as fo
+import freeorionserver as fo
 import options
 import names
 

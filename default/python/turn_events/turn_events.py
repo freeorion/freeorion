@@ -2,7 +2,7 @@ import sys
 from random import random, uniform, choice
 from math import sin, cos, pi, hypot
 
-import freeorion as fo
+import freeorionserver as fo
 from universe_tables import MONSTER_FREQUENCY
 
 

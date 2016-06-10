@@ -21,7 +21,7 @@ using boost::python::dict;
 
 namespace fs = boost::filesystem;
 
-BOOST_PYTHON_MODULE(freeorion) {
+BOOST_PYTHON_MODULE(freeorionserver) {
     boost::python::docstring_options doc_options(true, true, false);
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();
@@ -36,11 +36,11 @@ namespace {
 bool PythonServer::InitModules() {
     DebugLogger() << "Initializing server Python modules";
 
-    // Allow the "freeorion" C++ module to be imported within Python code
+    // Allow the "freeorionserver" C++ module to be imported within Python code
     try {
-        initfreeorion();
+        initfreeorionserver();
     } catch (...) {
-        ErrorLogger() << "Unable to initialize 'freeorion' server Python module";
+        ErrorLogger() << "Unable to initialize 'freeorionserver' server Python module";
         return false;
     }
 

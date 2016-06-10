@@ -1,6 +1,6 @@
 from random import randint, uniform, choice, sample
 
-import freeorion as fo
+import freeorionserver as fo
 from util import report_error
 
 

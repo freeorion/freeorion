@@ -1,4 +1,4 @@
-import freeorion as fo
+import freeorionserver as fo
 from planets import planet_types_real, planet_sizes_real
 
 

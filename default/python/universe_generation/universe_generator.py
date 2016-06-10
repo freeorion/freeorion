@@ -1,6 +1,6 @@
 import random
 
-import freeorion as fo
+import freeorionserver as fo
 
 from starnames import name_star_systems
 from galaxy import calc_star_system_positions

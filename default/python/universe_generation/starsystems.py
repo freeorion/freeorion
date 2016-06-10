@@ -1,6 +1,6 @@
 import sys
 import random
-import freeorion as fo
+import freeorionserver as fo
 import planets
 import util
 import universe_tables

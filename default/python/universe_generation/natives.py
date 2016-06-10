@@ -1,6 +1,6 @@
 import random
 
-import freeorion as fo
+import freeorionserver as fo
 
 import planets
 import statistics

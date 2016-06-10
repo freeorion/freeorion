@@ -1,7 +1,7 @@
 import os.path
 import random
 
-import freeorion as fo
+import freeorionserver as fo
 
 from galaxy import get_systems_within_jumps
 from starsystems import star_types_real, pick_star_type
