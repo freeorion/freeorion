@@ -11,7 +11,7 @@ import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
-from print_utils import print_in_columns
+from common.print_utils import print_in_columns
 
 AIDependencies = Dep  # TODO: fix remaining references and remove this line
 
