@@ -1,7 +1,8 @@
-import freeorion as fo
-import planets
-import natives
-import universe_tables
+from __future__ import absolute_import
+
+import freeorionserver as fo
+from . import planets
+from . import universe_tables
 
 
 species_summary = {species: 0 for species in fo.get_native_species()}
@@ -50,6 +51,7 @@ def log_planet_type_summary(sys_list):
 
 
 def log_species_summary(native_freq):
+    from . import natives
     num_empires = sum(empire_species.values())
     num_species = len(fo.get_playable_species())
     exp_count = num_empires // num_species

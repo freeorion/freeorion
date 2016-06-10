@@ -21,7 +21,7 @@ using boost::python::dict;
 
 namespace fs = boost::filesystem;
 
-BOOST_PYTHON_MODULE(freeorion) {
+BOOST_PYTHON_MODULE(freeorionserver) {
     boost::python::docstring_options doc_options(true, true, false);
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();
@@ -36,29 +36,17 @@ namespace {
 bool PythonServer::InitModules() {
     DebugLogger() << "Initializing server Python modules";
 
-    // Allow the "freeorion" C++ module to be imported within Python code
+    // Allow the "freeorionserver" C++ module to be imported within Python code
     try {
-        initfreeorion();
+        initfreeorionserver();
     } catch (...) {
-        ErrorLogger() << "Unable to initialize 'freeorion' server Python module";
-        return false;
-    }
-
-    // Confirm existence of the directory containing the universe generation
-    // Python scripts and add it to Pythons sys.path to make sure Python will
-    // find our scripts
-    if (!fs::exists(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't find folder containing universe generation scripts";
-        return false;
-    }
-    if (!AddToSysPath(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't add folder containing universe generation scripts to sys.path";
+        ErrorLogger() << "Unable to initialize 'freeorionserver' server Python module";
         return false;
     }
 
     try {
         // import universe generator script file
-        m_python_module_universe_generator = import("universe_generator");
+        m_python_module_universe_generator = import("freeorion.universe_generation.universe_generator");
     }
     catch (error_already_set err) {
         ErrorLogger() << "Unable to import universe generator script";
@@ -66,24 +54,12 @@ bool PythonServer::InitModules() {
         return false;
     }
 
-    // Confirm existence of the directory containing the turn event Python
-    // scripts and add it to Pythons sys.path to make sure Python will find
-    // our scripts
-    if (!fs::exists(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't find folder containing turn events scripts";
-        return false;
-    }
-    if (!AddToSysPath(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't add folder containing turn events scripts to sys.path";
-        return false;
-    }
-
     try {
         // import universe generator script file
-        m_python_module_turn_events = import("turn_events");
+        m_python_module_turn_events = import("freeorion.turn_events");
     }
     catch (error_already_set err) {
-        ErrorLogger() << "Unable to import turn events script";
+        ErrorLogger() << "Unable to import freeorion.turn_events script";
         PyErr_Print();
         return false;
     }
@@ -132,9 +108,3 @@ bool PythonServer::ExecuteTurnEvents() {
     }
     return success;
 }
-
-const std::string GetPythonUniverseGeneratorDir()
-{ return GetPythonDir() + "/universe_generation"; }
-
-const std::string GetPythonTurnEventsDir()
-{ return GetPythonDir() + "/turn_events"; }

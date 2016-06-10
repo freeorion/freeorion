@@ -1,9 +1,11 @@
+from __future__ import absolute_import
+
 import sys
 from random import random, uniform, choice
 from math import sin, cos, pi, hypot
 
-import freeorion as fo
-from universe_tables import MONSTER_FREQUENCY
+import freeorionserver as fo
+from .universe_generation.universe_tables import MONSTER_FREQUENCY
 
 
 def execute_turn_events():

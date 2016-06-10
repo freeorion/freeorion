@@ -1244,9 +1244,6 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
-    // Set Python current work directory to directory containing
-    // the universe generation Python scripts
-    m_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
     // Call the main Python universe generator function
     if (!(m_python_server.CreateUniverse(player_setup_data))) {
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
@@ -1283,7 +1280,6 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 }
 
 void ServerApp::ExecuteScriptedTurnEvents() {
-    m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
     // Call the main Python turn events function
     if (!(m_python_server.ExecuteTurnEvents())) {
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));

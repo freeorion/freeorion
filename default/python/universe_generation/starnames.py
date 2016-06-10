@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import random
-import freeorion as fo
-import options
-import names
+import freeorionserver as fo
+from . import options
+from . import names
 
 
 # for starname modifiers

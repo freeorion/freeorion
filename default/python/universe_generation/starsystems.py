@@ -1,9 +1,11 @@
+from __future__ import absolute_import
+
 import sys
 import random
-import freeorion as fo
-import planets
-import util
-import universe_tables
+import freeorionserver as fo
+from . import planets
+from . import util
+from . import universe_tables
 
 
 # tuple of available star types

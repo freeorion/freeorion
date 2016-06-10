@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import random
-import freeorion as fo
-import statistics
-import universe_tables
+import freeorionserver as fo
+from . import statistics
+from . import universe_tables
 
 
 def distribute_specials(specials_freq, universe_objects):

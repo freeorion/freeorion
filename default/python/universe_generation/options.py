@@ -1,5 +1,7 @@
-import freeorion as fo
-from planets import planet_types_real, planet_sizes_real
+from __future__ import absolute_import
+
+import freeorionserver as fo
+from .planets import planet_types_real, planet_sizes_real
 
 
 ###############################

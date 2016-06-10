@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import random
 from itertools import cycle
 
-import freeorion as fo
+import freeorionserver as fo
 
 
 #tuples of consonants and vowels for random name generation

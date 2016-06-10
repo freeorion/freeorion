@@ -1,10 +1,12 @@
+from __future__ import absolute_import
+
 import sys
 from random import random, uniform, randint, gauss, choice
 from math import pi, sin, cos, sqrt
 
-import freeorion as fo
-import util
-import universe_tables
+import freeorionserver as fo
+from . import util
+from . import universe_tables
 
 
 class AdjacencyGrid:

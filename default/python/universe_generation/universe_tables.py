@@ -1,4 +1,6 @@
-import freeorion as fo
+from __future__ import absolute_import
+
+import freeorionserver as fo
 
 
 #################################
