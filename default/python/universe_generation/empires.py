@@ -1,15 +1,17 @@
+from __future__ import absolute_import
+
 import os.path
 import random
 
 import freeorionserver as fo
 
-from galaxy import get_systems_within_jumps
-from starsystems import star_types_real, pick_star_type
-from planets import planet_sizes_real, planet_types_real, calc_planet_size, calc_planet_type
-from names import get_name_list, random_name
-from util import load_string_list, report_error
-from options import *
-import statistics
+from .galaxy import get_systems_within_jumps
+from .starsystems import star_types_real, pick_star_type
+from .planets import planet_sizes_real, planet_types_real, calc_planet_size, calc_planet_type
+from .names import get_name_list, random_name
+from .util import load_string_list, report_error
+from .options import *
+from . import statistics
 
 
 def get_empire_name_generator():

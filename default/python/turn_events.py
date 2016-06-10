@@ -5,7 +5,7 @@ from random import random, uniform, choice
 from math import sin, cos, pi, hypot
 
 import freeorionserver as fo
-from universe_tables import MONSTER_FREQUENCY
+from .universe_generation.universe_tables import MONSTER_FREQUENCY
 
 
 def execute_turn_events():

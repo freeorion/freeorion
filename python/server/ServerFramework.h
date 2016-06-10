@@ -21,8 +21,5 @@ private:
     boost::python::object m_python_module_turn_events;
 };
 
-// Returns folder containing the Python universe generator scripts
-const std::string GetPythonUniverseGeneratorDir();
-
 
 #endif /* defined(__FreeOrion__Python__ServerFramework__) */

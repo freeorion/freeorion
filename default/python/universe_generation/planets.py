@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import sys
 import random
 import freeorionserver as fo
-import util
-import universe_tables as tables
+from . import util
+from . import universe_tables as tables
 
 
 # tuple of all valid planet sizes (with "no world")

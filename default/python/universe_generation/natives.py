@@ -1,10 +1,12 @@
+from __future__ import absolute_import
+
 import random
 
 import freeorionserver as fo
 
-import planets
-import statistics
-import universe_tables
+from . import planets
+from . import statistics
+from . import universe_tables
 
 natives_for_planet_type = {}
 planet_types_for_natives = {}

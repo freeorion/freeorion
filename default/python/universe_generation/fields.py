@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 from random import randint, uniform, choice, sample
 
 import freeorionserver as fo
-from util import report_error
+from .util import report_error
 
 
 def generate_fields(systems):

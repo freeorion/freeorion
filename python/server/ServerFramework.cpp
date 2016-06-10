@@ -44,21 +44,9 @@ bool PythonServer::InitModules() {
         return false;
     }
 
-    // Confirm existence of the directory containing the universe generation
-    // Python scripts and add it to Pythons sys.path to make sure Python will
-    // find our scripts
-    if (!fs::exists(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't find folder containing universe generation scripts";
-        return false;
-    }
-    if (!AddToSysPath(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't add folder containing universe generation scripts to sys.path";
-        return false;
-    }
-
     try {
         // import universe generator script file
-        m_python_module_universe_generator = import("universe_generator");
+        m_python_module_universe_generator = import("freeorion.universe_generation.universe_generator");
     }
     catch (error_already_set err) {
         ErrorLogger() << "Unable to import universe generator script";
@@ -120,6 +108,3 @@ bool PythonServer::ExecuteTurnEvents() {
     }
     return success;
 }
-
-const std::string GetPythonUniverseGeneratorDir()
-{ return GetPythonDir() + "/universe_generation"; }

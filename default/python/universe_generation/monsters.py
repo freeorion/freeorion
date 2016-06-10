@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import random
 import freeorionserver as fo
-import util
-import statistics
-import universe_tables
+from . import util
+from . import statistics
+from . import universe_tables
 
 
 def generate_monsters(monster_freq, systems):
