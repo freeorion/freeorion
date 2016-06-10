@@ -3324,7 +3324,7 @@ DESIGN_COMPONENT_CONFLICT
 Conflicting Design
 
 DESIGN_COMPONENT_CONFLICT_DETAIL
-A shipdesign cannont contain both %1% and %2%.
+A shipdesign cannot contain both %1% and %2%.
 
 DESIGN_OBSOLETE
 Obsolete Design
@@ -3438,7 +3438,7 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 
 ENC_SUITABILITY_REPORT_WHEEL_INTRO
 '''
-Suitability is determined by distance from the preferred type in this wheel:
+Suitability is determined by distance from the preferred type of [[encyclopedia ENVIRONMENT_TITLE]] in this wheel:
 '''
 
 # types of things that can be shown in encyclopedia
@@ -4091,9 +4091,9 @@ Each [[encyclopedia ENC_SPECIES]] has its own environmental preferences, which d
 
 [[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
 
-The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the max population bonus value if the species colonizes the planet, whereas a red number indicates that the population will stay idle or will decrease, to finally perish if the species attempts to colonize the planet.
+The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the max population value if the species colonizes the planet, whereas a red number indicates that the population will stay idle or will decrease, to finally perish if the species attempts to colonize the planet.
 
-When terraforming a planet (by research or if the planet has the [[encyclopedia GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the Good suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed in the Planet Suitability report.'''
+When terraforming a planet (by [[encyclopedia RESEARCH_TITLE]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed in the Planet Suitability report.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
@@ -4669,13 +4669,13 @@ SITREP_SNOOZE_CLEAR_ALL
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_WELCOME
-'''[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]'''
+[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
 
 SITREP_WELCOME_LABEL
 Welcome
 
 SITREP_GAS_GIANT_GENERATION_REMINDER
-'''%planet% is a prime location for a %buildingtype%, but none is being built there'''
+%planet% is a prime location for a %buildingtype%, but none is being built there.
 
 SITREP_SHIP_BUILT
 At %system%: a new %shipdesign%, the '%ship%', has been produced.
@@ -4957,7 +4957,7 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia Terraform
 
 EFFECT_GAIA
-On %planet%: The citizens rejoice as their world is now a [[encyclopedia GAIA_SPECIAL]] paradise.
+On %planet%: The citizens rejoice as their world is now a [[special GAIA_SPECIAL]] paradise.
 EFFECT_GAIA_LABEL
 Gaia Paradise
 
@@ -5200,10 +5200,10 @@ BEGINNER_HINT_01
 1: At the beginning of the game, constructing more [[predefinedshipdesign SD_SCOUT]]s may help in exploring the region around your homeworld.
 
 BEGINNER_HINT_02
-2: Each species has its own planet preference. If you can conquer a planet with a different species, you can colonize other planets with them as well, allowing you to secure a system faster. Keep in mind that not all species can colonize and that some can not build ships.
+2: Each species has its own planetary [[encyclopedia ENVIRONMENT_TITLE]] preference. If you can conquer a planet with a different species, you can colonize other planets with them as well, allowing you to secure a system faster. Keep in mind that not all species can colonize and that some can not build ships.
 
 BEGINNER_HINT_03
-3: Ships can be repaired at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there was no combat in the system last turn, and the planet has a happiness score of 5 or more.  Ships will need to wait one turn in the system before repairs can begin.
+3: Ships can be repaired at a system that has a friendly [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] if there was no combat in the system last turn, and the planet has a [[encyclopedia HAPPINESS_TITLE]] score of 5 or more.  Ships will need to wait one turn in the system before repairs can begin.
 
 BEGINNER_HINT_04
 4: Systems that are connected by thick lines are [[encyclopedia SUPPLY_TITLE]] line linked and they share [[encyclopedia INDUSTRY_TITLE]] Production Points (PP).
@@ -5288,7 +5288,7 @@ OCCUPIED_PLANETS
 Occupied Planets
 
 ENVIRONMENTAL_PREFERENCES
-Environmental Preferences:
+[[encyclopedia ENVIRONMENT_TITLE]] Preferences:
 
 FOCUS_PREFERENCE
 '''Preferred Focus: '''
@@ -6043,7 +6043,7 @@ Gaia
 GAIA_SPECIAL_DESC
 '''Terraforms planets then increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
 
-This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a Good environment a substantial population bonus is added, if it is not then it will slowly terraform itself in stages to eventually reach Good (NB: [[species SP_EXOBOT]] do not have a Good environment so it cannot improve beyond Adequate for them).''' 
+This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]], a substantial population bonus is added. If it is not, then it will slowly terraform itself in stages to eventually reach [[PE_GOOD]] (NB: [[species SP_EXOBOT]] do not have a [[PE_GOOD]] environment so it cannot improve beyond [[PE_ADEQUATE]] for them).'''
 
 WORLDTREE_SPECIAL
 World Tree
@@ -6073,40 +6073,40 @@ EXTINCT_BANFORO_SPECIAL
 Banforo Remains
 
 EXTINCT_BANFORO_SPECIAL_DESC
-'''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
+On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on [[encyclopedia SUPPLY_TITLE]] connected planets.
 
 TECH_COL_BANFORO
 Banforo Resequencing
 
 TECH_COL_BANFORO_DESC
-'''Allows reconstruction of the ancient [[species SP_BANFORO]] species.'''
+Allows reconstruction of the ancient [[species SP_BANFORO]] species.
 
 EXTINCT_KILANDOW_SPECIAL
 Kilandow Remains
 
 EXTINCT_KILANDOW_SPECIAL_DESC
-'''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
+On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on [[encyclopedia SUPPLY_TITLE]] connected planets.
 
 TECH_COL_KILANDOW
 Kilandow Resequencing
 
 TECH_COL_KILANDOW_DESC
-'''Allows reconstruction of the ancient [[species SP_KILANDOW]] species.'''
+Allows reconstruction of the ancient [[species SP_KILANDOW]] species.
 
 EXTINCT_MISIORLA_SPECIAL
 Misiorla Remains
 
 EXTINCT_MISIORLA_SPECIAL_DESC
-'''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on [[encyclopedia SUPPLY_TITLE]] connected planets.'''
+On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on [[encyclopedia SUPPLY_TITLE]] connected planets.
 
 TECH_COL_MISIORLA
 Misiorla Resequencing
 
 TECH_COL_MISIORLA_DESC
-'''Allows reconstruction of the ancient [[species SP_MISIORLA]] species.'''
+Allows reconstruction of the ancient [[species SP_MISIORLA]] species.
 
 EXTINCT_UNLOCK_SHORT_DESC
-'''Unlocks an extinct species'''
+Unlocks an extinct species
 
 PANOPTICON_SPECIAL
 Panopticon Complex
@@ -6401,59 +6401,59 @@ unknown star type
 # PlanetTypes
 
 PT_SWAMP
-swamp
+Swamp
 PT_TOXIC
-toxic
+Toxic
 PT_INFERNO
-inferno
+Inferno
 PT_RADIATED
-radiated
+Radiated
 PT_BARREN
-barren
+Barren
 PT_TUNDRA
-tundra
+Tundra
 PT_DESERT
-desert
+Desert
 PT_TERRAN
-terran
+Terran
 PT_OCEAN
-ocean
+Ocean
 PT_ASTEROIDS
-asteroids
+Asteroids
 PT_GASGIANT
-gas giant
+Gas Giant
 
 # Planet Sizes
 
 SZ_NOWORLD
 Nothing to see here; move along.
 SZ_TINY
-tiny
+Tiny
 SZ_SMALL
-small
+Small
 SZ_MEDIUM
-medium
+Medium
 SZ_LARGE
-large
+Large
 SZ_HUGE
-huge
+Huge
 SZ_ASTEROIDS
-asteroids
+Asteroids
 SZ_GASGIANT
-gas giant
+Gas giant
 
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-uninhabitable
+Uninhabitable
 PE_HOSTILE
-hostile
+Hostile
 PE_POOR
-poor
+Poor
 PE_ADEQUATE
-adequate
+Adequate
 PE_GOOD
-good
+Good
 
 # FocusTypes
 
@@ -7806,7 +7806,7 @@ GRO_PLANET_ECOL
 Planetary Ecology
 
 GRO_PLANET_ECOL_DESC
-'''Increases the max population of Good and Adequate planets by +1. This bonus is not cumulative with [[tech GRO_SYMBIOTIC_BIO]].
+'''Increases the max population of [[PE_GOOD]] and [[PE_ADEQUATE]] planets by +1. This bonus is not cumulative with [[tech GRO_SYMBIOTIC_BIO]].
 
 Agriculture and medical science can drastically increase survivability, allowing great increases in population and food production. Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it. Understanding natural ecology and its interaction to stresses permits the system to be modified and enhanced, and its benefits reaped for generations to come.'''
 
@@ -7826,7 +7826,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-Increases the max population of Good, Adequate, and Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+Increases the max population of [[PE_GOOD]], [[PE_ADEQUATE]], and [[PE_POOR]] planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -7854,7 +7854,7 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Adequate & Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population of [[PE_ADEQUATE]] and [[PE_POOR]] planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and [[PE_HOSTILE]] planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -7878,7 +7878,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
+'''Increases the max population of [[PE_POOR]] planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and [[PE_HOSTILE]] planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -7939,7 +7939,7 @@ Although high level initial design and initial facility setup still require acti
 PRO_EXOBOTS
 Exobots
 PRO_EXOBOTS_DESC
-Allows the construction of [[species SP_EXOBOT]] colonies optimized for industry on hostile planets.
+Allows the construction of [[species SP_EXOBOT]] colonies optimized for industry on [[PE_HOSTILE]] planets.
 
 PRO_RAPID_EXO_PROD
 Rapid Exobot Production
@@ -8481,7 +8481,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population.
+'''Increases the max population on [[PE_HOSTILE]] planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -9322,7 +9322,7 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbital Drydock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, repairing structural damage each turn.
+'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, repairing their [[encyclopedia STRUCTURE_TITLE]] each turn.
 
 [[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] can be hindered due to the planets [[encyclopedia HAPPINESS_TITLE]], or from combat in the system.
 
@@ -9475,7 +9475,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Adds the [[encyclopedia GAIA_SPECIAL]] to the planet which increases max Population for Good environments according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Adds the [[special GAIA_SPECIAL]] to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -9553,22 +9553,22 @@ BLD_TERRAFORM
 Terraforming
 
 BLD_TERRAFORM_DESC
-Terraforms a world one step closer to the environmental preference of the inhabiting species.
+Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species.
 
 BLD_TERRAFORM_REVERT
 Terraforming Reversion
 
 BLD_TERRAFORM_REVERT_DESC
-Terraforms a world one step back towards its original type.
+Terraforms a world one step back towards its original type of [[encyclopedia ENVIRONMENT_TITLE]].
 
 BLD_REMOTE_TERRAFORM
 Remote Terraforming
 
 BLD_REMOTE_TERRAFORM_DESC
-Terraforms a world one step closer to the environmental preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 MACRO_NEUTRONIUM_BUILDINGS
-'''To use neutronium an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a Neutron Star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used'''
+To use neutronium an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a Neutron Star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used
 
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
@@ -10047,7 +10047,7 @@ Jaws of a space monster, can damage ships. Huge space monsters are even capable 
 SR_SPINES
 Spines
 SR_SPINES_DESC
-Spines of a space monster, a powerfull strike of the space monster can deal big damage to a ship.
+Spines of a space monster, a powerful strike of the space monster can deal big damage to a ship.
 
 SR_TENTACLE
 Tentacle
@@ -10960,7 +10960,7 @@ A basic hull for Guardian Class Monsters.
 SH_GUARD_3_BODY
 Warden Hull
 SH_GUARD_3_BODY_DESC
-A powerfull hull for Guardian Class Monsters.
+A powerful hull for Guardian Class Monsters.
 
 SH_KRILL_1_BODY
 Krill Body 1
@@ -11098,7 +11098,7 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''species inhabiting this planet will have the maximum population boosted by planet size (Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5) regardless of planetary environmment.
+'''species inhabiting this planet will have the maximum population boosted by planet size (Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5) regardless of planetary [[encyclopedia ENVIRONMENT_TITLE]].
 
 If this planet is set to the [[encyclopedia GROWTH_FOCUS_TITLE]], the bonus is applied to all [[encyclopedia SUPPLY_TITLE]] connected worlds inhabited by species with'''
 
