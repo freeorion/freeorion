@@ -39,6 +39,7 @@ namespace {
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
         db.Add<std::string>("ai-path",              UserStringNop("OPTIONS_DB_AI_FOLDER_PATH"),        "python/AI",     Validator<std::string>(), false);
         db.Add<std::string>("ai-config",            UserStringNop("OPTIONS_DB_AI_CONFIG"),             "",       Validator<std::string>(), false);
+	db.Add<std::string>("script-path",          UserStringNop("OPTIONS_DB_SCRIPT_PATH"),           "python", Validator<std::string>(), false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
