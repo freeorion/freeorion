@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import sys
 from random import random, uniform, choice
 from math import sin, cos, pi, hypot

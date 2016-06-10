@@ -1283,7 +1283,6 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 }
 
 void ServerApp::ExecuteScriptedTurnEvents() {
-    m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
     // Call the main Python turn events function
     if (!(m_python_server.ExecuteTurnEvents())) {
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));

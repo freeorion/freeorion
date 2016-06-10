@@ -66,24 +66,12 @@ bool PythonServer::InitModules() {
         return false;
     }
 
-    // Confirm existence of the directory containing the turn event Python
-    // scripts and add it to Pythons sys.path to make sure Python will find
-    // our scripts
-    if (!fs::exists(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't find folder containing turn events scripts";
-        return false;
-    }
-    if (!AddToSysPath(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't add folder containing turn events scripts to sys.path";
-        return false;
-    }
-
     try {
         // import universe generator script file
-        m_python_module_turn_events = import("turn_events");
+        m_python_module_turn_events = import("freeorion.turn_events");
     }
     catch (error_already_set err) {
-        ErrorLogger() << "Unable to import turn events script";
+        ErrorLogger() << "Unable to import freeorion.turn_events script";
         PyErr_Print();
         return false;
     }
@@ -135,6 +123,3 @@ bool PythonServer::ExecuteTurnEvents() {
 
 const std::string GetPythonUniverseGeneratorDir()
 { return GetPythonDir() + "/universe_generation"; }
-
-const std::string GetPythonTurnEventsDir()
-{ return GetPythonDir() + "/turn_events"; }
