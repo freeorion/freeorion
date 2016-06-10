@@ -2,6 +2,7 @@
 
 #include "../util/Directories.h"
 #include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 #include "CommonWrappers.h"
 
 #include <boost/python/docstring_options.hpp>
@@ -14,6 +15,13 @@ using boost::python::dict;
 using boost::python::list;
 using boost::python::extract;
 
+
+// Python base package for freeorion
+BOOST_PYTHON_MODULE(freeorion) {
+    list module_path;
+    module_path.append( (GetResourceDir() / GetOptionsDB().Get<std::string>("script-path")).string() );
+    boost::python::scope().attr("__path__") = module_path;
+}
 
 // Python module for logging functions
 BOOST_PYTHON_MODULE(freeorion_logger) {
@@ -71,6 +79,14 @@ bool PythonBase::Initialize()
     catch (error_already_set err) {
         ErrorLogger() << "Unable to set up main namespace in Python";
         PyErr_Print();
+        return false;
+    }
+
+    // initialize "freeorion" package
+    try {
+        initfreeorion();
+    } catch (...) {
+        ErrorLogger() << "Unable to initialize FreeOrion base package";
         return false;
     }
 
