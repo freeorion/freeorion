@@ -431,12 +431,13 @@ def generate_research_orders():
 
     empire = fo.getEmpire()
     empire_id = empire.empireID
+    completed_techs = get_completed_techs()
     print "Research Queue Management on turn %d:" % fo.currentTurn()
     print "ColonisationAI survey: got_ast %s, got_gg %s, gotRuins %s" % (ColonisationAI.got_ast, ColonisationAI.got_gg, ColonisationAI.gotRuins)
     resource_production = empire.resourceProduction(fo.resourceType.research)
     print "\nTotal Current Research Points: %.2f\n" % resource_production
     print "Techs researched and available for use:"
-    print_in_columns(sorted(get_completed_techs()))
+    print_in_columns(sorted(completed_techs))
 
     #
     # report techs currently at head of research queue
