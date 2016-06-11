@@ -115,7 +115,7 @@ struct GUIImpl;
 class GG_API GUI
 {
 private:
-    struct OrCombiner 
+    struct OrCombiner
     {
         typedef bool result_type; 
         template<class InIt> bool operator()(InIt first, InIt last) const;
@@ -212,6 +212,9 @@ public:
     /** Returns the signal that is emitted when the requested keyboard accelerator is invoked. */
     AcceleratorSignalType& AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;
 
+    /** Returns true iff keyboard accelerator signals fire while modal windows are open. */
+    bool ModalAcceleratorSignalsEnabled() const;
+
     /** Saves \a wnd to file \a filename during the next render cycle.  If \a
         wnd is not rendered during the render cycle, or PNG support is not
         enabled, this is a no-op. */
@@ -279,6 +282,9 @@ public:
 
     /** Removes a keyboard accelerator. */
     void           RemoveAccelerator(accel_iterator it);
+
+    /** Sets whether to emit keyboard accelerator signals while modal windows are open. */
+    void           EnableModalAcceleratorSignals(bool allow = true);
 
     /** Sets whether to swap left and right mouse button events. */
     void           SetMouseLRSwapped(bool swapped = true);

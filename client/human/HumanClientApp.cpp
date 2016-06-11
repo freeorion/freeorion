@@ -246,6 +246,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                          GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
     EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
                                 GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
+    EnableModalAcceleratorSignals(false);
 
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
     GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);

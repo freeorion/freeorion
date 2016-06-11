@@ -165,6 +165,7 @@ struct GG::GUIImpl
     Wnd*         m_focus_wnd;             // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
     std::list<std::pair<Wnd*, Wnd*> >
                  m_modal_wnds;            // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
+    bool         m_allow_modal_accelerator_signals; // iff true: keyboard accelerator signals will be output while modal window(s) is open
 
     bool         m_mouse_button_state[3]; // the up/down states of the three buttons on the mouse are kept here
     Pt           m_mouse_pos;             // absolute position of mouse, based on last MOUSEMOVE event
@@ -246,6 +247,7 @@ struct GG::GUIImpl
 
 GUIImpl::GUIImpl() :
     m_focus_wnd(0),
+    m_allow_modal_accelerator_signals(false),
     m_mouse_pos(X(-1000), Y(-1000)),
     m_mouse_rel(X(0), Y(0)),
     m_mod_keys(),
@@ -656,7 +658,7 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
     bool processed = false;
     // only process accelerators when there are no modal windows active;
     // otherwise, accelerators would be an end-run around modality
-    if (m_modal_wnds.empty()) {
+    if (m_modal_wnds.empty() || m_allow_modal_accelerator_signals) {
         // the focus_wnd may care about the state of the numlock and
         // capslock, or which side of the keyboard's CTRL, SHIFT, etc.
         // was pressed, but the accelerators don't
@@ -1007,6 +1009,9 @@ GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_ke
     return *sig_ptr;
 }
 
+bool GUI::ModalAcceleratorSignalsEnabled() const
+{ return s_impl->m_allow_modal_accelerator_signals; }
+
 void GUI::SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const
 {
     s_impl->m_save_as_png_wnd = wnd;
@@ -1301,6 +1306,9 @@ void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
 
 void GUI::RemoveAccelerator(accel_iterator it)
 { s_impl->m_accelerators.erase(it); }
+
+void GUI::EnableModalAcceleratorSignals(bool allow)
+{ s_impl->m_allow_modal_accelerator_signals = allow; }
 
 void GUI::SetMouseLRSwapped(bool swapped/* = true*/)
 { s_impl->m_mouse_lr_swap = swapped; }

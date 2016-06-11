@@ -1967,7 +1967,7 @@ void CUIToggleRepresenter::Render(const GG::StateButton& button) const {
 
     // tone color for disabled button, or when unchecked and using a single icon with same color
     if (button.Disabled() || (!render_checked && (m_checked_color == m_unchecked_color) && (m_checked_icon == m_unchecked_icon)))
-        icon_clr = DisabledColor(icon_clr) * 0.8;
+        icon_clr = DisabledColor(icon_clr) * 0.8f;
 
     // highlight on mouseover
     if (button.IsMouseover()) {
