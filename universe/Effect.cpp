@@ -513,6 +513,12 @@ SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value) :
     m_value(value)
 {}
 
+SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value, const std::string& accounting_label) :
+    m_meter(meter),
+    m_value(value),
+    m_accounting_label(accounting_label)
+{}
+
 SetMeter::~SetMeter()
 { delete m_value; }
 

@@ -134,19 +134,22 @@ private:
 class FO_COMMON_API SetMeter : public EffectBase {
 public:
     SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value);
+    SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value, const std::string& accounting_label);
     virtual ~SetMeter();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
-    MeterType GetMeterType() const {return m_meter;};
+    MeterType GetMeterType() const { return m_meter; };
+    const std::string&  AccountingLabel() const { return m_accounting_label; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     MeterType                       m_meter;
     ValueRef::ValueRefBase<double>* m_value;
+    std::string                     m_accounting_label;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1055,7 +1058,8 @@ void SetMeter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_meter)
-        & BOOST_SERIALIZATION_NVP(m_value);
+        & BOOST_SERIALIZATION_NVP(m_value)
+        & BOOST_SERIALIZATION_NVP(m_accounting_label);
 }
 
 template <class Archive>
