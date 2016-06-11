@@ -83,6 +83,9 @@ namespace {
         LinkText * title;
         std::vector<GG::Wnd *> details;
 
+        //distance between expansion symbol and text
+        static const unsigned int BORDER_MARGIN = 5;
+
     };
 
     CombatLogAccordionPanel::CombatLogAccordionPanel(
@@ -98,6 +101,8 @@ namespace {
 
         GG::Connect(m_expand_button->LeftClickedSignal, &CombatLogAccordionPanel::ToggleExpansion, this);
         GG::Connect(this->ExpandCollapseSignal, &CombatLogWnd::HandleWndChanged, &log);
+
+        SetBorderMargin(BORDER_MARGIN);
 
         SetLayout(new GG::Layout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
