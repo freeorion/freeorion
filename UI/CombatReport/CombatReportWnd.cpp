@@ -50,6 +50,7 @@ public:
         m_graphical->SetLog(log_id);
         m_log->SetFont(ClientUI::GetFont());
         m_log->SetLog(log_id);
+        m_log_scroller->ScrollTo(GG::Y0);
     }
 
     void DoLayout() {
