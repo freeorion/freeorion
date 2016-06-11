@@ -57,7 +57,6 @@ public:
     static void AddHotkey(const std::string& name, const std::string& description,
                           GG::Key key, GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
-
     /// Returns the name of all defined hotkeys
     static std::set<std::string> DefinedHotkeys();
 
@@ -135,13 +134,25 @@ public:
     virtual ~HotkeyCondition() {}
 };
 
+/// On only when no modal Wnds are open
+class NoModalWndsOpenCondition : public HotkeyCondition {
+public:
+    NoModalWndsOpenCondition() {};
+
+    virtual bool IsActive() const {
+        return !GG::GUI::GetGUI()->ModalWndsOpen();
+    };
+};
+
 /// On when the given window is visible
 class VisibleWindowCondition : public HotkeyCondition {
 protected:
-    GG::Wnd* target;
+    const GG::Wnd* target;
 
 public:
-    VisibleWindowCondition(GG::Wnd* tg) : target(tg) {}
+    VisibleWindowCondition(const GG::Wnd* tg) :
+        target(tg)
+    {}
     virtual bool IsActive() const {
         if (!target)
             return false;
@@ -149,16 +160,15 @@ public:
     };
 };
 
-/// On when the given windows are invisible 
+/// On when the given windows are invisible
 class InvisibleWindowCondition : public HotkeyCondition {
 protected:
-    std::list<GG::Wnd*> m_blacklist;
+    std::list<const GG::Wnd*> m_blacklist;
 
 public:
-    InvisibleWindowCondition(GG::Wnd* w1, GG::Wnd* w2 = NULL,
-                             GG::Wnd* w3 = NULL,
-                             GG::Wnd* w4 = NULL);
-    InvisibleWindowCondition(const std::list<GG::Wnd*>& bl);
+    InvisibleWindowCondition(const GG::Wnd* w1,     const GG::Wnd* w2 = 0,
+                             const GG::Wnd* w3 = 0, const GG::Wnd* w4 = 0);
+    InvisibleWindowCondition(const std::list<const GG::Wnd*>& bl);
 
     virtual bool IsActive() const;
 };
@@ -166,14 +176,16 @@ public:
 /// On when the given window is visible
 class FocusWindowCondition : public HotkeyCondition {
 protected:
-    GG::Wnd* target;
+    const GG::Wnd* target;
 
 public:
-    FocusWindowCondition(GG::Wnd* tg) : target(tg) {}
+    FocusWindowCondition(const GG::Wnd* tg) :
+        target(tg)
+    {}
     virtual bool IsActive() const {
         if (!target)
             return false;
-        GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
+        const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
         return target == foc;
     };
 };
@@ -184,9 +196,9 @@ public:
     FocusWindowIsA() {};
 
     virtual bool IsActive() const {
-        GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
+        const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
         //std::cout << "Focus: " << foc << std::endl;
-        if (dynamic_cast<W*>(foc))
+        if (dynamic_cast<const W*>(foc))
             return true;
         return false;
     };
@@ -197,12 +209,12 @@ protected:
     std::list<HotkeyCondition*> m_conditions;
 public:
     OrCondition(HotkeyCondition* c1, HotkeyCondition* c2,
-                HotkeyCondition* c3 = NULL,
-                HotkeyCondition* c4 = NULL,
-                HotkeyCondition* c5 = NULL,
-                HotkeyCondition* c6 = NULL,
-                HotkeyCondition* c7 = NULL,
-                HotkeyCondition* c8 = NULL);
+                HotkeyCondition* c3 = 0,
+                HotkeyCondition* c4 = 0,
+                HotkeyCondition* c5 = 0,
+                HotkeyCondition* c6 = 0,
+                HotkeyCondition* c7 = 0,
+                HotkeyCondition* c8 = 0);
 
     virtual ~OrCondition();
     virtual bool IsActive() const;
@@ -224,10 +236,10 @@ public:
 
     /// Connects a named shortcut to the target slot in the target instance.
     template <class T, class R>
-    void Connect(T* instance, R (T::*member)(), const std::string& name, HotkeyCondition* cond = NULL)
+    void Connect(T* instance, R (T::*member)(), const std::string& name, HotkeyCondition* cond = 0)
     { AddConditionalConnection(name, GG::Connect(NamedSignal(name), member, instance), cond); };
 
-    void Connect(boost::function<bool()> func, const std::string& name, HotkeyCondition* cond = NULL)
+    void Connect(boost::function<bool()> func, const std::string& name, HotkeyCondition* cond = 0)
     { AddConditionalConnection(name, GG::Connect(NamedSignal(name), func), cond); };
 
 

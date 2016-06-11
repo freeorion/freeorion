@@ -341,8 +341,8 @@ void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
 //////////////////////////////////////////////////////////////////////
 // InvisibleWindowCondition
 //////////////////////////////////////////////////////////////////////
-InvisibleWindowCondition::InvisibleWindowCondition(GG::Wnd* w1, GG::Wnd* w2,
-                                                   GG::Wnd* w3, GG::Wnd* w4)
+InvisibleWindowCondition::InvisibleWindowCondition(const GG::Wnd* w1, const GG::Wnd* w2,
+                                                   const GG::Wnd* w3, const GG::Wnd* w4)
 {
     m_blacklist.push_back(w1);
     if (w2)
@@ -353,12 +353,12 @@ InvisibleWindowCondition::InvisibleWindowCondition(GG::Wnd* w1, GG::Wnd* w2,
         m_blacklist.push_back(w4);
 }
 
-InvisibleWindowCondition::InvisibleWindowCondition(const std::list<GG::Wnd*>& bl) :
+InvisibleWindowCondition::InvisibleWindowCondition(const std::list<const GG::Wnd*>& bl) :
     m_blacklist(bl)
 {}
 
 bool InvisibleWindowCondition::IsActive() const {
-    for (std::list<GG::Wnd*>::const_iterator i = m_blacklist.begin();
+    for (std::list<const GG::Wnd*>::const_iterator i = m_blacklist.begin();
          i != m_blacklist.end(); i++)
     {
         if ((*i)->Visible())
