@@ -246,7 +246,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                          GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
     EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
                                 GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
-    EnableModalAcceleratorSignals(false);
+    EnableModalAcceleratorSignals(true);
 
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
     GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
@@ -298,9 +298,12 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
     // Add global hotkeys
     HotkeyManager *hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&HumanClientApp::ExitGame, this), "exit");
-    hkm->Connect(boost::bind(&HumanClientApp::QuitGame, this), "quit");
-    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "fullscreen");
+    hkm->Connect(boost::bind(&HumanClientApp::ExitGame, this),          "exit",
+                 new NoModalWndsOpenCondition());
+    hkm->Connect(boost::bind(&HumanClientApp::QuitGame, this),          "quit",
+                 new NoModalWndsOpenCondition());
+    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "fullscreen",
+                 new NoModalWndsOpenCondition());
 
     hkm->RebuildShortcuts();
 }
