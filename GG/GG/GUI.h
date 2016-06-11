@@ -215,6 +215,9 @@ public:
     /** Returns true iff keyboard accelerator signals fire while modal windows are open. */
     bool ModalAcceleratorSignalsEnabled() const;
 
+    /** Returns true iff any modal Wnds are open. */
+    bool ModalWndsOpen() const;
+
     /** Saves \a wnd to file \a filename during the next render cycle.  If \a
         wnd is not rendered during the render cycle, or PNG support is not
         enabled, this is a no-op. */

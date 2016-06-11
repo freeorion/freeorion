@@ -1012,6 +1012,9 @@ GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_ke
 bool GUI::ModalAcceleratorSignalsEnabled() const
 { return s_impl->m_allow_modal_accelerator_signals; }
 
+bool GUI::ModalWndsOpen() const
+{ return !s_impl->m_modal_wnds.empty(); }
+
 void GUI::SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const
 {
     s_impl->m_save_as_png_wnd = wnd;
