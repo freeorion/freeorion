@@ -220,6 +220,21 @@ public:
     virtual bool IsActive() const;
 };
 
+class AndCondition : public HotkeyCondition {
+protected:
+    std::list<HotkeyCondition*> m_conditions;
+public:
+    AndCondition(HotkeyCondition* c1, HotkeyCondition* c2,
+                 HotkeyCondition* c3 = 0,
+                 HotkeyCondition* c4 = 0,
+                 HotkeyCondition* c5 = 0,
+                 HotkeyCondition* c6 = 0,
+                 HotkeyCondition* c7 = 0,
+                 HotkeyCondition* c8 = 0);
+
+    virtual ~AndCondition();
+    virtual bool IsActive() const;
+};
 
 class HotkeyManager {
 public:

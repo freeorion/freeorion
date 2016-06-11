@@ -408,6 +408,46 @@ OrCondition::~OrCondition() {
 }
 
 //////////////////////////////////////////////////////////////////////
+// AndCondition
+//////////////////////////////////////////////////////////////////////
+AndCondition::AndCondition(HotkeyCondition* c1, HotkeyCondition* c2,
+                           HotkeyCondition* c3, HotkeyCondition* c4,
+                           HotkeyCondition* c5, HotkeyCondition* c6,
+                           HotkeyCondition* c7, HotkeyCondition* c8)
+{
+    m_conditions.push_back(c1);
+    m_conditions.push_back(c2);
+    if (c3)
+        m_conditions.push_back(c3);
+    if (c4)
+        m_conditions.push_back(c4);
+    if (c5)
+        m_conditions.push_back(c5);
+    if (c6)
+        m_conditions.push_back(c6);
+    if (c7)
+        m_conditions.push_back(c7);
+    if (c8)
+        m_conditions.push_back(c8);
+}
+
+bool AndCondition::IsActive() const {
+    for (std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
+         i != m_conditions.end(); i++)
+    {
+        if (!(*i)->IsActive())
+            return false;
+    }
+    return true;
+}
+
+AndCondition::~AndCondition() {
+    for (std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
+         i != m_conditions.end(); i++)
+    { delete *i; }
+}
+
+//////////////////////////////////////////////////////////////////////
 // HotkeyManager
 //////////////////////////////////////////////////////////////////////
 HotkeyManager* HotkeyManager::s_singleton = 0;
