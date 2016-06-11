@@ -26,6 +26,10 @@ public:
     /** Sets the interior color of the box. */
     void SetInteriorColor(GG::Clr c);
 
+    /** Set the number of pixels between the expansion symbol and the
+        client area. */
+    void SetBorderMargin(unsigned int margin);
+
     //@}
 
     typedef boost::signals2::signal<void ()> ExpandCollapseSignalType;
@@ -44,6 +48,9 @@ protected:
     bool                    m_is_left; ///< Is expand button on the left?
 
     GG::Clr                 m_interior_color;
+
+    /// The number of pixels between the expansion button and the client area.
+    unsigned int            m_border_margin;
 };
 
 #endif
