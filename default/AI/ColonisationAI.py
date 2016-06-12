@@ -30,7 +30,6 @@ annexable_system_ids = set()
 annexable_ring1 = set()
 annexable_ring2 = set()
 annexable_ring3 = set()
-annexable_planet_ids = set()
 systems_by_supply_tier = {}
 system_supply = {}
 planet_supply_cache = {}  # includes system supply
@@ -208,50 +207,10 @@ def check_supply():
     colonization_timer.start('Determining Annexable Systems')
 
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
-    annexable_ring1.clear()
-    annexable_ring2.clear()
-    annexable_ring3.clear()
-    annexable_planet_ids.clear()
     systems_by_supply_tier.clear()
     system_supply.clear()
-    supply_distance = get_supply_tech_range()
-    # extra potential supply contributions:
-    # 3 for up to Ultimate supply species
-    # 2 for possible tiny planets
-    # 1 for World Tree
-    # TODO: +3 to consider capturing planets with Elevators
-    supply_distance += 6
-    # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
-    # supply_distance += 1
-    for sys_id in empire.fleetSupplyableSystemIDs:
-        annexable_system_ids.add(sys_id)  # add fleet suppliable system
-        for nID in universe.getImmediateNeighbors(sys_id, empire_id):
-            annexable_system_ids.add(nID)  # add immediate neighbor of fleet suppliable system
-    if supply_distance > 1:
-        for sys_id in list(annexable_system_ids):
-            for nID in universe.getImmediateNeighbors(sys_id, empire_id):
-                annexable_ring1.add(nID)
-        annexable_ring1.difference_update(annexable_system_ids)
-        annexable_system_ids.update(annexable_ring1)
-    if supply_distance > 2:
-        for sys_id in list(annexable_ring1):
-            for nID in universe.getImmediateNeighbors(sys_id, empire_id):
-                annexable_ring2.add(nID)
-        annexable_ring2.difference_update(annexable_system_ids)
-        annexable_system_ids.update(annexable_ring2)
-    if supply_distance > 3:
-        for sys_id in list(annexable_ring2):
-            for nID in universe.getImmediateNeighbors(sys_id, empire_id):
-                annexable_ring3.add(nID)
-        annexable_ring3.difference_update(annexable_system_ids)
-        annexable_system_ids.update(annexable_ring3)
-    annexable_planet_ids.update(PlanetUtilsAI.get_planets_in__systems_ids(annexable_system_ids))
-    print "First Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring1))
-    print "Second Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring2))
-    print "Third Ring of annexable systems:", ', '.join(PlanetUtilsAI.sys_name_ids(annexable_ring3))
-    # print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
-    print
-    print "New Supply Calc:"
+
+    print "Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
     # Note: empire.supplyProjections supply returns the number of jumps each system is from a fleet-supplied system for that empire (0 if a system is in supply)
@@ -259,10 +218,10 @@ def check_supply():
     for sys_id, supply_val in system_supply.items():
         # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
-    print "New Supply connected systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
-    print "New First Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
-    print "New Second Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
-    print "New Third Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
+    print "Supply connected systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
+    print "First Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
+    print "Second Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
+    print "Third Ring of annexable systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
     # print "new supply calc took ", new_time-supp_timing[0][-1]
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexable_ring1.clear()
@@ -272,7 +231,20 @@ def check_supply():
     annexable_ring2.update(systems_by_supply_tier.get(-2, []))
     annexable_ring3.update(systems_by_supply_tier.get(-3, []))
     # annexableSystemIDs.update(systems_by_supply_tier.get(0, []), annexableRing1, annexableRing2, annexableRing3)
-    for jumps in range(0, -1 - supply_distance, -1):
+
+    supply_distance = get_supply_tech_range()
+    # extra potential supply contributions:
+    # 3 for up to Ultimate supply species
+    # 2 for possible tiny planets
+    # 1 for World Tree
+    # TODO: +3 to consider capturing planets with Elevators
+    # TODO consider that this should not be more then maximal value in empire.systemSupplyRanges
+    supply_distance += 6 # should not be more then max value in supplyProjections
+    # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
+    # supply_distance += 1
+
+    # we should not rely on constant here, for sys, supply in supplyProjections need to add systems in supply range
+    for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
         annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
     colonization_timer.stop()
     return fleet_suppliable_planet_ids
