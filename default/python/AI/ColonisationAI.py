@@ -247,15 +247,12 @@ def check_supply():
     for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
         annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
     colonization_timer.stop()
-    return fleet_suppliable_planet_ids
 
 
 def survey_universe():
     global gotRuins, got_ast, got_gg, got_computronium, got_nest, cur_best_pilot_rating, curMidPilotRating
-    univ_stats = {}
-    fleet_suppliable_planet_ids = check_supply()
+    check_supply()
     colonization_timer.start("Categorizing Visible Planets")
-    univ_stats['fleetSupplyablePlanetIDs'] = fleet_suppliable_planet_ids
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empire_id = empire.empireID
@@ -490,7 +487,6 @@ def survey_universe():
         # claimedStars.setdefault( tSys.starType, []).append(sysID)
     # foAI.foAIstate.misc['claimedStars'] = claimedStars
     colonization_timer.stop()
-    return univ_stats
 
 
 def get_colony_fleets():
