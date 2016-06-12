@@ -23,7 +23,6 @@ empire_ship_builders = {}
 empire_shipyards = {}
 empire_dry_docks = {}
 available_growth_specials = {}
-empire_planets_with_growth_specials = {}
 active_growth_specials = {}
 empire_metabolisms = {}
 annexable_system_ids = set()
@@ -43,11 +42,9 @@ cur_best_pilot_rating = 1e-8
 curMidPilotRating = 1e-8
 pilot_ratings = {}
 colony_status = {}
-pop_map = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
 unowned_empty_planet_ids = set()
 empire_outpost_ids = set()
-empire_ast_outpost_ids = set()
 claimed_stars = {}
 facilities_by_species_grade = {}
 system_facilities = {}
@@ -238,7 +235,7 @@ def check_supply():
     # 1 for World Tree
     # TODO: +3 to consider capturing planets with Elevators
     # TODO consider that this should not be more then maximal value in empire.systemSupplyRanges
-    supply_distance += 6 # should not be more then max value in supplyProjections
+    supply_distance += 6  # should not be more then max value in supplyProjections
     # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
     # supply_distance += 1
 
@@ -279,7 +276,6 @@ def survey_universe():
         claimed_stars.clear()
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
-        pop_map.clear()
         empire_status.clear()
         empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
@@ -295,8 +291,6 @@ def survey_universe():
         empire_owned_planet_ids = []
         empire_pop_ctrs = set()
         empire_outpost_ids.clear()
-        empire_ast_outpost_ids.clear()
-
         old_pop_ctrs = []
         for specn in empire_species:
             old_pop_ctrs.extend(empire_species[specn])
@@ -312,7 +306,6 @@ def survey_universe():
         empire_metabolisms.clear()
         available_growth_specials.clear()
         active_growth_specials.clear()
-        empire_planets_with_growth_specials.clear()
         if tech_is_complete(TechsListsAI.EXOBOT_TECH_NAME):
             empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
         empire_species_systems.clear()
@@ -367,12 +360,9 @@ def survey_universe():
                 empire_owned_planet_ids.append(pid)
                 AIstate.colonizedSystems.setdefault(sys_id, []).append(
                     pid)  # track these to plan Solar Generators and Singularity Generators, etc.
-                pop_map[pid] = planet_population
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
-                    if planet.type == fo.planetType.asteroids:
-                        empire_ast_outpost_ids.add(pid)
                 else:
                     empire_pop_ctrs.add(pid)
                     empire_has_qualifying_planet = True
@@ -418,7 +408,6 @@ def survey_universe():
                     if special in NEST_VAL_MAP:
                         got_nest = True
                     if special in AIDependencies.metabolismBoosts:
-                        empire_planets_with_growth_specials.setdefault(pid, []).append(special)
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
@@ -1072,7 +1061,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 retval += fort_val
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
-                honey_val = 0.3*(AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
+                honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
                                  empire_status['industrialists'] * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
