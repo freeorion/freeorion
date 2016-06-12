@@ -33,10 +33,7 @@ public:
     void AddRow(GG::Wnd * wnd);
     //@}
 
-    /**These handlers just echo the signals from contained log objects to the above signals*/
-    void HandleLinkClick(const std::string& link_type, const std::string& data);
-    void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
-    void HandleLinkRightClick(const std::string& link_type, const std::string& data);
+    /** When windows changes forces a re-layout */
     void HandleWndChanged();
 
     /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
@@ -188,13 +185,6 @@ GG::Pt CombatLogWnd::CombatLogWndImpl::MinUsableSize() const {
     return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
 }
 
-void CombatLogWnd::CombatLogWndImpl::HandleLinkClick(const std::string& link_type, const std::string& data)
-{ m_wnd.LinkClickedSignal(link_type, data); }
-void CombatLogWnd::CombatLogWndImpl::HandleLinkDoubleClick(const std::string& link_type, const std::string& data)
-{ m_wnd.LinkDoubleClickedSignal(link_type, data); }
-void CombatLogWnd::CombatLogWndImpl::HandleLinkRightClick(const std::string& link_type, const std::string& data)
-{ m_wnd.LinkRightClickedSignal(link_type, data); }
-
 void CombatLogWnd::CombatLogWndImpl::HandleWndChanged() {
     GG::Pt size = m_wnd.Size();
     m_wnd.Resize(size + GG::Pt(2*m_font->SpaceWidth(), GG::Y0));
@@ -321,9 +311,10 @@ LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & 
     links->SetDecorator(VarText::SYSTEM_ID_TAG, new ColorByOwner());
     links->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorByOwner());
 
-    GG::Connect(links->LinkClickedSignal,       &CombatLogWnd::CombatLogWndImpl::HandleLinkClick,          this);
-    GG::Connect(links->LinkDoubleClickedSignal, &CombatLogWnd::CombatLogWndImpl::HandleLinkDoubleClick,    this);
-    GG::Connect(links->LinkRightClickedSignal,  &CombatLogWnd::CombatLogWndImpl::HandleLinkDoubleClick,    this);
+
+    links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
+    links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
+    links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
     GG::Connect(links->ChangedSignal,           &CombatLogWnd::CombatLogWndImpl::HandleWndChanged,         this);
 
     return links;
