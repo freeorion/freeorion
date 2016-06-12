@@ -48,9 +48,10 @@ public:
 
     void SetLog(int log_id) {
         m_graphical->SetLog(log_id);
+
         m_log->SetFont(ClientUI::GetFont());
-        m_log->SetLog(log_id);
         m_log_scroller->ScrollTo(GG::Y0);
+        m_log->SetLog(log_id);
     }
 
     void DoLayout() {
@@ -63,9 +64,6 @@ public:
         if (GraphicalSummaryWnd* graphical_wnd =
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
             graphical_wnd->DoLayout();
-        } else {
-            //try to force a re-layout to prevent initial sizing error when switching tabs
-            m_log_scroller->SizeMove(m_tabs->ClientUpperLeft(), m_tabs->ClientLowerRight());
         }
     }
 

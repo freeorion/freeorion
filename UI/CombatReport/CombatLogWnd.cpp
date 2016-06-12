@@ -1,6 +1,9 @@
 #include "CombatLogWnd.h"
 
 #include <GG/Layout.h>
+#include <GG/Scroll.h>
+#include <GG/ScrollPanel.h>
+
 #include "../LinkText.h"
 
 #include "../../client/human/HumanClientApp.h"
@@ -13,7 +16,6 @@
 #include "../../universe/UniverseObject.h"
 #include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"
-
 
 class CombatLogWnd::CombatLogWndImpl {
 public:
@@ -30,12 +32,6 @@ public:
     /** Add a row at the end of the combat report*/
     void AddRow(GG::Wnd * wnd);
     //@}
-
-    ///link clicked signals: first string is the link type, second string is the specific item clicked
-    mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;
-    mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkDoubleClickedSignal;
-    mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
-    mutable boost::signals2::signal<void ()> WndChangedSignal;
 
     /**These handlers just echo the signals from contained log objects to the above signals*/
     void HandleLinkClick(const std::string& link_type, const std::string& data);
@@ -186,7 +182,7 @@ CombatLogWnd::CombatLogWndImpl::CombatLogWndImpl(CombatLogWnd& _wnd):
     m_wnd(_wnd),
     m_text_format_flags(GG::FORMAT_WORDBREAK| GG::FORMAT_LEFT | GG::FORMAT_TOP),
     m_font(ClientUI::GetFont())
-{}
+{ }
 
 GG::Pt CombatLogWnd::CombatLogWndImpl::MinUsableSize() const {
     return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
@@ -200,16 +196,123 @@ void CombatLogWnd::CombatLogWndImpl::HandleLinkRightClick(const std::string& lin
 { m_wnd.LinkRightClickedSignal(link_type, data); }
 
 void CombatLogWnd::CombatLogWndImpl::HandleWndChanged() {
-    // Trigger Layout to redraw the window
-    if (GG::Wnd * parent = m_wnd.Parent()) {
-        m_wnd.SizeMove(parent->ClientUpperLeft(), parent->ClientLowerRight());
-    }
+    GG::Pt size = m_wnd.Size();
+    m_wnd.Resize(size + GG::Pt(2*m_font->SpaceWidth(), GG::Y0));
+    m_wnd.Resize(size);
     m_wnd.WndChangedSignal();
 }
 
 
+namespace {
+    /**Find a parent of type T*/
+    template <typename T>
+    T const * FindParentOfType(GG::Wnd const * parent) {
+        GG::Wnd const * iwnd = parent;
+        T const * type_T = NULL;
+        while (iwnd && !(type_T = dynamic_cast<const T *>(iwnd))){
+            iwnd = iwnd->Parent();
+        }
+        return type_T;
+    }
+
+
+    /**LazyScrollerLinkText is a link text that initially populates
+       itself with an ellipsis.
+
+       As a one time effect, when it comes into view it populates itself
+       with the text which will be processed by DetermineLines and
+       flowed by the Layout.
+
+       This works around problems with Font::DetermineLinesImpl() which is
+       too costly to run on 100 combat reports without freezing the UI
+       for an extended portion of time.
+
+       This assumes:
+       + CombatLogWnd is in a TabWnd as the second tab.
+       + CombatLogWnd is in a ScrollPanel
+    */
+
+    class LazyScrollerLinkText : public LinkText {
+        public:
+
+        mutable boost::signals2::signal<void ()> ChangedSignal;
+
+        LazyScrollerLinkText(
+            GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
+            const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
+            LinkText(x, y, UserString("ELLIPSIS"), font, color),
+            m_text( new std::string(str)),
+            m_signals()
+        {
+
+            //Register for signals that might bring the text into view
+
+            if (CombatLogWnd const * log = FindParentOfType<CombatLogWnd>(&parent)) {
+                m_signals.push_back(
+                    GG::Connect(log->WndChangedSignal, &LazyScrollerLinkText::HandleMaybeVisible, this));
+            }
+
+            if (GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
+                GG::Scroll const * scroll = scroll_panel->GetScroll();
+                m_signals.push_back(
+                    GG::Connect(scroll->ScrolledAndStoppedSignal, &LazyScrollerLinkText::HandleScrolledAndStopped, this));
+
+            }
+
+            //Parent doesn't contain any of the expected parents so just
+            //show the text.
+            if (m_signals.empty()) {
+                SetText(str);
+                m_text.reset();
+            } else {
+                HandleMaybeVisible();
+            }
+        }
+
+        void HandleMaybeVisible() {
+
+            //Assumes the log is the second tab.
+            GG::OverlayWnd const * tab = FindParentOfType<const GG::OverlayWnd>(Parent());
+            if (tab && (tab->CurrentWndIndex() != 1))
+                return;
+
+            // Check if any part of text is in the scrollers visible area
+            GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent());
+            if (scroll_panel && (scroll_panel->InClient(UpperLeft())
+                                 || scroll_panel->InClient(LowerRight())
+                                 || scroll_panel->InClient(GG::Pt(Right(), Top()))
+                                 || scroll_panel->InClient(GG::Pt(Left(), Bottom())))) {
+                for (std::vector<boost::signals2::connection>::iterator sig_it = m_signals.begin();
+                     sig_it != m_signals.end(); ++sig_it){
+                    sig_it->disconnect();
+                }
+                m_signals.clear();
+
+                SetText(*m_text);
+                m_text.reset();
+
+                ChangedSignal();
+            }
+        }
+
+        void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos) {
+            HandleMaybeVisible();
+        }
+
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            LinkText::SizeMove(ul, lr);
+            if (! m_signals.empty())
+                HandleMaybeVisible();
+        }
+
+        boost::scoped_ptr<std::string> m_text;
+        std::vector<boost::signals2::connection> m_signals;
+    };
+
+}
+
 LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & text) {
-    LinkText * links = new LinkText(GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
+    LazyScrollerLinkText * links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
 
@@ -221,6 +324,7 @@ LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & 
     GG::Connect(links->LinkClickedSignal,       &CombatLogWnd::CombatLogWndImpl::HandleLinkClick,          this);
     GG::Connect(links->LinkDoubleClickedSignal, &CombatLogWnd::CombatLogWndImpl::HandleLinkDoubleClick,    this);
     GG::Connect(links->LinkRightClickedSignal,  &CombatLogWnd::CombatLogWndImpl::HandleLinkDoubleClick,    this);
+    GG::Connect(links->ChangedSignal,           &CombatLogWnd::CombatLogWndImpl::HandleWndChanged,         this);
 
     return links;
 }
@@ -349,6 +453,7 @@ CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
     SetName("CombatLogWnd");
 }
 
+//This virtual destructor must exist to ensure that the pimpl is destroyed.
 CombatLogWnd::~CombatLogWnd()
 {}
 
