@@ -774,9 +774,6 @@ void SaveFileDialog::Confirm() {
             ErrorLogger() << "SaveFileDialog::Confirm: Invalid status for file: " << Result();
             return;
         }
-    } else if (!fs::is_regular_file(chosen_full_path)) {
-        ErrorLogger() << "SaveFileDialog::Confirm: problem with result: " << Result();
-        return;
     }
 
     CloseClicked();
