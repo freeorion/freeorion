@@ -29,8 +29,9 @@ def handle_debug_chat(sender, message):
             chat_human("exiting debug mode")
         debug_mode = False
     elif debug_mode:
+        print '>', message,
         is_debug_chat = True
-        out, err = shell(message)
+        out, err = [x.strip('\n') for x in shell(message)]
         if out:
             chat_human(WHITE % out)
         if err:
@@ -46,16 +47,24 @@ def handle_debug_chat(sender, message):
         if player_id == fo.playerID():
             debug_mode = True
             # add some variables to scope
-            lines = ['import FreeOrionAI as foAI',
-                     'ai = foAI.foAIstate',
-                     'u = fo.getUniverse()',
-                     'e = fo.getEmpire()'
-                     ]
+            scopes_variable = (
+                ('ai', 'aistate', 'foAI.foAIstate'),
+                ('u', 'universe', 'fo.getUniverse()'),
+                ('e', 'empire', 'fo.getEmpire()'),
+            )
+
+            lines = ['import FreeOrionAI as foAI']
+            for var, _, code in scopes_variable:
+                lines.append('%s = %s' % (var, code))
+
             shell(';'.join(lines))
-            # Notify all players this AI entering debug mode
-            fo.sendChatMessage(-1, WHITE % ENTERING_DEBUG_MESSAGE)
-            chat_human(WHITE % "Print 'stop' to exit.")
-            chat_human(WHITE % " Local vars: <u>u</u>(universe), <u>e</u>(empire), <u>ai</u>(aistate)")
+
+            variable_template = '<u><rgba 255 255 0 255>%s</rgba></u>%s %s'
+            vars = (variable_template % (var, ' ' * (3 - len(var)), name) for var, name, _ in scopes_variable)
+            chat_human(WHITE % "%s\n"
+                               "Print <rgba 255 255 0 255>'stop'</rgba> to exit.\n"
+                               "Local variables:\n"
+                               "  %s" % (ENTERING_DEBUG_MESSAGE, '\n  '.join(vars)))
 
     elif message == 'help':
         is_debug_chat = True
