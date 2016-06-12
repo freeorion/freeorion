@@ -2611,15 +2611,52 @@ void Contains::Eval(const ScriptingContext& parent_context,
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
-        // evaluate contained objects once and check for all candidates
-        TemporaryPtr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
+        // how complicated is this containment test?
+        if (search_domain == MATCHES && matches.empty() ||
+            search_domain == NON_MATCHES && non_matches.empty())
+        {
+            // don't need to evaluate anything...
+            return;
 
-        // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_matches;
-        m_condition->Eval(local_context, subcondition_matches);
+        } else if (search_domain == MATCHES && matches.size() == 1 ||
+                   search_domain == NON_MATCHES && non_matches.size() == 1)
+        {
+            // evaluate subcondition on objects contained by the candidate
+            TemporaryPtr<const UniverseObject> no_object;
+            ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
-        EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
+            // initialize subcondition candidates from local candidate's contents
+            const ObjectMap& objects = Objects();
+            ObjectSet subcondition_matches = objects.FindObjects(local_context.condition_local_candidate->ContainedObjectIDs());
+
+            // apply subcondition to candidates
+            if (!subcondition_matches.empty()) {
+                ObjectSet dummy;
+                m_condition->Eval(local_context, subcondition_matches, dummy, Condition::MATCHES);
+            }
+
+            // move single local candidate as appropriate...
+            if (search_domain == MATCHES && subcondition_matches.empty()) {
+                // move to non_matches
+                matches.clear();
+                non_matches.push_back(local_context.condition_local_candidate);
+            } else if (search_domain == NON_MATCHES && !subcondition_matches.empty()) {
+                // move to matches
+                non_matches.clear();
+                matches.push_back(local_context.condition_local_candidate);
+            }
+
+        } else {
+            // evaluate contained objects once using default initial candidates
+            // of subcondition to find all subcondition matches in the Universe
+            TemporaryPtr<const UniverseObject> no_object;
+            ScriptingContext local_context(parent_context, no_object);
+            ObjectSet subcondition_matches;
+            m_condition->Eval(local_context, subcondition_matches);
+
+            // check all candidates to see if they contain any subcondition matches
+            EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
+        }
     } else {
         // re-evaluate contained objects for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -2777,7 +2814,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
-        // evaluate contained objects once and check for all candidates
+        // evaluate container objects once and check for all candidates
 
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
