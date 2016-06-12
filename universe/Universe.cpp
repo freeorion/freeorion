@@ -2284,7 +2284,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > > dispatched_targets_causes;
     {
         const Effect::EffectsGroup* last_effects_group   = 0;
-        Effect::TargetsCauses*      group_targets_causes = 0; // Is this even used?  ~Bigjoe5
+        Effect::TargetsCauses*      group_targets_causes = 0;
 
         for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
              targets_it != targets_causes.end(); ++targets_it)
