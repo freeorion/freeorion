@@ -56,6 +56,10 @@ Yes
 NO
 No
 
+# ELLIPSIS is used as a placeholder for unexpanded content in the combat log window.
+ELLIPSIS
+...
+
 EMPIRE
 Empire
 
