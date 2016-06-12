@@ -131,7 +131,7 @@ def chat_human(message):
     """
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     fo.sendChatMessage(human_id, message)
-    print "\nChat Message to human: %s\n" % remove_tags(message)
+    print "\nChat Message to human: %s" % remove_tags(message)
 
 
 def cache_by_session(function):
