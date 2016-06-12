@@ -438,6 +438,8 @@ void EffectBase::Execute(const TargetsCauses& targets_causes,
         info.cause_type =           targets_and_cause.effect_cause.cause_type;
         info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
         info.custom_label =         targets_and_cause.effect_cause.custom_label;
+        if (set_meter_effect)
+            info.custom_label =     set_meter_effect->AccountingLabel();
         info.source_id =            source_id;
 
         // process each target separately to do effect accounting
