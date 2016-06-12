@@ -195,7 +195,6 @@ def check_supply():
     colonization_timer.start('Getting Empire Supply Info')
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empire_id = empire.empireID
     fleet_suppliable_system_ids = empire.fleetSupplyableSystemIDs
     fleet_suppliable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_suppliable_system_ids)
     print
