@@ -200,18 +200,15 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
             error == boost::asio::error::connection_reset) {
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
-            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): error \""
-                                   << error << "\"";
+            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): error \"" << error << "\"";
         }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
             if (TRACE_EXECUTION && m_incoming_message.Type() != Message::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
-                DebugLogger() << "Server received message from player id: "
-                                       << m_incoming_message.SendingPlayer()
-                                       << " of type "
-                                       << MessageTypeName(m_incoming_message.Type())
-                                       << " and size "<< m_incoming_message.Size();
+                DebugLogger() << "Server received message from player id: " << m_incoming_message.SendingPlayer()
+                              << " of type " << MessageTypeName(m_incoming_message.Type())
+                              << " and size " << m_incoming_message.Size();
                 //DebugLogger() << "     Full message: " << m_incoming_message;
             }
             if (EstablishedPlayer()) {
