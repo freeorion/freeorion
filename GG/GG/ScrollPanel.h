@@ -32,6 +32,11 @@ public:
 
     //! Sets the background color of the panel.
     void SetBackgroundColor(const Clr& color);
+
+    //! Returns the scroll bar.
+    const Scroll * GetScroll() const
+    { return m_vscroll;}
+
 protected:
     virtual void MouseWheel(const Pt& pt, int move, GG::Flags< GG::ModKey > mod_keys);
 
