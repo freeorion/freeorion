@@ -2844,7 +2844,18 @@ Home Fleet
 FW_BATTLE_FLEET
 Battle Fleet
 
-# the name that is used for fleets the player does not control
+# the name that is used for fleets the client's player does not control but is owned by an empire. %1% is the empire name.
+FW_EMPIRE_FLEET
+%1% fleet
+
+# the name that is used for ships the client's player does not control but is owned by an empire. %1% is the empire name.
+FW_EMPIRE_SHIP
+%1% ship
+
+FW_FOREIGN
+Foreign
+
+# the name that is used for fleets the client's player does not control when the empire is not specified.
 FW_FOREIGN_FLEET
 Foreign fleet
 
@@ -2852,7 +2863,7 @@ Foreign fleet
 FW_ROGUE_FLEET
 Rogue Fleet
 
-# the name that is used for ships the player does not control
+# the name that is used for ships the client's player does not control when the empire is not specified.
 FW_FOREIGN_SHIP
 Foreign ship
 

@@ -918,8 +918,14 @@ void ShipDataPanel::Refresh() {
 
 
     // name and design name update
-    std::string ship_name = ship->PublicName(empire_id);
-    m_ship_name_text->SetText(ship_name);
+    const std::string& ship_name = ship->PublicName(empire_id);
+    if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
+        const Empire* ship_owner_empire = GetEmpire(ship->Owner());
+        const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
+        m_ship_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_SHIP")) % owner_name));
+    } else {
+        m_ship_name_text->SetText(ship_name);
+    }
 
     if (m_design_name_text) {
         std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
@@ -1563,7 +1569,14 @@ void FleetDataPanel::Refresh() {
     } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
-        m_fleet_name_text->SetText(fleet->PublicName(client_empire_id));
+        const std::string& fleet_name = fleet->PublicName(client_empire_id);
+        if (!fleet->Unowned() && fleet_name == UserString("FW_FOREIGN_FLEET")) {
+            const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
+            const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
+            m_fleet_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name));
+        } else {
+            m_fleet_name_text->SetText(fleet_name);
+        }
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
