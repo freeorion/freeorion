@@ -28,6 +28,9 @@ public:
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
     mutable boost::signals2::signal<void ()> WndChangedSignal;
 
+    /* The window may have becomem visible.*/
+    void HandleMadeVisible();
+
     class CombatLogWndImpl;
 private:
     //TODO C++11 unique_ptr

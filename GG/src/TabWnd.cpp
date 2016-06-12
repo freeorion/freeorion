@@ -177,7 +177,7 @@ TabWnd::TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr colo
     Connect(m_tab_bar->TabChangedSignal, boost::bind(&TabWnd::TabChanged, this, _1, true));
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(WndChangedSignal, TabChangedEcho("TabWnd::WndChangedSignal"));
+        Connect(TabChangedSignal, TabChangedEcho("TabWnd::TabChangedSignal"));
 }
 
 Pt TabWnd::MinUsableSize() const
@@ -254,7 +254,7 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
     assert(index < m_named_wnds.size());
     m_overlay->SetCurrentWnd(index);
     if (signal)
-        WndChangedSignal(index);
+        TabChangedSignal(index);
 }
 
 

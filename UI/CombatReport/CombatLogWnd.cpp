@@ -366,3 +366,6 @@ GG::Pt CombatLogWnd::ClientLowerRight() const
 
 GG::Pt CombatLogWnd::MinUsableSize() const
 { return pimpl->MinUsableSize(); }
+
+void CombatLogWnd::HandleMadeVisible()
+{ return pimpl->HandleWndChanged(); }

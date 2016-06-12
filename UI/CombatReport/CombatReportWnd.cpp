@@ -39,7 +39,7 @@ public:
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
-        GG::Connect(m_tabs->WndChangedSignal, boost::bind(&CombatReportPrivate::HandleWindowChanged, this));
+        GG::Connect(m_tabs->TabChangedSignal, &CombatReportPrivate::HandleTabChanged, this);
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
@@ -191,6 +191,13 @@ private:
         UpdateMinSize();
 
         DoLayout();
+    }
+
+    void HandleTabChanged(size_t tabnum) {
+        if (tabnum == 1)
+            m_log->HandleMadeVisible();
+
+        HandleWindowChanged();
     }
 };
 
