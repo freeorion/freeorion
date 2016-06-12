@@ -45,7 +45,6 @@ colony_status = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
 unowned_empty_planet_ids = set()
 empire_outpost_ids = set()
-claimed_stars = {}
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -273,7 +272,6 @@ def survey_universe():
 
     # set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
-        claimed_stars.clear()
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
         empire_status.clear()
@@ -864,14 +862,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 return 0.0
                 # distanceFactor = 1.001 / (least_jumps + 1)
 
-    if not claimed_stars:
-        for s_type in AIstate.empireStars:
-            claimed_stars[s_type] = list(AIstate.empireStars[s_type])
-        for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-            t_sys = universe.getSystem(sys_id)
-            if not t_sys:
-                continue
-            claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
+    claimed_stars = get_claimed_stars()
 
     empire_research_list = [element.tech for element in empire.researchQueue]
     if planet is None:
@@ -1351,6 +1342,20 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             retval *= thrt_factor
             detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
     return retval
+
+
+@cache_by_turn
+def get_claimed_stars():
+    claimed_stars = {}
+    universe = fo.getUniverse()
+    for s_type in AIstate.empireStars:
+        claimed_stars[s_type] = list(AIstate.empireStars[s_type])
+    for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+        t_sys = universe.getSystem(sys_id)
+        if not t_sys:
+            continue
+        claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
+    return claimed_stars
 
 
 def assign_colony_fleets_to_colonise():
