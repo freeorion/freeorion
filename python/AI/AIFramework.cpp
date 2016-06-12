@@ -98,8 +98,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 bool PythonAI::Initialize() {
     if (PythonBase::Initialize()) {
         try {
-            object initAIPythonFunction = m_python_module_ai.attr("initFreeOrionAI");
-            initAIPythonFunction();
             BuildingTypeManager& temp = GetBuildingTypeManager();  // Ensure buildings are initialized
         } catch (error_already_set err) {
             PyErr_Print();
