@@ -99,15 +99,15 @@ bool PythonBase::Initialize()
         return false;
     }
 
+    // add the directory containing common Python modules used by all Python scripts to Python sys.path
+    if (!AddToSysPath(GetPythonCommonDir()))
+        return false;
+
     // Allow C++ modules implemented by derived classes to be imported within Python code
     if (!InitModules()) {
         ErrorLogger() << "Unable to initialize FreeOrion Python modules";
         return false;
     }
-
-    // add the directory containing common Python modules used by all Python scripts to Python sys.path
-    if (!AddToSysPath(GetPythonCommonDir()))
-        return false;
 
     DebugLogger() << "FreeOrion Python interface successfully initialized!";
     return true;
