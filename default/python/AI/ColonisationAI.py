@@ -277,26 +277,9 @@ def survey_universe():
         empire_status.clear()
         empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
-
-        # empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
-        # print "Empire Owned PlanetIDs: " + str(empire_owned_planet_ids)
-        # #allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(explored_planet_ids) #working with Explored systems not all 'visible' because might not have a path to the latter
-        # allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(annexablePlanetIDs) #
-        # print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empire_owned_planet_ids))
-        # #unowned_empty_planet_ids = list(set(explored_planet_ids) -set(allOwnedPlanetIDs))
-        # unowned_empty_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-        # print "UnOwned annexable PlanetIDs: ", ", ".join(PlanetUtilsAI.planet_name_ids(unowned_empty_planet_ids))
-        empire_owned_planet_ids = []
-        empire_pop_ctrs = set()
         empire_outpost_ids.clear()
-        old_pop_ctrs = []
-        for specn in empire_species:
-            old_pop_ctrs.extend(empire_species[specn])
-        old_emp_spec = dict(empire_species)
         empire_species.clear()
         empire_species_by_planet.clear()
-        old_emp_col = {}
-        old_emp_col.update(empire_colonizers)
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
@@ -355,14 +338,12 @@ def survey_universe():
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
                 empire_has_colony_in_sys = True
-                empire_owned_planet_ids.append(pid)
                 AIstate.colonizedSystems.setdefault(sys_id, []).append(
                     pid)  # track these to plan Solar Generators and Singularity Generators, etc.
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
                 else:
-                    empire_pop_ctrs.add(pid)
                     empire_has_qualifying_planet = True
                     AIstate.popCtrIDs.append(pid)
                     empire_species_systems.setdefault(sys_id, {}).setdefault('pids', []).append(pid)
@@ -439,10 +420,6 @@ def survey_universe():
 
     # system_facilities[''] = {'systems': set().union(sys_id for key, val in system_facilities.items()
     #                                                for sys_id in val.get('systems', {}))}
-    if empire_species != old_emp_spec:
-        print "Old empire species: %s ; new empire species: %s" % (old_emp_spec, empire_species)
-    if empire_colonizers != old_emp_col:
-        print "Old empire colonizers: %s ; new empire colonizers: %s" % (old_emp_col, empire_colonizers)
 
     print "\n" + "Empire species roster:"
     for spec_name in empire_species:
