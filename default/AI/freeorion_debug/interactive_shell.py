@@ -46,25 +46,28 @@ def handle_debug_chat(sender, message):
             return True
         if player_id == fo.playerID():
             debug_mode = True
-            # add some variables to scope
+
+            initial_code = [
+                'import FreeOrionAI as foAI',
+            ]
+
+            # add some variables to scope: (name, help text, value)
             scopes_variable = (
                 ('ai', 'aistate', 'foAI.foAIstate'),
                 ('u', 'universe', 'fo.getUniverse()'),
                 ('e', 'empire', 'fo.getEmpire()'),
             )
-
-            lines = ['import FreeOrionAI as foAI']
             for var, _, code in scopes_variable:
-                lines.append('%s = %s' % (var, code))
+                initial_code.append('%s = %s' % (var, code))
 
-            shell(';'.join(lines))
+            shell(';'.join(initial_code))
 
             variable_template = '<u><rgba 255 255 0 255>%s</rgba></u>%s %s'
-            vars = (variable_template % (var, ' ' * (3 - len(var)), name) for var, name, _ in scopes_variable)
+            variables = (variable_template % (var, ' ' * (3 - len(var)), name) for var, name, _ in scopes_variable)
             chat_human(WHITE % "%s\n"
                                "Print <rgba 255 255 0 255>'stop'</rgba> to exit.\n"
                                "Local variables:\n"
-                               "  %s" % (ENTERING_DEBUG_MESSAGE, '\n  '.join(vars)))
+                               "  %s" % (ENTERING_DEBUG_MESSAGE, '\n  '.join(variables)))
 
     elif message == 'help':
         is_debug_chat = True
