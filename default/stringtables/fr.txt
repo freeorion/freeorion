@@ -218,7 +218,7 @@ SD_CARRIER_DESC
 Modèle prototype propulsant des chasseurs en cours de bataille en lieu et place d'une puissance de feu directe.
 
 SD_FLAK
-Prototype Antiaérien 
+Prototype Antiaérien
 SD_FLAK_DESC
 Modèle prototype équipé de canons antiaériens comme moyen de riposte contre les chasseurs.
 
@@ -2844,7 +2844,18 @@ Flotte Territoriale
 FW_BATTLE_FLEET
 Flotte de Guerre
 
-# the name that is used for fleets the player does not control
+# the name that is used for fleets the client's player does not control but is owned by an empire. %1% is the empire name.
+FW_EMPIRE_FLEET
+Flotte %1%
+
+# the name that is used for ships the client's player does not control but is owned by an empire. %1% is the empire name.
+FW_EMPIRE_SHIP
+Astronef %1%
+
+FW_FOREIGN
+Étranger
+
+# the name that is used for fleets the client's player does not control when the empire is not specified.
 FW_FOREIGN_FLEET
 Flotte Étrangère
 
@@ -2852,7 +2863,7 @@ Flotte Étrangère
 FW_ROGUE_FLEET
 Flotte Pirate
 
-# the name that is used for ships the player does not control
+# the name that is used for ships the client's player does not control when the empire is not specified.
 FW_FOREIGN_SHIP
 Astronef Étranger
 
@@ -4669,13 +4680,13 @@ SITREP_SNOOZE_CLEAR_ALL
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_WELCOME  # translated
-'''[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]'''
+[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
 
 SITREP_WELCOME_LABEL
 Bienvenue
 
 SITREP_GAS_GIANT_GENERATION_REMINDER
-'''La planète %planet% est un emplacement favorable pour la structure %buildingtype%, mais aucune n'y est construite à ce jour.'''
+La planète %planet% est un emplacement favorable pour la structure %buildingtype%, mais aucune n'y est construite à ce jour.
 
 SITREP_SHIP_BUILT
 Dans %system% : un astronef %shipdesign%, baptisé '%ship%', a été produit.
@@ -6073,40 +6084,40 @@ EXTINCT_BANFORO_SPECIAL
 Restes Banforo
 
 EXTINCT_BANFORO_SPECIAL_DESC
-'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_BANFORO]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_BANFORO]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_BANFORO]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_BANFORO]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].
 
 TECH_COL_BANFORO
 Séquençage Banforo
 
 TECH_COL_BANFORO_DESC
-'''Permet la reconstitution de l'espèce éteinte [[species SP_BANFORO]].'''
+Permet la reconstitution de l'espèce éteinte [[species SP_BANFORO]].
 
 EXTINCT_KILANDOW_SPECIAL
 Restes Kilandow
 
 EXTINCT_KILANDOW_SPECIAL_DESC
-'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_KILANDOW]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_KILANDOW]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_KILANDOW]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_KILANDOW]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].
 
 TECH_COL_KILANDOW
 Séquençage Kilandow
 
 TECH_COL_KILANDOW_DESC
-'''Permet la reconstitution de l'espèce éteinte [[species SP_KILANDOW]].'''
+Permet la reconstitution de l'espèce éteinte [[species SP_KILANDOW]].
 
 EXTINCT_MISIORLA_SPECIAL
 Restes Misiorla
 
 EXTINCT_MISIORLA_SPECIAL_DESC
-'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_MISIORLA]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_MISIORLA]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_MISIORLA]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_MISIORLA]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].
 
 TECH_COL_MISIORLA
 Séquençage Misiorla
 
 TECH_COL_MISIORLA_DESC
-'''Permet la reconstitution de l'espèce éteinte [[species SP_MISIORLA]].'''
+Permet la reconstitution de l'espèce éteinte [[species SP_MISIORLA]].
 
 EXTINCT_UNLOCK_SHORT_DESC
-'''Débloque une espèce éteinte'''
+Débloque une espèce éteinte
 
 PANOPTICON_SPECIAL
 Complexe Panoptique
@@ -7332,16 +7343,16 @@ DESC_SPECIES_NOT
 
 DESC_ENQUEUED
 ''' où l'empire %1% a entre %2% et %3% projets dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_NOT
 ''' où l'empire %1% n'a pas entre %2% et %3% projets dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_BUILDING
 ''' où l'empire %1% a entre %2% et %3% structures %4% dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_BUILDING_NOT
 ''' où l'empire %1% n'a pas entre %2% et %3% structures %4% dans la file d'attente de production'''
- 
+
 DESC_ENQUEUED_DESIGN
 ''' où l'empire %1% a entre %2% et %3% %4% astronefs dans la file d'attente de production'''
 
@@ -7509,7 +7520,7 @@ DESC_CAN_PRODUCE_SHIPS
 
 DESC_CAN_PRODUCE_SHIPS_NOT
 ''' avec une espèce ne pouvant produire d'astronefs'''
- 
+
 DESC_SUPPLY_CONNECTED_FLEET
 ''' qui est dans un sytème où l'empire %1% peut l'approvisionner'''
 
@@ -8955,7 +8966,7 @@ Cendres Volcaniques Planétaires
 SPY_STEALTH_2_DESC
 '''Confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
-Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.''' 
+Le coût de recherche de cette technologie est diminué de la valeur du coût de recherche de l'[[tech SPY_STEALTH_PART_2]], si cette dernière a été déjà effectuée.'''
 
 SPY_STEALTH_PART_2
 Absorption Radiative
@@ -9568,7 +9579,7 @@ BLD_REMOTE_TERRAFORM_DESC
 Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 MACRO_NEUTRONIUM_BUILDINGS
-'''Afin d'exploiter le Neutronium, un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] est requis au sein d'un système abritant une Étoile à Neutrons, ou bien l'empire doit avoir découvert un [[buildingtype BLD_NEUTRONIUM_SYNTH]]. Une [[buildingtype BLD_NEUTRONIUM_FORGE]] est également requise sur la planète où le Neutronium sera utilisé'''
+Afin d'exploiter le Neutronium, un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] est requis au sein d'un système abritant une Étoile à Neutrons, ou bien l'empire doit avoir découvert un [[buildingtype BLD_NEUTRONIUM_SYNTH]]. Une [[buildingtype BLD_NEUTRONIUM_FORGE]] est également requise sur la planète où le Neutronium sera utilisé
 
 BLD_NEUTRONIUM_EXTRACTOR
 Extracteur Neutronium
@@ -10479,7 +10490,7 @@ SP_VOID_SHADOW_DESC
 Une puissante arme d'énergie négative réduisant rapidement les populations phototropiques des planètes ennemies.
 
 SP_CHAOS_WAVE
-Vague du Chaos 
+Vague du Chaos
 
 SP_CHAOS_WAVE_DESC
 Une puissante arme réduisant rapidement tout type de population. AVERTISSEMENT: Anéantit également les Particularités [[special GAIA_SPECIAL]].
@@ -10548,7 +10559,7 @@ Coque Robotique
 SH_ROBOTIC_DESC
 '''Cette coque est entièrement automatisée et fonctionne selon les principes du [[tech SHP_MIL_ROBO_CONT]]. Elle dispose de quatre niches externes et d'une niche interne, et s'auto-répare à raison de 2 points de [[encyclopedia STRUCTURE_TITLE]] par tour.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] est requise autour de la planète où la coque sera produite.'''
 
@@ -10558,7 +10569,7 @@ Coque Flux Spatial
 SH_SPATIAL_FLUX_DESC
 '''Cette minuscule coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de la puissance fournie par la technologie de [[tech SHP_SPACE_FLUX_DRIVE]]. Elle ne dispose cependant que de deux niches externes et sa [[encyclopedia STRUCTURE_TITLE]] max est faible.
  
-Sa [[encyclopedia STEALTH_TITLE]] est normale, mais s'avère tributaire d'une pénalité importante de [[encyclopedia STEALTH_TITLE]] lors d'un déplacement sur la carte galactique ou en combat. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est élevée, mais s'avère tributaire d'une pénalité importante de [[encyclopedia STEALTH_TITLE]] lors d'un déplacement sur la carte galactique ou en combat. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard, tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] est requise autour de la planète où la coque sera produite.'''
 
@@ -10568,7 +10579,7 @@ Coque Auto-Gravitationnelle
 SH_SELF_GRAVITATING_DESC
 '''Cette coque immense, à la fois en taille et en puissance, est dotée de six niches externes, de deux niches internes, et d'une niche centrale - faisant de celle-ci l'une des rares capable d'accueillir les équipements d'astronef les plus avancés. Sa [[encyclopedia STRUCTURE_TITLE]] max élevée en fait également une coque des plus robustes.
 
-Sa [[encyclopedia STEALTH_TITLE]] est cependant très faible, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est cependant faible, son [[encyclopedia DETECTION_RANGE_TITLE]] standard, tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], une [[buildingtype BLD_SHIPYARD_CON_GEOINT]] est requise sur la planète où la coque sera produite.'''
 
@@ -10578,7 +10589,7 @@ Coque Nano-Robotique
 SH_NANOROBOTIC_DESC
 '''Cette grande coque automatisée s'auto-répare à l'aide de millions de nanorobots. Elle dispose six niches externes et d'une niche interne, et régénère entièrement sa [[encyclopedia STRUCTURE_TITLE]] entre chaque combat.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] est requise sur la planète où la coque sera produite.'''
 
@@ -10588,7 +10599,7 @@ Coque Titanesque
 SH_TITANIC_DESC
 '''Cette coque extraordinairement grande est un véritable exploit d'ingénierie. Elle dispose de seize niches externes, de trois niches internes et d'une niche centrale, et sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement élevée. Son immense taille la rend quasiment impossible à dissimuler, même à l'aide des technologies de Furtivité les plus avancées.
 
-Sa [[encyclopedia STEALTH_TITLE]] est donc très faible, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est donc très faible, son [[encyclopedia DETECTION_RANGE_TITLE]] standard, tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], une [[buildingtype BLD_SHIPYARD_CON_GEOINT]] est requise sur la planète où la coque sera produite.'''
 
@@ -10598,7 +10609,7 @@ Coque Trans-Spatiale
 SH_TRANSSPATIAL_DESC
 '''Cette coque expérimentale est conçue principalement pour tester des nouvelles technologies. Elle dispose d'une niche externe et d'une niche centrale, et sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement faible. Pensée pour la [[shippart FU_TRANSPATIAL_DRIVE]], doter cette coque de cet équipement d'astronef peut en faire un éclaireur très efficace.
 
-Sa [[encyclopedia STEALTH_TITLE]] est normale, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est élevée, son [[encyclopedia DETECTION_RANGE_TITLE]] standard, tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] est requis sur la planète où la coque sera produite.'''
 
@@ -10608,7 +10619,7 @@ Coque Logistique
 SH_LOGISTICS_FACILITATOR_DESC
 '''Destinée aux astronefs amiraux d'intendance, cette coque est conçue pour gérer de manière optimale les transferts d'équipage et de matériel durant les situations de combat. Elle dispose de sept niches externes, de deux niches internes et d'une niche centrale. Sa flotte intégrée de cargos furtifs rend possible le transfert en toute discrétion de personnel et de matériel pendant les combats, permettant ainsi à tous les astronefs alliés de restaurer entièrement leur [[encyclopedia STRUCTURE_TITLE]] entre chaque combat.
 
-Sa [[encyclopedia STEALTH_TITLE]] est normale, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], une [[buildingtype BLD_SHIPYARD_CON_GEOINT]], ainsi qu'un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] sur la planète où la coque sera produite.'''
 
@@ -10618,7 +10629,7 @@ Coque Astéroïdale
 SH_ASTEROID_DESC
 '''Cette coque est conçue à partir d'un astéroïde de taille moyenne et s'avère assez économique à produire. Légèrement plus spacieuse que la [[shiphull SH_STANDARD]], elle dispose de quatre niches externes et de deux niches internes.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] est requise dans le système où la coque sera produite.'''
 
@@ -10628,7 +10639,7 @@ Coque Astéroïdale Légère
 SH_SMALL_ASTEROID_DESC
 '''Cette coque est conçue à partir d'un astéroïde minuscule. Elle dispose donc seulement d'une niche externe et d'une niche interne.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] est requise dans le système où la coque sera produite.'''
 
@@ -10638,7 +10649,7 @@ Coque Astéroïdale Massive
 SH_HEAVY_ASTEROID_DESC
 '''Cette coque est conçue à partir d'un gigantesque astéroïde, et dispose par conséquent de six niches externes et de trois niches internes.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] est requise dans le système où la coque sera produite.'''
 
@@ -10648,7 +10659,7 @@ Coque Astéroïdale de Camouflage
 SH_CAMOUFLAGE_ASTEROID_DESC
 '''Cette coque est conçue pour ressembler en tout point à un astéroïde inerte. Elle dispose donc de quatre niches internes, mais d'aucune niche externe.
 
-Sa [[encyclopedia STEALTH_TITLE]] est normale et cette coque bénéficie d'un bonus appréciable de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est élevée et cette coque bénéficie d'un bonus appréciable de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] est requise dans le système où la coque sera produite.'''
 
@@ -10658,7 +10669,7 @@ Coque Astéroïdale Légère de Camouflage
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 '''Cette coque astéroïdale a recours à de petits astéroïdes satellites afin de parfaire son camouflage externe, mais en contrepartie, la coque principale doit être plus petite afin de conserver son bonus de [[encyclopedia STEALTH_TITLE]]. Par conséquent, elle dispose d'une niche externe mais de seulement une niche interne.
 
-Sa [[encyclopedia STEALTH_TITLE]] est élevée et cette coque bénéficie d'un bonus de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est très élevée et cette coque bénéficie d'un bonus de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] est requise dans le système où la coque sera produite.'''
 
@@ -10668,7 +10679,7 @@ Coque Astéroïdal Agglomérée
 SH_AGREGATE_ASTEROID_DESC
 '''Cette coque massive est formée à partir d'un agglomérat de plusieurs grands astéroïdes. Elle dispose donc de quinze niches externes et de quatre niches internes.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]], une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] ainsi qu'un [[buildingtype BLD_SHIPYARD_AST_REF]], dans le système où la coque sera produite.'''
 
@@ -10678,7 +10689,7 @@ Coque Essaim Mini-Astéroïdal
 SH_MINIASTEROID_SWARM_DESC
 '''Cette coque est conçue à partir d'un petit astéroïde, la majeure partie de ce dernier ayant été fragmentée en plusieurs autres petits astéroïdes, lesquels sont contrôlés par la coque astéroïdale principale. Ces astéroïdes protègent l'astronef, procurant un bonus aux [[encyclopedia SHIELDS_TITLE]]. Cette coque dispose de deux niches externes, mais d'aucune niche interne. Sa [[encyclopedia STRUCTURE_TITLE]] est très faible.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est très elevée et cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] et une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] ainsi qu'un [[buildingtype BLD_SHIPYARD_AST_REF]], dans le système où la coque sera produite.'''
 
@@ -10688,7 +10699,7 @@ Coque Astéroïdale Multiple
 SH_SCATTERED_ASTEROID_DESC
 '''Cet astronef amiral est conçu à partir de plusieurs grands astéroïdes, certains ayant été fusionnés pour former la coque principale, d'autres fragmentés en plusieurs petits astéroïdes, lesquels sont contrôlés par la coque astéroïdale principale. Ces astéroïdes protègent non seulement l'astronef, mais également tous les bâtiments alliés, conférant un bonus aux [[encyclopedia SHIELDS_TITLE]] de tous les astronefs impériaux et alliés se trouvant à proximité. Cette coque dispose de quinze niches externes et de quatre niches internes. Sa [[encyclopedia STRUCTURE_TITLE]] est élevée.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] et une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] ainsi qu'un [[buildingtype BLD_SHIPYARD_AST_REF]], dans le système où la coque sera produite.'''
 
@@ -10698,7 +10709,7 @@ Coque Astéroïdale Cristallisée
 SH_CRYSTALLIZED_ASTEROID_DESC
 '''Cette coque robuste est conçue à partir d'un astéroïde de taille moyenne, puis renforcée à l'aide de techniques avancées de cristallisation. Tout comme la [[shiphull SH_ASTEROID]] d'origine, elle dispose de quatre niches externes et de deux niches internes. Sa [[encyclopedia STRUCTURE_TITLE]] est extrêmement élevée.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard mais cette coque bénéficie d'un bonus conséquent de Furtivité lorsqu'elle se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsqu'elle se dissimule dans une ceinture d'astéroïdes. Son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] et une ceinture d'astéroïdes abritant un [[buildingtype BLD_SHIPYARD_AST]] ainsi qu'un [[buildingtype BLD_SHIPYARD_AST_REF]], dans le système où la coque sera produite.'''
 
@@ -10709,7 +10720,7 @@ SH_ORGANIC_DESC
 '''Une coque vivante disposant de trois niches externes et d'une niche interne.
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 5, mais bénéficie d'un bonus additionnel de 5 après 25 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est normale, son [[encyclopedia DETECTION_RANGE_TITLE]] est faible et sa [[encyclopedia STARLANE_SPEED_TITLE]] bonne.
+Sa [[encyclopedia STEALTH_TITLE]] est standard, son [[encyclopedia DETECTION_RANGE_TITLE]] est faible et sa [[encyclopedia STARLANE_SPEED_TITLE]] bonne.
 
 Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte, mais qui tend à devenir obsolète à mesure que la technologie évolue. Son faible Champ de Détection la rend peu adaptée pour la reconnaissance mais ses autres attributs en font un bon astronef de guerre. Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
 
@@ -10721,7 +10732,7 @@ Coque Multicellulaire Statique
 SH_STATIC_MULTICELLULAR_DESC
 '''Bien qu'étant organique, cette coque est non-vivante, car conçue comme un simple assemblage multicellulaire. La polyvalence de son intérieur ainsi que l'absence d'organes internes augmentent sa capacité, mais dénuée de systèmes physiologiques, cette coque ne peut régénérer sa santé ou son énergie. Elle dispose de trois niches externes et deux niches internes.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est élevée.
 
 Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte, mais n'excellant dans aucun domaine. Cette coque ne régénère ni sa [[encyclopedia STRUCTURE_TITLE]] ni son [[encyclopedia FUEL_TITLE]] entre chaque combat.
 
@@ -10734,7 +10745,7 @@ SH_ENDOMORPHIC_DESC
 '''Une coque à moitié vivante disposant de quatre niches externes et de deux niches internes.
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 5, mais bénéficie d'un bonus additionnel de 15 après 30 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est bon et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est standard, son [[encyclopedia DETECTION_RANGE_TITLE]] est élevé de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
 
 Bon potentiel comme astronef de guerre.
 
@@ -10749,7 +10760,7 @@ SH_SYMBIOTIC_DESC
 '''Une coque vivante disposant de deux niches externes et de deux niches internes. Développe une relation symbiotique avec son équipage, augmentant ainsi sa [[encyclopedia STEALTH_TITLE]] et sa [[encyclopedia STARLANE_SPEED_TITLE]].
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 10, mais bénéficie d'un bonus additionnel de 10 après 50 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est normale, son [[encyclopedia DETECTION_RANGE_TITLE]] est bon et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est élevée de même que son [[encyclopedia DETECTION_RANGE_TITLE]] et sa [[encyclopedia STARLANE_SPEED_TITLE]].
 
 Le nombre réduit de niches externes rend cette coque inadaptée au combat en première ligne, mais ses niches internes, son Champ de Détection et sa Furtivité lui confèrent un bon potentiel pour la reconnaissance ou le piratage commercial.
 
@@ -10764,7 +10775,7 @@ SH_PROTOPLASMIC_DESC
 '''Une coque vivante disposant de deux niches externes et de trois niches internes.
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 5, mais bénéficie d'un bonus additionnel de 25 après 50 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est élevée, son [[encyclopedia DETECTION_RANGE_TITLE]] est bon et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est très élevée, son [[encyclopedia DETECTION_RANGE_TITLE]] est élevée de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
 
 Le nombre réduit de niches externes rend cette coque inadaptée au combat en première ligne, mais ses niches internes, son Champ de Détection et sa Furtivité lui confèrent un bon potentiel pour la reconnaissance ou le piratage commercial.
 
@@ -10779,7 +10790,7 @@ Grâce à cette parfaite organisation, cette coque dispose de quatre niches exte
 
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 5, mais bénéficie d'un bonus additionnel de 15 après 30 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est bonne, son [[encyclopedia DETECTION_RANGE_TITLE]] est élevé, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est élevée de même que son [[encyclopedia DETECTION_RANGE_TITLE]] et sa [[encyclopedia STARLANE_SPEED_TITLE]].
 
 Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat. Bon potentiel comme puissant astronef de guerre ou de piratage commercial, ou bien comme astronef de reconnaissance armé.
 
@@ -10794,7 +10805,7 @@ SH_RAVENOUS_DESC
 
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 5, mais bénéficie d'un bonus additionnel de 20 après 40 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est excellent et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est standard, son [[encyclopedia DETECTION_RANGE_TITLE]] est très élevé et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
 
 Bon potentiel comme astronef de guerre puissant et rapide.
 
@@ -10810,7 +10821,7 @@ SH_BIOADAPTIVE_DESC
 '''Une coque vivante dont l'esprit et le corps ne font qu'un, pour une maîtrise totale de la régénération et de l'endurance. Elle dispose de trois niches externes et de trois niches internes.
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 15, mais bénéficie d'un bonus additionnel de 25 après 50 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est élevée, son [[encyclopedia DETECTION_RANGE_TITLE]] est excellent et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est très élevée de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est élevée.
 
 Bon potentiel comme astronef rapide et puissant pour le piratage commercial ou la reconnaissance.
 
@@ -10826,7 +10837,7 @@ SH_SENTIENT_DESC
 '''Cet astronef amiral vivant et doué de conscience, dispose de capacités analytiques et mémorielles exceptionnelles lui permettant d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles et d'habiles orientations tactiques en situation de combat, procurant ainsi un bonus de [[encyclopedia STEALTH_TITLE]] et de [[encyclopedia DETECTION_RANGE_TITLE]] à tous les astronefs alliés se trouvant à proximité. Cette coque dispose de six niches externes, de trois niches internes, et d'une niche centrale.
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 12, mais bénéficie d'un bonus additionnel de 45 après 45 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est bonne, de même que son [[encyclopedia DETECTION_RANGE_TITLE]], et sa [[encyclopedia STARLANE_SPEED_TITLE]] est élevée.
+Sa [[encyclopedia STEALTH_TITLE]] est très élevée de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est élevée.
 
 Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
 
@@ -10838,7 +10849,7 @@ Coque Énergie Compressée
 SH_COMPRESSED_ENERGY_DESC
 '''Cette coque très rapide est entièrement constituée d'énergie compressée et ne dispose que d'une niche externe.
 
-Sa [[encyclopedia STRUCTURE_TITLE]] est faible, sa [[encyclopedia STEALTH_TITLE]] est bonne, son [[encyclopedia DETECTION_RANGE_TITLE]] est normal et sa [[encyclopedia STARLANE_SPEED_TITLE]] très élevée.
+Sa [[encyclopedia STRUCTURE_TITLE]] est faible, sa [[encyclopedia STEALTH_TITLE]] est très élevée, son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] très élevée.
 
 La construction de cette coque nécessite un important apport d'énergie et ne peut donc être produite que dans un système abritant une Étoile Blanche, Bleue, ou un Trou Noir, ainsi qu'un [[buildingtype BLD_SHIPYARD_BASE]] et un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] sur la planète où la coque sera façonnée.'''
 
@@ -10847,7 +10858,7 @@ Frégate Energy
 SH_ENERGY_FRIGATE_DESC
 '''Cette coque très rapide combine l'énergie compressée et la technologie militaire afin de créer un astronef d'attaque véloce mais fragile.
 
-Sa [[encyclopedia STRUCTURE_TITLE]] et sa [[encyclopedia STEALTH_TITLE]] sont faibles, son [[encyclopedia DETECTION_RANGE_TITLE]] est normal et sa [[encyclopedia STARLANE_SPEED_TITLE]] très élevée.
+Sa [[encyclopedia STRUCTURE_TITLE]], sa [[encyclopedia STEALTH_TITLE]] et son [[encyclopedia DETECTION_RANGE_TITLE]] sont standards, tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est très élevée.
 
 La construction de cette coque nécessite un important apport d'énergie et ne peut donc être produite que dans un système abritant une Étoile Blanche, Bleue, ou un Trou Noir, ainsi qu'un [[buildingtype BLD_SHIPYARD_BASE]] et un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] sur la planète où la coque sera façonnée.'''
 
@@ -10857,7 +10868,7 @@ Coque Énergie Fractale
 SH_FRACTAL_ENERGY_DESC
 '''Cette coque, bien que petite, bénéficie d'une surface fractale lui permettant d'accueillir bien plus d'équipements qu'il ne serait possible sur une coque dotée d'une surface régulière. Elle dispose donc de quatorze niches externes, mais d'aucune niche interne.
 
-Sa [[encyclopedia STRUCTURE_TITLE]] est normale, de même que son [[encyclopedia DETECTION_RANGE_TITLE]], sa [[encyclopedia STEALTH_TITLE]] est très faible, mais sa [[encyclopedia STARLANE_SPEED_TITLE]] est très élevée.
+Sa [[encyclopedia STRUCTURE_TITLE]] est normale, sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est standard, mais sa [[encyclopedia STARLANE_SPEED_TITLE]] est très élevée.
 
 La construction de cette coque nécessite un important apport d'énergie et ne peut donc être produite que dans un système abritant une Étoile Bleue ou un Trou Noir, ainsi qu'un [[buildingtype BLD_SHIPYARD_BASE]] et un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] sur la planète où la coque sera façonnée.'''
 
@@ -10867,7 +10878,7 @@ Coque Énergie Quantique
 SH_QUANTUM_ENERGY_DESC
 '''Cette coque amplifie les fluctuations d'énergie quantique afin d'accroître sa propre puissance. Elle dispose de sept niches externes et de trois niches internes.
 
-Sa [[encyclopedia STRUCTURE_TITLE]] est normale, de même que son [[encyclopedia DETECTION_RANGE_TITLE]], sa [[encyclopedia STEALTH_TITLE]] est très faible, mais sa [[encyclopedia STARLANE_SPEED_TITLE]] est très élevée.
+Sa [[encyclopedia STRUCTURE_TITLE]] est normale, sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est standard, mais sa [[encyclopedia STARLANE_SPEED_TITLE]] est très élevée.
 
 La construction de cette coque nécessite un important apport d'énergie et ne peut donc être produite que dans un système abritant une Étoile Bleue ou un Trou Noir, ainsi qu'un [[buildingtype BLD_SHIPYARD_BASE]] et un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] sur la planète où la coque sera façonnée.'''
 
@@ -10877,7 +10888,7 @@ Coque Solaire
 SH_SOLAR_DESC
 '''Cette magnifique coque est essentiellement un soleil miniature, disposant donc de grandes réserves de [[encyclopedia FUEL_TITLE]] mais étant en contrepartie très voyante. Tous les astronefs alliés se trouvant à proximité régénèrent complètement leur Carburant entre chaque combat, tandis que tous les astronefs ennemis aux alentours subissent une pénalité de [[encyclopedia STEALTH_TITLE]]. Cette coque dispose de dix-huit niches externes, de huit niches internes, et d'une niche centrale, soit une capacité d'accueil d'équipements bien plus élevée que n'importe quelle autre coque.
 
-Sa [[encyclopedia STRUCTURE_TITLE]] est extrêmement élevée, sa [[encyclopedia STEALTH_TITLE]] est très faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est normal et sa [[encyclopedia STARLANE_SPEED_TITLE]] très élevée. Toutefois, cet astronef a la capacité de pénétrer une étoile et de s'y cacher, lui conférant ainsi une [[encyclopedia STEALTH_TITLE]] parfaite sur la carte galactique, lorsqu'il se trouve dans un système abritant une étoile autre qu'une Étoile à Neutrons ou qu'un Trou Noir, ainsi qu'en combat, lorsqu'il se dissimule dans une étoile adéquate.
+Sa [[encyclopedia STRUCTURE_TITLE]] est extrêmement élevée, sa [[encyclopedia STEALTH_TITLE]] est très faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est standard et sa [[encyclopedia STARLANE_SPEED_TITLE]] très élevée. Toutefois, cet astronef a la capacité de pénétrer une étoile et de s'y cacher, lui conférant ainsi une [[encyclopedia STEALTH_TITLE]] parfaite sur la carte galactique, lorsqu'il se trouve dans un système abritant une étoile autre qu'une Étoile à Neutrons ou qu'un Trou Noir, ainsi qu'en combat, lorsqu'il se dissimule dans une étoile adéquate.
 
 Cet astronef nécessite un gigantesque apport d'énergie lors de sa construction, cette dernière devant être collectée à partir des collisions entre particules et antiparticules aux abords de l'horizon des événements d'un Trou Noir. Nécessite donc un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] sur la planète où la coque sera produite.'''
 
@@ -10886,7 +10897,7 @@ Coque Basique Légère
 SH_BASIC_SMALL_DESC
 '''Une petite coque interstellaire de base pour astronef. Ne dispose que d'une niche externe, mais comparée aux autres coques de base, elle est capable d'effectuer un voyage supplémentaire sur une Voie spatiale.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] autour de la planète où la coque sera produite.'''
 
@@ -10895,7 +10906,7 @@ Coque Basique Moyenne
 SH_BASIC_MEDIUM_DESC
 '''Une coque interstellaire de base pour astronef de taille moyenne. Elle dispose de deux niches externes et d'une niche interne.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen, et sa [[encyclopedia STARLANE_SPEED_TITLE]] faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] autour de la planète où la coque sera produite.'''
 
@@ -10905,7 +10916,7 @@ Coque Basique Massive
 SH_STANDARD_DESC
 '''Une coque interstellaire de base pour astronef de grande taille. Elle dispose de trois niches externes et d'une niche interne.
 
-Sa [[encyclopedia STEALTH_TITLE]] est faible, son [[encyclopedia DETECTION_RANGE_TITLE]] est moyen, et sa [[encyclopedia STARLANE_SPEED_TITLE]] faible.
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est faible.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] autour de la planète où la coque sera produite.'''
 
@@ -10916,13 +10927,17 @@ SH_XENTRONIUM
 Coque Xentronium
 
 SH_XENTRONIUM_DESC
-Une coque conçue principalement à partir de xentronium. Bien que petite, sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement élevée en comparaison. Elle dispose de quatre niches externes et d'une niche centrale.
+'''Une coque conçue principalement à partir de xentronium. Bien que petite, sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement élevée en comparaison. Elle dispose de quatre niches externes et d'une niche centrale.
+
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]].'''
 
 SH_COLONY_BASE
 Coque Colon Stellaire
 
 SH_COLONY_BASE_DESC
-Une coque conçue pour le transport de colons et la création d'une colonie sur une autre planète du système où elle a été produite. Elle ne peut pas voyager sur les Voies spatiales entre les systèmes stellaires, pas plus qu'elle n'est rapide dans son propre système. Étant donné son rôle, elle dispose seulement d'une niche interne.
+'''Une coque conçue pour le transport de colons et la création d'une colonie sur une autre planète du système où elle a été produite. Elle ne peut pas voyager sur les Voies spatiales entre les systèmes stellaires, pas plus qu'elle n'est rapide dans son propre système. Étant donné son rôle, elle dispose seulement d'une niche interne.
+
+Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]].'''
 
 SH_FLOATER_BODY
 Corps Flotteur
@@ -11599,8 +11614,8 @@ Invincible'''
 ### End of Capital Names Lists
 
 ### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
-### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 #AI_SHIPDESIGN_NAME_INVALID
 #Invalid Design
 
@@ -11645,7 +11660,7 @@ Invincible'''
 #Outposter
 
 #AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
-#'''Comsat
+#'''ComSat
 #Starbase'''
 
 #AI_SHIPDESIGN_NAME_SCOUT
