@@ -34,7 +34,7 @@ namespace {
 
             set_meter
                 = (     parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
-                    >>  parse::label(Value_token)           > double_value_ref [ _c = _1 ]
+                    >> (parse::label(Value_token)           > double_value_ref [ _c = _1 ])
                     >>!(parse::label(AccountingLabel_token) > tok.string [ _d = _1 ] )
                   ) [ _val = new_<Effect::SetMeter>(_a, _c, _d) ]
                 ;
