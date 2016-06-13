@@ -15,6 +15,8 @@
 #include "../client/human/HumanClientApp.h"
 
 namespace {
+    //TODO: Move this code into a common non UI linked location, so that
+    //there is no duplicated code between server and clientUI.
     const std::string EMPTY_STRING("");
     const std::string& LinkTag(UniverseObjectType obj_type) {
         switch (obj_type) {
@@ -34,8 +36,20 @@ namespace {
         }
     }
 
+    std::string WrapWithTagAndId(const std::string& meat, const std::string& tag, int id) {
+        std::stringstream ss;
+        ss << "<" << tag << " " << boost::lexical_cast<std::string>(id) << ">" << meat << "</" << tag << ">";
+        return ss.str();
+    }
+
+    std::string WrapUserStringWithTag(const std::string& table_id, const std::string& tag) {
+        std::stringstream ss;
+        ss << "<" << tag << " " << table_id << ">" << UserString(table_id) << "</" << tag << ">";
+        return ss.str();
+    }
+
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
-    std::string RgbaTagCopy(const GG::Clr& c, std::string const & text) {
+    std::string WrapColorTag(std::string const & text, const GG::Clr& c) {
         std::stringstream stream;
         stream << "<rgba "
                << static_cast<int>(c.r) << " "
@@ -46,11 +60,15 @@ namespace {
         return stream.str();
     }
 
-    std::string EmpireColourWrappedText(int empire_id, const std::string& text) {
+    std::string EmpireColorWrappedText(int empire_id, const std::string& text) {
+        // TODO: refactor this to somewhere that links with the UI code.
+        // Hardcoded default color becauses not linked with UI code.
         const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return text;
-        return RgbaTagCopy(empire->Color(), text);
+        GG::Clr c = (empire ? empire->Color() : GG::Clr(80,255,128,255));
+        if (!empire) {
+            ErrorLogger() << "EmpireColorWrappedText expected an empire id and received " << empire_id;
+        }
+        return WrapColorTag(text, c);
     }
 
     /// Creates a link tag of the appropriate type for object_id,
@@ -62,7 +80,7 @@ namespace {
         if (object) {
             const std::string& name = object->PublicName(empire_id);
             const std::string& tag = LinkTag(object->ObjectType());
-            return "<" + tag + " " + boost::lexical_cast<std::string>(object_id) + ">" + name + "</" + tag + ">";
+            return WrapWithTagAndId(name, tag, object_id);
         } else {
             return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
         }
@@ -74,25 +92,22 @@ namespace {
         if (object_id >= 0)   // ship
             return PublicNameLink(viewing_empire_id, object_id);
         else                  // fighter
-            return EmpireColourWrappedText(object_empire_id, UserString("OBJ_FIGHTER"));
+            return EmpireColorWrappedText(object_empire_id, UserString("OBJ_FIGHTER"));
     }
 
     std::string EmpireLink(int empire_id) {
-        Empire* empire(0);
-        const std::string name = (empire = GetEmpire(empire_id)) ? empire->Name() : UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+        const Empire* empire = GetEmpire(empire_id);
+        const std::string name = empire ? empire->Name() : UserString("ENC_COMBAT_UNKNOWN_OBJECT");
 
         const std::string& tag = VarText::EMPIRE_ID_TAG;
-        std::string empire_wrapped = "<" + tag + " " + boost::lexical_cast<std::string>(empire_id) + ">" + name + "</" + tag + ">";
-        //TODO refactor this to somewhere that links with the UI code.
-        GG::Clr c = ((empire = GetEmpire(empire_id)) ? empire->Color() : GG::Clr(80,255,128,255));
-        std::stringstream color_wrapped;
-        color_wrapped << "<rgba "
-                      << static_cast<int>(c.r) << " "
-                      << static_cast<int>(c.g) << " "
-                      << static_cast<int>(c.b) << " "
-                      << static_cast<int>(c.a) << ">"
-                      << empire_wrapped << "</rgba>";
-        return color_wrapped.str();
+        std::string empire_wrapped = WrapWithTagAndId(name, tag, empire_id);
+        std::string retval = EmpireColorWrappedText(empire_id, empire_wrapped);
+        return retval;
+    }
+
+    std::string ShipPartLink(std::string const & part) {
+        return part.empty() ? UserString("ENC_COMBAT_UNKNOWN_OBJECT")
+            : WrapUserStringWithTag(part, VarText::SHIP_PART_TAG);
     }
 }
 
@@ -631,7 +646,7 @@ std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_DETAILS");
 
     return str(FlexibleFormat(template_str)
-               % UserString(weapon_name)
+               % ShipPartLink(weapon_name)
                % power
                % shield
                % damage);
@@ -785,7 +800,7 @@ std::string FighterAttackedEvent::DebugString() const {
 
 std::string FighterAttackedEvent::CombatLogDescription(int viewing_empire_id) const {
     std::string attacked_by = FighterOrPublicNameLink(viewing_empire_id, attacked_by_object_id, attacker_owner_empire_id);
-    std::string empire_coloured_attacked_fighter = EmpireColourWrappedText(attacked_owner_id, UserString("OBJ_FIGHTER"));
+    std::string empire_coloured_attacked_fighter = EmpireColorWrappedText(attacked_owner_id, UserString("OBJ_FIGHTER"));
 
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_SIMPLE_STR");
 
@@ -850,7 +865,7 @@ std::string FighterLaunchEvent::DebugString() const {
 
 std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id) const {
     std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id);
-    std::string empire_coloured_fighter = EmpireColourWrappedText(fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
+    std::string empire_coloured_fighter = EmpireColorWrappedText(fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
 
     // launching negative fighters indicates recovery of them by the ship
     const std::string& template_str = (number_launched >= 0 ?
