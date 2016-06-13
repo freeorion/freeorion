@@ -269,8 +269,8 @@ namespace parse {
                     ErrorLogger() << "Duplicate macro key foud: " << macro_key << ".  Ignoring duplicate.";
                 }
 
-                // remove macro definition from text by replacing with whitespace that is ignored by later parsing
-                text.replace(text_it + match.position(), text_it + match.position() + match.length(), match.length(), ' ');
+                // remove macro definition from text by replacing with a newline that is ignored by later parsing
+                text.replace(text_it + match.position(), text_it + match.position() + match.length(), "\n");
                 // subsequent scanning starts after macro defininition
                 text_it = text.end() - match.suffix().length();
             }
