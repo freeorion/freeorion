@@ -584,28 +584,31 @@ WeaponFireEvent::WeaponFireEvent() :
     round(-1),
     attacker_id(INVALID_OBJECT_ID),
     target_id(INVALID_OBJECT_ID),
+    weapon_name(),
     power(0.0f),
     shield(0.0f),
     damage(0.0f),
     attacker_owner_id(ALL_EMPIRES)
 {}
 
-WeaponFireEvent::WeaponFireEvent(int bout_, int round_, int attacker_id_, int target_id_
-                                 , float power_, float shield_, float damage_, int attacker_owner_id_) :
+WeaponFireEvent::WeaponFireEvent(
+    int bout_, int round_, int attacker_id_, int target_id_, const std::string &weapon_name_
+    , float power_, float shield_, float damage_, int attacker_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_id(attacker_id_),
     target_id( target_id_),
+    weapon_name(weapon_name_),
     power(power_),
     shield(shield_),
     damage(damage_),
     attacker_owner_id(attacker_owner_id_)
-{}
+{ }
 
 std::string WeaponFireEvent::DebugString() const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
-       << attacker_id << " -> " << target_id << " : "
+       << attacker_id << " -> " << target_id << " : " << weapon_name << " "
        << power << " - " << shield << " = " << damage << "   attacker owner: " << attacker_owner_id;
     return ss.str();
 }
@@ -628,6 +631,7 @@ std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_DETAILS");
 
     return str(FlexibleFormat(template_str)
+               % UserString(weapon_name)
                % power
                % shield
                % damage);
@@ -645,6 +649,7 @@ void WeaponFireEvent::serialize(Archive& ar, const unsigned int version) {
        & BOOST_SERIALIZATION_NVP(round)
        & BOOST_SERIALIZATION_NVP(attacker_id)
        & BOOST_SERIALIZATION_NVP(target_id)
+       & BOOST_SERIALIZATION_NVP(weapon_name)
        & BOOST_SERIALIZATION_NVP(power)
        & BOOST_SERIALIZATION_NVP(shield)
        & BOOST_SERIALIZATION_NVP(damage)
@@ -905,10 +910,12 @@ WeaponsPlatformEvent::WeaponsPlatformEvent(int bout_, int attacker_id_, int atta
     events()
 {}
 
-void WeaponsPlatformEvent::AddEvent(int round_, int target_id_, float power_, float shield_, float damage_) {
+void WeaponsPlatformEvent::AddEvent(
+    int round_, int target_id_, std::string const & weapon_name_,
+    float power_, float shield_, float damage_) {
     events[target_id_].push_back(
         boost::make_shared<WeaponFireEvent>(
-            bout, round_, attacker_id, target_id_, power_, shield_, damage_, attacker_owner_id));
+            bout, round_, attacker_id, target_id_, weapon_name_, power_, shield_, damage_, attacker_owner_id));
 }
 
 std::string WeaponsPlatformEvent::DebugString() const {

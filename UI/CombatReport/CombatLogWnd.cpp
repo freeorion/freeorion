@@ -311,7 +311,6 @@ LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & 
     links->SetDecorator(VarText::SYSTEM_ID_TAG, new ColorByOwner());
     links->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorByOwner());
 
-
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);

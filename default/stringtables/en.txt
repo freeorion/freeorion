@@ -3842,7 +3842,7 @@ ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
 
 ENC_COMBAT_ATTACK_DETAILS
-Attack strength: %1%  Shield strength: %2%  Damage: %3%
+Weapon: %1%  Strength: %2%  Shields: %3%  Damage: %4%
 
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attacks %2%
