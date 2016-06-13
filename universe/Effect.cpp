@@ -212,55 +212,6 @@ EffectsGroup::~EffectsGroup() {
     }
 }
 
-//void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const {
-//    TargetSet copy_of_potential_targets(potential_targets);
-//    GetTargetSet(source_id, targets, copy_of_potential_targets);
-//}
-//
-//void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const {
-//    targets.clear();
-//
-//    TemporaryPtr<UniverseObject> source = GetUniverseObject(source_id);
-//    if (!source && m_activation) {
-//        ErrorLogger() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
-//        return;
-//    }
-//    if (!m_scope) {
-//        ErrorLogger() << "EffectsGroup::GetTargetSet didn't find a valid scope condition to use...";
-//    }
-//
-//    // if there is an activation condition, evaluate it on the source object,
-//    // and abort with no targets if the source object doesn't match.
-//    // if there is no activation condition, continue as if the source object
-//    // had matched an activation condition.
-//    if (m_activation && !m_activation->Eval(ScriptingContext(source), source))
-//        return;
-//
-//    BOOST_MPL_ASSERT((boost::is_same<TargetSet,             std::vector<TemporaryPtr<UniverseObject> > >));
-//    BOOST_MPL_ASSERT((boost::is_same<Condition::ObjectSet,  std::vector<TemporaryPtr<const UniverseObject> > >));
-//
-//    // HACK! We're doing some dirt here for efficiency's sake.  Since we can't
-//    // const-cast std::set<TemporaryPtr<UniverseObject> > to std::set<const
-//    // TemporaryPtr<UniverseObject> >, we're telling the compiler that one type is actually
-//    // the other, rather than doing a copy.
-//    m_scope->Eval(ScriptingContext(source),
-//                  *static_cast<Condition::ObjectSet *>(static_cast<void *>(&targets)),
-//                  *static_cast<Condition::ObjectSet *>(static_cast<void *>(&potential_targets)));
-//}
-//
-//void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
-//    targets.clear();    // redundant, but here to be clear
-//
-//    // get potential targets from the plausible candidate objects of the scope condition
-//    TargetSet potential_targets;
-//    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_id);
-//    m_scope->GetDefaultInitialCandidateObjects(ScriptingContext(source),
-//            *static_cast<Condition::ObjectSet *>(static_cast<void *>(&potential_targets)));
-//
-//    // filter potential targets, put those matching scope condition into targets
-//    GetTargetSet(source_id, targets, potential_targets);
-//}
-
 void EffectsGroup::Execute(const TargetsCauses& targets_causes,
                            AccountingMap* accounting_map/* = 0*/,
                            bool only_meter_effects/* = false*/,
@@ -438,7 +389,7 @@ void EffectBase::Execute(const TargetsCauses& targets_causes,
         info.cause_type =           targets_and_cause.effect_cause.cause_type;
         info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
         info.custom_label =         targets_and_cause.effect_cause.custom_label;
-        if (set_meter_effect)
+        if (set_meter_effect && !info.custom_label.empty())
             info.custom_label =     set_meter_effect->AccountingLabel();
         info.source_id =            source_id;
 
