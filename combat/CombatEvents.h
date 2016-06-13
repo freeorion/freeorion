@@ -187,6 +187,8 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     virtual std::string DebugString() const;
     virtual std::string CombatLogDescription(int viewing_empire_id) const;
     virtual std::string CombatLogDetails(int viewing_empire_id) const;
+    virtual bool AreDetailsEmpty(int viewing_empire_id) const
+    { return false; }
     virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
     int     bout;

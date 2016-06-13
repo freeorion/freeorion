@@ -355,9 +355,7 @@ std::vector<GG::Wnd *> CombatLogWnd::CombatLogWndImpl::MakeCombatLogPanel(
         return new_logs;
     }
 
-    //Note:: detail string is parsed again in the AccordionPanel
-    std::string details = event->CombatLogDetails(viewing_empire_id);
-    if (!event->FlattenSubEvents() && !details.empty()) {
+    if (!event->FlattenSubEvents() && !event->AreDetailsEmpty(viewing_empire_id)) {
         new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
         return new_logs;
     }
@@ -366,6 +364,7 @@ std::vector<GG::Wnd *> CombatLogWnd::CombatLogWndImpl::MakeCombatLogPanel(
     if (!(event->FlattenSubEvents() && title.empty()))
         new_logs.push_back(DecorateLinkText(title));
 
+    std::string details = event->CombatLogDetails(viewing_empire_id);
     PopulateWithFlatLogs(w, viewing_empire_id, new_logs, event, details);
 
     return new_logs;

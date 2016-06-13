@@ -15,6 +15,15 @@ typedef boost::shared_ptr<CombatEvent> CombatEventPtr;
 typedef boost::shared_ptr<const CombatEvent> ConstCombatEventPtr;
 
 /// An abstract base class for combat events
+/**
+Combat events are created during combat processing to act as a log of
+combat events.
+
+Many combat events are created, but few are examined by players.
+The constructors must be fast.  They should not do any string processing
+in the contructor. The descriptions can be expanded on request.
+
+*/
 struct FO_COMMON_API CombatEvent {
     CombatEvent();
 
@@ -35,6 +44,11 @@ struct FO_COMMON_API CombatEvent {
     */
     virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
     { return std::vector<ConstCombatEventPtr>(); }
+
+    /** Return true if there are no details;
+    */
+    virtual bool AreDetailsEmpty(int viewing_empire_id) const
+    { return true; }
 
     /** Return true if there are no sub events;
     */
