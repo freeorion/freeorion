@@ -1323,15 +1323,20 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
 @cache_by_turn
 def get_claimed_stars():
+    """
+    Return dictionary of star type: list of colonised and planned to be colonized systems.
+    Start type converted to int because `cache_by_turn` store its value in savegame
+    and boost objects are not serializable.
+    """
     claimed_stars = {}
     universe = fo.getUniverse()
     for s_type in AIstate.empireStars:
-        claimed_stars[s_type] = list(AIstate.empireStars[s_type])
+        claimed_stars[int(s_type)] = list(AIstate.empireStars[s_type])
     for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
         t_sys = universe.getSystem(sys_id)
         if not t_sys:
             continue
-        claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
+        claimed_stars.setdefault(int(t_sys.starType), []).append(sys_id)
     return claimed_stars
 
 
