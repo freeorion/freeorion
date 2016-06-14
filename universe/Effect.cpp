@@ -542,7 +542,8 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         // deep inspection single ValueRef evaluation
         ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
         if (!op) {
-            ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation...";
+            ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
+            EffectBase::Execute(context, targets);
             return;
         }
         // RHS should be a ConstantExpr
@@ -552,7 +553,8 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         } else if (op->GetOpType() == ValueRef::MINUS) {
             increment = -increment;
         } else {
-            ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS)";
+            ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
+            EffectBase::Execute(context, targets);
             return;
         }
         //DebugLogger() << "simple increment: " << increment;
@@ -565,7 +567,6 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         return;
     }
 
-    //DebugLogger() << "complicated meter adjustment...";
     // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
     EffectBase::Execute(context, targets);
 }
