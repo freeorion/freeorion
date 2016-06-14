@@ -100,8 +100,8 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, N
 {
     if (TRACE_EXECUTION)
         DebugLogger() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
-                               << id << ", " << player_name << ", " << client_type << ","
-                               << client_version_string << ")";
+                      << id << ", " << player_name << ", "
+                      << client_type << ", " << client_version_string << ")";
 
     // ensure that this connection isn't already established
     if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
@@ -247,7 +247,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
             } else {
                 ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                                       << "error \"" << error << "\"";
+                              << "error \"" << error << "\"";
             }
         }
     } else {
@@ -506,8 +506,7 @@ void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection,
 {
     if (!error) {
         if (TRACE_EXECUTION)
-            DebugLogger() << "ServerNetworking::AcceptConnection : connected to "
-                                   << "new player";
+            DebugLogger() << "ServerNetworking::AcceptConnection : connected to new player";
         m_player_connections.insert(player_connection);
         player_connection->Start();
         AcceptNextConnection();
@@ -519,7 +518,7 @@ void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection,
 void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection) {
     if (TRACE_EXECUTION)
         DebugLogger() << "ServerNetworking::DisconnectImpl : disconnecting player "
-                               << player_connection->PlayerID();
+                      << player_connection->PlayerID();
     m_player_connections.erase(player_connection);
     m_disconnected_callback(player_connection);
 }
