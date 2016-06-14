@@ -8724,6 +8724,9 @@ Interstellar Lighthouse
 SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
+DEF_DEFENSE
+Planetary Defense
+
 DEF_DEFENSE_NET_1
 Planetary Defense Network 1
 
