@@ -155,8 +155,11 @@ class Table(object):
         print self.get_table()
 
     def get_table(self):
-        columns = [x for x in zip(*self.__rows)]
-        column_widths = [max([max(len(i) for i in x), len(h.name)]) for h, x in zip(self.__headers, columns)]
+        columns = [[len(y) for y in x] for x in zip(*self.__rows)]
+        # join size of headers and columns, since columns can be empty
+        header_and_columns = [[h] + x for h, x in izip_longest([len(x.name) for x in self.__headers], columns, fillvalue=[])]
+        column_widths = [max(x) for x in header_and_columns]
+
         result = []
 
         if self.__table_name:
@@ -210,3 +213,12 @@ if __name__ == '__main__':
     print
     print '=' * 5, 'Columns', '=' * 5
     print_in_columns(['a', 'b', 'c', 'd'], 2)
+
+    t2 = Table([Text('name', align='<', description='Name for first column'),
+                Float('value', description='VValue'),
+                Sequence('zzz'),
+                Sequence('zzzzzzzzzzzzzzzzzz'),
+                ],
+               table_name='Wooho'
+               )
+    t2.print_table()
