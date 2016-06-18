@@ -6,11 +6,18 @@
 
 #include "../util/Serialize.ipp"
 #include "../util/Serialize.h"
-#include "../universe/Universe.h"
+#include "../util/Logger.h"
 
 #include <sstream>
 
 CombatEvent::CombatEvent() {}
+
+boost::optional<int> CombatEvent::PrincipalFaction(int viewing_empire_id) const {
+    ErrorLogger() << "A combat logger expected this event to be "
+        "associated with a faction: "<< this->DebugString();
+
+    return boost::optional<int>();
+}
 
 template<typename Archive>
 void CombatEvent::serialize(Archive& ar, const unsigned int version) {}

@@ -242,8 +242,10 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
         // only height-for-width Wnd type, doesn't get vertically squashed
         // down to 0-height cells.  Note that they can still get horizontally
         // squashed.
-        if (dynamic_cast<TextControl*>(it->first))
-            min_space_needed.y = std::max(min_space_needed.y, min_usable_size.y);
+        if (TextControl *text_control = dynamic_cast<TextControl*>(it->first)) {
+            min_space_needed.y = (text_control->MinUsableSize(Width()) + margin).y;
+            min_usable_size.y = min_space_needed.y;
+        }
 
         // adjust row minimums
         double total_stretch = 0.0;
@@ -287,18 +289,27 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
     // determine final effective minimums, preserving stretch ratios
     double greatest_min_over_stretch_ratio = 0.0;
     double greatest_usable_min_over_stretch_ratio = 0.0;
+    bool is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
         if (m_row_params[i].stretch) {
+            is_zero_total_stretch = false;
             greatest_min_over_stretch_ratio = std::max(greatest_min_over_stretch_ratio, m_row_params[i].effective_min / m_row_params[i].stretch);
             greatest_usable_min_over_stretch_ratio = std::max(greatest_usable_min_over_stretch_ratio, row_effective_min_usable_sizes[i] / m_row_params[i].stretch);
         }
     }
     for (std::size_t i = 0; i < m_row_params.size(); ++i) {
-        m_row_params[i].effective_min = std::max(m_row_params[i].effective_min, static_cast<unsigned int>(m_row_params[i].stretch * greatest_min_over_stretch_ratio));
-        row_effective_min_usable_sizes[i] = std::max(row_effective_min_usable_sizes[i], static_cast<unsigned int>(m_row_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        if (is_zero_total_stretch || m_row_params[i].stretch) {
+            m_row_params[i].effective_min = std::max(
+                m_row_params[i].effective_min,
+                static_cast<unsigned int>(m_row_params[i].stretch * greatest_min_over_stretch_ratio));
+            row_effective_min_usable_sizes[i] = std::max(
+                row_effective_min_usable_sizes[i],
+                static_cast<unsigned int>(m_row_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        }
     }
     greatest_min_over_stretch_ratio = 0.0;
     greatest_usable_min_over_stretch_ratio = 0.0;
+    is_zero_total_stretch = true;
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
         if (m_column_params[i].stretch) {
             greatest_min_over_stretch_ratio = std::max(greatest_min_over_stretch_ratio, m_column_params[i].effective_min / m_column_params[i].stretch);
@@ -306,10 +317,17 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
         }
     }
     for (std::size_t i = 0; i < m_column_params.size(); ++i) {
-        m_column_params[i].effective_min = std::max(m_column_params[i].effective_min, static_cast<unsigned int>(m_column_params[i].stretch * greatest_min_over_stretch_ratio));
-        column_effective_min_usable_sizes[i] = std::max(column_effective_min_usable_sizes[i], static_cast<unsigned int>(m_column_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        if (is_zero_total_stretch || m_column_params[i].stretch) {
+            m_column_params[i].effective_min = std::max(
+                m_column_params[i].effective_min,
+                static_cast<unsigned int>(m_column_params[i].stretch * greatest_min_over_stretch_ratio));
+            column_effective_min_usable_sizes[i] = std::max(
+                column_effective_min_usable_sizes[i],
+                static_cast<unsigned int>(m_column_params[i].stretch * greatest_usable_min_over_stretch_ratio));
+        }
     }
 
+    //TODO Determine min usable size before stretching to fit space requested
     m_min_usable_size.x = X(2 * m_border_margin);
     for (std::size_t i = 0; i < column_effective_min_usable_sizes.size(); ++i) {
         m_min_usable_size.x += static_cast<int>(column_effective_min_usable_sizes[i]);
@@ -335,8 +353,6 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
         if (const_cast<const Wnd*>(parent)->GetLayout() == this) {
             Pt new_parent_min_size = MinSize() + parent->Size() - parent->ClientSize();
             Pt parent_min_size = parent->MinSize();
-            new_parent_min_size.x = std::max(parent_min_size.x, new_parent_min_size.x);
-            new_parent_min_size.y = std::max(parent_min_size.y, new_parent_min_size.y);
             ScopedAssign<bool> assignment(m_ignore_parent_resize, true);
             parent->SetMinSize(Pt(new_parent_min_size.x, new_parent_min_size.y));
         }
@@ -687,7 +703,11 @@ void Layout::ValidateAlignment(Flags<Alignment>& alignment)
 }
 
 void Layout::RedoLayout()
-{ Resize(Size()); }
+{
+    //Bug:  This does nothing if the size has not changed.  Fixing it to
+    //use Layout::SizeMove breaks all text boxes.
+    Resize(Size());
+}
 
 void Layout::ChildSizeOrMinSizeOrMaxSizeChanged()
 {

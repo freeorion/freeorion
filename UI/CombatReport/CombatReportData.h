@@ -7,7 +7,7 @@
 
 #include <vector>
 
-struct AttackEvent;
+struct WeaponFireEvent;
 struct CombatParticipantState;
 class Empire;
 class UniverseObject;
@@ -16,8 +16,9 @@ class UniverseObject;
 struct ParticipantSummary {
     int                         object_id;
     int                         empire_id;
-    std::vector<AttackEvent*>   attacks;
-    std::vector<AttackEvent*>   attacks_against;
+    // These appear to be never used
+    /* std::vector<WeaponFireEvent*>   attacks; */
+    /* std::vector<WeaponFireEvent*>   attacks_against; */
     float                       current_health;
     float                       max_health;
 

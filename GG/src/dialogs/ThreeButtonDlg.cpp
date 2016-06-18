@@ -144,7 +144,7 @@ void ThreeButtonDlg::Init(const std::string& msg, const boost::shared_ptr<Font>&
     TextControl* message_text = style->NewTextControl(msg, font, m_text_color,
                                                       FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
     message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
-    message_text->SetMinSize(true);
+    message_text->SetResetMinSize(true);
     layout->Add(message_text, 0, 0);
     layout->SetRowStretch(0, 1);
     layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);

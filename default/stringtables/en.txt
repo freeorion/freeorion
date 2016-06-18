@@ -56,6 +56,10 @@ Yes
 NO
 No
 
+# ELLIPSIS is used as a placeholder for unexpanded content in the combat log window.
+ELLIPSIS
+...
+
 EMPIRE
 Empire
 
@@ -206,6 +210,63 @@ Unowned
 
 NOWHERE
 Cannot be produced
+
+################################## 
+# FORMAT_LIST items are for lists of the form
+# FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
+# i.e.
+# There are none.
+# There is only: banana
+# There are: apple and banana
+##################################
+
+FORMAT_LIST_DEFAULT_PLURAL_HEADER
+There are:
+
+FORMAT_LIST_DEFAULT_SINGLE_HEADER
+There is one:
+
+FORMAT_LIST_DEFAULT_EMPTY_HEADER
+There are none.
+
+FORMAT_LIST_DEFAULT_DUAL_HEADER
+There are:
+
+FORMAT_LIST_0_ITEMS
+%1%
+
+FORMAT_LIST_1_ITEMS
+%1% %2%.
+
+FORMAT_LIST_2_ITEMS
+%1% %2% and %3%.
+
+FORMAT_LIST_3_ITEMS
+%1% %2%, %3% and %4%.
+
+FORMAT_LIST_4_ITEMS
+%1% %2%, %3%, %4% and %5%.
+
+FORMAT_LIST_5_ITEMS
+%1% %2%, %3%, %4%, %5% and %6%.
+
+FORMAT_LIST_6_ITEMS
+%1% %2%, %3%, %4%, %5%, %6% and %7%.
+
+FORMAT_LIST_7_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7% and %8%.
+
+FORMAT_LIST_8_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8% and %9%.
+
+FORMAT_LIST_9_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9% and %10%.
+
+FORMAT_LIST_10_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% and %11%.
+
+FORMAT_LIST_MANY_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
 ###########################
 # Predefined Ship Designs #
@@ -3780,6 +3841,9 @@ Combat at %1% on turn %2%:
 ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
 
+ENC_COMBAT_ATTACK_DETAILS
+Weapon: %1%  Strength: %2%  Shields: %3%  Damage: %4%
+
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attacks %2%
 
@@ -3807,6 +3871,36 @@ The%1%planet %2% was incapacitated
 
 ENC_COMBAT_DESTROYED_STR
 The%1%ship %2% was destroyed
+
+ENC_COMBAT_INITIAL_STEALTH_LIST
+%2% empire can not target:
+
+# %1 attacker %2 defender %3 empire
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK
+%2% detects %1% during attack.
+
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
+%2% detects
+
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
+%2% detects:
+
+ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
+%2% damages
+
+ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
+%2% damages %1% targets:
+
+# %1 defender %2 damage
+ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
+%1% for %2% damage
+
+ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
+%2% could not damage
+
+ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
+%2% could not damage %1% targets:
+
 
 ###########################################
 # Combat Report #
@@ -8629,6 +8723,9 @@ Interstellar Lighthouse
 
 SPY_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
+
+DEF_DEFENSE
+Planetary Defense
 
 DEF_DEFENSE_NET_1
 Planetary Defense Network 1

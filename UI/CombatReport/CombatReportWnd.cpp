@@ -9,6 +9,7 @@
 #include "GraphicalSummary.h"
 #include "CombatLogWnd.h"
 
+#include <GG/ScrollPanel.h>
 #include <GG/TabWnd.h>
 #include <GG/Layout.h>
 
@@ -20,33 +21,36 @@ public:
         m_tabs(new GG::TabWnd(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(),
                               ClientUI::CtrlColor(), ClientUI::TextColor())),
         m_graphical(new GraphicalSummaryWnd()),
-        m_log(new CombatLogWnd()),
+        m_log(new CombatLogWnd(m_wnd.ClientWidth(), m_wnd.ClientHeight())),
+        m_log_scroller(new GG::ScrollPanel(GG::X(0), GG::Y(0), m_tabs->ClientWidth(), m_tabs->ClientHeight(), m_log)),
         m_min_size(GG::X0, GG::Y0)
     {
         m_log->SetFont(ClientUI::GetFont());
+        m_log_scroller->SetBackgroundColor(ClientUI::CtrlColor());
 
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
-        m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
+        m_tabs->AddWnd(m_log_scroller, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
 
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
         GG::Connect(m_log->LinkRightClickedSignal,  &CombatReportPrivate::HandleLinkDoubleClick,    this);
+        GG::Connect(m_log->WndChangedSignal,        &CombatReportPrivate::HandleWindowChanged,      this);
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
-        GG::Connect(m_tabs->WndChangedSignal,
-                    boost::bind(&CombatReportPrivate::HandleTabChanged, this));
+        GG::Connect(m_tabs->TabChangedSignal, &CombatReportPrivate::HandleTabChanged, this);
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
-        GG::Connect(m_graphical->MinSizeChangedSignal,
-                    boost::bind(&CombatReportPrivate::UpdateMinSize, this));
+        GG::Connect(m_graphical->MinSizeChangedSignal, &CombatReportPrivate::UpdateMinSize, this);
     }
 
     void SetLog(int log_id) {
         m_graphical->SetLog(log_id);
+
         m_log->SetFont(ClientUI::GetFont());
+        m_log_scroller->ScrollTo(GG::Y0);
         m_log->SetLog(log_id);
     }
 
@@ -129,6 +133,7 @@ private:
     GG::TabWnd*             m_tabs;
     GraphicalSummaryWnd*    m_graphical;//< Graphical summary
     CombatLogWnd*           m_log;      //< Detailed log
+    GG::ScrollPanel*        m_log_scroller;
     GG::Pt                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
     void SetFocus(int id)
@@ -148,7 +153,16 @@ private:
         // dealing with the children of m_tabs directly, but that checks the
         // MinUsableSize of _all_ child windows, not just the currently
         // selected one.
-        m_min_size += m_tabs->CurrentWnd()->MinUsableSize();
+        if (GraphicalSummaryWnd* graphical_wnd =
+               dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
+            m_min_size += graphical_wnd->MinUsableSize();
+        } else {
+            // The log uses the GG::Layout which incorrectly reports
+            // the current size as the minimum size. So use an arbitrary
+            // minimum size of 20 characters by 1 line height
+            // m_min_size += m_log_scroller->MinUsableSize();
+            m_min_size += GG::Pt(ClientUI::GetFont()->SpaceWidth()*20, ClientUI::GetFont()->Height());
+        }
 
         std::list<GG::Wnd*>::const_iterator layout_begin =
             m_tabs->GetLayout()->Children().begin();
@@ -170,12 +184,18 @@ private:
         }
     }
 
-    void HandleTabChanged() {
+    void HandleWindowChanged() {
         // Use the minimum size of the newly selected window.
         UpdateMinSize();
 
-        // Make sure that the newly selected window gets an update.
         DoLayout();
+    }
+
+    void HandleTabChanged(size_t tabnum) {
+        if (tabnum == 1)
+            m_log->HandleMadeVisible();
+
+        HandleWindowChanged();
     }
 };
 

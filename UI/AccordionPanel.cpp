@@ -3,9 +3,13 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 
-AccordionPanel::AccordionPanel(GG::X w) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
-    m_expand_button(0)
+AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= false*/) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+    m_expand_button(0),
+    m_collapsed(true),
+    m_is_left(is_button_on_left),
+    m_interior_color(ClientUI::WndColor()),
+    m_border_margin(0)
 {
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -13,7 +17,8 @@ AccordionPanel::AccordionPanel(GG::X w) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrownormal.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "downarrowmouseover.png")));
-    m_expand_button->SetMinSize(GG::Pt(GG::X(16), GG::Y(16)));
+    m_expand_button->SetMinSize(GG::Pt(GG::X(EXPAND_BUTTON_SIZE), GG::Y(EXPAND_BUTTON_SIZE)));
+    m_expand_button->NonClientChild(true);
 
     AttachChild(m_expand_button);
 
@@ -35,6 +40,18 @@ void AccordionPanel::InitBuffer() {
     m_border_buffer.createServerBuffer();
 }
 
+GG::Pt AccordionPanel::ClientUpperLeft() const
+{ return UpperLeft() + GG::Pt((m_is_left ? GG::X(EXPAND_BUTTON_SIZE + m_border_margin) : GG::X0), GG::Y0); }
+
+GG::Pt AccordionPanel::ClientLowerRight() const
+{ return LowerRight() - GG::Pt((m_is_left ? GG::X0 : GG::X(EXPAND_BUTTON_SIZE + m_border_margin)), GG::Y0); }
+
+void AccordionPanel::SetInteriorColor(GG::Clr c)
+{ m_interior_color = c; }
+
+void AccordionPanel::SetBorderMargin(unsigned int margin)
+{ m_border_margin = margin; }
+
 void AccordionPanel::Render() {
     if (Height() < 1 || Width() < 1)
         return;
@@ -49,7 +66,7 @@ void AccordionPanel::Render() {
     glEnableClientState(GL_VERTEX_ARRAY);
 
     m_border_buffer.activate();
-    glColor(ClientUI::WndColor());
+    glColor(m_interior_color);
     glDrawArrays(GL_TRIANGLE_FAN,   0, m_border_buffer.size() - 1);
     glColor(ClientUI::WndOuterBorderColor());
     glDrawArrays(GL_LINE_STRIP,     0, m_border_buffer.size());
@@ -76,6 +93,7 @@ void AccordionPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void AccordionPanel::SetCollapsed(bool collapsed) {
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
+    m_collapsed = collapsed;
     if (!collapsed) {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrownormal.png"   )));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrowclicked.png"  )));
@@ -89,8 +107,13 @@ void AccordionPanel::SetCollapsed(bool collapsed) {
     ExpandCollapseSignal();
 }
 
+bool AccordionPanel::IsCollapsed() const {
+    return m_collapsed;
+}
+
 void AccordionPanel::DoLayout() {
-    GG::Pt expand_button_ul(Width() - 16, GG::Y0);
-    GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(16), GG::Y(16));
+    GG::Pt expand_button_ul(m_is_left ? GG::X(-(EXPAND_BUTTON_SIZE + m_border_margin))
+                            : (Width() + GG::X(-(EXPAND_BUTTON_SIZE + m_border_margin))), GG::Y0);
+    GG::Pt expand_button_lr = expand_button_ul + GG::Pt(GG::X(EXPAND_BUTTON_SIZE), GG::Y(EXPAND_BUTTON_SIZE));
     m_expand_button->SizeMove(expand_button_ul, expand_button_lr);
 }

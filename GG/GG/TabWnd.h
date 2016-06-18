@@ -46,7 +46,7 @@ public:
     /** Emitted when the currently-selected Wnd has changed; the new selected
         Wnd's index in the group is provided (this may be NO_WND if no Wnd is
         currently selected). */
-    typedef boost::signals2::signal<void (std::size_t)> WndChangedSignalType;
+    typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -120,7 +120,7 @@ public:
     /** Emitted when the currently-selected Wnd has changed; the new selected
         Wnd's index in the group is provided (this may be NO_WND if no Wnd is
         currently selected). */
-    typedef boost::signals2::signal<void (std::size_t)> WndChangedSignalType;
+    typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -168,7 +168,7 @@ public:
     void            SetCurrentWnd(std::size_t index);
     //@}
 
-    mutable WndChangedSignalType WndChangedSignal; ///< The Wnd change signal object for this TabWnd
+    mutable TabChangedSignalType TabChangedSignal; ///< The Wnd change signal object for this TabWnd
 
     /** The invalid Wnd position index that there is no currently-selected
         Wnd. */

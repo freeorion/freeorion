@@ -1,5 +1,9 @@
 #include "CombatLogWnd.h"
 
+#include <GG/Layout.h>
+#include <GG/Scroll.h>
+#include <GG/ScrollPanel.h>
+
 #include "../LinkText.h"
 
 #include "../../client/human/HumanClientApp.h"
@@ -10,13 +14,60 @@
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
 #include "../../universe/UniverseObject.h"
+#include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"
 
+class CombatLogWnd::CombatLogWndImpl {
+public:
+    CombatLogWndImpl(CombatLogWnd& _log);//GG::X w, GG::Y h);
+
+    /** \name Accessors */ ///@{
+    GG::Pt MinUsableSize() const;
+    //@}
+
+    /** \name Mutators */ //@{
+    void SetFont(boost::shared_ptr<GG::Font> font);
+    /// Set which log to show
+    void SetLog(int log_id);
+    /** Add a row at the end of the combat report*/
+    void AddRow(GG::Wnd * wnd);
+    //@}
+
+    /** When windows changes forces a re-layout */
+    void HandleWndChanged();
+
+    /** DecorateLinkText creates a CUILinkTextMultiEdit using \a text and attaches it to handlers
+        \a and_flags are anded to the default flags. */
+    LinkText * DecorateLinkText(std::string const & text);
+
+    /** Fill \p new_logs with pointers to the flat log contents of \p
+        event using the pre-calculated \p details.*/
+    void PopulateWithFlatLogs(
+        GG::X w, int viewing_empire_id, std::vector<GG::Wnd *> &new_logs,
+        ConstCombatEventPtr &event, std::string &details);
+
+    //Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
+    std::vector<GG::Wnd *> MakeCombatLogPanel(
+        GG::X w, int viewing_empire_id, ConstCombatEventPtr event);
+
+    // public interface
+    CombatLogWnd &m_wnd;
+
+    ///default flags for a text link log segment
+    GG::Flags<GG::TextFormat> m_text_format_flags;
+    boost::shared_ptr<GG::Font> m_font;
+
+};
+
 namespace {
+    typedef boost::shared_ptr<LinkText> LinkTextPtr;
+
     const std::string EMPTY_STRING;
 
-    std::map<int, int> CountByOwner(const std::set<int>& objects) {
+    std::map<int, int> CountByOwner(const std::set<int>& owners, const std::set<int>& objects) {
         std::map<int, int> objects_per_owner;
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
+            objects_per_owner[*it] = 0;
         for (std::set<int>::const_iterator it = objects.begin(); it != objects.end(); ++it) {
             TemporaryPtr<const UniverseObject> object = Objects().Object(*it);
             if (object && (
@@ -38,7 +89,9 @@ namespace {
         for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
             std::string owner_string = UserString("NEUTRAL");
             if (const Empire* owner = GetEmpire(it->first))
-                owner_string = GG::RgbaTag(owner->Color()) + owner->Name() + "</rgba>";
+                owner_string = GG::RgbaTag(owner->Color()) + "<" + VarText::EMPIRE_ID_TAG + " "
+                    + boost::lexical_cast<std::string>(owner->EmpireID()) + ">" + owner->Name()
+                    + "</" + VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
             ss << owner_string << ": " << it->second;
             ++it;
             if (it != count_per_empire.end())
@@ -47,173 +100,366 @@ namespace {
         return ss.str();
     }
 
-    const std::string& LinkTag(UniverseObjectType obj_type) {
-        switch (obj_type) {
-        case OBJ_SHIP:
-            return VarText::SHIP_ID_TAG;
-            break;
-        case OBJ_FLEET:
-            return VarText::FLEET_ID_TAG;
-            break;
-        case OBJ_PLANET:
-            return VarText::PLANET_ID_TAG;
-            break;
-        case OBJ_BUILDING:
-            return VarText::BUILDING_ID_TAG;
-            break;
-        case OBJ_SYSTEM:
-            return VarText::SYSTEM_ID_TAG;
-            break;
-        case OBJ_FIELD:
-        default:
-            return EMPTY_STRING;
+    /// A Single section in the CombatLog showing general outline of a ship's combat
+    /// and expanding into specifics.
+    class CombatLogAccordionPanel : public AccordionPanel {
+        public:
+        CombatLogAccordionPanel(GG::X w, CombatLogWnd::CombatLogWndImpl &log_,
+                                int viewing_empire_id_, ConstCombatEventPtr event_);
+        ~CombatLogAccordionPanel();
+
+        private:
+        /** toggles panel expanded or collapsed */
+        void ToggleExpansion();
+
+        CombatLogWnd::CombatLogWndImpl & log;
+        int viewing_empire_id;
+        ConstCombatEventPtr event;
+        LinkText * title;
+        std::vector<GG::Wnd *> details;
+
+        //distance between expansion symbol and text
+        static const unsigned int BORDER_MARGIN = 5;
+
+    };
+
+    CombatLogAccordionPanel::CombatLogAccordionPanel(
+        GG::X w, CombatLogWnd::CombatLogWndImpl &log_,
+        int viewing_empire_id_, ConstCombatEventPtr event_) :
+        AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
+        log(log_),
+        viewing_empire_id(viewing_empire_id_),
+        event(event_),
+        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id))),
+        details()
+    {
+        AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
+
+        GG::Connect(m_expand_button->LeftClickedSignal, &CombatLogAccordionPanel::ToggleExpansion, this);
+        GG::Connect(this->ExpandCollapseSignal, &CombatLogWnd::CombatLogWndImpl::HandleWndChanged, &log);
+
+        SetBorderMargin(BORDER_MARGIN);
+
+        SetLayout(new GG::Layout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
+        GetLayout()->Add(title, 0, 0, 1, 1);
+        SetCollapsed(true);
+    }
+
+    CombatLogAccordionPanel::~CombatLogAccordionPanel() {
+        if (!IsCollapsed() && !details.empty()) {
+            for (std::vector<GG::Wnd *>::iterator it = details.begin(); it != details.end(); ++it) {
+                delete *it;
+            }
         }
     }
 
-    /// Creates a link tag of the appropriate type for object_id,
-    /// with the content being the public name from the point of view of client_empire_id.
-    /// Returns not_found if object_id is not found.
-    std::string PublicNameLink(int client_empire_id, int object_id, const std::string& not_found) {
-        TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
-        if (object) {
-            const std::string& name = object->PublicName(client_empire_id);
-            const std::string& tag = LinkTag(object->ObjectType());
-            return LinkTaggedIDText(tag, object_id, name);
+    void CombatLogAccordionPanel::ToggleExpansion() {
+        DebugLogger() << "Expand/Collapse of detailed combat log.";
+        bool new_collapsed = !IsCollapsed();
+        if (new_collapsed) {
+            for (std::vector<GG::Wnd *>::iterator it = details.begin(); it != details.end(); ++it) {
+                GetLayout()->Remove(*it);
+            }
         } else {
-            return not_found;
+            if (details.empty()) {
+                std::string detail_text = event->CombatLogDetails(viewing_empire_id);
+                log.PopulateWithFlatLogs(Width(), viewing_empire_id, details, event, detail_text);
+            }
+
+            for (std::vector<GG::Wnd *>::iterator it = details.begin(); it != details.end(); ++it) {
+                GetLayout()->Add(*it, GetLayout()->Rows(), 0);
+            }
+        }
+        SetCollapsed(new_collapsed);
+    }
+
+}
+
+CombatLogWnd::CombatLogWndImpl::CombatLogWndImpl(CombatLogWnd& _wnd):
+    m_wnd(_wnd),
+    m_text_format_flags(GG::FORMAT_WORDBREAK| GG::FORMAT_LEFT | GG::FORMAT_TOP),
+    m_font(ClientUI::GetFont())
+{ }
+
+GG::Pt CombatLogWnd::CombatLogWndImpl::MinUsableSize() const {
+    return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
+}
+
+void CombatLogWnd::CombatLogWndImpl::HandleWndChanged() {
+    GG::Pt size = m_wnd.Size();
+    m_wnd.Resize(size + GG::Pt(2*m_font->SpaceWidth(), GG::Y0));
+    m_wnd.Resize(size);
+    m_wnd.WndChangedSignal();
+}
+
+
+namespace {
+    /**Find a parent of type T*/
+    template <typename T>
+    T const * FindParentOfType(GG::Wnd const * parent) {
+        GG::Wnd const * iwnd = parent;
+        T const * type_T = NULL;
+        while (iwnd && !(type_T = dynamic_cast<const T *>(iwnd))){
+            iwnd = iwnd->Parent();
+        }
+        return type_T;
+    }
+
+
+    /**LazyScrollerLinkText is a link text that initially populates
+       itself with an ellipsis.
+
+       As a one time effect, when it comes into view it populates itself
+       with the text which will be processed by DetermineLines and
+       flowed by the Layout.
+
+       This works around problems with Font::DetermineLinesImpl() which is
+       too costly to run on 100 combat reports without freezing the UI
+       for an extended portion of time.
+
+       This assumes:
+       + CombatLogWnd is in a TabWnd as the second tab.
+       + CombatLogWnd is in a ScrollPanel
+    */
+
+    class LazyScrollerLinkText : public LinkText {
+        public:
+
+        mutable boost::signals2::signal<void ()> ChangedSignal;
+
+        LazyScrollerLinkText(
+            GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
+            const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
+            LinkText(x, y, UserString("ELLIPSIS"), font, color),
+            m_text( new std::string(str)),
+            m_signals()
+        {
+
+            //Register for signals that might bring the text into view
+
+            if (CombatLogWnd const * log = FindParentOfType<CombatLogWnd>(&parent)) {
+                m_signals.push_back(
+                    GG::Connect(log->WndChangedSignal, &LazyScrollerLinkText::HandleMaybeVisible, this));
+            }
+
+            if (GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
+                GG::Scroll const * scroll = scroll_panel->GetScroll();
+                m_signals.push_back(
+                    GG::Connect(scroll->ScrolledAndStoppedSignal, &LazyScrollerLinkText::HandleScrolledAndStopped, this));
+
+            }
+
+            //Parent doesn't contain any of the expected parents so just
+            //show the text.
+            if (m_signals.empty()) {
+                SetText(str);
+                m_text.reset();
+            } else {
+                HandleMaybeVisible();
+            }
+        }
+
+        void HandleMaybeVisible() {
+
+            //Assumes the log is the second tab.
+            GG::OverlayWnd const * tab = FindParentOfType<const GG::OverlayWnd>(Parent());
+            if (tab && (tab->CurrentWndIndex() != 1))
+                return;
+
+            // Check if any part of text is in the scrollers visible area
+            GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent());
+            if (scroll_panel && (scroll_panel->InClient(UpperLeft())
+                                 || scroll_panel->InClient(LowerRight())
+                                 || scroll_panel->InClient(GG::Pt(Right(), Top()))
+                                 || scroll_panel->InClient(GG::Pt(Left(), Bottom())))) {
+                for (std::vector<boost::signals2::connection>::iterator sig_it = m_signals.begin();
+                     sig_it != m_signals.end(); ++sig_it){
+                    sig_it->disconnect();
+                }
+                m_signals.clear();
+
+                SetText(*m_text);
+                m_text.reset();
+
+                ChangedSignal();
+            }
+        }
+
+        void HandleScrolledAndStopped(int start_pos, int end_post, int min_pos, int max_pos) {
+            HandleMaybeVisible();
+        }
+
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            LinkText::SizeMove(ul, lr);
+            if (! m_signals.empty())
+                HandleMaybeVisible();
+        }
+
+        boost::scoped_ptr<std::string> m_text;
+        std::vector<boost::signals2::connection> m_signals;
+    };
+
+}
+
+LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & text) {
+    LazyScrollerLinkText * links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
+
+    links->SetTextFormat(m_text_format_flags);
+
+    links->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
+    links->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
+    links->SetDecorator(VarText::SYSTEM_ID_TAG, new ColorByOwner());
+    links->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorByOwner());
+
+    links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
+    links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
+    links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
+    GG::Connect(links->ChangedSignal,           &CombatLogWnd::CombatLogWndImpl::HandleWndChanged,         this);
+
+    return links;
+}
+
+/** Fill \p new_logs with pointers to the flat log contents of \p
+    event using the pre-calculated \p details.*/
+void CombatLogWnd::CombatLogWndImpl::PopulateWithFlatLogs(
+    GG::X w, int viewing_empire_id, std::vector<GG::Wnd *> &new_logs,
+    ConstCombatEventPtr &event, std::string &details) {
+    if (!details.empty()) {
+        new_logs.push_back(DecorateLinkText(details));
+    }
+
+    if (!event->AreSubEventsEmpty(viewing_empire_id)) {
+        std::vector<ConstCombatEventPtr> sub_events = event->SubEvents(viewing_empire_id);
+        for (std::vector<ConstCombatEventPtr>::iterator sub_event_it = sub_events.begin();
+             sub_event_it != sub_events.end(); ++sub_event_it) {
+            std::vector<GG::Wnd *> flat_logs =
+                MakeCombatLogPanel(w, viewing_empire_id, *sub_event_it);
+            new_logs.insert(new_logs.end(), flat_logs.begin(), flat_logs.end());
         }
     }
+}
 
-    std::string EmpireColourWrappedText(int empire_id, const std::string& text) {
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return text;
-        return GG::RgbaTag(empire->Color()) + text + "</rgba>";
+
+//Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
+std::vector<GG::Wnd *> CombatLogWnd::CombatLogWndImpl::MakeCombatLogPanel(
+    GG::X w, int viewing_empire_id, ConstCombatEventPtr event) {
+    std::vector<GG::Wnd *> new_logs;
+
+    //Create and accordion log if there are detail or sub events and
+    //the log isn't explicitly flatten.  Otherwise, flatten the log,
+    //details and sub events.
+
+    if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
+        new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
+        return new_logs;
     }
+
+    if (!event->FlattenSubEvents() && !event->AreDetailsEmpty(viewing_empire_id)) {
+        new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
+        return new_logs;
+    }
+
+    std::string title = event->CombatLogDescription(viewing_empire_id);
+    if (!(event->FlattenSubEvents() && title.empty()))
+        new_logs.push_back(DecorateLinkText(title));
+
+    std::string details = event->CombatLogDetails(viewing_empire_id);
+    PopulateWithFlatLogs(w, viewing_empire_id, new_logs, event, details);
+
+    return new_logs;
 }
 
 
-CombatLogWnd::CombatLogWnd() :
-    CUILinkTextMultiEdit("", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY)
-{
-    SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
-    SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
+void CombatLogWnd::CombatLogWndImpl::AddRow(GG::Wnd * wnd) {
+    if( GG::Layout * layout = m_wnd.GetLayout())
+        layout->Add(wnd, layout->Rows(), 0);
 }
 
-void CombatLogWnd::SetLog(int log_id) {
-    std::stringstream detailed_description;
-    bool available = CombatLogAvailable(log_id);
-    if (!available) {
-        ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find combat log with id: " << log_id;
+void CombatLogWnd::CombatLogWndImpl::SetFont(boost::shared_ptr<GG::Font> font)
+{ m_font = font; }
+
+void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
+    if (!CombatLogAvailable(log_id)) {
+        ErrorLogger() << "Couldn't find combat log with id: " << log_id;
         return;
     }
+
+    m_wnd.DeleteChildren();
+    GG::Layout* layout = new GG::Layout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y
+                                        , m_wnd.Width(), m_wnd.Height()
+                                        , 1, 1 ///< numrows, numcols
+                                        , 0, 0 ///< wnd margin, cell margin
+                                       );
+    m_wnd.SetLayout(layout);
+
     const CombatLog& log = GetCombatLog(log_id);
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
+    // Write Header text
     DebugLogger() << "Setting log with " << log.combat_events.size() << " events";
-
-    std::string name = UserString("ENC_COMBAT_LOG");
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / "/icons/sitrep/combat.png", true);
-    std::string general_type = UserString("ENC_COMBAT_LOG");
 
     TemporaryPtr<const System> system = GetSystem(log.system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
-    detailed_description << str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
+    AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
                                 % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log.system_id, sys_name)
-                                % log.turn) + "\n";
+                                % log.turn) + "\n"
+                           ));
+    AddRow(DecorateLinkText(UserString("COMBAT_INITIAL_FORCES")));
+    AddRow(DecorateLinkText(CountsToText(CountByOwner(log.empire_ids, log.object_ids))));
 
-    detailed_description <<"\n"+ UserString("COMBAT_INITIAL_FORCES") + "\n" + CountsToText(CountByOwner(log.object_ids))+"\n";
+    std::stringstream summary_text;
+    summary_text << std::endl << UserString("COMBAT_SUMMARY_DESTROYED")
+                 << std::endl << CountsToText(CountByOwner(log.empire_ids, log.destroyed_object_ids));
+    AddRow(DecorateLinkText(summary_text.str()));
 
+    // Write Logs
     for (std::vector<CombatEventPtr>::const_iterator it = log.combat_events.begin();
-         it != log.combat_events.end(); ++it)
-    {
+         it != log.combat_events.end(); ++it) {
         DebugLogger() << "event debug info: " << it->get()->DebugString();
 
-        if (const BoutBeginEvent* bout_begin = dynamic_cast<BoutBeginEvent*>(it->get())) {
-            detailed_description << str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout_begin->bout) + "\n";
-
-        } else if (const AttackEvent* attack = dynamic_cast<AttackEvent*>(it->get())) {
-            std::string attacker_link;
-            if (attack->attacker_id >= 0)   // ship
-                attacker_link = PublicNameLink(client_empire_id, attack->attacker_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            else                            // fighter
-                attacker_link = EmpireColourWrappedText(attack->attacker_owner_id, UserString("OBJ_FIGHTER"));
-
-            std::string target_link = PublicNameLink(client_empire_id, attack->target_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-
-            const std::string& template_str = UserString("ENC_COMBAT_ATTACK_STR");
-
-            detailed_description << str(FlexibleFormat(template_str)
-                                        % attacker_link
-                                        % target_link
-                                        % attack->damage
-                                        % attack->bout
-                                        % attack->round) + "\n";
-
-        } else if (const IncapacitationEvent* incapacitation = dynamic_cast<IncapacitationEvent*>(it->get())) {
-            TemporaryPtr<const UniverseObject> object = GetUniverseObject(incapacitation->object_id);
-            std::string template_str, object_str;
-            int owner_id = incapacitation->object_owner_id;
-
-            if (!object && incapacitation->object_id < 0) {
-                template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_STR");
-                object_str = UserString("OBJ_FIGHTER");
-
-            } else if (!object) {
-                template_str = UserString("ENC_COMBAT_UNKNOWN_DESTROYED_STR");
-                object_str = UserString("ENC_COMBAT_UNKNOWN_OBJECT");
-
-            } else if (object->ObjectType() == OBJ_PLANET) {
-                template_str = UserString("ENC_COMBAT_PLANET_INCAPACITATED_STR");
-                object_str = PublicNameLink(client_empire_id, incapacitation->object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-
-            } else {    // ships or other to-be-determined objects...
-                template_str = UserString("ENC_COMBAT_DESTROYED_STR");
-                object_str = PublicNameLink(client_empire_id, incapacitation->object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            }
-
-            std::string owner_string = " ";
-            if (const Empire* owner = GetEmpire(owner_id))
-                owner_string += owner->Name() + " ";
-
-            detailed_description << str(FlexibleFormat(template_str) % owner_string % object_str) + "\n";
-
-        } else if (const FighterLaunchEvent* launch = dynamic_cast<FighterLaunchEvent*>(it->get())) {
-            std::string launched_from_link = PublicNameLink(client_empire_id, launch->launched_from_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            std::string empire_coloured_fighter = EmpireColourWrappedText(launch->fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
-
-            // launching negative fighters indicates recovery of them by the ship
-            const std::string& template_str = (launch->number_launched >= 0 ?
-                                                UserString("ENC_COMBAT_LAUNCH_STR") :
-                                                UserString("ENC_COMBAT_RECOVER_STR"));
-
-            detailed_description << str(FlexibleFormat(template_str)
-                                        % launched_from_link
-                                        % empire_coloured_fighter
-                                        % std::abs(launch->number_launched)
-                                        % attack->bout
-                                        % attack->round) + "\n";
-
-        } else if (const FighterAttackedEvent* fighter_attack = dynamic_cast<FighterAttackedEvent*>(it->get())) {
-            std::string attacked_by;
-            if (fighter_attack->attacked_by_object_id >= 0) // attacked by ship or planet
-                attacked_by = PublicNameLink(client_empire_id, fighter_attack->attacked_by_object_id, UserString("ENC_COMBAT_UNKNOWN_OBJECT"));
-            else                                            // attacked by fighter
-                attacked_by = EmpireColourWrappedText(fighter_attack->attacker_owner_empire_id, UserString("OBJ_FIGHTER"));
-            std::string empire_coloured_attacked_fighter = EmpireColourWrappedText(fighter_attack->attacked_owner_id, UserString("OBJ_FIGHTER"));
-
-            const std::string& template_str = UserString("ENC_COMBAT_ATTACK_SIMPLE_STR");
-
-            detailed_description << str(FlexibleFormat(template_str)
-                                        % attacked_by
-                                        % empire_coloured_attacked_fighter
-                                        % attack->bout
-                                        % attack->round) + "\n";
+        std::vector<GG::Wnd *> flat_logs =
+            MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, *it);
+        for (std::vector<GG::Wnd *>::iterator log_it = flat_logs.begin();
+             log_it != flat_logs.end(); ++log_it) {
+            AddRow(*log_it);
         }
     }
 
-    detailed_description << "\n" + UserString("COMBAT_SUMMARY_DESTROYED") + "\n" + CountsToText(CountByOwner(log.destroyed_object_ids));
+    //Add a dummy row that the layout manager can use to add space.
+    AddRow(DecorateLinkText(""));
+    layout->SetRowStretch(layout->Rows() - 1, 1);
 
-    SetText(detailed_description.str());
+    HandleWndChanged();
 }
+
+
+// Forward request to private implementation
+CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+    pimpl(new CombatLogWndImpl(*this))
+{
+    SetName("CombatLogWnd");
+}
+
+//This virtual destructor must exist to ensure that the pimpl is destroyed.
+CombatLogWnd::~CombatLogWnd()
+{}
+
+void CombatLogWnd::SetFont(boost::shared_ptr<GG::Font> font)
+{ pimpl->SetFont(font); }
+
+void CombatLogWnd::SetLog(int log_id)
+{ pimpl->SetLog(log_id); }
+
+GG::Pt CombatLogWnd::ClientUpperLeft() const
+{ return UpperLeft() + GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
+
+GG::Pt CombatLogWnd::ClientLowerRight() const
+{ return LowerRight() - GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
+
+GG::Pt CombatLogWnd::MinUsableSize() const
+{ return pimpl->MinUsableSize(); }
+
+void CombatLogWnd::HandleMadeVisible()
+{ return pimpl->HandleWndChanged(); }
