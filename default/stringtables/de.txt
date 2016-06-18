@@ -112,7 +112,16 @@ Flotte %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
-# used to generate name for effect-created planets. %1% is the system name.
+# new asteroids or new planet names...
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
+
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 EMPTY_SPACE
 Tiefe des Alls
@@ -243,11 +252,6 @@ SM_TREE
 Dysonwald
 SM_TREE_DESC
 Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.
-
-SM_SEED
-Dysonsamen
-SM_SEED_DESC
-Dysonwälder produzieren von Zeit zu Zeit Samen, welche sich über die Sternstraßen verbreiten, um neue Wälder in anderen Sternensystemen gründen können.
 
 SM_FLOATER
 Schwimmer
@@ -541,9 +545,6 @@ Entscheidet ob der Vergrösserungsregler auf der Galaxiekarte angezeigt wird.
 
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Entscheidet ob ein Kontextmenü in der Galaxiekarte angezeigt werden soll.
-
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Verwende schicke optimierte OpenGL 1.5 Zeicheneffekte für Systeme auf der Galaxiekarte. Kann bei älteren Grafikkarten Abstürze verursachen.
 
 OPTIONS_DB_STARLANE_THICKNESS
 Setzt die Breite der Sternstraßen in Pixeln fest.
@@ -894,18 +895,6 @@ Tauscht die Funktion der linken und rechten Maustasten.
 OPTIONS_DB_MUSIC_VOLUME
 Die Lautstärke (0 bis 255) in welcher Musik gespielt werden soll.
 
-OPTIONS_DB_COMBAT_ENABLE_GLOW
-Schaltet Leuchteffekt an oder aus.
-
-OPTIONS_DB_COMBAT_ENABLE_SKYBOX
-Schaltet die Hintergrundsterne an oder aus.
-
-OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
-Schaltet die Blendenflecken an oder aus.
-
-OPTIONS_DB_COMBAT_FILLED_SELECTION
-Benutzt einen Ausfülleffekt anstatt eines Umrandungseffekts für ausgewählte Objekte.
-
 OPTIONS_DB_QUICKSTART
 Beginnt ein neues Schnellstartspiel. Das Hauptmenü wird umgangen.
 
@@ -923,12 +912,6 @@ Schaltet die ausführliche Protokollierung der Inhalte des Universums und Effekt
 
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Schaltet das Einfügen der Situationsberichte mit Fehlerausgabe ein.
-
-OPTIONS_DB_TECH_DEMO
-Die 3D-Kampf Technologiedemo ausprobieren
-
-OPTIONS_DB_TEST_3D_COMBAT
-Tested die 3D Kampfauflösung.
 
 OPTIONS_DB_LOAD
 Lädt einen angegebenen Einzelspielerspielstand.
@@ -1154,9 +1137,9 @@ GSETUP_CLUSTER
 Haufen
 GSETUP_ELLIPTICAL
 Elliptisch
+
 GSETUP_RANDOM
 Zufällig
-
 GSETUP_NONE
 Keine
 GSETUP_LOW
@@ -1229,6 +1212,10 @@ GAME_MENU_SAVE_FILES
 Speicherstände
 
 ###########################
+# Save Game Dialog        #
+###########################
+
+###########################
 # Game Options            #
 ###########################
 
@@ -1268,13 +1255,10 @@ Schriftgrößen
 OPTIONS_FONT_TITLE
 Fenstertitel
 
-OPTIONS_TECH_SPACING
-Technologie Abstand
-
-OPTIONS_HORIZONTAL
+OPTIONS_TECH_SPACING_HORIZONTAL
 Waagerecht
 
-OPTIONS_VERTICAL
+OPTIONS_TECH_SPACING_VERTICAL
 Senkrecht
 
 OPTIONS_TOOLTIP_DELAY
@@ -1339,9 +1323,6 @@ Inhaltsbeschreibung
 
 OPTIONS_SYSTEM_ICONS
 Systemsymbole
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimiertes Zeichnen
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Systemsymbolgröße
@@ -1562,9 +1543,6 @@ Oberfläche
 OPTIONS_PAGE_COLORS
 Farben
 
-OPTIONS_PAGE_COMBAT
-Kampf
-
 OPTIONS_PAGE_DIRECTORIES
 Verzeichnisse
 
@@ -1591,18 +1569,6 @@ Hintergrund
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Leiste
-
-OPTIONS_COMBAT_ENABLE_GLOW
-Glühen
-
-OPTIONS_COMBAT_ENABLE_SKYBOX
-Himmel
-
-OPTIONS_COMBAT_ENABLE_LENS_FLARES
-Linsenlichtreflex
-
-OPTIONS_COMBAT_FILLED_SELECTION
-Gefüllte Auswahl
 
 OPTIONS_ANY_FILE
 Alle Dateien
@@ -1634,16 +1600,6 @@ Ausführliche Protokollierung zur Fehlersuche
 OPTIONS_VERBOSE_SITREP_DESC
 Statusberichte mit Fehlermeldungen
 
-##################
-# CombatSetupWnd #
-##################
-
-AUTO_PLACE_SHIPS
-Schiffe automatisch platzieren
-
-REDO_PLACEMENTS
-Platzierungen wiederholen
-
 #################
 # Main Map      #
 #################
@@ -1672,9 +1628,6 @@ Schiffsdesign
 MAP_PRODUCTION_TITLE
 Produktion
 
-MAP_PRODUCTION_TEXT
-Produktionsleistung des gesamten Imperiums
-
 MAP_PROD_WASTED_TITLE
 Ungenutzte Produktion
 
@@ -1686,9 +1639,6 @@ Hier anklicken um das Produktionsmenü zu öffnen'''
 
 MAP_RESEARCH_TITLE
 Forschung
-
-MAP_RESEARCH_TEXT
-Forschungsleistung des gesamten Imperiums
 
 MAP_RES_WASTED_TITLE
 Ungenutzte Forschung
@@ -1808,6 +1758,8 @@ Neuste bekannte Tarnung ist nicht aktuell.  Tatsächliche Tarnung übersteigt di
 
 RP_FOCUS_TOOLTIP
 Fokus: %1%
+
+## Specials Panel ##########
 
 ## Buildings Panel##########
 
@@ -2127,11 +2079,8 @@ In der Warteschlange
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Unerforschte Voraussetzungen: '''
 
-TECH_WND_LIST_VIEW
-Listenansicht
-
-TECH_WND_TREE_VIEW
-Baumansicht
+TECH_WND_VIEW_TYPE
+Baumansicht / Listenansicht
 
 TECH_WND_REQUIRES
 Benötigt
@@ -2156,23 +2105,11 @@ Insg. verfügbare Punkte
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
 
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Laufende Projekte
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Unterbezahlte Projekte
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Anzahl der Projekte
-
 ###############
 # ResearchWnd #
 ###############
 
 RESEARCH_WND_TITLE
-Forschung
-
-RESEARCH_INFO_PANEL_TITLE
 Forschung
 
 RESEARCH_INFO_RP
@@ -2231,9 +2168,6 @@ Doppelklick auf ein verfügbares Objekt um es zur Produktionswarteschlange hinzu
 PRODUCTION_WND_TITLE
 Produktion
 
-PRODUCTION_INFO_PANEL_TITLE
-Produktion
-
 PRODUCTION_QUEUE_EMPTY
 '''Die Produktionswarteschlange des Imperiums ist leer.
 
@@ -2289,6 +2223,10 @@ Alles entfernen
 
 DESIGN_DELETE
 Entwurf löschen
+
+################
+## Statistics ##
+################
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -2486,6 +2424,10 @@ ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
 
 ###########################################
+# Combat Report #
+###########################################
+
+###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
@@ -2644,7 +2586,9 @@ Während der Evakuierung fällt die Produktion auf Null. Wenn die Kolonie leer i
 AI_LEVELS_TITLE
 KI-Aggressionsniveau
 
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
+#
+# Guides
+#
 
 ####################
 # Combat Messages  #
@@ -2768,6 +2712,10 @@ Zuklappen
 EXPAND_ALL
 Aufklappen
 
+#####################
+## Objects Columns ##
+#####################
+
 ####################
 ## Filters Dialog ##
 ####################
@@ -2838,42 +2786,7 @@ Ein unbekanntes Ereignis ist aufgetreten.
 FILTERS
 Filter
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
-## these sitreps to be presented in the SitrepPanel in the order set below.
-## Sitreps not specified below will appear in the SitrepPanel following those below.
-
-## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
-SITREP_PRIORITY_ORDER
-'''SITREP_VICTORY
-SITREP_VICTORY_DESTRUCTION
-SITREP_VICTORY_CAPTURE
-SITREP_VICTORY_TECH
-SITREP_VICTORY_BIO
-SITREP_EMPIRE_ELIMINATED
-EFFECT_ANCIENT_SHIP
-EFFECT_ANCIENT_BUILDING
-EFFECT_ANCIENT_TECH
-SITREP_TECH_RESEARCHED
-SITREP_PLANET_CAPTURED
-SITREP_PLANET_COLONIZED
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-EFFECT_CONC_CAMP_COMLETE
-EFFECT_GAIAN_TERRAFORM
-EFFECT_TERRAFORM
-EFFECT_TAME_MONSTER_HATCHED
-EFFECT_TAME_MONSTER_MATURED
-SITREP_BUILDING_BUILT
-EFFECT_EXOBOT
-SITREP_SHIP_BUILT
-SITREP_SHIP_BATCH_BUILT
-EFFECT_EVACUEES
-EFFECT_PSY_DOM
-SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
-SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
-SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
-SITREP_FLEET_ARRIVED_AT_DESTINATION'''
-## END OF SITREP_PRIORITY_ORDER
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 %shipdesign% '%ship%' wurde im %system% fertiggestellt.
@@ -3012,10 +2925,8 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Fremde Flotte ist angekommen
 
-EFFECT_DRYDOCK_SHIP_REPAIR
+EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 %ship% ist im %building% auf %planet% repariert worden.
-EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Trockendockreparatur
 
 EFFECT_MONSTER_SPAWNING
 Ein %predefinedshipdesign% ist in %system% aufgetaucht!
@@ -3095,6 +3006,9 @@ The %empire% ship %ship% has been destroyed by mines in the %system% system!
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Systemminem zerstörten Schiff
 
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
@@ -3112,6 +3026,10 @@ SITREP_EMPIRE_ELIMINATED
 %empire% wurde ausgelöscht.
 SITREP_EMPIRE_ELIMINATED_LABEL
 Imperium ausgeloescht
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -3390,8 +3308,6 @@ METER_STEALTH
 Tarnung
 METER_DETECTION
 Aufklärungsreichweite
-METER_DAMAGE
-Schaden
 METER_SPEED
 Geschwindigkeit
 METER_CAPACITY
@@ -3480,14 +3396,6 @@ Leer
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Waffen
-PC_MISSILES
-Raketen
-PC_FIGHTERS
-Abfangjäger
-PC_POINT_DEFENSE
-Punktverteidigung
 PC_SHIELD
 Schilde
 PC_ARMOUR
@@ -3504,6 +3412,8 @@ PC_COLONY
 Kolonisten
 PC_GENERAL
 Sonstiges
+
+# Visibility levels
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -3911,8 +3821,6 @@ GROWTH_CATEGORY
 Wachstum
 ECONOMICS_CATEGORY
 Wirtschaft
-SHIPS_CATEGORY
-Schiffe
 DEFENSE_CATEGORY
 Verteidigung
 SPY_CATEGORY
@@ -4941,34 +4849,8 @@ Fassungsvermögen: %1%
 PART_DESC_STRENGTH
 Stärke: %1%
 
-# Detection Range: %2%
-
 PART_DESC_DIRECT_FIRE_STATS
 Angriffsschaden: %1%
-
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
-
-PART_DESC_LR_STATS
-'''Schaden: %1%
-Schusskadenz: %2% Raketen/Runde
-Reichweite: %3%
-Raketen Geschwindigkeit: %4%
-Raketen Struktur: %5%
-Raketen [[encyclopedia STEALTH_TITLE]]: %6%
-Fassungsvermögen: %7% Raketen'''
-
-PART_DESC_FIGHTER_STATS
-'''Abfangjägertyp: %1%
-Abfangjäger Schaden gegen Abfangjäger: %3%
-Abfangjäger Schaden gegen Schiffe: %2%
-Abfangjäger Startkadenz: %4% Abfangjäger/Runde
-Abfangjäger Geschwindigkeit: %5%
-Abfangjäger Struktur: %6%
-Abfangjäger [[encyclopedia STEALTH_TITLE]]: %7%
-Abfangjäger Aufklärungsreichweite: %8%
-Fassungsvermögen: %9% Abfangjäger'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -4979,87 +4861,24 @@ Massenkatapult 1
 SR_WEAPON_1_1_DESC
 Der Massenkatapult, eine Standardwaffe.
 
-SR_WEAPON_1_2
-Massenkatapult 2
-SR_WEAPON_1_2_DESC
-Der Massenkatapult, auf Stufe 2 verbessert.
-
-SR_WEAPON_1_3
-Massenkatapult 3
-SR_WEAPON_1_3_DESC
-Der Massenkatapult, auf Stufe 3 verbessert.
-
-SR_WEAPON_1_4
-Massenkatapult 4
-SR_WEAPON_1_4_DESC
-Der Massenkatapult, auf Stufe 4 verbessert.
-
 SR_WEAPON_2_1_DESC
 Der Laser, eine viel leistungsfähigere Schiffswaffe als der Massenkatapult.
-
-SR_WEAPON_2_2_DESC
-Laser, auf Stufe 2 verbessert.
-
-SR_WEAPON_2_3_DESC
-Laser, auf Stufe 3 verbessert.
-
-SR_WEAPON_2_4_DESC
-Laser, auf Stufe 4 verbessert.
 
 SR_WEAPON_3_1
 Plasmakanone 1
 SR_WEAPON_3_1_DESC
 Die Plasmakanone, eine viel leistungsfähigere Schiffswaffe als der Laser.
 
-SR_WEAPON_3_2
-Plasmakanone 2
-SR_WEAPON_3_2_DESC
-Plasmakanone, auf Stufe 2 verbessert.
-
-SR_WEAPON_3_3
-Plasmakanone 3
-SR_WEAPON_3_3_DESC
-Plasmakanone, auf Stufe 3 verbessert.
-
-SR_WEAPON_3_4
-Plasmakanone 4
-SR_WEAPON_3_4_DESC
-Plasmakanone, auf Stufe 4 verbessert.
-
 SR_WEAPON_4_1
 Todesstrahl 1
 SR_WEAPON_4_1_DESC
 Der Todesstrahl, die ultimative Schiffswaffe.
-
-SR_WEAPON_4_2
-Todesstrahl 2
-SR_WEAPON_4_2_DESC
-Todesstrahl, auf Stufe 2 verbessert.
-
-SR_WEAPON_4_3
-Todesstrahl 3
-SR_WEAPON_4_3_DESC
-Todesstrahl, auf Stufe 3 verbessert.
-
-SR_WEAPON_4_4
-Todesstrahl 4
-SR_WEAPON_4_4_DESC
-Todesstrahl, auf Stufe 4 verbessert. Die ultimative Verbesserung der ultimativen Waffe.
-
-SR_WEAPON_2_DESC
-Wenig Durchschlagskraft und Masse
 
 SR_ION_CANNON
 Ionenkanone
 
 SR_ION_CANNON_DESC
 Akzeptable Durchschlagskraft und Masse
-
-SR_WEAPON_1
-Masstreiber
-
-SR_WEAPON_4
-Todesstrahl
 
 PD_PULSE_LASER
 Impulslaser
@@ -5294,6 +5113,18 @@ SH_COSMIC_DRAGON_BODY_DESC
 A fearsom space dragon the size of a small planet.
 
 #############################################################
+####              B U I L D I N G  M A C R O S           ####
+#############################################################
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+#############################################################
 ####              S P E C I E S   P I C K S              ####
 #############################################################
 
@@ -5333,22 +5164,22 @@ GREAT_RESEARCH
 ULTIMATE_RESEARCH
 +++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%
 
-NO_GROUND_TROOPS
+NO_DEFENSE_TROOPS
 −−−	Keine Boden[[encyclopedia TROOP_TITLE]]
 
-BAD_GROUND_TROOPS
+BAD_DEFENSE_TROOPS
 −	Schlechte Boden[[encyclopedia TROOP_TITLE]]: -50%
 
-AVERAGE_GROUND_TROOPS
+AVERAGE_DEFENSE_TROOPS
 '''	Mittelmäßige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
 
-GOOD_GROUND_TROOPS
+GOOD_DEFENSE_TROOPS
 +	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.
 
-GREAT_GROUND_TROOPS
+GREAT_DEFENSE_TROOPS
 ++	Große Boden[[encyclopedia TROOP_TITLE]]: 200%.
 
-ULTIMATE_GROUND_TROOPS
+ULTIMATE_DEFENSE_TROOPS
 +++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.
 
 BAD_DETECTION
@@ -5508,3 +5339,47 @@ Gute Sicht
 EXCELLENT_VISION_LABEL
 Ausgezeichnete Sicht
 
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"

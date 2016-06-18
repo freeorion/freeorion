@@ -1154,9 +1154,9 @@ GSETUP_ELLIPTICAL
 Эллиптическая
 GSETUP_RING
 Кольцо
+
 GSETUP_RANDOM
 Случайно
-
 GSETUP_NONE
 Нет
 GSETUP_LOW
@@ -1278,13 +1278,10 @@ OPTIONS_FONT_TEXT
 OPTIONS_FONT_TITLE
 Заголовки окон
 
-OPTIONS_TECH_SPACING
-Технический интервал
-
-OPTIONS_HORIZONTAL
+OPTIONS_TECH_SPACING_HORIZONTAL
 Горизонтальный
 
-OPTIONS_VERTICAL
+OPTIONS_TECH_SPACING_VERTICAL
 Вертикальный
 
 OPTIONS_TOOLTIP_DELAY
@@ -1693,9 +1690,6 @@ MAP_BTN_MESSAGES
 MAP_PRODUCTION_TITLE
 Производство
 
-MAP_PRODUCTION_TEXT
-Производство всей империи
-
 MAP_PROD_WASTED_TITLE
 Простаивающие мощности
 
@@ -1707,9 +1701,6 @@ MAP_PROD_WASTED_TEXT
 
 MAP_RESEARCH_TITLE
 Наука
-
-MAP_RESEARCH_TEXT
-Наука всей империи
 
 MAP_RES_WASTED_TITLE
 Простаивающие лаборатории
@@ -2175,11 +2166,8 @@ TECH_WND_ENQUEUED
 TECH_WND_UNRESEARCHED_PREREQUISITES
 '''Необходимо Исследовать: '''
 
-TECH_WND_LIST_VIEW
-Просмотр списком
-
-TECH_WND_TREE_VIEW
-Просмотр в виде дерева
+TECH_WND_VIEW_TYPE
+Список / Дерево
 
 TECH_WND_REQUIRES
 Необходимы
@@ -2209,9 +2197,6 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 ###############
 
 RESEARCH_WND_TITLE
-Исследования
-
-RESEARCH_INFO_PANEL_TITLE
 Исследования
 
 RESEARCH_INFO_RP
@@ -2362,8 +2347,6 @@ DESIGN_KNOWN_DETAIL
 ################
 ## Statistics ##
 ################
-
-    
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -3330,10 +3313,8 @@ EFFECT_CONC_CAMP_COMLETE
 EFFECT_CONC_CAMP_COMLETE_LABEL
 '''Этническая чистка '''
 
-EFFECT_DRYDOCK_SHIP_REPAIR
+EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 %ship% починен в %building% на %planet%.
-EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Ремонт Сухой Док
 
 EFFECT_MONSTER_SPAWNING
 %predefinedshipdesign% Появился в %system%!
@@ -3386,6 +3367,10 @@ SITREP_EMPIRE_ELIMINATED
 Империя %empire% была уничтожена.
 SITREP_EMPIRE_ELIMINATED_LABEL
 Империя Уничтожена.
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -4316,8 +4301,6 @@ SL_TOOLTIP_DESC
 
 # Ship Part Classes
 
-PC_FIGHTERS
-Истребители
 PC_SHIELD
 Щиты
 PC_ARMOUR
@@ -4336,6 +4319,8 @@ PC_GENERAL
 '''Общий '''
 PC_BOMBARD
 Бомбардировка
+
+# Visibility levels
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -4711,8 +4696,6 @@ DESC_SPECIES
 DESC_SPECIES_NOT
 ''' у этого нет артефакта %1%'''
 
- 
-
 DESC_FOCUS_TYPE
 ''' это имеет цель %1%'''
 
@@ -4850,7 +4833,7 @@ DESC_CAN_PRODUCE_SHIPS
 
 DESC_CAN_PRODUCE_SHIPS_NOT
 ''' виды, которые не могут производить суда'''
- 
+
 DESC_SUPPLY_CONNECTED_FLEET
 ''' находится в системе, где империя %1% может осуществлять снабжение флота'''
 
@@ -4985,8 +4968,6 @@ GROWTH_CATEGORY
 Демография
 ECONOMICS_CATEGORY
 Экономика
-SHIPS_CATEGORY
-Кораблестроение
 DEFENSE_CATEGORY
 Оборона
 SPY_CATEGORY
@@ -6285,34 +6266,8 @@ PART_DESC_CAPACITY
 PART_DESC_STRENGTH
 Сила: %1%
 
-# Detection Strength: %1%
-
 PART_DESC_DIRECT_FIRE_STATS
 Урон при атаке: %1%
-
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
-
-PART_DESC_LR_STATS
-'''Урон: %1%
-Скорость ведения огня: %2% ракет/ход
-Дальность: %3%
-Скорость ракет: %4%
-Прочность ракет: %5%
-[[encyclopedia STEALTH_TITLE]] ракет: %6%
-Вместимость: %7% ракет'''
-
-PART_DESC_FIGHTER_STATS
-'''Тип истребителя: %1%
-Урон истребителям врага: %3%
-Урон кораблям врага: %2%
-Скорость запуска истребителей: %4% шт./ход
-Скорость истребителей: %5%
-Живучесть истребителей: %6%
-[[encyclopedia STEALTH_TITLE]] истребителей: %7%
-Обнаружение истребителей: %8%
-Вместимость: %9% истребителей'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -7362,9 +7317,13 @@ AI_CAPITOL_NAMES_TURTLE
 
 ### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists 
+### AI Diplomacy Strings and Lists
 ### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
 ### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
 
 ### End of AI Diplomacy Message Lists
 

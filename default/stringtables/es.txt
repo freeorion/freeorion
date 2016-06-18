@@ -68,7 +68,16 @@ Nueva Flota %1%
 NEW_FLEET_NAME_NO_NUMBER
 Nueva Flota
 
-# used to generate name for effect-created planets. %1% is the system name.
+# new asteroids or new planet names...
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
+
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 BOMBER
 Bombardero
@@ -160,6 +169,14 @@ Diente de Dragón
 SD_DRAGON_TOOTH_DESC
 Antiguo diseño naval con armas avanzadas y sistemas defensivos.
 
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -248,9 +265,6 @@ Mostrar línea de escala para la distancia del universo en el mapa de galaxia.
 
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Alterna entre enseñar o no la barra de nivel de zoom en el mapa de galaxia.
-
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Usar renderizado vistoso optimizado de OpenGL 1.5 para los sistemas en el mapa de galaxia.  Es posible que no funcione con una tarjeta gráfica antigua.
 
 OPTIONS_DB_STARLANE_THICKNESS
 Establece el ancho para renderizar las líneas de suministro en pixeles.
@@ -573,18 +587,6 @@ Establece el número de turnos que pasarán entre auto guardados.
 OPTIONS_DB_MUSIC_VOLUME
 El volumen (de 0 a 255) en el que la música se reproduce.
 
-OPTIONS_DB_COMBAT_ENABLE_GLOW
-Alterna los efectos de brillo entre encendido y apagado
-
-OPTIONS_DB_COMBAT_ENABLE_SKYBOX
-Alterna el skybox de fondo entre encendido y apagado
-
-OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
-Alterna las bengalas entre encendido y apagado.
-
-OPTIONS_DB_COMBAT_FILLED_SELECTION
-Usa un efecto de relleno en vez de un efecto esquemático en los objetos seleccionados.
-
 OPTIONS_DB_QUICKSTART
 Comienza un nuevo juego rápido, sin pasar por el menu.
 
@@ -593,12 +595,6 @@ Comprueba si la versión OpenGL del sistema ha sido revisada.  Si es falso, algu
 
 OPTIONS_DB_AUTO_EFFECT_DESC
 Alterna entre incluir o no texto autogenerado en las descripciones de tecnología, edificio o parte de nave.
-
-OPTIONS_DB_TECH_DEMO
-Prueba la demo del combate 3D.
-
-OPTIONS_DB_TEST_3D_COMBAT
-Probar resolución de combate 3D.
 
 OPTIONS_DB_LOAD
 Carga la partida guardada de un solo jugador especificada.
@@ -923,9 +919,6 @@ Texto
 OPTIONS_FONT_TITLE
 Títulos de ventanas
 
-OPTIONS_TECH_SPACING
-Espacio de tecnología
-
 OPTIONS_TOOLTIP_DELAY
 Retraso de las sugerencias (ms)
 
@@ -976,9 +969,6 @@ Descripciones de Contenidos
 
 OPTIONS_SYSTEM_ICONS
 Iconos de Sistema
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Sistema optimizado de renderizado
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Tamaño del Icono de Sistema
@@ -1169,9 +1159,6 @@ Apariencia UI
 OPTIONS_PAGE_COLORS
 Colores
 
-OPTIONS_PAGE_COMBAT
-Combate
-
 OPTIONS_PAGE_DIRECTORIES
 Directorios
 
@@ -1199,15 +1186,6 @@ Barra
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Fondo
 
-OPTIONS_COMBAT_ENABLE_GLOW
-Brillo
-
-OPTIONS_COMBAT_ENABLE_LENS_FLARES
-Bengalas
-
-OPTIONS_COMBAT_FILLED_SELECTION
-Selección rellenada
-
 OPTIONS_ANY_FILE
 Todos los archivos
 
@@ -1231,16 +1209,6 @@ Archivos de sonido
 
 OPTIONS_AUTO_EFFECT_DESC
 Descripciones de efectos autogenerados
-
-##################
-# CombatSetupWnd #
-##################
-
-AUTO_PLACE_SHIPS
-Colocado automático de Naves
-
-REDO_PLACEMENTS
-Rehacer Emplazamientos
 
 #################
 # Main Map      #
@@ -1323,6 +1291,8 @@ Seleccionar colonizador
 
 RP_FOCUS_TOOLTIP
 Enfoque: %1%
+
+## Specials Panel ##########
 
 ## Buildings Panel##########
 
@@ -1468,6 +1438,14 @@ ORDER_CANCEL_SHIP_SCRAP
 Cancelar Destruir Nave
 
 ###############
+#  Moderator  #
+###############
+
+###############
+#  Diplomacy  #
+###############
+
+###############
 # TechTreeWnd #
 ###############
 
@@ -1513,11 +1491,8 @@ Completado
 TECH_WND_STATUS_RESEARCHABLE
 Investigable
 
-TECH_WND_LIST_VIEW
-Vista de Lista
-
-TECH_WND_TREE_VIEW
-Vista de Árbol
+TECH_WND_VIEW_TYPE
+Vde Árbol / De Lista
 
 TECH_WND_REQUIRES
 Requiere
@@ -1535,23 +1510,11 @@ Puntos disponibles
 PRODUCTION_INFO_WASTED_PS_LABEL
 Puntos gastados
 
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Proyectos en progreso
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Proyecto estancado
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Proyectos en cola
-
 ###############
 # ResearchWnd #
 ###############
 
 RESEARCH_WND_TITLE
-Investigación
-
-RESEARCH_INFO_PANEL_TITLE
 Investigación
 
 ####################
@@ -1596,9 +1559,6 @@ Centrar en construcción
 #################
 
 PRODUCTION_WND_TITLE
-Producción
-
-PRODUCTION_INFO_PANEL_TITLE
 Producción
 
 PRODUCTION_QUEUE_MULTIPLES
@@ -1656,6 +1616,10 @@ Limpiar Partes
 
 DESIGN_DELETE
 Borrar Diseño
+
+################
+## Statistics ##
+################
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -1748,6 +1712,33 @@ Capacidad de Combustible: %11%
 Capacidad de Colonización: %12%
 Ocultación: %13%
 '''
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+
+###########################################
+# Combat Report #
+###########################################
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
+###########################################
+# ARTICLES #
+###########################################
+
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
+
+#
+# Guides
+#
 
 ####################
 # Combat Messages  #
@@ -1808,6 +1799,26 @@ Ejecutando ordenes ...
 TURN_PROGRESS_PHASE_DOWNLOADING
 Descargando estado actual del juego ...
 
+########################
+# Messages Panel       #
+########################
+
+########################
+# Players List         #
+########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
@@ -1820,12 +1831,7 @@ Reporte de Situación
 SITREP_ERROR
 Ha ocurrido un evento desconocido.
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
-## these sitreps to be presented in the SitrepPanel in the order set below.
-## Sitreps not specified below will appear in the SitrepPanel following those below.
-
-## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
-## END OF SITREP_PRIORITY_ORDER
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 La nave %ship% ha sido producida en el sistema %system%.
@@ -1851,6 +1857,9 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% ha llegado al sistema %system% y espera ordenes.
 
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
@@ -1863,6 +1872,10 @@ El imperio %empire% ha alcanzado una victoria como único superviviente.
 
 SITREP_EMPIRE_ELIMINATED
 El imperio %empire% ha sido eliminado.
+
+#############################################################
+####           RANDOM BEGINNER HINTS                     ####
+#############################################################
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -2087,8 +2100,6 @@ METER_STEALTH
 Ocultación
 METER_DETECTION
 Detección
-METER_DAMAGE
-Daño
 METER_SPEED
 Velocidad
 METER_CAPACITY
@@ -2161,14 +2172,6 @@ Interno
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Corto Alcance
-PC_MISSILES
-Misiles
-PC_FIGHTERS
-Cazas
-PC_POINT_DEFENSE
-Punto de Defensa
 PC_SHIELD
 Escudos
 PC_ARMOUR
@@ -2181,6 +2184,8 @@ PC_FUEL
 Combustible
 PC_COLONY
 Colonización
+
+# Visibility levels
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -2388,8 +2393,6 @@ DESC_SPECIES
 DESC_SPECIES_NOT
 ''' que no contiene especies %1%'''
 
- 
-
 DESC_FOCUS_TYPE
 ''' que tiene un enfoque %1%'''
 
@@ -2456,8 +2459,6 @@ DESC_STATIONARY
 DESC_STATIONARY_NOT
 ''' que no es estacionario'''
 
- 
-
 DESC_AND_BETWEEN_OPERANDS
 ''' y'''
 
@@ -2508,8 +2509,6 @@ GROWTH_CATEGORY
 Crecimiento
 ECONOMICS_CATEGORY
 Economía
-SHIPS_CATEGORY
-Naves
 
 #############################################################
 ####               T E C H   T H E O R I E S             ####
@@ -3842,36 +3841,10 @@ Capacidad: %1%
 PART_DESC_STRENGTH
 Fuerza: %1%
 
-# Detection Range: %2%
-
 PART_DESC_DIRECT_FIRE_STATS
 '''Daño: %1%
 Cadencia de Disparo: %2% disparos/turno
 Alcance: %3%'''
-
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
-
-PART_DESC_LR_STATS
-'''Daño: %1%
-Cadencia de Disparo: %2% misiles/turno
-Alcance: %3%
-Velocidad del Misil: %4%
-Salud del Misil: %5%
-Ocultación del Misil: %6%
-Capacidad: %7% misiles'''
-
-PART_DESC_FIGHTER_STATS
-'''Tipo de Caza: %1%
-Caza Anti-Caza Daño: %2%
-Caza Anti-Nave Daño: %3%
-Caza Cadencia de Lanzamiento: %4% cazas/turno
-Caza Velocidad: %6%
-Caza Salud: %7%
-Caza Ocultación: %8%
-Caza Detección: %9%
-Capacidad: %10% Cazas'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -4347,3 +4320,67 @@ Casco de Colonia Base
 SH_COLONY_BASE_DESC
 Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede moverse entre sistemas o de forma rápida dentro del sistema.
 
+#############################################################
+####              B U I L D I N G  M A C R O S           ####
+#############################################################
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+# NOTE TO TRANSLATORS:
+# The following lists group the AI turn 1 greetings by AI aggression level.
+# These are functional lists that must not be translated!
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"
