@@ -1958,6 +1958,11 @@ void TechTreeWnd::InitializeWindows() {
 void TechTreeWnd::ShowCategory(const std::string& category) {
     m_layout_panel->ShowCategory(category);
     m_tech_list->ShowCategory(category);
+
+    std::map<std::string, GG::StateButton*>::iterator
+        maybe_button = m_tech_tree_controls->m_cat_buttons.find(category);
+    if (maybe_button != m_tech_tree_controls->m_cat_buttons.end())
+        maybe_button->second->SetCheck(true);
 }
 
 void TechTreeWnd::ShowAllCategories() {
@@ -1972,6 +1977,11 @@ void TechTreeWnd::ShowAllCategories() {
 void TechTreeWnd::HideCategory(const std::string& category) {
     m_layout_panel->HideCategory(category);
     m_tech_list->HideCategory(category);
+
+    std::map<std::string, GG::StateButton*>::iterator
+        maybe_button = m_tech_tree_controls->m_cat_buttons.find(category);
+    if (maybe_button != m_tech_tree_controls->m_cat_buttons.end())
+        maybe_button->second->SetCheck(false);
 }
 
 void TechTreeWnd::HideAllCategories() {
