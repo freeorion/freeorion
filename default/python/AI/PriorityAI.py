@@ -71,8 +71,6 @@ def calculate_priorities():
     foAI.foAIstate.set_priority(PriorityType.RESEARCH_DEFENSE, 0)
     prioritiees_timer.end()
 
-    # foAI.foAIstate.print_priorities()
-
 
 def _calculate_industry_priority():  # currently only used to print status
     """calculates the demand for industry"""

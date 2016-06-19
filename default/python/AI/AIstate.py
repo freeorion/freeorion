@@ -199,22 +199,6 @@ class AIstate(object):
             sys.stderr.write("Error converting fleet summary %s: %s\n" % (summary, e))
             return None
             
-    # TODO not used
-    def update_fleet_locs(self):
-        universe = fo.getUniverse()
-        moved_fleets = []
-        for fleet_id in self.fleetStatus:
-            old_location = self.fleetStatus[fleet_id]['sysID']
-            fleet = universe.getFleet(fleet_id)
-            if not fleet:
-                print "can't retrieve fleet %4d to update location" % fleet_id
-                continue  # TODO: update elsewhere?
-            new_location = fleet.systemID
-            if new_location != old_location:
-                moved_fleets.append((fleet_id, old_location, new_location))
-                self.fleetStatus[fleet_id]['sysID'] = new_location
-                self.fleetStatus[fleet_id]['nships'] = len(fleet.shipIDs)
-
     def delete_fleet_info(self, fleet_id):
         if fleet_id in self.__aiMissionsByFleetID:
             del self.__aiMissionsByFleetID[fleet_id]
@@ -534,16 +518,6 @@ class AIstate(object):
             threat_fleets.update(sys_status.get('local_fleet_threats', []))
         return threat, max_threat, myrating, threat_fleets
 
-    def after_turn_cleanup(self):
-        """Removes not required information to save from AI state after AI complete its turn."""
-        # some ships in fleet can be destroyed between turns and then fleet may have have different roles
-        # self.__fleetRoleByID = {}
-        pass
-
-    def __has_fleet_mission(self, fleet_id):
-        """Returns True if fleetID has AIFleetMission."""
-        return fleet_id in self.__aiMissionsByFleetID
-
     def get_fleet_mission(self, fleet_id):
         """Returns AIFleetMission with fleetID."""
         if fleet_id in self.__aiMissionsByFleetID:
@@ -661,29 +635,6 @@ class AIstate(object):
             nships += 1
         fleet_summary_tuples = [(v[0], k) for k, v in summary.items()]
         return {'overall': attack * health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships, 'summary': fleet_summary_tuples}
-
-    def old_rate_fleet(self, fleet_id):
-        universe = fo.getUniverse()
-        fleet = universe.getFleet(fleet_id)
-        # if fleet and not fleet.aggressive and fleet.ownedBy(self.empireID):
-        #     fleet.setAggressive(True)
-        if not fleet:
-            return {}
-        rating = 0
-        attack = 0
-        health = 0
-        nships = 0
-        for ship_id in fleet.shipIDs:
-            # could approximate by design, but checking meters has better current accuracy
-            ship = universe.getShip(ship_id)
-            if not ship:
-                continue
-            stats = self.get_design_id_stats(ship.designID)
-            rating += stats['attack'] * (stats['structure'] + stats['shields'])
-            attack += stats['attack']
-            health += (stats['structure'] + stats['shields'])
-            nships += 1
-        return {'overall': attack * health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships}
 
     def get_rating(self, fleet_id, force_new=False, enemy_stats=None):
         """Returns a dict with various rating info."""
@@ -854,26 +805,6 @@ class AIstate(object):
             self.__shipRoleByDesignID[ship_design_id] = role
             return role
 
-    def add_ship_role(self, ship_design_id, ship_role):
-        """Adds a ship designID/role pair."""
-        if not (ship_role in get_ship_roles_types()):
-            print "Invalid shipRole: " + str(ship_role)
-            return
-        elif ship_design_id in self.__shipRoleByDesignID:
-            return
-        else:
-            self.__shipRoleByDesignID[ship_design_id] = ship_role
-
-    def remove_ship_role(self, ship_design_id):
-        """Removes a ship designID/role pair."""
-
-        if ship_design_id in self.__shipRoleByDesignID:
-            print "Removed role for ship design %d named: %s" % (ship_design_id, fo.getShipDesign(ship_design_id).name)
-            del self.__shipRoleByDesignID[ship_design_id]
-            return
-        else:
-            print "No existing role found for ship design %d named: %s" % (ship_design_id, fo.getShipDesign(ship_design_id).name)
-
     def get_fleet_roles_map(self):
         return self.__fleetRoleByID
 
@@ -903,22 +834,6 @@ class AIstate(object):
             fo.issueAggressionOrder(fleet_id, make_aggressive)
             return role
 
-    def add_fleet_role(self, fleet_id, mission_type):
-        """Adds a fleet ID/role pair."""
-
-        if not check_validity(mission_type):
-            return
-        if fleet_id in self.__fleetRoleByID:
-            return
-        else:
-            self.__fleetRoleByID[fleet_id] = mission_type
-
-    def remove_fleet_role(self, fleet_id):
-        """Removes a fleet ID/role pair."""
-        if fleet_id in self.__fleetRoleByID:
-            del self.__fleetRoleByID[fleet_id]
-            return
-
     def session_start_cleanup(self):
         self.newlySplitFleets = {}
         for fleetID in FleetUtilsAI.get_empire_fleet_ids():
@@ -937,14 +852,6 @@ class AIstate(object):
         self.qualifyingColonyBaseTargets.clear()
         self.qualifyingOutpostBaseTargets.clear()
         self.qualifyingTroopBaseTargets.clear()
-        # self.reset_invasions()
-        
-    def reset_invasions(self):
-        """Useful when testing changes to invasion planning."""
-        invasion_missions = self.get_fleet_missions_with_any_mission_types([MissionType.INVASION])
-        for mission in invasion_missions:
-            mission.clear_fleet_orders()
-            mission.clear_target()
 
     def __clean_fleet_roles(self, just_resumed=False):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
@@ -1063,17 +970,6 @@ class AIstate(object):
         if priority_type in self.__priorityByType:
             return copy.deepcopy(self.__priorityByType[priority_type])
         return 0
-
-    def get_all_priorities(self):
-        """Returns a dictionary with all priority values."""
-        return copy.deepcopy(self.__priorityByType)
-
-    def print_priorities(self):
-        """Prints all priorities."""
-        print "all priorities:"
-        for priority in self.__priorityByType:
-            print "    %s: %s" % (priority, self.__priorityByType[priority])
-        print
 
     def split_new_fleets(self):
         """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
