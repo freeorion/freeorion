@@ -41,7 +41,7 @@ def calculate_priorities():
     prioritiees_timer.start('Evaluating Invasion Status')
     InvasionAI.get_invasion_fleets()  # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     prioritiees_timer.start('Evaluating Military Status')
-    MilitaryAI.get_military_fleets()  # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
+    MilitaryAI.get_military_fleets()
     prioritiees_timer.start('reporting Production Priority')
     print("Calculating priorities")
     _calculate_industry_priority()  # purely for reporting purposes

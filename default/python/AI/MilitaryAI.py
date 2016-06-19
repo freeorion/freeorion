@@ -127,14 +127,6 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     for fid in all_military_fleet_ids:
         num_milships += foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
 
-    this_tot_mil_rating = sum(map(lambda x: foAI.foAIstate.get_rating(x).get('overall', 0), all_military_fleet_ids))
-    if "Main" in thisround:
-        totMilRating = this_tot_mil_rating
-        print "=================================================="
-        print "%s Round Total Military Rating: %d" % (thisround, totMilRating)
-        print "---------------------------------"
-        foAI.foAIstate.militaryRating = totMilRating
-
     enemy_rating = foAI.foAIstate.empire_standard_enemy_rating
 
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
@@ -506,8 +498,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                 print "-----------------"
 
     current_mil_systems = [sid for sid, alloc, take_any, mm in allocations]
-    interior_ids = list(foAI.foAIstate.expInteriorSystemIDs)
-    interior_targets1 = (targetable_ids.union(interior_ids)).difference(current_mil_systems)
+    interior_targets1 = targetable_ids.difference(current_mil_systems)
     interior_targets = [sid for sid in interior_targets1 if (
         threat_bias + systems_status.get(sid, {}).get('totalThreat', 0) > 0.8 * already_assigned_rating[sid])]
     if "Main" in thisround:
@@ -737,7 +728,6 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             fleet_mission.add_target(mission_type, target)
 
         all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
-        AIstate.militaryFleetIDs = all_military_fleet_ids
         if not all_military_fleet_ids:
             military_allocations = []
             return

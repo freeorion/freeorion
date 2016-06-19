@@ -19,7 +19,6 @@ from universe_object import System
 # in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values
 # global variables
 # foodStockpileSize = 1  # food stored per population
-minimalColoniseValue = 3  # minimal value for a planet to be colonised
 colonyTargetedSystemIDs = []
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
@@ -28,13 +27,10 @@ invasionTargets = []
 invasionTargetedSystemIDs = []
 blockadeTargetedSystemIDs = []
 militarySystemIDs = []
-militaryTargetedSystemIDs = []
 colonyFleetIDs = []
 outpostFleetIDs = []
 invasionFleetIDs = []
-militaryFleetIDs = []
 fleetsLostBySystem = {}
-fleetsLostByID = {}
 popCtrSystemIDs = []
 colonizedSystems = {}
 empireStars = {}
@@ -56,14 +52,12 @@ class AIstate(object):
 
         # 'global' (?) variables
         # self.foodStockpileSize = 1    # food stored per population
-        self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
         self.colonisablePlanetIDs = odict()
         self.colonisableOutpostIDs = odict()  #
         self.__aiMissionsByFleetID = {}
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}
         self.designStats = {}
-        self.design_rating_adjustments = {}
         self.diplomatic_logs = {}
         self.__priorityByType = {}
 
@@ -84,8 +78,6 @@ class AIstate(object):
             self.origHomeSystemID = -1
         self.visBorderSystemIDs = {self.origHomeSystemID: 1}
         self.visInteriorSystemIDs = {}
-        self.expBorderSystemIDs = {self.origHomeSystemID: 1}
-        self.expInteriorSystemIDs = {}
         self.exploredSystemIDs = {}
         self.unexploredSystemIDs = {self.origHomeSystemID: 1}
         self.fleetStatus = {}  # keys: 'sysID', 'nships', 'rating'
@@ -96,11 +88,9 @@ class AIstate(object):
         # 'my_neighbor_rating' (up to 1 jump away), 'my_jump2_rating', 'my_jump3_rating', my_jump4_rating'
         # 'local_fleet_threats', 'regional_fleet_threats' <== these are only for mobile fleet threats
         self.systemStatus = {}
-        self.planet_status = {}
         self.needsEmergencyExploration = []
         self.newlySplitFleets = {}
         self.aggression = aggression
-        self.militaryRating = 0
         self.shipCount = 4
         self.misc = {}
         self.qualifyingColonyBaseTargets = {}
@@ -152,7 +142,6 @@ class AIstate(object):
         universe = fo.getUniverse()
         # checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         fleetsLostBySystem.clear()
-        fleetsLostByID.clear()
         invasionTargets[:] = []
         exploration_center = PlanetUtilsAI.get_capital_sys_id()
         if exploration_center == -1:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
@@ -938,7 +927,6 @@ class AIstate(object):
             self.ensure_have_fleet_missions([fleetID])
         self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
-        fleetsLostByID.clear()
         popCtrSystemIDs[:] = []  # resets without detroying existing references
         colonizedSystems.clear()
         empireStars.clear()
