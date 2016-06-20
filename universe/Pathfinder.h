@@ -126,7 +126,6 @@ public:
 
     //@}
 
-private:
     class PathfinderImpl;
     std::unique_ptr<PathfinderImpl> const pimpl;
 

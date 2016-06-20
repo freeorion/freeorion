@@ -16,6 +16,7 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/variant/variant.hpp>
 
 #include <algorithm>
 #include <stdexcept>
@@ -558,6 +559,7 @@ class Pathfinder::PathfinderImpl {
     double LinearDistance(int object1_id, int object2_id) const;
     short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
     int JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+
     std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     double ShortestPathDistance(int object1_id, int object2_id) const;
     std::pair<std::list<int>, int> LeastJumpsPath(
@@ -679,122 +681,138 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
     }
 }
 
-int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id);
+namespace {
+    /**ObjectLocation can be nowhere, one system or two systems in the
+       case of a ship or fleet in transit.
+       The returned variant is
+       void() -- nowhere
+       System -- somewhere
+       pair of Systems  -- in transit
+
+       Using float to represent no location instead of wrapping the whole
+       Variant in boost::optional allows the visitors to be more
+       uniform.  The type needed to be not implicitly convertible to
+       int.  The type should really be void.
+
+    */
+    typedef void (*NowhereType)();
+    void Nowhere() {}
+    typedef boost::variant<NowhereType, int, std::pair<int, int > > ObjectSystemIDType;
+
+    ObjectSystemIDType ObjectSystemID(std::shared_ptr<const UniverseObject> obj) {
+        if (!obj)
+            return &Nowhere;
+
+        int system_id = obj->SystemID();
+        std::shared_ptr<const System> system = GetSystem(system_id);
+        if (system)
+            return system_id;
+
+        std::shared_ptr<const Fleet> fleet = FleetFromObject(obj);
+        if (fleet)
+            return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
+
+        ErrorLogger() << "ObjectLocation unable to locate " << obj->Name() << "(" << obj->ID() << ")";
+        return &Nowhere;
+    }
+
+    ObjectSystemIDType ObjectSystemID(int object_id) {
+        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+        return ObjectSystemID(obj);
+    }
+
 }
 
-int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
-    if (!obj1)
-        return INT_MAX;
+struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
+    JumpDistanceSys2Visitor(Pathfinder::PathfinderImpl const & _pf, int _sys_id1) :
+        pf(_pf), sys_id1(_sys_id1) {}
 
-    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
-    if (!obj2)
-        return INT_MAX;
+    int operator()(NowhereType) const { return INT_MAX; }
 
-    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
-
-    if (system_one && system_two) {
-        // both condition-matching object and candidate are / in systems.
-        // can just find the shortest path between the two systems
+    /** Simple case of two system ids */
+    int operator()(int sys_id2) const {
         short jumps = -1;
         try {
-            jumps = JumpDistanceBetweenSystems(system_one->ID(), system_two->ID());
-        } catch (...) {
-            ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            jumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
+        } catch (std::out_of_range const &) {
+            ErrorLogger() << "JumpsBetweenObjects caught out of range exception sys_id1 = "
+                          << sys_id1 << " sys_id2 = " << sys_id2;
+            return INT_MAX;
         }
         if (jumps != -1)    // if jumps is -1, no path exists between the systems
             return static_cast<int>(jumps);
         else
             return INT_MAX;
+    }
 
-    } else if (system_one) {
-        // just object one is / in a system.
-        // TODO generalize Object to report multiple systems for things
-        // like fleets in transit
-        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj2)) {
-            // other object is a fleet that is between systems
-            // need to check shortest path from systems on either side of starlane fleet is on
-            short jumps1 = -1, jumps2 = -1;
-            try {
-                if (fleet->PreviousSystemID() != -1)
-                    jumps1 = JumpDistanceBetweenSystems(system_one->ID(), fleet->PreviousSystemID());
-                if (fleet->NextSystemID() != -1)
-                    jumps2 = JumpDistanceBetweenSystems(system_one->ID(), fleet->NextSystemID());
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, jumps2));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
+    /** A single system id and a fleet with two locations*/
+    int operator()(std::pair<int, int> prev_next) const {
+        short jumps1 = -1, jumps2 = -1;
+        int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
+        try {
+            if (prev_sys_id != INVALID_OBJECT_ID)
+                jumps1 = pf.JumpDistanceBetweenSystems(sys_id1, prev_sys_id);
+            if (next_sys_id!= INVALID_OBJECT_ID)
+                jumps2 = pf.JumpDistanceBetweenSystems(sys_id1, next_sys_id);
+        } catch (...) {
+            ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
         }
-
-    } else if (system_two) {
-        // just object two is a system.
-        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj1)) {
-            // other object is a fleet that is between systems
-            // need to check shortest path from systems on either side of starlane fleet is on
-            short jumps1 = -1, jumps2 = -1;
-            try {
-                if (fleet->PreviousSystemID() != -1)
-                    jumps1 = JumpDistanceBetweenSystems(system_two->ID(), fleet->PreviousSystemID());
-                if (fleet->NextSystemID() != -1)
-                    jumps2 = JumpDistanceBetweenSystems(system_two->ID(), fleet->NextSystemID());
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, jumps2));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
-    } else {
-        // neither object is / in a system
-
-        std::shared_ptr<const Fleet> fleet_one = FleetFromObject(obj1);
-        std::shared_ptr<const Fleet> fleet_two = FleetFromObject(obj2);
-
-        if (fleet_one && fleet_two) {
-            // both objects are / in a fleet.
-            // need to check all combinations of systems on either sides of
-            // starlanes condition-matching object and candidate are on
-            int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
-            int fleet_one_next_system_id = fleet_one->NextSystemID();
-            int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
-            int fleet_two_next_system_id = fleet_two->NextSystemID();
-            short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
-            try {
-                if (fleet_one_prev_system_id != -1 && fleet_two_prev_system_id != -1)
-                    jumps1 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_prev_system_id);
-                if (fleet_one_prev_system_id != -1 && fleet_two_next_system_id != -1)
-                    jumps2 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_next_system_id);
-                if (fleet_one_next_system_id != -1 && fleet_two_prev_system_id != -1)
-                    jumps3 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_prev_system_id);
-                if (fleet_one_next_system_id != -1 && fleet_two_next_system_id != -1)
-                    jumps4 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_next_system_id);
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
+        int jumps = static_cast<int>(std::max(jumps1, jumps2));
+        if (jumps != -1) {
+            return jumps - 1; // TODO:  why (jumps -1)?
+        } else {
+            // no path
+            return INT_MAX;
         }
     }
-    return INT_MAX;
+    Pathfinder::PathfinderImpl const & pf;
+    int sys_id1;
+};
+
+struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
+    JumpDistanceSys1Visitor(Pathfinder::PathfinderImpl const & _pf,
+                            ObjectSystemIDType const &_sys2_ids) :
+        pf(_pf), sys2_ids(_sys2_ids) {}
+
+    int operator()(NowhereType) const { return INT_MAX; }
+    int operator()(int sys_id1) const {
+        JumpDistanceSys2Visitor visitor(pf, sys_id1);
+        return boost::apply_visitor(visitor, sys2_ids);
+    }
+    int operator()(std::pair<int, int> prev_next) const {
+        short jumps1 = -1, jumps2 = -1;
+        int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
+        if (prev_sys_id != INVALID_OBJECT_ID) {
+            JumpDistanceSys2Visitor visitor(pf, prev_sys_id);
+            jumps1 = boost::apply_visitor(visitor, sys2_ids);
+        }
+        if (next_sys_id!= INVALID_OBJECT_ID) {
+            JumpDistanceSys2Visitor visitor(pf, next_sys_id);
+            jumps2 = boost::apply_visitor(visitor, sys2_ids);
+        }
+
+        int jumps = static_cast<int>(std::max(jumps1, jumps2));
+        if (jumps != -1) {
+            return jumps - 1; // TODO:  why (jumps -1)?
+        } else {
+            // no path
+            return INT_MAX;
+        }
+    }
+    Pathfinder::PathfinderImpl const & pf;
+    ObjectSystemIDType const & sys2_ids;
+};
+
+int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
+    return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id);
 }
 
+int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
+    ObjectSystemIDType obj1 = ObjectSystemID(object1_id);
+    ObjectSystemIDType obj2 = ObjectSystemID(object2_id);
+    JumpDistanceSys1Visitor visitor(*this, obj2);
+    return boost::apply_visitor(visitor, obj1);
+}
 
 std::pair<std::list<int>, double> Pathfinder::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const {
     return pimpl->ShortestPath(system1_id, system2_id, empire_id);
