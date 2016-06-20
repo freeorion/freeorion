@@ -6,6 +6,18 @@ Tech
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
     prerequisites = "PRO_MICROGRAV_MAN"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Species
+                OwnedBy empire = Source.Owner
+                //TargetPopulation low = 0
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "ORBITAL_HAB_LABEL"
+    ]
     graphic = "icons/tech/orbital_gardens.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

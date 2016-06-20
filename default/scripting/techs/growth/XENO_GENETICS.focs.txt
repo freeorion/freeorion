@@ -9,7 +9,29 @@ Tech
         "GRO_SYMBIOTIC_BIO"
         "GRO_GENETIC_MED"
     ]
-    // Effects are located in species
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Planet environment = [
+                    Adequate
+                    Poor
+                ]
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble accountinglabel = "GRO_XENO_GENETICS"
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Planet environment = [ Hostile ]
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "GRO_XENO_GENETICS"
+    ]
     graphic = "icons/tech/xenological_genetics.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

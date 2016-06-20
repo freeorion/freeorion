@@ -9,13 +9,21 @@ Tech
         "CON_FRC_ENRG_STRC"
         "LRN_NDIM_SUBSPACE"
     ]
-    effectsgroups = 
+    effectsgroups = [
         EffectsGroup
             scope = And [
-                        Species
-                        OwnedBy empire = Source.Owner
-                    ]
-            effects = SetTargetConstruction value = Value + 10
+                Species
+                OwnedBy empire = Source.Owner
+            ]
+            accountinglabel = "NDIM_STRC_LABEL"
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetConstruction value = Value + 10
+                SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
+            ]
+    ]
     graphic = "icons/tech/n-dimensional_structures.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

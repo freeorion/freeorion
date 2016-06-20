@@ -6,7 +6,27 @@ Tech
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "GRO_XENO_GENETICS"
-    // Effects are located in species
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Planet environment = [ Poor ]
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "GRO_XENO_HYBRIDS"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Planet environment = [ Hostile ]
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble accountinglabel = "GRO_XENO_HYBRIDS"
+    ]
     graphic = "icons/tech/xenological_hybridization.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"
