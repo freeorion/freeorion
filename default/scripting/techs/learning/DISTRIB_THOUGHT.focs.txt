@@ -13,8 +13,10 @@ Tech
                 OwnedBy empire = Source.Owner
                 // Focus type = "FOCUS_RESEARCH"  //Does not require research Focus
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/distributed_thought.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

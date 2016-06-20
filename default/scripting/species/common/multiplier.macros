@@ -1,5 +1,5 @@
 BAD_MULTIPLIER
-'''0.5'''
+'''0.75'''
 
 AVERAGE_MULTIPLIER
 '''1.0'''
@@ -11,7 +11,7 @@ GREAT_MULTIPLIER
 '''2.0'''
 
 ULTIMATE_MULTIPLIER
-'''4.0'''
+'''3.0'''
 
 BAD_MULTIPLIER_WHOLE
 '''0'''

@@ -14,6 +14,7 @@ Tech
                 Star type = BlackHole
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
@@ -23,6 +24,7 @@ Tech
                 Star type = Neutron
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
@@ -32,6 +34,7 @@ Tech
                 Star type = [Blue White]
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
@@ -41,8 +44,10 @@ Tech
                 Star type = [Red Orange Yellow]
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

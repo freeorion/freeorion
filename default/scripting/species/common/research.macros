@@ -7,6 +7,7 @@ BASIC_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
 
         EffectsGroup      // removes residual production from a dead planet
@@ -33,6 +34,7 @@ BAD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "BAD_RESEARCH_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
 '''
 
@@ -52,6 +54,7 @@ GOOD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "GOOD_RESEARCH_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[GOOD_MULTIPLIER]]
 '''
 
@@ -67,6 +70,7 @@ GREAT_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "GREAT_RESEARCH_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[GREAT_MULTIPLIER]]
 '''
 
@@ -82,5 +86,6 @@ ULTIMATE_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "ULTIMATE_RESEARCH_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetResearch value = Value*[[ULTIMATE_MULTIPLIER]]
 '''

@@ -13,8 +13,10 @@ Tech
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/quantum_networking.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

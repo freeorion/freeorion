@@ -17,6 +17,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
     ]
     icon = "icons/building/science-institute.png"
@@ -24,3 +25,4 @@ BuildingType
 #include "/scripting/common/base_prod.macros"
 
 #include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"

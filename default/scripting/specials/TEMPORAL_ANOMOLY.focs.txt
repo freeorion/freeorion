@@ -15,8 +15,10 @@ Special
                 Source
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 25 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/specials_huge/temporal_anomaly.png"
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
