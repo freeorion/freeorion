@@ -16,7 +16,7 @@ from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_prior
                      FocusType, ShipRoleType, ShipDesignTypes)
 from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error
 from TechsListsAI import EXOBOT_TECH_NAME
-from print_utils import Table, Sequence, Text
+from common.print_utils import Table, Sequence, Text
 
 
 best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
