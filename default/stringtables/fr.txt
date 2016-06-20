@@ -56,6 +56,10 @@ Oui
 NO
 Non
 
+# ELLIPSIS is used as a placeholder for unexpanded content in the combat log window.
+#ELLIPSIS  
+#...
+
 EMPIRE  # translated
 Empire
 
@@ -206,6 +210,63 @@ Sans propriétaire
 
 NOWHERE
 Ne peut pas être produit
+
+################################## 
+# FORMAT_LIST items are for lists of the form
+# FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
+# i.e.
+# There are none.
+# There is only: banana
+# There are: apple and banana
+##################################
+
+FORMAT_LIST_DEFAULT_PLURAL_HEADER
+Engagés :
+
+FORMAT_LIST_DEFAULT_SINGLE_HEADER
+Seul engagé :
+
+FORMAT_LIST_DEFAULT_EMPTY_HEADER
+Aucun engagé.
+
+FORMAT_LIST_DEFAULT_DUAL_HEADER
+Engagés :
+
+#FORMAT_LIST_0_ITEMS
+#%1%
+
+#FORMAT_LIST_1_ITEMS
+#%1% %2%.
+
+FORMAT_LIST_2_ITEMS
+%1% %2% et %3%.
+
+FORMAT_LIST_3_ITEMS
+%1% %2%, %3% et %4%.
+
+FORMAT_LIST_4_ITEMS
+%1% %2%, %3%, %4% et %5%.
+
+FORMAT_LIST_5_ITEMS
+%1% %2%, %3%, %4%, %5% et %6%.
+
+FORMAT_LIST_6_ITEMS
+%1% %2%, %3%, %4%, %5%, %6% et %7%.
+
+FORMAT_LIST_7_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7% et %8%.
+
+FORMAT_LIST_8_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8% et %9%.
+
+FORMAT_LIST_9_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9% et %10%.
+
+FORMAT_LIST_10_ITEMS
+%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% et %11%.
+
+#FORMAT_LIST_MANY_ITEMS
+#%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
 ###########################
 # Predefined Ship Designs #
@@ -2814,7 +2875,7 @@ FW_SHIP_CLASS
 Classe d'astronef
 
 FW_UNKNOWN_DESIGN_NAME
-Conception inconnue
+Modèle inconnu
 
 #FW_SPECIES_SHIP_DESIGN_LABEL
 #(%2%) %1%
@@ -3251,16 +3312,16 @@ Conditions non remplies pour produire sur %1%
 ###############
 
 SHIP_DESIGN_FILES
-Fichiers de Conception
+Fichiers Modèle
 
 DESIGN_SAVE
-Enregistrer fichier de Conception
+Sauvegarder Fichier Modèle
 
 DESIGN_ADD
-Ajouter le modèle aux Conceptions de l'Empire
+Ajouter Modèle aux Modèles de l'Empire
 
 DESIGN_ADD_ALL
-Ajouter tous les modèles sauvegardés à l'Empire
+Ajouter tous les Modèles sauvegardés à l'Empire
 
 DESIGN_NAME_DEFAULT
 Modèle d'astronef personnalisé
@@ -3272,7 +3333,7 @@ DESIGN_NO_PART
 Aucun
 
 DESIGN_WND_STARTS
-Démarrage de conception
+Démarrage de Modèle
 
 DESIGN_WND_HULLS
 Coques
@@ -3281,16 +3342,16 @@ DESIGN_WND_FINISHED_DESIGNS
 Finalisés
 
 DESIGN_WND_SAVED_DESIGNS
-Enregistrés
+Sauvegardés
 
 DESIGN_WND_MONSTERS
 Monstres
 
 DESIGN_WND_PART_PALETTE_TITLE
-Équipements d'astronef
+Équipements d'Astronef
 
 DESIGN_WND_MAIN_PANEL_TITLE
-Détails du modèle
+Détails du Modèle
 
 DESIGN_WND_DESIGN_NAME
 Nom
@@ -3299,16 +3360,16 @@ DESIGN_WND_DESIGN_DESCRIPTION  # translated
 Description
 
 DESIGN_WND_CONFIRM
-Enregistrer modèle
+Sauvegarder Modèle
 
 DESIGN_WND_CLEAR
-Effacer équipements
+Effacer Équipements
 
 DESIGN_DELETE
-Supprimer le modèle
+Supprimer le Modèle
 
 DESIGN_RENAME
-Renommer le modèle
+Renommer le Modèle
 
 DESIGN_ENTER_NEW_DESIGN_NAME
 Entrer le nouveau nom du modèle:
@@ -3341,7 +3402,7 @@ DESIGN_OBSOLETE
 Modèle obsolète
 
 DESIGN_WND_ADD
-Ajouter nouv. modèle
+Ajouter nouv. Modèle
 
 DESIGN_WND_ADD_DETAIL
 '''Ajouter nouveau modèle nommé
@@ -3349,7 +3410,7 @@ DESIGN_WND_ADD_DETAIL
 aux modèles finalisés.'''
 
 DESIGN_WND_UPDATE
-Actualiser anc. modèle
+Actualiser anc. Modèle
 
 DESIGN_WND_UPDATE_DETAIL
 '''Remplacer ancien modèle
@@ -3362,7 +3423,7 @@ DESIGN_UPDATE_INVALID_NO_CANDIDATE
 Choisir un modèle existant à actualiser.
 
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
-Choisissez une coque, ajoutez des équipements, puis cliquez sur "Ajouter nouveau modèle" pour créer un modèle utilisable.
+Choisissez une coque, ajoutez des équipements, puis cliquez sur "[[DESIGN_WND_ADD]]" pour créer un modèle utilisable.
 
 ################
 ## Statistics ##
@@ -3509,7 +3570,7 @@ NO_SHIPS_OF_DESIGN
 Aucun astronef connu de ce modèle
 
 ENC_INCOMPETE_SHIP_DESIGN
-Conception de modèle
+Modèle d'astronef incomplet
 
 ENC_EMPIRE
 [Partie - Empires]
@@ -3778,7 +3839,10 @@ ENC_COMBAT_LOG_DESCRIPTION_STR
 Bataille à %1% au %2%° tour :
 
 ENC_COMBAT_ATTACK_STR
-%1% attaque %2% et inflige %3% de dégâts
+%1% attaque %2% et inflige %3% de dommages
+
+ENC_COMBAT_ATTACK_DETAILS
+Armement: %1%  Puissance: %2%  Boucliers: %3%  Dommages: %4%
 
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attaque %2%
@@ -3807,6 +3871,36 @@ La planète %2% de l'empire %1% a été mise en déroute
 
 ENC_COMBAT_DESTROYED_STR
 Le vaisseau %2% de %1% a été détruit
+
+ENC_COMBAT_INITIAL_STEALTH_LIST
+L'empire %2% ne peut pas cibler :
+
+# %1 attacker %2 defender %3 empire
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK
+%2% détecte %1% durant l'attaque.
+
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
+%2% détecte
+
+ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
+%2% détecte :
+
+ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
+%2% endommage
+
+ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
+%2% endommage %1% cibles :
+
+# %1 defender %2 damage
+ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
+%1% de %2% dommages
+
+ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
+%2% n'a pas pu endommagé
+
+ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
+%2% n'a pas pu endommagé %1% cibles :
+
 
 ###########################################
 # Combat Report #
@@ -4062,7 +4156,7 @@ Augmente la [[encyclopedia STRUCTURE_TITLE]] max d'un astronef de la valeur de p
 SLOT_TITLE
 Niche
 SLOT_TEXT
-Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la Fenêtre Conception, chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
+Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
 
 STEALTH_TITLE
 Furtivité
@@ -4230,6 +4324,39 @@ Les icônes suivantes désignent pour l'empire du joueur le total de l'[[encyclo
 
 Sur le côté droit de la barre de contrôle se trouvent les icônes permettant d'afficher/cacher les autres fenêtres importantes de l'interface.  Des infobulles sont disponibles pour ces dernières.'''
 
+DESIGN_WINDOW_ARTICLE_TITLE
+Fenêtre Conception
+DESIGN_WINDOW_ARTICLE_TEXT
+'''La [[DESIGN_WINDOW_ARTICLE_TITLE]] permet de visualiser ou de modifier les modèles de monstres ou d'astronefs.
+
+Cette dernière est composée de quatre panneaux: [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]], [[MAP_BTN_PEDIA]].
+
+
+Le panneau [[DESIGN_WND_STARTS]] propose quatre onglets différents: les [[DESIGN_WND_HULLS]] de départ, les modèles [[DESIGN_WND_FINISHED_DESIGNS]], les modèles [[DESIGN_WND_SAVED_DESIGNS]] lors de précédentes parties, et enfin les modèles de [[DESIGN_WND_MONSTERS]] pour consultation. Glissez-déposez ou double-cliquez sur une coque, un modèle ou un monstre pour les examiner plus en détails ou les modifier sur le plan de travail.
+
+Les modèles [[DESIGN_WND_FINISHED_DESIGNS]] sont affichés dans un ordre identique à celui de la Fenêtre Production. L'ordre des différents modèles peut être modifié par un glisser-déposer. Un modèle peut être supprimé de la liste par un clic-droit en sélectionnant "[[DESIGN_OBSOLETE]]" dans le menu contextuel. Les astronefs déjà placés en file d'attente de production seront cependant toujours construits sur la base de l'ancien modèle. Un nouveau modèle d'astronef peut être sauvegardé sur le disque dur via la commande "[[DESIGN_SAVE]]" du menu contextuel, afin de pouvoir le réutiliser sans passer à nouveau par l'étape de conception lors de futures parties.
+
+Au lancement d'une nouvelle partie, un clic-droit sur les modèles [[DESIGN_WND_SAVED_DESIGNS]] les ajoute à l'unité ou en totalité aux modèles d'astronefs de l'empire. Si "[[OPTIONS_ADD_SAVED_DESIGNS]]" est activée dans les options de jeu, tous les modèles [[DESIGN_WND_SAVED_DESIGNS]] seront automatiquement importés à chaque lancement d'une toute nouvelle partie.
+
+
+Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] affiche comme son nom l'indique les équipements. Ceux dont la technologie associée a été recherchée et assimilée sont disponibles et peuvent être intégrés dans un modèle d'astronef. D'autres équipements sont indisponibles si aucune [[encyclopedia RESEARCH_TITLE]] n'a encore été effectuée concernant la technologie associée ou si cet équipement est seulement utilisable par les monstres.
+
+Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef. Certains items indisponibles peuvent être débloqués en effectuant une [[RESEARCH_TITLE]] sur la technologie associée.
+
+Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] propose également des filtres pour afficher/cacher les équipements par catégorie.
+
+
+Le panneau [[DESIGN_WND_MAIN_PANEL_TITLE]] fait office de plan de travail pour le modèle en cours.
+
+Un modèle peut accueillir plusieurs types de [[encyclopedia SLOT_TITLE]]: interne, externe, et centrale. Un glisser-déposer ou un double-clic sur un équipement dans le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] ajoute celui-ci au modèle en cours, tandis que la même action le retire si elle est effectuée depuis le panneau [[DESIGN_WND_MAIN_PANEL_TITLE]].
+
+Un nom pour le modèle conçu est requis tandis que sa description reste optionnelle.
+
+Le bouton "[[DESIGN_WND_ADD]]" ajoute le modèle conçu à la fin de la liste des modèles [[DESIGN_WND_FINISHED_DESIGNS]].
+
+Le bouton "[[DESIGN_WND_UPDATE]]" remplace par un nouveau modèle le dernier modèle sélectionné et affiché depuis le panneau [[DESIGN_WND_FINISHED_DESIGNS]]. Le bouton "[[DESIGN_WND_UPDATE]]" est actif seulement si la conception d'un nouveau modèle a débuté à partir d'un modèle déjà existant dans le panneau [[DESIGN_WND_FINISHED_DESIGNS]]. "[[DESIGN_WND_UPDATE]]" modifie seulement la conception du modèle, donc tout astronef précédemment ajouté à la file d'attente de production ou déjà construit, sera toujours basé sur l'ancienne conception du modèle.
+'''
+
 FLEET_MOVEMENT_ARTICLE_TITLE
 Déplacement des Flottes
 FLEET_MOVEMENT_ARTICLE_TEXT
@@ -4250,7 +4377,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 Parmi les nombreux réglages disponibles permettant de définir l'emplacement/taille des divers éléments de l'UI, ces 'Réglages Cachés' intègrent:
 
-UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la Fenêtre Conception (peut engendrer des ralentissements)
+UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] (peut engendrer des ralentissements)
 
 show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte (Estimated Time of Arrival soit ETA), en nombre de tours à partir du tour actuel, dans le Panneau de la flotte se trouvant dans la Fenêtre Flottes.
 
@@ -8090,7 +8217,7 @@ CON_ART_HEAVENLY
 Astres Artificiels
 
 CON_ART_HEAVENLY_DESC
-À partir d'une masse proche de celle d'une petite lune ou plus, la conception classique de que l'on nomme "structure", "station" or "astronef" ne s'applique plus. En effet, au delà de cette échelle de grandeur, l'objet en question s'apparente davantage à un corps extrêmement massif: sa force de gravitation influence les mouvements orbitaux et peut retenir une fine atmosphère, tandis que de plus petites structures peuvent entrer en orbite autour de lui. À une échelle encore plus grande, des planètes entières peuvent être construites, ou réassemblées, et même de nouvelles étoiles peuvent être formées et activées, faisant ainsi rayonner le pouvoir et la supériorité de ses créateurs à travers tout l'univers.
+À partir d'une masse proche de celle d'une petite lune ou plus, la conception classique de ce que l'on nomme "structure", "station" or "astronef" ne s'applique plus. En effet, au delà de cette échelle de grandeur, l'objet en question s'apparente davantage à un corps extrêmement massif: sa force de gravitation influence les mouvements orbitaux et peut retenir une fine atmosphère, tandis que de plus petites structures peuvent entrer en orbite autour de lui. À une échelle encore plus grande, des planètes entières peuvent être construites, ou réassemblées, et même de nouvelles étoiles peuvent être formées et activées, faisant ainsi rayonner le pouvoir et la supériorité de ses créateurs à travers tout l'univers.
 
 CON_TRANS_ARCH
 Architecture Transcendantale
@@ -8596,6 +8723,9 @@ Phare Interstellaire
 
 SPY_LIGHTHOUSE_DESC
 En ayant recours à un système complexe d'impulsions électromagnétiques et de jets de particules permettant de déceler l'emplacement d'objets dans un système, il devient alors possible de détecter des objets extrêmement furtifs, et ce même à l'aide d'un équipement classique de détection.
+
+DEF_DEFENSE
+Défense Planétaire
 
 DEF_DEFENSE_NET_1
 Dispositif Défense Planétaire 1
@@ -11737,7 +11867,7 @@ AI_FIRST_TURN_GREETING_MSG101
 Qu'avons-nous donc fait pour provoquer votre courroux, Ô Tout Puissant?
 
 AI_FIRST_TURN_GREETING_MSG102
-Ne vous préoccupez pas de nous, nous n'avons strictement rien à offrir qui puisse avoir un quelconque intérêt à vos yeux.
+Ne faites pas attention à nous, nous n'avons strictement rien à offrir qui puisse avoir un quelconque intérêt à vos yeux.
 
 AI_FIRST_TURN_GREETING_MSG103
 De grâce, épargnez vos humbles serviteurs, et notre gratitude sera éternelle!
