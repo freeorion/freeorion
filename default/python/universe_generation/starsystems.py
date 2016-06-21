@@ -4,7 +4,7 @@ import freeorion as fo
 import planets
 import util
 import universe_tables
-
+from itertools import product
 
 # tuple of available star types
 star_types = (fo.starType.blue, fo.starType.white,   fo.starType.yellow,    fo.starType.orange,
@@ -70,6 +70,16 @@ def name_planets(system):
         fo.set_name(planet, name)
 
 
+def can_have_no_planets(star_type):
+    """
+    Return True is system is allowed to have no planets.
+    This intentionally only checks the STAR_TYPE_MOD_TO_PLANET_SIZE_DIST so that
+    the following code forces most stars to have a planetary body so that in the
+    GUI the presence of a star implies a planet
+    """
+    return universe_tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][fo.planetSize.noWorld] > 0
+
+
 def generate_systems(pos_list, gsd):
     """
     Generates and populates star systems at all positions in specified list.
@@ -101,20 +111,16 @@ def generate_systems(pos_list, gsd):
             if planets.generate_a_planet(system, star_type, orbit, gsd.planet_density, gsd.shape):
                 at_least_one_planet = True
 
-        if star_type == fo.starType.blackHole:
+        if at_least_one_planet or can_have_no_planets(star_type):
             continue
 
-        ii_safety = 1000
-        while not at_least_one_planet and ii_safety > 0:
-            ii_safety -= 1
-            for orbit in orbits:
-                if planets.generate_a_planet(system, star_type, orbit, gsd.planet_density, gsd.shape):
-                    at_least_one_planet = True
-                    break
-
-        if not at_least_one_planet:
+        recursion_limit = 1000
+        for _, orbit in product(range(recursion_limit), orbits):
+            if planets.generate_a_planet(system, star_type, orbit, gsd.planet_density, gsd.shape):
+                break
+        else:
             # Intentionally non-modal.  Should be a warning.
-            print >> sys.stderr, ("Python generate_systems: place planets in system at position (%f, %f) failed"
-                                  % (position[0], position[1]))
+            print >> sys.stderr, ("Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
+                                  % (system, position[0], position[1]))
 
     return sys_list
