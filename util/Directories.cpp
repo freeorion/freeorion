@@ -56,7 +56,7 @@ void InitDirs(const std::string& argv0) {
 
     CFBundleRef bundle = CFBundleGetMainBundle();
     char bundle_dir[MAXPATHLEN];
-    
+
     if (bundle) {
         CFURLRef bundleurl = CFBundleCopyBundleURL(bundle);
         CFURLGetFileSystemRepresentation(bundleurl, true, reinterpret_cast<UInt8*>(bundle_dir), MAXPATHLEN);
@@ -406,9 +406,9 @@ void InitBinDir(const std::string& argv0) {
 
 void CompleteXDGMigration() {
     fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
-    if(exists(sentinel)){
+    if (exists(sentinel)) {
         fs::remove(sentinel);
-        //Update data dir in config file
+        // Update data dir in config file
         const std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
         const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
         if (fs::path(options_save_dir) == old_path)
