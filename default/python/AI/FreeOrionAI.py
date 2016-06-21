@@ -37,6 +37,12 @@ except ImportError:
     pass
 
 
+ai_config = fo.getAIConfigStr()
+print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
+user_dir = fo.getUserDataDir()
+print "Path to folder for user specific data: %s" % user_dir
+print 'Python paths', sys.path
+
 _aggression_names = {fo.aggression.beginner: "GSETUP_BEGINNER",
                      fo.aggression.turtle: "GSETUP_TURTLE",
                      fo.aggression.cautious: "GSETUP_CAUTIOUS",
@@ -54,16 +60,6 @@ _capitals = {fo.aggression.beginner: UserStringList("AI_CAPITOL_NAMES_BEGINNER")
 # AIstate
 foAIstate = None
 diplomatic_corp = None
-
-
-def initFreeOrionAI():  # pylint: disable=invalid-name
-    """Called by client when Python AI starts, before any game new game starts or saved game is resumed."""
-    ai_config = fo.getAIConfigStr()
-    print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
-    user_dir = fo.getUserDataDir()
-    print "Path to folder for user specific data: %s" % user_dir
-    print(sys.path)
-
 
 @chat_on_error
 def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name
