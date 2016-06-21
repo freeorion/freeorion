@@ -207,8 +207,8 @@ public:
     FlagType FromString(const std::string& str) const
     {
         for (typename std::map<FlagType, std::string>::const_iterator it = m_strings.begin();
-                it != m_strings.end();
-                ++it) {
+             it != m_strings.end(); ++it)
+        {
             if (it->second == str)
                 return it->first;
         }
