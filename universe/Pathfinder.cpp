@@ -731,40 +731,36 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
 
     /** Simple case of two system ids */
     int operator()(int sys_id2) const {
-        short jumps = -1;
+        short sjumps = -1;
         try {
-            jumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
+            sjumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
         } catch (std::out_of_range const &) {
             ErrorLogger() << "JumpsBetweenObjects caught out of range exception sys_id1 = "
                           << sys_id1 << " sys_id2 = " << sys_id2;
             return INT_MAX;
         }
-        if (jumps != -1)    // if jumps is -1, no path exists between the systems
-            return static_cast<int>(jumps);
-        else
-            return INT_MAX;
+        int jumps = (sjumps == -1) ? INT_MAX : static_cast<int>(sjumps);
+        return jumps;
     }
 
     /** A single system id and a fleet with two locations*/
     int operator()(std::pair<int, int> prev_next) const {
-        short jumps1 = -1, jumps2 = -1;
+        short sjumps1 = -1, sjumps2 = -1;
         int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
         try {
             if (prev_sys_id != INVALID_OBJECT_ID)
-                jumps1 = pf.JumpDistanceBetweenSystems(sys_id1, prev_sys_id);
+                sjumps1 = pf.JumpDistanceBetweenSystems(sys_id1, prev_sys_id);
             if (next_sys_id!= INVALID_OBJECT_ID)
-                jumps2 = pf.JumpDistanceBetweenSystems(sys_id1, next_sys_id);
+                sjumps2 = pf.JumpDistanceBetweenSystems(sys_id1, next_sys_id);
         } catch (...) {
             ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
         }
-        int jumps = static_cast<int>(std::max(jumps1, jumps2));
-        if (jumps != -1) {
-            return jumps - 1; // TODO:  why (jumps -1)?
-        } else {
-            // no path
-            return INT_MAX;
-        }
-    }
+        int jumps1 = (sjumps1 == -1) ? INT_MAX : static_cast<int>(sjumps1);
+        int jumps2 = (sjumps2 == -1) ? INT_MAX : static_cast<int>(sjumps2);
+
+        int jumps = std::min(jumps1, jumps2);
+        return jumps;
+   }
     Pathfinder::PathfinderImpl const & pf;
     int sys_id1;
 };
@@ -780,24 +776,22 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
         return boost::apply_visitor(visitor, sys2_ids);
     }
     int operator()(std::pair<int, int> prev_next) const {
-        short jumps1 = -1, jumps2 = -1;
+        short sjumps1 = -1, sjumps2 = -1;
         int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
         if (prev_sys_id != INVALID_OBJECT_ID) {
             JumpDistanceSys2Visitor visitor(pf, prev_sys_id);
-            jumps1 = boost::apply_visitor(visitor, sys2_ids);
+            sjumps1 = boost::apply_visitor(visitor, sys2_ids);
         }
         if (next_sys_id!= INVALID_OBJECT_ID) {
             JumpDistanceSys2Visitor visitor(pf, next_sys_id);
-            jumps2 = boost::apply_visitor(visitor, sys2_ids);
+            sjumps2 = boost::apply_visitor(visitor, sys2_ids);
         }
 
-        int jumps = static_cast<int>(std::max(jumps1, jumps2));
-        if (jumps != -1) {
-            return jumps - 1; // TODO:  why (jumps -1)?
-        } else {
-            // no path
-            return INT_MAX;
-        }
+        int jumps1 = (sjumps1 == -1) ? INT_MAX : static_cast<int>(sjumps1);
+        int jumps2 = (sjumps2 == -1) ? INT_MAX : static_cast<int>(sjumps2);
+
+        int jumps = std::min(jumps1, jumps2);
+        return jumps;
     }
     Pathfinder::PathfinderImpl const & pf;
     ObjectSystemIDType const & sys2_ids;
