@@ -507,7 +507,9 @@ public:
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void Update();  ///< update indicated \a tech panel or all panels if \a tech_name is an empty string, without redoing layout
-    void Clear();                               ///< remove all tech panels
+    void Clear();
+    virtual void Show(bool children = true);    ///< remove all tech panels
+    virtual void Hide(bool children = true);    ///< remove all tech panels
     void Reset();                               ///< redo layout, recentre on a tech
     void SetScale(double scale);
     void ShowCategory(const std::string& category);
@@ -581,8 +583,8 @@ private:
     std::string             m_browsed_tech_name;
     TechTreeLayout          m_graph;
 
-    boost::unordered_map<std::string, TechPanel*>   m_techs;
-    int                     m_techs_update_turn;
+    boost::unordered_map<std::string, TechPanel*>
+                            m_techs;
     TechTreeArcs                        m_dependency_arcs;
 
     LayoutSurface* m_layout_surface;
@@ -1024,7 +1026,6 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_browsed_tech_name(),
     m_graph(),
     m_techs(),
-    m_techs_update_turn(CurrentTurn() - 1),
     m_layout_surface(0),
     m_vscroll(0),
     m_hscroll(0),
@@ -1166,21 +1167,13 @@ void TechTreeWnd::LayoutPanel::Clear() {
     GG::SignalScroll(*m_vscroll, true);
     GG::SignalScroll(*m_hscroll, true);
 
-    // Delete old all panels and hide all current panels.
-    if (m_techs_update_turn != CurrentTurn()) {
-        for (boost::unordered_map<std::string, TechPanel*>::const_iterator panel_it = m_techs.begin()
-                 ; panel_it != m_techs.end(); ++panel_it) {
-            delete panel_it->second;
-        }
-        m_techs.clear();
-
-    } else {
-        for (boost::unordered_map<std::string, TechPanel*>::const_iterator panel_it = m_techs.begin()
-                 ; panel_it != m_techs.end(); ++panel_it) {
-            panel_it->second->Hide();
-            if (GG::Wnd * parent = panel_it->second->Parent())
-                parent->DetachChild(panel_it->second);
-        }
+    //Hide all current panels.
+    for (boost::unordered_map<std::string, TechPanel*>::const_iterator panel_it = m_techs.begin();
+         panel_it != m_techs.end(); ++panel_it)
+    {
+        panel_it->second->Hide();
+        if (GG::Wnd* parent = panel_it->second->Parent())
+            parent->DetachChild(panel_it->second);
     }
 
     m_graph.Clear();
@@ -1189,6 +1182,25 @@ void TechTreeWnd::LayoutPanel::Clear() {
     m_dependency_arcs.Reset();
 
     m_selected_tech_name.clear();
+}
+
+void TechTreeWnd::LayoutPanel::Show(bool children/* = true*/) {
+    Layout(true);
+    GG::Wnd::Show(children);
+}
+
+void TechTreeWnd::LayoutPanel::Hide(bool children/* = true*/) {
+    GG::Wnd::Hide(children);
+
+    // Delete all panels
+    // Panel creation is slow so it is only done once when Research Window
+    // is first shown
+    for (boost::unordered_map<std::string, TechPanel*>::const_iterator panel_it = m_techs.begin();
+         panel_it != m_techs.end(); ++panel_it)
+    {
+        delete panel_it->second;
+    }
+    m_techs.clear();
 }
 
 void TechTreeWnd::LayoutPanel::Reset() {
@@ -1337,15 +1349,13 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
         boost::unordered_map<std::string, TechPanel*>::iterator panel_it = m_techs.find(tech_name);
-        if ((panel_it == m_techs.end()) || (m_techs_update_turn != CurrentTurn())) {
+        if (panel_it == m_techs.end()) {
             m_techs[tech_name] = new TechPanel(tech_name, this);
         } else {
             m_techs[tech_name]->Show();
         }
         m_graph.AddNode(tech_name, m_techs[tech_name]->Width(), m_techs[tech_name]->Height());
     }
-
-    m_techs_update_turn = CurrentTurn();
 
     DebugLogger() << "Tech Tree Layout Preparing Tech Data Edges";
 
