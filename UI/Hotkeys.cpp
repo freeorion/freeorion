@@ -123,14 +123,20 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
 
         size_t found = 0;
         size_t prev = 0;
-        while (true) {
-            found = m.find('|', prev);
-            std::string sub = m.substr(prev, found-prev);
-            GG::ModKey cm = GG::FlagSpec<GG::ModKey>::instance().FromString(sub);
-            mod |= cm;
-            if (found == std::string::npos)
-                break;
-            prev = found + 1;
+
+        try {
+            while (true) {
+                found = m.find('|', prev);
+                std::string sub = m.substr(prev, found-prev);
+                GG::ModKey cm = GG::FlagSpec<GG::ModKey>::instance().FromString(sub);
+                mod |= cm;
+                if (found == std::string::npos)
+                    break;
+                prev = found + 1;
+            }
+        } catch (...) {
+            ErrorLogger() << "Unable make flag from string: " << str;
+            return std::make_pair(GG::GGK_NONE, GG::Flags<GG::ModKey>());
         }
     }
 
