@@ -3423,7 +3423,7 @@ DESIGN_UPDATE_INVALID_NO_CANDIDATE
 Choose an existing design to update.
 
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
-Select a hull, add parts and then click "Add New Design" to create an available design.
+Select a hull, add parts and then click "[[DESIGN_WND_ADD]]" to create an available design.
 
 ################
 ## Statistics ##
@@ -4156,7 +4156,7 @@ Increases the maximum [[encyclopedia STRUCTURE_TITLE]] of its ship by the streng
 SLOT_TITLE
 Slot
 SLOT_TEXT
-A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the Design Window, where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
+A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
 
 STEALTH_TITLE
 Stealth
@@ -4327,34 +4327,34 @@ On the right hand side of the control bar are a number of icons for toggling dis
 DESIGN_WINDOW_ARTICLE_TITLE
 Design Window
 DESIGN_WINDOW_ARTICLE_TEXT
-'''The design window is for viewing or altering the designs of monsters or ships.
+'''The [[DESIGN_WINDOW_ARTICLE_TITLE]] is for viewing or altering the designs of monsters or ships.
 
-There are four sub windows:  Design Starts, Ship Parts, Design Details and the Pedia.
-
-
-Design Starts has four tabs: empty Hulls, Finished designs, Saved designs from previous games and Monster designs for inspection.  Drag or double click hulls, designs or monsters to edit/examine them on the workbench.
-
-Finished designs appear in the same order as on the Production Window.  Designs can be drag-and-dropped within the list to change their order.  Delete designs with Obsolete from the context menu.  Ships already queued for production will continue to be built with the old design.  Save designs to disk for future games with Save from the context menu.
-
-Right click Saved designs and copy a single or all saved designs to the empire's known designs.
+There are four sub windows:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]] and the [[MAP_BTN_PEDIA]].
 
 
-Ship Parts displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
+[[DESIGN_WND_STARTS]] has four tabs: empty [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] designs, [[DESIGN_WND_SAVED_DESIGNS]] designs from previous games and [[DESIGN_WND_MONSTERS]] designs for inspection.  Drag or double click hulls, designs or monsters to edit/examine them on the workbench.
 
-The Available and Unavailable filters on Design Starts and Ship Parts toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated technologies.
+[[DESIGN_WND_FINISHED_DESIGNS]] designs appear in the same order as on the Production Window.  Designs can be drag-and-dropped within the list to change their order.  Delete designs with "[[DESIGN_OBSOLETE]]" from the context menu.  Ships already queued for production will continue to be built with the old design.  Save designs to disk for future games with "[[DESIGN_SAVE]]" from the context menu.
 
-The Ship Parts window has filters to display/hide entire categories of parts.
+Right click [[DESIGN_WND_SAVED_DESIGNS]] designs and copy a single or all saved designs to the empire's known designs. If "[[OPTIONS_ADD_SAVED_DESIGNS]]" is activated in the game settings, all the [[DESIGN_WND_SAVED_DESIGNS]] designs will be automatically imported at the beginning of a whole new game.
 
 
-Design Details is the workbench for the current design.
+[[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
 
-The current design may have internal, external and/or core slots.  Drag and drop or double click parts from Ship Parts to add/remove them to/from the current design.
+The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated technologies.
+
+The [[DESIGN_WND_PART_PALETTE_TITLE]] window has filters to display/hide entire categories of parts.
+
+
+[[DESIGN_WND_MAIN_PANEL_TITLE]] is the workbench for the current design.
+
+The current design may have internal, external and/or core [[encyclopedia SLOT_TITLE]]s.  Drag and drop or double click parts from [[DESIGN_WND_PART_PALETTE_TITLE]] to add/remove them to/from the current design.
 
 Add a name and optionally a description to the design.
 
-Click Add New Design to add the design to the end of the list of Finished designs.
+Click "[[DESIGN_WND_ADD]]" to add the design to the end of the list of [[DESIGN_WND_FINISHED_DESIGNS]] designs.
 
-Click Update Old Design to replace the most recently selected finished design with a new design.  Update Old Design is only active if this design was started from a design in the Finished list.  Update Old Design only changes the design, any ships already queued for production or already produced will continue to use the old design.
+Click "[[DESIGN_WND_UPDATE]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] design with a new design.  "[[DESIGN_WND_UPDATE]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] list.  "[[DESIGN_WND_UPDATE]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE
@@ -4377,7 +4377,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 In addition to a great many entries for the size/location of various UI elements, these 'Hidden Settings' include:
 
-UI.design-pedia-dynamic : controls whether or not the design detail pedia page in the Design Window will be dynamically updated as the design name is edited (can cause lag)
+UI.design-pedia-dynamic : controls whether or not the design detail pedia page in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] will be dynamically updated as the design name is edited (can cause lag)
 
 show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in number of turns from the current turn, is shown in its Fleet Panel in the Fleet Window
 
@@ -10819,7 +10819,7 @@ Mini-Asteroid Swarm
 SH_MINIASTEROID_SWARM_DESC
 '''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. [[encyclopedia STRUCTURE_TITLE]] is very low.
 
-[[encyclopedia STEALTH_TITLE]] is very high but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is low.
+[[encyclopedia STEALTH_TITLE]] is very high and the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is low.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
@@ -10850,7 +10850,7 @@ SH_ORGANIC_DESC
 '''A living hull with three external slots and one internal slot.
 Organic Growth: starts with 5 [[encyclopedia STRUCTURE_TITLE]], but grows an additional 5 structure over 25 turns.
 
-[[encyclopedia STEALTH_TITLE]] is medium, [[encyclopedia DETECTION_RANGE_TITLE]] is low and [[encyclopedia STARLANE_SPEED_TITLE]] is good.
+[[encyclopedia STEALTH_TITLE]] is medium, [[encyclopedia DETECTION_RANGE_TITLE]] is low and [[encyclopedia STARLANE_SPEED_TITLE]] is high.
 
 Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology develops. Low detection makes it poorly suited in a scouting role but it can make a capable warship. Living hull regenerates [[encyclopedia STRUCTURE_TITLE]] and [[encyclopedia FUEL_TITLE]] between combats.
 
@@ -10979,7 +10979,7 @@ Compressed Energy Hull
 SH_COMPRESSED_ENERGY_DESC
 '''This fast hull is comprised entirely of compressed energy and has a single external slot.
 
-Structure is low, [[encyclopedia STEALTH_TITLE]] is very high, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high.
+[[encyclopedia STRUCTURE_TITLE]] is low, [[encyclopedia STEALTH_TITLE]] is very high, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high.
 
 This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
