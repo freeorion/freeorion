@@ -168,6 +168,7 @@ EG_SYSTEM_MINES
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_FLEET_STACK"
+            priority = [[@2@]]
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
@@ -189,6 +190,7 @@ EG_SYSTEM_MINES
                 Structure high = @1@
             ]
             stackinggroup = "DEF_MINES_SITREP_SHIP_STACK"
+            priority = [[@2@]]
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"

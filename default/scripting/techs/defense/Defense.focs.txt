@@ -28,8 +28,8 @@ Tech
     researchturns = 4
     prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(2,VERY_LATE_PRIORITY,EMPIRE)]]
-    ]
+        [[EG_SYSTEM_MINES(2,75,EMPIRE)]] 
+    ] //Priority deliberately not a macro and before all priority macros
     graphic = "icons/tech/system_defense_mines.png"
 
 Tech
@@ -41,7 +41,7 @@ Tech
     researchturns = 6
     prerequisites = "DEF_SYST_DEF_MINE_1"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(6,DEFAULT_PRIORITY,EMPIRE)]]
+        [[EG_SYSTEM_MINES(6,65,EMPIRE)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
@@ -54,7 +54,7 @@ Tech
     researchturns = 8
     prerequisites = "DEF_SYST_DEF_MINE_2"
     effectsgroups = [
-        [[EG_SYSTEM_MINES(14,EARLY_PRIORITY,EMPIRE)]]
+        [[EG_SYSTEM_MINES(14,60,EMPIRE)]]
     ]
     graphic = "icons/tech/system_defense_mines.png"
 
