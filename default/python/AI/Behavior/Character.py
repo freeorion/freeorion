@@ -90,7 +90,7 @@ of a playable species.
 """
 
 import abc
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -358,6 +358,7 @@ class EmpireIDBehavior(Behavior):
     # can describe, "Look the 'Continuum' is behaving like a 1 modulo 2 character."
 
     def __init__(self, empire_id, aggression):
+        print "EmpireIDBehavior initialized."
         self.id = empire_id
         self.aggression = aggression  # TODO remove when old research style get_research_index is removed
 
@@ -366,10 +367,8 @@ class EmpireIDBehavior(Behavior):
         return self.id % 2
 
     def preferred_research_cutoff(self, alternatives):
-        print "Incomming ", alternatives
         if not alternatives:
             return None
-        print "Out going ", alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
         return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
 
     def preferred_colonization_portion(self, alternatives):
@@ -460,7 +459,7 @@ for funcname in ["check_orbital_production"]:
 
 
 def _make_most_preferred_combiner(funcnamei):
-    """Make acombiner that runs the preference function for each behavior and
+    """Make a combiner that runs the preference function for each behavior and
     returns the result most preferred by all the behaviors."""
     def _most_preferred(self, alternatives):
         """Applies funcnamei from each behavior to the alternatives and return the most preferred."""
@@ -469,10 +468,7 @@ def _make_most_preferred_combiner(funcnamei):
             return None
         if len(prefs) == 1:
             return prefs[0]
-        counts = defaultdict(int)
-        for pref in prefs:
-            counts[pref] += 1
-        return max(counts)
+        return Counter.most_common(Counter(prefs), 1)[0][0]
     return _most_preferred
 
 # Create combiners for behaviors deal with preference
