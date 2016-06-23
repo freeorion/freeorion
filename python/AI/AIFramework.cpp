@@ -122,7 +122,7 @@ bool PythonAI::InitModules() {
 
     // Confirm existence of the directory containing the AI Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
-    std::string ai_path = (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string();
+    std::string ai_path = boost::filesystem::canonical(GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string();
     DebugLogger() << "AI Python script path: " << ai_path;
     if (!fs::exists(ai_path)) {
         ErrorLogger() << "Can't find folder containing AI scripts";
