@@ -4061,7 +4061,7 @@ void Universe::ResetUniverse() {
     m_objects.Clear();  // wipe out anything present in the object map
 
     m_empire_known_destroyed_object_ids.clear();
-    m_empire_known_ship_design_ids;
+    m_empire_known_ship_design_ids.clear();
     m_empire_latest_known_objects.clear();
     m_effect_accounting_map.clear();
     m_empire_object_visibility.clear();
