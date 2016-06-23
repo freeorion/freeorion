@@ -11,6 +11,8 @@ IF(NOT CMAKE_BUILD_TYPE)
   SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
+message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
+
 ########################################
 # Configuration                        #
 ########################################
@@ -23,8 +25,12 @@ set(PYTHON_VERSION 2.7)
 
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
+message(STATUS "Building tests BUILD_TESTS set to ${BUILD_TESTS}")
 if (BUILD_TESTS)
-    enable_testing()
+  message( STATUS "Building Tests")
+  enable_testing()
+else()
+  message( STATUS "Not building Tests")
 endif ()
 
 find_package (Threads)
