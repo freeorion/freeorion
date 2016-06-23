@@ -65,13 +65,10 @@ def _parse_options():
             sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
             config = _create_default_config_file(os.path.join(fo.getUserConfigDir(), CONFIG_DEFAULT_FILE))
 
-    option_file = _get_option_file()
-    # if not os.path.exists(option_path):
-    #    raise Exception('Error, option path "%s" does not exists.' % option_path)
+    option_string = fo.getAIConfigStr()
 
-    # read the defaults and then the specified config path
-    if option_file:
-        config_files = [option_file]
+    if option_string:
+        config_files = [option_string]
         configs_read = config.read(config_files)
         print "AI Config read config file(s): %s" % configs_read
         if len(configs_read) != len(config_files):
