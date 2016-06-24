@@ -472,6 +472,12 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
     }
 
     ErrorLogger() << "Variable<PlanetSize>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return INVALID_PLANET_SIZE;
 }
 
@@ -504,6 +510,12 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     }
 
     ErrorLogger() << "Variable<PlanetType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return INVALID_PLANET_TYPE;
 }
 
@@ -525,6 +537,12 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
     }
 
     ErrorLogger() << "Variable<PlanetEnvironment>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return INVALID_PLANET_ENVIRONMENT;
 }
 
@@ -551,6 +569,12 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
     }
 
     ErrorLogger() << "Variable<UniverseObjectType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return INVALID_UNIVERSE_OBJECT_TYPE;
 }
 
@@ -577,6 +601,12 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
     }
 
     ErrorLogger() << "Variable<StarType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return INVALID_STAR_TYPE;
 }
 
@@ -599,6 +629,12 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         // add more non-object reference double functions here
         ErrorLogger() << "Variable<double>::Eval unrecognized non-object property: "
                       << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                          << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
         return 0.0;
     }
 
@@ -607,6 +643,12 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     if (!object) {
         ErrorLogger() << "Variable<double>::Eval unable to follow reference: "
                       << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                          << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
         return 0.0;
     }
 
@@ -656,6 +698,12 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     ErrorLogger() << "Variable<double>::Eval unrecognized object property: "
                   << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return 0.0;
 }
 
@@ -690,6 +738,12 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
         // add more non-object reference int functions here
         ErrorLogger() << "Variable<int>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                          << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
         return 0;
     }
 
@@ -697,6 +751,12 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<int>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                          << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
         return 0;
     }
 
@@ -830,6 +890,12 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     }
 
     ErrorLogger() << "Variable<int>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return 0;
 }
 
@@ -845,6 +911,12 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return GetGalaxySetupData().GetSeed();
 
         ErrorLogger() << "Variable<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                          << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
         return "";
     }
 
@@ -852,6 +924,12 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<std::string>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                          << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
         return "";
     }
 
@@ -924,6 +1002,12 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     }
 
     ErrorLogger() << "Variable<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << UserString(boost::lexical_cast<std::string>(context.source->ObjectType())) << " "
+                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
     return "";
 }
 
