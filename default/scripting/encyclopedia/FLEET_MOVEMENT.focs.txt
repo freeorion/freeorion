@@ -3,4 +3,4 @@ Article
     category = "CATEGORY_USER_INTERFACE"
     short_description = "FLEET_MOVEMENT_ARTICLE_TITLE"
     description = "FLEET_MOVEMENT_ARTICLE_TEXT"
-    icon = "icons/tech/galactic_exploration.png"
+    icon = "icons/sitrep/fleet_arrived.png"
