@@ -171,7 +171,7 @@ HOMEWORLD_BONUS_POPULATION
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble // accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble accountinglabel = "HOMEWORLD_BONUS"
 '''
 
 HOMEWORLD_GROWTH_FOCUS_BOOST
