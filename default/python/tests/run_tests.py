@@ -10,5 +10,7 @@ this_dir = os.path.dirname(__file__)
 sys.path.append(os.path.join(this_dir, '..', '..', 'python', 'AI/'))
 # path to freeOrionAIInterface mock
 sys.path.append(os.path.join(this_dir, '..', '..', 'python', 'AI/', 'freeorion_debug', 'ide_tools', 'result'))
+# add path to common tools
+sys.path.append(os.path.join(this_dir, '..', '..', 'python'))
 
 pytest.main(sys.argv[1:])

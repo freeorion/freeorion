@@ -191,34 +191,3 @@ class Table(object):
             for header in legend:
                 result.append(('*%-*s %s' % (name_width, header.name[:-1], header.description)))
         return '\n'.join(x.encode('utf-8') for x in result)
-
-
-# Tests
-if __name__ == '__main__':
-    t = Table(
-        [Text('name', align='<', description='Name for first column'),
-         Float('value', description='VValue'),
-         Sequence('zzz'),
-         Sequence('zzzzzzzzzzzzzzzzzz'),
-         ],
-        table_name='Wooho')
-    t.add_row(['hello', 144444, 'abcffff', 'a'])
-    t.add_row([u'Plato aa\u03b2 III', 21, 'de', 'a'])
-    t.add_row([u'Plato \u03b2 III', 21, 'de', 'a'])
-    t.add_row(['Plato B III', 21, 'd', 'a'])
-    t.add_row(['Plato Bddddd III', 21, 'd', 'a'])
-    t.add_row(['Plato III', 21, 'd', 'a'])
-    t.print_table()
-
-    print
-    print '=' * 5, 'Columns', '=' * 5
-    print_in_columns(['a', 'b', 'c', 'd'], 2)
-
-    t2 = Table([Text('name', align='<', description='Name for first column'),
-                Float('value', description='VValue'),
-                Sequence('zzz'),
-                Sequence('zzzzzzzzzzzzzzzzzz'),
-                ],
-               table_name='Wooho'
-               )
-    t2.print_table()
