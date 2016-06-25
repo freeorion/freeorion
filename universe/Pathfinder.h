@@ -108,7 +108,7 @@ public:
     /** Returns the \p near and \p far objects from the \p candidates that are
         within \p jumps of the \p others.
         The \p candidates are modified and transfered to the \near vector.*/
-    void WithinJumps(
+    void WithinJumpsOfOthers(
         int jumps,
         std::vector<std::shared_ptr<const UniverseObject> > & near,
         std::vector<std::shared_ptr<const UniverseObject> > & far,

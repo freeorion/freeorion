@@ -6608,7 +6608,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         int jump_limit = m_jumps->Eval(local_context);
         ObjectSet &from_set( search_domain == Condition::MATCHES ? matches : non_matches);
 
-        GetUniverse().GetPathfinder()->WithinJumps(jump_limit, matches, non_matches, from_set, subcondition_matches);
+        GetUniverse().GetPathfinder()->WithinJumpsOfOthers(jump_limit, matches, non_matches, from_set, subcondition_matches);
 
     } else {
         // re-evaluate contained objects for each candidate object
@@ -6662,7 +6662,7 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     ObjectSet near;
     ObjectSet one;
     one.push_back(candidate);
-    GetUniverse().GetPathfinder()->WithinJumps(jump_limit, near, one, one, subcondition_matches);
+    GetUniverse().GetPathfinder()->WithinJumpsOfOthers(jump_limit, near, one, one, subcondition_matches);
     return !near.empty();
 }
 

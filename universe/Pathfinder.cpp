@@ -576,18 +576,18 @@ class Pathfinder::PathfinderImpl {
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
          size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
-    void WithinJumps(
+    void WithinJumpsOfOthers(
         int jumps,
         std::vector<std::shared_ptr<const UniverseObject> > & near,
         std::vector<std::shared_ptr<const UniverseObject> > & far,
         std::vector<std::shared_ptr<const UniverseObject> > & candidates,
         std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
     /**Return true if \p system_id is within \p jumps of any of \p others*/
-    bool WithinJumps(
+    bool WithinJumpsOfOthers(
         int jumps, int system_id,
         std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.*/
-    void WithinJumpsCacheHit(
+    void WithinJumpsOfOthersCacheHit(
         bool * const answer, int jumps,
         std::vector<std::shared_ptr<const UniverseObject> > const & others,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
@@ -990,8 +990,8 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 
 /**Examine a single universe object and determine if it is within jumps
    of any object in others.*/
-struct WithinJumpsObjectVisitor : public boost::static_visitor<bool> {
-    WithinJumpsObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
+struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
+    WithinJumpsOfOthersObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
                              int _jumps,
                              std::vector<std::shared_ptr<const UniverseObject> > const & _others
                             ) :
@@ -999,12 +999,12 @@ struct WithinJumpsObjectVisitor : public boost::static_visitor<bool> {
 
     bool operator()(NowhereType) const { return false; }
     bool operator()(int sys_id) const {
-        bool retval = pf.WithinJumps(jumps, sys_id, others);
+        bool retval = pf.WithinJumpsOfOthers(jumps, sys_id, others);
         return retval;
     }
     bool operator()(std::pair<int, int> prev_next) const {
-        return pf.WithinJumps(jumps, prev_next.first, others)
-            || pf.WithinJumps(jumps, prev_next.second, others);
+        return pf.WithinJumpsOfOthers(jumps, prev_next.first, others)
+            || pf.WithinJumpsOfOthers(jumps, prev_next.second, others);
     }
     Pathfinder::PathfinderImpl const & pf;
     int jumps;
@@ -1012,8 +1012,8 @@ struct WithinJumpsObjectVisitor : public boost::static_visitor<bool> {
 };
 /*Examine a single other in the cache to see if any of its locations
   are within jumps*/
-struct WithinJumpsOtherVisitor : public boost::static_visitor<bool> {
-    WithinJumpsOtherVisitor(Pathfinder::PathfinderImpl const & _pf,
+struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
+    WithinJumpsOfOthersOtherVisitor(Pathfinder::PathfinderImpl const & _pf,
                             int _jumps,
                             const distance_matrix_storage<short>::row_ref _row
                             ) :
@@ -1045,7 +1045,7 @@ struct WithinJumpsOtherVisitor : public boost::static_visitor<bool> {
 };
 
 
-void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
+void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     bool * const answer,
     int jumps,
     std::vector<std::shared_ptr<const UniverseObject> > const & others,
@@ -1056,7 +1056,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
     for (std::vector<std::shared_ptr<const UniverseObject> >::const_iterator other = others.begin();
          other != others.end(); ++other) {
 
-        WithinJumpsOtherVisitor visitor(*this, jumps, row);
+        WithinJumpsOfOthersOtherVisitor visitor(*this, jumps, row);
         ObjectSystemIDType other_systems = ObjectSystemID(*other);
         bool other_within_jumps = boost::apply_visitor(visitor, other_systems);
         if (other_within_jumps){
@@ -1066,16 +1066,16 @@ void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
     }
 }
 
-void Pathfinder::WithinJumps(
+void Pathfinder::WithinJumpsOfOthers(
     int jumps,
     std::vector<std::shared_ptr<const UniverseObject> > & near,
     std::vector<std::shared_ptr<const UniverseObject> > & far,
     std::vector<std::shared_ptr<const UniverseObject> > & candidates,
     std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
-    pimpl->WithinJumps(jumps, near, far, candidates, others);
+    pimpl->WithinJumpsOfOthers(jumps, near, far, candidates, others);
 }
 
-void Pathfinder::PathfinderImpl::WithinJumps(
+void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps,
     std::vector<std::shared_ptr<const UniverseObject> > & near,
     std::vector<std::shared_ptr<const UniverseObject> > & far,
@@ -1085,7 +1085,7 @@ void Pathfinder::PathfinderImpl::WithinJumps(
     // Examine each candidate and transfer those within jumps of the
     // others into near.
     // near or far may be the same as candidates.
-    WithinJumpsObjectVisitor visitor(*this, jumps, others);
+    WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, others);
     std::vector<std::shared_ptr<const UniverseObject> > candidates;
     candidates.swap(candidates_);
     size_t size = candidates.size();
@@ -1104,7 +1104,7 @@ void Pathfinder::PathfinderImpl::WithinJumps(
     }
 }
 
-bool Pathfinder::PathfinderImpl::WithinJumps(
+bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps, int system_id,
     std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
 
@@ -1124,7 +1124,7 @@ bool Pathfinder::PathfinderImpl::WithinJumps(
     distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
     cache.examine_row(system_index,
                       boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
-                      boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
+                      boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
                                   &within_jumps, jumps, others, _1, _2));
     return within_jumps;
 }
