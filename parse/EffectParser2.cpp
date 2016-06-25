@@ -33,10 +33,12 @@ namespace {
             const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =   parse::value_ref_parser<PlanetSize>();
 
             set_meter
-                = (     parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
-                    >> (parse::label(Value_token)           > double_value_ref [ _c = _1 ])
-                    >>!(parse::label(AccountingLabel_token) > tok.string [ _d = _1 ] )
-                  ) [ _val = new_<Effect::SetMeter>(_a, _c, _d) ]
+                =   parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
+                >>  parse::label(Value_token)               > double_value_ref [ _c = _1 ]
+                >   (
+                        (parse::label(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
+                    |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
+                    )
                 ;
 
             set_ship_part_meter

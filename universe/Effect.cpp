@@ -463,7 +463,8 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
 ///////////////////////////////////////////////////////////
 SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value) :
     m_meter(meter),
-    m_value(value)
+    m_value(value),
+    m_accounting_label()
 {}
 
 SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value, const std::string& accounting_label) :
