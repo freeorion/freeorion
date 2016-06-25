@@ -315,19 +315,8 @@ void EffectBase::Execute(const TargetsCauses& targets_causes, bool stacking, Acc
                          bool only_meter_effects, bool only_appearance_effects,
                          bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
-    // filter executed effects according to flags
-    if (only_appearance_effects) {
-        if (!dynamic_cast<const SetTexture*>(this) && !dynamic_cast<const SetOverlayTexture*>(this))
-            return;
-    } else if (only_meter_effects) {
-        if (!include_empire_meter_effects)
-            return;
-        if (!dynamic_cast<const SetEmpireMeter*>(this))
-            return;
-    } else if (only_generate_sitrep_effects) {
-        if (!dynamic_cast<const GenerateSitRepMessage*>(this))
-            return;
-    }
+    if (only_appearance_effects || only_meter_effects || only_generate_sitrep_effects)
+        return; // overrides should catch all these effects
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
@@ -823,6 +812,25 @@ void SetEmpireMeter::Execute(const ScriptingContext& context) const {
     double value = m_value->Eval(ScriptingContext(context, meter->Current()));
 
     meter->SetCurrent(value);
+}
+
+void SetEmpireMeter::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+                             bool only_meter_effects, bool only_appearance_effects,
+                             bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+{
+    if (only_appearance_effects || only_generate_sitrep_effects)
+        return;
+    if (!include_empire_meter_effects)
+        return;
+
+    // apply this effect for each source causing it
+    ScriptingContext source_context;
+    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
+        targets_it != targets_causes.end(); ++targets_it)
+    {
+        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
+        EffectBase::Execute(source_context, targets_it->second.target_set);
+    }
 }
 
 std::string SetEmpireMeter::Description() const {
@@ -3582,6 +3590,23 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     }
 }
 
+void GenerateSitRepMessage::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+                                    bool only_meter_effects, bool only_appearance_effects,
+                                    bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+{
+    if (only_appearance_effects || only_meter_effects)
+        return;
+
+    // apply this effect for each source causing it
+    ScriptingContext source_context;
+    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
+        targets_it != targets_causes.end(); ++targets_it)
+    {
+        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
+        EffectBase::Execute(source_context, targets_it->second.target_set);
+    }
+}
+
 std::string GenerateSitRepMessage::Description() const {
     std::string empire_str;
     if (m_recipient_empire_id) {
@@ -3686,6 +3711,23 @@ void SetOverlayTexture::Execute(const ScriptingContext& context) const {
         system->SetOverlayTexture(m_texture, size);
 }
 
+void SetOverlayTexture::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+                                bool only_meter_effects, bool only_appearance_effects,
+                                bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+{
+    if (only_generate_sitrep_effects || only_meter_effects)
+        return;
+
+    // apply this effect for each source causing it
+    ScriptingContext source_context;
+    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
+        targets_it != targets_causes.end(); ++targets_it)
+    {
+        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
+        EffectBase::Execute(source_context, targets_it->second.target_set);
+    }
+}
+
 std::string SetOverlayTexture::Description() const
 { return UserString("DESC_SET_OVERLAY_TEXTURE"); }
 
@@ -3717,6 +3759,22 @@ void SetTexture::Execute(const ScriptingContext& context) const {
         planet->SetSurfaceTexture(m_texture);
 }
 
+void SetTexture::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+                         bool only_meter_effects, bool only_appearance_effects,
+                         bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+{
+    if (only_generate_sitrep_effects || only_meter_effects)
+        return;
+
+    // apply this effect for each source causing it
+    ScriptingContext source_context;
+    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
+        targets_it != targets_causes.end(); ++targets_it)
+    {
+        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
+        EffectBase::Execute(source_context, targets_it->second.target_set);
+    }
+}
 std::string SetTexture::Description() const
 { return UserString("DESC_SET_TEXTURE"); }
 
