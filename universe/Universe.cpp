@@ -1358,9 +1358,9 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
             Meter& meter = meter_it->second;
 
             // discrepancy is the difference between expected and actual meter values at start of turn
-            double discrepancy = meter.Initial() - meter.Current();
+            float discrepancy = meter.Initial() - meter.Current();
 
-            if (discrepancy == 0.0) continue;   // no discrepancy for this meter
+            if (discrepancy == 0.0f) continue;   // no discrepancy for this meter
 
             // add to discrepancy map
             m_effect_discrepancy_map[object_id][type] = discrepancy;
