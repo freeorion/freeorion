@@ -6,7 +6,6 @@ import freeorion as fo
 import planets
 import statistics
 import universe_tables
-from galaxy_topology import get_systems_within_jumps
 
 natives_for_planet_type = {}
 planet_types_for_natives = {}
@@ -29,7 +28,7 @@ def generate_natives(native_freq, systems, empire_home_systems):
     # list of planets safe for natives
     EMPIRE_TO_NATIVE_MIN_DIST = 2
     empire_exclusions = set(itertools.chain.from_iterable(
-        get_systems_within_jumps(e, EMPIRE_TO_NATIVE_MIN_DIST)
+        fo.systems_within_jumps(EMPIRE_TO_NATIVE_MIN_DIST, [e])
         for e in empire_home_systems))
     native_safe_planets = set(itertools.chain.from_iterable(
         [fo.sys_get_planets(s) for s in systems if s not in empire_exclusions]))

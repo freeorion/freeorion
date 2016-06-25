@@ -4,7 +4,6 @@ from collections import defaultdict
 import freeorion as fo
 import statistics
 import universe_tables
-from galaxy_topology import get_systems_within_jumps
 
 # REPEAT_RATE along with calculate_number_of_specials_to_place determines if there are multiple
 # specials in a single location.  There can only be at most 4 specials in a single location.
@@ -118,7 +117,7 @@ def distribute_specials(specials_freq, universe_objects):
                 obj_tuple_needing_specials.add((obj, system, specials_count - 1))
 
             # remove all neighbors from the local pool
-            for neighbor in get_systems_within_jumps(system, GALAXY_DECOUPLING_DISTANCE):
+            for neighbor in fo.systems_within_jumps(GALAXY_DECOUPLING_DISTANCE, [system]):
                 if neighbor in systems_needing_specials:
                     systems_needing_specials.pop(neighbor)
 
