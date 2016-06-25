@@ -123,10 +123,6 @@ class OrderMove(AIFleetOrder):
             sys1_name = sys1 and sys1.name or "unknown"
             target_system = self.target.get_system()
             target_system_name = (target_system and target_system.get_object().name) or "unknown"
-            # following line was poor because AIstate.militaryFleetIDs only covers fleets without current missions
-            # my_other_fleet_rating = sum([foAI.foAIstate.fleetStatus.get(fleet_id, {}).get('rating', 0) for fleet_id in foAI.foAIstate.militaryFleetIDs if ( foAI.foAIstate.fleetStatus.get(fleet_id, {}).get('sysID', -1) == thisSystemID ) ])
-            # myOtherFleetsRatings = [foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', {}) for fid in foAI.foAIstate.systemStatus.get(target_id, {}).get('myfleets', [])]
-            # my_other_fleet_rating = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0) for fid in foAI.foAIstate.systemStatus.get( target_id, {}).get('myfleets', []) ])
             my_other_fleet_rating = foAI.foAIstate.systemStatus.get(self.target.id, {}).get('myFleetRating', 0)  # TODO: adjust calc for any departing fleets
             is_military = foAI.foAIstate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
 

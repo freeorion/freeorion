@@ -235,7 +235,6 @@ def generateOrders():  # pylint: disable=invalid-name
                    ResearchAI.generate_research_orders,
                    ProductionAI.generate_production_orders,
                    ResourcesAI.generate_resources_orders,
-                   foAIstate.after_turn_cleanup,
                    ]
 
     for action in action_list:
