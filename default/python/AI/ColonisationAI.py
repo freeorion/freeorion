@@ -23,7 +23,6 @@ empire_ship_builders = {}
 empire_shipyards = {}
 empire_dry_docks = {}
 available_growth_specials = {}
-empire_planets_with_growth_specials = {}
 active_growth_specials = {}
 empire_metabolisms = {}
 annexable_system_ids = set()
@@ -43,12 +42,9 @@ cur_best_pilot_rating = 1e-8
 curMidPilotRating = 1e-8
 pilot_ratings = {}
 colony_status = {}
-pop_map = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
 unowned_empty_planet_ids = set()
 empire_outpost_ids = set()
-empire_ast_outpost_ids = set()
-claimed_stars = {}
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -195,7 +191,6 @@ def check_supply():
     colonization_timer.start('Getting Empire Supply Info')
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empire_id = empire.empireID
     fleet_suppliable_system_ids = empire.fleetSupplyableSystemIDs
     fleet_suppliable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_suppliable_system_ids)
     print
@@ -239,7 +234,7 @@ def check_supply():
     # 1 for World Tree
     # TODO: +3 to consider capturing planets with Elevators
     # TODO consider that this should not be more then maximal value in empire.systemSupplyRanges
-    supply_distance += 6 # should not be more then max value in supplyProjections
+    supply_distance += 6  # should not be more then max value in supplyProjections
     # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
     # supply_distance += 1
 
@@ -247,15 +242,12 @@ def check_supply():
     for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
         annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
     colonization_timer.stop()
-    return fleet_suppliable_planet_ids
 
 
 def survey_universe():
     global gotRuins, got_ast, got_gg, got_computronium, got_nest, cur_best_pilot_rating, curMidPilotRating
-    univ_stats = {}
-    fleet_suppliable_planet_ids = check_supply()
+    check_supply()
     colonization_timer.start("Categorizing Visible Planets")
-    univ_stats['fleetSupplyablePlanetIDs'] = fleet_suppliable_planet_ids
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     empire_id = empire.empireID
@@ -280,35 +272,14 @@ def survey_universe():
 
     # set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
-        claimed_stars.clear()
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
-        pop_map.clear()
         empire_status.clear()
         empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
-
-        # empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs, empireID)
-        # print "Empire Owned PlanetIDs: " + str(empire_owned_planet_ids)
-        # #allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(explored_planet_ids) #working with Explored systems not all 'visible' because might not have a path to the latter
-        # allOwnedPlanetIDs = PlanetUtilsAI.get_all_owned_planet_ids(annexablePlanetIDs) #
-        # print "All annexable Owned or Populated PlanetIDs: " + str(set(allOwnedPlanetIDs)-set(empire_owned_planet_ids))
-        # #unowned_empty_planet_ids = list(set(explored_planet_ids) -set(allOwnedPlanetIDs))
-        # unowned_empty_planet_ids = list(set(annexablePlanetIDs) -set(allOwnedPlanetIDs))
-        # print "UnOwned annexable PlanetIDs: ", ", ".join(PlanetUtilsAI.planet_name_ids(unowned_empty_planet_ids))
-        empire_owned_planet_ids = []
-        empire_pop_ctrs = set()
         empire_outpost_ids.clear()
-        empire_ast_outpost_ids.clear()
-
-        old_pop_ctrs = []
-        for specn in empire_species:
-            old_pop_ctrs.extend(empire_species[specn])
-        old_emp_spec = dict(empire_species)
         empire_species.clear()
         empire_species_by_planet.clear()
-        old_emp_col = {}
-        old_emp_col.update(empire_colonizers)
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
@@ -316,7 +287,6 @@ def survey_universe():
         empire_metabolisms.clear()
         available_growth_specials.clear()
         active_growth_specials.clear()
-        empire_planets_with_growth_specials.clear()
         if tech_is_complete(TechsListsAI.EXOBOT_TECH_NAME):
             empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
         empire_species_systems.clear()
@@ -368,17 +338,12 @@ def survey_universe():
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
                 empire_has_colony_in_sys = True
-                empire_owned_planet_ids.append(pid)
                 AIstate.colonizedSystems.setdefault(sys_id, []).append(
                     pid)  # track these to plan Solar Generators and Singularity Generators, etc.
-                pop_map[pid] = planet_population
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
-                    if planet.type == fo.planetType.asteroids:
-                        empire_ast_outpost_ids.add(pid)
                 else:
-                    empire_pop_ctrs.add(pid)
                     empire_has_qualifying_planet = True
                     AIstate.popCtrIDs.append(pid)
                     empire_species_systems.setdefault(sys_id, {}).setdefault('pids', []).append(pid)
@@ -422,7 +387,6 @@ def survey_universe():
                     if special in NEST_VAL_MAP:
                         got_nest = True
                     if special in AIDependencies.metabolismBoosts:
-                        empire_planets_with_growth_specials.setdefault(pid, []).append(special)
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
@@ -456,10 +420,6 @@ def survey_universe():
 
     # system_facilities[''] = {'systems': set().union(sys_id for key, val in system_facilities.items()
     #                                                for sys_id in val.get('systems', {}))}
-    if empire_species != old_emp_spec:
-        print "Old empire species: %s ; new empire species: %s" % (old_emp_spec, empire_species)
-    if empire_colonizers != old_emp_col:
-        print "Old empire colonizers: %s ; new empire colonizers: %s" % (old_emp_col, empire_colonizers)
 
     print "\n" + "Empire species roster:"
     for spec_name in empire_species:
@@ -490,7 +450,6 @@ def survey_universe():
         # claimedStars.setdefault( tSys.starType, []).append(sysID)
     # foAI.foAIstate.misc['claimedStars'] = claimedStars
     colonization_timer.stop()
-    return univ_stats
 
 
 def get_colony_fleets():
@@ -880,14 +839,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 return 0.0
                 # distanceFactor = 1.001 / (least_jumps + 1)
 
-    if not claimed_stars:
-        for s_type in AIstate.empireStars:
-            claimed_stars[s_type] = list(AIstate.empireStars[s_type])
-        for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-            t_sys = universe.getSystem(sys_id)
-            if not t_sys:
-                continue
-            claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
+    claimed_stars = get_claimed_stars()
 
     empire_research_list = [element.tech for element in empire.researchQueue]
     if planet is None:
@@ -1077,7 +1029,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 retval += fort_val
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
-                honey_val = 0.3*(AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
+                honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
                                  empire_status['industrialists'] * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
@@ -1367,6 +1319,25 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             retval *= thrt_factor
             detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
     return retval
+
+
+@cache_by_turn
+def get_claimed_stars():
+    """
+    Return dictionary of star type: list of colonised and planned to be colonized systems.
+    Start type converted to int because `cache_by_turn` store its value in savegame
+    and boost objects are not serializable.
+    """
+    claimed_stars = {}
+    universe = fo.getUniverse()
+    for s_type in AIstate.empireStars:
+        claimed_stars[int(s_type)] = list(AIstate.empireStars[s_type])
+    for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+        t_sys = universe.getSystem(sys_id)
+        if not t_sys:
+            continue
+        claimed_stars.setdefault(int(t_sys.starType), []).append(sys_id)
+    return claimed_stars
 
 
 def assign_colony_fleets_to_colonise():
