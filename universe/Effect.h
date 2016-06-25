@@ -139,6 +139,14 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
+    virtual void        Execute(const TargetsCauses& targets_causes,
+                                bool stacking,
+                                AccountingMap* accounting_map = 0,
+                                bool only_meter_effects = false,
+                                bool only_appearance_effects = false,
+                                bool include_empire_meter_effects = false,
+                                bool only_generate_sitrep_effects = false) const;
+
     virtual std::string Description() const;
     virtual std::string Dump() const;
     MeterType GetMeterType() const { return m_meter; };
@@ -174,6 +182,14 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
+    virtual void        Execute(const TargetsCauses& targets_causes,
+                                bool stacking,
+                                AccountingMap* accounting_map = 0,
+                                bool only_meter_effects = false,
+                                bool only_appearance_effects = false,
+                                bool include_empire_meter_effects = false,
+                                bool only_generate_sitrep_effects = false) const;
+
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
