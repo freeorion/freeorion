@@ -576,6 +576,22 @@ class Pathfinder::PathfinderImpl {
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
          size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
+    void WithinJumps(
+        int jumps,
+        std::vector<std::shared_ptr<const UniverseObject> > & near,
+        std::vector<std::shared_ptr<const UniverseObject> > & far,
+        std::vector<std::shared_ptr<const UniverseObject> > & candidates,
+        std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+    /**Return true if \p system_id is within \p jumps of any of \p others*/
+    bool WithinJumps(
+        int jumps, int system_id,
+        std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+    /** If any of \p others are within \p jumps of \p ii return true in \p answer.*/
+    void WithinJumpsCacheHit(
+        bool * const answer, int jumps,
+        std::vector<std::shared_ptr<const UniverseObject> > const & others,
+        size_t ii, const distance_matrix_storage<short>::row_ref row) const;
+
     int NearestSystemTo(double x, double y) const;
     void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
     void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
@@ -969,6 +985,148 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
             return ImmediateNeighborsImpl(*graph_it->second, system_id, m_system_id_to_graph_index);
     }
     return std::multimap<double, int>();
+}
+
+
+/**Examine a single universe object and determine if it is within jumps
+   of any object in others.*/
+struct WithinJumpsObjectVisitor : public boost::static_visitor<bool> {
+    WithinJumpsObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
+                             int _jumps,
+                             std::vector<std::shared_ptr<const UniverseObject> > const & _others
+                            ) :
+        pf(_pf), jumps(_jumps), others(_others) {}
+
+    bool operator()(NowhereType) const { return false; }
+    bool operator()(int sys_id) const {
+        bool retval = pf.WithinJumps(jumps, sys_id, others);
+        return retval;
+    }
+    bool operator()(std::pair<int, int> prev_next) const {
+        return pf.WithinJumps(jumps, prev_next.first, others)
+            || pf.WithinJumps(jumps, prev_next.second, others);
+    }
+    Pathfinder::PathfinderImpl const & pf;
+    int jumps;
+    std::vector<std::shared_ptr<const UniverseObject> > const & others;
+};
+/*Examine a single other in the cache to see if any of its locations
+  are within jumps*/
+struct WithinJumpsOtherVisitor : public boost::static_visitor<bool> {
+    WithinJumpsOtherVisitor(Pathfinder::PathfinderImpl const & _pf,
+                            int _jumps,
+                            const distance_matrix_storage<short>::row_ref _row
+                            ) :
+        pf(_pf), jumps(_jumps), row(_row) {}
+
+    bool single_result(int other_id) const {
+        int index;
+        try {
+            index = pf.m_system_id_to_graph_index.at(other_id);
+        } catch (const std::out_of_range& e) {
+            ErrorLogger() << "Passed invalid system id: " << other_id;
+            return false;
+        }
+        bool retval = (row[index] <= jumps);
+        return retval;
+    }
+
+    bool operator()(NowhereType) const { return false; }
+    bool operator()(int sys_id) const {
+        return single_result(sys_id);
+    }
+    bool operator()(std::pair<int, int> prev_next) const {
+        return single_result(prev_next.first)
+            || single_result(prev_next.second);
+    }
+    Pathfinder::PathfinderImpl const & pf;
+    int jumps;
+    const distance_matrix_storage<short>::row_ref row;
+};
+
+
+void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
+    bool * const answer,
+    int jumps,
+    std::vector<std::shared_ptr<const UniverseObject> > const & others,
+    size_t ii, const distance_matrix_storage<short>::row_ref row) const {
+
+    // Check if any of the others are within jumps of candidate
+    *answer = false;
+    for (std::vector<std::shared_ptr<const UniverseObject> >::const_iterator other = others.begin();
+         other != others.end(); ++other) {
+
+        WithinJumpsOtherVisitor visitor(*this, jumps, row);
+        ObjectSystemIDType other_systems = ObjectSystemID(*other);
+        bool other_within_jumps = boost::apply_visitor(visitor, other_systems);
+        if (other_within_jumps){
+            *answer = true;
+            return;
+        }
+    }
+}
+
+void Pathfinder::WithinJumps(
+    int jumps,
+    std::vector<std::shared_ptr<const UniverseObject> > & near,
+    std::vector<std::shared_ptr<const UniverseObject> > & far,
+    std::vector<std::shared_ptr<const UniverseObject> > & candidates,
+    std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
+    pimpl->WithinJumps(jumps, near, far, candidates, others);
+}
+
+void Pathfinder::PathfinderImpl::WithinJumps(
+    int jumps,
+    std::vector<std::shared_ptr<const UniverseObject> > & near,
+    std::vector<std::shared_ptr<const UniverseObject> > & far,
+    std::vector<std::shared_ptr<const UniverseObject> > & candidates_,
+    std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
+
+    // Examine each candidate and transfer those within jumps of the
+    // others into near.
+    // near or far may be the same as candidates.
+    WithinJumpsObjectVisitor visitor(*this, jumps, others);
+    std::vector<std::shared_ptr<const UniverseObject> > candidates;
+    candidates.swap(candidates_);
+    size_t size = candidates.size();
+    near.reserve(near.size() + size);
+    far.reserve(near.size() + size);
+
+    for (std::vector<std::shared_ptr<const UniverseObject> >::iterator candidate = candidates.begin();
+         candidate != candidates.end(); ++candidate) {
+        ObjectSystemIDType candidate_systems = ObjectSystemID(*candidate);
+        bool is_near = boost::apply_visitor(visitor, candidate_systems);
+
+        if (is_near)
+            near.push_back(*candidate);
+        else
+            far.push_back(*candidate);
+    }
+}
+
+bool Pathfinder::PathfinderImpl::WithinJumps(
+    int jumps, int system_id,
+    std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
+
+    if (others.empty())
+        return false;
+
+    size_t system_index;
+    try {
+        system_index = m_system_id_to_graph_index.at(system_id);
+    } catch (const std::out_of_range& e) {
+        ErrorLogger() << "Passed invalid system id: " << system_id;
+        return false;
+    }
+
+    //Examine
+    bool within_jumps(false);
+    distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
+    cache.examine_row(system_index,
+                      boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
+                      boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
+                                  &within_jumps, jumps, others, _1, _2));
+    return within_jumps;
 }
 
 
