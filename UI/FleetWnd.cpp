@@ -1816,38 +1816,35 @@ public:
     }
 
     virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-        DebugLogger() << "FleetsListBox::AcceptDrops";
+        //DebugLogger() << "FleetsListBox::AcceptDrops";
         if (wnds.empty()) {
-            ErrorLogger() << "... dropped wnds empty";
+            ErrorLogger() << "FleetsListBox::AcceptDrops dropped wnds empty";
             return;
         }
         if (!m_order_issuing_enabled) {
-            DebugLogger() << "... order issuing disabled, aborting";
+            //DebugLogger() << "... order issuing disabled, aborting";
             return;
         }
-
-
 
         iterator drop_target_row = RowUnderPt(pt);
-        DebugLogger() << "... drop pt: " << pt;
+        //DebugLogger() << "... drop pt: " << pt;
         if (drop_target_row == end()) {
-            DebugLogger() << "... drop row is end, aborting";
+            //DebugLogger() << "... drop row is end, aborting";
             return;
         }
-        DebugLogger() << "... drop row is in position: " << std::distance(begin(), drop_target_row);
-
+        //DebugLogger() << "... drop row is in position: " << std::distance(begin(), drop_target_row);
 
         // get drop target fleet
         const FleetRow* drop_target_fleet_row = boost::polymorphic_downcast<FleetRow*>(*drop_target_row);
         if (!drop_target_fleet_row) {
-            ErrorLogger() << "... drop target not a fleet row. aborting";
+            ErrorLogger() << "FleetsListBox::AcceptDrops  drop target not a fleet row. aborting";
             return;
         }
 
         int target_fleet_id = drop_target_fleet_row->FleetID();
         TemporaryPtr<Fleet> target_fleet = GetFleet(target_fleet_id);
         if (!target_fleet) {
-            ErrorLogger() << "... unable to get target fleet with id: " << target_fleet_id;
+            ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get target fleet with id: " << target_fleet_id;
             return;
         }
 
@@ -1856,19 +1853,19 @@ public:
         std::vector<TemporaryPtr<Fleet> > dropped_fleets;
         std::vector<TemporaryPtr<Ship> > dropped_ships;
 
-        DebugLogger() << "... getting/sorting dropped fleets or ships...";
+        //DebugLogger() << "... getting/sorting dropped fleets or ships...";
         for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
             const GG::Wnd* wnd = *it;
 
             if (drop_target_fleet_row == wnd) {
-                ErrorLogger() << "... ... dropped wnd is same as drop target?! skipping";
+                ErrorLogger() << "FleetsListBox::AcceptDrops  dropped wnd is same as drop target?! skipping";
                 continue;
             }
 
             if (wnd->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(wnd);
                 if (!fleet_row) {
-                    ErrorLogger() << "... ... unable to get fleet row from dropped wnd";
+                    ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get fleet row from dropped wnd";
                     continue;
                 }
                 dropped_fleets.push_back(GetFleet(fleet_row->FleetID()));
@@ -1876,7 +1873,7 @@ public:
             } else if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd);
                 if (!ship_row) {
-                    ErrorLogger() << "... ... unable to get ship row from dropped wnd";
+                    ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get ship row from dropped wnd";
                     continue;
                 }
                 dropped_ships.push_back(GetShip(ship_row->ShipID()));
@@ -1884,24 +1881,24 @@ public:
         }
 
         if (dropped_ships.empty() && dropped_fleets.empty()) {
-            ErrorLogger() << "... no ships or fleets dropped... aborting";
+            ErrorLogger() << "FleetsListBox::AcceptDrops  no ships or fleets dropped... aborting";
             return;
         }
 
         if (dropped_ships.empty() == dropped_fleets.empty()) {
-            ErrorLogger() << "... dropped a mix of fleets and ships... aborting";
+            ErrorLogger() << "FleetsListBox::AcceptDrops  dropped a mix of fleets and ships... aborting";
             return;
         }
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
         if (!dropped_fleets.empty()) {
-            DebugLogger() << " ... processing dropped " << dropped_fleets.size() << " fleets";
+            //DebugLogger() << " ... processing dropped " << dropped_fleets.size() << " fleets";
             // dropping fleets.  get each ships of all source fleets and transfer to the target fleet
 
             for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = dropped_fleets.begin(); it != dropped_fleets.end(); ++it) {
                 TemporaryPtr<const Fleet> dropped_fleet = *it;
                 if (!dropped_fleet) {
-                    ErrorLogger() << "... ... unable to get dropped fleet?";
+                    ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get dropped fleet?";
                     continue;
                 }
                 int dropped_fleet_id = dropped_fleet->ID();
@@ -1925,7 +1922,7 @@ public:
             }
 
         } else if (!dropped_ships.empty()) {
-            DebugLogger() << " ... processing dropped " << dropped_ships.size() << " ships";
+            //DebugLogger() << " ... processing dropped " << dropped_ships.size() << " ships";
             // dropping ships.  transfer to target fleet.
 
             // get source fleet of ship(s).  assumes all ships are from the same source fleet.
@@ -1938,7 +1935,7 @@ public:
             for (std::vector<TemporaryPtr<Ship> >::const_iterator it = dropped_ships.begin(); it != dropped_ships.end(); ++it) {
                 TemporaryPtr<const Ship> ship = *it;
                 if (!ship) {
-                    ErrorLogger() << "... ... couldn't get dropped ship?";
+                    ErrorLogger() << "FleetsListBox::AcceptDrops  couldn't get dropped ship?";
                     continue;
                 }
                 ship_ids_vec.push_back(ship->ID());
@@ -1961,7 +1958,7 @@ public:
                     // TODO: moderator action to transfer ships / remove empty fleets
             }
         }
-        DebugLogger() << "FleetsListBox::AcceptDrops finished";
+        //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
 
     virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
