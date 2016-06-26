@@ -804,6 +804,14 @@ const std::string& GUI::AppName() const
 Wnd* GUI::FocusWnd() const
 { return s_impl->m_modal_wnds.empty() ? s_impl->m_focus_wnd : s_impl->m_modal_wnds.back().second; }
 
+bool GUI::FocusWndAcceptsTypingInput() const
+{
+    const Wnd* focus_wnd = FocusWnd();
+    if (!focus_wnd)
+        return false;
+    return dynamic_cast<const Edit*>(focus_wnd);    // currently only Edit controls accept text input, so far as I'm aware. Could add a ->AcceptsTypingInput() function to Wnd if needed
+}
+
 Wnd* GUI::PrevFocusInteractiveWnd() const
 {
     Wnd* focus_wnd = FocusWnd();

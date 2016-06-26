@@ -161,6 +161,7 @@ public:
     /** \name Accessors */ ///@{
     const std::string&          AppName() const;                    ///< returns the user-defined name of the application
     Wnd*                        FocusWnd() const;                   ///< returns the GG::Wnd that currently has the input focus
+    bool                        FocusWndAcceptsTypingInput() const; ///< returns true iff the current focus GG::Wnd accepts typing input
     Wnd*                        PrevFocusInteractiveWnd() const;    ///< returns the previous Wnd to the current FocusWnd. Cycles through INTERACTIVE Wnds, in order determined by parent-child relationships
     Wnd*                        NextFocusInteractiveWnd() const;    ///< returns the next Wnd to the current FocusWnd.
     Wnd*                        GetWindowUnder(const Pt& pt) const; ///< returns the GG::Wnd under the point pt
