@@ -251,10 +251,13 @@ bool ClientNetworking::ConnectToLocalHostServer(
 }
 
 void ClientNetworking::DisconnectFromServer() {
-    if (Connected())
+    if (Connected()) {
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-    // HACK! wait a bit for the disconnect to occur
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+        // HACK! wait a bit for the disconnect to occur
+        //only wait ~1 refresh period
+        DebugLogger() << "ClientNetworking::DisconnectFromServer wait";
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {
