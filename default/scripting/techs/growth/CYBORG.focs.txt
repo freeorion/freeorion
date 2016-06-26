@@ -15,6 +15,15 @@ Tech
             ]
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  accountinglabel = "GRO_CYBORG"
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "CYBORG_TROOPS_STACK"
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]] accountinglabel = "GRO_CYBORG"
     ]
     graphic = "icons/tech/cyborgs.png"
 

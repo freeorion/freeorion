@@ -36,7 +36,18 @@ BuildingType
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
             effects = SetMaxSupply value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                Planet
+                WithinStarlaneJumps jumps = 2 condition = Source
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = SetMaxTroops value = Value + 10 accountinglabel = "MEGALITH_LABEL"
     ]
     icon = "icons/building/megalith.png"
 
 #include "/scripting/common/enqueue.macros"
+
+#include "/scripting/common/priorities.macros"

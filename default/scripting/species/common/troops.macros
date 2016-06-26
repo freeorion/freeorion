@@ -2,23 +2,12 @@ BASIC_DEFENSE_TROOPS
 '''EffectsGroup
             scope = Source
             activation = And [
-                Planet
-                OwnerHasTech name = "DEF_ROOT_DEFENSE"
-                Contains Building name = "BLD_IMPERIAL_PALACE"
-            ]
-            stackinggroup = "PALACE_TROOPS_STACK"
-            accountinglabel = "BLD_IMPERIAL_PALACE"
-            effects = SetMaxTroops value = Value + 6
-
-EffectsGroup
-            scope = Source
-            activation = And [
                 Homeworld
                 Not Unowned
             ]
             stackinggroup = "HOMEWORLD_TROOPS_STACK"
-            accountinglabel = "HOMEWORLD_LABEL"
-            effects = SetMaxTroops value = Value + 4
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = SetMaxTroops value = Value + 4 accountinglabel = "HOMEWORLD_LABEL"
 
 EffectsGroup
             scope = Source
@@ -27,104 +16,27 @@ EffectsGroup
                 Unowned
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
-            accountinglabel = "INDEPENDENT_TROOP_LABEL"
-            effects = SetMaxTroops value = Value + 10
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = SetMaxTroops value = Value + 10 accountinglabel = "INDEPENDENT_TROOP_LABEL"
 
 EffectsGroup
             scope = Source
             activation = Planet
             stackinggroup = "POPULATION_TROOPS_STACK"
-            accountinglabel = "DEF_ROOT_DEFENSE"
-            effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]]
-
-EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                OwnerHasTech name = "GRO_CYBORG"
-            ]
-            stackinggroup = "CYBORG_TROOPS_STACK"
-            accountinglabel = "GRO_CYBORG"
-            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]]
-            
-EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_GARRISON_2"
-            ]
-            stackinggroup = "GARRISON_2_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_2"
-            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
-
-EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_GARRISON_4"
-            ]
-            stackinggroup = "GARRISON_4_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_4"
-            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
+            priority = [[VERY_EARLY_PRIORITY]]
+            effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]] accountinglabel = "DEF_ROOT_DEFENSE"
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS
 '''EffectsGroup
-            scope = Or [
-                Source
-                And [
-                    Planet
-                    OwnedBy empire = Source.Owner
-                    Population high = 0
-                ]
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_GARRISON_1"
-            ]
-            stackinggroup = "GARRISON_1_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_1"
-            effects = SetMaxTroops value = Value + 10   
-
-EffectsGroup
-            scope = Or [
-                Source
-                And [
-                    Planet
-                    OwnedBy empire = Source.Owner
-                    Population high = 0
-                ]
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_GARRISON_3"
-            ]
-            stackinggroup = "GARRISON_3_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_3"
-            effects = SetMaxTroops value = Value + 16
-
-EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                WithinStarlaneJumps jumps = 2 condition = And [
-                    Planet
-                    OwnedBy empire = Source.Owner
-                    Contains Building name = "BLD_MEGALITH"
-                ]
-            ]
-            accountinglabel = "MEGALITH_LABEL"
-            effects = SetMaxTroops value = Value + 10
-
-EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Population high = 0
             ]
             stackinggroup = "OUTPOST_TROOPS_STACK"
-            accountinglabel = "OUTPOST_TROOP_LABEL"
-            effects = SetMaxTroops value = Value * .5
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetMaxTroops value = Value * .5 accountinglabel = "OUTPOST_TROOP_LABEL"
 
 [[PROTECTION_FOCUS_TROOPS]]
 '''
@@ -135,6 +47,7 @@ NO_DEFENSE_TROOPS
         description = "NO_DEFENSE_TROOPS"
         scope = Source
         activation = None
+        priority = [[DEFAULT_PRIORITY]]
         effects = SetMaxTroops value = 0
 
 [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
@@ -147,8 +60,8 @@ EffectsGroup
             description = "BAD_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
-            accountinglabel = "BAD_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 0.5
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxTroops value = Value * 0.5 accountinglabel = "BAD_TROOPS_LABEL"
 
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
@@ -166,8 +79,8 @@ EffectsGroup
             description = "GOOD_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
-            accountinglabel = "GOOD_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 1.5
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxTroops value = Value * 1.5 accountinglabel = "GOOD_TROOPS_LABEL"
 
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
@@ -179,8 +92,8 @@ EffectsGroup
             description = "GREAT_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
-            accountinglabel = "GREAT_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 2
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxTroops value = Value * 2 accountinglabel = "GREAT_TROOPS_LABEL"
 
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
@@ -192,8 +105,8 @@ EffectsGroup
             description = "ULTIMATE_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
-            accountinglabel = "ULTIMATE_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 3
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxTroops value = Value * 3 accountinglabel = "ULTIMATE_TROOPS_LABEL"
 
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
@@ -206,8 +119,8 @@ PROTECTION_FOCUS_TROOPS
                 Focus type = "FOCUS_PROTECTION"
             ]
             stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
-            accountinglabel = "FOCUS_PROTECTION_LABEL"
-            effects = SetMaxTroops value = Value * 2
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetMaxTroops value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
 '''
 
 NO_OFFENSE_TROOPS
