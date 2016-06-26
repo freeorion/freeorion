@@ -740,6 +740,51 @@ CUIEdit::CUIEdit(const std::string& str) :
     SetHiliteColor(ClientUI::EditHiliteColor());
 }
 
+void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    // create popup menu with a rename ship option in it.
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),           1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_PASTE"),         3, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: { // cut
+            GG::GUI::GetGUI()->CutWndText(this);
+            break;
+        }
+
+        case 2: { // copy
+            GG::GUI::GetGUI()->CopyWndText(this);
+            break;
+        }
+
+        case 3: { // paste
+            GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
+            break;
+        }
+
+        case 4: { // select all
+            GG::GUI::GetGUI()->WndSelectAll(this);
+            break;
+        }
+
+        case 5: { // deselect all
+            GG::GUI::GetGUI()->WndDeselect(this);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+}
+
 void CUIEdit::GainingFocus() {
     GG::Edit::GainingFocus();
     GainingFocusSignal();
