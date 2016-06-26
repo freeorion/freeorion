@@ -29,6 +29,15 @@ Tech
 
         EffectsGroup
             scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_GEM"
+            priority = [[LATE_PRIORITY]]
+            effects = SetMaxShield value = Value + 50 accountinglabel = "GRO_ENERGY_META"
+
+        EffectsGroup
+            scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"

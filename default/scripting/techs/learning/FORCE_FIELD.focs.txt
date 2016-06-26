@@ -8,5 +8,17 @@ Tech
     prerequisites = "LRN_ARTIF_MINDS"
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
     graphic = "icons/tech/forcefield_harmonics.png"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            stackinggroup = "PLANET_SHIELDS_STACK_FF"
+            effects = SetMaxShield value = Value + 10 accountinglabel = "LRN_FORCE_FIELD"
+    ]
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

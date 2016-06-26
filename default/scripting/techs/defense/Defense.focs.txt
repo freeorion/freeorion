@@ -7,6 +7,16 @@ Tech
     researchcost = 1
     researchturns = 1
     graphic = ""
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[DEFAULT_PRIORITY]]
+            stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
+            effects = SetMaxShield value = Value + 1 accountinglabel = "DEF_ROOT_DEFENSE"
+    ]
 
 Tech
     name = "DEF_PLANET_CLOAK"

@@ -1,135 +1,20 @@
 
 NATIVE_PLANETARY_SHIELDS
-'''[[BASIC_PLANETARY_SHIELDS]]
-
-EffectsGroup
+'''EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Unowned
             ]
-            accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
-            effects = SetMaxShield value = Value + 10
+            effects = SetMaxShield value = Value + 10 accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
 
     [[PROTECTION_FOCUS_SHIELDS]]
 '''
 
 
 AVERAGE_PLANETARY_SHIELDS
-'''[[BASIC_PLANETARY_SHIELDS]]
+'''[[PROTECTION_FOCUS_SHIELDS]]'''
 
-//EffectsGroup
-//            scope = Source
-//            activation = Planet
-//          accountinglabel = "AVERAGE_SHIELDS_LABEL"
-//            effects = SetMaxShield value = Value * 1
-            
-    [[PROTECTION_FOCUS_SHIELDS]]
-'''
-
-BASIC_PLANETARY_SHIELDS
-'''EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_ROOT_DEFENSE"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
-            accountinglabel = "DEF_ROOT_DEFENSE"
-            effects = SetMaxShield value = Value + 1
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "LRN_FORCE_FIELD"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_FF"
-            accountinglabel = "LRN_FORCE_FIELD"
-            effects = SetMaxShield value = Value + 10
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_1"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_1"
-            accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
-            effects = SetMaxShield value = Value + 30
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_2"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_2"
-            accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
-            effects = SetMaxShield value = Value + 60
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_3"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_3"
-            accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
-            effects = SetMaxShield value = Value + 90
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_4"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_4"
-            accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
-            effects = SetMaxShield value = Value + 150
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_5"
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_5"
-            accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
-            effects = SetMaxShield value = Value + 150
-
-EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                OwnerHasTech name = "GRO_ENERGY_META"
-                Population low = 0.000001
-            ]
-            stackinggroup = "PLANET_SHIELDS_STACK_GEM"
-            accountinglabel = "GRO_ENERGY_META"
-            effects = SetMaxShield value = Value + 50
-'''
 
 PROTECTION_FOCUS_SHIELDS
 '''EffectsGroup
@@ -139,6 +24,8 @@ PROTECTION_FOCUS_SHIELDS
                 Focus type = "FOCUS_PROTECTION"
             ]
             stackinggroup = "FOCUS_PROTECTION_SHIELDS_STACK"
-            accountinglabel = "FOCUS_PROTECTION_LABEL"
-            effects = SetMaxShield value = Value * 2
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetMaxShield value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
 '''
+
+#include "/scripting/common/priorities.macros"
