@@ -18,7 +18,14 @@ Tech
             ]
             effects = SetMaxFuel value = Value + 2
 
-// Shield & defense now adjusted in Species
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "DEFENSE_NET_STACK_GM"
+            priority = [[LATE_PRIORITY]]
+            effects = SetMaxDefense value = Value + 10 accountinglabel = "GRO_ENERGY_META"
 
         EffectsGroup
             scope = And [

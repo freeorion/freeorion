@@ -92,5 +92,14 @@ BuildingType
             stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
             effects =
                 SetTargetHappiness value = Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
+        
+        EffectsGroup
+            scope = Object id = Source.PlanetID
+            stackinggroup = "PALACE_DEFENSE_STACK"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetMaxDefense value = Value + 5 accountinglabel = "BLD_IMPERIAL_PALACE"
         ]
+
     icon = "icons/building/palace.png"
+
+#include "/scripting/common/priorities.macros"

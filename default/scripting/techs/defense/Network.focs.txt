@@ -6,6 +6,9 @@ Tech
     researchcost = 16 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "DEF_ROOT_DEFENSE"
+    effectsgroups = [
+        [[EG_DEFENSE_NET(5,1)]]
+    ]
 
 Tech
     name = "DEF_DEFENSE_NET_2"
@@ -15,6 +18,9 @@ Tech
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     prerequisites = "DEF_DEFENSE_NET_1"
+    effectsgroups = [
+        [[EG_DEFENSE_NET(15,2)]]
+    ]
 
 Tech
     name = "DEF_DEFENSE_NET_3"
@@ -24,6 +30,9 @@ Tech
     researchcost = 160 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     prerequisites = "DEF_DEFENSE_NET_2"
+    effectsgroups = [
+        [[EG_DEFENSE_NET(25,3)]]
+    ]
 
 Tech
     name = "DEF_DEFENSE_NET_REGEN_1"
@@ -57,4 +66,17 @@ Tech
             ]
             effects = SetDefense value = Value + max(0.1*Target.MaxDefense, 0.25*Target.Construction)
 
+EG_DEFENSE_NET
+'''EffectsGroup
+    scope = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
+    stackinggroup = "DEFENSE_NET_STACK_@2@"
+    priority = [[DEFAULT_PRIORITY]]
+    effects = SetMaxDefense value = Value + @1@ accountinglabel = "DEF_DEFENSE_NET_@2@"
+'''
+
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"
