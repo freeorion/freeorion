@@ -750,6 +750,8 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
 
+    // todo: italicize, underline, or colour selected text
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (popup.Run()) {
@@ -782,6 +784,29 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         default:
             break;
         }
+    }
+}
+
+void CUIEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+    if (Disabled()) {
+        GG::Edit::KeyPress(key, key_code_point, mod_keys);
+        return;
+    }
+
+    bool shift_down = mod_keys & (GG::MOD_KEY_LSHIFT | GG::MOD_KEY_RSHIFT);
+    //bool ctrl_down = mod_keys & (GG::MOD_KEY_CTRL | GG::MOD_KEY_RCTRL);
+    //bool numlock_on = mod_keys & GG::MOD_KEY_NUM;
+
+    if (key == GG::GGK_DELETE && shift_down) {
+        GG::GUI::GetGUI()->CutWndText(this);
+
+    } else if (key == GG::GGK_INSERT && shift_down) {
+        GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
+
+    // todo: italicize, underline selected text with ctrl-i or ctrl-u
+
+    } else {
+        GG::Edit::KeyPress(key, key_code_point, mod_keys);
     }
 }
 

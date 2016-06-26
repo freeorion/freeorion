@@ -242,6 +242,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     virtual void GainingFocus();
     virtual void LosingFocus();
     virtual void Render();
