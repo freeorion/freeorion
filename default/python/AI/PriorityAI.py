@@ -12,6 +12,7 @@ import PlanetUtilsAI
 import ProductionAI
 import ResearchAI
 import AIDependencies
+from turn_state import state
 from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
 from freeorion_debug import Timer
 from freeorion_tools import tech_is_complete
@@ -119,8 +120,8 @@ def _calculate_research_priority():
     total_rp = empire.resourceProduction(fo.resourceType.research)
     industry_surge = ((foAI.foAIstate.aggression > fo.aggression.cautious) and
                      ((total_pp + 1.6 * total_rp) < (50 * foAI.foAIstate.aggression)) and
-                     (((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and ColonisationAI.have_gas_giant()) or
-                      ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and ColonisationAI.have_asteroids())) and
+                     (((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and state.have_gas_giant) or
+                      ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and state.have_asteroids)) and
                      (not (len(AIstate.popCtrIDs) >= 12)))
     # get current industry production & Target
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)

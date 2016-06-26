@@ -10,6 +10,7 @@ import AIstate
 import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
+from turn_state import state
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
 from common.print_utils import print_in_columns
 
@@ -360,15 +361,15 @@ def init():
     ]
 
     tech_handlers = (
-        (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, ColonisationAI.have_asteroids)),
-        (Dep.PRO_ORBITAL_GEN, conditional_priority(3.0, LOW, ColonisationAI.have_gas_giant)),
+        (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, state.have_asteroids)),
+        (Dep.PRO_ORBITAL_GEN, conditional_priority(3.0, LOW, state.have_gas_giant)),
         (Dep.PRO_SINGULAR_GEN, conditional_priority(3.0, LOW, partial(has_star, fo.starType.blackHole))),
         (Dep.GRO_XENO_GENETICS, get_xeno_genetics_priority),
-        (Dep.LRN_XENOARCH, conditional_priority(LOW, conditional_priority(5.0, LOW, ColonisationAI.have_ruins), has_low_aggression)),
+        (Dep.LRN_XENOARCH, conditional_priority(LOW, conditional_priority(5.0, LOW, state.have_ruins), has_low_aggression)),
         (Dep.LRN_ART_BLACK_HOLE, get_artificial_black_hole_priority),
         (Dep.GRO_GENOME_BANK, LOW),
         (Dep.CON_CONC_CAMP, ZERO),
-        (Dep.NEST_DOMESTICATION_TECH, conditional_priority(ZERO, conditional_priority(3.0, LOW, ColonisationAI.have_nest), has_low_aggression)),
+        (Dep.NEST_DOMESTICATION_TECH, conditional_priority(ZERO, conditional_priority(3.0, LOW, state.have_nest), has_low_aggression)),
         (Dep.UNRESEARCHABLE_TECHS, -1.0),
         (Dep.UNUSED_TECHS, ZERO),
         (Dep.THEORY_TECHS, ZERO),
@@ -433,7 +434,11 @@ def generate_research_orders():
     empire_id = empire.empireID
     completed_techs = get_completed_techs()
     print "Research Queue Management on turn %d:" % fo.currentTurn()
-    print "ColonisationAI survey: got_ast %s, got_gg %s, gotRuins %s" % (ColonisationAI.got_ast, ColonisationAI.got_gg, ColonisationAI.gotRuins)
+    print "ColonisationAI survey:"
+    print '  have asteroids:', state.have_asteroids
+    print '  have gas giant:', state.have_gas_giant
+    print '  have ruins', state.have_ruins
+
     resource_production = empire.resourceProduction(fo.resourceType.research)
     print "\nTotal Current Research Points: %.2f\n" % resource_production
     print "Techs researched and available for use:"
@@ -756,7 +761,7 @@ def generate_classic_research_orders():
 
     nest_tech = AIDependencies.NEST_DOMESTICATION_TECH
     artif_minds = AIDependencies.ART_MINDS
-    if ColonisationAI.got_nest and not tech_is_complete(nest_tech):
+    if state.have_nest and not tech_is_complete(nest_tech):
         if artif_minds in research_queue_list:
             insert_idx = 1 + research_queue_list.index(artif_minds)
         else:
@@ -838,7 +843,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate xeno_arch
     if True:  # just to help with cold-folding /  organization
-        if (ColonisationAI.gotRuins and not tech_is_complete("LRN_XENOARCH") and
+        if (state.have_ruins and not tech_is_complete("LRN_XENOARCH") and
                 foAI.foAIstate.aggression >= fo.aggression.typical):
             if artif_minds in research_queue_list:
                 insert_idx = 7 + research_queue_list.index(artif_minds)
@@ -892,7 +897,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate asteroid or GG tech
     if True:  # just to help with cold-folding / organization
-        if ColonisationAI.got_ast:
+        if state.have_asteroids:
             insert_idx = num_techs_accelerated if "GRO_SYMBIOTIC_BIO" not in research_queue_list else research_queue_list.index("GRO_SYMBIOTIC_BIO")
             ast_tech = "PRO_MICROGRAV_MAN"
             if not (tech_is_complete(ast_tech) or ast_tech in research_queue_list[:(1 + insert_idx)]):
@@ -916,7 +921,7 @@ def generate_classic_research_orders():
                         if report_adjustments:
                             chat_human(msg)
                 research_queue_list = get_research_queue_techs()
-        if ColonisationAI.got_gg and not tech_is_complete("PRO_ORBITAL_GEN"):
+        if state.have_gas_giant and not tech_is_complete("PRO_ORBITAL_GEN"):
             fusion_idx = 0 if "PRO_FUSION_GEN" not in research_queue_list else (1 + research_queue_list.index("PRO_FUSION_GEN"))
             forcefields_idx = 0 if "LRN_FORCE_FIELD" not in research_queue_list else (1 + research_queue_list.index("LRN_FORCE_FIELD"))
             insert_idx = max(fusion_idx, forcefields_idx) if enemies_sighted else fusion_idx

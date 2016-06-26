@@ -10,6 +10,7 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
+from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn
 from freeorion_debug import Timer
@@ -34,13 +35,7 @@ systems_by_supply_tier = {}
 system_supply = {}
 planet_supply_cache = {}  # includes system supply
 all_colony_opportunities = {}
-gotRuins = False
-got_ast = False
-got_gg = False
-got_computronium = False
-got_nest = False
-cur_best_pilot_rating = 1e-8
-curMidPilotRating = 1e-8
+
 pilot_ratings = {}
 colony_status = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
@@ -54,33 +49,6 @@ ENVIRONS = {str(fo.planetEnvironment.uninhabitable): 0, str(fo.planetEnvironment
 PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, fo.starType.neutron: -1,
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
 
-
-def get_medium_pilot_rating():
-    return curMidPilotRating
-
-
-def get_best_pilot_rating():
-    return cur_best_pilot_rating
-
-
-def have_computronium():
-    return got_computronium
-
-
-def have_asteroids():
-    return got_ast
-
-
-def have_gas_giant():
-    return got_gg
-
-
-def have_ruins():
-    return gotRuins
-
-
-def have_nest():
-    return got_nest
 
 #  mods per environ uninhab hostile poor adequate good
 POP_SIZE_MOD_MAP = {
@@ -238,7 +206,6 @@ def check_supply():
 
 
 def survey_universe():
-    global gotRuins, got_ast, got_gg, got_computronium, got_nest, cur_best_pilot_rating, curMidPilotRating
     check_supply()
     colonization_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
@@ -290,11 +257,7 @@ def survey_universe():
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
-        got_computronium = False
-        got_nest = False
-        got_ast = False
-        got_gg = False
-        gotRuins = False
+        state.cleanup()
 
     # var setup done
 
@@ -358,7 +321,7 @@ def survey_universe():
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
                     if "COMPUTRONIUM_SPECIAL" in planet.specials:  # only counting it if planet is populated
-                        got_computronium = True
+                        state.set_have_computronium()
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
@@ -373,10 +336,10 @@ def survey_universe():
                 elif planet.focus == FocusType.FOCUS_RESEARCH:
                     empire_status['researchers'] += planet_population
                 if "ANCIENT_RUINS_SPECIAL" in planet.specials:
-                    gotRuins = True
+                    state.set_have_ruins()
                 for special in planet.specials:
                     if special in NEST_VAL_MAP:
-                        got_nest = True
+                        state.set_have_nest()
                     if special in AIDependencies.metabolismBoosts:
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
@@ -393,9 +356,9 @@ def survey_universe():
 
         if empire_has_qualifying_planet:
             if local_ast:
-                got_ast = True
+                state.set_have_asteroids()
             elif local_gg:
-                got_gg = True
+                state.set_have_gas_giant()
 
         if empire_has_colony_in_sys:
             if empire_has_pop_ctr_in_sys:
@@ -428,24 +391,20 @@ def survey_universe():
 
     if len(pilot_ratings) != 0:
         rating_list = sorted(pilot_ratings.values(), reverse=True)
-        cur_best_pilot_rating = rating_list[0]
+        state.set_best_pilot_rating(rating_list[0])
         if len(pilot_ratings) == 1:
-            curMidPilotRating = rating_list[0]
+            state.set_medium_pilot_rating(rating_list[0])
         else:
-            curMidPilotRating = rating_list[1 + int(len(rating_list) / 5)]
-    else:
-        cur_best_pilot_rating = 1e-8
-        curMidPilotRating = 1e-8
-
-        # the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targetted
-        # for making/invading a colony
-        # claimedStars = {}
-        # for sType in AIstate.empireStars:
-        # claimedStars[sType] = list( AIstate.empireStars[sType] )
-        # for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-        # tSys = universe.getSystem(sysID)
-        # if not tSys: continue
-        # claimedStars.setdefault( tSys.starType, []).append(sysID)
+            state.set_medium_pilot_rating(rating_list[1 + int(len(rating_list) / 5)])
+    # the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targetted
+    # for making/invading a colony
+    # claimedStars = {}
+    # for sType in AIstate.empireStars:
+    # claimedStars[sType] = list( AIstate.empireStars[sType] )
+    # for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
+    # tSys = universe.getSystem(sysID)
+    # if not tSys: continue
+    # claimedStars.setdefault( tSys.starType, []).append(sysID)
     # foAI.foAIstate.misc['claimedStars'] = claimedStars
     colonization_timer.stop()
 
@@ -805,7 +764,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
         pilot_val = pilot_rating = rate_piloting_tag(species.tags)
-        if pilot_val > get_best_pilot_rating():
+        if pilot_val > state.best_pilot_rating:
             pilot_val *= 2
         if pilot_val > 2:
             retval += discount_multiplier * 5 * pilot_val
@@ -927,7 +886,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "PHOTOTROPHIC" in tag_list:
             star_pop_mod = PHOTO_MAP.get(system.starType, 0)
             detail.append("PHOTOTROPHIC popMod %.1f" % star_pop_mod)
-        elif pilot_rating >= get_best_pilot_rating():
+        elif pilot_rating >= state.best_pilot_rating:
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
                 star_bonus += 40 * discount_multiplier  # can be used for artif'l black hole and solar hull
                 detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
@@ -1297,7 +1256,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
                               AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
                               discount_multiplier)
-                if have_computronium():
+                if state.have_computronium:
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
                 detail.append("COMPUTRONIUM_SPECIAL")
