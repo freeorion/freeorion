@@ -26,7 +26,7 @@ EG_SYSTEM_MINES
                 Structure low = @1@ + 0.0001
             ]
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 SetStructure value = Value - @1@
             ]
@@ -43,7 +43,7 @@ EG_SYSTEM_MINES
                 Structure high = @1@
             ]
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 Destroy
             ]
@@ -56,7 +56,7 @@ EG_SYSTEM_MINES
                 VisibleToEmpire empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_ENEMY_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
@@ -79,7 +79,7 @@ EG_SYSTEM_MINES
                 Structure low = @1@ + 0.0001
             ]
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_UNOWNED_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SINGLE_SHIP"
@@ -103,7 +103,7 @@ EG_SYSTEM_MINES
                 Structure high = @1@
             ]
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_UNOWNED_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_UNOWNED_DESTROYED"
@@ -126,7 +126,7 @@ EG_SYSTEM_MINES
                 VisibleToEmpire empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_ENEMY_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
@@ -150,7 +150,7 @@ EG_SYSTEM_MINES
                 Not VisibleToEmpire empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_PLANET_INVISIBLE_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_UNKNOWN"
@@ -168,7 +168,7 @@ EG_SYSTEM_MINES
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_FLEET_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
@@ -190,7 +190,7 @@ EG_SYSTEM_MINES
                 Structure high = @1@
             ]
             stackinggroup = "DEF_MINES_SITREP_SHIP_STACK"
-            priority = [[@2@]]
+            priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
