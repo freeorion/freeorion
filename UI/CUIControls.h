@@ -116,7 +116,6 @@ private:
     bool             m_fill_background_with_wnd_color;
 };
 
-
 /** \brief A FreeOrion styled check box state button. */
 class CUICheckBoxRepresenter : public GG::StateButtonRepresenter {
 public:
@@ -125,7 +124,6 @@ public:
     virtual void OnChecked(bool checked) const;
 };
 
-
 /** \brief A FreeOrion styled radio state button. */
 class CUIRadioRepresenter : public GG::StateButtonRepresenter {
 public:
@@ -133,7 +131,6 @@ public:
 
     virtual void OnChecked(bool checked) const;
 };
-
 
 /** \brief A FreeOrion styled TabBar tab. */
 class CUITabRepresenter : public GG::StateButtonRepresenter {
@@ -144,7 +141,6 @@ public:
 
     virtual GG::Pt MinUsableSize(const GG::StateButton& button) const;
 };
-
 
 /** a FreeOrion StateButton control */
 class CUIStateButton : public GG::StateButton {
@@ -594,7 +590,6 @@ private:
     float   m_rpm;
     float   m_phase_offset;
 };
-
 
 /** \brief Represents a CUIToggleButton
  * 
