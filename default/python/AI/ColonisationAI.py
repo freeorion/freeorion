@@ -1,4 +1,5 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from common.print_utils import Table, Text, Sequence, Bool
 
 import AIDependencies
 import universe_object
@@ -9,7 +10,7 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
-from EnumsAI import MissionType, ExplorableSystemType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
+from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn
 from freeorion_debug import Timer
 
@@ -191,14 +192,6 @@ def check_supply():
     colonization_timer.start('Getting Empire Supply Info')
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    fleet_suppliable_system_ids = empire.fleetSupplyableSystemIDs
-    fleet_suppliable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_suppliable_system_ids)
-    print
-    print "    fleet_suppliable_system_ids: %s" % list(fleet_suppliable_system_ids)
-    print "    fleet_suppliable_planet_ids: %s" % fleet_suppliable_planet_ids
-    print
-
-    print "-------\nEmpire Obstructed Starlanes: %s" % list(empire.obstructedStarlanes())
     colonization_timer.start('Determining Annexable Systems')
 
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
@@ -254,14 +247,12 @@ def survey_universe():
     current_turn = fo.currentTurn()
 
     # get outpost and colonization planets
-    explored_system_ids = foAI.foAIstate.get_explorable_systems(ExplorableSystemType.EXPLORED)
-    un_ex_sys_ids = list(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.UNEXPLORED))
-    un_ex_systems = map(universe.getSystem, un_ex_sys_ids)
-    print "Unexplored Systems: %s " % un_ex_systems
-    print "Explored SystemIDs: %s" % list(explored_system_ids)
+    explored_system_ids = foAI.foAIstate.get_explored_system_ids()
+    un_ex_sys_ids = foAI.foAIstate.get_unexplored_system_ids()
 
-    explored_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
-    print "Explored PlanetIDs: %s" % explored_planet_ids
+    print "Unexplored Systems: %s " % map(universe.getSystem, un_ex_sys_ids)
+    print "Explored SystemIDs: %s" % map(universe.getSystem, explored_system_ids)
+    print "Explored PlanetIDs: %s" % PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
     print
 
     # visibleSystemIDs = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
@@ -421,13 +412,20 @@ def survey_universe():
     # system_facilities[''] = {'systems': set().union(sys_id for key, val in system_facilities.items()
     #                                                for sys_id in val.get('systems', {}))}
 
-    print "\n" + "Empire species roster:"
+    species_table = Table(
+        [Text('species'), Sequence('planets'), Bool('can colonize'),
+         Text('ship yards count'), Sequence('tags')],
+        table_name="Empire species roster"
+    )
+
     for spec_name in empire_species:
         this_spec = fo.getSpecies(spec_name)
-        print "%s on planets %s; can%s colonize from %d shipyards; has tags %s" % (
-            spec_name, empire_species[spec_name], ["not", ""][spec_name in empire_colonizers],
-            len(empire_ship_builders.get(spec_name, [])), list(this_spec.tags))
-    print ""
+        species_table.add_row(
+            (spec_name, empire_species[spec_name], spec_name in empire_colonizers,
+             len(empire_ship_builders.get(spec_name, [])), list(this_spec.tags))
+        )
+    species_table.print_table()
+
     if len(pilot_ratings) != 0:
         rating_list = sorted(pilot_ratings.values(), reverse=True)
         cur_best_pilot_rating = rating_list[0]
