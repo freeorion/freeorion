@@ -48,9 +48,10 @@ struct HotkeyManager::ConditionalConnection {
         }
     };
 
-    ConditionalConnection(const boost::signals2::connection& conn,
-                            HotkeyCondition* cond) :
-        condition(cond), connection(conn), blocker(connection)
+    ConditionalConnection(const boost::signals2::connection& conn, HotkeyCondition* cond) :
+        condition(cond),
+        connection(conn),
+        blocker(connection)
     {
         blocker.unblock();
     }
@@ -70,13 +71,7 @@ std::map<std::string, Hotkey>* Hotkey::s_hotkeys = 0;
 void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!s_hotkeys)
         s_hotkeys = new std::map<std::string, Hotkey>;
-    if (IsTypingSafe(key, mod)) {
-        s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, key, mod)));
-    } else {
-        ErrorLogger() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing: "
-                      << "name: " << name << " key/mod: " << key << " / " << mod;
-        s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, GG::GGK_NONE, GG::MOD_KEY_NONE)));
-    }
+    s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, key, mod)));
 }
 
 std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
@@ -292,11 +287,9 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
             size_t j = hk_name.find('.');
             if (j != std::string::npos) {
                 section = "HOTKEYS_" + hk_name.substr(0, j);
-                std::transform(section.begin(), section.end(),
-                               section.begin(), ::toupper);
+                std::transform(section.begin(), section.end(), section.begin(), ::toupper);
                 if (section == "HOTKEYS_COMBAT")
-                    section = "HOTKEYS_Z_COMBAT"; // make combat the
-                                                  // last category
+                    section = "HOTKEYS_Z_COMBAT"; // make combat the last category
             }
             ret[section].insert(hk_name);
         }
@@ -305,6 +298,8 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
 }
 
 bool Hotkey::IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod) {
+    if (key >= GG::GGK_UP && key <= GG::GGK_PAGEDOWN)
+        return false;
     if (mod & (GG::MOD_KEY_CTRL | GG::MOD_KEY_ALT | GG::MOD_KEY_META))
         return true;
     if (key >= GG::GGK_F1 && key <= GG::GGK_F15)
@@ -321,12 +316,6 @@ bool Hotkey::IsDefault() const
 { return m_key == m_key_default && m_mod_keys == m_mod_keys_default; }
 
 void Hotkey::SetHotkey(const Hotkey& hotkey, GG::Key key, GG::Flags<GG::ModKey> mod) {
-    if (!IsTypingSafe(key, mod)) {
-        DebugLogger() << "Hotkey::SetHotkey: Typing-unsafe hotkey requested: "
-                               << mod << " + " << key << " for hotkey " << hotkey.m_name;
-        return;
-    }
-
     Hotkey& hk = PrivateNamedHotkey(hotkey.m_name);
     hk.m_key = key;
     hk.m_mod_keys = GG::MassagedAccelModKeys(mod);
@@ -490,8 +479,7 @@ void HotkeyManager::RebuildShortcuts() {
 
         m_internal_connections.insert(GG::Connect(
             gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys),
-            boost::bind(&HotkeyManager::ProcessNamedShortcut,
-            this, hk.m_name)));
+            boost::bind(&HotkeyManager::ProcessNamedShortcut, this, hk.m_name, hk.m_key, hk.m_mod_keys)));
     }
 }
 
@@ -512,7 +500,11 @@ GG::GUI::AcceleratorSignalType& HotkeyManager::NamedSignal(const std::string& na
     return *sig;
 }
 
-bool HotkeyManager::ProcessNamedShortcut(const std::string& name) {
+bool HotkeyManager::ProcessNamedShortcut(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod) {
+    // reject unsafe-for-typing key combinations while typing
+    if (GG::GUI::GetGUI()->FocusWndAcceptsTypingInput() && !Hotkey::IsTypingSafe(key, mod))
+        return false;
+
     // First update the connection state according to the current status.
     ConditionalConnectionList& conds = m_connections[name];
     for (ConditionalConnectionList::iterator i = conds.begin();

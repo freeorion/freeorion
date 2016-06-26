@@ -262,7 +262,7 @@ private:
     HotkeyManager();
 
     /// The shortcut processing function. Passed using boost::bind.
-    bool ProcessNamedShortcut(const std::string& name);
+    bool ProcessNamedShortcut(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod);
 
     /// Returns the signal for the given named accelerator, creating
     /// it if necessary.
