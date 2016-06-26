@@ -1903,7 +1903,7 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const
 //////////////////////////////////////////////////
 // TechTreeWnd                                  //
 //////////////////////////////////////////////////
-TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
+TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_tech_tree_controls(0),
     m_enc_detail_panel(0),
@@ -1959,11 +1959,16 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     // connect view type selector
     GG::Connect(m_tech_tree_controls->m_view_type_button->CheckedSignal, &TechTreeWnd::ToggleViewType, this);
 
-    ShowAllCategories();
-    ShowStatus(TS_RESEARCHABLE);
-    ShowStatus(TS_HAS_RESEARCHED_PREREQ);
-    ShowStatus(TS_COMPLETE);
-    // leave unresearchable hidden by default
+    //TechTreeWnd in typically constructed before theUI client has
+    //accesss to the technologies so showing these categories takes a
+    //long time and generates errors, but is never seen by the user.
+    if (!initially_hidden) {
+        ShowAllCategories();
+        ShowStatus(TS_RESEARCHABLE);
+        ShowStatus(TS_HAS_RESEARCHED_PREREQ);
+        ShowStatus(TS_COMPLETE);
+        // leave unresearchable hidden by default
+    }
 
     ShowTreeView();
 }

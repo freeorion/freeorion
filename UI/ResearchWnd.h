@@ -13,7 +13,7 @@ class ResearchQueueWnd;
 class ResearchWnd : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    ResearchWnd(GG::X w, GG::Y h);
+    ResearchWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~ResearchWnd();
     //@}
 
