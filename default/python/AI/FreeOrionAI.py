@@ -57,8 +57,14 @@ _capitals = {fo.aggression.beginner: UserStringList("AI_CAPITOL_NAMES_BEGINNER")
              fo.aggression.aggressive: UserStringList("AI_CAPITOL_NAMES_AGGRESSIVE"),
              fo.aggression.maniacal: UserStringList("AI_CAPITOL_NAMES_MANIACAL")}
 
+
+# Mock to have proper inspection and autocomplete for this variable
+class AIStateMock(AIstate.AIstate):
+    def __init__(self):
+        pass
+
 # AIstate
-foAIstate = None
+foAIstate = AIStateMock()
 diplomatic_corp = None
 
 @chat_on_error
