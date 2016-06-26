@@ -30,7 +30,8 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    MapWnd*                 GetMapWnd();                                //!< Returns the main map window (may be null).
+    MapWnd*                 GetMapWnd();                                //!< Returns the main map window.
+    MapWnd const*           GetMapWndConst() const;                     //!< Returns the main map window.
     MessageWnd*             GetMessageWnd();                            //!< Returns the chat / message window.
     PlayerListWnd*          GetPlayerListWnd();                         //!< Returns the players list window.
     IntroScreen*            GetIntroScreen();                           //!< Returns the intro screen / splash window.
@@ -203,7 +204,7 @@ private:
     void                HandleSizeChange(bool fullscreen) const;
     void                HandleFullscreenSwitch() const;
 
-    MapWnd*                 m_map_wnd;              //!< the galaxy map
+    mutable MapWnd*         m_map_wnd;              //!< the galaxy map
     MessageWnd*             m_message_wnd;          //!< the messages / chat display
     PlayerListWnd*          m_player_list_wnd;      //!< the players list
     IntroScreen*            m_intro_screen;         //!< splash screen / main menu when starting program
