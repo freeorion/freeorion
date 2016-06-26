@@ -36,7 +36,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Turn low = Source.CreationTurn + 1
-            effects = SetStructure value = Target.MaxStructure
+            effects = SetStructure value = Value + Value
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
