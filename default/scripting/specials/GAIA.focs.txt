@@ -42,7 +42,16 @@ Special
                     empire = Source.Owner
             ]
 
-        // population effects in species.txt
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet environment = Good
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = [
+                SetTargetPopulation value = Value + 3 * Target.SizeAsDouble accountinglabel = "GAIA_LABEL"
+                SetTargetHappiness value = Value + 5 accountinglabel = "GAIA_LABEL"
+            ]
 
         EffectsGroup
             scope = Source
@@ -61,3 +70,5 @@ Special
             effects = Destroy
     ]
     graphic = "icons/specials_huge/gaia.png"
+
+#include "/scripting/common/priorities.macros"
