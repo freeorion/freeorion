@@ -1926,8 +1926,7 @@ std::set<std::string> TechTreeWnd::GetCategoriesShown() const
 std::set<TechStatus> TechTreeWnd::GetTechStatusesShown() const
 { return m_layout_panel->GetTechStatusesShown(); }
 
-void TechTreeWnd::Update()
-{
+void TechTreeWnd::Update() {
     m_layout_panel->Update();
     m_tech_list->Update();
 }
