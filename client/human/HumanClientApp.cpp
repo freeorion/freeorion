@@ -43,6 +43,7 @@
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/chrono/chrono_io.hpp>
 
 #include <sstream>
 
@@ -83,7 +84,9 @@ void SigHandler(int sig) {
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const unsigned int  SERVER_CONNECT_TIMEOUT = 4500; // in ms
+    typedef boost::chrono::steady_clock Clock;
+    const boost::chrono::milliseconds SERVER_CONNECT_TIMEOUT(4500);
+    const boost::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(2000);
 
     const bool          INSTRUMENT_MESSAGE_HANDLING = false;
 
@@ -444,9 +447,9 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
 
     bool failed = false;
-    unsigned int start_time = Ticks();
-    while (!m_networking.ConnectToLocalHostServer(boost::chrono::milliseconds(2000))) {
-        if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+    Clock::time_point start_time = Clock::now();
+    while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
+        if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             failed = true;
             break;
@@ -454,7 +457,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
     m_connected = !failed;
     if (!failed && (quickstart || ended_with_ok)) {
-        DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connected to server";
+        DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connected to server in "
+                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(Clock::now() - start_time) << ".";
 
         SinglePlayerSetupData setup_data;
         setup_data.m_new_game = true;
@@ -578,9 +582,9 @@ void HumanClientApp::MultiPlayerGame() {
         server_name = GetOptionsDB().Get<std::string>("external-server-address");
     }
 
-    unsigned int start_time = Ticks();
-    while (!m_networking.ConnectToServer(server_name, boost::chrono::milliseconds(2000))) {
-        if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+    Clock::time_point start_time = Clock::now();
+    while (!m_networking.ConnectToServer(server_name, SERVER_STARTUP_POLLING_TIME)) {
+        if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
                 KillServer();
@@ -656,9 +660,9 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
-    unsigned int start_time = Ticks();
-    while (!m_networking.ConnectToLocalHostServer()) {
-        if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+    Clock::time_point start_time = Clock::now();
+    while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
+        if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
             ErrorLogger() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             KillServer();
@@ -696,9 +700,9 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         StartServer();
 
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
-        unsigned int start_time = Ticks();
-        while (!m_networking.ConnectToLocalHostServer()) {
-            if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+        Clock::time_point start_time = Clock::now();
+        while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
+            if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
                 ErrorLogger() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 KillServer();
