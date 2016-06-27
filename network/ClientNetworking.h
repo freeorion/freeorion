@@ -10,6 +10,7 @@
 // FreeOrion function names.
 #define NOMINMAX
 #include <boost/asio.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 #ifdef FREEORION_WIN32
 #   undef Message
 #   undef MessageBox
@@ -81,12 +82,12 @@ public:
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToServer(const std::string& ip_address,
-                         boost::posix_time::seconds timeout = boost::posix_time::seconds(5));
+                         boost::chrono::milliseconds timeout = boost::chrono::seconds(5));
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
-    bool ConnectToLocalHostServer(boost::posix_time::seconds timeout =
-                                  boost::posix_time::seconds(5));
+    bool ConnectToLocalHostServer(boost::chrono::milliseconds timeout =
+                                  boost::chrono::seconds(5));
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
@@ -116,7 +117,7 @@ public:
 private:
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
-                          boost::asio::deadline_timer* timer,
+                          boost::asio::high_resolution_timer* timer,
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread();
