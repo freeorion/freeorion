@@ -233,9 +233,8 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         }
 
         if (!IsTypingSafe(key_modkey_pair.first, key_modkey_pair.second)) {
-            ErrorLogger() << "Hotkey::ReadFromOptions : Typing-unsafe key spec: '"
-                                   << option_string << "' for hotkey " << hotkey.m_name;
-            continue;
+            DebugLogger() << "Hotkey::ReadFromOptions : Typing-unsafe key spec: '"
+                          << option_string << "' for hotkey " << hotkey.m_name;
         }
 
         hotkey.m_key = key_modkey_pair.first;
