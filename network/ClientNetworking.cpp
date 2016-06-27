@@ -13,7 +13,6 @@
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 
-
 using boost::asio::ip::tcp;
 using namespace Networking;
 
@@ -63,7 +62,7 @@ namespace {
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
-                m_timer.expires_from_now(boost::posix_time::seconds(2));
+                m_timer.expires_from_now(boost::chrono::seconds(2));
                 m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_service->run();
                 m_io_service->reset();
@@ -106,7 +105,7 @@ namespace {
         { m_socket.close(); }
 
         boost::asio::io_service*       m_io_service;
-        boost::asio::deadline_timer    m_timer;
+        boost::asio::high_resolution_timer m_timer;
         boost::asio::ip::udp::socket   m_socket;
 
         std::array<char, 1024> m_recv_buf;
@@ -161,7 +160,7 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
+    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/)
 {
     DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
 
@@ -180,7 +179,7 @@ bool ClientNetworking::ConnectToServer(
                           << "  port: " << it->endpoint().port();
 
             m_socket.close();
-            boost::asio::deadline_timer timer(m_io_service);
+            boost::asio::high_resolution_timer timer(m_io_service);
 
             m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                     &it,
@@ -218,7 +217,7 @@ bool ClientNetworking::ConnectToServer(
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
+    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/)
 {
     bool retval = false;
 #if FREEORION_WIN32
@@ -283,7 +282,7 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
 }
 
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
-                                        boost::asio::deadline_timer* timer,
+                                        boost::asio::high_resolution_timer* timer,
                                         const boost::system::error_code& error)
 {
     if (error) {

@@ -42,7 +42,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <sstream>
 
@@ -445,7 +445,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     bool failed = false;
     unsigned int start_time = Ticks();
-    while (!m_networking.ConnectToLocalHostServer(boost::posix_time::seconds(2))) {
+    while (!m_networking.ConnectToLocalHostServer(boost::chrono::milliseconds(2000))) {
         if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             failed = true;
@@ -579,7 +579,7 @@ void HumanClientApp::MultiPlayerGame() {
     }
 
     unsigned int start_time = Ticks();
-    while (!m_networking.ConnectToServer(server_name, boost::posix_time::seconds(2))) {
+    while (!m_networking.ConnectToServer(server_name, boost::chrono::milliseconds(2000))) {
         if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
