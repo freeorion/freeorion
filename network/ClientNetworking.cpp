@@ -160,9 +160,11 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/)
+    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/,
+    bool verbose)
 {
-    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
+    if (verbose)
+        DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
 
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
@@ -174,9 +176,7 @@ bool ClientNetworking::ConnectToServer(
 
     try {
         for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-            DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
-                          << "  address: " << it->endpoint().address()
-                          << "  port: " << it->endpoint().port();
+            if (verbose)
 
             m_socket.close();
             boost::asio::high_resolution_timer timer(m_io_service);
@@ -192,6 +192,9 @@ bool ClientNetworking::ConnectToServer(
             m_io_service.reset();
 
             if (Connected()) {
+                DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
+                              << "  address: " << it->endpoint().address()
+                              << "  port: " << it->endpoint().port();
                 DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
                 if (GetOptionsDB().Get<bool>("binary-serialization"))
                     DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
@@ -202,11 +205,14 @@ bool ClientNetworking::ConnectToServer(
                 DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
                 boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
                 break;
-            } else {
+            } else if (verbose) {
+                DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
+                              << "  address: " << it->endpoint().address()
+                              << "  port: " << it->endpoint().port();
                 DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
             }
         }
-        if (!Connected())
+        if (!Connected() && verbose)
             DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
 
     } catch (const std::exception& e) {
@@ -217,13 +223,14 @@ bool ClientNetworking::ConnectToServer(
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/)
+    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/,
+    bool verbose)
 {
     bool retval = false;
 #if FREEORION_WIN32
     try {
 #endif
-        retval = ConnectToServer("127.0.0.1", timeout);
+        retval = ConnectToServer("127.0.0.1", timeout, verbose);
 #if FREEORION_WIN32
     } catch (const boost::system::system_error& e) {
         if (e.code().value() != WSAEADDRNOTAVAIL)
