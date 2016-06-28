@@ -231,6 +231,33 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     // binary / executable to run for AI clients
     const std::string AI_CLIENT_EXE = AIClientExe();
 
+
+    // TODO: add other command line args to AI client invocation as needed
+    std::vector<std::string> args, arg;
+    args.push_back("\"" + AI_CLIENT_EXE + "\"");
+    args.push_back("place_holder");
+    size_t player_pos = args.size()-1;
+    std::stringstream maxAggrStr;
+    maxAggrStr << max_aggression;
+    args.push_back(maxAggrStr.str());
+    args.push_back("--resource-dir");
+    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
+    args.push_back("--log-level");
+    args.push_back(GetOptionsDB().Get<std::string>("log-level"));
+    args.push_back("--ai-path");
+    args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
+    DebugLogger() << "starting AIs with " << AI_CLIENT_EXE ;
+    DebugLogger() << "ai-aggression set to " << max_aggression;
+    DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
+    std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
+    if (!ai_config.empty()) {
+        args.push_back("--ai-config");
+        args.push_back(ai_config);
+        DebugLogger() << "ai-config set to '" << ai_config << "'";
+    } else {
+        DebugLogger() << "ai-config not set.";
+    }
+
     // for each AI client player, create a new AI client process
     for (const PlayerSetupData& psd : player_setup_data) {
         if (psd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
@@ -243,33 +270,10 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
             return;
         }
 
-        std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
-        // TODO: add other command line args to AI client invocation as needed
-        std::vector<std::string> args;
-        args.push_back("\"" + AI_CLIENT_EXE + "\"");
-        args.push_back(player_name);
-        std::stringstream maxAggrStr;
-        maxAggrStr << max_aggression;
-        args.push_back(maxAggrStr.str());
-        args.push_back("--resource-dir");
-        args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
-        args.push_back("--log-level");
-        args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-        args.push_back("--ai-path");
-        args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
-        DebugLogger() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
-        DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
-        if (!ai_config.empty()) {
-            args.push_back("--ai-config");
-            args.push_back(ai_config);
-            DebugLogger() << "ai-config set to '" << ai_config << "'";
-        } else {
-            DebugLogger() << "ai-config not set.";
-        }
-
+        args[player_pos] = player_name;
         m_ai_client_processes.push_back(Process(AI_CLIENT_EXE, args));
 
-        DebugLogger() << "done starting " << AI_CLIENT_EXE;
+        DebugLogger() << "done starting AI " << player_name;
     }
 
     // set initial AI process priority to low
