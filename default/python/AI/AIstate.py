@@ -8,7 +8,7 @@ import AIFleetMission
 import ExplorationAI
 import FleetUtilsAI
 import ResourcesAI
-from EnumsAI import MissionType, ExplorableSystemType, get_ship_roles_types, ShipRoleType, check_validity
+from EnumsAI import MissionType, ShipRoleType
 import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
@@ -949,16 +949,11 @@ class AIstate(object):
         print "Empire standard fighter summary: ", std_fighter
         print "------------------------"
 
-    def get_explorable_systems(self, explorable_systems_type):
-        """Get all explorable systems determined by type."""
-        # return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
-        if explorable_systems_type == ExplorableSystemType.EXPLORED:
-            return list(self.exploredSystemIDs)
-        elif explorable_systems_type == ExplorableSystemType.UNEXPLORED:
-            return list(self.unexploredSystemIDs)
-        else:
-            print "Error -- unexpected explorableSystemsType (value %s ) submited to AIState.get_explorable_systems "
-            return {}
+    def get_explored_system_ids(self):
+        return list(self.exploredSystemIDs)
+
+    def get_unexplored_system_ids(self):
+        return list(self.unexploredSystemIDs)
 
     def set_priority(self, priority_type, value):
         """Sets a priority of the specified type."""

@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-from EnumsAI import MissionType, ShipRoleType, ExplorableSystemType
+from EnumsAI import MissionType, ShipRoleType
 import traceback
 from universe_object import Planet
 
@@ -452,9 +452,9 @@ def generate_fleet_orders_for_fleet_missions():
     if fo.currentTurn() < 50:
         print
         print "Explored systems:"
-        print_systems(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.EXPLORED))
+        _print_systems_and_supply(foAI.foAIstate.get_explored_system_ids())
         print "Unexplored systems:"
-        print_systems(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.UNEXPLORED))
+        _print_systems_and_supply(foAI.foAIstate.get_unexplored_system_ids())
         print
 
     exploration_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.EXPLORATION])
@@ -556,7 +556,7 @@ def issue_fleet_orders_for_fleet_missions():
     print
 
 
-def print_systems(system_ids):
+def _print_systems_and_supply(system_ids):
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
