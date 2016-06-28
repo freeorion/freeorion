@@ -81,7 +81,7 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
 
     # initialize AIstate
     global foAIstate
-    foAIstate = AIstate.AIstate(aggression=aggression)
+    foAIstate = AIstate.AIstate(aggression)
     foAIstate.session_start_cleanup()
     print "Initialized foAIstate class"
     planet_id = PlanetUtilsAI.get_capital()
@@ -113,7 +113,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate = pickle.loads(saved_state_string)
     except Exception as e:
         # assigning new state
-        foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
+        foAIstate = AIstate.AIstate(fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
         print_error("Fail to load aiState form saved game: %s" % e)
 

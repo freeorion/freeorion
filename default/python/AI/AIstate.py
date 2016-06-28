@@ -43,7 +43,7 @@ piloting_grades = {}
 # AIstate class
 class AIstate(object):
     """Stores AI game state."""
-    def __init__(self, aggression=fo.aggression.typical):
+    def __init__(self, aggression):
         # Debug info
         # unique id for game
         self.uid = self.generate_uid(first=True)
