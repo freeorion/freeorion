@@ -665,6 +665,20 @@ PlayerListWnd* ClientUI::GetPlayerListWnd()
 IntroScreen* ClientUI::GetIntroScreen()
 { return m_intro_screen; }
 
+void ClientUI::ShowIntroScreen()
+{
+    if (m_map_wnd) {
+        HumanClientApp::GetApp()->Remove(m_map_wnd);
+        m_map_wnd->RemoveWindows();
+        m_map_wnd->Hide();
+    }
+
+    HumanClientApp::GetApp()->Register(m_intro_screen);
+    HumanClientApp::GetApp()->Remove(m_message_wnd);
+    HumanClientApp::GetApp()->Remove(m_player_list_wnd);
+    HumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
+}
+
 MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
 
