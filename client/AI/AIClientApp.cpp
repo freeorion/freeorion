@@ -21,6 +21,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/chrono/chrono_io.hpp>
 
 #include <thread>
 
@@ -156,25 +157,23 @@ void AIClientApp::Run() {
 }
 
 void AIClientApp::ConnectToServer() {
-    // connect
-    const int MAX_TRIES = 10;
-    int tries = 0;
-    volatile bool connected = false;
-    while (tries < MAX_TRIES) {
-        DebugLogger() << "Attempting to contact server";
-        connected = Networking().ConnectToLocalHostServer();
-        if (!connected) {
-            std::cerr << "FreeOrion AI client server contact attempt " << tries + 1 << " failed." << std::endl;
-            ErrorLogger() << "Server contact attempt " << tries + 1 << " failed";
-        } else {
-            break;
-        }
-        ++tries;
+    typedef boost::chrono::steady_clock Clock;
+    const boost::chrono::milliseconds SERVER_CONNECT_TIMEOUT(4500);
+    const boost::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
+
+    bool connected = false;
+    Clock::time_point start_time = Clock::now();
+    boost::chrono::milliseconds connection_time(0);
+    while (!connected && (connection_time < SERVER_CONNECT_TIMEOUT )) {
+        connected = Networking().ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME);
+        connection_time = boost::chrono::duration_cast<boost::chrono::milliseconds>(Clock::now() - start_time);
     }
+
     if (!connected) {
-        ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
+        ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << connection_time << ".  Exiting.";
         Exit(1);
     }
+    DebugLogger() << "AI connected to local server took " << connection_time << ".";
 }
 
 void AIClientApp::StartPythonAI() {
