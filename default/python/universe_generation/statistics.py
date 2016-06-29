@@ -185,3 +185,22 @@ def log_specials_summary():
         special_placement.add_row((number, tally, 100.0 * tally / (1E-10 + objects_tally)))
     special_placement.print_table()
     print
+
+
+def log_systems():
+    systems_table = Table(
+        [Text('id'), Text('name'), Sequence('planets'), Sequence('connections'), Text('star')],
+        table_name='System summary')
+    for sid in fo.get_systems():
+        system = fo.get_universe().getSystem(sid)
+        systems_table.add_row([
+            sid, system.name, fo.sys_get_planets(sid), fo.sys_get_starlanes(sid), system.starType.name
+        ])
+
+    # Printing too much info at once will lead to truncation of text
+    for line in systems_table.get_table().split('\n'):
+        print line
+
+    exit(1)
+
+
