@@ -6,7 +6,18 @@ Tech
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "GRO_NANO_CYBERNET"
-    // Effects are located in species
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Planet environment = [ Hostile ]
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  accountinglabel = "GRO_CYBORG"
+    ]
     graphic = "icons/tech/cyborgs.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

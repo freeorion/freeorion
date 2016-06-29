@@ -5,6 +5,22 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                Not OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
+                OwnedBy empire = Source.Owner
+                Planet environment = [
+                    Good
+                    Adequate
+                ]
+            ]
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 accountinglabel = "GRO_PLANET_ECOL"
+    ]
     graphic = "icons/tech/planetary_ecology.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"

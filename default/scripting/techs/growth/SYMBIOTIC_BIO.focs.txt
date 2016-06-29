@@ -6,7 +6,22 @@ Tech
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
     prerequisites = "GRO_PLANET_ECOL"
-    // Effects are located in species.txt
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Planet environment = [
+                    Good
+                    Adequate
+                    Poor
+                ]
+            ]
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble accountinglabel = "GRO_SYMBIOTIC_BIO"
+    ]
     graphic = "icons/tech/symbiosis_biology.png"
 
 #include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/priorities.macros"
