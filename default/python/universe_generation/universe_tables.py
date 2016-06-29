@@ -60,6 +60,9 @@ DENSITY_MOD_TO_PLANET_SIZE_DIST = {
 
 # Given the star type that was already chosen, what will the bonus be for this
 # size of planet?
+# Note: A positive value for none, will mean a chance of empty systems
+# of that type in game.  All star types with a zero or less chance for
+# none will be forced to have at least one satellite.
 STAR_TYPE_MOD_TO_PLANET_SIZE_DIST = {
 #                           none  tiny  small  medium  large  huge  asteroids  gas giant
     fo.starType.blue:      (  0,    0,     0,      0,    -5,  -10,         0,         0),

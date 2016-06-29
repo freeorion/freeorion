@@ -4,7 +4,7 @@ import freeorion as fo
 import planets
 import util
 import universe_tables
-
+from itertools import product
 
 # tuple of available star types
 star_types = (fo.starType.blue, fo.starType.white,   fo.starType.yellow,    fo.starType.orange,
@@ -70,6 +70,16 @@ def name_planets(system):
         fo.set_name(planet, name)
 
 
+def can_have_no_planets(star_type):
+    """
+    Return True is system is allowed to have no planets.
+    This intentionally only checks the STAR_TYPE_MOD_TO_PLANET_SIZE_DIST so that
+    the following code forces most stars to have a planetary body so that in the
+    GUI the presence of a star implies a planet
+    """
+    return universe_tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][fo.planetSize.noWorld] > 0
+
+
 def generate_systems(pos_list, gsd):
     """
     Generates and populates star systems at all positions in specified list.
@@ -84,13 +94,33 @@ def generate_systems(pos_list, gsd):
                               % (position[0], position[1]))
             continue
         sys_list.append(system)
-        for orbit in range(fo.sys_get_num_orbits(system)):
-            # check for each orbit if a planet shall be created by determining planet size
-            planet_size = planets.calc_planet_size(star_type, orbit, gsd.planet_density, gsd.shape)
-            if planet_size in planets.planet_sizes:
-                # ok, we want a planet, determine planet type and generate the planet
-                planet_type = planets.calc_planet_type(star_type, orbit, planet_size)
-                if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
-                    # create planet failed, report an error and try to continue with next orbit
-                    util.report_error("Python generate_systems: create planet in system %d failed" % system)
+
+        orbits = range(fo.sys_get_num_orbits(system))
+
+        if not planets.can_have_planets(star_type, orbits, gsd.planet_density, gsd.shape):
+            continue
+
+        # Try to generate planets in each orbit.
+        # If after each orbit is tried once there are no planets then
+        # keep trying until a single planet is placed.
+        # Except for black hole systems, which can be empty.
+
+        at_least_one_planet = False
+        random.shuffle(orbits)
+        for orbit in orbits:
+            if planets.generate_a_planet(system, star_type, orbit, gsd.planet_density, gsd.shape):
+                at_least_one_planet = True
+
+        if at_least_one_planet or can_have_no_planets(star_type):
+            continue
+
+        recursion_limit = 1000
+        for _, orbit in product(range(recursion_limit), orbits):
+            if planets.generate_a_planet(system, star_type, orbit, gsd.planet_density, gsd.shape):
+                break
+        else:
+            # Intentionally non-modal.  Should be a warning.
+            print >> sys.stderr, ("Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
+                                  % (system, position[0], position[1]))
+
     return sys_list
