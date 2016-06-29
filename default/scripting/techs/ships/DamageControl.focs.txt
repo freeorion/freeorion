@@ -28,8 +28,9 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-//            activation = Not OwnerHasTech name = "SHP_ADV_DAM_CONT"
             effects = SetStructure value = Value + 1
 
 Tech

@@ -49,6 +49,8 @@ Hull
                 Ship
                 InSystem id = Source.SystemID
                 Turn low = Target.CreationTurn + 1
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
                 Or [
                     OwnedBy empire = Source.Owner
                     OwnedBy affiliation = AllyOf empire = Source.Owner
@@ -59,7 +61,27 @@ Hull
                 Turn low = Source.CreationTurn + 1
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
-            effects = SetStructure value = max(Target.Structure, Target.MaxStructure)
+            priority = [[LATE_PRIORITY]]
+            effects = SetStructure value = max((Target.Structure + Target.Structure), (Target.Structure + 30))
+
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                Turn low = Target.CreationTurn + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                Or [
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
+                ]
+            ]
+            activation = And [
+                InSystem
+                Turn low = Source.CreationTurn + 1
+            ]
+            stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 10))
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -74,3 +96,4 @@ Hull
 #include "../ship_hulls.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/common/priorities.macros"

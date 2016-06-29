@@ -28,7 +28,11 @@ Hull
     ]
     effectsgroups = [
         EffectsGroup
-            scope = Source
+            scope = And [
+                Source
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                ]
             activation = Source
             effects = SetStructure value = Value + 2
 

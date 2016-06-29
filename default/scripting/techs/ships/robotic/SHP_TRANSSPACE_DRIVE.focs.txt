@@ -3,8 +3,8 @@ Tech
     description = "SHP_TRANSSPACE_DRIVE_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     category = "SHIP_HULLS_CATEGORY"
-    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 5
+    researchcost = 400 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
     prerequisites = "SHP_NANOROBO_MAINT"
     unlock = [
         Item type = ShipHull name = "SH_TRANSSPATIAL"
