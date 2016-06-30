@@ -99,9 +99,10 @@ bool PythonBase::Initialize()
 }
 
 void PythonBase::Finalize() {
-    if (Py_IsInitialized())
+    if (Py_IsInitialized()) {
         Py_Finalize();
-    DebugLogger() << "Cleaned up FreeOrion Python interface";
+        DebugLogger() << "Cleaned up FreeOrion Python interface";
+    }
 }
 
 bool PythonBase::ExecScript(const std::string script) {
