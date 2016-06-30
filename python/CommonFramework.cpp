@@ -65,38 +65,61 @@ bool PythonBase::Initialize()
 
     DebugLogger() << "Initializing C++ interfaces for Python";
 
+    systemExit = import("exceptions").attr("SystemExit");
     try {
         // get main namespace, needed to run other interpreted code
         object py_main = import("__main__");
         m_namespace = extract<dict>(py_main.attr("__dict__"));
-    }
-    catch (error_already_set err) {
-        ErrorLogger() << "Unable to set up main namespace in Python";
-        PyErr_Print();
-        return false;
-    }
 
-    // add the directory containing common Python modules used by all Python scripts to Python sys.path
-    if (!AddToSysPath(GetPythonCommonDir()))
-        return false;
+        // add the directory containing common Python modules used by all Python scripts to Python sys.path
+        if (!AddToSysPath(GetPythonCommonDir()))
+            return false;
 
-    // allow the "freeorion_logger" C++ module to be imported within Python code
-    try {
-        initfreeorion_logger();
-    } catch (...) {
-        ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
-        return false;
-    }
+        // allow the "freeorion_logger" C++ module to be imported within Python code
+        try {
+            initfreeorion_logger();
+        } catch (...) {
+            ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
+            return false;
+        }
 
-    // Allow C++ modules implemented by derived classes to be imported within Python code
-    if (!InitModules()) {
-        ErrorLogger() << "Unable to initialize FreeOrion Python modules";
+        // Allow C++ modules implemented by derived classes to be imported
+        // within Python code
+
+        if (!InitModules()) {
+            ErrorLogger() << "Unable to initialize FreeOrion Python modules";
+            return false;
+        }
+    } catch (error_already_set &err) {
+        HandleErrorAlreadySet();
         return false;
     }
 
     DebugLogger() << "FreeOrion Python interface successfully initialized!";
     return true;
 }
+
+bool PythonBase::IsPythonRunning()
+{ return Py_IsInitialized(); }
+
+void PythonBase::HandleErrorAlreadySet() {
+    if (!Py_IsInitialized()) {
+        ErrorLogger() << "Python interpreter not initialized and exception handler called.";
+        return;
+    }
+
+    // Matches system exit
+    if (PyErr_ExceptionMatches(systemExit.ptr()))
+    {
+        Finalize();
+        ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
+        return;
+    }
+
+    PyErr_Print();
+    return;
+}
+
 
 void PythonBase::Finalize() {
     if (Py_IsInitialized()) {

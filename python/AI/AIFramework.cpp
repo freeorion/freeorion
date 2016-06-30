@@ -97,12 +97,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 //////////////////////
 bool PythonAI::Initialize() {
     if (PythonBase::Initialize()) {
-        try {
-            BuildingTypeManager& temp = GetBuildingTypeManager();  // Ensure buildings are initialized
-        } catch (error_already_set err) {
-            PyErr_Print();
-            return false;
-        }
+        BuildingTypeManager& temp = GetBuildingTypeManager();  // Ensure buildings are initialized
         return true;
     }
     else
@@ -138,9 +133,8 @@ bool PythonAI::InitModules() {
         m_python_module_ai = import("FreeOrionAI");
     }
     catch (error_already_set err) {
-        ErrorLogger() << "Unable to import AI script";
-        PyErr_Print();
-        return false;
+        ErrorLogger() << "Unable to import AI script.";
+        throw;
     }
 
     DebugLogger() << "AI Python modules successfully initialized!";
