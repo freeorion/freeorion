@@ -128,6 +128,10 @@ void AIClientApp::StartPythonAI() {
         Networking().DisconnectFromServer();
         throw std::runtime_error(err_msg.str());
     }
+
+    if (m_AI)
+        delete m_AI;
+
     m_AI = python_ai;
 
 }

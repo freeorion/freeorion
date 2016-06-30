@@ -37,6 +37,7 @@ private:
 
 
     AIBase*             m_AI;           ///< implementation of AI logic
+                                        ///TODO:Use smart pointer
     std::string         m_player_name;
     int                 m_max_aggression;
 };
