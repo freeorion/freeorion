@@ -30,6 +30,10 @@ PythonBase::PythonBase() :
     m_python_module_error(NULL)
 {}
 
+PythonBase::~PythonBase() {
+    Finalize();
+}
+
 bool PythonBase::Initialize()
 {
     DebugLogger() << "Initializing FreeOrion Python interface";

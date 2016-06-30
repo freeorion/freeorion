@@ -15,6 +15,7 @@ class PythonBase {
 public:
     /** \name ctor */ //@{
     PythonBase();
+    virtual ~PythonBase();
     //@}
 
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
