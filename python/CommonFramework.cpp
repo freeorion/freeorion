@@ -22,7 +22,6 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
 }
 
 PythonBase::PythonBase() :
-    m_python_interpreter_initialized(false),
 #if defined(FREEORION_MACOSX)
     m_home_dir(""),
     m_program_name(""),
@@ -54,7 +53,6 @@ bool PythonBase::Initialize()
 #endif
         // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
-        m_python_interpreter_initialized = true;
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python version: " << Py_GetVersion();
         DebugLogger() << "Python prefix: " << Py_GetPrefix();
@@ -101,10 +99,8 @@ bool PythonBase::Initialize()
 }
 
 void PythonBase::Finalize() {
-    if (m_python_interpreter_initialized) {
+    if (Py_IsInitialized())
         Py_Finalize();
-        m_python_interpreter_initialized = false;
-    }
     DebugLogger() << "Cleaned up FreeOrion Python interface";
 }
 

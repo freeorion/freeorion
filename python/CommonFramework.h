@@ -29,7 +29,6 @@ public:
 
 private:
     // some helper objects needed to initialize and run the Python interface
-    bool                  m_python_interpreter_initialized;
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
     char                  m_home_dir[1024];
     char                  m_program_name[1024];
