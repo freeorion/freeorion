@@ -145,8 +145,7 @@ std::string Species::Dump() const {
     return retval;
 }
 
-std::string Species::GameplayDescription() const
-{
+std::string Species::GameplayDescription() const {
     std::stringstream result;
 
     result << UserString(m_gameplay_description);
@@ -157,17 +156,15 @@ std::string Species::GameplayDescription() const
          m_effects.end() != it; ++it)
     {
         const std::string& description = (*it)->GetDescription();
+        if (description.empty())
+            continue;
 
-        if (!description.empty())
-        {
-            if (requires_separator)
-            {
-                result << "\n";
-                requires_separator = false;
-            }
-
-            result << UserString(description) << "\n";
+        if (requires_separator) {
+            result << "\n";
+            requires_separator = false;
         }
+
+        result << UserString(description) << "\n";
     }
 
     return result.str();
