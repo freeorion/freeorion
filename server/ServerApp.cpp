@@ -150,7 +150,11 @@ ServerApp::ServerApp() :
     GG::Connect(Empires().DiplomaticStatusChangedSignal,  &ServerApp::HandleDiplomaticStatusChange, this);
     GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
 
-    m_python_server.Initialize();
+    if (!m_python_server.Initialize()) {
+        // TODO: This should throw since the python interpreter is an
+        // essentially resource that can't be acquired.  This is unrecoverable.
+        ErrorLogger() << "Server's python interpreter failed to initialize.";
+    }
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }
