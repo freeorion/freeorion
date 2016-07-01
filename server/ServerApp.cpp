@@ -151,9 +151,8 @@ ServerApp::ServerApp() :
     GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
 
     if (!m_python_server.Initialize()) {
-        // TODO: This should throw since the python interpreter is an
-        // essentially resource that can't be acquired.  This is unrecoverable.
         ErrorLogger() << "Server's python interpreter failed to initialize.";
+        Exit(1);
     }
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
@@ -1259,8 +1258,10 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     } catch (boost::python::error_already_set err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
-        if (!m_python_server.IsPythonRunning())
-            ErrorLogger() << "Python interpreter is no longer running";
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Exiting.";
+            Exit(1);
+        }
     }
 
     if (!success)
@@ -1306,8 +1307,15 @@ void ServerApp::ExecuteScriptedTurnEvents() {
     } catch (boost::python::error_already_set err) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
-        if (!m_python_server.IsPythonRunning())
-            ErrorLogger() << "Python interpreter is no longer running";
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attemting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                Exit(1);
+            }
+        }
     }
 
     if (!success) {
