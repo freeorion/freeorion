@@ -52,6 +52,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_meter_stats.push_back(std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false)));
     m_meter_stats.push_back(std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false)));
     m_meter_stats.push_back(std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;

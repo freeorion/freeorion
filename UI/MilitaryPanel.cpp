@@ -45,7 +45,6 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_meter_stats.push_back(std::make_pair(METER_TROOPS, new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS), 0, 3, false)));
     m_meter_stats.push_back(std::make_pair(METER_DETECTION, new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false)));
     m_meter_stats.push_back(std::make_pair(METER_STEALTH, new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH), 0, 3, false)));
-    m_meter_stats.push_back(std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;

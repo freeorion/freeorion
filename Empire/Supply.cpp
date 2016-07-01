@@ -220,8 +220,8 @@ void SupplyManager::Update() {
     // propegating supply can push back another's, if the pusher's range is
     // larger.
 
-    // map from empire id to map from system id to set of systems that are
-    // supply-connected to it directly (which may involve multiple starlane jumps
+    // map from empire id to map from system id to range (in starlane jumps)
+    // that supply can be propegated out of that system by that empire.
     std::map<int, std::map<int, float> > empire_system_supply_ranges;
     // map from empire id to which systems are obstructed for it for supply
     // propegation
