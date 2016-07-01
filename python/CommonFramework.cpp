@@ -127,15 +127,8 @@ void PythonBase::Finalize() {
     }
 }
 
-bool PythonBase::ExecScript(const std::string script) {
-    try {
-        object ignored = exec(script.c_str(), m_namespace, m_namespace);
-    }
-    catch (error_already_set err) {
-        PyErr_Print();
-        return false;
-    }
-    return true;
+void PythonBase::ExecScript(const std::string script) {
+    exec(script.c_str(), m_namespace, m_namespace);
 }
 
 void PythonBase::SetCurrentDir(const std::string dir) {

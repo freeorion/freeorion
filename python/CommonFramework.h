@@ -40,7 +40,7 @@ public:
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
     void         Finalize();                           // stops Python interpreter and releases its resources
     virtual bool InitModules() = 0;                    // initializes Python modules, must be implemented by derived classes
-    bool         ExecScript(const std::string script); // executes a Python script
+    void         ExecScript(const std::string script); // executes a Python script or throws error_already_set
     void         SetCurrentDir(const std::string dir); // sets Python current work directory or throws error_already_set
     void         AddToSysPath(const std::string dir);  // adds directory to Python sys.path or throws error_already_set
     void         SetErrorModule(boost::python::object& module); // sets Python module that contains error report function defined on the Python side
