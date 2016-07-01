@@ -42,7 +42,7 @@ public:
     virtual bool InitModules() = 0;                    // initializes Python modules, must be implemented by derived classes
     bool         ExecScript(const std::string script); // executes a Python script
     bool         SetCurrentDir(const std::string dir); // sets Python current work directory
-    bool         AddToSysPath(const std::string dir);  // adds directory to Python sys.patch
+    void         AddToSysPath(const std::string dir);  // adds directory to Python sys.path or throws error_already_set
     void         SetErrorModule(boost::python::object& module); // sets Python module that contains error report function defined on the Python side
     std::vector<std::string> ErrorReport();            // wraps call to error report function defined on the Python side
 

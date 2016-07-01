@@ -73,10 +73,7 @@ bool PythonServer::InitModules() {
         ErrorLogger() << "Can't find folder containing universe generation scripts";
         return false;
     }
-    if (!AddToSysPath(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't add folder containing universe generation scripts to sys.path";
-        return false;
-    }
+    AddToSysPath(GetPythonUniverseGeneratorDir());
 
     // import universe generator script file
     m_python_module_universe_generator = import("universe_generator");
@@ -88,10 +85,7 @@ bool PythonServer::InitModules() {
         ErrorLogger() << "Can't find folder containing turn events scripts";
         return false;
     }
-    if (!AddToSysPath(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't add folder containing turn events scripts to sys.path";
-        return false;
-    }
+    AddToSysPath(GetPythonTurnEventsDir());
 
     // import universe generator script file
     m_python_module_turn_events = import("turn_events");

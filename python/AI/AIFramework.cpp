@@ -123,10 +123,7 @@ bool PythonAI::InitModules() {
         ErrorLogger() << "Can't find folder containing AI scripts";
         return false;
     }
-    if (!AddToSysPath(ai_path)) {
-        ErrorLogger() << "Can't add folder containing AI scripts to sys.path";
-        return false;
-    }
+    AddToSysPath(ai_path);
 
     // import universe generator script file
     m_python_module_ai = import("FreeOrionAI");

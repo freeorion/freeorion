@@ -72,8 +72,7 @@ bool PythonBase::Initialize()
         m_namespace = extract<dict>(py_main.attr("__dict__"));
 
         // add the directory containing common Python modules used by all Python scripts to Python sys.path
-        if (!AddToSysPath(GetPythonCommonDir()))
-            return false;
+        AddToSysPath(GetPythonCommonDir());
 
         // allow the "freeorion_logger" C++ module to be imported within Python code
         try {
@@ -150,14 +149,10 @@ bool PythonBase::SetCurrentDir(const std::string dir) {
     return true;
 }
 
-bool PythonBase::AddToSysPath(const std::string dir) {
+void PythonBase::AddToSysPath(const std::string dir) {
     std::string command = "import sys\n"
         "sys.path.append(r'" + dir + "')";
-    if (!ExecScript(command)) {
-        ErrorLogger() << "Unable to add " << dir << " to sys.path";
-        return false;
-    }
-    return true;
+    exec(command.c_str(), m_namespace, m_namespace);
 }
 
 void PythonBase::SetErrorModule(object& module)
