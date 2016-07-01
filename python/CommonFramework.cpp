@@ -138,21 +138,17 @@ bool PythonBase::ExecScript(const std::string script) {
     return true;
 }
 
-bool PythonBase::SetCurrentDir(const std::string dir) {
+void PythonBase::SetCurrentDir(const std::string dir) {
     std::string script = "import os\n"
     "os.chdir(r'" + dir + "')\n"
     "print 'Python current directory set to', os.getcwd()";
-    if (!ExecScript(script)) {
-        ErrorLogger() << "Unable to set Python current directory";
-        return false;
-    }
-    return true;
+    exec(script.c_str(), m_namespace, m_namespace);
 }
 
 void PythonBase::AddToSysPath(const std::string dir) {
-    std::string command = "import sys\n"
+    std::string script = "import sys\n"
         "sys.path.append(r'" + dir + "')";
-    exec(command.c_str(), m_namespace, m_namespace);
+    exec(script.c_str(), m_namespace, m_namespace);
 }
 
 void PythonBase::SetErrorModule(object& module)

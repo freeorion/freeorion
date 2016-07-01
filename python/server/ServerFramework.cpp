@@ -112,27 +112,16 @@ bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_d
         return false;
     }
 
-    try { success = f(py_player_setup_data); }
-    catch (error_already_set err) {
-        success = false;
-        HandleErrorAlreadySet();
-    }
-    return success;
+    return f(py_player_setup_data);
 }
 
 bool PythonServer::ExecuteTurnEvents() {
-    bool success;
     object f = m_python_module_turn_events.attr("execute_turn_events");
     if (!f) {
         ErrorLogger() << "Unable to call Python function execute_turn_events ";
         return false;
     }
-    try { success = f(); }
-    catch (error_already_set err) {
-        success = false;
-        HandleErrorAlreadySet();
-    }
-    return success;
+    return f();
 }
 
 const std::string GetPythonUniverseGeneratorDir()

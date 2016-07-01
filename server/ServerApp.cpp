@@ -1248,13 +1248,24 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
-    // Set Python current work directory to directory containing
-    // the universe generation Python scripts
-    m_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
-    // Call the main Python universe generator function
-    if (!(m_python_server.CreateUniverse(player_setup_data))) {
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
+
+    bool success(false);
+    try {
+        // Set Python current work directory to directory containing
+        // the universe generation Python scripts
+        m_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
+        // Call the main Python universe generator function
+        success = m_python_server.CreateUniverse(player_setup_data);
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning())
+            ErrorLogger() << "Python interpreter is no longer running";
     }
+
+    if (!success)
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
+
 
     DebugLogger() << "Applying first turn effects and updating meters";
 
@@ -1287,9 +1298,20 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 }
 
 void ServerApp::ExecuteScriptedTurnEvents() {
-    m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
-    // Call the main Python turn events function
-    if (!(m_python_server.ExecuteTurnEvents())) {
+    bool success(false);
+    try {
+        m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
+        // Call the main Python turn events function
+        success = m_python_server.ExecuteTurnEvents();
+    } catch (boost::python::error_already_set err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning())
+            ErrorLogger() << "Python interpreter is no longer running";
+    }
+
+    if (!success) {
+        ErrorLogger() << "Python scripted turn events failed.";
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));
     }
 }
