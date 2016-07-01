@@ -35,6 +35,7 @@ private:
     void                Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())
     void                ConnectToServer();
     void                StartPythonAI();
+    void                HandlePythonAICrash();
     void                HandleMessage(const Message& msg);
 
 

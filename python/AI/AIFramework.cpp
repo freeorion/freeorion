@@ -153,10 +153,12 @@ void PythonAI::GenerateOrders() {
         //DebugLogger() << "PythonAI::GenerateOrders : generating orders";
         generateOrdersPythonFunction();
     } catch (error_already_set err) {
-        PyErr_Print();
-        //DebugLogger() << "PythonAI::GenerateOrders : python error caught and printed";
+        HandleErrorAlreadySet();
+        if (IsPythonRunning())
+            throw;
+
+        ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";
         AIInterface::DoneTurn();
-        //DebugLogger() << "PythonAI::GenerateOrders : done with error";
     }
     DebugLogger() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
 }
