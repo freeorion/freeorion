@@ -128,14 +128,8 @@ bool PythonAI::InitModules() {
         return false;
     }
 
-    try {
-        // import universe generator script file
-        m_python_module_ai = import("FreeOrionAI");
-    }
-    catch (error_already_set err) {
-        ErrorLogger() << "Unable to import AI script.";
-        throw;
-    }
+    // import universe generator script file
+    m_python_module_ai = import("FreeOrionAI");
 
     DebugLogger() << "AI Python modules successfully initialized!";
     return true;
@@ -164,67 +158,43 @@ void PythonAI::GenerateOrders() {
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
-    try {
-        // call Python function that responds or ignores a chat message
-        object handleChatMessagePythonFunction = m_python_module_ai.attr("handleChatMessage");
-        handleChatMessagePythonFunction(sender_id, msg);
-    } catch (error_already_set err) {
-        PyErr_Print();
-    }
+    // call Python function that responds or ignores a chat message
+    object handleChatMessagePythonFunction = m_python_module_ai.attr("handleChatMessage");
+    handleChatMessagePythonFunction(sender_id, msg);
 }
 
 void PythonAI::HandleDiplomaticMessage(const DiplomaticMessage& msg) {
-    try {
-        // call Python function to inform of diplomatic message change
-        object handleDiplomaticMessagePythonFunction = m_python_module_ai.attr("handleDiplomaticMessage");
-        handleDiplomaticMessagePythonFunction(msg);
-    } catch (error_already_set err) {
-        PyErr_Print();
-    }
+    // call Python function to inform of diplomatic message change
+    object handleDiplomaticMessagePythonFunction = m_python_module_ai.attr("handleDiplomaticMessage");
+    handleDiplomaticMessagePythonFunction(msg);
 }
 
 void PythonAI::HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u) {
-    try {
-        // call Python function to inform of diplomatic status update
-        object handleDiplomaticStatusUpdatePythonFunction = m_python_module_ai.attr("handleDiplomaticStatusUpdate");
-        handleDiplomaticStatusUpdatePythonFunction(u);
-    } catch (error_already_set err) {
-        PyErr_Print();
-    }
+    // call Python function to inform of diplomatic status update
+    object handleDiplomaticStatusUpdatePythonFunction = m_python_module_ai.attr("handleDiplomaticStatusUpdate");
+    handleDiplomaticStatusUpdatePythonFunction(u);
 }
 
 void PythonAI::StartNewGame() {
     FreeOrionPython::ClearStaticSaveStateString();
-    try {
-        // call Python function that sets up the AI to be able to generate orders for a new game
-        object startNewGamePythonFunction = m_python_module_ai.attr("startNewGame");
-        startNewGamePythonFunction(m_aggression);
-    } catch (error_already_set err) {
-        PyErr_Print();
-    }
+    // call Python function that sets up the AI to be able to generate orders for a new game
+    object startNewGamePythonFunction = m_python_module_ai.attr("startNewGame");
+    startNewGamePythonFunction(m_aggression);
 }
 
 void PythonAI::ResumeLoadedGame(const std::string& save_state_string) {
     //DebugLogger() << "PythonAI::ResumeLoadedGame(" << save_state_string << ")";
     FreeOrionPython::SetStaticSaveStateString(save_state_string);
-    try {
-        // call Python function that deals with the new state string sent by the server
-        object resumeLoadedGamePythonFunction = m_python_module_ai.attr("resumeLoadedGame");
-        resumeLoadedGamePythonFunction(FreeOrionPython::GetStaticSaveStateString());
-    } catch (error_already_set err) {
-        PyErr_Print();
-    }
+    // call Python function that deals with the new state string sent by the server
+    object resumeLoadedGamePythonFunction = m_python_module_ai.attr("resumeLoadedGame");
+    resumeLoadedGamePythonFunction(FreeOrionPython::GetStaticSaveStateString());
 }
 
 const std::string& PythonAI::GetSaveStateString() {
-    try {
-        // call Python function that serializes AI state for storage in save file and sets s_save_state_string
-        // to contain that string
-        object prepareForSavePythonFunction = m_python_module_ai.attr("prepareForSave");
-        prepareForSavePythonFunction();
-    } catch (error_already_set err) {
-        PyErr_Print();
-    }
+    // call Python function that serializes AI state for storage in save file and sets s_save_state_string
+    // to contain that string
+    object prepareForSavePythonFunction = m_python_module_ai.attr("prepareForSave");
+    prepareForSavePythonFunction();
     //DebugLogger() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
     return FreeOrionPython::GetStaticSaveStateString();
 }
