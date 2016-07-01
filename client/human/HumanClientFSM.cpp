@@ -125,10 +125,11 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
     boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-    ClientUI::MessageBox(UserString(problem), true);
 
-    if (fatal)
+    if (fatal) {
+        ClientUI::MessageBox(UserString(problem), true);
         Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    }
 
     return retval;
 }
@@ -165,10 +166,11 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
     boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-    ClientUI::MessageBox(UserString(problem), true);
 
-    if (fatal)
+    if (fatal) {
+        ClientUI::MessageBox(UserString(problem), true);
         Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    }
 
     return retval;
 }
@@ -204,10 +206,11 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
     boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-    ClientUI::MessageBox(UserString(problem), true);
 
-    if (fatal)
+    if (fatal) {
+        ClientUI::MessageBox(UserString(problem), true);
         Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+    }
 
     return retval;
 }
@@ -315,10 +318,11 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
     boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-    ClientUI::MessageBox(UserString(problem), true);
 
-    if (fatal)
+    if (fatal) {
+        ClientUI::MessageBox(UserString(problem), true);
         Client().Remove(Client().GetClientUI()->GetMultiPlayerLobbyWnd());
+    }
 
     return retval;
 }
@@ -479,6 +483,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ClientUI::MessageBox(UserString(problem), false);
 
     if (fatal) {
+        ClientUI::MessageBox(UserString(problem), true);
         Client().EndGame(true);
         Client().GetClientUI()->GetMessageWnd()->Hide();
         Client().GetClientUI()->GetPlayerListWnd()->Hide();
