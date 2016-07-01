@@ -3,8 +3,10 @@
 
 #include "../ClientApp.h"
 #include <vector>
+#include <boost/scoped_ptr.hpp>
 
 class AIBase;
+class PythonAI;
 
 /** the application framework for an AI player FreeOrion client.*/
 class AIClientApp : public ClientApp {
@@ -36,8 +38,7 @@ private:
     void                HandleMessage(const Message& msg);
 
 
-    AIBase*             m_AI;           ///< implementation of AI logic
-                                        ///TODO:Use smart pointer
+    boost::scoped_ptr<PythonAI> m_AI;     ///< implementation of AI logic
     std::string         m_player_name;
     int                 m_max_aggression;
 };

@@ -48,7 +48,6 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 }
 
 AIClientApp::~AIClientApp() {
-    delete m_AI;
     DebugLogger() << "Shutting down " + PlayerName() + " logger...";
 }
 
@@ -67,7 +66,7 @@ AIClientApp* AIClientApp::GetApp()
 { return static_cast<AIClientApp*>(s_app); }
 
 const AIBase* AIClientApp::GetAI()
-{ return m_AI; }
+{ return m_AI.get(); }
 
 void AIClientApp::Run() {
     ConnectToServer();
@@ -114,9 +113,8 @@ void AIClientApp::ConnectToServer() {
 }
 
 void AIClientApp::StartPythonAI() {
-    PythonAI* python_ai = new PythonAI();
-    if (!(python_ai->Initialize())) {
-        delete python_ai;  //TODO use smart pointer
+    m_AI.reset(new PythonAI());
+    if (!m_AI.get()->Initialize()) {
         //Note: At this point in the initialization the AI has not been associated with a PlayerConnection
         //so the server will no know the AI's PlayerName.
         std::stringstream err_msg;
@@ -128,12 +126,6 @@ void AIClientApp::StartPythonAI() {
         Networking().DisconnectFromServer();
         throw std::runtime_error(err_msg.str());
     }
-
-    if (m_AI)
-        delete m_AI;
-
-    m_AI = python_ai;
-
 }
 
 void AIClientApp::HandleMessage(const Message& msg) {
