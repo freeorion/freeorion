@@ -37,6 +37,7 @@ public:
     bool                        IsArmed() const;
     bool                        CanColonize() const;
     bool                        HasTroops() const;
+    bool                        CanHaveTroops() const;
     bool                        CanBombard() const;
     const std::string&          SpeciesName() const         { return m_species_name; }
     float                       Speed() const;

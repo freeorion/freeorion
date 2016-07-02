@@ -337,6 +337,11 @@ float Ship::TroopCapacity() const {
     return retval;
 }
 
+bool Ship::CanHaveTroops() const {
+    const ShipDesign* design = Design();
+    return design ? design->HasTroops() : false;
+}
+
 const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
     // doesn't know the design for a particular ship can easily guess it if the
