@@ -163,11 +163,11 @@ void NewFleetOrder::ExecuteImpl() const {
 
     GetUniverse().InhibitUniverseObjectSignals(true);
     std::vector<TemporaryPtr<Fleet> > created_fleets;
-    created_fleets.reserve(m_fleet_names.size());
+    created_fleets.reserve(m_ship_id_groups.size());
 
 
     // create fleet for each group of ships
-    for (int i = 0; i < static_cast<int>(m_fleet_names.size()); ++i) {
+    for (int i = 0; i < static_cast<int>(m_ship_id_groups.size()); ++i) {
         const std::string&      fleet_name =    m_fleet_names[i];
         int                     fleet_id =      m_fleet_ids[i];
         const std::vector<int>& ship_ids =      m_ship_id_groups[i];
@@ -227,6 +227,9 @@ void NewFleetOrder::ExecuteImpl() const {
             ship->SetFleetID(fleet->ID());
         }
         fleet->AddShips(validated_ships_ids);
+
+        if (fleet_name.empty())
+            fleet->Rename(fleet->GenerateFleetName());
 
         created_fleets.push_back(fleet);
     }

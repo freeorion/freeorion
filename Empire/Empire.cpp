@@ -3171,7 +3171,7 @@ void Empire::CheckProductionProgress() {
                 }
 
                 // rename fleet, given its id and the ship that is in it
-                fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet->ID()));
+                fleet->Rename(fleet->GenerateFleetName());
                 fleet->SetAggressive(fleet->HasArmedShips());
 
                 if (rally_point_id != INVALID_OBJECT_ID) {

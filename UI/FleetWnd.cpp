@@ -231,8 +231,8 @@ namespace {
                 }
             }
 
-            // generate new fleet name
-            std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
+            // Request a generated fleet name
+            std::string fleet_name = "";
 
             // add entry to order data
             order_fleet_names.push_back(fleet_name);
