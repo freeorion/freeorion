@@ -232,10 +232,10 @@ void SupplyManager::Update() {
         empire_system_supply_ranges[it->first] = empire->SystemSupplyRanges();
         empire_supply_unobstructed_systems[it->first] = empire->SupplyUnobstructedSystems();
 
-        std::stringstream ss;
-        for (std::set<int>::const_iterator sys_it = empire_supply_unobstructed_systems[it->first].begin();
-             sys_it != empire_supply_unobstructed_systems[it->first].end(); ++sys_it)
-        { ss << *sys_it << ", "; }
+        //std::stringstream ss;
+        //for (std::set<int>::const_iterator sys_it = empire_supply_unobstructed_systems[it->first].begin();
+        //     sys_it != empire_supply_unobstructed_systems[it->first].end(); ++sys_it)
+        //{ ss << *sys_it << ", "; }
         //DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
     }
 
@@ -585,6 +585,17 @@ void SupplyManager::Update() {
             supply_groups_map[pair_it->first].insert(pair_it->second);
             supply_groups_map[pair_it->second].insert(pair_it->first);
         }
+
+        // also add connections from all fleet-supplyable systems to themselves, so that
+        // any fleet supply able system with no connection to another system can still
+        // have resource sharing within tiself
+        const std::set<int>& fleet_supplyable = m_fleet_supplyable_system_ids[empire_id];
+        for (std::set<int>::const_iterator sys_it = fleet_supplyable.begin();
+             sys_it != fleet_supplyable.end(); ++sys_it)
+        {
+            supply_groups_map[*sys_it].insert(*sys_it);
+        }
+
         if (supply_groups_map.empty())
             continue;
 
@@ -609,6 +620,7 @@ void SupplyManager::Update() {
         }
 
         // add edges for all direct connections between systems
+        // and add edges from fleet supplyable systems to themselves
         for (std::map<int, std::set<int> >::const_iterator maps_it = supply_groups_map.begin();
              maps_it != supply_groups_map.end(); ++maps_it)
         {
