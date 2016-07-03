@@ -3140,7 +3140,10 @@ void Empire::CheckProductionProgress() {
             new_ships_by_rally_point_id_and_design_id[rally_point_id][ship->DesignID()].push_back(ship);
         }
 
-        // create fleets for ships with the same rally point, grouped by ship design
+        // create fleets for ships with the same rally point, grouped by
+        // ship design
+        // Do not group unarmed ships with no troops (i.e. scouts and
+        // colony ships).
         for (std::map<int, std::map<int, std::vector<TemporaryPtr<Ship> > > >::iterator
                 rally_it = new_ships_by_rally_point_id_and_design_id.begin();
              rally_it != new_ships_by_rally_point_id_and_design_id.end(); ++rally_it)
@@ -3157,35 +3160,60 @@ void Empire::CheckProductionProgress() {
                 if (ships.empty())
                     continue;
 
-                // create new fleet for ships
-                TemporaryPtr<Fleet> fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+                // create a single fleet for combat ships and individual
+                // fleets for non-combat ships
+                bool individual_fleets = !((*ships.begin())->IsArmed()
+                                           || (*ships.begin())->CanHaveTroops()
+                                           || (*ships.begin())->CanBombard());
 
-                system->Insert(fleet);
-                fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+                std::vector<TemporaryPtr<Fleet> > fleets;
+                TemporaryPtr<Fleet> fleet;
+
+                if (!individual_fleets) {
+                    fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+
+                    system->Insert(fleet);
+                    fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+
+                    fleets.push_back(fleet);
+                }
 
                 for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin(); it != ships.end(); ++it) {
                     TemporaryPtr<Ship> ship = *it;
+                    if (individual_fleets) {
+                        fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
+
+                        system->Insert(fleet);
+                        fleet->SetNextAndPreviousSystems(system->ID(), system->ID());
+
+                        fleets.push_back(fleet);
+                    }
                     ship_ids.push_back(ship->ID());
                     fleet->AddShip(ship->ID());
                     ship->SetFleetID(fleet->ID());
                 }
 
-                // rename fleet, given its id and the ship that is in it
-                fleet->Rename(fleet->GenerateFleetName());
-                fleet->SetAggressive(fleet->HasArmedShips());
+                for (std::vector<TemporaryPtr<Fleet> >::iterator fleet_it = fleets.begin();
+                     fleet_it != fleets.end(); ++fleet_it)
+                {
+                    fleet = *fleet_it;
+                    // rename fleet, given its id and the ship that is in it
+                    fleet->Rename(fleet->GenerateFleetName());
+                    fleet->SetAggressive(fleet->HasArmedShips());
 
-                if (rally_point_id != INVALID_OBJECT_ID) {
-                    if (GetSystem(rally_point_id)) {
-                        fleet->CalculateRouteTo(rally_point_id);
-                    } else if (TemporaryPtr<const UniverseObject> rally_obj = GetUniverseObject(rally_point_id)) {
-                        if (GetSystem(rally_obj->SystemID()))
-                            fleet->CalculateRouteTo(rally_obj->SystemID());
-                    } else {
-                        ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;
+                    if (rally_point_id != INVALID_OBJECT_ID) {
+                        if (GetSystem(rally_point_id)) {
+                            fleet->CalculateRouteTo(rally_point_id);
+                        } else if (TemporaryPtr<const UniverseObject> rally_obj = GetUniverseObject(rally_point_id)) {
+                            if (GetSystem(rally_obj->SystemID()))
+                                fleet->CalculateRouteTo(rally_obj->SystemID());
+                        } else {
+                            ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;
+                        }
                     }
-                }
 
-                DebugLogger() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
+                    DebugLogger() << "New Fleet \"" + fleet->Name() + "\" created on turn: " << fleet->CreationTurn();
+                }
             }
         }
     }
