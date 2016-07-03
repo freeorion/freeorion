@@ -568,6 +568,8 @@ public:
 
     void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
 
+    virtual void    ShowScrollbar();
+    virtual void    HideScrollbar();
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     /** Enables, or disables if \a enable is false, issuing orders via the
@@ -2403,29 +2405,35 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
 
     GG::Y starting_y = y;
 
+    // how much vertical space will be consumed and how much is available?
+    GG::Y available_height = Height();
+    GG::Y used_height = GG::Y(0);
+
+    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+        PlanetPanel* panel = *it;
+        used_height += panel->Height() + EDGE_PAD; // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
+    }
+
+    // reserve width for scroll bar if it is visible
+    GG::X scroll_width = m_vscroll->Width();
+    if (Value(starting_y) >= 0 && available_height >= used_height)
+        scroll_width = GG::X(0);
+
     // place panels in sequence from the top, each below the previous
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         PlanetPanel* panel = *it;
         const GG::Y PANEL_HEIGHT = panel->Height(); // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
         GG::Pt panel_ul(x, y);
-        GG::Pt panel_lr(Width() - m_vscroll->Width(), y + PANEL_HEIGHT);
+        GG::Pt panel_lr(Width() - scroll_width, y + PANEL_HEIGHT);
         panel->SizeMove(panel_ul, panel_lr);
         y += PANEL_HEIGHT + EDGE_PAD;
     }
-
-    // how much vertical space did panels consume?
-    const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(185);
-    GG::Y used_height = y - starting_y + BIG_PAD_TO_BE_SAFE;
-
-    // how much vertical space is actuall available to display panels?
-    GG::Y available_height = Height();
 
     // hide scrollbar if all panels are visible and fit into the available height
     if (Value(starting_y) >= 0 && available_height >= used_height) {
         DetachChild(m_vscroll);
         return;
     }
-
 
     // show and adjust scrollbar size to represent space needed for panels
     AttachChild(m_vscroll);
@@ -2529,6 +2537,14 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
         (*it)->Refresh();
+}
+
+void SidePanel::PlanetPanelContainer::ShowScrollbar(){
+	DoPanelsLayout();
+}
+
+void SidePanel::PlanetPanelContainer::HideScrollbar(){
+	DetachChild(m_vscroll);
 }
 
 void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2974,6 +2990,13 @@ void SidePanel::DoLayout() {
     ul = GG::Pt(BORDER_LEFT, PLANET_PANEL_TOP);
     lr = GG::Pt(ClientWidth() - 1, ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     m_planet_panel_container->SizeMove(ul, lr);
+
+    // hide scrollbar if there is no planets in the system
+    if (TemporaryPtr<const System> system = GetSystem(s_system_id))
+        if (system->PlanetIDs().size() == 0)
+            m_planet_panel_container->HideScrollbar();
+        else
+            m_planet_panel_container->ShowScrollbar();
 
     // resize system resource summary
     if (m_system_resource_summary) {
