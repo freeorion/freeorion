@@ -6179,7 +6179,7 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforms planets then increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
+'''Terraforms planets then increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15 and increases max [[encyclopedia HAPPINESS_TITLE]] by 5.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]], a substantial population bonus is added. If it is not, then it will slowly terraform itself in stages to eventually reach [[PE_GOOD]] (NB: [[species SP_EXOBOT]] do not have a [[PE_GOOD]] environment so it cannot improve beyond [[PE_ADEQUATE]] for them).'''
 
@@ -6187,7 +6187,7 @@ WORLDTREE_SPECIAL
 World Tree
 
 WORLDTREE_SPECIAL_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] by +1, [[encyclopedia DETECTION_RANGE_TITLE]] by +10, max Population by +1, [[encyclopedia HAPPINESS_TITLE]] on the planet that has the special by +5 and [[encyclopedia HAPPINESS_TITLE]] on all other planets owned by the same empire by +1
+'''Increases [[encyclopedia SUPPLY_TITLE]] by +1, [[encyclopedia DETECTION_RANGE_TITLE]] by +10, max Population by +1, and [[encyclopedia HAPPINESS_TITLE]] on the planet that has the special by +5. Increases [[encyclopedia HAPPINESS_TITLE]] on all other planets owned by the same empire by +1.
 
 A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been planted by the Caretakers in ancient times.'''
 
@@ -6272,7 +6272,7 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on this planet by 0.2 per Population when Focus is set to [[encyclopedia INDUSTRY_TITLE]], but population is decreased: Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on this planet by 0.2 per Population when Focus is set to [[encyclopedia INDUSTRY_TITLE]]. Decreases population (regardless of Focus): Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
 
 This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
 
@@ -6280,7 +6280,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 5 per Population when Focus is set to [[encyclopedia RESEARCH_TITLE]], but population is decreased: Tiny: -5, Small: -10, Medium: -15, Large: -20, Huge: -25.
+'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 5 per Population when Focus is set to [[encyclopedia RESEARCH_TITLE]]. Decreases population (regardless of Focus): Tiny: -5, Small: -10, Medium: -15, Large: -20, Huge: -25.
 
 The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
@@ -8817,7 +8817,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population.
+'''Increases max [[encyclopedia SHIELDS_TITLE]] by 1 on each owned planet. For species with basic defensive toops, increases max [[encyclopedia TROOP_TITLE]] on the planet by 0.2 per population.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -8831,19 +8831,19 @@ DEF_GARRISON_2
 Defensive Militia Training
 
 DEF_GARRISON_2_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional one per turn.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional 1 per turn.
 
 DEF_GARRISON_3
 Planetary Fortification Network
 
 DEF_GARRISON_3_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 16 (unmodified by species traits) and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 16 (unmodified by species traits) and causes troops to regenerate by an additional 2 per turn in addition to that from [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Planetary Guard Brigades
 
 DEF_GARRISON_4_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional 3 per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -9616,7 +9616,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Adds the [[special GAIA_SPECIAL]] to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Adds the [[special GAIA_SPECIAL]] to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15, and increases max [[encyclopedia HAPPINESS_TITLE]] by 5.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
