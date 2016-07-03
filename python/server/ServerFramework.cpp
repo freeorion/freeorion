@@ -1,6 +1,7 @@
 #include "ServerFramework.h"
 
 #include "ServerWrapper.h"
+#include "../SetWrapper.h"
 #include "../CommonWrappers.h"
 
 #include "../../util/Logger.h"
@@ -9,25 +10,46 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 
 
 #include <stdexcept>
 
 using boost::python::object;
+using boost::python::class_;
 using boost::python::import;
 using boost::python::error_already_set;
 using boost::python::dict;
+using boost::python::vector_indexing_suite;
+using boost::python::map_indexing_suite;
 
 namespace fs = boost::filesystem;
 
 BOOST_PYTHON_MODULE(freeorion) {
     boost::python::docstring_options doc_options(true, true, false);
+
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();
     FreeOrionPython::WrapEmpire();
     FreeOrionPython::WrapUniverseClasses();
     FreeOrionPython::WrapServer();
+
+    // STL Containers
+    class_<std::vector<int> >("IntVec")
+        .def(vector_indexing_suite<std::vector<int> >())
+    ;
+    class_<std::vector<std::string> >("StringVec")
+        .def(vector_indexing_suite<std::vector<std::string> >())
+    ;
+
+    class_<std::map<int, bool> >("IntBoolMap")
+        .def(map_indexing_suite<std::map<int, bool> >())
+    ;
+
+    FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
+    FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
 }
 
 namespace {
