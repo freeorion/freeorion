@@ -144,6 +144,7 @@ namespace {
 
         db.Add("UI.hide-map-panels",                UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                 false,      Validator<bool>());
 
+        db.Add("UI.sidepanel-width",                UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                 512,        Validator<int>());
 
         // Register hotkey names/default values for the context "map".
         Hotkey::AddHotkey("map.return_to_map",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
@@ -1311,9 +1312,11 @@ void MapWnd::DoLayout() {
 }
 
 void MapWnd::InitializeWindows() {
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+
     // system-view side panel
-    const GG::Pt sidepanel_ul(AppWidth() - GG::X(450), m_toolbar->Bottom());
-    const GG::Pt sidepanel_wh(GG::X(450), AppHeight() - m_toolbar->Height());
+    const GG::Pt sidepanel_ul(AppWidth() - SIDEPANEL_WIDTH, m_toolbar->Bottom());
+    const GG::Pt sidepanel_wh(SIDEPANEL_WIDTH, AppHeight() - m_toolbar->Height());
 
     // situation report window
     const GG::Pt sitrep_ul(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom());
