@@ -1123,6 +1123,7 @@ void OptionsWnd::SoundEffectsEnableClicked(bool checked) const
     if (checked) {
         GetOptionsDB().Set("UI.sound.enabled", true);
         Sound::GetSound().Enable(true);
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
     } else {
         GetOptionsDB().Set("UI.sound.enabled", false);
         if (!GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
