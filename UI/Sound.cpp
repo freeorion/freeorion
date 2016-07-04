@@ -220,6 +220,9 @@ void Sound::SoundImpl::Enable(bool enable) {
 
     if (enable) {
         InitOpenAL();
+        if (!m_initialized) {
+            ErrorLogger() "Unable to initialize audio.  Sound effects and music are disabled.";
+        }
     } else {
 
         StopMusic();
@@ -234,41 +237,54 @@ void Sound::SoundImpl::Enable(bool enable) {
     m_buffers.clear();
     m_temporary_disable_count = 0;
 
-    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "diabled.");
+    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
 
 }
 
-    /// Initialize OpenAl and return true on success.
+/// Initialize OpenAl and return true on success.
+// TODO rewrite with std::unique_ptr and custom deleter to remove long
+// chain of "destructor" code.
 void Sound::SoundImpl::InitOpenAL() {
-    ALCcontext *m_context;
-    ALCdevice *m_device;
+    ALCcontext *context;
+    ALCdevice *device;
     ALenum error_code;
 
-    m_device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
-                                     * string desctribing a device can be passed here (of type ALchar*) */
-    if (m_device == 0) {
+    device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
+                                   * string desctribing a device can be passed here (of type ALchar*) */
+    if (device == 0) {
         ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
         m_initialized = false;
         return;
     }
 
-    m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
+    context = alcCreateContext(device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
     // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
 
-    if (!((m_context != 0) && (alcMakeContextCurrent(m_context) == AL_TRUE))) {
-        ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
+    if (!((context != 0) && (alcMakeContextCurrent(context) == AL_TRUE) && ((error_code = alGetError()) == AL_NO_ERROR) )) {
+        ErrorLogger() << "Unable to create OpenAL context : " << alGetString(error_code) << "\n";
+        alcCloseDevice(device);
         m_initialized = false;
         return;
     }
 
     alListenerf(AL_GAIN,1.0);
-    alGetError(); // clear possible previous errors (just to be certain)
+    error_code = alGetError();
+    if(error_code != AL_NO_ERROR) {
+        ErrorLogger() << "Unable to create OpenAL listener: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+        alcMakeContextCurrent(0);
+        alcDestroyContext(context);
+        alcCloseDevice(device);
+        m_initialized = false;
+        return;
+    }
+
     alGenSources(NUM_SOURCES, m_sources);
     error_code = alGetError();
     if(error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
         alcMakeContextCurrent(0);
-        alcDestroyContext(m_context);
+        alcDestroyContext(context);
+        alcCloseDevice(device);
         m_initialized = false;
         return;
     }
@@ -277,15 +293,27 @@ void Sound::SoundImpl::InitOpenAL() {
     error_code = alGetError();
     if (error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-        alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+        alDeleteSources(NUM_SOURCES, m_sources);
         alcMakeContextCurrent(0);
-        alcDestroyContext(m_context);
+        alcDestroyContext(context);
+        alcCloseDevice(device);
         m_initialized = false;
         return;
     }
 
     for (int i = 0; i < NUM_SOURCES; ++i) {
         alSourcei(m_sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
+        error_code = alGetError();
+        if (error_code != AL_NO_ERROR) {
+            ErrorLogger() << "Unable to set OpenAL source to relative: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+            alDeleteSources(NUM_SOURCES, m_sources);
+            alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+            alcMakeContextCurrent(0);
+            alcDestroyContext(context);
+            alcCloseDevice(device);
+            m_initialized = false;
+            return;
+        }
     }
     DebugLogger() << "OpenAL initialized. Version "
                   << alGetString(AL_VERSION)
@@ -419,10 +447,8 @@ void Sound::SoundImpl::StopMusic()
 
 void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
 {
-    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
+    if (!m_initialized || !GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
-
-    Enable(true);
 
     std::string filename = PathString(path);
     ALuint current_buffer;
