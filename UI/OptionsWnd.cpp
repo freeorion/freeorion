@@ -875,7 +875,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
-    GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(toggle_option_name));
+    GG::Connect(button->CheckedSignal, &OptionsWnd::SoundEffectsEnableClicked, this);
     GG::Connect(slider->SlidAndStoppedSignal, volume_slider_handler, this);
 }
 
@@ -1118,14 +1118,29 @@ void OptionsWnd::DoneClicked()
     m_done = true;
 }
 
+void OptionsWnd::SoundEffectsEnableClicked(bool checked) const
+{
+    if (checked) {
+        GetOptionsDB().Set("UI.sound.enabled", true);
+        Sound::GetSound().Enable(true);
+    } else {
+        GetOptionsDB().Set("UI.sound.enabled", false);
+        if (!GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+            Sound::GetSound().Enable(false);
+    }
+}
+
 void OptionsWnd::MusicClicked(bool checked)
 {
     if (checked) {
         GetOptionsDB().Set("UI.sound.music-enabled", true);
+        Sound::GetSound().Enable(true);
         Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
     } else {
         GetOptionsDB().Set("UI.sound.music-enabled", false);
         Sound::GetSound().StopMusic();
+        if (!GetOptionsDB().Get<bool>("UI.sound.enabled"))
+            Sound::GetSound().Enable(false);
     }
 }
 

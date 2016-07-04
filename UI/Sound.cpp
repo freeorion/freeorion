@@ -13,7 +13,8 @@
 namespace {
     const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
 
-    void InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers) {
+    /// Initialize OpenAl and return true on success.
+    bool InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers) {
         ALCcontext *m_context;
         ALCdevice *m_device;
         ALenum error_code;
@@ -22,6 +23,7 @@ namespace {
                                          * string desctribing a device can be passed here (of type ALchar*) */
         if (m_device == 0) {
             ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
+            return false;
         } else {
             m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
                                                          // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
@@ -35,6 +37,7 @@ namespace {
                     ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
                     alcMakeContextCurrent(0);
                     alcDestroyContext(m_context);
+                    return false;
                 } else {
                     alGetError();
                     alGenBuffers(2, music_buffers);
@@ -44,6 +47,7 @@ namespace {
                         alDeleteBuffers(2, music_buffers);
                         alcMakeContextCurrent(0);
                         alcDestroyContext(m_context);
+                        return false;
                     } else {
                         for (int i = 0; i < num_sources; ++i) {
                             alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
@@ -60,8 +64,10 @@ namespace {
                 }
             } else {
                 ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
+                return false;
             }
         }
+        return true;
     }
 
     void ShutdownOpenAL() {
@@ -145,30 +151,61 @@ Sound& Sound::GetSound()
 
 Sound::Sound() :
     m_sources(),
-    m_music_loops(),
+    m_music_loops(0),
     m_music_name(),
     m_buffers(),
     m_music_buffers(),
     m_ogg_file(),
     m_ogg_format(),
     m_ogg_freq(),
-    m_temporary_disable_count(0)
+    m_temporary_disable_count(0),
+    m_initialized(false)
 {
-    InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
+    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") && !GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        return;
+
+    Enable(true);
 }
 
 Sound::~Sound() {
-    if (alcGetCurrentContext() != 0) {
-        alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
+    Enable(false);
+}
 
-        alDeleteBuffers(2, m_music_buffers);
-        for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
-            alDeleteBuffers(1, &itr->second );
+void Sound::Enable(bool enable) {
+    if (enable == m_initialized)
+        return;
+
+    if (enable) {
+        m_initialized = InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
+    } else {
+
+        StopMusic();
+
+        if (alcGetCurrentContext() != 0) {
+            alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
+
+            alDeleteBuffers(2, m_music_buffers);
+            for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
+                alDeleteBuffers(1, &itr->second );
+        }
+        ShutdownOpenAL();
+
+        m_initialized = false;
     }
-    ShutdownOpenAL();
+
+    //Reset playing audio
+    m_music_loops = 0;
+    m_buffers.clear();
+    m_temporary_disable_count = 0;
+
+    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "diabled.");
+
 }
 
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/) {
+    if (!m_initialized)
+        return;
+
     ALenum m_openal_error;
     std::string filename = PathString(path);
     FILE* m_f = 0;
@@ -248,6 +285,9 @@ void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/) {
 
 void Sound::StopMusic()
 {
+    if (!m_initialized)
+        return;
+
     if (alcGetCurrentContext() != 0)
     {
         alSourceStop(m_sources[0]);
@@ -264,6 +304,8 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
 {
     if (!GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
+
+    Enable(true);
 
     std::string filename = PathString(path);
     ALuint current_buffer;
@@ -364,6 +406,9 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
 }
 
 void Sound::FreeSound(const boost::filesystem::path& path) {
+    if (!m_initialized)
+        return;
+
     ALenum m_openal_error;
     std::string filename = PathString(path);
     std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
@@ -380,6 +425,9 @@ void Sound::FreeSound(const boost::filesystem::path& path) {
 }
 
 void Sound::FreeAllSounds() {
+    if (!m_initialized)
+        return;
+
     ALenum m_openal_error;
 
     for (std::map<std::string, ALuint>::iterator it = m_buffers.begin();
@@ -399,6 +447,9 @@ void Sound::FreeAllSounds() {
 }
 
 void Sound::SetMusicVolume(int vol) {
+    if (!m_initialized)
+        return;
+
     ALenum m_openal_error;
 
     /* normalize value, then apply to all sound sources */
@@ -415,6 +466,9 @@ void Sound::SetMusicVolume(int vol) {
 }
 
 void Sound::SetUISoundsVolume(int vol) {
+    if (!m_initialized)
+        return;
+
     ALenum m_openal_error;
 
     /* normalize value, then apply to all sound sources */
@@ -431,6 +485,9 @@ void Sound::SetUISoundsVolume(int vol) {
 }
 
 void Sound::DoFrame() {
+    if (!m_initialized)
+        return;
+
     ALint    state;
     int      num_buffers_processed;
 

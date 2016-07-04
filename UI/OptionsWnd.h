@@ -55,6 +55,7 @@ private:
     void                ResolutionOption(GG::ListBox* page, int indentation_level);
 
     void                DoneClicked();
+    void                SoundEffectsEnableClicked(bool checked) const;
     void                MusicClicked(bool checked);
     void                MusicVolumeSlid(int pos, int low, int high);
     void                UISoundsVolumeSlid(int pos, int low, int high);

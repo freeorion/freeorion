@@ -56,6 +56,9 @@ public:
     /** Does the work that must be done by the sound system once per frame. */
     void DoFrame();
 
+    /** Enables(disables) the sound system if enable is true(false).. */
+    void Enable(bool enable);
+
 private:
     Sound();  ///< ctor.
     ~Sound(); ///< dotr.
@@ -73,6 +76,10 @@ private:
     ALenum                            m_ogg_format;           ///< mono or stereo
     ALsizei                           m_ogg_freq;             ///< sampling frequency
     unsigned int                      m_temporary_disable_count; ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
+    /** m_initialized indicates if the sound system has been initialized.
+        The system will not be initialized if both sound effects and
+        music are disabled or if initialization failed. */
+    bool                              m_initialized;
 };
 
 #endif // _Sound_h_
