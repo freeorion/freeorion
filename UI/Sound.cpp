@@ -250,52 +250,51 @@ void Sound::SoundImpl::InitOpenAL() {
         ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
         m_initialized = false;
         return;
-    } else {
-        m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
-        // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
-
-        if ((m_context != 0) && (alcMakeContextCurrent(m_context) == AL_TRUE)) {
-            alListenerf(AL_GAIN,1.0);
-            alGetError(); // clear possible previous errors (just to be certain)
-            alGenSources(NUM_SOURCES, m_sources);
-            error_code = alGetError();
-            if(error_code != AL_NO_ERROR) {
-                ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-                alcMakeContextCurrent(0);
-                alcDestroyContext(m_context);
-                m_initialized = false;
-                return;
-            } else {
-                alGetError();
-                alGenBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
-                error_code = alGetError();
-                if (error_code != AL_NO_ERROR) {
-                    ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-                    alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
-                    alcMakeContextCurrent(0);
-                    alcDestroyContext(m_context);
-                    m_initialized = false;
-                    return;
-                } else {
-                    for (int i = 0; i < NUM_SOURCES; ++i) {
-                        alSourcei(m_sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
-                    }
-                    DebugLogger() << "OpenAL initialized. Version "
-                                  << alGetString(AL_VERSION)
-                                  << "Renderer "
-                                  << alGetString(AL_RENDERER)
-                                  << "Vendor "
-                                  << alGetString(AL_VENDOR) << "\n"
-                                  << "Extensions: "
-                                  << alGetString(AL_EXTENSIONS) << "\n";
-                }
-            }
-        } else {
-            ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
-            m_initialized = false;
-            return;
-        }
     }
+
+    m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
+    // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
+
+    if (!((m_context != 0) && (alcMakeContextCurrent(m_context) == AL_TRUE))) {
+        ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
+        m_initialized = false;
+        return;
+    }
+
+    alListenerf(AL_GAIN,1.0);
+    alGetError(); // clear possible previous errors (just to be certain)
+    alGenSources(NUM_SOURCES, m_sources);
+    error_code = alGetError();
+    if(error_code != AL_NO_ERROR) {
+        ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+        alcMakeContextCurrent(0);
+        alcDestroyContext(m_context);
+        m_initialized = false;
+        return;
+    }
+
+    alGenBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+    error_code = alGetError();
+    if (error_code != AL_NO_ERROR) {
+        ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+        alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+        alcMakeContextCurrent(0);
+        alcDestroyContext(m_context);
+        m_initialized = false;
+        return;
+    }
+
+    for (int i = 0; i < NUM_SOURCES; ++i) {
+        alSourcei(m_sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
+    }
+    DebugLogger() << "OpenAL initialized. Version "
+                  << alGetString(AL_VERSION)
+                  << " Renderer "
+                  << alGetString(AL_RENDERER)
+                  << " Vendor "
+                  << alGetString(AL_VENDOR) << "\n"
+                  << " Extensions: "
+                  << alGetString(AL_EXTENSIONS) << "\n";
     m_initialized = true;
 }
 
