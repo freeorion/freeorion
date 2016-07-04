@@ -1,17 +1,8 @@
 #ifndef _Sound_h_
 #define _Sound_h_
 
-#ifdef FREEORION_MACOSX
-# include <OpenAL/al.h>
-#else
-# include <AL/al.h>
-#endif
-
-#include <vorbis/vorbisfile.h>
-
 #include <boost/filesystem/path.hpp>
-
-#include <map>
+#include <boost/scoped_ptr.hpp>
 
 
 class Sound
@@ -60,27 +51,12 @@ public:
     void Enable(bool enable);
 
 private:
+    class SoundImpl;
+    // TODO use C++11 unique_ptr
+    boost::scoped_ptr<SoundImpl> const pimpl;
     Sound();  ///< ctor.
     ~Sound(); ///< dotr.
 
-    bool UISoundsTemporarilyDisabled() const;
-
-    static const int NUM_SOURCES = 16; // The number of sources for OpenAL to create. Should be 2 or more.
-    static const int NUM_MUSIC_BUFFERS = 2; // The number of music buffers.
-
-    ALuint                            m_sources[NUM_SOURCES]; ///< OpenAL sound sources. The first one is used for music
-    int                               m_music_loops;          ///< the number of loops of the current music to play (< 0 for loop forever)
-    std::string                       m_music_name;           ///< the name of the currently-playing music file
-    std::map<std::string, ALuint>     m_buffers;              ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
-    ALuint                            m_music_buffers[NUM_MUSIC_BUFFERS];     ///< two additional buffers for music. statically defined as they'll be changed many times.
-    OggVorbis_File                    m_ogg_file;             ///< the currently open ogg file
-    ALenum                            m_ogg_format;           ///< mono or stereo
-    ALsizei                           m_ogg_freq;             ///< sampling frequency
-    unsigned int                      m_temporary_disable_count; ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
-    /** m_initialized indicates if the sound system has been initialized.
-        The system will not be initialized if both sound effects and
-        music are disabled or if initialization failed. */
-    bool                              m_initialized;
 };
 
 #endif // _Sound_h_
