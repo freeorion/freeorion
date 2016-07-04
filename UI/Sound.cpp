@@ -3,6 +3,8 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 
+#include <boost/scoped_array.hpp>
+
 #ifdef FREEORION_MACOSX
 # include <OpenAL/alc.h>
 #else
@@ -95,7 +97,7 @@ namespace {
         ALenum m_openal_error;
         int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
         int bitStream,bytes,bytes_new;
-        char* array = new char[buffer_size];
+        boost::scoped_array<char> array(new char[buffer_size]);
         bytes = 0;
 
         if (alcGetCurrentContext() != 0) {
@@ -114,19 +116,16 @@ namespace {
                 }
             } while ((buffer_size - bytes) > 4096);
             if (bytes > 0) {
-                alBufferData(bufferName, ogg_format, array, static_cast < ALsizei > (bytes), ogg_freq);
+                alBufferData(bufferName, ogg_format, array.get(), static_cast < ALsizei > (bytes), ogg_freq);
                 m_openal_error = alGetError();
                 if (m_openal_error != AL_NONE)
                     ErrorLogger() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
             } else {
                 ov_clear(ogg_file); // the app might think we still have something to play.
-                delete [] array;
                 return 1;
             }
-            delete [] array;
             return 0;
         }
-        delete [] array;
         return 1;
     }
 }
