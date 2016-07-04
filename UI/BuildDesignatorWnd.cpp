@@ -1170,7 +1170,7 @@ void BuildDesignatorWnd::Update() {
 void BuildDesignatorWnd::InitializeWindows() {
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
 
-    const GG::X SIDEPANEL_WIDTH = GG::X(512);
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
     const GG::Y PANEL_HEIGHT    = GG::Y(240);
 
     const GG::Pt pedia_ul(queue_width, GG::Y0);

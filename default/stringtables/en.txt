@@ -1032,6 +1032,9 @@ Toggles whether to show a right-click popup menu on the galaxy map.
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Toggles whether the sitrep, pedia etc. panels are temporarily hidden when opening the production window and reopened when closing the production window.
 
+OPTIONS_DB_UI_SIDEPANEL_WIDTH
+Default width for the map and production screen's sidepanel
+
 OPTIONS_DB_STARLANE_THICKNESS
 Sets how wide to render starlanes in pixels.
 
