@@ -224,13 +224,6 @@ void Sound::SoundImpl::Enable(bool enable) {
 
         StopMusic();
 
-        if (alcGetCurrentContext() != 0) {
-            alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
-
-            alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
-            for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
-                alDeleteBuffers(1, &itr->second );
-        }
         ShutdownOpenAL();
 
         m_initialized = false;
@@ -307,6 +300,14 @@ void Sound::SoundImpl::InitOpenAL() {
 }
 
 void Sound::SoundImpl::ShutdownOpenAL() {
+
+    if (alcGetCurrentContext() != 0) {
+        alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
+
+        alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+        for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
+            alDeleteBuffers(1, &itr->second );
+    }
 
     ALCcontext* context = alcGetCurrentContext();
     if (context != 0) {
