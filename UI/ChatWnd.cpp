@@ -98,10 +98,8 @@ private:
     void            AutoComplete();                     //!< Autocomplete current word
 
     /** AutoComplete helper function */
-    bool            CompleteWord(const std::set<std::string>& names,
-                                 const std::string& partial_word,
-                                 const std::pair<GG::CPSize,
-                                 const GG::CPSize>& cursor_pos,
+    bool            CompleteWord(const std::set<std::string>& names, const std::string& partial_word,
+                                 const std::pair<GG::CPSize, const GG::CPSize>& cursor_pos,
                                  std::string& text);
 
     // Set for autocomplete game words
@@ -216,40 +214,40 @@ void MessageWndEdit::FindGameWords() {
  }
 
 void MessageWndEdit::AutoComplete() {
-    std::string fullLine = this->Text();
+    std::string full_line = this->Text();
 
     // Check for repeated tab
     // if current line is same as the last read line
-    if (m_last_line_read != "" && boost::equals(fullLine, m_last_line_read)){
+    if (m_last_line_read != "" && boost::equals(full_line, m_last_line_read)){
         if (m_repeated_tab_count >= m_auto_complete_choices.size())
             m_repeated_tab_count = 0;
 
-        std::string nextWord = m_auto_complete_choices.at(m_repeated_tab_count);
+        std::string next_word = m_auto_complete_choices.at(m_repeated_tab_count);
 
-        if (nextWord != "") {
-             // Remove the old choice from the line
+        if (next_word != "") {
+            // Remove the old choice from the line
             // and replace it with the next choice
-            fullLine = fullLine.substr(0, fullLine.size() - (m_last_game_word.size() + 1));
-            fullLine.insert(fullLine.size(), nextWord + " ");
-            this->SetText(fullLine);
-            GG::CPSize move_cursor_to = fullLine.size() + GG::CP1;
+            full_line = full_line.substr(0, full_line.size() - (m_last_game_word.size() + 1));
+            full_line.insert(full_line.size(), next_word + " ");
+            this->SetText(full_line);
+            GG::CPSize move_cursor_to = full_line.size() + GG::CP1;
             this->SelectRange(move_cursor_to, move_cursor_to);
-            m_last_game_word = nextWord;
+            m_last_game_word = next_word;
             m_last_line_read = this->Text();
         }
         ++m_repeated_tab_count;
     }
     else {
-        bool exactMatch = false;
+        bool exact_match = false;
 
         std::pair<GG::CPSize, GG::CPSize> cursor_pos = this->CursorPosn();
-        if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= fullLine.size()) {
-            std::string::size_type word_start = fullLine.substr(0, Value(cursor_pos.first)).find_last_of(" :");
+        if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= full_line.size()) {
+            std::string::size_type word_start = full_line.substr(0, Value(cursor_pos.first)).find_last_of(" :");
             if (word_start == std::string::npos)
                 word_start = 0;
             else
                 ++word_start;
-            std::string partial_word = fullLine.substr(word_start, Value(cursor_pos.first - word_start));
+            std::string partial_word = full_line.substr(word_start, Value(cursor_pos.first - word_start));
             if (partial_word == "")
                 return;
 
@@ -259,64 +257,62 @@ void MessageWndEdit::AutoComplete() {
             // See if word is an exact match with a game word
             for (std::set<std::string>::const_iterator it = m_game_words.begin(); it != m_game_words.end(); ++it) {
                 if (boost::iequals(*it, partial_word)) { // if there's an exact match, just add a space
-                    fullLine.insert(Value(cursor_pos.first), " ");
-                    this->SetText(fullLine);
+                    full_line.insert(Value(cursor_pos.first), " ");
+                    this->SetText(full_line);
                     this->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
-                    exactMatch = true;
+                    exact_match = true;
                     break;
                 }
             }
             // If not an exact match try to complete the word
-            if (!exactMatch) 
-                CompleteWord(m_game_words, partial_word, cursor_pos, fullLine);
+            if (!exact_match) 
+                CompleteWord(m_game_words, partial_word, cursor_pos, full_line);
         }
     }
 }
 
-bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
-                                  const std::string& partial_word,
-                                  const std::pair<GG::CPSize,
-                                  const GG::CPSize>& cursor_pos,
-                                  std::string& fullLine)
+bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std::string& partial_word,
+                                  const std::pair<GG::CPSize, const GG::CPSize>& cursor_pos,
+                                  std::string& full_line)
 {
     // clear repeated tab variables
     m_auto_complete_choices.clear();
     m_repeated_tab_count = 0;
 
-    bool partialWordMatch = false;
-    std::string gameWord;
+    bool partial_word_match = false;
+    std::string game_word;
 
     // Check if the partial_word is contained in any game words
     for (std::set<std::string>::const_iterator it = names.begin(); it != names.end(); ++it) {
-        std::string tempGameWord = *it;
+        std::string temp_game_word = *it;
 
-        if (tempGameWord.size() >= partial_word.size()) {
-            std::string gameWordPartial = tempGameWord.substr(0, partial_word.size());
+        if (temp_game_word.size() >= partial_word.size()) {
+            std::string game_word_partial = temp_game_word.substr(0, partial_word.size());
 
-            if (boost::iequals(gameWordPartial, partial_word)) {
-                if (gameWordPartial != "") {
+            if (boost::iequals(game_word_partial, partial_word)) {
+                if (game_word_partial != "") {
                     // Add all possible word choices for repeated tab
-                    m_auto_complete_choices.push_back(tempGameWord);
-                    partialWordMatch = true;
+                    m_auto_complete_choices.push_back(temp_game_word);
+                    partial_word_match = true;
                 }
             }
         }
     }
   
-    if (!partialWordMatch)
+    if (!partial_word_match)
         return false;
 
     // Grab first autocomplete choice
-    gameWord = m_auto_complete_choices.at(m_repeated_tab_count++);
-    m_last_game_word = gameWord;
+    game_word = m_auto_complete_choices.at(m_repeated_tab_count++);
+    m_last_game_word = game_word;
 
     // Remove the partial_word from the line
     // and replace it with the properly formated game word
-    fullLine = fullLine.substr(0, fullLine.size() - partial_word.size());
-    fullLine.insert(fullLine.size(), gameWord + " ");
-    this->SetText(fullLine);
+    full_line = full_line.substr(0, full_line.size() - partial_word.size());
+    full_line.insert(full_line.size(), game_word + " ");
+    this->SetText(full_line);
     m_last_line_read = this->Text();
-    GG::CPSize move_cursor_to = fullLine.size() + GG::CP1;
+    GG::CPSize move_cursor_to = full_line.size() + GG::CP1;
     this->SelectRange(move_cursor_to, move_cursor_to);
     return true;
 }
