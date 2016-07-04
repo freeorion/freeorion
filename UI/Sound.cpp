@@ -16,7 +16,7 @@ namespace {
     const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
 
     /// Initialize OpenAl and return true on success.
-    bool InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers) {
+    bool InitOpenAL(int num_sources, ALuint *sources, int num_music_buffers, ALuint *music_buffers) {
         ALCcontext *m_context;
         ALCdevice *m_device;
         ALenum error_code;
@@ -42,11 +42,11 @@ namespace {
                     return false;
                 } else {
                     alGetError();
-                    alGenBuffers(2, music_buffers);
+                    alGenBuffers(num_music_buffers, music_buffers);
                     error_code = alGetError();
                     if (error_code != AL_NO_ERROR) {
                         ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-                        alDeleteBuffers(2, music_buffers);
+                        alDeleteBuffers(num_music_buffers, music_buffers);
                         alcMakeContextCurrent(0);
                         alcDestroyContext(m_context);
                         return false;
@@ -175,7 +175,7 @@ void Sound::Enable(bool enable) {
         return;
 
     if (enable) {
-        m_initialized = InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
+        m_initialized = InitOpenAL(NUM_SOURCES, m_sources, NUM_MUSIC_BUFFERS, m_music_buffers);
     } else {
 
         StopMusic();
@@ -183,7 +183,7 @@ void Sound::Enable(bool enable) {
         if (alcGetCurrentContext() != 0) {
             alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
 
-            alDeleteBuffers(2, m_music_buffers);
+            alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
             for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
                 alDeleteBuffers(1, &itr->second );
         }
