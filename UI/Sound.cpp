@@ -23,6 +23,15 @@ public:
     SoundImpl();  ///< ctor.
     ~SoundImpl(); ///< dotr.
 
+    /** Enables(disables) the sound system if enable is true(false).. */
+    void Enable(bool enable);
+
+    /**Initialize OpenAL*/
+    void InitOpenAL();
+
+    /**Shutdown OpenAL.*/
+    void ShutdownOpenAL();
+
     /** Plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a
         loops + 1 times otherwise. */
     void PlayMusic(const boost::filesystem::path& path, int loops = 0);
@@ -47,9 +56,6 @@ public:
 
     /** Does the work that must be done by the sound system once per frame. */
     void DoFrame();
-
-    /** Enables(disables) the sound system if enable is true(false).. */
-    void Enable(bool enable);
 
     bool UISoundsTemporarilyDisabled() const;
 
@@ -80,75 +86,6 @@ private:
 
 namespace {
     const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
-
-    /// Initialize OpenAl and return true on success.
-    bool InitOpenAL(int num_sources, ALuint *sources, int num_music_buffers, ALuint *music_buffers) {
-        ALCcontext *m_context;
-        ALCdevice *m_device;
-        ALenum error_code;
-
-        m_device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
-                                         * string desctribing a device can be passed here (of type ALchar*) */
-        if (m_device == 0) {
-            ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
-            return false;
-        } else {
-            m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
-                                                         // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
-
-            if ((m_context != 0) && (alcMakeContextCurrent(m_context) == AL_TRUE)) {
-                alListenerf(AL_GAIN,1.0);
-                alGetError(); // clear possible previous errors (just to be certain)
-                alGenSources(num_sources, sources);
-                error_code = alGetError();
-                if(error_code != AL_NO_ERROR) {
-                    ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-                    alcMakeContextCurrent(0);
-                    alcDestroyContext(m_context);
-                    return false;
-                } else {
-                    alGetError();
-                    alGenBuffers(num_music_buffers, music_buffers);
-                    error_code = alGetError();
-                    if (error_code != AL_NO_ERROR) {
-                        ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-                        alDeleteBuffers(num_music_buffers, music_buffers);
-                        alcMakeContextCurrent(0);
-                        alcDestroyContext(m_context);
-                        return false;
-                    } else {
-                        for (int i = 0; i < num_sources; ++i) {
-                            alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
-                        }
-                        DebugLogger() << "OpenAL initialized. Version "
-                                               << alGetString(AL_VERSION)
-                                               << "Renderer "
-                                               << alGetString(AL_RENDERER)
-                                               << "Vendor "
-                                               << alGetString(AL_VENDOR) << "\n"
-                                               << "Extensions: "
-                                               << alGetString(AL_EXTENSIONS) << "\n";
-                    }
-                }
-            } else {
-                ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void ShutdownOpenAL() {
-
-        ALCcontext* context = alcGetCurrentContext();
-        if (context != 0) {
-            ALCdevice* device = alcGetContextsDevice(context);
-            alcMakeContextCurrent(0);
-            alcDestroyContext(context);
-            if (device != 0)
-                alcCloseDevice(device);
-        }
-    }
 
 #ifdef FREEORION_WIN32
     int _fseek64_wrap(FILE *f, ogg_int64_t off, int whence) {
@@ -282,7 +219,7 @@ void Sound::SoundImpl::Enable(bool enable) {
         return;
 
     if (enable) {
-        m_initialized = InitOpenAL(NUM_SOURCES, m_sources, NUM_MUSIC_BUFFERS, m_music_buffers);
+        InitOpenAL();
     } else {
 
         StopMusic();
@@ -307,6 +244,80 @@ void Sound::SoundImpl::Enable(bool enable) {
     DebugLogger() << "Audio " << (m_initialized ? "enabled." : "diabled.");
 
 }
+
+    /// Initialize OpenAl and return true on success.
+void Sound::SoundImpl::InitOpenAL() {
+    ALCcontext *m_context;
+    ALCdevice *m_device;
+    ALenum error_code;
+
+    m_device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
+                                     * string desctribing a device can be passed here (of type ALchar*) */
+    if (m_device == 0) {
+        ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
+        m_initialized = false;
+        return;
+    } else {
+        m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
+        // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
+
+        if ((m_context != 0) && (alcMakeContextCurrent(m_context) == AL_TRUE)) {
+            alListenerf(AL_GAIN,1.0);
+            alGetError(); // clear possible previous errors (just to be certain)
+            alGenSources(NUM_SOURCES, m_sources);
+            error_code = alGetError();
+            if(error_code != AL_NO_ERROR) {
+                ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                alcMakeContextCurrent(0);
+                alcDestroyContext(m_context);
+                m_initialized = false;
+                return;
+            } else {
+                alGetError();
+                alGenBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+                error_code = alGetError();
+                if (error_code != AL_NO_ERROR) {
+                    ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                    alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+                    alcMakeContextCurrent(0);
+                    alcDestroyContext(m_context);
+                    m_initialized = false;
+                    return;
+                } else {
+                    for (int i = 0; i < NUM_SOURCES; ++i) {
+                        alSourcei(m_sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
+                    }
+                    DebugLogger() << "OpenAL initialized. Version "
+                                  << alGetString(AL_VERSION)
+                                  << "Renderer "
+                                  << alGetString(AL_RENDERER)
+                                  << "Vendor "
+                                  << alGetString(AL_VENDOR) << "\n"
+                                  << "Extensions: "
+                                  << alGetString(AL_EXTENSIONS) << "\n";
+                }
+            }
+        } else {
+            ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
+            m_initialized = false;
+            return;
+        }
+    }
+    m_initialized = true;
+}
+
+void Sound::SoundImpl::ShutdownOpenAL() {
+
+    ALCcontext* context = alcGetCurrentContext();
+    if (context != 0) {
+        ALCdevice* device = alcGetContextsDevice(context);
+        alcMakeContextCurrent(0);
+        alcDestroyContext(context);
+        if (device != 0)
+            alcCloseDevice(device);
+    }
+}
+
 
 void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/) {
     if (!m_initialized)
