@@ -1032,6 +1032,9 @@ Active/Désactive le clic droit affichant un menu contextuel sur la carte galact
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Définit si les panneaux Rapport de Situation, Encyclopédie, etc. sont temporairement cachés lors de l'ouverture de la Fenêtre Production et réaffichés lors de la fermeture de la Fenêtre Production.
 
+OPTIONS_DB_UI_SIDEPANEL_WIDTH
+Largeur par défaut des panneaux latéraux dans la Fenêtre Carte et la Fenêtre Production.
+
 OPTIONS_DB_STARLANE_THICKNESS
 Épaisseur en pixels des Voies spatiales.
 
@@ -3333,7 +3336,7 @@ DESIGN_NO_PART
 Aucun
 
 DESIGN_WND_STARTS
-Démarrage de Modèle
+Amorce du Modèle
 
 DESIGN_WND_HULLS
 Coques
@@ -6179,7 +6182,7 @@ GAIA_SPECIAL  # translated
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforme la planète puis accroît son plafond de Population selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Terraforme la planète puis accroît son plafond de Population selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15, et augmente son [[encyclopedia HAPPINESS_TITLE]] max de 5.
 
 Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population. Si l'[[encyclopedia ENVIRONMENT_TITLE]] devient parfait pour l'espèce, un bonus susbstantiel de Population sera acquis. Dans le cas contraire, la planète se terraformera lentement par paliers pour finalement atteindre une Habitabilité [[PE_GOOD]] pour l'espèce (NB: Les [[species SP_EXOBOT]]s ne s'adaptant parfaitement à aucun Environnement, une planète terraformée pour cette espèce ne pourra dépasser le stade [[PE_ADEQUATE]]).'''
 
@@ -6187,7 +6190,7 @@ WORLDTREE_SPECIAL
 Arbre Planétaire
 
 WORLDTREE_SPECIAL_DESC
-'''Augmente l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le [[encyclopedia HAPPINESS_TITLE]] de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
+'''Augmente l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, et le [[encyclopedia HAPPINESS_TITLE]] de +5 sur la planète présentant cette Particularité. Augmente le [[encyclopedia HAPPINESS_TITLE]] de +1 sur toutes les autres planètes appartenant au même empire.
 
 Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Soigneurs dans les temps ancestraux.'''
 
@@ -6272,7 +6275,7 @@ TIDAL_LOCK_SPECIAL
 Rotation Synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de la planète de 0.2 par Population si le Focus [[encyclopedia INDUSTRY_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Immense -5.
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de la planète de 0.2 par Population si le Focus [[encyclopedia INDUSTRY_TITLE]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) : Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Immense -5.
 
 Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la population s'en trouve impactée, mais l'industrie tire profit des conditions stables à la surface de la planète.'''
 
@@ -6280,7 +6283,7 @@ TEMPORAL_ANOMALY_SPECIAL
 Anomalie Temporelle
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 5 par Population si le Focus [[encyclopedia RESEARCH_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -10 ; Moyenne -15 ; Grande -20 ; Immense -25.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 5 par Population si le Focus [[encyclopedia RESEARCH_TITLE]] est activé. Diminue la Population selon la taille de la planète (quel que soit le Focus) : Minuscule -5 ; Petite -10 ; Moyenne -15 ; Grande -20 ; Immense -25.
 
 L'écoulement du temps sur cette planète est fortement perturbé. Des événements apparemment aléatoires provoquent soit une accélération soit un ralentissement de la vitesse du temps, troublant profondément le rythme biologique de tout être vivant et rendant quasiment impossible toute organisation sociale et productive. Une adaptabilité extrême et de grandes précautions sont requises afin d'établir une colonie sur cette planète.
 Cependant, une anomalie temporelle présente un fort potentiel pour la recherche scientifique, bien au-delà de ce qu'il est possible d'entreprendre sur les planètes conventionnelles.'''
@@ -8817,7 +8820,7 @@ DEF_ROOT_DEFENSE
 Auto-défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes de l'empire.
+'''Augmente les [[encyclopedia SHIELDS_TITLE]] max de 1 sur chaque planète appartenant à l'empire. Pour les espèces disposant de troupes de défense, augmente l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur la planète.
 
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
@@ -8869,7 +8872,7 @@ SHP_BASIC_DAM_CONT
 Contrôle Basique des Dégâts
 
 SHP_BASIC_DAM_CONT_DESC
-Répare progressivement les astronefs endommagés au rythme d'1 point de [[encyclopedia STRUCTURE_TITLE]] par tour.
+Répare progressivement les astronefs endommagés. La valeur de [[encyclopedia STRUCTURE_TITLE]] de tous les astronefs est restaurée au rythme d'1 point par tour, si pour chaque tour les astronefs n'ont engagé aucun combat.
 
 SHP_ADV_DAM_CONT
 Contrôle Avancé des Dégâts
@@ -9616,7 +9619,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît le plafond de Population (pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]]) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît le plafond de Population (pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]]) selon la taille de la planète : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15, et augmente le [[encyclopedia HAPPINESS_TITLE]] max de 5.
 
 Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
@@ -10687,7 +10690,7 @@ SH_ROBOTIC
 Coque Robotique
 
 SH_ROBOTIC_DESC
-'''Cette coque est entièrement automatisée et fonctionne selon les principes du [[tech SHP_MIL_ROBO_CONT]]. Elle dispose de quatre niches externes et d'une niche interne, et s'auto-répare à raison de 2 points de [[encyclopedia STRUCTURE_TITLE]] par tour.
+'''Cette coque est entièrement automatisée et fonctionne selon les principes du [[tech SHP_MIL_ROBO_CONT]]. Elle dispose de quatre niches externes et d'une niche interne, et s'auto-répare à raison de 2 points de [[encyclopedia STRUCTURE_TITLE]] par tour, tant que l'astronef n'engage aucun combat.
 
 Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
@@ -10717,7 +10720,7 @@ SH_NANOROBOTIC
 Coque Nano-Robotique
 
 SH_NANOROBOTIC_DESC
-'''Cette grande coque automatisée s'auto-répare à l'aide de millions de nanorobots. Elle dispose six niches externes et d'une niche interne, et régénère entièrement sa [[encyclopedia STRUCTURE_TITLE]] entre chaque combat.
+'''Cette grande coque automatisée s'auto-répare à l'aide de millions de nanorobots. Elle dispose de six niches externes et d'une niche interne. Si l'astronef n'est pas engagé dans un combat, les nanorobots effectuent des réparations rapides, doublant ainsi la valeur actuelle de [[encyclopedia STRUCTURE_TITLE]] de l'astronef (jusqu'à son maximum) à chaque tour, tant qu'aucun combat n'est engagé.
 
 Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
@@ -10747,7 +10750,7 @@ SH_LOGISTICS_FACILITATOR
 Coque Logistique
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''Destinée aux astronefs amiraux d'intendance, cette coque est conçue pour gérer de manière optimale les transferts d'équipage et de matériel durant les situations de combat. Elle dispose de sept niches externes, de deux niches internes et d'une niche centrale. Sa flotte intégrée de cargos furtifs rend possible le transfert en toute discrétion de personnel et de matériel pendant les combats, permettant ainsi à tous les astronefs alliés de restaurer entièrement leur [[encyclopedia STRUCTURE_TITLE]] entre chaque combat.
+'''Destinée aux astronefs amiraux d'intendance, cette coque est conçue pour gérer de manière optimale les transferts d'équipage et de matériel durant les situations de combat. Elle dispose de sept niches externes, de deux niches internes et d'une niche centrale. Sa flotte intégrée de cargos furtifs rend possible le transfert en toute discrétion de personnel et de matériel pendant les combats, permettant ainsi à tous les astronefs alliés d'effectuer des réparations partielles même durant les tours où un combat a eu lieu. Si aucun combat n'est engagé, la [[encyclopedia STRUCTURE_TITLE]] des astronefs sera restaurée au double de leur valeur actuelle, ce qui signifie que les astronefs disposant encore au minimum de la moitié de leur [[encyclopedia STRUCTURE_TITLE]], seront complètement réparés.
 
 Sa [[encyclopedia STEALTH_TITLE]] est standard de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est moyenne.
 
@@ -10850,7 +10853,7 @@ SH_ORGANIC_DESC
 '''Une coque vivante disposant de trois niches externes et d'une niche interne.
 Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale à 5, mais bénéficie d'un bonus additionnel de 5 après 25 tours.
 
-Sa [[encyclopedia STEALTH_TITLE]] est standard, son [[encyclopedia DETECTION_RANGE_TITLE]] est faible et sa [[encyclopedia STARLANE_SPEED_TITLE]] bonne.
+Sa [[encyclopedia STEALTH_TITLE]] est standard, son [[encyclopedia DETECTION_RANGE_TITLE]] est faible et sa [[encyclopedia STARLANE_SPEED_TITLE]] élevée.
 
 Coque économique et polyvalente capable d'endosser de nombreux rôles au sein d'une flotte, mais qui tend à devenir obsolète à mesure que la technologie évolue. Son faible Champ de Détection la rend peu adaptée pour la reconnaissance mais ses autres attributs en font un bon astronef de guerre. Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
 
@@ -10953,9 +10956,9 @@ Croissance Organique: débute avec une [[encyclopedia STRUCTURE_TITLE]] égale �
 
 Sa [[encyclopedia STEALTH_TITLE]] est très élevée de même que son [[encyclopedia DETECTION_RANGE_TITLE]], tandis que sa [[encyclopedia STARLANE_SPEED_TITLE]] est élevée.
 
-Bon potentiel comme astronef rapide et puissant pour le piratage commercial ou la reconnaissance.
+Bon potentiel comme astronef rapide et puissant pour le piratage commercial, l'attaque furtive ou la reconnaissance.
 
-Les coques vivantes régénèrent leur [[encyclopedia STRUCTURE_TITLE]] et leur [[encyclopedia FUEL_TITLE]] entre chaque combat.
+Cette coque vivante régénère rapidement sa [[encyclopedia STRUCTURE_TITLE]] lorsqu'elle n'est pas engagée dans un combat, regagnant sa valeur actuelle de Résistance à chaque tour, tant qu'elle ne participe pas à une bataille ou un blocus. Cela signifie que si l'astronef dispose encore au moins de la moitié de sa Résistance, il sera complètement réparé en un tour. D'autre part, cette coque régénère son [[encyclopedia FUEL_TITLE]] de 0.2 par tour.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] sur la planète où la coque sera produite.
 '''
