@@ -97,12 +97,13 @@ namespace {
 
     std::string EmpireLink(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
-        const std::string name = empire ? empire->Name() : UserString("ENC_COMBAT_UNKNOWN_OBJECT");
-
-        const std::string& tag = VarText::EMPIRE_ID_TAG;
-        std::string empire_wrapped = WrapWithTagAndId(name, tag, empire_id);
-        std::string retval = EmpireColorWrappedText(empire_id, empire_wrapped);
-        return retval;
+        if (empire) {
+            const std::string& tag = VarText::EMPIRE_ID_TAG;
+            std::string empire_wrapped = WrapWithTagAndId(empire->Name(), tag, empire_id);
+            return EmpireColorWrappedText(empire_id, empire_wrapped);
+        } else {
+            return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
+        }
     }
 
     std::string ShipPartLink(std::string const & part) {
