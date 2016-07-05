@@ -30,7 +30,27 @@ protected:
     virtual GG::Rect CalculatePosition() const;
 
 private:
-    typedef void (OptionsWnd::* VolumeSliderHandler)(int, int, int);
+
+    class SoundOptionsFeedback {
+    public:
+        SoundOptionsFeedback() :
+            m_effects_button(0),
+            m_music_button(0)
+        {}
+
+        void SetEffectsButton(GG::StateButton * const button);
+        void SetMusicButton(GG::StateButton * const button);
+
+        void SoundEffectsEnableClicked(bool checked);
+        void MusicClicked(bool checked);
+        void MusicVolumeSlid(int pos, int low, int high) const;
+        void UISoundsVolumeSlid(int pos, int low, int high) const;
+        void SoundInitializationFailure(std::runtime_error const &e);
+
+    private:
+        GG::StateButton* m_effects_button;
+        GG::StateButton* m_music_button;
+    };
 
     void                DoLayout();
 
@@ -41,9 +61,10 @@ private:
     GG::Spin<int>*      IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     GG::Spin<double>*   DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     void                HotkeyOption(GG::ListBox* page, int indentation_level, const std::string& hotkey_name);
-    void                MusicVolumeOption(GG::ListBox* page, int indentation_level);
-    void                VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
-                                     VolumeSliderHandler volume_slider_handler, bool toggle_value);
+    void                MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback &fb);
+    void                VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
+                                     const std::string& volume_option_name, const std::string& text, bool toggle_value,
+                                     SoundOptionsFeedback &fb);
     void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory, bool relative_path);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = 0);
     void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = 0);
@@ -55,13 +76,13 @@ private:
     void                ResolutionOption(GG::ListBox* page, int indentation_level);
 
     void                DoneClicked();
-    void                SoundEffectsEnableClicked(bool checked) const;
-    void                MusicClicked(bool checked);
-    void                MusicVolumeSlid(int pos, int low, int high);
-    void                UISoundsVolumeSlid(int pos, int low, int high);
 
     GG::TabWnd* m_tabs;
     GG::Button* m_done_button;
+
+    // Enable and disable the sound when audio options are changed.
+    SoundOptionsFeedback m_sound_feedback;
+
 };
 
 #endif // _OptionsWnd_h_

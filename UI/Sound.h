@@ -19,7 +19,7 @@ public:
         ~TempUISoundDisabler();
     };
 
-    /** Returns the singleton instance of Sound. */
+    /** Returns the singleton instance of Sound.*/
     static Sound& GetSound();
 
     /** Plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a
@@ -47,8 +47,11 @@ public:
     /** Does the work that must be done by the sound system once per frame. */
     void DoFrame();
 
-    /** Enables(disables) the sound system if enable is true(false).. */
-    void Enable(bool enable);
+    /** Enables the sound system.  Throws runtime_error on failure. */
+    void Enable();
+
+    /** Disable the sound system. */
+    void Disable();
 
 private:
     class SoundImpl;

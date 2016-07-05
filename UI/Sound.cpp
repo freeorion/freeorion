@@ -23,8 +23,11 @@ public:
     SoundImpl();  ///< ctor.
     ~SoundImpl(); ///< dotr.
 
-    /** Enables(disables) the sound system if enable is true(false).. */
-    void Enable(bool enable);
+    /** Enables the sound system.  Throws runtime_error on failure. */
+    void Enable();
+
+    /** Disable the sound system. */
+    void Disable();
 
     /**Initialize OpenAL*/
     void InitOpenAL();
@@ -159,8 +162,11 @@ Sound::Sound() :
 // Require here because SoundImpl is defined in this file.
 Sound::~Sound() {}
 
-void Sound::Enable(bool enable)
-{ pimpl->Enable(enable); }
+void Sound::Enable()
+{ pimpl->Enable(); }
+
+void Sound::Disable()
+{ pimpl->Disable(); }
 
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 { pimpl->PlayMusic(path, loops); }
@@ -207,38 +213,52 @@ Sound::SoundImpl::SoundImpl() :
     if (!GetOptionsDB().Get<bool>("UI.sound.enabled") && !GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
         return;
 
-    Enable(true);
+    try {
+        Enable();
+    } catch (std::runtime_error const & e) {
+        if (std::string(e.what()) != "ERROR_SOUND_INITIALIZATION_FAILED")
+            throw;
+    }
 }
 
 Sound::SoundImpl::~SoundImpl() {
-    Enable(false);
+    Disable();
 }
 
-void Sound::SoundImpl::Enable(bool enable) {
-    if (enable == m_initialized)
+void Sound::SoundImpl::Enable() {
+    if (m_initialized)
         return;
-
-    if (enable) {
-        InitOpenAL();
-        if (!m_initialized) {
-            ErrorLogger() "Unable to initialize audio.  Sound effects and music are disabled.";
-        }
-    } else {
-
-        StopMusic();
-
-        ShutdownOpenAL();
-
-        m_initialized = false;
-    }
 
     //Reset playing audio
     m_music_loops = 0;
     m_buffers.clear();
     m_temporary_disable_count = 0;
 
-    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
+    InitOpenAL();
+    if (!m_initialized) {
+        ErrorLogger() "Unable to initialize audio.  Sound effects and music are disabled.";
+        // TODO: Let InitOpenAL throw the OpenAL error message which
+        // might be more useful.
+        throw std::runtime_error("ERROR_SOUND_INITIALIZATION_FAILED");
+    }
 
+    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
+}
+
+void Sound::SoundImpl::Disable() {
+    if (!m_initialized)
+        return;
+    StopMusic();
+
+    ShutdownOpenAL();
+
+    //Reset playing audio
+    m_music_loops = 0;
+    m_buffers.clear();
+    m_temporary_disable_count = 0;
+
+    m_initialized = false;
+    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
 }
 
 /// Initialize OpenAl and return true on success.
@@ -306,8 +326,8 @@ void Sound::SoundImpl::InitOpenAL() {
         error_code = alGetError();
         if (error_code != AL_NO_ERROR) {
             ErrorLogger() << "Unable to set OpenAL source to relative: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-            alDeleteSources(NUM_SOURCES, m_sources);
             alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+            alDeleteSources(NUM_SOURCES, m_sources);
             alcMakeContextCurrent(0);
             alcDestroyContext(context);
             alcCloseDevice(device);

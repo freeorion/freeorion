@@ -211,6 +211,15 @@ Unowned
 NOWHERE
 Cannot be produced
 
+#############################################################
+####               M A J O R   E R R O R S               ####
+#############################################################
+
+ERROR_SOUND_INITIALIZATION_FAILED
+'''OpenAL audio system initialization failed.
+Check log files for more detailed messages.
+'''
+
 ################################## 
 # FORMAT_LIST items are for lists of the form
 # FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
