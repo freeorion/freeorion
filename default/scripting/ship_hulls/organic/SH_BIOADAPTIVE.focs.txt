@@ -36,7 +36,7 @@ Hull
             scope = Source
             activation = Turn low = Source.CreationTurn + 1
             effects = [
-                SetStructure value = Target.MaxStructure
+                SetStructure value =  Value + Value
                 SetFuel value = Value + 0.2
             ]
 

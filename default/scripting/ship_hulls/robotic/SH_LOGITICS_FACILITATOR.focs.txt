@@ -62,7 +62,7 @@ Hull
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
             priority = [[LATE_PRIORITY]]
-            effects = SetStructure value = max((Target.Structure + Target.Structure), (Target.Structure + 30))
+            effects = SetStructure value = max((Target.Structure + Target.Structure), (Target.Structure + 50))
 
         EffectsGroup
             scope = And [
@@ -81,7 +81,7 @@ Hull
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 10))
+            effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 20))
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
