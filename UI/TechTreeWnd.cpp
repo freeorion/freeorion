@@ -29,6 +29,7 @@
 #include <algorithm>
 
 #include <boost/timer.hpp>
+#include <boost/unordered_map.hpp>
 
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
@@ -485,6 +486,7 @@ class TechTreeWnd::LayoutPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     LayoutPanel(GG::X w, GG::Y h);
+    virtual ~LayoutPanel();
     //@}
 
     /** \name Accessors */ //@{
@@ -505,7 +507,9 @@ public:
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void Update();  ///< update indicated \a tech panel or all panels if \a tech_name is an empty string, without redoing layout
-    void Clear();                               ///< remove all tech panels
+    void Clear();
+    virtual void Show(bool children = true);    ///< remove all tech panels
+    virtual void Hide(bool children = true);    ///< remove all tech panels
     void Reset();                               ///< redo layout, recentre on a tech
     void SetScale(double scale);
     void ShowCategory(const std::string& category);
@@ -579,7 +583,8 @@ private:
     std::string             m_browsed_tech_name;
     TechTreeLayout          m_graph;
 
-    std::map<std::string, TechPanel*>   m_techs;
+    boost::unordered_map<std::string, TechPanel*>
+                            m_techs;
     TechTreeArcs                        m_dependency_arcs;
 
     LayoutSurface* m_layout_surface;
@@ -1020,6 +1025,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_selected_tech_name(),
     m_browsed_tech_name(),
     m_graph(),
+    m_techs(),
     m_layout_surface(0),
     m_vscroll(0),
     m_hscroll(0),
@@ -1070,6 +1076,11 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     //m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
+}
+
+TechTreeWnd::LayoutPanel::~LayoutPanel() {
+    for (boost::unordered_map<std::string, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it)
+        delete it->second;
 }
 
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
@@ -1156,15 +1167,40 @@ void TechTreeWnd::LayoutPanel::Clear() {
     GG::SignalScroll(*m_vscroll, true);
     GG::SignalScroll(*m_hscroll, true);
 
-    // delete all panels
-    for (std::map<std::string, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it)
-        delete it->second;
-    m_techs.clear();
+    //Hide all current panels.
+    for (boost::unordered_map<std::string, TechPanel*>::const_iterator panel_it = m_techs.begin();
+         panel_it != m_techs.end(); ++panel_it)
+    {
+        panel_it->second->Hide();
+        if (GG::Wnd* parent = panel_it->second->Parent())
+            parent->DetachChild(panel_it->second);
+    }
+
     m_graph.Clear();
+    DebugLogger() << "Layout Panel Clearing";
 
     m_dependency_arcs.Reset();
 
     m_selected_tech_name.clear();
+}
+
+void TechTreeWnd::LayoutPanel::Show(bool children/* = true*/) {
+    Layout(true);
+    GG::Wnd::Show(children);
+}
+
+void TechTreeWnd::LayoutPanel::Hide(bool children/* = true*/) {
+    GG::Wnd::Hide(children);
+
+    // Delete all panels
+    // Panel creation is slow so it is only done once when Research Window
+    // is first shown
+    for (boost::unordered_map<std::string, TechPanel*>::const_iterator panel_it = m_techs.begin();
+         panel_it != m_techs.end(); ++panel_it)
+    {
+        delete panel_it->second;
+    }
+    m_techs.clear();
 }
 
 void TechTreeWnd::LayoutPanel::Reset() {
@@ -1231,7 +1267,7 @@ void TechTreeWnd::LayoutPanel::ShowTech(const std::string& tech_name)
 { TechLeftClickedSlot(tech_name, GG::Flags<GG::ModKey>()); }
 
 void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
-    std::map<std::string, TechPanel*>::const_iterator it = m_techs.find(tech_name);
+    boost::unordered_map<std::string, TechPanel*>::const_iterator it = m_techs.find(tech_name);
     if (it == m_techs.end()) {
         DebugLogger() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << tech_name
                                << " due to lack of such a tech panel";
@@ -1312,9 +1348,16 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         if (!tech) continue;
         const std::string& tech_name = tech->Name();
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
-        m_techs[tech_name] = new TechPanel(tech_name, this);
+        boost::unordered_map<std::string, TechPanel*>::iterator panel_it = m_techs.find(tech_name);
+        if (panel_it == m_techs.end()) {
+            m_techs[tech_name] = new TechPanel(tech_name, this);
+        } else {
+            m_techs[tech_name]->Show();
+        }
         m_graph.AddNode(tech_name, m_techs[tech_name]->Width(), m_techs[tech_name]->Height());
     }
+
+    DebugLogger() << "Tech Tree Layout Preparing Tech Data Edges";
 
     // create an edge for every prerequisite
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
@@ -1415,12 +1458,13 @@ void TechTreeWnd::LayoutPanel::TechBrowsedSlot(const std::string& tech_name)
 void TechTreeWnd::LayoutPanel::TechLeftClickedSlot(const std::string& tech_name,
                                                    const GG::Flags<GG::ModKey>& modkeys)
 {
+    if (m_techs.find(tech_name) == m_techs.end())
+        return;
     // deselect previously-selected tech panel
     if (m_techs.find(m_selected_tech_name) != m_techs.end())
         m_techs[m_selected_tech_name]->Select(false);
     // select clicked on tech
-    if (m_techs.find(tech_name) != m_techs.end())
-        m_techs[tech_name]->Select(true);
+    m_techs[tech_name]->Select(true);
     m_selected_tech_name = tech_name;
     TechLeftClickedSignal(tech_name, modkeys);
 }
