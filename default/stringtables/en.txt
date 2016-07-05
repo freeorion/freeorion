@@ -8872,7 +8872,7 @@ SHP_BASIC_DAM_CONT
 Basic Damage Control
 
 SHP_BASIC_DAM_CONT_DESC
-Gradually repairs damaged ships. Current [[encyclopedia STRUCTURE_TITLE]] of all ships is replenished at a rate of 1 per turn.
+Gradually repairs damaged ships. Current [[encyclopedia STRUCTURE_TITLE]] of all ships is replenished at a rate of 1 per turn every turn they are not engaged in combat.
 
 SHP_ADV_DAM_CONT
 Advanced Damage Control
@@ -10690,7 +10690,7 @@ SH_ROBOTIC
 Robotic Hull
 
 SH_ROBOTIC_DESC
-'''This hull is completely automated and functions under the principals of [[tech SHP_MIL_ROBO_CONT]]. It has four external slots and one internal slot, and repairs 2 points of [[encyclopedia STRUCTURE_TITLE]] each turn.
+'''This hull is completely automated and functions under the principals of [[tech SHP_MIL_ROBO_CONT]]. It has four external slots and one internal slot, and repairs 2 points of [[encyclopedia STRUCTURE_TITLE]] each turn as long as the ship has not been in combat.
 
 [[encyclopedia STEALTH_TITLE]] is medium, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is average.
 
@@ -10720,7 +10720,7 @@ SH_NANOROBOTIC
 Nano-Robotic Hull
 
 SH_NANOROBOTIC_DESC
-'''This automated hull is large and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, and restores [[encyclopedia STRUCTURE_TITLE]] completely between combats.
+'''This automated hull is large and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot. When not engaged in combat, the nanorobots are able to effect fast repairs, doubling current [[encyclopedia STRUCTURE_TITLE]] (up to maximum) on every turn the ship is not in combat.
 
 [[encyclopedia STEALTH_TITLE]] and is medium, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is average.
 
@@ -10750,7 +10750,7 @@ SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to completely restore [[encyclopedia STRUCTURE_TITLE]] between combats.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[encyclopedia STRUCTURE_TITLE]] to double the current when out of combat, meaning ships at at least half strength will fully repair.
 
 [[encyclopedia STEALTH_TITLE]] is medium, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is average.
 
@@ -10956,9 +10956,9 @@ Organic Growth: starts with 15 [[encyclopedia STRUCTURE_TITLE]], grows an additi
 
 [[encyclopedia STEALTH_TITLE]] is very high, [[encyclopedia DETECTION_RANGE_TITLE]] is very high and [[encyclopedia STARLANE_SPEED_TITLE]] is high.
 
-Potentially a powerful and fast commerce raider or scout.
+Potentially a powerful and fast commerce raider, stealth attacker or scout.
 
-This living hull regenerates [[encyclopedia STRUCTURE_TITLE]] and [[encyclopedia FUEL_TITLE]] completely between combats.
+This living hull regenerates [[encyclopedia STRUCTURE_TITLE]] quickly when out of combat, gaining its current structure every turn it isn't involved in a fight or blockade, meaning if it is at half strength or greater it will be fully repaired in one turn. In addition, it regains 0.2 [[encyclopedia FUEL_TITLE]] per turn.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.
 '''
