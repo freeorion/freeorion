@@ -2069,7 +2069,7 @@ public:
     }
 
     GG::Pt          ListRowSize() const
-    { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
+    { return GG::Pt(Width() - RightMargin() - 5, ListRowHeight()); }
 
 protected:
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -2373,7 +2373,7 @@ public:
     }
 
     GG::Pt          ListRowSize() const
-    { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
+    { return GG::Pt(Width() - 5 - RightMargin(), ListRowHeight()); }
 
 private:
     int     m_fleet_id;
