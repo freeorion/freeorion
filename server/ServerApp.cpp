@@ -500,55 +500,13 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     std::map<int, PlayerSetupData> player_id_setup_data;
     const std::vector<PlayerSetupData>& player_setup_data = single_player_setup_data.m_players;
 
-    for (const PlayerSetupData& psd : player_setup_data) {
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            // In a single player game, the host player is always the human player, so
-            // this is just a matter of finding which player setup data is for
-            // a human player, and assigning that setup data to the host player id
-            player_id_setup_data[m_networking.HostPlayerID()] = psd;
-
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-            player_id_setup_data[psd.m_player_id] = psd;
-        } else {
-            // do nothing for any other player type, until another player type is implemented
-            ErrorLogger() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
-        }
-    }
-
-    NewGameInitConcurrentWithJoiners(single_player_setup_data, player_id_setup_data);
+    NewGameInitConcurrentWithJoiners(single_player_setup_data, player_setup_data);
 }
 
 void ServerApp::VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data) {
-    // associate player IDs with player setup data.  the player connection with
-    // id == m_networking.HostPlayerID() should be the human player in
-    // PlayerSetupData.  AI player connections are assigned one of the remaining
-    // PlayerSetupData entries that is for an AI player.
-
-
-    // TODO unduplicate this chunk of code
-    std::map<int, PlayerSetupData> player_id_setup_data;
     const std::vector<PlayerSetupData>& player_setup_data = single_player_setup_data.m_players;
 
-    for (std::vector<PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
-         setup_data_it != player_setup_data.end(); ++setup_data_it)
-    {
-        const PlayerSetupData& psd = *setup_data_it;
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            // In a single player game, the host player is always the human player, so
-            // this is just a matter of finding which player setup data is for
-            // a human player, and assigning that setup data to the host player id
-            player_id_setup_data[m_networking.HostPlayerID()] = psd;
-
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-            player_id_setup_data[psd.m_player_id] = psd;
-        } else {
-            // do nothing for any other player type, until another player type is implemented
-            ErrorLogger() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
-        }
-    }
-
-
-    NewGameInitVerifyJoiners(single_player_setup_data, player_id_setup_data);
+    NewGameInitVerifyJoiners(single_player_setup_data, player_setup_data);
 }
 
 void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data) {
@@ -618,28 +576,29 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
         }
     }
 
-    NewGameInitConcurrentWithJoiners(multiplayer_lobby_data, player_id_setup_data);
-    NewGameInitVerifyJoiners(multiplayer_lobby_data, player_id_setup_data);
+    std::vector<PlayerSetupData> psds;
+    for (std::map<int, PlayerSetupData>::iterator it = player_id_setup_data.begin();
+         it!= player_id_setup_data.end(); ++it)
+    {
+        it->second.m_player_id = it->first;
+        psds.push_back(it->second);
+    }
+
+    NewGameInitConcurrentWithJoiners(multiplayer_lobby_data, psds);
+    NewGameInitVerifyJoiners(multiplayer_lobby_data, psds);
 }
 
 void ServerApp::NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
-                            const std::map<int, PlayerSetupData>& player_id_setup_data) {
+                            const std::vector<PlayerSetupData>& player_setup_data) {
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners";
 
     m_galaxy_setup_data = galaxy_setup_data;
 
-    // ensure some reasonable inputs
-    if (player_id_setup_data.empty()) {
-        ErrorLogger() << "ServerApp::NewGameInitConcurrentWithJoiners passed empty player_id_setup_data.  Aborting";
-        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
-        return;
-    }
-
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_players_id_setup_data;
-    for (std::map<int, PlayerSetupData>::const_iterator player_id_setup_data_it = player_id_setup_data.begin();
-         player_id_setup_data_it != player_id_setup_data.end(); ++player_id_setup_data_it) {
-        const PlayerSetupData& psd = player_id_setup_data_it->second;
+    for (std::vector<PlayerSetupData>::const_iterator player_setup_data_it = player_setup_data.begin();
+         player_setup_data_it != player_setup_data.end(); ++player_setup_data_it) {
+        const PlayerSetupData& psd = *player_setup_data_it;
 
         if (!psd.m_player_name.empty()
             && (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER
@@ -731,10 +690,40 @@ void ServerApp::NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_s
 }
 
 void ServerApp::NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_data,
-                            const std::map<int, PlayerSetupData>& player_id_setup_data) {
+                                         const std::vector<PlayerSetupData>& player_setup_data) {
     DebugLogger() << "ServerApp::NewGameInitVerifyJoiners";
 
     m_galaxy_setup_data = galaxy_setup_data;
+
+    // associate player IDs with player setup data.  the player connection with
+    // id == m_networking.HostPlayerID() should be the human player in
+    // PlayerSetupData.  AI player connections are assigned one of the remaining
+    // PlayerSetupData entries that is for an AI player.
+
+    std::map<int, PlayerSetupData> player_id_setup_data;
+
+    for (std::vector<PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
+         setup_data_it != player_setup_data.end(); ++setup_data_it)
+    {
+        const PlayerSetupData& psd = *setup_data_it;
+        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            // In a single player game, the host player is always the human player, so
+            // this is just a matter of finding which player setup data is for
+            // a human player, and assigning that setup data to the host
+            // player id
+            if (m_networking.HostPlayerID() != psd.m_player_id)
+                ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners Human Player id, "
+                              << psd.m_player_id << ", is not the host id, " << m_networking.HostPlayerID() << ".";
+
+            player_id_setup_data[psd.m_player_id] = psd;
+
+        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            player_id_setup_data[psd.m_player_id] = psd;
+        } else {
+            // do nothing for any other player type, until another player type is implemented
+            ErrorLogger() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
+        }
+    }
 
     // ensure some reasonable inputs
     if (player_id_setup_data.empty()) {

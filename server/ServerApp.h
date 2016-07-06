@@ -231,13 +231,13 @@ private:
       * empires to turn processing list, does start-of-turn empire supply and
       * resource pool determination. */
     void    NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
-                                             const std::map<int, PlayerSetupData>& player_id_setup_data);
+                                             const std::vector<PlayerSetupData>& player_setup_data);
 
     /** Compiles and sends out basic
       * information about players in game to all other players as part of the
       * game start messages sent to players. */
     void    NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_data,
-                                     const std::map<int, PlayerSetupData>& player_id_setup_data);
+                                     const std::vector<PlayerSetupData>& player_setup_data);
 
     /** Clears any old game stored orders, victors or eliminated players, ads
       * empires to turn processing list, does start-of-turn empire supply and
