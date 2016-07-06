@@ -104,6 +104,7 @@ struct PlayerSetupData {
     /** \name Structors */ //@{
     PlayerSetupData() :
         m_player_name(),
+        m_player_id(Networking::INVALID_PLAYER_ID),
         m_empire_name(),
         m_empire_color(GG::Clr(0, 0, 0, 0)),
         m_starting_species_name(),
@@ -114,6 +115,7 @@ struct PlayerSetupData {
     //@}
 
     std::string             m_player_name;          ///< the player's name
+    int                     m_player_id;            ///< player id
 
     std::string             m_empire_name;          ///< the name of the player's empire when starting a new game
     GG::Clr                 m_empire_color;         ///< the color used to represent this player's empire when starting a new game

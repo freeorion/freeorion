@@ -72,6 +72,7 @@ template <class Archive>
 void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_player_name)
+        & BOOST_SERIALIZATION_NVP(m_player_id)
         & BOOST_SERIALIZATION_NVP(m_empire_name)
         & BOOST_SERIALIZATION_NVP(m_empire_color)
         & BOOST_SERIALIZATION_NVP(m_starting_species_name)
