@@ -1121,8 +1121,7 @@ void OptionsWnd::DoneClicked()
     m_done = true;
 }
 
-void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked)
-{
+void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
@@ -1138,8 +1137,7 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked)
     }
 }
 
-void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked)
-{
+void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
@@ -1156,24 +1154,22 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked)
     }
 }
 
-void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const
-{
+void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("UI.sound.music-volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
-void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const
-{
+void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("UI.sound.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(GG::StateButton* button)
-{ m_music_button = button;}
+{ m_music_button = button; }
 
 void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(GG::StateButton* button)
-{ m_effects_button = button;}
+{ m_effects_button = button; }
 
 void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(std::runtime_error const &e) {
     if (std::string(e.what()) != "ERROR_SOUND_INITIALIZATION_FAILED")

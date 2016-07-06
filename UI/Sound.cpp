@@ -94,7 +94,7 @@ namespace {
     int _fseek64_wrap(FILE *f, ogg_int64_t off, int whence) {
         if (!f)
             return -1;
-        return fseek(f,off,whence);
+        return fseek(f, off, whence);
     }
 #endif
 
@@ -103,7 +103,7 @@ namespace {
     {
         ALenum m_openal_error;
         int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
-        int bitStream,bytes,bytes_new;
+        int bitStream, bytes, bytes_new;
         boost::scoped_array<char> array(new char[buffer_size]);
         bytes = 0;
 
@@ -116,7 +116,7 @@ namespace {
                     if (loops != 0) {   // enter here if we need to play the same file again
                         if (loops > 0)
                             loops--;
-                        ov_time_seek(ogg_file,0.0); // rewind to beginning
+                        ov_time_seek(ogg_file, 0.0); // rewind to beginning
                     }
                     else
                         break;
@@ -287,9 +287,9 @@ void Sound::SoundImpl::InitOpenAL() {
         return;
     }
 
-    alListenerf(AL_GAIN,1.0);
+    alListenerf(AL_GAIN, 1.0);
     error_code = alGetError();
-    if(error_code != AL_NO_ERROR) {
+    if (error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL listener: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
         alcMakeContextCurrent(0);
         alcDestroyContext(context);
@@ -300,7 +300,7 @@ void Sound::SoundImpl::InitOpenAL() {
 
     alGenSources(NUM_SOURCES, m_sources);
     error_code = alGetError();
-    if(error_code != AL_NO_ERROR) {
+    if (error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
         alcMakeContextCurrent(0);
         alcDestroyContext(context);
@@ -416,10 +416,10 @@ void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops 
                 /* fill up the buffers and queue them up for the first time */
                 if (!RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq, m_music_buffers[0], BUFFER_SIZE, m_music_loops))
                 {
-                    alSourceQueueBuffers(m_sources[0],1,&m_music_buffers[0]); // queue up the buffer if we manage to fill it
+                    alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
                     if (!RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq, m_music_buffers[1], BUFFER_SIZE, m_music_loops))
                     {
-                        alSourceQueueBuffers(m_sources[0],1,&m_music_buffers[1]);
+                        alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
                         m_music_name = filename; // yup, we're playing something that takes up more than 2 buffers
                     }
                     else
@@ -448,8 +448,7 @@ void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops 
         ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(m_openal_error);
 }
 
-void Sound::SoundImpl::StopMusic()
-{
+void Sound::SoundImpl::StopMusic() {
     if (!m_initialized)
         return;
 
@@ -465,8 +464,7 @@ void Sound::SoundImpl::StopMusic()
     }
 }
 
-void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
-{
+void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
     if (!m_initialized || !GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
@@ -549,7 +547,7 @@ void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui
         if (found_buffer) {
             /* Now that we have the buffer, we need to find a source to send it to */
             for (m_i = 1; m_i < NUM_SOURCES; ++m_i) {   // as we're playing sounds we start at 1. 0 is reserved for music
-                alGetSourcei(m_sources[m_i],AL_SOURCE_STATE,&source_state);
+                alGetSourcei(m_sources[m_i], AL_SOURCE_STATE, &source_state);
                 if ((source_state != AL_PLAYING) && (source_state != AL_PAUSED)) {
                     found_source = true;
                     alSourcei(m_sources[m_i], AL_BUFFER, current_buffer);
@@ -620,7 +618,7 @@ void Sound::SoundImpl::SetMusicVolume(int vol) {
     GetOptionsDB().Set<int>("UI.sound.music-volume", vol);
     if (alcGetCurrentContext() != 0)
     {
-        alSourcef(m_sources[0],AL_GAIN, ((ALfloat) vol)/255.0);
+        alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
@@ -639,7 +637,7 @@ void Sound::SoundImpl::SetUISoundsVolume(int vol) {
     GetOptionsDB().Set<int>("UI.sound.volume", vol);
     if (alcGetCurrentContext() != 0) {
         for (int it = 1; it < NUM_SOURCES; ++it)
-            alSourcef(m_sources[it],AL_GAIN, ((ALfloat) vol)/255.0);
+            alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
@@ -655,7 +653,7 @@ void Sound::SoundImpl::DoFrame() {
     int      num_buffers_processed;
 
     if ((alcGetCurrentContext() != 0) && (m_music_name.size() > 0)) {
-        alGetSourcei(m_sources[0],AL_BUFFERS_PROCESSED,&num_buffers_processed);
+        alGetSourcei(m_sources[0], AL_BUFFERS_PROCESSED, &num_buffers_processed);
         while (num_buffers_processed > 0) {
             ALuint buffer_name_yay;
             alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
@@ -664,7 +662,7 @@ void Sound::SoundImpl::DoFrame() {
                 m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
                 break; /// this happens if RefillBuffer returns 1, meaning it encountered EOF and the file shouldn't be repeated
             }
-            alSourceQueueBuffers(m_sources[0],1,&buffer_name_yay);
+            alSourceQueueBuffers(m_sources[0], 1, &buffer_name_yay);
             num_buffers_processed--;
         }
         alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);

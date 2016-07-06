@@ -31,6 +31,8 @@ protected:
 
 private:
 
+    /**SoundOptionsFeedback enables immediate player feedback when
+       sound options are changed.*/
     class SoundOptionsFeedback {
     public:
         SoundOptionsFeedback() :
@@ -38,13 +40,24 @@ private:
             m_music_button(0)
         {}
 
+        /** Stores a pointer to  the sound effects check box.*/
         void SetEffectsButton(GG::StateButton * const button);
+        /** Stores pointer to music enable check box.*/
         void SetMusicButton(GG::StateButton * const button);
 
+        /**Enables/disables sound effects when the sound effects check
+           box is clicked.*/
         void SoundEffectsEnableClicked(bool checked);
+        /**Enables/disables background music when the music check
+           box is clicked.*/
         void MusicClicked(bool checked);
+        /** Adjusts the music volume.*/
         void MusicVolumeSlid(int pos, int low, int high) const;
+        /** Adjusts the effects volume.*/
         void UISoundsVolumeSlid(int pos, int low, int high) const;
+        /** Handles a sound initialization failure by setting sound
+            effects and music enable check boxes to disabled and
+            informing the player with a popup message box.*/
         void SoundInitializationFailure(std::runtime_error const &e);
 
     private:
