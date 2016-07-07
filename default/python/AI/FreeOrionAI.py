@@ -6,10 +6,15 @@ import random
 
 # IMPORTANT! this import also execute python code to update freeOrionAIInterface interface,
 # removing this import will brake AI in unexpected way.
-from freeorion_debug import handle_debug_chat, listener
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
-# pylint: disable=relative-import
+
+from extend_free_orion_AI_interface import patch_interface
+patch_interface()
+
+from common.handlers import init_handlers
+init_handlers()
+
 import AIstate
 import ColonisationAI
 import ExplorationAI
@@ -23,7 +28,9 @@ import ProductionAI
 import ResearchAI
 import ResourcesAI
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString
-from freeorion_debug import Timer
+from common.timers import Timer
+from common.interactive_shell import handle_debug_chat
+from common.listeners import listener
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)

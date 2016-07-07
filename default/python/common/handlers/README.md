@@ -12,7 +12,7 @@
 
 
 ## Existing handlers:
-  - `freeorion_debug/handlers/charts_handler`:
+  - `common/handlers/charts_handler`:
     Debug prints required for charts. Started by default
-  - `freeorion_debug/handlers/inspect_freeOrionAIInterface.py`:
+  - `common/handlers/inspect_freeOrionAIInterface.py`:
     Code that create stub for `freeOrionAIInterface`. Must be launched with single AI player.

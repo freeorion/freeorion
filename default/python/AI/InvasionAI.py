@@ -13,7 +13,7 @@ import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
 from freeorion_tools import tech_is_complete
-from freeorion_debug import Timer
+from common.timers import Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
 

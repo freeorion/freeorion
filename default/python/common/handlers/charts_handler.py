@@ -3,7 +3,7 @@ This module contain code that used in charting.
 Do not modify output because charting code is relay on it.
 """
 import freeOrionAIInterface as fo
-from freeorion_debug.listeners import register_pre_handler
+from common.listeners import register_pre_handler
 from PlanetUtilsAI import get_capital
 from ResearchAI import get_research_index
 

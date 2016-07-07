@@ -1090,5 +1090,5 @@ def use_classic_research_approach():
 
     2) run game with flag  --ai-config=<path to config file>
     """
-    from freeorion_debug.option_tools import get_option_dict
+    from common.option_tools import get_option_dict
     return not get_option_dict().get('new_research', False)

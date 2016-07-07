@@ -18,7 +18,7 @@ import random
 import ColonisationAI
 import AIDependencies
 import FleetUtilsAI
-from freeorion_debug import Timer
+from common.timers import Timer
 from freeorion_tools import tech_is_complete
 
 resource_timer = Timer('timer_bucket')
