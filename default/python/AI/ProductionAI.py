@@ -11,6 +11,7 @@ import PriorityAI
 import ColonisationAI
 import MilitaryAI
 import ShipDesignAI
+from turn_state import state
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
                      FocusType, ShipRoleType, ShipDesignTypes)
@@ -355,7 +356,7 @@ def generate_production_orders():
 
     # TODO: add total_pp checks below, so don't overload queue
     best_pilot_facilities = ColonisationAI.facilities_by_species_grade.get(
-        "WEAPONS_%.1f" % ColonisationAI.get_best_pilot_rating(), {})
+        "WEAPONS_%.1f" % state.best_pilot_rating, {})
 
     print "best_pilot_facilities: \n %s" % best_pilot_facilities
 
@@ -447,7 +448,7 @@ def generate_production_orders():
 
     top_pilot_systems = {}
     for pid, _ in ColonisationAI.pilot_ratings.items():
-        if (_ <= ColonisationAI.get_medium_pilot_rating()) and (_ < ColonisationAI.GREAT_PILOT_RATING):
+        if (_ <= state.medium_pilot_rating) and (_ < ColonisationAI.GREAT_PILOT_RATING):
             continue
         top_pilot_systems.setdefault(universe.getPlanet(pid).systemID, []).append((pid, _))
         if (pid in queued_shipyard_locs) or not building_type.canBeProduced(empire.empireID, pid):
@@ -463,15 +464,15 @@ def generate_production_orders():
     red_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
                           if colony_systems.get(pid, -1) in AIstate.empireStars.get(fo.starType.red, [])],
                          reverse=True)
-    red_pilots = [pid for _, pid in red_popctrs if _ == ColonisationAI.get_best_pilot_rating()]
+    red_pilots = [pid for _, pid in red_popctrs if _ == state.best_pilot_rating]
     blue_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
                            if colony_systems.get(pid, -1) in AIstate.empireStars.get(fo.starType.blue, [])],
                           reverse=True)
-    blue_pilots = [pid for _, pid in blue_popctrs if _ == ColonisationAI.get_best_pilot_rating()]
+    blue_pilots = [pid for _, pid in blue_popctrs if _ == state.best_pilot_rating]
     bh_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
                          if colony_systems.get(pid, -1) in AIstate.empireStars.get(fo.starType.blackHole, [])],
                         reverse=True)
-    bh_pilots = [pid for _, pid in bh_popctrs if _ == ColonisationAI.get_best_pilot_rating()]
+    bh_pilots = [pid for _, pid in bh_popctrs if _ == state.best_pilot_rating]
     enrgy_shipyard_locs = {}
     for building_name in ["BLD_SHIPYARD_ENRG_COMP"]:
         if empire.buildingTypeAvailable(building_name):
@@ -1343,13 +1344,13 @@ def generate_production_orders():
             per_turn_cost = (float(best_design.productionCost(empire.empireID, loc)) / best_design.productionTime(empire.empireID, loc))
             if this_priority == PriorityType.PRODUCTION_MILITARY:
                 this_rating = ColonisationAI.pilot_ratings.get(loc, 0)
-                rating_ratio = float(this_rating) / ColonisationAI.get_best_pilot_rating()
+                rating_ratio = float(this_rating) / state.best_pilot_rating
                 if rating_ratio < 0.1:
                     loc_planet = universe.getPlanet(loc)
                     if loc_planet:
                         pname = loc_planet.name
                         this_rating = ColonisationAI.rate_planetary_piloting(loc)
-                        rating_ratio = float(this_rating) / ColonisationAI.get_best_pilot_rating()
+                        rating_ratio = float(this_rating) / state.best_pilot_rating
                         qualifier = ["", "suboptimal"][rating_ratio < 1.0]
                         print "Building mil ship at loc %d (%s) with %s pilot Rating: %.1f; ratio to empire best is %.1f" % (loc, pname, qualifier, this_rating, rating_ratio)
                 while total_pp > 40 * per_turn_cost:
