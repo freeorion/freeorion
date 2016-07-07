@@ -200,7 +200,3 @@ def log_systems():
     # Printing too much info at once will lead to truncation of text
     for line in systems_table.get_table().split('\n'):
         print line
-
-    exit(1)
-
-
