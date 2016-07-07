@@ -154,6 +154,7 @@ def create_universe(psd_map):
     statistics.log_specials_summary()
     print "############################################################"
     statistics.log_systems()
+    statistics.log_planets()
 
     if error_list:
         print "Python Universe Generator completed with errors"
