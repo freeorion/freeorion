@@ -195,13 +195,31 @@ Battle Fleet %1%
 # %1% name of the system this asteroid belt is created in.
 # %2% orbit number where this asteroid belt is created on.
 NEW_ASTEROIDS_NAME
-%1% %2% remnants
+%1% %2% %3%
 
-# Name for a newly created planet. When creating a new planet it is assumed this
-# planet is the first one within the system.
-# %1% name of the system this planet is created in.
 NEW_PLANET_NAME
-%1% I
+%1% %2%
+
+NEW_ASTEROID_SUFFIX_ORBIT_I
+[[PL_ASTEROID_BELT]]
+
+NEW_ASTEROID_SUFFIX_ORBIT_II
+[[PL_ASTEROID_BELT]]
+
+NEW_ASTEROID_SUFFIX_ORBIT_III
+[[PL_ASTEROID_BELT]]
+
+NEW_ASTEROID_SUFFIX_ORBIT_IV
+[[PL_ASTEROID_BELT]]
+
+NEW_ASTEROID_SUFFIX_ORBIT_V
+[[PL_ASTEROID_BELT]]
+
+NEW_ASTEROID_SUFFIX_ORBIT_VI
+[[PL_ASTEROID_BELT]]
+
+NEW_ASTEROID_SUFFIX_ORBIT_VII
+[[PL_ASTEROID_BELT]]
 
 EMPTY_SPACE
 Deep Space

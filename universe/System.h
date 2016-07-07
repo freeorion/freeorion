@@ -40,6 +40,7 @@ public:
     StarType                NextYoungerStarType() const;
 
     int                     Orbits() const                  { return m_orbits.size(); } ///< returns the number of orbits in this system
+    int                     NumPlanets() const              { return m_planets.size(); }    ///< returns number of planets in this system
 
     int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
