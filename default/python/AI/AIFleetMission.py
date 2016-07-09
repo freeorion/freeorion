@@ -445,7 +445,7 @@ class AIFleetMission(object):
                                                      AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)):
             if self._need_repair():
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
-                if repair_fleet_order.is_valid():
+                if repair_fleet_order and repair_fleet_order.is_valid():
                     self.orders.append(repair_fleet_order)
             if fleet.fuel < fleet.maxFuel and self.get_location_target().id not in fleet_supplyable_system_ids:
                 resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.fleet, self.get_location_target())
@@ -490,7 +490,7 @@ class AIFleetMission(object):
         # if we are already at a system where we can repair, make sure we use it...
         system = self.fleet.get_system()
         # TODO starlane obstruction is not considered in the next call
-        nearest_dock = MoveUtilsAI.get_nearest_drydock_system_id(system.id)
+        nearest_dock = MoveUtilsAI.get_best_drydock_system_id(system.id, fleet_id)
         if nearest_dock == system.id:
             repair_limit = 0.99
         # if combat fleet, use military repair check

@@ -1,3 +1,4 @@
+import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
@@ -164,37 +165,67 @@ def get_nearest_supplied_system(start_system_id):
         return universe_object.System(supply_system_id)
 
 
-def get_nearest_drydock_system_id(start_system_id):
-    """Get system_id of nearest drydock capable of repair.
-
-    This function does not consider starlane obstruction!
+def get_best_drydock_system_id(start_system_id, fleet_id):
+    """
+    Get system_id of best drydock capable of repair, where best is nearest drydock
+    that has a current and target happiness greater than the HAPPINESS _THRESHOLD
+    with a path that is not blockaded or that the fleet can fight through to with
+    acceptable losses.
 
      :param start_system_id: current location of fleet - used to find closest target
      :type start_system_id: int
      :return: closest system_id capable of repairing
      :rtype: int
      """
-    # TODO consider starlane obstruction
+    if start_system_id == -1:
+        print >> sys.stderr, "get_best_drydock_system_id passed bad system id."
+        return None
+
+    if fleet_id == -1:
+        print >> sys.stderr, "get_best_drydock_system_id passed bad fleet id."
+        return None
+
+    HAPPINESS_THRESHOLD = 5
+
     universe = fo.getUniverse()
+    start_sys = universe.getSystem(start_system_id)
     drydock_system_ids = set()
     for sys_id, pids in ColonisationAI.empire_dry_docks.iteritems():
+        if sys_id == -1:
+            print >> sys.stderr, "get_best_drydock_system_id passed bad dry dock sys_id."
+            continue
         for pid in pids:
             planet = universe.getPlanet(pid)
-            if planet and planet.currentMeterValue(fo.meterType.happiness) >= 5:
+            if (planet
+                  and planet.currentMeterValue(fo.meterType.happiness) >= HAPPINESS_THRESHOLD
+                  and planet.currentMeterValue(fo.meterType.targetHappiness) >= HAPPINESS_THRESHOLD):
                 drydock_system_ids.add(sys_id)
-                continue
-    if start_system_id in drydock_system_ids:
-        return start_system_id
-    else:
-        min_jumps = 9999  # infinity
-        supply_system_id = -1
-        for system_id in drydock_system_ids:
-            if start_system_id != -1 and system_id != -1:
-                least_jumps_len = universe.jumpDistance(start_system_id, system_id)
-                if least_jumps_len < min_jumps:
-                    min_jumps = least_jumps_len
-                    supply_system_id = system_id
-        return supply_system_id
+                break
+
+    sys_distances = sorted([(universe.jumpDistance(start_system_id, sys_id), sys_id)
+                            for sys_id in drydock_system_ids])
+
+    fleet_rating = foAI.foAIstate.get_rating(fleet_id).get('overall', 0)
+    for dock_sys in [universe.getSystem(sys_id) for (_, sys_id) in sys_distances]:
+        path = can_travel_to_system(fleet_id, start_sys, dock_sys)
+
+        path_rating = sum([foAI.foAIstate.systemStatus[path_sys.id]['totalThreat']
+                           for path_sys in path])
+
+        SAFETY_MARGIN = 10
+        if SAFETY_MARGIN * path_rating <= fleet_rating:
+            print ("Drydock recommendation %s(%d) from %s(%d) for fleet %s(%d) with fleet rating %2f and path rating %2f."
+                   % (dock_sys.name, dock_sys.id,
+                      start_sys.name, start_sys.id,
+                      universe.getFleet(fleet_id).name, fleet_id,
+                      fleet_rating, path_rating))
+            return dock_sys.id
+
+    print ("No safe drydock recommendation from %s(%d) for fleet %s(%d) with fleet rating %2f."
+           % (start_sys.name, start_sys.id,
+              universe.getFleet(fleet_id).name, fleet_id,
+              fleet_rating))
+    return None
 
 
 def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
@@ -309,7 +340,9 @@ def get_repair_fleet_order(fleet_target, current_sys_id):
     """
     # TODO Cover new mechanics where happiness increases repair rate - don't always use nearest system!
     # find nearest supplied system
-    drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
+    drydock_sys_id = get_best_drydock_system_id(current_sys_id, fleet_target.id)
+    if drydock_sys_id is None:
+        return None
     print "ordering fleet %d to %s for repair" % (fleet_target.id, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
     # create resupply AIFleetOrder
     return fleet_orders.OrderRepair(fleet_target, universe_object.System(drydock_sys_id))
