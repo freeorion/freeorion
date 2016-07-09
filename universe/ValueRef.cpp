@@ -1013,6 +1013,17 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         if (!empire)
             return "";
         return empire->TopPriorityEnqueuedTech();
+    } else if (property_name == "OrbitalSuffix") {
+        if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object)) {
+            return planet->OrbitalSuffix();
+        } else if (TemporaryPtr<const System> system_ptr = boost::dynamic_pointer_cast<const System>(object)) {
+            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(GetPlanet(*system_ptr->PlanetIDs().rbegin())))
+                return planet->OrbitalSuffix();
+            else
+                return RomanNumber(system_ptr->PlanetIDs().size());
+        }
+        ErrorLogger() << "OrbitalSuffix requested for non-planet or system object: " << "(" << object->ID() << ")" << object->Name();
+        return "";
     }
 
     ErrorLogger() << "Variable<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
