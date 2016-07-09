@@ -9,7 +9,7 @@ import random
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
-from extend_free_orion_AI_interface import patch_interface
+from freeorion_tools import patch_interface
 patch_interface()
 
 from common.handlers import init_handlers

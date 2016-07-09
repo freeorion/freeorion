@@ -44,7 +44,7 @@ from functools import wraps
 from itertools import izip_longest
 
 import freeOrionAIInterface as fo
-from freeorion_tools import dict_from_map
+from _freeorion_tools import dict_from_map
 
 
 PLANET = 'P'

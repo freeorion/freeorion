@@ -1,0 +1,2 @@
+from _freeorion_tools import *
+from extend_freeorion_AI_interface import patch_interface
