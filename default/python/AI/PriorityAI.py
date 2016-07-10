@@ -14,8 +14,7 @@ import ResearchAI
 import AIDependencies
 from turn_state import state
 from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
-from common.timers import Timer
-from freeorion_tools import tech_is_complete
+from freeorion_tools import Timer, tech_is_complete
 
 prioritiees_timer = Timer('calculate_priorities()')
 

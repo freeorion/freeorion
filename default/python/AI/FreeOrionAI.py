@@ -24,8 +24,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat
-from common.timers import Timer
+from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer
 from common.listeners import listener
 
 from common.option_tools import parse_config

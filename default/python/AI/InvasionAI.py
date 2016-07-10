@@ -12,8 +12,7 @@ import ProductionAI
 import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
-from freeorion_tools import tech_is_complete
-from common.timers import Timer
+from freeorion_tools import tech_is_complete, Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
 
