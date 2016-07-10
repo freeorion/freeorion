@@ -2,39 +2,41 @@ import cProfile
 import os
 import pstats
 import time
-import freeOrionAIInterface as fo
 import StringIO
-import FreeOrionAI as foAI
 
 
-def profile(sort_by='cumulative'):
+def profile(save_path, sort_by='cumulative'):
     """
     Profile function decorator.
 
     Each function execution will add new entry to file.
 
     Result stored in user directory in profile catalog. See lne in logs for exact position.
+
+    :param save_path: path to save profile, for example:
+        os.path.join(fo.getUserDataDir(), 'profiling', base_path, foAI.foAIstate.uid)
+    :type save_path: str
+    :param sort_by: sort stats https://docs.python.org/2/library/profile.html#pstats.Stats.sort_stats
+    :type sort_by: str
     """
 
     def argument_wrapper(function):
         def wrapper(*args, **kwargs):
-            base_path = os.path.join(fo.getUserDataDir(), 'profiling')
-            path = os.path.join(base_path, foAI.foAIstate.uid)
-
             pr = cProfile.Profile()
             pr.enable()
             start = time.clock()
             result = function(*args, **kwargs)
             end = time.clock()
             pr.disable()
-            print "Profile %s tooks %f s, saved to %s" % (function.__name__, end - start, path)
+            print "Profile %s tooks %f s, saved to %s" % (function.__name__, end - start, save_path)
             s = StringIO.StringIO()
             ps = pstats.Stats(pr, stream=s).strip_dirs().sort_stats(sort_by)
             ps.print_stats()
 
+            base_path = os.path.dirname(save_path)
             if not os.path.exists(base_path):
                 os.makedirs(base_path)
-            with open(path, 'a') as f:
+            with open(save_path, 'a') as f:
                 f.write(s.getvalue())
                 f.write('\n')
 
