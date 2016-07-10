@@ -188,15 +188,43 @@ def log_specials_summary():
 
 
 def log_systems():
+    universe = fo.get_universe()
+
     systems_table = Table(
         [Text('id'), Text('name'), Sequence('planets'), Sequence('connections'), Text('star')],
         table_name='System summary')
     for sid in fo.get_systems():
-        system = fo.get_universe().getSystem(sid)
+        system = universe.getSystem(sid)
         systems_table.add_row([
             sid, system.name, fo.sys_get_planets(sid), fo.sys_get_starlanes(sid), system.starType.name
         ])
 
     # Printing too much info at once will lead to truncation of text
     for line in systems_table.get_table().split('\n'):
+        print line
+
+
+def log_planets():
+    universe = fo.get_universe()
+
+    planets_table = Table(
+        [Text('id'), Text('name'), Text('system'), Text('type'), Sequence('specials'), Text('species'), Sequence('buildings')],
+        table_name='Planets summary')
+    # group planets by system
+    for sid in fo.get_systems():
+        for pid in fo.sys_get_planets(sid):
+            planet = universe.getPlanet(pid)
+
+            planet_type = fo.planet_get_type(pid).name
+            planet_size = fo.planet_get_size(pid).name
+            if planet_type != planet_size:
+                planet_type = '%s %s' % (planet_type, planet_size)
+
+            buildings = [universe.getBuilding(x).name for x in planet.buildingIDs]
+            planets_table.add_row([
+                pid, planet.name, planet.systemID, planet_type, list(planet.specials), planet.speciesName, buildings
+            ])
+
+    # Printing too much info at once will lead to truncation of text
+    for line in planets_table.get_table().split('\n'):
         print line
