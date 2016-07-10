@@ -12,9 +12,6 @@ import freeOrionAIInterface as fo  # interface used to interact with FreeOrion A
 from freeorion_tools import patch_interface
 patch_interface()
 
-from common.handlers import init_handlers
-init_handlers(fo.getAIDir(), fo.getAIConfigStr())
-
 import AIstate
 import ColonisationAI
 import ExplorationAI
@@ -30,6 +27,13 @@ import ResourcesAI
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat
 from common.timers import Timer
 from common.listeners import listener
+
+from common.option_tools import parse_config
+parse_config(fo.getAIConfigStr(), fo.getUserConfigDir())
+
+from common.handlers import init_handlers
+init_handlers(fo.getAIDir(), fo.getAIConfigStr())
+
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
