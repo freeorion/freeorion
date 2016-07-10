@@ -3,7 +3,6 @@ This module contain code that used in charting.
 Do not modify output because charting code is relay on it.
 """
 import freeOrionAIInterface as fo
-from common.listeners import register_pre_handler
 from PlanetUtilsAI import get_capital
 from ResearchAI import get_research_index
 
@@ -29,6 +28,3 @@ def charting_text():
         print "CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName
     else:
         print "CapitalID: None Currently Name: None Species: None "
-
-
-register_pre_handler('generateOrders', charting_text)

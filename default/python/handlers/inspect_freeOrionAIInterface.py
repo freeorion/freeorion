@@ -1,4 +1,3 @@
-
 import PlanetUtilsAI
 import freeOrionAIInterface as fo
 

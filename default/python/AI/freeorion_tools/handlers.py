@@ -1,10 +1,11 @@
 import sys
-import charts_handler
+from freeorion_tools.charts_handler import charting_text
 from traceback import print_exc
 from shlex import split
 import os
 
 from common.option_tools import get_option_dict, HANDLERS
+from common.listeners import register_pre_handler
 
 
 def init_handlers(config_str, search_dir):
@@ -32,3 +33,6 @@ def init_handlers(config_str, search_dir):
             print >> sys.stderr, "Fail to import handler %s with error %s" % (handler, e)
             print_exc()
             exit(1)
+        register_pre_handler('generateOrders', charting_text)
+
+
