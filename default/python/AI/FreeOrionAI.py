@@ -27,9 +27,8 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserStringList, chat_on_error, print_error, UserString
+from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat
 from common.timers import Timer
-from common.interactive_shell import handle_debug_chat
 from common.listeners import listener
 
 main_timer = Timer('timer', write_log=True)
