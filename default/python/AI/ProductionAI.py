@@ -234,7 +234,7 @@ def generate_production_orders():
     else:
         print "Empire priority_id %d has current Capital %s:" % (empire.empireID, homeworld.name)
         table = Table([
-            Text('Id', align='<', description='Building id'),
+            Text('Id', description='Building id'),
             Text('Name'),
             Text('Type'),
             Sequence('Tags'),

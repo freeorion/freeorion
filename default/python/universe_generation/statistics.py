@@ -34,7 +34,7 @@ def log_planet_count_dist(sys_list):
     planet_tally = sum(planet_size_dist.values())
 
     count_distribution_table = Table(
-        [Text('planets in system', align='<'), Text('num of systems'), Float('% of systems', precession=1)],
+        [Text('planets in system'), Text('num of systems'), Float('% of systems', precession=1)],
         table_name='Planet Count Distribution'
     )
     for planet_count, sys_count in planet_count_dist.items():
@@ -43,7 +43,7 @@ def log_planet_count_dist(sys_list):
     print
 
     size_distribution = Table(
-        [Text('size', align='<'), Text('count'), Float('% of planets', precession=1)],
+        [Text('size'), Text('count'), Float('% of planets', precession=1)],
         table_name='Planet Size Distribution'
     )
     for planet_size, planet_count in sorted(planet_size_dist.items()):
@@ -76,7 +76,7 @@ def log_species_summary(native_freq):
     exp_count = num_empires // num_species
 
     species_summary_table = Table(
-        [Text('species', align='<'), Text('count'), Float('%', precession=1)],
+        [Text('species'), Text('count'), Float('%', precession=1)],
         table_name=('Empire Starting Species Summary\n'
                     'Approximately %d to %d empires expected per species\n'
                     '%d Empires and %d playable species') % (max(0, exp_count - 1), exp_count + 1,
@@ -95,7 +95,7 @@ def log_species_summary(native_freq):
         return
     native_table = Table(
         [
-            Text('settled natives', align='<'),
+            Text('settled natives'),
             Text('on planets'),
             Float('total', precession=1),
             Float('actual', precession=1),
@@ -127,7 +127,7 @@ def log_species_summary(native_freq):
 
     native_settled_planet_total = sum(settled_native_planet_summary.values())
     type_summary_table = Table(
-        [Text('planet type', align='<'), Float('potential (% of tot)', precession=1), Float('settled (% of potential)', precession=1)],
+        [Text('planet type'), Float('potential (% of tot)', precession=1), Float('settled (% of potential)', precession=1)],
         table_name=("Planet Type Summary for Native Planets (native frequency: %.1f%%)\n"
                     "Totals: native_potential_planet_total: %s; native_settled_planet_total %s"
                     ) % (100 * native_chance, native_potential_planet_total, native_settled_planet_total)
@@ -143,7 +143,7 @@ def log_species_summary(native_freq):
 
 
 def log_monsters_summary(monster_freq):
-    monster_place_table = Table([Text('monster', align='<'), Text('count')], table_name='Monster placement')
+    monster_place_table = Table([Text('monster'), Text('count')], table_name='Monster placement')
     for monster, counter in sorted(monsters_summary):
         monster_place_table.add_row([monster, counter])
     monster_place_table.print_table()
@@ -151,7 +151,7 @@ def log_monsters_summary(monster_freq):
 
     monster_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
     monster_table = Table(
-        [Text('monster', align='<'), Float('chance'), Text('attempts'),
+        [Text('monster'), Float('chance'), Text('attempts'),
          Text('number placed'), Text('number valid sys locs'), Text('number valid nest planet locs')],
         table_name=("Space Monsters Placement Summary\n"
                     "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance))
@@ -168,7 +168,7 @@ def log_monsters_summary(monster_freq):
 
 def log_specials_summary():
     special_placement_count_table = Table(
-        [Text('special', align='<'), Text('times placed')],
+        [Text('special'), Text('times placed')],
         table_name="Special Placement Summary"
     )
     for special in sorted(specials_summary):

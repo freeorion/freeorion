@@ -36,7 +36,7 @@ class Base(object):
     header_fmt = ''
     fmt = None
 
-    def __init__(self, name, align='>', description=None, **kwargs):
+    def __init__(self, name, align='<', description=None, **kwargs):
         """
         Header cell describe how to format column.
 
@@ -75,7 +75,7 @@ class Base(object):
 class Text(Base):
     fmt = u'{}'
 
-    def __init__(self, name, description=None, align='>'):
+    def __init__(self, name, description=None, align='<'):
         super(Text, self).__init__(name, align=align, description=description)
 
     def to_unicode(self, val):
