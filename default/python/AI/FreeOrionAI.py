@@ -13,7 +13,7 @@ from freeorion_tools import patch_interface
 patch_interface()
 
 from common.handlers import init_handlers
-init_handlers()
+init_handlers(fo.getAIDir(), fo.getAIConfigStr())
 
 import AIstate
 import ColonisationAI
