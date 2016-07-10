@@ -19,12 +19,12 @@ EXPECTED_SIMPLE_TABLE = '''Wooho
 ============================================================================
 | name*            | value*     | zzz                 | zzzzzzzzzzzzzzzzzz |
 ============================================================================
-| hello            |  144444.00 | a, b, c, f, f, f, f |                  a |
-| Plato aaβ III    |      21.00 |                d, e |                  a |
-| Plato β III      |      21.00 |                d, e |                  a |
-| Plato B III      |      21.00 |                   d |                  a |
-| Plato Bddddd III |      21.00 |                   d |                  a |
-| Plato III        |      21.00 |                   d |                  a |
+| hello            |  144444.00 | a, b, c, f, f, f, f | a                  |
+| Plato aaβ III    |      21.00 | d, e                | a                  |
+| Plato β III      |      21.00 | d, e                | a                  |
+| Plato B III      |      21.00 | d                   | a                  |
+| Plato Bddddd III |      21.00 | d                   | a                  |
+| Plato III        |      21.00 | d                   | a                  |
 ----------------------------------------------------------------------------
 *name   Name for first column
 *value  VValue'''
@@ -47,7 +47,7 @@ def test_print_in_columns(capfd):
 
 def test_simple_table():
     t = Table(
-        [Text('name', align='<', description='Name for first column'), Float('value', description='VValue'),
+        [Text('name', description='Name for first column'), Float('value', description='VValue'),
          Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz')],
         table_name='Wooho')
     t.add_row(['hello', 144444, 'abcffff', 'a'])
@@ -61,7 +61,7 @@ def test_simple_table():
 
 def test_empty_table():
     empty = Table(
-        [Text('name', align='<', description='Name for first column'), Float('value', description='VValue'),
+        [Text('name', description='Name for first column'), Float('value', description='VValue'),
          Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz')],
         table_name='Wooho'
     )
