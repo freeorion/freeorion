@@ -1,7 +1,7 @@
 import PlanetUtilsAI
 import freeOrionAIInterface as fo
 
-from common.ide_tools import inspect
+from interface_mock import inspect
 
 
 def inspect_ai_interface():
