@@ -17,9 +17,7 @@ from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, c
 
 colonization_timer = Timer('getColonyFleets()')
 
-empire_species = {}
-empire_species_by_planet = {}
-empire_species_systems = {}  # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
+
 empire_colonizers = {}
 empire_ship_builders = {}
 empire_shipyards = {}
@@ -236,8 +234,6 @@ def survey_universe():
         empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
         empire_outpost_ids.clear()
-        empire_species.clear()
-        empire_species_by_planet.clear()
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
@@ -247,7 +243,6 @@ def survey_universe():
         active_growth_specials.clear()
         if tech_is_complete(TechsListsAI.EXOBOT_TECH_NAME):
             empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
-        empire_species_systems.clear()
         AIstate.popCtrIDs[:] = []
         AIstate.popCtrSystemIDs[:] = []
         AIstate.outpostIDs[:] = []
@@ -257,7 +252,7 @@ def survey_universe():
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
-        state.cleanup()
+        state.update()
 
     # var setup done
 
@@ -300,10 +295,7 @@ def survey_universe():
                 elif this_spec:
                     empire_has_qualifying_planet = True
                     AIstate.popCtrIDs.append(pid)
-                    empire_species_systems.setdefault(sys_id, {}).setdefault('pids', []).append(pid)
                     empire_has_pop_ctr_in_sys = True
-                    empire_species_by_planet[pid] = spec_name
-                    empire_species.setdefault(spec_name, []).append(pid)
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.size
                     if this_spec.canProduceShips:
@@ -395,10 +387,10 @@ def survey_universe():
         table_name="Empire species roster"
     )
 
-    for spec_name in empire_species:
+    for spec_name, planets in state.get_species_planets().items():
         this_spec = fo.getSpecies(spec_name)
         species_table.add_row(
-            (spec_name, empire_species[spec_name], spec_name in empire_colonizers,
+            (spec_name, planets, spec_name in empire_colonizers,
              len(empire_ship_builders.get(spec_name, [])), list(this_spec.tags))
         )
     species_table.print_table()
@@ -509,7 +501,7 @@ def get_colony_fleets():
         if not planet:
             continue
         sys_id = planet.systemID
-        for pid2 in empire_species_systems.get(sys_id, {}).get('pids', []):
+        for pid2 in state.get_empire_species_systems().get(sys_id, []):
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue
@@ -822,7 +814,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
     locally_owned_planets = [lpid for lpid in AIstate.colonizedSystems.get(this_sysid, []) if lpid != planet_id]
-    locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in empire_species_by_planet]
+    planets_with_species = state.get_inhabited_planets()
+    locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in planets_with_species]
     # triple count pop_ctrs
     existing_presence = len(locally_owned_planets) + 2 * len(locally_owned_pop_ctrs)
     system = universe.getSystem(this_sysid)

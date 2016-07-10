@@ -1,3 +1,9 @@
+from collections import namedtuple
+import freeOrionAIInterface as fo
+
+PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species', 'owner', 'system_id'])
+
+
 class State(object):
     """
     This class represent state for current turn.
@@ -18,9 +24,60 @@ class State(object):
         self.__have_computronium = False
         self.__best_pilot_rating = 1e-8
         self.__medium_pilot_rating = 1e-8
+        self.__planets = {}
 
-    def cleanup(self):
+    def update(self):
         self.__init__()
+        universe = fo.getUniverse()
+        for pid in universe.planetIDs:
+            planet = universe.getPlanet(pid)
+            self.__planets[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
+
+    def get_empire_species_systems(self):
+        """
+        Return dict from system id to planet ids of empire with species.
+
+        :rtype: dict[int, list[int]]
+        """
+        # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
+        empire_id = fo.empireID()
+        planets_with_species = (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species)
+        result = {}
+        for x in planets_with_species:
+            result.setdefault(x.system_id, []).append(x.pid)
+        return result
+
+    def get_inhabited_planets(self):
+        """
+        Return set of empire planet ids with species.
+
+        :rtype: set
+        """
+        empire_id = fo.empireID()
+        return {x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species}
+
+    def get_planets_for_species(self, species):
+        """
+        Return list of empire planet ids with species.
+
+        :rtype: list[int]
+        """
+        if not species:
+            return []
+        empire_id = fo.empireID()
+        return [x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species == species]
+
+    def get_species_planets(self):
+        """
+        Return dict for empire from species to list of planet ids.
+
+        :rtype: dict[str, list[int]]
+        """
+        empire_id = fo.empireID()
+        result = {}
+        for x in (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species):
+            result.setdefault(x.species, []).append(x.pid)
+        return result
 
     @property
     def have_gas_giant(self):

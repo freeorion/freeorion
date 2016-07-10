@@ -1,4 +1,5 @@
 import sys
+from turn_state import state
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -100,7 +101,7 @@ def get_invasion_fleets():
             planet_partial_vis_turn = universe.getVisibilityTurnsMap(pid, empire_id).get(fo.visibility.partial, -9999)
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 continue
-            for pid2 in ColonisationAI.empire_species_systems.get(sys_id, {}).get('pids', []):
+            for pid2 in state.get_empire_species_systems().get(sys_id, []):
                 if available_pp.get(pid2, 0) < 2:  # TODO: improve troop base PP sufficiency determination
                     break
                 planet2 = universe.getPlanet(pid2)
