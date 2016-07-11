@@ -1032,9 +1032,6 @@ Active/Désactive le clic droit affichant un menu contextuel sur la carte galact
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Définit si les panneaux Rapport de Situation, Encyclopédie, etc. sont temporairement cachés lors de l'ouverture de la Fenêtre Production et réaffichés lors de la fermeture de la Fenêtre Production.
 
-OPTIONS_DB_UI_SIDEPANEL_WIDTH
-Largeur par défaut des panneaux latéraux dans la Fenêtre Carte et la Fenêtre Production.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Épaisseur en pixels des Voies spatiales.
 
@@ -1342,7 +1339,7 @@ OPTIONS_DB_CHAT_PANEL_WIDTH
 Fixe la largeur du panneau de discussion du joueur, en pixels
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
-Fixe la taille du panneau latéral de description de système stellaire.
+Fixe la taille du panneau latéral de description des systèmes stellaires.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
 Fixe la taille maximale du rendu des planètes en rotation dans le panneau latéral de système stellaire.
