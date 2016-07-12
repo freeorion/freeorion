@@ -28,7 +28,13 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Or [
+                    Not InSystem
+                    And [
+                        InSystem
+                        Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                    ]
+                ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
             effects = SetStructure value = Value + 1
