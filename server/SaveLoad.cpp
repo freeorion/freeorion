@@ -99,11 +99,11 @@ namespace {
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
 }
 
-void SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
-              const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe,
-              const EmpireManager& empire_manager, const SpeciesManager& species_manager,
-              const CombatLogManager& combat_log_manager, const GalaxySetupData& galaxy_setup_data,
-              bool multiplayer)
+int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
+             const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe,
+             const EmpireManager& empire_manager, const SpeciesManager& species_manager,
+             const CombatLogManager& combat_log_manager, const GalaxySetupData& galaxy_setup_data,
+             bool multiplayer)
 {
     ScopedTimer timer("SaveGame: " + filename, true);
 
@@ -122,6 +122,10 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     for (std::vector<PlayerSaveGameData>::const_iterator it = player_save_game_data.begin();
          it != player_save_game_data.end(); ++it)
     { player_save_header_data.push_back(*it); }
+
+
+    int bytes_written = 0;
+    std::streampos pos_before_writing;
 
 
     try {
@@ -143,6 +147,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         fs::ofstream ofs(path, std::ios_base::binary);
         if (!ofs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+        pos_before_writing = ofs.tellp();
 
         if (use_binary) {
             DebugLogger() << "Creating binary oarchive";
@@ -220,11 +225,16 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             xoa2 << BOOST_SERIALIZATION_NVP(compressed_str);
         }
 
+        ofs.flush();
+        bytes_written = ofs.tellp() - pos_before_writing;
+
     } catch (const std::exception& e) {
         ErrorLogger() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
         throw e;
     }
     DebugLogger() << "SaveGame : Successfully wrote save file";
+
+    return bytes_written;
 }
 
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,

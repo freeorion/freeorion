@@ -16,15 +16,15 @@ struct SaveGameEmpireData;
 struct ServerSaveGameData;
 
 /** Saves the provided data to savefile \a filename. */
-void SaveGame(const std::string& filename,
-              const ServerSaveGameData& server_save_game_data,
-              const std::vector<PlayerSaveGameData>& player_save_game_data,
-              const Universe& universe,
-              const EmpireManager& empire_manager,
-              const SpeciesManager& species_manager,
-              const CombatLogManager& combat_log_manager,
-              const GalaxySetupData& galaxy_setup_data,
-              bool multiplayer);
+int SaveGame(const std::string& filename,
+             const ServerSaveGameData& server_save_game_data,
+             const std::vector<PlayerSaveGameData>& player_save_game_data,
+             const Universe& universe,
+             const EmpireManager& empire_manager,
+             const SpeciesManager& species_manager,
+             const CombatLogManager& combat_log_manager,
+             const GalaxySetupData& galaxy_setup_data,
+             bool multiplayer);
 
 /** Loads the indicated data from savefile \a filename. */
 void LoadGame(const std::string& filename,

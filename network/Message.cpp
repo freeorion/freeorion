@@ -536,8 +536,15 @@ Message ServerSaveGameDataRequestMessage(int receiver, bool synchronous_response
                    receiver, DUMMY_EMPTY_MESSAGE, synchronous_response);
 }
 
-Message ServerSaveGameCompleteMessage(int receiver)
-{ return Message(Message::SAVE_GAME_COMPLETE, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE); }
+Message ServerSaveGameCompleteMessage(const std::string& save_filename, int bytes_written) {
+    std::ostringstream os;
+    {
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(save_filename)
+           << BOOST_SERIALIZATION_NVP(bytes_written);
+    }
+    return Message(Message::SAVE_GAME_COMPLETE, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
+}
 
 Message GlobalChatMessage(int sender, const std::string& msg)
 { return Message(Message::PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg); }
@@ -1037,6 +1044,21 @@ void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
 
     } catch(const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, PreviewInformation& previews) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& save_filename, int& bytes_written) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(save_filename)
+           >> BOOST_SERIALIZATION_NVP(bytes_written);
+
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& save_filename, int& bytes_written) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

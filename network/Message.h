@@ -283,7 +283,7 @@ FO_COMMON_API Message ServerSaveGameDataRequestMessage(int receiver, bool synchr
 /** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
     sent by the server to inform clients that the last initiated save has been
     completed successfully. */
-FO_COMMON_API Message ServerSaveGameCompleteMessage(int receiver);
+FO_COMMON_API Message ServerSaveGameCompleteMessage(const std::string& save_filename, int bytes_written);
 
 /** creates a PLAYER_CHAT, which is sent to the server, and then from the server
   * to all players, including the originating player.*/
@@ -394,5 +394,7 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticStatusUpdate
 FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& directory);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, PreviewInformation& previews);
+
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& save_filename, int& bytes_written);
 
 #endif // _Message_h_

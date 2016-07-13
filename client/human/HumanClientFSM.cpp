@@ -597,6 +597,15 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameDataRequest& m
 
 boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForTurnData.SaveGameComplete";
+
+    std::string save_filename;
+    int bytes_written;
+    ExtractMessageData(msg.m_message, save_filename, bytes_written);
+
+
+    Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(
+        boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
+
     DebugLogger() << "Save Complete on Server";
     return discard_event();
 }
@@ -691,6 +700,15 @@ boost::statechart::result PlayingTurn::react(const SaveGameDataRequest& msg) {
 
 boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingTurn.SaveGameComplete";
+
+    std::string save_filename;
+    int bytes_written;
+    ExtractMessageData(msg.m_message, save_filename, bytes_written);
+
+
+    Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(
+        boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
+
     DebugLogger() << "Save Complete on Server";
     return discard_event();
 }

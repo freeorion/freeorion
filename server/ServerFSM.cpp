@@ -1455,13 +1455,14 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         // retreive requested save name from Base state, which should have been
         // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
         const std::string& save_filename = context<WaitingForTurnEnd>().m_save_filename;
+        int bytes_written = 0;
 
         // save game...
         try {
-            SaveGame(save_filename,     server_data,    m_player_save_game_data,
-                     GetUniverse(),     Empires(),      GetSpeciesManager(),
-                     GetCombatLogManager(),             server.m_galaxy_setup_data,
-                     !server.m_single_player_game);
+            bytes_written = SaveGame(save_filename,     server_data,    m_player_save_game_data,
+                                     GetUniverse(),     Empires(),      GetSpeciesManager(),
+                                     GetCombatLogManager(),             server.m_galaxy_setup_data,
+                                     !server.m_single_player_game);
 
         } catch (const std::exception&) {
             DebugLogger() << "Catch std::exception&";
@@ -1469,7 +1470,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         }
 
         // inform players that save is complete
-        //SendMessageToAllPlayers // todo: this
+        SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
 
         DebugLogger() << "Finished ClientSaveData from within if.";
         context<WaitingForTurnEnd>().m_save_filename = "";
