@@ -552,6 +552,24 @@ OptionsWnd::OptionsWnd():
 
     m_tabs->SetCurrentWnd(0);
 
+    // Objects List Page
+    current_page = CreatePage(UserString("OPTIONS_PAGE_OBJECTS_WINDOW"));
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_COLUMNS"));
+    for (unsigned int i = 0; i < 12u; ++i) {
+        std::string col_width_opt_name = "UI.objects-list-width-col-" + boost::lexical_cast<std::string>(i);
+        if (!GetOptionsDB().OptionExists(col_width_opt_name))
+            break;
+        std::string col_opt_name = "UI.objects-list-info-col-" + boost::lexical_cast<std::string>(i);
+        if (!GetOptionsDB().OptionExists(col_opt_name))
+            break;
+        std::string col_contents = GetOptionsDB().GetValueString(col_opt_name);
+        const std::string& tx_contents = (col_contents.empty() ? "" : UserString(col_contents));
+
+        IntOption(current_page, 0, col_width_opt_name,                      tx_contents);
+    }
+
+    m_tabs->SetCurrentWnd(0);
+
     // Colors tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_COLORS"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GENERAL_COLORS"));
@@ -1088,7 +1106,7 @@ void OptionsWnd::HotkeysPage()
 OptionsWnd::~OptionsWnd()
 {}
 
-void OptionsWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+void OptionsWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE || key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
         DoneClicked();
