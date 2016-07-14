@@ -502,15 +502,18 @@ private:
         for (std::vector<std::string>::const_iterator it = names.begin();
              it != names.end(); ++it)
         {
+            bool found_col = false;
             for (std::vector<SaveFileColumn>::const_iterator jt = m_columns.begin();
                  jt != m_columns.end(); ++jt)
             {
                 if (jt->Name() == *it) {
                     columns.push_back(*jt);
+                    found_col = true;
                     break;
                 }
             }
-            ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << *it;
+            if (!found_col)
+                ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << *it;
         }
         DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns.size();
         return columns;
