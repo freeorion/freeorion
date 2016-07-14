@@ -591,6 +591,7 @@ WaitingForTurnData::~WaitingForTurnData()
 boost::statechart::result WaitingForTurnData::react(const SaveGameDataRequest& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForTurnData.SaveGameDataRequest";
     DebugLogger() << "Sending Save Game Data to Server";
+    Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("SERVER_SAVE_INITIATE_ACK") + "\n");
     Client().HandleSaveGameDataRequest();
     return discard_event();
 }
@@ -694,6 +695,7 @@ PlayingTurn::~PlayingTurn()
 boost::statechart::result PlayingTurn::react(const SaveGameDataRequest& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingTurn.SaveGameDataRequest";
     DebugLogger() << "Sending Save Game Data to Server";
+    Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("SERVER_SAVE_INITIATE_ACK") + "\n");
     Client().HandleSaveGameDataRequest();
     return discard_event();
 }
