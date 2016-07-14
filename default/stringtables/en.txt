@@ -902,6 +902,9 @@ The server has sent an end-game message. Buh-bye.
 PLAYER_DISCONNECTED
 Player %1% no longer has a connection to the server.
 
+SERVER_SAVE_INITIATE_ACK
+Saving...
+
 SERVER_SAVE_COMPLETE
 Saved %2% bytes to file: %1%
 
