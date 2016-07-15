@@ -3555,6 +3555,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                     }
                 }
             }
+            break;
         }
 
         default: { // check for menu item indicating give to other empire order
