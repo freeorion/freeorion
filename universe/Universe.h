@@ -318,6 +318,10 @@ public:
     /** Applies empire-object visibilities set by effects. */
     void            ApplyEffectDerivedVisibilities();
 
+    /** If an \p empire_id can't currently see \p object_id, then remove
+     * \p object_id' object from the object map and the set of known objects. */
+    void            ForgetKnownObject(int empire_id, int object_id);
+
     /** Sets visibility for indicated \a empire_id of object with \a object_id
       * a vis */
     void            SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
