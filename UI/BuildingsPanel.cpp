@@ -456,7 +456,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             std::map<int, int> pending_scrap_orders = PendingScrapOrders();
             std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
             if (it != pending_scrap_orders.end()) {
-                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
             break;
             }
         }

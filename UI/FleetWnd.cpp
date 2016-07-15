@@ -2683,7 +2683,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             std::map<int, int> pending_scrap_orders = PendingScrapOrders();
             std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
             if (it != pending_scrap_orders.end())
-                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
             break;
         }
 
@@ -3523,7 +3523,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                     if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
                         if (order->ObjectID() == ship_id) {
-                            HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                            HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
@@ -3550,7 +3550,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                     boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
                 {
                     if (order->ObjectID() == fleet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
