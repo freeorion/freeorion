@@ -1304,3 +1304,35 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
     }
     return false;
 }
+
+////////////////////////////////////////////////
+// ForgetOrder
+////////////////////////////////////////////////
+ForgetOrder::ForgetOrder() :
+    Order(),
+    m_object_id(INVALID_OBJECT_ID)
+{}
+
+ForgetOrder::ForgetOrder(int empire, int object_id) :
+    Order(empire),
+    m_object_id(object_id)
+{}
+
+void ForgetOrder::ExecuteImpl() const {
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+    TemporaryPtr<Fleet> fleet = GetFleet(m_object_id);
+    if (!fleet)
+        return;
+    if (fleet->OwnedBy(empire_id)) {
+        ErrorLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
+                      << " on fleet: " << fleet->ID()
+                      << ". Trying to forget visibility of own fleet.";
+        return;
+    }
+
+    DebugLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
+                  << " on fleet: " << fleet->ID();
+
+    GetUniverse().ForgetKnownObject(empire_id, fleet->ID());
+}
