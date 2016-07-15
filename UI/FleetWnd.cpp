@@ -3435,6 +3435,17 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     }
 
 
+    //Allow dismissal of stale visibility information
+    if (!fleet->OwnedBy(client_empire_id)){
+        Universe::VisibilityTurnMap visibility_turn_map =
+            GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
+        Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
+        if (last_turn_visible_it != visibility_turn_map.end()
+            && last_turn_visible_it->second < CurrentTurn()) {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   13, false, false));
+        }
+   }
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
@@ -3555,6 +3566,28 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                     }
                 }
             }
+            break;
+        }
+
+        case 13: { // Remove visibility information for this fleet from
+                   // the empire's visibility table.
+            //server info for future effect
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ForgetOrder(client_empire_id, fleet->ID()))
+            );
+            //local info for immediate effect
+            GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet->ID());
+
+            // Force a redraw
+
+            // Just signaling StateChanged doesn't work because MapWnd
+            // only resets/deletes paths to non-existent objects on the
+            // turn updates and not when handling StateChanged.
+            // fleet->StateChangedSignal();
+
+            //So brute force.
+            ClientUI::GetClientUI()->GetMapWnd()->MidTurnUpdate();
+
             break;
         }
 
