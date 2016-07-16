@@ -2515,7 +2515,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
         return;
 
     TemporaryPtr<UniverseObject> obj = objects.Object(object_id);
-    if(!obj) {
+    if (!obj) {
         ErrorLogger() << "ForgetKnownObject empire: " << empire_id
                       << " bad object id: " << object_id;
         return;

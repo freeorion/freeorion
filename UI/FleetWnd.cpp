@@ -3435,13 +3435,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     }
 
 
-    //Allow dismissal of stale visibility information
+    // Allow dismissal of stale visibility information
     if (!fleet->OwnedBy(client_empire_id)){
         Universe::VisibilityTurnMap visibility_turn_map =
             GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
         Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
         if (last_turn_visible_it != visibility_turn_map.end()
-            && last_turn_visible_it->second < CurrentTurn()) {
+            && last_turn_visible_it->second < CurrentTurn())
+        {
             menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   13, false, false));
         }
    }
@@ -3571,11 +3572,15 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
         case 13: { // Remove visibility information for this fleet from
                    // the empire's visibility table.
-            //server info for future effect
+            // Server changes for permanent effect
+            // Tell the server to change what the empire wants to know
+            // in future so that the server doesn't keep resending this
+            // fleet information.
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 OrderPtr(new ForgetOrder(client_empire_id, fleet->ID()))
             );
-            //local info for immediate effect
+            // Client changes for immediate effect
+            // Force the client to change immediately.
             GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet->ID());
 
             // Force a redraw
