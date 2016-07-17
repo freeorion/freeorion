@@ -37,6 +37,9 @@ public:
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
     //@}
+    /** \name Mutators */ //@{
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    //@}
 };
 
 /** a FreeOrion Button control */

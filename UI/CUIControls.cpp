@@ -56,6 +56,26 @@ CUILabel::CUILabel(const std::string& str,
     TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
+void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    // create popup menu
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 2: { // copy
+            GG::GUI::GetGUI()->CopyWndText(this);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+}
+
 
 ///////////////////////////////////////
 // class CUIButton
@@ -274,7 +294,6 @@ void CUIArrowButton::RenderUnpressed() {
     IsoscelesTriangle(tri_ul, tri_lr, m_orientation, color_to_use);
 }
 
-
 void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     // draw button
     GG::Pt cl_ul = button.ClientUpperLeft();
@@ -366,7 +385,6 @@ void CUICheckBoxRepresenter::OnChecked(bool checked) const {
         PlayButtonCheckSound();
 }
 
-
 void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     // draw button
     GG::Pt cl_ul = button.ClientUpperLeft();
@@ -414,7 +432,6 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
 
 void CUIRadioRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
-
 
 void CUITabRepresenter::Render(const GG::StateButton& button) const {
     // draw button
@@ -741,7 +758,7 @@ CUIEdit::CUIEdit(const std::string& str) :
 }
 
 void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    // create popup menu with a rename ship option in it.
+    // create popup menu
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),           1, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
