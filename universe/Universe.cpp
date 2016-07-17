@@ -2536,6 +2536,17 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
             ForgetKnownObject(empire_id, child->ID());
     }
 
+    if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
+        if (TemporaryPtr<UniverseObject> container = objects.Object(container_id)) {
+            if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(container))
+                system->Remove(object_id);
+            else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(container))
+                planet->RemoveBuilding(object_id);
+            else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(container))
+                fleet->RemoveShip(object_id);
+        }
+    }
+
     objects.Remove(object_id);
 }
 
