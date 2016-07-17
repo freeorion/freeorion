@@ -1321,18 +1321,9 @@ ForgetOrder::ForgetOrder(int empire, int object_id) :
 void ForgetOrder::ExecuteImpl() const {
     ValidateEmpireID();
     int empire_id = EmpireID();
-    TemporaryPtr<UniverseObject> obj = GetUniverse().Objects().Object(m_object_id);
-    if (!obj)
-        return;
-    if (obj->OwnedBy(empire_id)) {
-        ErrorLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
-                      << " for object: " << obj->ID()
-                      << ". Trying to forget visibility of own object.";
-        return;
-    }
 
     DebugLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
-                  << " for object: " << obj->ID();
+                  << " for object: " << m_object_id;
 
-    GetUniverse().ForgetKnownObject(empire_id, obj->ID());
+    GetUniverse().ForgetKnownObject(empire_id, m_object_id);
 }
