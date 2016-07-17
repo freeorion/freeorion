@@ -411,21 +411,44 @@ namespace {
             const std::string CREDITS_STR = "AöŁ";
             std::set<GG::UnicodeCharset> credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
 
-            std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
-            std::string stringtable_str;
-
-            boost::filesystem::ifstream ifs(file_name);
-            while (ifs) {
-                std::string line;
-                std::getline(ifs, line);
-                stringtable_str += line;
-                stringtable_str += '\n';
+            std::set<GG::UnicodeCharset> stringtable_charsets;
+            {
+                std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
+                std::string stringtable_str;
+                boost::filesystem::ifstream ifs(file_name);
+                while (ifs) {
+                    std::string line;
+                    std::getline(ifs, line);
+                    stringtable_str += line;
+                    stringtable_str += '\n';
+                }
+                stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
+                DebugLogger() << "loading " << stringtable_charsets.size() << " charsets for current stringtable characters";
             }
-            std::set<GG::UnicodeCharset> stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
+
+            if (!GetOptionsDB().IsDefaultValue("stringtable-filename")) {
+                DebugLogger() << "Non-default stringtable!";
+                std::string file_name = GetOptionsDB().GetDefault<std::string>("stringtable-filename");
+                std::string stringtable_str;
+                boost::filesystem::ifstream ifs(file_name);
+                while (ifs) {
+                    std::string line;
+                    std::getline(ifs, line);
+                    stringtable_str += line;
+                    stringtable_str += '\n';
+                }
+                std::set<GG::UnicodeCharset> default_stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
+                DebugLogger() << "loading " << default_stringtable_charsets.size() << " charsets for default stringtable characters";
+
+                stringtable_charsets.insert(default_stringtable_charsets.begin(), default_stringtable_charsets.end());
+                DebugLogger() << "combined stringtable charsets have " << stringtable_charsets.size() << " charsets";
+            }
 
             std::set_union(credits_charsets.begin(), credits_charsets.end(),
                            stringtable_charsets.begin(), stringtable_charsets.end(),
                            std::back_inserter(retval));
+
+            DebugLogger() << "union of charset sets has " << retval.size() << " charsets";
         }
         return retval;
     }
