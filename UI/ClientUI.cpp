@@ -448,7 +448,12 @@ namespace {
                            stringtable_charsets.begin(), stringtable_charsets.end(),
                            std::back_inserter(retval));
 
-            DebugLogger() << "union of charset sets has " << retval.size() << " charsets";
+            std::string message_text = "Loading " + boost::lexical_cast<std::string>(retval.size()) + " Unicode charsets: ";
+            for (std::vector<GG::UnicodeCharset>::const_iterator it = retval.begin();
+                 it != retval.end(); ++it)
+            { message_text += it->m_script_name + ", "; }
+
+            DebugLogger() << message_text;
         }
         return retval;
     }
