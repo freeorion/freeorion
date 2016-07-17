@@ -272,7 +272,7 @@ void Sound::SoundImpl::InitOpenAL() {
     device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
                                    * string desctribing a device can be passed here (of type ALchar*) */
     if (device == 0) {
-        ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
+        ErrorLogger() << "Unable to initialise default OpenAL device.";
         m_initialized = false;
         return;
     }
