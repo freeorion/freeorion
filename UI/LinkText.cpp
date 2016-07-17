@@ -10,6 +10,8 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
+#include <GG/Menu.h>
+#include <GG/GUI.h>
 
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
@@ -110,8 +112,33 @@ void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void LinkText::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TextLinker::LDoubleClick_(pt, mod_keys); }
 
-void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ TextLinker::RClick_(pt, mod_keys); }
+void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    // create popup menu
+    GG::MenuItem menu_contents;
+    if (GetLinkUnderPt(pt) != -1) {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPEN"),     1, false, false));
+    }
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),  2, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 2: { // copy
+            GG::GUI::GetGUI()->CopyWndText(this);
+            break;
+        }
+
+        case 1: {
+            TextLinker::RClick_(pt, mod_keys);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+}
 
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TextLinker::MouseHere_(pt, mod_keys); }
@@ -488,8 +515,6 @@ void TextLinker::MarkLinks() {
 }
 
 const LinkDecorator TextLinker::DEFAULT_DECORATOR;
-
-
 
 std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry)
 { return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">"; }
