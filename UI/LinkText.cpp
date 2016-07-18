@@ -116,7 +116,8 @@ void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     GG::MenuItem menu_contents;
     if (GetLinkUnderPt(pt) != -1) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPEN"),     1, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPEN"),     9, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
     }
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),  2, false, false));
 
@@ -124,13 +125,13 @@ void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
-        case 2: { // copy
-            GG::GUI::GetGUI()->CopyWndText(this);
+        case 9: {
+            TextLinker::RClick_(pt, mod_keys);
             break;
         }
 
-        case 1: {
-            TextLinker::RClick_(pt, mod_keys);
+        case 2: { // copy
+            GG::GUI::GetGUI()->CopyWndText(this);
             break;
         }
 
