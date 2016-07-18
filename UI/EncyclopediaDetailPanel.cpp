@@ -61,6 +61,7 @@ namespace {
     const std::string UNIVERSE_OBJECT = "universe object";
     const std::string PLANET_SUITABILITY_REPORT = "planet suitability report";
     const std::string GRAPH = "data graph";
+    const std::string TEXT_SEARCH_RESULTS = "dynamic generated text";
 }
 
 namespace {
@@ -864,9 +865,12 @@ namespace {
 
 void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     const std::string& search_text = m_search_edit->Text();
+    std::string match_report;
 
     // search lists of articles for typed text
     const std::vector<std::string>& dir_names = GetSearchTextDirNames();
+
+    match_report += UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
 
     // search for exact matches
     for (std::vector<std::string>::const_iterator it = dir_names.begin();
@@ -876,15 +880,19 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
         GetSortedPediaDirEntires(type_text, sorted_entries_list);
         for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
-             entry_it = sorted_entries_list.begin(); 
+             entry_it = sorted_entries_list.begin();
              entry_it != sorted_entries_list.end(); ++entry_it)
         {
             if (boost::iequals(entry_it->first, search_text)) {
-                AddItem(type_text, entry_it->second.second);
-                return;
+                match_report += entry_it->second.first;
             }
         }
     }
+
+    // TODO: word matches
+    //match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
+
+    match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
 
     // search for partial matches
     for (std::vector<std::string>::const_iterator it = dir_names.begin();
@@ -897,11 +905,12 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
              entry_it = sorted_entries_list.begin();  entry_it != sorted_entries_list.end(); ++entry_it)
         {
             if (boost::icontains(entry_it->first, search_text)) {
-                AddItem(type_text, entry_it->second.second);
-                return;
+                match_report += entry_it->second.first;
             }
         }
     }
+
+    match_report += "\n" + UserString("ENC_SEARCH_IN_TEXT_MATCHES") + "\n\n";
 
     // Find a custom article that contains the search text in its name
     const Encyclopedia& pedia = GetEncyclopedia();
@@ -912,13 +921,19 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
              article_it != articles.end(); ++article_it)
         {
-            const std::string& article_name = UserString(article_it->name);
-            if (boost::icontains(article_name, search_text)) {
-                AddItem(TextLinker::ENCYCLOPEDIA_TAG, article_it->name);
-                break;
+            const std::string& article_text = UserString(article_it->description);
+            if (boost::icontains(article_text, search_text)) {
+                //match_report += LinkTagg;
             }
         }
     }
+
+    // compile list of articles into some dynamically generated search report text
+
+    if (match_report.empty())
+        match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
+
+    AddItem(TEXT_SEARCH_RESULTS, match_report);
 }
 
 namespace {
@@ -2320,9 +2335,7 @@ namespace {
         // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
         // represented in this empire's PopCenters
         const SpeciesManager& species_manager = GetSpeciesManager();
-        for (SpeciesManager::iterator it = species_manager.begin();
-                it != species_manager.end(); ++it)
-        {
+        for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it) {
             if (!it->second)
                 continue;
             const std::string& species_str = it->first;
@@ -2337,7 +2350,7 @@ namespace {
             if (species_tags.find("CTRL_EXTINCT") != species_tags.end()) {
                 const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
                 for (BuildingTypeManager::iterator bld_it = building_type_manager.begin();
-                    bld_it != building_type_manager.end(); ++bld_it)
+                     bld_it != building_type_manager.end(); ++bld_it)
                 {
                     const std::set<std::string>& bld_tags = bld_it->second->Tags();
                     // check if building matches tag requirements
@@ -2470,6 +2483,18 @@ namespace {
         detailed_description += UserString("ENC_SUITABILITY_REPORT_WHEEL_INTRO") + "<img src=\"encyclopedia/EP_wheel.png\"></img>";
     }
 
+    void RefreshDetailPanelSearchResultsTag(const std::string& item_type, const std::string& item_name,
+                                            std::string& name, boost::shared_ptr<GG::Texture>& texture,
+                                            boost::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
+    {
+        general_type = UserString("SEARCH_RESULTS");
+        texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "search.png");
+        detailed_description = item_name;
+    }
+
     void GetRefreshDetailPanelInfo(         const std::string& item_type, const std::string& item_name,
                                             std::string& name, boost::shared_ptr<GG::Texture>& texture,
                                             boost::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2532,6 +2557,10 @@ namespace {
                                                 general_type, specific_type, detailed_description, color);
         } else if (item_type == PLANET_SUITABILITY_REPORT) {
             RefreshDetailPanelSuitabilityTag(   item_type, item_name,
+                                                name, texture, other_texture, turns, cost, cost_units,
+                                                general_type, specific_type, detailed_description, color);
+        } else if (item_type == TEXT_SEARCH_RESULTS) {
+            RefreshDetailPanelSearchResultsTag( item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
                                                 general_type, specific_type, detailed_description, color);
         } else if (item_type == TextLinker::GRAPH_TAG) {

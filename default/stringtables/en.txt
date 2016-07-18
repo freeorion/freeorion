@@ -2574,8 +2574,6 @@ Messages
 MAP_PRODUCTION_TITLE
 Production
 
-
-
 MAP_PROD_WASTED_TITLE
 Unused Production
 
@@ -3694,6 +3692,24 @@ ENC_HOMEWORLDS
 
 ENC_INDEX
 Encyclopedia Index
+
+ENC_SEARCH_RESULTS_FOR
+Searched for: %1%
+
+ENC_SEARCH_EXACT_MATCHES
+Exact Title Matches
+
+ENC_SEARCH_WORD_MATCHES
+Word Title Matches
+
+ENC_SEARCH_PARTIAL_MATCHES
+Partial-Word Title Matches
+
+ENC_SEARCH_IN_TEXT_MATCHES
+Article Text Matches
+
+ENC_SEARCH_NOTHING_FOUND
+No Matches Found
 
 # type of thing being shown. %1% is a bit of detail, and %2% is the general type.
 # for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
