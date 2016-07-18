@@ -43,8 +43,8 @@ public:
     const std::map<int, std::set<std::set<int> > >&         ResourceSupplyGroups() const;
     const std::set<std::set<int> >&                         ResourceSupplyGroups(int empire_id) const;
 
-    /** Returns the range from each system some empire can propegate supply.*/
-    const std::map<int, float>&                             PropegatedSupplyRanges() const;
+    /** Returns the range from each system some empire can propagate supply.*/
+    const std::map<int, float>&                             PropagatedSupplyRanges() const;
 
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
@@ -79,9 +79,9 @@ private:
         by empire id. */
     std::map<int, std::set<std::set<int> > >        m_resource_supply_groups;
 
-    /** for whichever empire can propegate supply into this system, what is the
-        additional range from this system that empire can propegate supply */
-    std::map<int, float>                            m_propegated_supply_ranges;
+    /** for whichever empire can propagate supply into this system, what is the
+        additional range from this system that empire can propagate supply */
+    std::map<int, float>                            m_propagated_supply_ranges;
 
     friend class boost::serialization::access;
     template <class Archive>

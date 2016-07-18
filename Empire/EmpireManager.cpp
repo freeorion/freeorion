@@ -93,9 +93,9 @@ EmpireManager::iterator EmpireManager::begin()
 EmpireManager::iterator EmpireManager::end()
 { return m_empire_map.end(); }
 
-void EmpireManager::BackPropegateMeters() {
+void EmpireManager::BackPropagateMeters() {
     for (iterator it = m_empire_map.begin(); it != m_empire_map.end(); ++it)
-        it->second->BackPropegateMeters();
+        it->second->BackPropagateMeters();
 }
 
 Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name,

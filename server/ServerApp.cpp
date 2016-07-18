@@ -733,8 +733,8 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
-        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
-        empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
+        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
+        empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();
@@ -1126,8 +1126,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         Empire* empire = it->second;
         if (empire->Eliminated())
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
-        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
-        empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
+        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
+        empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();
@@ -1258,8 +1258,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     universe.ApplyAllEffectsAndUpdateMeters(false);
     // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
-    universe.BackPropegateObjectMeters();
-    Empires().BackPropegateMeters();
+    universe.BackPropagateObjectMeters();
+    Empires().BackPropagateMeters();
 
     DebugLogger() << "Re-applying first turn meter effects and updating meters";
 
@@ -1271,8 +1271,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Set the population of unowned planets to a random fraction of their target values.
     SetNativePopulationValues(universe.Objects());
 
-    universe.BackPropegateObjectMeters();
-    Empires().BackPropegateMeters();
+    universe.BackPropagateObjectMeters();
+    Empires().BackPropagateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
@@ -1771,7 +1771,7 @@ namespace {
         for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it) {
             ObjectMap& objects = it->objects;
             for (ObjectMap::iterator<> obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
-                obj_it->BackPropegateMeters();
+                obj_it->BackPropagateMeters();
         }
     }
 
@@ -2487,7 +2487,7 @@ namespace {
                     meter->SetCurrent(0.0);
             }
 
-            planet->BackPropegateMeters();
+            planet->BackPropagateMeters();
 
             // knowledge update to ensure previous owner of planet knows who owns it now?
             if (planet_initial_owner_id != ALL_EMPIRES && planet_initial_owner_id != planet->Owner()) {
@@ -3014,8 +3014,8 @@ void ServerApp::PostCombatProcessTurns() {
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
-        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
-        empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
+        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
+        empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();
@@ -3092,8 +3092,8 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
     // store initial values of meters for this turn.
-    m_universe.BackPropegateObjectMeters();
-    empires.BackPropegateMeters();
+    m_universe.BackPropagateObjectMeters();
+    empires.BackPropagateMeters();
 
 
     // check for loss of empire capitals

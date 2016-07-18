@@ -301,7 +301,7 @@
     (Product)                                   \
     (ProductionCenter)                          \
     (ProductionLocation)                        \
-    (PropegatedSupplyRange)                     \
+    (PropagatedSupplyRange)                     \
     (Property)                                  \
     (Progress)
 

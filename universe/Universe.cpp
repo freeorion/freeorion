@@ -1570,16 +1570,16 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 }
 
-void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids) {
+void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
     std::vector<TemporaryPtr<UniverseObject> > objects = m_objects.FindObjects(object_ids);
 
     // copy current meter values to initial values
     for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
-        (*it)->BackPropegateMeters();
+        (*it)->BackPropagateMeters();
 }
 
-void Universe::BackPropegateObjectMeters()
-{ BackPropegateObjectMeters(m_objects.FindObjectIDs()); }
+void Universe::BackPropagateObjectMeters()
+{ BackPropagateObjectMeters(m_objects.FindObjectIDs()); }
 
 namespace {
     /** Used by GetEffectsAndTargets to process a vector of effects groups.
@@ -2964,10 +2964,10 @@ namespace {
         }
     }
 
-    void PropegateVisibilityToContainerObjects(const ObjectMap& objects,
+    void PropagateVisibilityToContainerObjects(const ObjectMap& objects,
                                                Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
-        // propegate visibility from contained to container objects
+        // propagate visibility from contained to container objects
         for (ObjectMap::const_iterator<> container_object_it = objects.const_begin();
              container_object_it != objects.const_end(); ++container_object_it)
         {
@@ -2981,7 +2981,7 @@ namespace {
             // does object actually contain any other objects?
             const std::set<int>& contained_objects = container_obj->ContainedObjectIDs();
             if (contained_objects.empty())
-                continue;   // nothing to propegate if no objects contained
+                continue;   // nothing to propagate if no objects contained
 
             // check if container object is a fleet, for special case later...
             bool container_fleet = container_obj->ObjectType() == OBJ_FLEET;
@@ -3025,7 +3025,7 @@ namespace {
                             // general case: for non-fleets, having visible
                             // contained object grants basic vis only.  if
                             // container already has this or better for the current
-                            // empire, don't need to propegate anything
+                            // empire, don't need to propagate anything
                             continue;
                         }
                     }
@@ -3037,7 +3037,7 @@ namespace {
                         // get contained object's visibility for current empire
                         Visibility contained_obj_vis = contained_vis_it->second;
 
-                        // no need to propegate if contained object isn't visible to current empire
+                        // no need to propagate if contained object isn't visible to current empire
                         if (contained_obj_vis <= VIS_NO_VISIBILITY)
                             continue;
 
@@ -3065,7 +3065,7 @@ namespace {
         }   // end for container objects
     }
 
-    void PropegateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
+    void PropagateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
                                                     Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
         const std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
         for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
@@ -3083,7 +3083,7 @@ namespace {
                 if (system_vis_it == vis_map.end())
                     continue;
 
-                // skip systems that aren't at least partially visible; they can't propegate visibility along starlanes
+                // skip systems that aren't at least partially visible; they can't propagate visibility along starlanes
                 Visibility system_vis = system_vis_it->second;
                 if (system_vis <= VIS_BASIC_VISIBILITY)
                     continue;
@@ -3256,9 +3256,9 @@ void Universe::UpdateEmpireObjectVisibilities() {
 
     ApplyEffectDerivedVisibilities();
 
-    PropegateVisibilityToContainerObjects(Objects(), m_empire_object_visibility);
+    PropagateVisibilityToContainerObjects(Objects(), m_empire_object_visibility);
 
-    PropegateVisibilityToSystemsAlongStarlanes(Objects(), m_empire_object_visibility);
+    PropagateVisibilityToSystemsAlongStarlanes(Objects(), m_empire_object_visibility);
 
     SetTravelledStarlaneEndpointsVisible(Objects(), m_empire_object_visibility);
 
@@ -3668,7 +3668,7 @@ bool Universe::Delete(int object_id) {
     }
 
     // move object to invalid position, thereby removing it from anything that
-    // contained it and propegating associated signals
+    // contained it and propagating associated signals
     obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
     // remove from existing objects set
     m_objects.Remove(object_id);

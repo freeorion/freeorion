@@ -38,7 +38,7 @@ public:
     void        AddToCurrent(float adjustment);     ///< adds \a current to the current value of the Meter
     void        ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE);    ///< ensures the current value falls in the range [\a min, \a max]
 
-    void        BackPropegate();                    ///< sets previous equal to initial, then sets initial equal to current
+    void        BackPropagate();                    ///< sets previous equal to initial, then sets initial equal to current
     //@}
 
     static const float DEFAULT_VALUE;               ///< value assigned to current or initial when resetting or when no value is specified in a constructor

@@ -5555,7 +5555,7 @@ namespace {
                 return false;
 
             if (const Meter* meter = candidate->GetMeter(m_meter_type)) {
-                float value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propegation happens
+                float value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propagation happens
                 return m_low <= value && value <= m_high;
             }
 

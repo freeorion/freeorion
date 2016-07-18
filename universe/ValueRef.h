@@ -24,7 +24,7 @@ struct ScriptingContext {
 
     /** Context with only a source object.  Useful for evaluating effectsgroup
       * scope and activation conditions that have no external candidates or
-      * effect target to propegate. */
+      * effect target to propagate. */
     explicit ScriptingContext(TemporaryPtr<const UniverseObject> source_) :
         source(source_)
     {}

@@ -682,7 +682,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
     }
 
-    // propegate lobby changes to players, so everyone has the latest updated
+    // propagate lobby changes to players, so everyone has the latest updated
     // version of the lobby data
     for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
          player_connection_it != server.m_networking.established_end(); ++player_connection_it)

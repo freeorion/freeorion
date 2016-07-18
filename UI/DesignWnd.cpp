@@ -2600,7 +2600,7 @@ public:
     /** emitted when the design name is changed */
     mutable boost::signals2::signal<void ()>                DesignNameChangedSignal;
 
-    /** propegates signals from contained SlotControls that signal that a part
+    /** propagates signals from contained SlotControls that signal that a part
       * has been clicked */
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
 

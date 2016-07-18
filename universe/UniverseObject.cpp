@@ -348,10 +348,10 @@ Meter* UniverseObject::GetMeter(MeterType type) {
     return 0;
 }
 
-void UniverseObject::BackPropegateMeters() {
+void UniverseObject::BackPropagateMeters() {
     for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
         if (Meter* meter = this->GetMeter(i))
-            meter->BackPropegate();
+            meter->BackPropagate();
 }
 
 void UniverseObject::SetOwner(int id) {

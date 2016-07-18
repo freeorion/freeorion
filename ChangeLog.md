@@ -937,12 +937,12 @@ Notable changes to the FreeOrion project will be documented in this file.
   production.
 - Added an aggression setting for fleets, which can be toggled between passive
   and agressive. Passive fleets try to hide and don't attack enemies. Aggressive
-  fleets attack any enemy they can, and can block supply propegation.
+  fleets attack any enemy they can, and can block supply propagation.
 - Added very basic diplomatic system. Empires start at peace, and can declare
   war, propose, or accept peace with other empires. Battles between empires
   happen only when at war. Diplomacy is controlled through right-click menu on
   the players list.
-- Made unarmed ships unable to block supply propegation.
+- Made unarmed ships unable to block supply propagation.
 - New 'Game Concepts' section of the 'Pedia to help exlain the game.
 - Macro support in script files.
 - Experimental AI process priority management on Windows builds, which will
@@ -1717,7 +1717,7 @@ Changes since the last release include:
 - Fixed incorrectly drawn fleet move lines that occured in some situations.
 - Added initial, limited, implementaiton of coloured starlanes along which
   empires can exchange resources. Lanes are coloured half-way to the next system
-  if the starting system could propegate resources further, but is being blocked
+  if the starting system could propagate resources further, but is being blocked
   by a blockade or the next system being unexplored.
 - Modified food and minerals distribution and stockpiling to be limited by which
   systems are connected and able to share resources.
@@ -1823,7 +1823,7 @@ Some new stuff includes:
 - An initial test fleet supply distribution route calculation and display
   system.  There are small checkered lines emanating from systems with planets
   you control over top of starlanes.  These can be expanded by researching the
-  Fleet Logistics tech.  Enemy fleets block the propegation.
+  Fleet Logistics tech.  Enemy fleets block the propagation.
 - Various UI improvements.
 
 
