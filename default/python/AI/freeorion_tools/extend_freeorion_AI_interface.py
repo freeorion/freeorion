@@ -44,7 +44,7 @@ from functools import wraps
 from itertools import izip_longest
 
 import freeOrionAIInterface as fo
-from freeorion_tools import dict_from_map
+from _freeorion_tools import dict_from_map
 
 
 PLANET = 'P'
@@ -60,55 +60,48 @@ def to_dict(method):
         return dict_from_map(method(*args))
     return wrapper
 
-fo.universe.getVisibilityTurnsMap = to_dict(fo.universe.getVisibilityTurnsMap)
-fo.empire.supplyProjections = to_dict(fo.empire.supplyProjections)
-
 
 def to_str(prefix, id, name):
     return '{}_{}<{}>'.format(prefix, id, name)
 
-fo.to_str = to_str
 
+def patch_interface():
+    fo.universe.getVisibilityTurnsMap = to_dict(fo.universe.getVisibilityTurnsMap)
+    fo.empire.supplyProjections = to_dict(fo.empire.supplyProjections)
 
-def system_to_string(system):
-    return to_str(SYSTEM, system.systemID, system.name)
+    fo.to_str = to_str
 
-fo.system.__repr__ = system_to_string
+    def system_to_string(system):
+        return to_str(SYSTEM, system.systemID, system.name)
 
+    fo.system.__repr__ = system_to_string
 
-def design_to_string(design):
-    return to_str(SHIP_DESIGN, design.id, design.name)
-fo.shipDesign.__repr__ = design_to_string
+    def design_to_string(design):
+        return to_str(SHIP_DESIGN, design.id, design.name)
+    fo.shipDesign.__repr__ = design_to_string
 
+    def planet_to_string(planet):
+        return to_str(PLANET, planet.id, planet.name)
+    fo.planet.__repr__ = planet_to_string
 
-def planet_to_string(planet):
-    return to_str(PLANET, planet.id, planet.name)
-fo.planet.__repr__ = planet_to_string
+    def fleet_to_string(fleet):
+        return to_str(FLEET, fleet.id, fleet.name)
+    fo.fleet.__repr__ = fleet_to_string
 
+    def empire_to_string(empire):
+        return to_str(EMPIRE, empire.empireID, empire.name)
+    fo.empire.__repr__ = empire_to_string
 
-def fleet_to_string(fleet):
-    return to_str(FLEET, fleet.id, fleet.name)
-fo.fleet.__repr__ = fleet_to_string
+    def set_to_string(val):
+        return '{%s}' % ', '.join(map(str, val))
 
+    fo.StringSet.__str__ = set_to_string
+    fo.IntSet.__str__ = set_to_string
 
-def empire_to_string(empire):
-    return to_str(EMPIRE, empire.empireID, empire.name)
-fo.empire.__repr__ = empire_to_string
+    def int_int_map_to_string(int_int_map):
+        return str(dict_from_map(int_int_map))
 
-
-def set_to_string(val):
-    return '{%s}' % ', '.join(map(str, val))
-
-
-fo.StringSet.__str__ = set_to_string
-fo.IntSet.__str__ = set_to_string
-
-
-def int_int_map_to_string(int_int_map):
-    return str(dict_from_map(int_int_map))
-
-
-fo.IntIntMap.__str__ = int_int_map_to_string
+    fo.IntIntMap.__str__ = int_int_map_to_string
 
 
 def logger(callable_object, argument_wrappers=None):

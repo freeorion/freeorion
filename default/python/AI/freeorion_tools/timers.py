@@ -1,8 +1,8 @@
 import os
 import freeOrionAIInterface as fo
 from time import time
-from option_tools import get_option_dict, check_bool, DEFAULT_SUB_DIR
-from option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
+from common.option_tools import get_option_dict, check_bool, DEFAULT_SUB_DIR
+from common.option_tools import TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
 import sys
 
 # setup module

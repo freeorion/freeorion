@@ -6,10 +6,15 @@ import random
 
 # IMPORTANT! this import also execute python code to update freeOrionAIInterface interface,
 # removing this import will brake AI in unexpected way.
-from freeorion_debug import handle_debug_chat, listener
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
-# pylint: disable=relative-import
+
+from common.option_tools import parse_config
+parse_config(fo.getAIConfigStr(), fo.getUserConfigDir())
+
+from freeorion_tools import patch_interface
+patch_interface()
+
 import AIstate
 import ColonisationAI
 import ExplorationAI
@@ -22,8 +27,8 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserStringList, chat_on_error, print_error, UserString
-from freeorion_debug import Timer
+from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
+from common.listeners import listener
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
@@ -132,7 +137,7 @@ def prepareForSave():  # pylint: disable=invalid-name
     if empire.eliminated:
         print "This empire has been eliminated. Save info request"
         return
-    
+
     print "Preparing for game save by serializing state"
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
@@ -149,7 +154,7 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring chat message"
         return
-    
+
     # print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
     # perhaps it is a debugging interaction
     if handle_debug_chat(sender_id, message_text):
@@ -168,7 +173,7 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring diplomatic message"
         return
-        
+
     diplomatic_corp.handle_diplomatic_message(message)
 
 
@@ -180,7 +185,7 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring diplomatic status update"
         return
-    
+
     diplomatic_corp.handle_diplomatic_status_update(status_update)
 
 
@@ -276,3 +281,6 @@ def declare_war_on_all():  # pylint: disable=invalid-name
         if emp_id != my_emp_id:
             msg = fo.diplomaticMessage(my_emp_id, emp_id, fo.diplomaticMessageType.warDeclaration)
             fo.sendDiplomaticMessage(msg)
+
+
+init_handlers(fo.getAIConfigStr(), fo.getAIDir())

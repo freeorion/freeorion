@@ -51,8 +51,7 @@ import AIstate
 from collections import Counter, defaultdict
 
 from EnumsAI import ShipDesignTypes
-from freeorion_tools import print_error, UserString
-from ResearchAI import tech_is_complete
+from freeorion_tools import print_error, UserString, tech_is_complete
 
 # Define meta classes for the ship parts
 ARMOUR = frozenset({fo.shipPartClass.armour})

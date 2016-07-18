@@ -1,4 +1,4 @@
-# Handlers allow to add debug features to AI with out modifying existing code.
+# Handlers allow to add debug features to AI without modifying existing code.
 
 ## Attach handler
 
@@ -8,11 +8,16 @@
     path can be absolute, single_name(in same folder as config file) or relative form AI folder. Backslashes should be escaped.
   - run game with param `--ai-config <path to config file>`
 
-  If game freezes on stat check log for error.
+  If game freezes on start check log for error.
 
 
 ## Existing handlers:
-  - `freeorion_debug/handlers/charts_handler`:
+  - `python\AI\freeorion_tools\charts_handler.py`:
     Debug prints required for charts. Started by default
-  - `freeorion_debug/handlers/inspect_freeOrionAIInterface.py`:
+  - `python\handlers\inspect_freeOrionAIInterface.py`:
     Code that create stub for `freeOrionAIInterface`. Must be launched with single AI player.
+
+## Implementation
+    Only AI handlers implementation is present now (`python\AI\freeorion_tools\handlers.py`),
+    need to add universe generation and events implementation too.
+ 
