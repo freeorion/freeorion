@@ -3584,14 +3584,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet->ID());
 
             // Force a redraw
-
-            // Just signaling StateChanged doesn't work because MapWnd
-            // only resets/deletes paths to non-existent objects on the
-            // turn updates and not when handling StateChanged.
-            // fleet->StateChangedSignal();
-
-            //So brute force.
-            ClientUI::GetClientUI()->GetMapWnd()->MidTurnUpdate();
+            this->Refresh();
+            ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet->ID());
 
             break;
         }
