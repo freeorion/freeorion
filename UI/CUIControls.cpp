@@ -877,6 +877,55 @@ void CUIMultiEdit::Render() {
     SetColor(color);
 }
 
+void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    // create popup menu
+    GG::MenuItem menu_contents;
+    if (!(this->Style() & GG::MULTI_READ_ONLY))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),       1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
+    if (!(this->Style() & GG::MULTI_READ_ONLY))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_PASTE"),     3, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
+
+    // todo: italicize, underline, or colour selected text
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: { // cut
+            GG::GUI::GetGUI()->CutWndText(this);
+            break;
+        }
+
+        case 2: { // copy
+            GG::GUI::GetGUI()->CopyWndText(this);
+            break;
+        }
+
+        case 3: { // paste
+            GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
+            break;
+        }
+
+        case 4: { // select all
+            GG::GUI::GetGUI()->WndSelectAll(this);
+            break;
+        }
+
+        case 5: { // deselect all
+            GG::GUI::GetGUI()->WndDeselect(this);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+}
+
 
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit
@@ -922,8 +971,62 @@ void CUILinkTextMultiEdit::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> 
 }
 
 void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    CUIMultiEdit::RClick(pt, mod_keys);
-    TextLinker::RClick_(pt, mod_keys);
+    // create popup menu
+    GG::MenuItem menu_contents;
+    if (GetLinkUnderPt(pt) != -1) {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPEN"),             9, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
+    }
+    if (!(this->Style() & GG::MULTI_READ_ONLY))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),       1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
+    if (!(this->Style() & GG::MULTI_READ_ONLY))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_PASTE"),     3, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
+
+    // todo: italicize, underline, or colour selected text
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+
+        case 9: {
+            TextLinker::RClick_(pt, mod_keys);
+            break;
+        }
+
+        case 1: { // cut
+            GG::GUI::GetGUI()->CutWndText(this);
+            break;
+        }
+
+        case 2: { // copy
+            GG::GUI::GetGUI()->CopyWndText(this);
+            break;
+        }
+
+        case 3: { // paste
+            GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
+            break;
+        }
+
+        case 4: { // select all
+            GG::GUI::GetGUI()->WndSelectAll(this);
+            break;
+        }
+
+        case 5: { // deselect all
+            GG::GUI::GetGUI()->WndDeselect(this);
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
 }
 
 void CUILinkTextMultiEdit::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {

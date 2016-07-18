@@ -263,7 +263,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void Render();
+    virtual void    Render();
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 };
 
