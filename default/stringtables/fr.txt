@@ -902,6 +902,12 @@ Le serveur a envoyé un message de fin de jeu. Au revoir.
 PLAYER_DISCONNECTED
 Le joueur %1% n'est plus connecté au serveur.
 
+SERVER_SAVE_INITIATE_ACK
+Sauvegarde...
+
+SERVER_SAVE_COMPLETE
+%2% octets sauvegardés vers le fichier: %1%
+
 UNKNOWN_EMPIRE
 Empire inconnu
 
@@ -2425,6 +2431,12 @@ Sauvegardes
 
 OPTIONS_PAGE_UI
 Interface
+
+OPTIONS_PAGE_OBJECTS_WINDOW
+Liste Objets
+
+OPTIONS_COLUMNS
+Largeur Colonnes
 
 OPTIONS_PAGE_COLORS
 Couleurs
