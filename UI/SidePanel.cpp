@@ -2409,7 +2409,9 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     GG::Y available_height = Height();
     GG::Y used_height = GG::Y(0);
 
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin();
+        it != m_planet_panels.end(); ++it)
+    {
         PlanetPanel* panel = *it;
         used_height += panel->Height() + EDGE_PAD; // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
@@ -2539,13 +2541,11 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
         (*it)->Refresh();
 }
 
-void SidePanel::PlanetPanelContainer::ShowScrollbar(){
-	DoPanelsLayout();
-}
+void SidePanel::PlanetPanelContainer::ShowScrollbar()
+{ DoPanelsLayout(); }
 
-void SidePanel::PlanetPanelContainer::HideScrollbar(){
-	DetachChild(m_vscroll);
-}
+void SidePanel::PlanetPanelContainer::HideScrollbar()
+{ DetachChild(m_vscroll); }
 
 void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
@@ -2993,7 +2993,7 @@ void SidePanel::DoLayout() {
 
     // hide scrollbar if there is no planets in the system
     if (TemporaryPtr<const System> system = GetSystem(s_system_id))
-        if (system->PlanetIDs().size() == 0)
+        if (system->PlanetIDs().empty())
             m_planet_panel_container->HideScrollbar();
         else
             m_planet_panel_container->ShowScrollbar();
