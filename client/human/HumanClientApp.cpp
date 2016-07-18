@@ -238,9 +238,6 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
 
-    if (inform_user_sound_failed)
-        ClientUI::MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
-
     EnableFPS();
     UpdateFPSLimit();
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
@@ -304,6 +301,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     if (fake_mode_change && !FramebuffersAvailable()) {
         ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
     }
+
+    // Placed after mouse initialization.
+    if (inform_user_sound_failed)
+        ClientUI::MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
+
     m_fsm->initiate();
 }
 
