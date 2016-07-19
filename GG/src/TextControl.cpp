@@ -197,7 +197,6 @@ void TextControl::SetText(const std::string& str)
     }
 
     m_cached_minusable_size_width = X0;
-
 }
 
 const boost::shared_ptr<Font>& TextControl::GetFont() const
