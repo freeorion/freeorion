@@ -2856,12 +2856,174 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     std::map<int, std::set<int> >           member_to_pool;
     std::set<int>                           under_alloc_res_grp_core_members;
 
-    if (this_client_empire) {
+    std::set<int> old_method_under_alloc_res_sys;
+
+    std::map<std::set<int>, std::set<int> > old_method_res_pool_systems;       // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
+    std::map<std::set<int>, std::set<int> > old_method_res_pool_to_group_map;  // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
+    std::map<std::set<int>, std::set<int> > old_method_res_group_cores;        // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    std::set<int>                           old_method_res_group_core_members;
+    std::map<int, std::set<int> >           old_method_member_to_pool;
+    std::set<int>                           old_method_under_alloc_res_grp_core_members;
+
+    bool enable_comparison_test(true);
+    if (enable_comparison_test && this_client_empire) {
+        ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers problem section", true);
         const std::set<std::set<int> >& res_groups = GetSupplyManager().ResourceSupplyGroups(client_empire_id);
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
         std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
         std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
 
+        // For each industry set,
+        // a. find underalloacted PPoints
+        // b. add all systems to old_method_res_pool_systems[industry set]
+        for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+            float group_pp = it->second;
+            if (group_pp < 1e-4f)
+                continue;
+
+            std::string this_pool = "( ";
+            for (std::set<int>::const_iterator obj_it = it->first.begin(); obj_it != it->first.end(); ++obj_it) {
+                int object_id = *obj_it;
+                this_pool += boost::lexical_cast<std::string>(object_id) +", ";
+
+                TemporaryPtr<const Planet> planet = GetPlanet(object_id);
+                if (!planet)
+                    continue;
+
+                //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
+
+                int system_id = planet->SystemID();
+                old_method_res_pool_systems[it->first].insert(system_id);
+
+                if (group_pp > allocatedPP[it->first] + 0.05)
+                    old_method_under_alloc_res_sys.insert(system_id);
+            }
+            this_pool += ")";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocatedPP[it->first] << " PP allocated";
+        }
+
+        // For each industry set (now from old_method_res_pool_systems) A for each
+        // supply set B from the SupplyManager, if any system from A is in
+        // B associate this supply set with old_method_res_pool_to_group_map[ industry set]?
+
+        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
+        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = old_method_res_pool_systems.begin();
+             res_pool_sys_it != old_method_res_pool_systems.end(); res_pool_sys_it++)
+        {
+            for (std::set<std::set<int> >::const_iterator rg_it = res_groups.begin(); rg_it != res_groups.end(); ++rg_it) {
+                bool placed_pool = false;
+                for (std::set<int>::iterator sysIt=res_pool_sys_it->second.begin(); sysIt!=res_pool_sys_it->second.end(); sysIt++) {
+                    if (rg_it->find(*sysIt) != rg_it->end()) {
+                        old_method_res_pool_to_group_map[res_pool_sys_it->first] = *rg_it;
+                        placed_pool = true;
+                        break;
+                    }
+                }
+                if (placed_pool)
+                    break;
+            }
+        }
+        // TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
+        // DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
+
+
+        // For each production set N(N-1) upper triangle of systems path
+        // through set of supply links res_pool_to_group[Pgroup] and copy every
+        // system on the path into
+
+        std::set<std::pair<int, int> > resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = old_method_res_pool_systems.begin();
+             res_pool_sys_it != old_method_res_pool_systems.end(); res_pool_sys_it++)
+        {
+            // std::string this_pool_ctrs = "( ";
+            // for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
+            //      start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
+            // {
+            //     this_pool_ctrs += boost::lexical_cast<std::string>(*start_sys_it) +", ";
+            // }
+            // this_pool_ctrs += ")";
+            //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
+
+            old_method_res_group_cores[res_pool_sys_it->first].insert(*(res_pool_sys_it->second.begin())); // if pool only has one sys, ensure it is added to core
+            old_method_res_group_core_members.insert(*(res_pool_sys_it->second.begin()));
+            std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
+            lastSys--;
+            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
+                 start_sys_it != lastSys; start_sys_it++)
+            {
+                // since res_pool_sys_it->second cannot be empty
+                std::set<int>::iterator next_sys_it = start_sys_it;
+                for (std::set<int>::iterator end_sys_it = ++next_sys_it;
+                     end_sys_it != res_pool_sys_it->second.end(); end_sys_it++)
+                {
+                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
+                    std::vector<int> path = GetLeastJumps(*start_sys_it, *end_sys_it, old_method_res_pool_to_group_map[res_pool_sys_it->first],
+                                                          resource_supply_lanes, Objects());
+                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
+                    for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
+                        old_method_res_group_cores[ res_pool_sys_it->first ].insert(*path_sys_it);
+                        old_method_res_group_core_members.insert(*path_sys_it);
+                        old_method_member_to_pool[*path_sys_it] = res_pool_sys_it->first;
+                    }
+                }
+            }
+        }
+        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
+
+        // For industry set if under allocated add all system to under
+        // allocated
+        // TODO: Move under allocation from both loops into own function.
+
+        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = old_method_res_pool_systems.begin();
+             res_pool_sys_it != old_method_res_pool_systems.end(); res_pool_sys_it++)
+        {
+            if (old_method_under_alloc_res_sys.find(*(res_pool_sys_it->second.begin())) != old_method_under_alloc_res_sys.end())
+                old_method_under_alloc_res_grp_core_members.insert(old_method_res_group_cores[ res_pool_sys_it->first].begin(),
+                                                        old_method_res_group_cores[ res_pool_sys_it->first].end());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (this_client_empire) {
+        ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers improved section", true);
+        const std::set<std::set<int> >& res_groups = GetSupplyManager().ResourceSupplyGroups(client_empire_id);
+        const ProductionQueue& queue = this_client_empire->GetProductionQueue();
+        std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
+        std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+
+        // For each industry set,
+        // a. find underalloacted PPoints
+        // b. add all systems to res_pool_systems[industry set]
         for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
             float group_pp = it->second;
             if (group_pp < 1e-4f)
@@ -2888,6 +3050,11 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocatedPP[it->first] << " PP allocated";
         }
+
+        // For each industry set (now from res_pool_systems) A for each
+        // supply set B from the SupplyManager, if any system from A is in
+        // B associate this supply set with res_pool_to_group_map[ industry set]?
+
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
         for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
@@ -2908,17 +3075,22 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
         // DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
 
+
+        // For each production set N(N-1) upper triangle of systems path
+        // through set of supply links res_pool_to_group[Pgroup] and copy every
+        // system on the path into
+
         std::set<std::pair<int, int> > resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
         for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
-            std::string this_pool_ctrs = "( ";
-            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
-                 start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
-            {
-                this_pool_ctrs += boost::lexical_cast<std::string>(*start_sys_it) +", ";
-            }
-            this_pool_ctrs += ")";
+            // std::string this_pool_ctrs = "( ";
+            // for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
+            //      start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
+            // {
+            //     this_pool_ctrs += boost::lexical_cast<std::string>(*start_sys_it) +", ";
+            // }
+            // this_pool_ctrs += ")";
             //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
 
             res_group_cores[res_pool_sys_it->first].insert(*(res_pool_sys_it->second.begin())); // if pool only has one sys, ensure it is added to core
@@ -2947,6 +3119,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
+        // For industry set if under allocated add all system to under
+        // allocated
+        // TODO: Move under allocation from both loops into own function.
+
         for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
@@ -2955,6 +3131,39 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                                                         res_group_cores[ res_pool_sys_it->first].end());
         }
     }
+
+    if (enable_comparison_test) {
+        //Test section.
+        //Check that the new section produces the same results as
+        //before.
+#define CHECK_VS_OLD_SET(setname)                                       \
+        if (old_method_##setname != setname) {                          \
+            ErrorLogger() << "Errors in comparison of " << #setname;    \
+            if (old_method_##setname.size() != setname.size())          \
+                ErrorLogger() << "size (" <<setname.size() <<") != old(" <<old_method_##setname.size() <<")"; \
+            throw "not equal sets";                                     \
+        }
+
+#define CHECK_VS_OLD_MAP(setname)                                       \
+        if (old_method_ ## setname != setname) {                        \
+            ErrorLogger() << "Errors in comparison of " << #setname;    \
+        if (old_method_##setname.size() != setname.size())              \
+            ErrorLogger() << "size (" <<setname.size() <<") != old(" <<old_method_##setname.size() <<")"; \
+        throw "not equal maps";                                         \
+        }
+
+        CHECK_VS_OLD_SET (under_alloc_res_sys);
+        CHECK_VS_OLD_MAP(res_pool_systems);
+        CHECK_VS_OLD_MAP(res_pool_to_group_map);
+        CHECK_VS_OLD_MAP(res_group_cores);
+        CHECK_VS_OLD_SET(res_group_core_members);
+        CHECK_VS_OLD_MAP(member_to_pool);
+        CHECK_VS_OLD_SET(under_alloc_res_grp_core_members);
+
+#undef CHECK_VS_OLD_SET
+#undef CHECK_VS_OLD_MAP
+    }
+
     //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
