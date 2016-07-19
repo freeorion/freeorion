@@ -3153,6 +3153,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // this_pool_ctrs += ")";
             //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
 
+            const std::set<int>& supply_group = res_pool_to_group_map[res_pool_sys_it->first];
+            std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
+
             res_group_cores[res_pool_sys_it->first].insert(*(res_pool_sys_it->second.begin())); // if pool only has one sys, ensure it is added to core
             res_group_core_members.insert(*(res_pool_sys_it->second.begin()));
             std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
@@ -3168,12 +3171,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
                     std::vector<int> path = GetLeastJumpsThroughSupplyLanes(
                         *start_sys_it, *end_sys_it,
-                        res_pool_to_group_map[res_pool_sys_it->first],
+                        supply_group,
                         resource_supply_lanes_undirected, Objects()
                     );
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
                     for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
-                        res_group_cores[ res_pool_sys_it->first ].insert(*path_sys_it);
+                        group_core.insert(*path_sys_it);
                         res_group_core_members.insert(*path_sys_it);
                         member_to_pool[*path_sys_it] = res_pool_sys_it->first;
                     }
