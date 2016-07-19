@@ -2854,9 +2854,10 @@ namespace {
         std::map<int,int> ancestor;
         std::deque<int> tryNext;
         std::vector<int> path;
-        path.push_back(start_sys_it);
         if (start_sys_it==end_sys_it)
             return path;
+
+        path.push_back(start_sys_it);
 
         for (std::set<int>::const_iterator sysIt = resGroup.begin(); sysIt!=resGroup.end(); sysIt++)
             ancestor[*sysIt] = -1;
@@ -3156,8 +3157,14 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             const std::set<int>& supply_group = res_pool_to_group_map[res_pool_sys_it->first];
             std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
 
-            res_group_cores[res_pool_sys_it->first].insert(*(res_pool_sys_it->second.begin())); // if pool only has one sys, ensure it is added to core
-            res_group_core_members.insert(*(res_pool_sys_it->second.begin()));
+            // All individual system on their own are in.
+            for (std::set<int>::iterator sys_it=res_pool_sys_it->second.begin();
+                 sys_it != res_pool_sys_it->second.end(); sys_it++)
+            {
+                group_core.insert(*sys_it);
+                res_group_core_members.insert(*sys_it);
+            }
+
             std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
             lastSys--;
             for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
