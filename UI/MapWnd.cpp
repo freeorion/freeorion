@@ -2859,7 +2859,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const Empire* this_client_empire = GetEmpire(client_empire_id);
-    std::set<int> under_alloc_res_sys;
 
     std::map<std::set<int>, std::set<int> > res_pool_systems;       // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
     std::map<std::set<int>, std::set<int> > res_pool_to_group_map;  // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
@@ -3014,18 +3013,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     if (this_client_empire) {
         ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers improved section", true);
         const std::set<std::set<int> >& res_groups = GetSupplyManager().ResourceSupplyGroups(client_empire_id);
@@ -3034,8 +3021,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
 
         // For each industry set,
-        // a. find underalloacted PPoints
-        // b. add all systems to res_pool_systems[industry set]
+        // add all planet's systems to res_pool_systems[industry set]
         for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
             float group_pp = it->second;
             if (group_pp < 1e-4f)
@@ -3054,9 +3040,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 int system_id = planet->SystemID();
                 res_pool_systems[it->first].insert(system_id);
-
-                if (group_pp > allocatedPP[it->first] + 0.05)
-                    under_alloc_res_sys.insert(system_id);
             }
             this_pool += ")";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
@@ -3133,14 +3116,16 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
         // For industry set if under allocated add all system to under
         // allocated
-        // TODO: Move under allocation from both loops into own function.
+        // TODO: Why not store an iterator to the core set and save the copying
+        for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+            float group_pp = it->second;
+            if (group_pp < 1e-4f)
+                continue;
 
-        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
-             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
-        {
-            if (under_alloc_res_sys.find(*(res_pool_sys_it->second.begin())) != under_alloc_res_sys.end())
-                under_alloc_res_grp_core_members.insert(res_group_cores[ res_pool_sys_it->first].begin(),
-                                                        res_group_cores[ res_pool_sys_it->first].end());
+            if (group_pp > allocatedPP[it->first] + 0.05) {
+                const std::set<int>& core_systems(res_group_cores[ it->first]);
+                under_alloc_res_grp_core_members.insert(core_systems.begin(), core_systems.end());
+            }
         }
     }
 
