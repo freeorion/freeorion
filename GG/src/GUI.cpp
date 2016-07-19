@@ -992,6 +992,40 @@ std::set<std::pair<CPSize, CPSize> > GUI::FindWords(const std::string& str) cons
     return retval;
 }
 
+std::set<std::pair<StrSize, StrSize> > GUI::FindWordsStringIndices(const std::string& str) const
+{
+    std::cout << "looking for words in text: " << str << std::endl;
+
+    std::set<std::pair<StrSize, StrSize> > retval;
+
+    utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
+    utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+    // determine where all UTF-8 characters are in the raw string
+    std::vector<std::pair<StrSize, StrSize> > chars;
+    for (utf8_wchar_iterator it = first; it != last; ++it) {
+        chars.push_back(std::make_pair(S0, S0));
+    }
+
+    word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
+    word_regex_iterator end_it;
+
+    typedef word_regex_iterator::value_type match_result_type;
+
+    for ( ; it != end_it; ++it) {
+        match_result_type match_result = *it;
+        utf8_wchar_iterator word_pos_it = first;
+        std::advance(word_pos_it, match_result.position());
+        std::string::const_iterator word_string_start_it = word_pos_it.base();
+        std::advance(word_pos_it, match_result.length());
+        std::string::const_iterator word_string_end_it = word_pos_it.base();
+
+        std::string word(word_string_start_it, word_string_end_it);
+
+        std::cout << "found word: " << word << std::endl;
+    }
+    return retval;
+}
+
 const boost::shared_ptr<StyleFactory>& GUI::GetStyleFactory() const
 { return s_impl->m_style_factory; }
 

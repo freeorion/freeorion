@@ -198,6 +198,7 @@ public:
         application-specific that it was placed here so that users can
         customize this behavior. */
     virtual std::set<std::pair<CPSize, CPSize> > FindWords(const std::string& str) const;
+    virtual std::set<std::pair<StrSize, StrSize> > FindWordsStringIndices(const std::string& str) const;
 
     const boost::shared_ptr<StyleFactory>& GetStyleFactory() const; ///< returns the currently-installed style factory
 
