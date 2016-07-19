@@ -54,6 +54,7 @@
 
 #include <boost/timer.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/PtRect.h>
@@ -2848,14 +2849,19 @@ namespace {
         int start_sys_it, int end_sys_it,
         const std::set<int>& resGroup,
         const std::set<std::pair<int, int> >& supplylanes,
-        const ObjectMap& objMap)
+        const ObjectMap& objMap,
+        const boost::unordered_set<std::pair<int, int> >& systems_with_known_paths)
     {
         //std::map<int,bool> sysChecked;
         std::map<int,int> ancestor;
         std::deque<int> tryNext;
         std::vector<int> path;
-        if (start_sys_it==end_sys_it)
+
+        if (start_sys_it == end_sys_it
+            || systems_with_known_paths.count(std::make_pair(std::min(start_sys_it, end_sys_it),
+                                                          std::max(start_sys_it, end_sys_it)))) {
             return path;
+        }
 
         path.push_back(start_sys_it);
 
@@ -2880,7 +2886,9 @@ namespace {
                     continue;
                 if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
                     ancestor[newSys] = sysID;
-                    if (newSys==end_sys_it) {
+                    if (newSys == end_sys_it) {
+                        // || sys_with_known_paths.count(std::make_pair(std::min(end_sys_it, newSys),
+                        //                                              std::max(end_sys_it, newSys)))) {
                         int iSys = newSys;
                         while ((ancestor[iSys] !=-1)&&( ancestor[iSys] != iSys )) {
                             path.push_back(iSys);
@@ -2899,6 +2907,7 @@ namespace {
     }
 
 }
+
 void MapWnd::InitStarlaneRenderingBuffers() {
     DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
     ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
@@ -3154,6 +3163,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // this_pool_ctrs += ")";
             //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
 
+            // Systems from the production set or the supply chain with
+            // known paths already found.
+            boost::unordered_set<std::pair<int, int> > systems_with_known_paths;
+
             const std::set<int>& supply_group = res_pool_to_group_map[res_pool_sys_it->first];
             std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
 
@@ -3176,13 +3189,17 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                      end_sys_it != res_pool_sys_it->second.end(); end_sys_it++)
                 {
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
+
                     std::vector<int> path = GetLeastJumpsThroughSupplyLanes(
                         *start_sys_it, *end_sys_it,
                         supply_group,
-                        resource_supply_lanes_undirected, Objects()
+                        resource_supply_lanes_undirected, Objects(),
+                        systems_with_known_paths
                     );
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
                     for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
+                        systems_with_known_paths.insert(std::make_pair(std::min(*start_sys_it, *path_sys_it),
+                                                                       std::max(*start_sys_it, *path_sys_it)));
                         group_core.insert(*path_sys_it);
                         res_group_core_members.insert(*path_sys_it);
                         member_to_pool[*path_sys_it] = res_pool_sys_it->first;
