@@ -55,6 +55,7 @@
 #include <boost/timer.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/PtRect.h>
@@ -2853,7 +2854,7 @@ namespace {
         const boost::unordered_set<std::pair<int, int> >& systems_with_known_paths)
     {
         //std::map<int,bool> sysChecked;
-        std::map<int,int> ancestor;
+        boost::unordered_map<int,int> ancestor;
         std::deque<int> tryNext;
         std::vector<int> path;
 
@@ -2865,8 +2866,6 @@ namespace {
 
         path.push_back(start_sys_it);
 
-        for (std::set<int>::const_iterator sysIt = resGroup.begin(); sysIt!=resGroup.end(); sysIt++)
-            ancestor[*sysIt] = -1;
         ancestor[start_sys_it] = start_sys_it;
         tryNext.push_back(start_sys_it);
 
@@ -2884,15 +2883,18 @@ namespace {
                 std::pair<int, int> lane_min_then_max = std::make_pair(std::min(sysID, newSys), std::max(sysID, newSys));
                 if (supplylanes.find(lane_min_then_max) == supplylanes.end())
                     continue;
-                if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
-                    ancestor[newSys] = sysID;
+                boost::unordered_map<int,int>::const_iterator ancestor_newSys = ancestor.find(newSys);
+                if (!laneIt->second && ( ancestor_newSys == ancestor.end() )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
+                    ancestor.insert(std::make_pair(newSys, sysID));
                     if (newSys == end_sys_it) {
                         // || sys_with_known_paths.count(std::make_pair(std::min(end_sys_it, newSys),
                         //                                              std::max(end_sys_it, newSys)))) {
                         int iSys = newSys;
-                        while ((ancestor[iSys] !=-1)&&( ancestor[iSys] != iSys )) {
+                        boost::unordered_map<int,int>::const_iterator ancestor_iSys;
+                        while (((ancestor_iSys = ancestor.find(iSys)) != ancestor.end())
+                               && (ancestor_iSys->second != iSys )) {
                             path.push_back(iSys);
-                            iSys = ancestor[iSys];
+                            iSys = ancestor_iSys->second;
                         }
                         return path;
                     }
