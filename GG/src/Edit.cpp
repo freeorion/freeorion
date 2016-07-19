@@ -298,9 +298,26 @@ CPSize Edit::LastVisibleChar() const
 {
     X first_char_offset = FirstCharOffset();
     CPSize retval = m_first_char_shown;
-    for ( ; retval < Length(); ++retval) {
-        if (ClientSize().x <= (retval ? GetLineData()[0].char_data[Value(retval - 1)].extent : X0) - first_char_offset)
-            break;
+
+    const std::vector<Font::LineData>& line_data = GetLineData();
+    if (line_data.empty())
+        return CP0;
+    const Font::LineData& first_line_data = line_data.at(0);
+    const std::vector<Font::LineData::CharData>& char_data = first_line_data.char_data;
+
+    CPSize line_limit = std::min(Length(), CPSize(char_data.size()));
+    X client_size_x = ClientSize().x;
+
+    for ( ; retval < line_limit; ++retval) {
+        if (!retval) {
+            if (client_size_x <= X0 - first_char_offset)
+                break;
+        } else {
+            size_t retval_minus_1 = Value(retval - 1);
+            Font::LineData::CharData retval_minus_1_char_data = char_data.at(retval_minus_1);
+            if (client_size_x <= retval_minus_1_char_data.extent - first_char_offset)
+                break;
+        }
     }
     return retval;
 }
@@ -564,7 +581,7 @@ void Edit::ClearSelected()
     Erase(0, low, high - low);
 
     // make sure deletion has not left m_first_char_shown in an out-of-bounds position
-    if (GetLineData()[0].char_data.empty())
+    if (GetLineData().empty() || GetLineData()[0].char_data.empty())
         m_first_char_shown = CP0;
     else if (GetLineData()[0].char_data.size() <= m_first_char_shown)
         m_first_char_shown = CodePointIndexOf(0, INVALID_CP_SIZE, GetLineData());
