@@ -937,10 +937,10 @@ class AIstate(object):
                 elif this_sys:
                     status['sysID'] = this_sys.id
                 else:
-                    main_missin = self.get_fleet_mission(fleet_id)
-                    main_mission_type = (main_missin.getAIMissionTypes() + [-1])[0]
+                    main_mission = self.get_fleet_mission(fleet_id)
+                    main_mission_type = (main_mission.getAIMissionTypes() + [-1])[0]
                     if main_mission_type != -1:
-                        targets = main_missin.getAITargets(main_mission_type)
+                        targets = main_mission.getAITargets(main_mission_type)
                         if targets:
                             m_mt0 = targets[0]
                             if isinstance(m_mt0.target_type, System):
