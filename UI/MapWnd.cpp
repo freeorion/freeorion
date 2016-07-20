@@ -2854,7 +2854,6 @@ namespace {
         int start_sys_it, int end_sys_it,
         const std::set<int>& resGroup,
         const SupplyLaneMMap& supplylanes,
-        const ObjectMap& objMap,
         const boost::unordered_set<std::pair<int, int> >& systems_with_known_paths)
     {
         //std::map<int,bool> sysChecked;
@@ -2876,9 +2875,6 @@ namespace {
         while (!tryNext.empty() ) {
             int sysID = tryNext.front();
 
-            TemporaryPtr<const System> system = objMap.Object<const System>(sysID);
-            if (!system)
-                continue;
             std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator> supplylane_endpoints
                 = supplylanes.equal_range(sysID);
             for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
@@ -3108,6 +3104,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
+                TemporaryPtr<const System> system = Objects().Object<const System>(system_id);
+                if (!system)
+                    continue;
                 res_pool_systems[it->first].insert(system_id);
             }
             this_pool += ")";
@@ -3240,7 +3239,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         //cause more short circuited paths.
                         *end_sys_it, *start_sys_it,
                         supply_group,
-                        resource_supply_lanes_undirected, Objects(),
+                        resource_supply_lanes_undirected,
                         systems_with_known_paths
                     );
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
