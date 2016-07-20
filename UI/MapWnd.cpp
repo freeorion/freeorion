@@ -2931,7 +2931,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     std::map<std::set<int>, std::set<int> > res_pool_to_group_map;  // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
     std::map<std::set<int>, std::set<int> > res_group_cores;        // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     std::set<int>                           res_group_core_members;
-    std::map<int, std::set<int> >           member_to_pool;
+    std::map<int, const std::set<int> * >   member_to_core;
     std::set<int>                           under_alloc_res_grp_core_members;
 
     std::set<int> old_method_under_alloc_res_sys;
@@ -3209,7 +3209,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         }
                         group_core.insert(*path_sys_it);
                         res_group_core_members.insert(*path_sys_it);
-                        member_to_pool[*path_sys_it] = res_pool_sys_it->first;
+                        member_to_core[*path_sys_it] = &group_core;
                     }
                 }
             }
@@ -3280,7 +3280,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         CHECK_VS_OLD_MAP(res_pool_to_group_map);
         CHECK_VS_OLD_MAP(res_group_cores);
         CHECK_VS_OLD_SET(res_group_core_members);
-        CHECK_VS_OLD_MAP(member_to_pool);
         CHECK_VS_OLD_SET(under_alloc_res_grp_core_members);
 
 #undef CHECK_VS_OLD_SET
@@ -3398,7 +3397,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    if (res_group_cores[ member_to_pool[start_system->ID()]] != res_group_cores[ member_to_pool[dest_system->ID()]])
+                    std::map<int, const std::set<int> * >::const_iterator start_core = member_to_core.find(start_system->ID());
+                    std::map<int, const std::set<int> * >::const_iterator dest_core = member_to_core.find(dest_system->ID());
+                    if (start_core != member_to_core.end() && dest_core != member_to_core.end()
+                        && (*(start_core->second) != *(dest_core->second)))
                         indicatorExtent = 0.2f;
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
                                                  lane_endpoints.Y1);
