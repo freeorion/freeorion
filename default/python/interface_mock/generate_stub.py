@@ -46,7 +46,7 @@ def handle_class(info):
         if rutine_name == 'error_stub':
             continue
 
-        docs = Docs(rutine_docs, 2)
+        docs = Docs(rutine_docs, 2, is_class=True)
 
         if docs.rtype == 'VisibilityIntMap':
             return_string = 'return dict()'
@@ -55,12 +55,8 @@ def handle_class(info):
         else:
             return_string = 'return %s()' % docs.rtype
 
-        argument_string = docs.get_argument_string(is_class=True)
-        if argument_string:
-            argument_string = ', ' + argument_string
-
-        doc_string = docs.get_doc_string(is_class=True)
-        result.append('    def %s(self%s):' % (rutine_name, argument_string))
+        doc_string = docs.get_doc_string()
+        result.append('    def %s(%s):' % (rutine_name, docs.get_argument_string()))
         result.append(doc_string)
         result.append('        %s' % return_string)
         result.append('')
@@ -115,7 +111,7 @@ def make_stub(data, result_path):
         if info['type'] in known_types:
             groups.setdefault(info['type'], []).append(info)
         else:
-            print info['type']
+            print 'Unknown type %s in %s' % (info['type'], info)
     classes = [x for x in groups['boost_class'] if not x['name'].startswith('map_indexing_suite_')]
     clases_map = {x['name']: x for x in classes}
     instance_names = {instance['class_name'] for instance in groups.get('instance', [])}
@@ -123,11 +119,16 @@ def make_stub(data, result_path):
     enums = sorted(groups['enum'], key=itemgetter('name'))
     enums_names = [x['name'] for x in enums]
 
-    excludes = ([u'IntSet', u'StringSet', u'IntIntMap', u'ShipSlotVec', u'VisibilityIntMap', u'IntDblMap',
-                 u'IntBoolMap', u'ItemSpecVec', u'PairIntInt_IntMap', u'IntSetSet', u'StringVec',
-                 u'IntPairVec'])
+    not_required_instances = (
+        ['IntSet', 'StringSet', 'IntIntMap', 'ShipSlotVec', 'VisibilityIntMap', 'IntDblMap',
+         'IntBoolMap', 'ItemSpecVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
+         'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
+         # this item cannot be get from generate orders
+         'diplomaticStatusUpdate',
+         ])
 
-    print "Classes with out instance", instance_names.symmetric_difference(clases_map).difference(excludes)
+    missed_instances = instance_names.symmetric_difference(clases_map).difference(not_required_instances)
+    print "Classes without instances:", ', '.join(sorted(missed_instances))
 
     for instance in groups.get('instance', []):
         class_name = instance['class_name']

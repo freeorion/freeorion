@@ -60,6 +60,7 @@ normalization_dict = {'empire': 'empire_object',
                       'ShipPartMeterMap': 'ship_part_meter_map',
                       'ShipSlotVec': 'ship_slot_vec',
                       'special': 'special',
+                      'IntFltMap': 'int_flt_map'
                       }
 
 
@@ -69,15 +70,20 @@ def normalize_name(tp):
         return provided_name
 
     if argument_type not in normalization_dict:
-        print sys.stderr.write("Can't find proper name for: %s" % argument_type)
-        return 'arg'
-    else:
-        return normalization_dict[argument_type]
+        print sys.stderr.write("Can't find proper name for: %s\n" % argument_type)
+        normalization_dict[argument_type] = 'arg'
+    return normalization_dict[argument_type]
 
 
-def get_argument_names(arguments):
+def get_argument_names(arguments, is_class):
     counts = {}
     names = []
+
+    types = [x[0] for x in arguments]
+
+    if is_class:
+        arguments = arguments[1:]
+
     arg_names = [normalize_name(tp) for tp in arguments]
     for tp, arg_name in zip(arguments, arg_names):
         if arg_names.count(arg_name) == 1:
@@ -89,7 +95,9 @@ def get_argument_names(arguments):
                 counts[arg_name] = 1
             suffix = str(counts[arg_name])
         names.append('%s%s' % (arg_name, suffix))
-    return names, [x[0] for x in arguments]
+    if is_class:
+        names.insert(0, 'self')
+    return names, types
 
 
 def parse_name(txt):
@@ -99,16 +107,16 @@ def parse_name(txt):
     return [x[0] for x in args], return_type
 
 
-def merge_args(arg_types):
+def merge_args(arg_types, is_class):
     if len(arg_types) == 1:
-        names, types = get_argument_names(arg_types[0])
+        names, types = get_argument_names(arg_types[0], is_class)
         use_keyword = False
     elif len(arg_types) == 2 and any(not x for x in arg_types):
-        names, types = get_argument_names(filter(None, arg_types)[0])
+        names, types = get_argument_names(filter(None, arg_types)[0], is_class)
         use_keyword = True
     else:
-        sys.stderr.write('Cannot merge: %s, use first arguments\n' % list(x for x in arg_types))
-        names, types = get_argument_names(arg_types[0])
+        sys.stderr.write('Cannot merge, use first arguments from:\n    %s\n' % '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in arg_types))
+        names, types = get_argument_names(arg_types[0], is_class)
         use_keyword = False
     return ['%s=None' % name for name in names] if use_keyword else names, zip(names, types)
 
@@ -120,8 +128,9 @@ def normilize_rtype(rtype):
 
 
 class Docs(object):
-    def __init__(self, text, indent):
+    def __init__(self, text, indent, is_class=False):
         self.indent = indent
+        self.is_class = is_class
 
         if not text:
             self.rtype = 'unknown'
@@ -175,19 +184,19 @@ class Docs(object):
 
         # if docs are equals show only one of them
         self.header = sorted(doc_lines)
-        argument_declaration, args = merge_args(args)
+        argument_declaration, args = merge_args(args, self.is_class)
         self.argument_declaration = argument_declaration
         self.args = args
 
-    def get_argument_string(self, is_class=False):
-        return ', '.join([arg_name for arg_name in self.argument_declaration[is_class:]])
+    def get_argument_string(self):
+        return ', '.join(arg_name for arg_name in self.argument_declaration)
 
-    def get_doc_string(self, is_class=False):
+    def get_doc_string(self):
         doc = ['"""']
         if self.header:
             doc.extend(self.header)
             doc.append('')
-        for arg_name, arg_type in self.args[is_class:]:
+        for arg_name, arg_type in self.args[self.is_class:]:
             doc.append(':param %s:' % arg_name)
             doc.append(':type %s: %s' % (arg_name, arg_type))
 

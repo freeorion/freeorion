@@ -30,8 +30,17 @@ def inspect_ai_interface():
 
     building = list(planet.buildingIDs)[0]
 
+    color = empire.colour
+
+    part_meters = ship.partMeters
+
+    meter = planet.getMeter(fo.meterType.population)
+
     inspect(
         fo,
+        meter,
+        part_meters,
+        color,
         universe,
         fleet,
         planet,

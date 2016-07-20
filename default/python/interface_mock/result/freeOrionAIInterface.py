@@ -1,19 +1,19 @@
 class GGColor(object):
     @property
     def a(self):
-        pass
+        return int()
 
     @property
     def r(self):
-        pass
+        return int()
 
     @property
     def b(self):
-        pass
+        return int()
 
     @property
     def g(self):
-        pass
+        return int()
 
 
 class GalaxySetupData(object):
@@ -67,10 +67,10 @@ class IntBoolMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -115,10 +115,10 @@ class IntDblMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -163,10 +163,10 @@ class IntFltMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -211,10 +211,10 @@ class IntIntMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -267,10 +267,10 @@ class IntPairVec(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -415,10 +415,10 @@ class IntVec(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -489,10 +489,10 @@ class ItemSpecVec(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -545,10 +545,10 @@ class MeterTypeMeterMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -603,10 +603,10 @@ class PairIntInt_IntMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -651,10 +651,10 @@ class ShipPartMeterMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -707,10 +707,10 @@ class ShipSlotVec(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -813,10 +813,10 @@ class StringVec(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -869,10 +869,10 @@ class VisibilityIntMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -1329,15 +1329,15 @@ class hullType(object):
 class meter(object):
     @property
     def current(self):
-        pass
+        return float()
 
     @property
     def initial(self):
-        pass
+        return float()
 
     @property
     def dump(self):
-        pass
+        return str()
 
 
 class partType(object):
@@ -1360,6 +1360,10 @@ class partType(object):
     @property
     def partClass(self):
         return shipPartClass()
+
+    @property
+    def secondaryStat(self):
+        return float()
 
     def productionTime(self, number1, number2):
         """
@@ -1509,10 +1513,10 @@ class resPoolMap(object):
         """
         return None
 
-    def __getitem__(self, obj2):
+    def __getitem__(self, obj):
         """
-        :param obj2:
-        :type obj2: object
+        :param obj:
+        :type obj: object
         :rtype: object
         """
         return object()
@@ -3240,6 +3244,15 @@ def getUniverse():
     :rtype: universe
     """
     return universe()
+
+
+def getUserConfigDir():
+    """
+    Returns path to directory where FreeOrion stores user specific configuration.
+
+    :rtype: str
+    """
+    return str()
 
 
 def getUserDataDir():
