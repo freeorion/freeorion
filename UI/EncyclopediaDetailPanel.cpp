@@ -65,6 +65,25 @@ namespace {
 }
 
 namespace {
+    const std::vector<std::string>& GetSearchTextDirNames() {
+        static std::vector<std::string> dir_names;
+        if (dir_names.empty()) {
+            dir_names.push_back("ENC_INDEX");
+            dir_names.push_back("ENC_SHIP_PART");       dir_names.push_back("ENC_SHIP_HULL");
+            dir_names.push_back("ENC_TECH");            dir_names.push_back("ENC_BUILDING_TYPE");
+            dir_names.push_back("ENC_SPECIAL");         dir_names.push_back("ENC_SPECIES");
+            dir_names.push_back("ENC_FIELD_TYPE");      dir_names.push_back("ENC_EMPIRE");
+            dir_names.push_back("ENC_SHIP_DESIGN");     dir_names.push_back("ENC_SHIP");
+            dir_names.push_back("ENC_MONSTER");         dir_names.push_back("ENC_MONSTER_TYPE");
+            dir_names.push_back("ENC_FLEET");           dir_names.push_back("ENC_PLANET");
+            dir_names.push_back("ENC_BUILDING");        dir_names.push_back("ENC_SYSTEM");
+            dir_names.push_back("ENC_FIELD");           dir_names.push_back("ENC_GRAPH");
+            dir_names.push_back("ENC_GALAXY_SETUP");
+            //  dir_names.push_back("ENC_HOMEWORLDS");  // omitted due to weird formatting of article titles
+        }
+        return dir_names;
+    }
+
     /** Returns map from (Human-readable and thus sorted article category) to
         pair of (article link tag text, stringtable key for article category or
         subcategorization of it). Category is something like "ENC_TECH" and
@@ -846,29 +865,6 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
         }
     } catch (const boost::bad_lexical_cast&) {
         ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
-    }
-}
-
-namespace {
-    const std::vector<std::string>& GetSearchTextDirNames() {
-        static std::vector<std::string> dir_names;
-        if (dir_names.empty()) {
-            dir_names.push_back("ENC_SHIP_PART");       dir_names.push_back("ENC_SHIP_HULL");
-            dir_names.push_back("ENC_TECH");            dir_names.push_back("ENC_BUILDING_TYPE");
-            dir_names.push_back("ENC_SPECIAL");         dir_names.push_back("ENC_SPECIES");
-            dir_names.push_back("ENC_FIELD_TYPE");      dir_names.push_back("ENC_EMPIRE");
-            dir_names.push_back("ENC_SHIP_DESIGN");     dir_names.push_back("ENC_SHIP");
-            dir_names.push_back("ENC_MONSTER");         dir_names.push_back("ENC_MONSTER_TYPE");
-            dir_names.push_back("ENC_FLEET");           dir_names.push_back("ENC_PLANET");
-            dir_names.push_back("ENC_BUILDING");        dir_names.push_back("ENC_SYSTEM");
-            dir_names.push_back("ENC_FIELD");           dir_names.push_back("ENC_GRAPH");
-            dir_names.push_back("ENC_GALAXY_SETUP");//  dir_names.push_back("ENC_HOMEWORLDS");
-        }
-        return dir_names;
-    }
-
-    std::set<std::pair<size_t, size_t> > FindWords(const std::string& str) {
-        return std::set<std::pair<size_t, size_t> >();
     }
 }
 
