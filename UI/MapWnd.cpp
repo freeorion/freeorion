@@ -3144,20 +3144,46 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // through set of supply links res_pool_to_group[Pgroup] and copy every
         // system on the path into
 
-        // Supply starlane with no directional preference.
-        SupplyLaneMMap resource_supply_lanes_undirected;
-        const std::set<std::pair<int, int> > resource_supply_lanes_directed
-            = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
-
-        for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
-             sp_it != resource_supply_lanes_directed.end(); ++sp_it) {
-            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->first, sp_it->second));
-            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
-        }
-
         for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
+            // Supply starlane with no directional preference.
+            SupplyLaneMMap resource_supply_lanes_undirected;
+            const std::set<std::pair<int, int> > resource_supply_lanes_directed
+                = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+
+            for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
+                 sp_it != resource_supply_lanes_directed.end(); ++sp_it) {
+                resource_supply_lanes_undirected.insert(std::make_pair(sp_it->first, sp_it->second));
+                resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
+            }
+
+            // Remove dead end supply lanes a string of "loose thread"
+            // supply lanes that don't terminate on a resource source.
+            std::vector<int> loose_enders;
+            SupplyLaneMMap::iterator supply_it = resource_supply_lanes_undirected.begin();
+            while (supply_it != resource_supply_lanes_undirected.end()) {
+                size_t num_supply_lanes = resource_supply_lanes_undirected.count(supply_it->first);
+                if (num_supply_lanes < 2 && res_pool_sys_it->second.count(supply_it->first) == 0) {
+                    loose_enders.push_back(supply_it->first);
+                }
+                std::advance(supply_it, num_supply_lanes);
+            }
+
+            for (std::vector<int>::const_iterator loose_it = loose_enders.begin();
+                 loose_it != loose_enders.end(); ++loose_it) {
+                int thread_end = *loose_it;
+                std::pair<SupplyLaneMMap::iterator, SupplyLaneMMap::iterator> loose_range
+                    = resource_supply_lanes_undirected.equal_range(thread_end);
+                while(std::distance(loose_range.first, loose_range.second) == 1) {
+                    DebugLogger() << "lucy " << loose_range.first->first;
+                    int new_thread_end = loose_range.first->second;
+                    resource_supply_lanes_undirected.erase(loose_range.first);
+                    thread_end = new_thread_end;
+                    loose_range = resource_supply_lanes_undirected.equal_range(thread_end);
+                }
+            }
+
             // std::string this_pool_ctrs = "( ";
             // for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
             //      start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
