@@ -2846,10 +2846,14 @@ std::vector<int> MapWnd::GetLeastJumps(int start_sys_it, int end_sys_it, const s
 }
 
 namespace {
+    // SupplyLaneMap map keyed by system containing all system
+    // corresponding to valid supply lane destinations
+    typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
+
     std::vector<int> GetLeastJumpsThroughSupplyLanes(
         int start_sys_it, int end_sys_it,
         const std::set<int>& resGroup,
-        const std::set<std::pair<int, int> >& supplylanes,
+        const SupplyLaneMMap& supplylanes,
         const ObjectMap& objMap,
         const boost::unordered_set<std::pair<int, int> >& systems_with_known_paths)
     {
@@ -2875,16 +2879,14 @@ namespace {
             TemporaryPtr<const System> system = objMap.Object<const System>(sysID);
             if (!system)
                 continue;
-            const std::map<int, bool>& lanes = system->StarlanesWormholes();
-            for (std::map<int, bool>::const_iterator laneIt = lanes.begin();
-                 laneIt != lanes.end(); ++laneIt)
+            std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator> supplylane_endpoints
+                = supplylanes.equal_range(sysID);
+            for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
+                 sup_it != supplylane_endpoints.second; ++sup_it)
             {
-                int newSys = laneIt->first;
-                std::pair<int, int> lane_min_then_max = std::make_pair(std::min(sysID, newSys), std::max(sysID, newSys));
-                if (supplylanes.find(lane_min_then_max) == supplylanes.end())
-                    continue;
+                int newSys = sup_it->second;
                 boost::unordered_map<int,int>::const_iterator ancestor_newSys = ancestor.find(newSys);
-                if (!laneIt->second && ( ancestor_newSys == ancestor.end() )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
+                if ( ancestor_newSys == ancestor.end()) { //is a starlane, and not yet visited newSys
                     ancestor.insert(std::make_pair(newSys, sysID));
                     if (newSys == end_sys_it
                         || systems_with_known_paths.count(std::make_pair(std::min(end_sys_it, newSys),
@@ -3143,14 +3145,14 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // system on the path into
 
         // Supply starlane with no directional preference.
-        std::set<std::pair<int, int> > resource_supply_lanes_undirected;
+        SupplyLaneMMap resource_supply_lanes_undirected;
         const std::set<std::pair<int, int> > resource_supply_lanes_directed
             = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
 
         for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
              sp_it != resource_supply_lanes_directed.end(); ++sp_it) {
-            resource_supply_lanes_undirected.insert(std::make_pair(std::min(sp_it->first, sp_it->second),
-                                                                   std::max(sp_it->first, sp_it->second)));
+            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->first, sp_it->second));
+            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
         }
 
         for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
