@@ -65,6 +65,10 @@ namespace {
 }
 
 namespace {
+    /** Returns map from (Human-readable and thus sorted article category) to
+        pair of (article link tag text, stringtable key for article category or
+        subcategorization of it). Category is something like "ENC_TECH" and
+        subcategorization is something like a tech category. */
     void GetSortedPediaDirEntires(const std::string& dir_name,
                                   std::multimap<std::string,
                                                 std::pair<std::string,
@@ -178,7 +182,7 @@ namespace {
             for (std::map<std::string, std::string>::const_iterator
                  it = userstring_tech_names.begin(); it != userstring_tech_names.end(); ++it)
             {
-                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                sorted_entries_list.insert(std::make_pair(it->first,    // already iterating over userstring-looked-up names, so don't need to re-look-up-here
                     std::make_pair(LinkTaggedText(VarText::TECH_TAG, it->second) + "\n",
                                    it->second)));
             }
@@ -310,10 +314,11 @@ namespace {
             for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns();
                  it != GetUniverse().endShipDesigns(); ++it)
             {
-                if (!it->second->IsMonster())
-                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),
-                        std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
-                                       boost::lexical_cast<std::string>(it->first))));
+                if (it->second->IsMonster())
+                    continue;
+                sorted_entries_list.insert(std::make_pair(it->second->Name(),
+                    std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
+                                   boost::lexical_cast<std::string>(it->first))));
             }
 
         } else if (dir_name == "ENC_SHIP") {
@@ -343,7 +348,7 @@ namespace {
         } else if (dir_name == "ENC_MONSTER_TYPE") {
             for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 if (it->second->IsMonster())
-                    sorted_entries_list.insert(std::make_pair(UserString(it->second->Name()),
+                    sorted_entries_list.insert(std::make_pair(it->second->Name(),
                         std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
                                        boost::lexical_cast<std::string>(it->first))));
 
@@ -861,18 +866,29 @@ namespace {
         }
         return dir_names;
     }
+
+    std::set<std::pair<size_t, size_t> > FindWords(const std::string& str) {
+        return std::set<std::pair<size_t, size_t> >();
+    }
 }
 
 void EncyclopediaDetailPanel::HandleSearchTextEntered() {
-    const std::string& search_text = m_search_edit->Text();
-    std::string match_report;
-
     // search lists of articles for typed text
+    const std::string& search_text = m_search_edit->Text();
+    if (search_text.empty())
+        return;
+
+    std::string match_report;
+    std::set<std::pair<std::string, std::string> > already_listed_results;  // pair of category / article name
+
+    // assemble link text to all pedia entrys, indexed by name
     const std::vector<std::string>& dir_names = GetSearchTextDirNames();
+    // map from human-readable-name to (link-text, category nam
+    std::multimap<std::string, std::pair<std::string, std::string> > all_pedia_entries_list;
 
-    match_report += UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
 
-    // search for exact matches
+    // for every directory, get all entries, add to common multimap for ease of
+    // repeated searching for different types of match...
     for (std::vector<std::string>::const_iterator it = dir_names.begin();
          it != dir_names.end(); ++it)
     {
@@ -880,21 +896,60 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
         GetSortedPediaDirEntires(type_text, sorted_entries_list);
         for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
-             entry_it = sorted_entries_list.begin();
-             entry_it != sorted_entries_list.end(); ++entry_it)
+             entry_it = sorted_entries_list.begin(); entry_it != sorted_entries_list.end(); ++entry_it)
         {
-            if (boost::iequals(entry_it->first, search_text)) {
+            all_pedia_entries_list.insert(*entry_it);
+        }
+    }
+
+    // find distinct words in search text
+    std::set<std::string> words_in_search_text;
+    std::set<std::pair<GG::StrSize, GG::StrSize> > word_indices = GG::GUI::GetGUI()->FindWordsStringIndices(search_text);
+    for (std::set<std::pair<GG::StrSize, GG::StrSize> >::iterator idx_it = word_indices.begin();
+         idx_it != word_indices.end(); ++idx_it)
+    {
+        if (idx_it->first == idx_it->second)
+            continue;
+        std::string word(search_text.begin() + Value(idx_it->first), search_text.begin() + Value(idx_it->second));
+        if (word.empty())
+            continue;
+        words_in_search_text.insert(word);
+    }
+
+
+    ////
+    // search through all articles for full or partial matches to search query
+    ///
+
+
+    // search for exact title matches
+    match_report += UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
+    for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
+         entry_it = all_pedia_entries_list.begin(); entry_it != all_pedia_entries_list.end(); ++entry_it)
+    {
+        if (boost::iequals(entry_it->first, search_text)) {
+            match_report += entry_it->second.first;
+            already_listed_results.insert(std::make_pair(entry_it->second.second, entry_it->first));
+        }
+    }
+
+    // search for full word matches in titles
+    match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
+    for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
+         entry_it = all_pedia_entries_list.begin();
+         entry_it != all_pedia_entries_list.end(); ++entry_it)
+    {
+        for (std::set<std::string>::const_iterator word_it = words_in_search_text.begin();
+             word_it != words_in_search_text.end(); ++word_it)
+        {
+            if (GG::GUI::GetGUI()->ContainsWord(search_text, *word_it)) {
                 match_report += entry_it->second.first;
             }
         }
     }
 
-    // TODO: word matches
-    //match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
-
+    // search for partial word matches: words that appear as part of text
     match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
-
-    // search for partial matches
     for (std::vector<std::string>::const_iterator it = dir_names.begin();
          it != dir_names.end(); ++it)
     {
@@ -910,23 +965,23 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         }
     }
 
-    match_report += "\n" + UserString("ENC_SEARCH_IN_TEXT_MATCHES") + "\n\n";
+    //match_report += "\n" + UserString("ENC_SEARCH_IN_TEXT_MATCHES") + "\n\n";
 
-    // Find a custom article that contains the search text in its name
-    const Encyclopedia& pedia = GetEncyclopedia();
-    for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
-         category_it = pedia.articles.begin(); category_it != pedia.articles.end(); ++category_it)
-    {
-        const std::vector<EncyclopediaArticle>& articles = category_it->second;
-        for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
-             article_it != articles.end(); ++article_it)
-        {
-            const std::string& article_text = UserString(article_it->description);
-            if (boost::icontains(article_text, search_text)) {
-                //match_report += LinkTagg;
-            }
-        }
-    }
+    //// Find a custom article that contains the search text in its name
+    //const Encyclopedia& pedia = GetEncyclopedia();
+    //for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
+    //     category_it = pedia.articles.begin(); category_it != pedia.articles.end(); ++category_it)
+    //{
+    //    const std::vector<EncyclopediaArticle>& articles = category_it->second;
+    //    for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
+    //         article_it != articles.end(); ++article_it)
+    //    {
+    //        const std::string& article_text = UserString(article_it->description);
+    //        if (boost::icontains(article_text, search_text)) {
+    //            //match_report += LinkTagg;
+    //        }
+    //    }
+    //}
 
     // compile list of articles into some dynamically generated search report text
 
