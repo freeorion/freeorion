@@ -186,6 +186,7 @@ namespace {
     const std::map<std::string, MeterType>& GetMeterNameMap() {
         static std::map<std::string, MeterType> meter_name_map;
         if (meter_name_map.empty()) {
+            // todo: maybe need some thread guards here?
             meter_name_map["Population"] =         METER_POPULATION;
             meter_name_map["TargetPopulation"] =   METER_TARGET_POPULATION;
             meter_name_map["Industry"] =           METER_INDUSTRY;
