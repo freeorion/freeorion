@@ -122,19 +122,25 @@ void Edit::Render()
 
     BeginScissorClipping(Pt(client_ul.x - 1, client_ul.y), client_lr);
 
+    if (GetLineData().empty())
+        return;
     const std::vector<Font::LineData::CharData>& char_data = GetLineData()[0].char_data;
+
     X first_char_offset = FirstCharOffset();
     Y text_y_pos(ul.y + ((lr.y - ul.y) - GetFont()->Height()) / 2.0 + 0.5);
     CPSize last_visible_char = LastVisibleChar();
     const StrSize INDEX_0 = StringIndexOf(0, m_first_char_shown, GetLineData());
     const StrSize INDEX_END = StringIndexOf(0, last_visible_char, GetLineData());
-    if (MultiSelected())   { // if one or more chars are selected, hilite, then draw the range in the selected-text color
-        CPSize low_cursor_pos  = std::min(m_cursor_pos.first, m_cursor_pos.second);
-        CPSize high_cursor_pos = std::max(m_cursor_pos.first, m_cursor_pos.second);
+
+    if (MultiSelected()) {
+        // if one or more chars are selected, hilite, then draw the range in
+        // the selected-text color
+        CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::max(CP0, std::min(m_cursor_pos.first, m_cursor_pos.second)));
+        CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(CP0, std::max(m_cursor_pos.first, m_cursor_pos.second)));
 
         // draw hiliting
         Pt hilite_ul(client_ul.x + (low_cursor_pos < 1 ? X0 : char_data[Value(low_cursor_pos - 1)].extent) - first_char_offset, client_ul.y);
-        Pt hilite_lr(client_ul.x + char_data[Value(high_cursor_pos - 1)].extent - first_char_offset, client_lr.y);
+        Pt hilite_lr(client_ul.x + (high_cursor_pos < 1 ? X0 : char_data[Value(high_cursor_pos - 1)].extent) - first_char_offset, client_lr.y);
         FlatRectangle(hilite_ul, hilite_lr, hilite_color_to_use, CLR_ZERO, 0);
 
         // INDEX_0 to INDEX_1 is unhilited, INDEX_1 to
@@ -160,6 +166,7 @@ void Edit::Render()
         text_x_pos +=
             GetFont()->RenderText(Pt(text_x_pos, text_y_pos),
                                   Text().substr(Value(INDEX_2), Value(INDEX_END - INDEX_2)));
+
     } else { // no selected text
         glColor(text_color_to_use);
         GetFont()->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)));
