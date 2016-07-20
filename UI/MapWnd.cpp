@@ -3208,6 +3208,21 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 res_group_core_members.insert(*sys_it);
             }
 
+            // Remove any resource source systems that are unconnected
+            // to the supply network.
+            std::vector<int> mark_unsupplied_source;
+            for (std::set<int>::iterator source_it=res_pool_sys_it->second.begin();
+                 source_it != res_pool_sys_it->second.end(); source_it++)
+            {
+                if (resource_supply_lanes_undirected.count(*source_it) == 0)
+                    mark_unsupplied_source.push_back(*source_it);
+            }
+            for (std::vector<int>::const_iterator unsupplied_it = mark_unsupplied_source.begin();
+                 unsupplied_it != mark_unsupplied_source.end(); ++ unsupplied_it) {
+                DebugLogger() << "betty " << *unsupplied_it;
+                res_pool_sys_it->second.erase(*unsupplied_it);
+            }
+
             std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
             lastSys--;
             for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
