@@ -3193,7 +3193,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
 
                     std::vector<int> path = GetLeastJumpsThroughSupplyLanes(
-                        *start_sys_it, *end_sys_it,
+                        //end_sys is intentionally before start_sys to
+                        //cause more short circuited paths.
+                        *end_sys_it, *start_sys_it,
                         supply_group,
                         resource_supply_lanes_undirected, Objects(),
                         systems_with_known_paths
