@@ -2860,7 +2860,7 @@ namespace {
 
         if (start_sys_it == end_sys_it
             || systems_with_known_paths.count(std::make_pair(std::min(start_sys_it, end_sys_it),
-                                                          std::max(start_sys_it, end_sys_it)))) {
+                                                             std::max(start_sys_it, end_sys_it)))) {
             return path;
         }
 
@@ -2886,9 +2886,9 @@ namespace {
                 boost::unordered_map<int,int>::const_iterator ancestor_newSys = ancestor.find(newSys);
                 if (!laneIt->second && ( ancestor_newSys == ancestor.end() )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
                     ancestor.insert(std::make_pair(newSys, sysID));
-                    if (newSys == end_sys_it) {
-                        // || sys_with_known_paths.count(std::make_pair(std::min(end_sys_it, newSys),
-                        //                                              std::max(end_sys_it, newSys)))) {
+                    if (newSys == end_sys_it
+                        || systems_with_known_paths.count(std::make_pair(std::min(end_sys_it, newSys),
+                                                                         std::max(end_sys_it, newSys)))) {
                         int iSys = newSys;
                         boost::unordered_map<int,int>::const_iterator ancestor_iSys;
                         while (((ancestor_iSys = ancestor.find(iSys)) != ancestor.end())
@@ -3200,8 +3200,13 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     );
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
                     for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
-                        systems_with_known_paths.insert(std::make_pair(std::min(*start_sys_it, *path_sys_it),
-                                                                       std::max(*start_sys_it, *path_sys_it)));
+                        if (path.size() > 1) {
+                            std::vector<int>::iterator path_sys_it2 = path_sys_it;
+                            for (++path_sys_it2; path_sys_it2!= path.end(); ++path_sys_it2) {
+                                systems_with_known_paths.insert(std::make_pair(std::min(*path_sys_it, *path_sys_it2),
+                                                                               std::max(*path_sys_it, *path_sys_it2)));
+                            }
+                        }
                         group_core.insert(*path_sys_it);
                         res_group_core_members.insert(*path_sys_it);
                         member_to_pool[*path_sys_it] = res_pool_sys_it->first;
