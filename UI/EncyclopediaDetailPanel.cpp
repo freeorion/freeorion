@@ -862,7 +862,7 @@ namespace {
             dir_names.push_back("ENC_FLEET");           dir_names.push_back("ENC_PLANET");
             dir_names.push_back("ENC_BUILDING");        dir_names.push_back("ENC_SYSTEM");
             dir_names.push_back("ENC_FIELD");           dir_names.push_back("ENC_GRAPH");
-            dir_names.push_back("ENC_GALAXY_SETUP");    dir_names.push_back("ENC_HOMEWORLDS");
+            dir_names.push_back("ENC_GALAXY_SETUP");//  dir_names.push_back("ENC_HOMEWORLDS");
         }
         return dir_names;
     }
@@ -883,6 +883,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
     // assemble link text to all pedia entrys, indexed by name
     const std::vector<std::string>& dir_names = GetSearchTextDirNames();
+
     // map from human-readable-name to (link-text, category nam
     std::multimap<std::string, std::pair<std::string, std::string> > all_pedia_entries_list;
 
@@ -939,52 +940,47 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
          entry_it = all_pedia_entries_list.begin();
          entry_it != all_pedia_entries_list.end(); ++entry_it)
     {
+        std::set<std::pair<std::string, std::string> >::const_iterator dupe_it =
+            already_listed_results.find(std::make_pair(entry_it->second.second, entry_it->first));
+        if (dupe_it != already_listed_results.end())
+            continue;
+
         for (std::set<std::string>::const_iterator word_it = words_in_search_text.begin();
              word_it != words_in_search_text.end(); ++word_it)
         {
-            if (GG::GUI::GetGUI()->ContainsWord(search_text, *word_it)) {
+            if (GG::GUI::GetGUI()->ContainsWord(entry_it->first, *word_it)) {
                 match_report += entry_it->second.first;
+                already_listed_results.insert(std::make_pair(entry_it->second.second, entry_it->first));
             }
         }
     }
 
-    // search for partial word matches: words that appear as part of text
+    // search for partial word matches: searched-for words that appear in the
+    // title text, not necessarily as a complete word
     match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
-    for (std::vector<std::string>::const_iterator it = dir_names.begin();
-         it != dir_names.end(); ++it)
+    for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
+         entry_it = all_pedia_entries_list.begin();
+         entry_it != all_pedia_entries_list.end(); ++entry_it)
     {
-        const std::string& type_text = *it;
-        std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
-        GetSortedPediaDirEntires(type_text, sorted_entries_list);
-        for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
-             entry_it = sorted_entries_list.begin();  entry_it != sorted_entries_list.end(); ++entry_it)
+        std::set<std::pair<std::string, std::string> >::const_iterator dupe_it =
+            already_listed_results.find(std::make_pair(entry_it->second.second, entry_it->first));
+        if (dupe_it != already_listed_results.end())
+            continue;
+
+        for (std::set<std::string>::const_iterator word_it = words_in_search_text.begin();
+             word_it != words_in_search_text.end(); ++word_it)
         {
-            if (boost::icontains(entry_it->first, search_text)) {
+            // reject searches in text for words less than 3 characters
+            if (word_it->size() < 3)
+                continue;
+            if (boost::icontains(entry_it->first, *word_it)) {
                 match_report += entry_it->second.first;
+                already_listed_results.insert(std::make_pair(entry_it->second.second, entry_it->first));
             }
         }
     }
-
-    //match_report += "\n" + UserString("ENC_SEARCH_IN_TEXT_MATCHES") + "\n\n";
-
-    //// Find a custom article that contains the search text in its name
-    //const Encyclopedia& pedia = GetEncyclopedia();
-    //for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
-    //     category_it = pedia.articles.begin(); category_it != pedia.articles.end(); ++category_it)
-    //{
-    //    const std::vector<EncyclopediaArticle>& articles = category_it->second;
-    //    for (std::vector<EncyclopediaArticle>::const_iterator article_it = articles.begin();
-    //         article_it != articles.end(); ++article_it)
-    //    {
-    //        const std::string& article_text = UserString(article_it->description);
-    //        if (boost::icontains(article_text, search_text)) {
-    //            //match_report += LinkTagg;
-    //        }
-    //    }
-    //}
 
     // compile list of articles into some dynamically generated search report text
-
     if (match_report.empty())
         match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
 

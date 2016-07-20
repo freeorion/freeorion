@@ -3693,8 +3693,8 @@ ENC_HOMEWORLDS
 ENC_INDEX
 Encyclopedia Index
 
-ENC_SEARCH_RESULTS_FOR
-Searched for: %1%
+SEARCH_RESULTS
+Search Results
 
 ENC_SEARCH_EXACT_MATCHES
 Exact Title Matches
