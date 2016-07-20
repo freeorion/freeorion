@@ -49,6 +49,7 @@
 
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
 #include <cassert>
@@ -994,18 +995,10 @@ std::set<std::pair<CPSize, CPSize> > GUI::FindWords(const std::string& str) cons
 
 std::set<std::pair<StrSize, StrSize> > GUI::FindWordsStringIndices(const std::string& str) const
 {
-    std::cout << "looking for words in text: " << str << std::endl;
-
     std::set<std::pair<StrSize, StrSize> > retval;
 
     utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
     utf8_wchar_iterator last(str.end(), str.begin(), str.end());
-    // determine where all UTF-8 characters are in the raw string
-    std::vector<std::pair<StrSize, StrSize> > chars;
-    for (utf8_wchar_iterator it = first; it != last; ++it) {
-        chars.push_back(std::make_pair(S0, S0));
-    }
-
     word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
     word_regex_iterator end_it;
 
@@ -1014,16 +1007,43 @@ std::set<std::pair<StrSize, StrSize> > GUI::FindWordsStringIndices(const std::st
     for ( ; it != end_it; ++it) {
         match_result_type match_result = *it;
         utf8_wchar_iterator word_pos_it = first;
+
         std::advance(word_pos_it, match_result.position());
-        std::string::const_iterator word_string_start_it = word_pos_it.base();
+        StrSize start_idx(std::distance(str.begin(), word_pos_it.base()));
         std::advance(word_pos_it, match_result.length());
-        std::string::const_iterator word_string_end_it = word_pos_it.base();
+        StrSize end_idx(std::distance(str.begin(), word_pos_it.base()));
 
-        std::string word(word_string_start_it, word_string_end_it);
-
-        std::cout << "found word: " << word << std::endl;
+        retval.insert(std::make_pair(start_idx, end_idx));
     }
     return retval;
+}
+
+bool GUI::ContainsWord(const std::string& str, const std::string& word) const
+{
+    if (word.empty())
+        return false;
+
+    utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
+    utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+    word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
+    word_regex_iterator end_it;
+
+    typedef word_regex_iterator::value_type match_result_type;
+
+    for ( ; it != end_it; ++it) {
+        match_result_type match_result = *it;
+        utf8_wchar_iterator word_pos_it = first;
+
+        std::advance(word_pos_it, match_result.position());
+        std::string::const_iterator start_it = word_pos_it.base();
+        std::advance(word_pos_it, match_result.length());
+        std::string word_in_str(start_it, word_pos_it.base());
+
+        if (boost::iequals(word_in_str, word))
+            return true;
+    }
+
+    return false;
 }
 
 const boost::shared_ptr<StyleFactory>& GUI::GetStyleFactory() const

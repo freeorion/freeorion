@@ -197,8 +197,10 @@ public:
         this function to exist, but the notion of what a "word" is is so
         application-specific that it was placed here so that users can
         customize this behavior. */
-    virtual std::set<std::pair<CPSize, CPSize> > FindWords(const std::string& str) const;
-    virtual std::set<std::pair<StrSize, StrSize> > FindWordsStringIndices(const std::string& str) const;
+    virtual std::set<std::pair<CPSize, CPSize> >    FindWords(const std::string& str) const;
+    virtual std::set<std::pair<StrSize, StrSize> >  FindWordsStringIndices(const std::string& str) const;
+    /** Returns true if \a word is a word that appears in \a str */
+    virtual bool                                    ContainsWord(const std::string& str, const std::string& word) const;
 
     const boost::shared_ptr<StyleFactory>& GetStyleFactory() const; ///< returns the currently-installed style factory
 
