@@ -267,8 +267,9 @@ public:
     {
         TemporaryPtr<UniverseObject> object =  Objects().Object(participant.object_id);
         if (object) {
-            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID()) + " " + boost::lexical_cast<std::string>(participant.current_health) + "/" +
-                          boost::lexical_cast<std::string>(participant.max_health)
+            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID()) + " " +
+                          DoubleToString(participant.current_health, 3, false) + "/" +
+                          DoubleToString(participant.max_health, 3, false)
             );
         }
         SetBrowseModeTime(300);
