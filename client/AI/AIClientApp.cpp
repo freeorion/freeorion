@@ -263,6 +263,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
+    case Message::SAVE_GAME_COMPLETE:
+        break;
+
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
