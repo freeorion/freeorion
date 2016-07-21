@@ -56,6 +56,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/PtRect.h>
@@ -2850,61 +2851,92 @@ namespace {
     // corresponding to valid supply lane destinations
     typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
 
-    std::vector<int> GetLeastJumpsThroughSupplyLanes(
-        int start_sys_it, int end_sys_it,
-        const std::set<int>& resGroup,
-        const SupplyLaneMMap& supplylanes,
-        const boost::unordered_set<std::pair<int, int> >& systems_with_known_paths)
+    /**
+       Returns either:
+       a) a \p good_path between from any one of \p terminal_points to all
+       reachable \p terminal_points along the \p supply_lanes.
+       b) a \p bad_start_point that doesn't connect to any other end point.
+       c) both empty indicating no more work to do.
+
+     */
+    void GetPathsThroughSupplyLanes(
+        boost::unordered_set<int> & good_path,
+        boost::optional<int> & bad_start_point,
+        const boost::unordered_set<int> & terminal_points,
+        const SupplyLaneMMap& supply_lanes)
     {
-        //std::map<int,bool> sysChecked;
+        good_path.clear();
+        bad_start_point = boost::optional<int>();
+
+        // No end points or start points, so all remaining supply lanes lead
+        // nowhere.
+        if (terminal_points.empty())
+            return;
+
         boost::unordered_map<int,int> ancestor;
         std::deque<int> tryNext;
         std::vector<int> path;
+        std::vector<int> reachable_endpoints;
 
-        if (start_sys_it == end_sys_it
-            || systems_with_known_paths.count(std::make_pair(std::min(start_sys_it, end_sys_it),
-                                                             std::max(start_sys_it, end_sys_it)))) {
-            return path;
-        }
+        int start_sys = *terminal_points.begin();
 
-        path.push_back(start_sys_it);
+        ancestor[start_sys] = start_sys;
+        tryNext.push_back(start_sys);
 
-        ancestor[start_sys_it] = start_sys_it;
-        tryNext.push_back(start_sys_it);
+        DebugLogger() << "PathThroughSupply starting with " << start_sys;
 
+        // Find all reachable endpoints
         while (!tryNext.empty() ) {
             int sysID = tryNext.front();
 
             std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator> supplylane_endpoints
-                = supplylanes.equal_range(sysID);
+                = supply_lanes.equal_range(sysID);
             for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
                  sup_it != supplylane_endpoints.second; ++sup_it)
             {
                 int newSys = sup_it->second;
-                boost::unordered_map<int,int>::const_iterator ancestor_newSys = ancestor.find(newSys);
-                if ( ancestor_newSys == ancestor.end()) { //is a starlane, and not yet visited newSys
+                //Not yet visited system
+                if ( ancestor.find(newSys) == ancestor.end()) {
                     ancestor.insert(std::make_pair(newSys, sysID));
-                    if (newSys == end_sys_it
-                        || systems_with_known_paths.count(std::make_pair(std::min(end_sys_it, newSys),
-                                                                         std::max(end_sys_it, newSys)))) {
-                        int iSys = newSys;
-                        boost::unordered_map<int,int>::const_iterator ancestor_iSys;
-                        while (((ancestor_iSys = ancestor.find(iSys)) != ancestor.end())
-                               && (ancestor_iSys->second != iSys )) {
-                            path.push_back(iSys);
-                            iSys = ancestor_iSys->second;
-                        }
-                        return path;
+
+                    //Found an end point
+                    if (terminal_points.count(newSys)) {
+                        reachable_endpoints.push_back(newSys);
                     }
                     tryNext.push_back(newSys);
                 }
             }
             tryNext.pop_front();
         }
-        //found no path, return empty vec
-        std::vector<int> nullPath;
-        return nullPath;
+
+        // This start point has no paths to any other terminal point.
+        if (reachable_endpoints.empty()) {
+            bad_start_point = start_sys;
+            DebugLogger() << "PathThroughSupply: Found no paths from " << start_sys;
+            return;
+        }
+
+        // Find all systems on any path back to start
+        DebugLogger() << "PathThroughSupply: Found end points from " << start_sys
+                      << " of length " << reachable_endpoints.size();
+        good_path.insert(start_sys);
+        for (std::vector<int>::const_iterator reached_it = reachable_endpoints.begin();
+             reached_it != reachable_endpoints.end(); ++reached_it) {
+            int ii_sys = *reached_it;
+            boost::unordered_map<int,int>::const_iterator ancestor_ii_sys;
+            while (((ancestor_ii_sys = ancestor.find(ii_sys)) != ancestor.end())
+                   && (ancestor_ii_sys->second != ii_sys )
+                   && (good_path.count(ancestor_ii_sys->first) == 0 )) {
+                good_path.insert(ancestor_ii_sys->first);
+                ii_sys = ancestor_ii_sys->second;
+            }
+        }
+        DebugLogger() << "PathThroughSupply: Found paths from " << start_sys << " of length " << good_path.size();
+
+        return;
     }
+
+
 
 }
 
@@ -3175,7 +3207,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 std::pair<SupplyLaneMMap::iterator, SupplyLaneMMap::iterator> loose_range
                     = resource_supply_lanes_undirected.equal_range(thread_end);
                 while(std::distance(loose_range.first, loose_range.second) == 1) {
-                    DebugLogger() << "lucy " << loose_range.first->first;
                     int new_thread_end = loose_range.first->second;
                     resource_supply_lanes_undirected.erase(loose_range.first);
                     thread_end = new_thread_end;
@@ -3218,45 +3249,50 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
             for (std::vector<int>::const_iterator unsupplied_it = mark_unsupplied_source.begin();
                  unsupplied_it != mark_unsupplied_source.end(); ++ unsupplied_it) {
-                DebugLogger() << "betty " << *unsupplied_it;
                 res_pool_sys_it->second.erase(*unsupplied_it);
             }
 
-            std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
-            lastSys--;
-            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
-                 start_sys_it != lastSys; start_sys_it++)
+            boost::unordered_set<int> path;
+            boost::optional<int> maybe_bad_start_point;
+            boost::unordered_set<int> terminal_points;
+            for (std::set<int>::iterator source_it=res_pool_sys_it->second.begin();
+                 source_it != res_pool_sys_it->second.end(); source_it++)
             {
-                // since res_pool_sys_it->second cannot be empty
-                std::set<int>::iterator next_sys_it = start_sys_it;
-                for (std::set<int>::iterator end_sys_it = ++next_sys_it;
-                     end_sys_it != res_pool_sys_it->second.end(); end_sys_it++)
-                {
-                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
+                terminal_points.insert(*source_it);
+            }
 
-                    std::vector<int> path = GetLeastJumpsThroughSupplyLanes(
-                        //end_sys is intentionally before start_sys to
-                        //cause more short circuited paths.
-                        *end_sys_it, *start_sys_it,
-                        supply_group,
-                        resource_supply_lanes_undirected,
-                        systems_with_known_paths
-                    );
-                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
-                    for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
-                        if (path.size() > 1) {
-                            std::vector<int>::iterator path_sys_it2 = path_sys_it;
-                            for (++path_sys_it2; path_sys_it2!= path.end(); ++path_sys_it2) {
-                                systems_with_known_paths.insert(std::make_pair(std::min(*path_sys_it, *path_sys_it2),
-                                                                               std::max(*path_sys_it, *path_sys_it2)));
-                            }
-                        }
-                        group_core.insert(*path_sys_it);
-                        res_group_core_members.insert(*path_sys_it);
-                        member_to_core[*path_sys_it] = &group_core;
+            int ii_safety = terminal_points.size();
+            while(true) {
+                DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers  hoop jump " << ii_safety;
+                if (ii_safety-- < 0) {
+                    ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers too many iterations of inner loop.  Skipping.";
+                    break;
+                }
+
+                GetPathsThroughSupplyLanes(path, maybe_bad_start_point, terminal_points,
+                                           resource_supply_lanes_undirected);
+
+                // Stop if No path found, no supply lanes to cull.
+                if (path.empty() && !maybe_bad_start_point)
+                    break;
+
+                // All systems on the path become valid end points
+                // Remove supply lanes used in the path
+                if (!path.empty()) {
+                    for (boost::unordered_set<int>::iterator path_it = path.begin(); path_it!= path.end(); path_it++) {
+                        group_core.insert(*path_it);
+                        res_group_core_members.insert(*path_it);
+                        member_to_core[*path_it] = &group_core;
+
+                        terminal_points.erase(*path_it);
                     }
                 }
+
+                if (maybe_bad_start_point)
+                    terminal_points.erase(*maybe_bad_start_point);
             }
+
+            
         }
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
