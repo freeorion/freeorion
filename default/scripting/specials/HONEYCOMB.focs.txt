@@ -38,7 +38,10 @@ Special
                 ]
             ]
             activation = Turn high = 0 
-            effects = Destroy
+            effects = [
+                SetPlanetSize planetsize = asteroids
+                SetPlanetType type = asteroids
+            ]
 
         EffectsGroup
             scope = Source
