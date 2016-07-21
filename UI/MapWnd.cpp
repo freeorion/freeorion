@@ -2851,6 +2851,17 @@ namespace {
     // corresponding to valid supply lane destinations
     typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
 
+    // AncestorInfo stores the \p ids of systems one back on the path.
+    struct AncestorInfo {
+        AncestorInfo(int a) : ids(1, a) {}
+        std::vector<int> ids;  // previous systems
+    };
+
+    struct PrevCurrInfo {
+        PrevCurrInfo(int p, int n) : prev(p), curr(n) {}
+        int prev, curr;
+    };
+
     /**
        Returns either:
        a) a \p good_path between from any one of \p terminal_points to all
@@ -2868,76 +2879,84 @@ namespace {
         good_path.clear();
         bad_start_point = boost::optional<int>();
 
-        // No end points or start points, so all remaining supply lanes lead
-        // nowhere.
+        // No terminal points, so all paths lead nowhere.
         if (terminal_points.empty())
             return;
 
-        boost::unordered_map<int,int> ancestor;
-        std::deque<int> tryNext;
+        boost::unordered_map<int, AncestorInfo> ancestors;
+        std::deque<PrevCurrInfo> tryNext;
         std::vector<int> path;
+
+        // A list of all reachable terminal points
         std::vector<int> reachable_endpoints;
 
         int start_sys = *terminal_points.begin();
 
-        ancestor[start_sys] = start_sys;
-        tryNext.push_back(start_sys);
-
-        DebugLogger() << "PathThroughSupply starting with " << start_sys;
+        ancestors.insert(std::make_pair(start_sys, AncestorInfo(start_sys)));
+        tryNext.push_back(PrevCurrInfo(start_sys, start_sys));
 
         // Find all reachable endpoints
         while (!tryNext.empty() ) {
-            int sysID = tryNext.front();
+            const PrevCurrInfo & curr = tryNext.front();
 
             std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator> supplylane_endpoints
-                = supply_lanes.equal_range(sysID);
+                = supply_lanes.equal_range(curr.curr);
             for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
                  sup_it != supplylane_endpoints.second; ++sup_it)
             {
-                int newSys = sup_it->second;
-                //Not yet visited system
-                if ( ancestor.find(newSys) == ancestor.end()) {
-                    ancestor.insert(std::make_pair(newSys, sysID));
+                int next = sup_it->second;
+                if (next == curr.prev)
+                    continue;
+                boost::unordered_map<int, AncestorInfo>::iterator ancestor = ancestors.find(next);
+                if (ancestor == ancestors.end()) {
 
-                    //Found an end point
-                    if (terminal_points.count(newSys)) {
-                        reachable_endpoints.push_back(newSys);
-                    }
-                    tryNext.push_back(newSys);
+                    // Unvisited system, so create new ancestor.
+                    ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr)));
+                    tryNext.push_back(PrevCurrInfo(curr.curr, next));
+
+                    // Record terminal point.
+                    if (terminal_points.count(next))
+                        reachable_endpoints.push_back(next);
+
+                } else {
+
+                    // Previously visited system so add to its ancestors.
+                    ancestor->second.ids.push_back(curr.curr);
                 }
             }
             tryNext.pop_front();
         }
 
+        // Queue is exhausted.
+
         // This start point has no paths to any other terminal point.
         if (reachable_endpoints.empty()) {
             bad_start_point = start_sys;
-            DebugLogger() << "PathThroughSupply: Found no paths from " << start_sys;
             return;
         }
 
-        // Find all systems on any path back to start
-        DebugLogger() << "PathThroughSupply: Found end points from " << start_sys
-                      << " of length " << reachable_endpoints.size();
+        // Find all systems on any path back to a terminal point.
         good_path.insert(start_sys);
+        boost::unordered_set<int> ancestors_on_path;
         for (std::vector<int>::const_iterator reached_it = reachable_endpoints.begin();
              reached_it != reachable_endpoints.end(); ++reached_it) {
-            int ii_sys = *reached_it;
-            boost::unordered_map<int,int>::const_iterator ancestor_ii_sys;
-            while (((ancestor_ii_sys = ancestor.find(ii_sys)) != ancestor.end())
-                   && (ancestor_ii_sys->second != ii_sys )
-                   && (good_path.count(ancestor_ii_sys->first) == 0 )) {
-                good_path.insert(ancestor_ii_sys->first);
-                ii_sys = ancestor_ii_sys->second;
+
+            boost::unordered_map<int, AncestorInfo>::const_iterator ancestor_ii_sys;
+            int ii_sys;
+            ancestors_on_path.insert(*reached_it);
+            while (!ancestors_on_path.empty()) {
+                ii_sys = *ancestors_on_path.begin();
+                ancestors_on_path.erase(ancestors_on_path.begin());
+                if ((ancestor_ii_sys = ancestors.find(ii_sys)) != ancestors.end()
+                       && ii_sys != start_sys
+                       && (good_path.count(ancestor_ii_sys->first) == 0 )) {
+                    good_path.insert(ancestor_ii_sys->first);
+                    ancestors_on_path.insert(ancestor_ii_sys->second.ids.begin(), ancestor_ii_sys->second.ids.end());
+                }
             }
         }
-        DebugLogger() << "PathThroughSupply: Found paths from " << start_sys << " of length " << good_path.size();
-
         return;
     }
-
-
-
 }
 
 void MapWnd::InitStarlaneRenderingBuffers() {
@@ -3227,7 +3246,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // known paths already found.
             boost::unordered_set<std::pair<int, int> > systems_with_known_paths;
 
-            const std::set<int>& supply_group = res_pool_to_group_map[res_pool_sys_it->first];
             std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
 
             // All individual system on their own are in.
