@@ -1591,9 +1591,6 @@ Object list column contents
 OPTIONS_DB_OBJECTS_LIST_COLUMN_WIDTH
 Object list column widths
 
-HOTKEY_MAP_OBJECTS
-Hotkey to open Objects list
-
 OPTIONS_DB_FLEET_WND_AGGRESSION
 Fleet window default aggression setting
 
@@ -12032,6 +12029,21 @@ Toggle research panel
 
 HOTKEY_MAP_DESIGN
 Toggle design panel
+
+HOTKEY_MAP_OBJECTS
+Hotkey to open Objects list
+
+HOTKEY_MAP_MESSAGES
+Toggle messages window
+
+HOTKEY_MAP_EMPIRES
+Toggle empires list
+
+HOTKEY_MAP_PEDIA
+Toggle pedia window
+
+HOTKEY_MAP_GRAPHS
+Show graphs list
 
 HOTKEY_MAP_PRODUCTION
 Toggle production panel

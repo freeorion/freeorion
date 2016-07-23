@@ -155,6 +155,10 @@ namespace {
         Hotkey::AddHotkey("map.production",           UserStringNop("HOTKEY_MAP_PRODUCTION"),           GG::GGK_p,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.design",               UserStringNop("HOTKEY_MAP_DESIGN"),               GG::GGK_d,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.objects",              UserStringNop("HOTKEY_MAP_OBJECTS"),              GG::GGK_o,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.messages",             UserStringNop("HOTKEY_MAP_MESSAGES"),             GG::GGK_t,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
+        Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
         Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
         Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_in_alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
@@ -815,7 +819,7 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
         in_window_func);
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_graphs->LeftClickedSignal, &MapWnd::ShowGraphs, this);
+    GG::Connect(m_btn_graphs->LeftClickedSignal, boost::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_graphs->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH"))));
@@ -5543,9 +5547,10 @@ bool MapWnd::TogglePedia() {
     return true;
 }
 
-void MapWnd::ShowGraphs() {
+bool MapWnd::ShowGraphs() {
     ShowPedia();
     m_pedia_panel->AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH");
+    return true;
 }
 
 void MapWnd::HideSidePanel() {
@@ -6085,7 +6090,6 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
 }
 
 namespace {
-
     /// On when the MapWnd window is visible and not covered
     //  by one of the full screen covering windows
     class NotCoveredMapWndCondition : public HotkeyCondition {
@@ -6118,6 +6122,14 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
     hkm->Connect(this, &MapWnd::ToggleObjects,          "map.objects",
+                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+    hkm->Connect(this, &MapWnd::ToggleMessages,         "map.messages",
+                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+    hkm->Connect(this, &MapWnd::ToggleEmpires,          "map.empires",
+                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+    hkm->Connect(this, &MapWnd::TogglePedia,            "map.pedia",
+                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+    hkm->Connect(this, &MapWnd::ShowGraphs,             "map.graphs",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
     hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));

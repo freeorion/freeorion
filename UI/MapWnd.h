@@ -347,7 +347,7 @@ private:
     void            ShowPedia();
     void            HidePedia();
 
-    void            ShowGraphs();
+    bool            ShowGraphs();
 
     void            HideSidePanel();
     void            RestoreSidePanel();
