@@ -2973,6 +2973,22 @@ namespace {
         }
         return;
     }
+
+
+    /** Look a \p kkey in \p mmap and if not found allocate an new
+        shared_ptr with the default constructor.*/
+    template <typename Map>
+    typename Map::mapped_type& lookup_or_make_shared(Map & mmap, typename Map::key_type const & kkey) {
+        typename Map::iterator map_it = mmap.find(kkey);
+        if (map_it == mmap.end()) {
+            map_it = mmap.insert(map_it,
+                                 std::make_pair(kkey,
+                                                boost::make_shared<typename Map::mapped_type::element_type>()));
+            if (map_it == mmap.end())
+                ErrorLogger() << "Unable to insert new empty set into map.";
+        }
+        return map_it->second;
+    }
 }
 
 void MapWnd::InitStarlaneRenderingBuffers() {
@@ -3176,15 +3192,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 if (!system)
                     continue;
 
-                boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator
-                    supplied_systems = res_pool_systems.find(it->first);
-                if (supplied_systems == res_pool_systems.end()) {
-                    supplied_systems = res_pool_systems.insert(
-                        supplied_systems, std::make_pair(it->first, boost::make_shared<std::set<int> >()));
-                    if (supplied_systems == res_pool_systems.end())
-                        ErrorLogger() << "Unable to insert new resource system.";
-                }
-                supplied_systems->second->insert(system_id);
+                lookup_or_make_shared(res_pool_systems, it->first)->insert(system_id);
             }
             this_pool += ")";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
@@ -3210,16 +3218,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
             }
 
-            boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator
-                group_core_it = res_group_cores.find(res_pool_sys_it->first);
-            if (group_core_it == res_group_cores.end()) {
-                group_core_it = res_group_cores.insert(
-                    group_core_it, std::make_pair(res_pool_sys_it->first, boost::make_shared<std::set<int> >()));
-                if (group_core_it == res_group_cores.end())
-                    ErrorLogger() << "Unable to insert new core system set.";
-            }
-
-            boost::shared_ptr<std::set<int> >& group_core = group_core_it->second;
+            boost::shared_ptr<std::set<int> >& group_core = lookup_or_make_shared(res_group_cores, res_pool_sys_it->first);
 
             // All individual system on their own are in.
             for (std::set<int>::iterator sys_it=res_pool_sys_it->second->begin();
