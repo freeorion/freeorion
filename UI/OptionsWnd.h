@@ -40,10 +40,10 @@ private:
             m_music_button(0)
         {}
 
-        /** Stores a pointer to  the sound effects check box.*/
-        void SetEffectsButton(GG::StateButton * const button);
+        /** Stores a pointer to the sound effects check box.*/
+        void SetEffectsButton(GG::StateButton* const button);
         /** Stores pointer to music enable check box.*/
-        void SetMusicButton(GG::StateButton * const button);
+        void SetMusicButton(GG::StateButton* const button);
 
         /**Enables/disables sound effects when the sound effects check
            box is clicked.*/

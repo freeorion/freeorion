@@ -452,11 +452,9 @@ void Sound::SoundImpl::StopMusic() {
     if (!m_initialized)
         return;
 
-    if (alcGetCurrentContext() != 0)
-    {
+    if (alcGetCurrentContext() != 0) {
         alSourceStop(m_sources[0]);
-        if (m_music_name.size() > 0)
-        {
+        if (m_music_name.size() > 0) {
             m_music_name.clear();  // do this to avoid music being re-started by other functions
             ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
         }
@@ -491,16 +489,14 @@ void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui
     };
 #endif
 
-    if (alcGetCurrentContext() != 0)
-    {
+    if (alcGetCurrentContext() != 0) {
         /* First check if the sound data of the file we want to play is already buffered somewhere */
         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
         if (it != m_buffers.end()) {
             current_buffer = it->second;
             found_buffer = true;
         } else {
-            if ((file = fopen(filename.c_str(), "rb")) != 0) // make sure we CAN open it
-            {
+            if ((file = fopen(filename.c_str(), "rb")) != 0) { // make sure we CAN open it
                 OggVorbis_File ogg_file;
                 vorbis_info *vorbis_info;
                 ALenum ogg_format;
