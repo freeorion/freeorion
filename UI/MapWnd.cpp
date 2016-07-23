@@ -2994,8 +2994,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
     boost::unordered_map<std::set<int>, std::set<int> > res_pool_systems;
-    // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
-    boost::unordered_map<std::set<int>, std::set<int> > res_pool_to_group_map;
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     boost::unordered_map<std::set<int>, std::set<int> > res_group_cores;
 
@@ -3151,7 +3149,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     if (this_client_empire) {
         ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers improved section", true);
-        const std::set<std::set<int> >& res_groups = GetSupplyManager().ResourceSupplyGroups(client_empire_id);
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
         std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
         std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
@@ -3184,30 +3181,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocatedPP[it->first] << " PP allocated";
         }
-
-        // For each industry set (now from res_pool_systems) A for each
-        // supply set B from the SupplyManager, if any system from A is in
-        // B associate this supply set with res_pool_to_group_map[ industry set]?
-
-        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
-        for (boost::unordered_map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
-             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
-        {
-            for (std::set<std::set<int> >::const_iterator rg_it = res_groups.begin(); rg_it != res_groups.end(); ++rg_it) {
-                bool placed_pool = false;
-                for (std::set<int>::iterator sysIt=res_pool_sys_it->second.begin(); sysIt!=res_pool_sys_it->second.end(); sysIt++) {
-                    if (rg_it->find(*sysIt) != rg_it->end()) {
-                        res_pool_to_group_map[res_pool_sys_it->first] = *rg_it;
-                        placed_pool = true;
-                        break;
-                    }
-                }
-                if (placed_pool)
-                    break;
-            }
-        }
-        // TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
-        // DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
 
 
         // For each production set N(N-1) upper triangle of systems path
