@@ -3224,44 +3224,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
             }
 
-            // Remove dead end supply lanes a string of "loose thread"
-            // supply lanes that don't terminate on a resource source.
-            std::vector<int> loose_enders;
-            SupplyLaneMMap::iterator supply_it = resource_supply_lanes_undirected.begin();
-            while (supply_it != resource_supply_lanes_undirected.end()) {
-                size_t num_supply_lanes = resource_supply_lanes_undirected.count(supply_it->first);
-                if (num_supply_lanes < 2 && res_pool_sys_it->second.count(supply_it->first) == 0) {
-                    loose_enders.push_back(supply_it->first);
-                }
-                std::advance(supply_it, num_supply_lanes);
-            }
-
-            for (std::vector<int>::const_iterator loose_it = loose_enders.begin();
-                 loose_it != loose_enders.end(); ++loose_it) {
-                int thread_end = *loose_it;
-                std::pair<SupplyLaneMMap::iterator, SupplyLaneMMap::iterator> loose_range
-                    = resource_supply_lanes_undirected.equal_range(thread_end);
-                while(std::distance(loose_range.first, loose_range.second) == 1) {
-                    int new_thread_end = loose_range.first->second;
-                    resource_supply_lanes_undirected.erase(loose_range.first);
-                    thread_end = new_thread_end;
-                    loose_range = resource_supply_lanes_undirected.equal_range(thread_end);
-                }
-            }
-
-            // std::string this_pool_ctrs = "( ";
-            // for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
-            //      start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
-            // {
-            //     this_pool_ctrs += boost::lexical_cast<std::string>(*start_sys_it) +", ";
-            // }
-            // this_pool_ctrs += ")";
-            //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
-
-            // Systems from the production set or the supply chain with
-            // known paths already found.
-            boost::unordered_set<std::pair<int, int> > systems_with_known_paths;
-
             std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
 
             // All individual system on their own are in.
@@ -3270,20 +3232,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             {
                 group_core.insert(*sys_it);
                 res_group_core_members.insert(*sys_it);
-            }
-
-            // Remove any resource source systems that are unconnected
-            // to the supply network.
-            std::vector<int> mark_unsupplied_source;
-            for (std::set<int>::iterator source_it=res_pool_sys_it->second.begin();
-                 source_it != res_pool_sys_it->second.end(); source_it++)
-            {
-                if (resource_supply_lanes_undirected.count(*source_it) == 0)
-                    mark_unsupplied_source.push_back(*source_it);
-            }
-            for (std::vector<int>::const_iterator unsupplied_it = mark_unsupplied_source.begin();
-                 unsupplied_it != mark_unsupplied_source.end(); ++ unsupplied_it) {
-                res_pool_sys_it->second.erase(*unsupplied_it);
             }
 
             boost::unordered_set<int> path;
