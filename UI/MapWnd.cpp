@@ -2843,6 +2843,61 @@ std::vector<int> MapWnd::GetLeastJumps(int start_sys_it, int end_sys_it, const s
     return nullPath;
 }
 
+namespace {
+    std::vector<int> GetLeastJumpsThroughSupplyLanes(
+        int start_sys_it, int end_sys_it,
+        const std::set<int>& resGroup,
+        const std::set<std::pair<int, int> >& supplylanes,
+        const ObjectMap& objMap)
+    {
+        //std::map<int,bool> sysChecked;
+        std::map<int,int> ancestor;
+        std::deque<int> tryNext;
+        std::vector<int> path;
+        path.push_back(start_sys_it);
+        if (start_sys_it==end_sys_it)
+            return path;
+
+        for (std::set<int>::const_iterator sysIt = resGroup.begin(); sysIt!=resGroup.end(); sysIt++)
+            ancestor[*sysIt] = -1;
+        ancestor[start_sys_it] = start_sys_it;
+        tryNext.push_back(start_sys_it);
+
+        while (!tryNext.empty() ) {
+            int sysID = tryNext.front();
+
+            TemporaryPtr<const System> system = objMap.Object<const System>(sysID);
+            if (!system)
+                continue;
+            const std::map<int, bool>& lanes = system->StarlanesWormholes();
+            for (std::map<int, bool>::const_iterator laneIt = lanes.begin();
+                 laneIt != lanes.end(); ++laneIt)
+            {
+                int newSys = laneIt->first;
+                std::pair<int, int> lane_min_then_max = std::make_pair(std::min(sysID, newSys), std::max(sysID, newSys));
+                if (supplylanes.find(lane_min_then_max) == supplylanes.end())
+                    continue;
+                if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
+                    ancestor[newSys] = sysID;
+                    if (newSys==end_sys_it) {
+                        int iSys = newSys;
+                        while ((ancestor[iSys] !=-1)&&( ancestor[iSys] != iSys )) {
+                            path.push_back(iSys);
+                            iSys = ancestor[iSys];
+                        }
+                        return path;
+                    }
+                    tryNext.push_back(newSys);
+                }
+            }
+            tryNext.pop_front();
+        }
+        //found no path, return empty vec
+        std::vector<int> nullPath;
+        return nullPath;
+    }
+
+}
 void MapWnd::InitStarlaneRenderingBuffers() {
     DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
     ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
@@ -3075,7 +3130,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // through set of supply links res_pool_to_group[Pgroup] and copy every
         // system on the path into
 
-        std::set<std::pair<int, int> > resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
         // Supply starlane with no directional preference.
         std::set<std::pair<int, int> > resource_supply_lanes_undirected;
         const std::set<std::pair<int, int> > resource_supply_lanes_directed
@@ -3112,8 +3166,11 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                      end_sys_it != res_pool_sys_it->second.end(); end_sys_it++)
                 {
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
-                    std::vector<int> path = GetLeastJumps(*start_sys_it, *end_sys_it, res_pool_to_group_map[res_pool_sys_it->first],
-                                                          resource_supply_lanes, Objects());
+                    std::vector<int> path = GetLeastJumpsThroughSupplyLanes(
+                        *start_sys_it, *end_sys_it,
+                        res_pool_to_group_map[res_pool_sys_it->first],
+                        resource_supply_lanes_undirected, Objects()
+                    );
                     //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
                     for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
                         res_group_cores[ res_pool_sys_it->first ].insert(*path_sys_it);
