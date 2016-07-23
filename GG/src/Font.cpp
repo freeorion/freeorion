@@ -1818,7 +1818,8 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
                     if (0 <= temp_color[0] && temp_color[0] <= 255 &&
                         0 <= temp_color[1] && temp_color[1] <= 255 &&
                         0 <= temp_color[2] && temp_color[2] <= 255 &&
-                        0 <= temp_color[3] && temp_color[3] <= 255) {
+                        0 <= temp_color[3] && temp_color[3] <= 255)
+                    {
                         color[0] = temp_color[0];
                         color[1] = temp_color[1];
                         color[2] = temp_color[2];
@@ -1838,7 +1839,8 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
                         if (0.0 <= color[0] && color[0] <= 1.0 &&
                             0.0 <= color[1] && color[1] <= 1.0 &&
                             0.0 <= color[2] && color[2] <= 1.0 &&
-                            0.0 <= color[3] && color[3] <= 1.0) {
+                            0.0 <= color[3] && color[3] <= 1.0)
+                        {
                             glColor4dv(color);
                             render_state.PushColor(color[0], color[1], color[2], color[3]);
                         } else {
