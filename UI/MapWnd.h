@@ -453,6 +453,8 @@ private:
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 
+    std::vector<std::pair<GG::Pt, ShapeOrientation> > m_delete_me_supply_rendering_mishaps;
+
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
     GG::Button*                 m_btn_turn;         //!< button that updates player's turn

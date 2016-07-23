@@ -1427,6 +1427,18 @@ void MapWnd::Render() {
     RenderSystems();
     RenderFleetMovementLines();
 
+    /*Debug Test only remove below*/
+    int radius = ceil(ClientUI::SystemCircleSize() / 2);
+    GG::Pt offset = GG::Pt(GG::X(radius), GG::Y(radius));
+    for (std::vector<std::pair<GG::Pt, ShapeOrientation> >::const_iterator it = m_delete_me_supply_rendering_mishaps.begin();
+         it != m_delete_me_supply_rendering_mishaps.end(); ++it) {
+        GG::Pt center = it->first;
+        GG::Pt tri_ul = center - offset;
+        GG::Pt tri_lr = center + offset;
+        IsoscelesTriangle(tri_ul, tri_lr, it->second, GG::Clr(255,110,25,255));
+    }
+    /*Debug Test only remove above*/
+
     glPopClientAttrib();
     glPopMatrix();
 }
@@ -3141,18 +3153,42 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             ErrorLogger() << "Errors in comparison of " << #setname;    \
             if (old_method_##setname.size() != setname.size())          \
                 ErrorLogger() << "size (" <<setname.size() <<") != old(" <<old_method_##setname.size() <<")"; \
-            throw "not equal sets";                                     \
+            for (std::set<int>::iterator it = setname.begin(); it != setname.end();++it) { \
+                if (old_method_##setname.count(*it) == 0) { \
+                    ErrorLogger() <<  "(" << *it <<") is missing from old_method_" << #setname; \
+                    TemporaryPtr<const System> system = GetSystem(*it);\
+                    if (system) {                                      \
+                        int radius = ceil(ClientUI::SystemCircleSize()); \
+                        GG::Pt center = GG::Pt(GG::X((int)ceil(system->X())), GG::Y((int)ceil(system->Y())) + GG::Y(radius)); \
+                        m_delete_me_supply_rendering_mishaps.push_back(std::make_pair(center, SHAPE_UP)); \
+                    } else {                                            \
+                        ErrorLogger() <<  "(" << *it <<") DNE" << #setname; \
+                    }                                                   \
+                }                                                       \
+            }                                                           \
+            for (std::set<int>::iterator it = old_method_##setname.begin(); it != old_method_##setname.end();++it) { \
+                if (setname.count(*it) == 0) { \
+                    ErrorLogger() <<  "(" << *it <<") is missing from " << #setname; \
+                    TemporaryPtr<const System> system = GetSystem(*it);\
+                    if (system) {                                      \
+                        int radius = ceil(ClientUI::SystemCircleSize()); \
+                        GG::Pt center = GG::Pt(GG::X((int)ceil(system->X())), GG::Y((int)ceil(system->Y())) - GG::Y(radius)); \
+                        m_delete_me_supply_rendering_mishaps.push_back(std::make_pair(center, SHAPE_DOWN)); \
+                    } else {                                            \
+                        ErrorLogger() <<  "(" << *it <<") DNE" << #setname; \
+                    }                                                   \
+                }                                                       \
+            }                                                           \
         }
 
 #define CHECK_VS_OLD_MAP(setname)                                       \
         if (old_method_ ## setname != setname) {                        \
             ErrorLogger() << "Errors in comparison of " << #setname;    \
-        if (old_method_##setname.size() != setname.size())              \
-            ErrorLogger() << "size (" <<setname.size() <<") != old(" <<old_method_##setname.size() <<")"; \
-        throw "not equal maps";                                         \
+            if (old_method_##setname.size() != setname.size())          \
+                ErrorLogger() << "size (" <<setname.size() <<") != old(" <<old_method_##setname.size() <<")"; \
         }
 
-        CHECK_VS_OLD_SET (under_alloc_res_sys);
+        m_delete_me_supply_rendering_mishaps.clear();
         CHECK_VS_OLD_MAP(res_pool_systems);
         CHECK_VS_OLD_MAP(res_pool_to_group_map);
         CHECK_VS_OLD_MAP(res_group_cores);
