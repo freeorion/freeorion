@@ -3014,8 +3014,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_group_cores;
 
     std::set<int>                           res_group_core_members;
-    boost::unordered_map<int, const std::set<int> * >   member_to_core;
-    std::set<int>                           under_alloc_res_grp_core_members;
+    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >   member_to_core;
+    boost::shared_ptr<std::set<int> >       under_alloc_res_grp_core_members;
 
     std::set<int> old_method_under_alloc_res_sys;
 
@@ -3244,7 +3244,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 for (boost::unordered_set<int>::iterator path_it = path.begin(); path_it!= path.end(); path_it++) {
                     group_core->insert(*path_it);
                     res_group_core_members.insert(*path_it);
-                    member_to_core[*path_it] = &(*group_core);
+                    member_to_core[*path_it] = group_core;
                 }
             }
 
@@ -3260,8 +3260,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 continue;
 
             if (group_pp > allocatedPP[it->first] + 0.05) {
-                const std::set<int>& core_systems(*res_group_cores[ it->first]);
-                under_alloc_res_grp_core_members.insert(core_systems.begin(), core_systems.end());
+                boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(it->first);
+                if (group_core_it != res_group_cores.end())
+                    under_alloc_res_grp_core_members = group_core_it->second;
             }
         }
     }
@@ -3312,7 +3313,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
         m_delete_me_supply_rendering_mishaps.clear();
         CHECK_VS_OLD_SET(res_group_core_members);
-        CHECK_VS_OLD_SET(under_alloc_res_grp_core_members);
+        // CHECK_VS_OLD_SET(under_alloc_res_grp_core_members);
 
 #undef CHECK_VS_OLD_SET
 #undef CHECK_VS_OLD_MAP
@@ -3421,7 +3422,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 if ( (this_client_empire) &&(res_group_core_members.find(start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
                     lane_colour = this_client_empire->Color();
                     float indicatorExtent = 0.5f;
-                    if (under_alloc_res_grp_core_members.find(start_system->ID()) != under_alloc_res_grp_core_members.end() ) {
+                    if (under_alloc_res_grp_core_members
+                        && (under_alloc_res_grp_core_members->find(start_system->ID()) != under_alloc_res_grp_core_members->end() ) ) {
                         GG::Clr eclr= this_client_empire->Color();
                         lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
@@ -3429,9 +3431,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    boost::unordered_map<int, const std::set<int> * >::const_iterator start_core = member_to_core.find(start_system->ID());
-                    boost::unordered_map<int, const std::set<int> * >::const_iterator dest_core = member_to_core.find(dest_system->ID());
+                    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >::const_iterator start_core = member_to_core.find(start_system->ID());
+                    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >::const_iterator dest_core = member_to_core.find(dest_system->ID());
                     if (start_core != member_to_core.end() && dest_core != member_to_core.end()
+                        && (start_core->second != dest_core->second)
                         && (*(start_core->second) != *(dest_core->second)))
                         indicatorExtent = 0.2f;
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
