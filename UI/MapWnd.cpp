@@ -2993,7 +2993,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     const Empire* this_client_empire = GetEmpire(client_empire_id);
 
     // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
-    boost::unordered_map<std::set<int>, std::set<int> > res_pool_systems;
+    boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_pool_systems;
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     boost::unordered_map<std::set<int>, std::set<int> > res_group_cores;
 
@@ -3175,7 +3175,16 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 TemporaryPtr<const System> system = Objects().Object<const System>(system_id);
                 if (!system)
                     continue;
-                res_pool_systems[it->first].insert(system_id);
+
+                boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator
+                    supplied_systems = res_pool_systems.find(it->first);
+                if (supplied_systems == res_pool_systems.end()) {
+                    supplied_systems = res_pool_systems.insert(
+                        supplied_systems, std::make_pair(it->first, boost::make_shared<std::set<int> >()));
+                    if (supplied_systems == res_pool_systems.end())
+                        ErrorLogger() << "Unable to insert new resource system.";
+                }
+                supplied_systems->second->insert(system_id);
             }
             this_pool += ")";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
@@ -3187,7 +3196,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // through set of supply links res_pool_to_group[Pgroup] and copy every
         // system on the path into
 
-        for (boost::unordered_map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+        for (boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
             // Supply starlane with no directional preference.
@@ -3204,8 +3213,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
 
             // All individual system on their own are in.
-            for (std::set<int>::iterator sys_it=res_pool_sys_it->second.begin();
-                 sys_it != res_pool_sys_it->second.end(); sys_it++)
+            for (std::set<int>::iterator sys_it=res_pool_sys_it->second->begin();
+                 sys_it != res_pool_sys_it->second->end(); sys_it++)
             {
                 group_core.insert(*sys_it);
                 res_group_core_members.insert(*sys_it);
@@ -3213,8 +3222,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
             boost::unordered_set<int> path;
             boost::unordered_set<int> terminal_points;
-            for (std::set<int>::iterator source_it=res_pool_sys_it->second.begin();
-                 source_it != res_pool_sys_it->second.end(); source_it++)
+            for (std::set<int>::iterator source_it=res_pool_sys_it->second->begin();
+                 source_it != res_pool_sys_it->second->end(); source_it++)
             {
                 terminal_points.insert(*source_it);
             }
