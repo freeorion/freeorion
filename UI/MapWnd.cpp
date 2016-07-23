@@ -2853,31 +2853,30 @@ namespace {
 
     // AncestorInfo stores the \p ids of systems one back on the path.
     struct AncestorInfo {
-        AncestorInfo(int a) : ids(1, a) {}
+        AncestorInfo(int a, int o) : ids(1, a), single_origin(o) {}
         std::vector<int> ids;  // previous systems
+        // originating terminal or nothing for connected resources
+        boost::optional<int> single_origin;
     };
 
     struct PrevCurrInfo {
-        PrevCurrInfo(int p, int n) : prev(p), curr(n) {}
-        int prev, curr;
+        PrevCurrInfo(int p, int n, int o) : prev(p), curr(n), origin(o) {}
+        int prev, curr, origin;
     };
 
     /**
        Returns either:
-       a) a \p good_path between from any one of \p terminal_points to all
+       a) a \p good_path between from any \p terminal_points to all
        reachable \p terminal_points along the \p supply_lanes.
-       b) a \p bad_start_point that doesn't connect to any other end point.
-       c) both empty indicating no more work to do.
+       b) empty indicating no more work to do.
 
      */
     void GetPathsThroughSupplyLanes(
         boost::unordered_set<int> & good_path,
-        boost::optional<int> & bad_start_point,
         const boost::unordered_set<int> & terminal_points,
         const SupplyLaneMMap& supply_lanes)
     {
         good_path.clear();
-        bad_start_point = boost::optional<int>();
 
         // No terminal points, so all paths lead nowhere.
         if (terminal_points.empty())
@@ -2890,10 +2889,14 @@ namespace {
         // A list of all reachable terminal points
         std::vector<int> reachable_endpoints;
 
-        int start_sys = *terminal_points.begin();
+        //        ancestors.insert(std::make_pair(start_sys,
+        //        AncestorInfo(start_sys)));
 
-        ancestors.insert(std::make_pair(start_sys, AncestorInfo(start_sys)));
-        tryNext.push_back(PrevCurrInfo(start_sys, start_sys));
+        for (boost::unordered_set<int>::const_iterator start_it = terminal_points.begin();
+             start_it != terminal_points.end(); ++start_it) {
+            tryNext.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
+            ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it, *start_it)));
+        }
 
         // Find all reachable endpoints
         while (!tryNext.empty() ) {
@@ -2908,20 +2911,37 @@ namespace {
                 if (next == curr.prev)
                     continue;
                 boost::unordered_map<int, AncestorInfo>::iterator ancestor = ancestors.find(next);
+
+                // Unvisited system, so create new ancestor.
                 if (ancestor == ancestors.end()) {
+                    ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr, curr.origin)));
+                    tryNext.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
+                }
 
-                    // Unvisited system, so create new ancestor.
-                    ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr)));
-                    tryNext.push_back(PrevCurrInfo(curr.curr, next));
+                // Previously visited so modify older ancestor to merge
+                // paths/create end points.
+                else {
 
-                    // Record terminal point.
-                    if (terminal_points.count(next))
+                    // Same origin so add to ancestors.
+                    if (ancestor->second.single_origin
+                        && ancestor->second.single_origin == curr.origin) {
+                        ancestor->second.ids.push_back(curr.curr);
+                    }
+
+                    // Different origins so mark both as ends of good paths
+                    else if (ancestor->second.single_origin
+                        && ancestor->second.single_origin != curr.origin) {
+                        // Single origin becomes multi origin and these
+                        // points are marked as midpoints.
+                        ancestor->second.single_origin = boost::none;
+                        reachable_endpoints.push_back(curr.curr);
                         reachable_endpoints.push_back(next);
+                    }
 
-                } else {
-
-                    // Previously visited system so add to its ancestors.
-                    ancestor->second.ids.push_back(curr.curr);
+                    // Already multi-origin so add to ancestors
+                    else {
+                        ancestor->second.ids.push_back(curr.curr);
+                    }
                 }
             }
             tryNext.pop_front();
@@ -2929,14 +2949,11 @@ namespace {
 
         // Queue is exhausted.
 
-        // This start point has no paths to any other terminal point.
-        if (reachable_endpoints.empty()) {
-            bad_start_point = start_sys;
+        // No terminal point has a path to any other terminal point.
+        if (reachable_endpoints.empty())
             return;
-        }
 
         // Find all systems on any path back to a terminal point.
-        good_path.insert(start_sys);
         boost::unordered_set<int> ancestors_on_path;
         for (std::vector<int>::const_iterator reached_it = reachable_endpoints.begin();
              reached_it != reachable_endpoints.end(); ++reached_it) {
@@ -2948,7 +2965,6 @@ namespace {
                 ii_sys = *ancestors_on_path.begin();
                 ancestors_on_path.erase(ancestors_on_path.begin());
                 if ((ancestor_ii_sys = ancestors.find(ii_sys)) != ancestors.end()
-                       && ii_sys != start_sys
                        && (good_path.count(ancestor_ii_sys->first) == 0 )) {
                     good_path.insert(ancestor_ii_sys->first);
                     ancestors_on_path.insert(ancestor_ii_sys->second.ids.begin(), ancestor_ii_sys->second.ids.end());
@@ -3271,7 +3287,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
 
             boost::unordered_set<int> path;
-            boost::optional<int> maybe_bad_start_point;
             boost::unordered_set<int> terminal_points;
             for (std::set<int>::iterator source_it=res_pool_sys_it->second.begin();
                  source_it != res_pool_sys_it->second.end(); source_it++)
@@ -3279,38 +3294,18 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 terminal_points.insert(*source_it);
             }
 
-            int ii_safety = terminal_points.size();
-            while(true) {
-                DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers  hoop jump " << ii_safety;
-                if (ii_safety-- < 0) {
-                    ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers too many iterations of inner loop.  Skipping.";
-                    break;
+            GetPathsThroughSupplyLanes(path, terminal_points, resource_supply_lanes_undirected);
+
+            // All systems on the path become valid end points
+            // Remove supply lanes used in the path
+            if (!path.empty()) {
+                for (boost::unordered_set<int>::iterator path_it = path.begin(); path_it!= path.end(); path_it++) {
+                    group_core.insert(*path_it);
+                    res_group_core_members.insert(*path_it);
+                    member_to_core[*path_it] = &group_core;
                 }
-
-                GetPathsThroughSupplyLanes(path, maybe_bad_start_point, terminal_points,
-                                           resource_supply_lanes_undirected);
-
-                // Stop if No path found, no supply lanes to cull.
-                if (path.empty() && !maybe_bad_start_point)
-                    break;
-
-                // All systems on the path become valid end points
-                // Remove supply lanes used in the path
-                if (!path.empty()) {
-                    for (boost::unordered_set<int>::iterator path_it = path.begin(); path_it!= path.end(); path_it++) {
-                        group_core.insert(*path_it);
-                        res_group_core_members.insert(*path_it);
-                        member_to_core[*path_it] = &group_core;
-
-                        terminal_points.erase(*path_it);
-                    }
-                }
-
-                if (maybe_bad_start_point)
-                    terminal_points.erase(*maybe_bad_start_point);
             }
 
-            
         }
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
