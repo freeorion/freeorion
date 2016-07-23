@@ -2992,11 +2992,15 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const Empire* this_client_empire = GetEmpire(client_empire_id);
 
-    std::map<std::set<int>, std::set<int> > res_pool_systems;       // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
-    std::map<std::set<int>, std::set<int> > res_pool_to_group_map;  // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
-    std::map<std::set<int>, std::set<int> > res_group_cores;        // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
+    boost::unordered_map<std::set<int>, std::set<int> > res_pool_systems;
+    // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
+    boost::unordered_map<std::set<int>, std::set<int> > res_pool_to_group_map;
+    // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    boost::unordered_map<std::set<int>, std::set<int> > res_group_cores;
+
     std::set<int>                           res_group_core_members;
-    std::map<int, const std::set<int> * >   member_to_core;
+    boost::unordered_map<int, const std::set<int> * >   member_to_core;
     std::set<int>                           under_alloc_res_grp_core_members;
 
     std::set<int> old_method_under_alloc_res_sys;
@@ -3186,7 +3190,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // B associate this supply set with res_pool_to_group_map[ industry set]?
 
         //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
-        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+        for (boost::unordered_map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
             for (std::set<std::set<int> >::const_iterator rg_it = res_groups.begin(); rg_it != res_groups.end(); ++rg_it) {
@@ -3210,7 +3214,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // through set of supply links res_pool_to_group[Pgroup] and copy every
         // system on the path into
 
-        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+        for (boost::unordered_map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
             // Supply starlane with no directional preference.
@@ -3317,9 +3321,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
 
         m_delete_me_supply_rendering_mishaps.clear();
-        CHECK_VS_OLD_MAP(res_pool_systems);
-        CHECK_VS_OLD_MAP(res_pool_to_group_map);
-        CHECK_VS_OLD_MAP(res_group_cores);
         CHECK_VS_OLD_SET(res_group_core_members);
         CHECK_VS_OLD_SET(under_alloc_res_grp_core_members);
 
@@ -3438,8 +3439,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    std::map<int, const std::set<int> * >::const_iterator start_core = member_to_core.find(start_system->ID());
-                    std::map<int, const std::set<int> * >::const_iterator dest_core = member_to_core.find(dest_system->ID());
+                    boost::unordered_map<int, const std::set<int> * >::const_iterator start_core = member_to_core.find(start_system->ID());
+                    boost::unordered_map<int, const std::set<int> * >::const_iterator dest_core = member_to_core.find(dest_system->ID());
                     if (start_core != member_to_core.end() && dest_core != member_to_core.end()
                         && (*(start_core->second) != *(dest_core->second)))
                         indicatorExtent = 0.2f;
