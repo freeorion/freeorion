@@ -7,6 +7,7 @@
 #include <GG/GGFwd.h>
 
 #include "CUIWnd.h"
+#include "Sound.h"
 
 
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
@@ -58,7 +59,7 @@ private:
         /** Handles a sound initialization failure by setting sound
             effects and music enable check boxes to disabled and
             informing the player with a popup message box.*/
-        void SoundInitializationFailure(std::runtime_error const &e);
+        void SoundInitializationFailure(Sound::InitializationFailureException const &e);
 
     private:
         GG::StateButton* m_effects_button;

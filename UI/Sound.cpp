@@ -23,7 +23,7 @@ public:
     SoundImpl();  ///< ctor.
     ~SoundImpl(); ///< dotr.
 
-    /** Enables the sound system.  Throws runtime_error on failure. */
+    /** Enables the sound system.  Throws Sound::InitializationFailureException on failure. */
     void Enable();
 
     /** Disable the sound system. */
@@ -215,9 +215,10 @@ Sound::SoundImpl::SoundImpl() :
 
     try {
         Enable();
-    } catch (std::runtime_error const & e) {
-        if (std::string(e.what()) != "ERROR_SOUND_INITIALIZATION_FAILED")
-            throw;
+    } catch (InitializationFailureException const&) {
+        // Bury the exception because the GetSound() singleton may cause
+        // the sound system to initialize at unpredictable times when
+        // the user can't be usefully informed of the failure.
     }
 }
 
@@ -239,7 +240,7 @@ void Sound::SoundImpl::Enable() {
         ErrorLogger() "Unable to initialize audio.  Sound effects and music are disabled.";
         // TODO: Let InitOpenAL throw the OpenAL error message which
         // might be more useful.
-        throw std::runtime_error("ERROR_SOUND_INITIALIZATION_FAILED");
+        throw InitializationFailureException("ERROR_SOUND_INITIALIZATION_FAILED");
     }
 
     DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");

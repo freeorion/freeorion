@@ -1127,7 +1127,7 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("UI.sound.enabled", true);
             Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
-        } catch (std::runtime_error const &e) {
+        } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
@@ -1143,7 +1143,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("UI.sound.music-enabled", true);
             Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
-        } catch (std::runtime_error const &e) {
+        } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
@@ -1171,10 +1171,7 @@ void OptionsWnd::SoundOptionsFeedback::SetMusicButton(GG::StateButton* button)
 void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(GG::StateButton* button)
 { m_effects_button = button; }
 
-void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(std::runtime_error const &e) {
-    if (std::string(e.what()) != "ERROR_SOUND_INITIALIZATION_FAILED")
-        throw;
-
+void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {
     GetOptionsDB().Set("UI.sound.enabled", false);
     GetOptionsDB().Set("UI.sound.music-enabled", false);
     if (m_effects_button)
