@@ -2995,7 +2995,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
     boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_pool_systems;
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-    boost::unordered_map<std::set<int>, std::set<int> > res_group_cores;
+    boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_group_cores;
 
     std::set<int>                           res_group_core_members;
     boost::unordered_map<int, const std::set<int> * >   member_to_core;
@@ -3210,13 +3210,22 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
             }
 
-            std::set<int>& group_core = res_group_cores[ res_pool_sys_it->first ];
+            boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator
+                group_core_it = res_group_cores.find(res_pool_sys_it->first);
+            if (group_core_it == res_group_cores.end()) {
+                group_core_it = res_group_cores.insert(
+                    group_core_it, std::make_pair(res_pool_sys_it->first, boost::make_shared<std::set<int> >()));
+                if (group_core_it == res_group_cores.end())
+                    ErrorLogger() << "Unable to insert new core system set.";
+            }
+
+            boost::shared_ptr<std::set<int> >& group_core = group_core_it->second;
 
             // All individual system on their own are in.
             for (std::set<int>::iterator sys_it=res_pool_sys_it->second->begin();
                  sys_it != res_pool_sys_it->second->end(); sys_it++)
             {
-                group_core.insert(*sys_it);
+                group_core->insert(*sys_it);
                 res_group_core_members.insert(*sys_it);
             }
 
@@ -3234,9 +3243,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // Remove supply lanes used in the path
             if (!path.empty()) {
                 for (boost::unordered_set<int>::iterator path_it = path.begin(); path_it!= path.end(); path_it++) {
-                    group_core.insert(*path_it);
+                    group_core->insert(*path_it);
                     res_group_core_members.insert(*path_it);
-                    member_to_core[*path_it] = &group_core;
+                    member_to_core[*path_it] = &(*group_core);
                 }
             }
 
@@ -3252,7 +3261,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 continue;
 
             if (group_pp > allocatedPP[it->first] + 0.05) {
-                const std::set<int>& core_systems(res_group_cores[ it->first]);
+                const std::set<int>& core_systems(*res_group_cores[ it->first]);
                 under_alloc_res_grp_core_members.insert(core_systems.begin(), core_systems.end());
             }
         }
