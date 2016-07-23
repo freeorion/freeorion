@@ -3166,8 +3166,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     if (this_client_empire) {
         ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers improved section", true);
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
-        std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
-        std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+        const std::map<std::set<int>, float>& allocatedPP(queue.AllocatedPP());
+        const std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
 
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
@@ -3249,17 +3249,15 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
 
         }
-        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
-        // For industry set if under allocated add all system to under
-        // allocated
-        // TODO: Why not store an iterator to the core set and save the copying
+        // Take note of all systems of under allocated resource groups.
         for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
             float group_pp = it->second;
             if (group_pp < 1e-4f)
                 continue;
 
-            if (group_pp > allocatedPP[it->first] + 0.05) {
+            std::map<std::set<int>, float>::const_iterator allocated_it = allocatedPP.find(it->first);
+            if (allocated_it == allocatedPP.end() || (group_pp > allocated_it->second + 0.05)) {
                 boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(it->first);
                 if (group_core_it != res_group_cores.end())
                     under_alloc_res_grp_core_members = group_core_it->second;
