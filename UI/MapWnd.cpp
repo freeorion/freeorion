@@ -3076,6 +3076,17 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // system on the path into
 
         std::set<std::pair<int, int> > resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+        // Supply starlane with no directional preference.
+        std::set<std::pair<int, int> > resource_supply_lanes_undirected;
+        const std::set<std::pair<int, int> > resource_supply_lanes_directed
+            = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+
+        for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
+             sp_it != resource_supply_lanes_directed.end(); ++sp_it) {
+            resource_supply_lanes_undirected.insert(std::make_pair(std::min(sp_it->first, sp_it->second),
+                                                                   std::max(sp_it->first, sp_it->second)));
+        }
+
         for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
