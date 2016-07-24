@@ -2506,6 +2506,50 @@ void Universe::ApplyEffectDerivedVisibilities() {
     }
 }
 
+void Universe::ForgetKnownObject(int empire_id, int object_id) {
+    // Note: Client calls this with empire_id == ALL_EMPIRES to
+    // immediately forget information without waiting for the turn update.
+    ObjectMap& objects(EmpireKnownObjects(empire_id));
+
+    if (objects.Empty())
+        return;
+
+    TemporaryPtr<UniverseObject> obj = objects.Object(object_id);
+    if (!obj) {
+        ErrorLogger() << "ForgetKnownObject empire: " << empire_id
+                      << " bad object id: " << object_id;
+        return;
+    }
+
+    if (empire_id != ALL_EMPIRES && obj->OwnedBy(empire_id)) {
+        ErrorLogger() << "ForgetKnownObject empire: " << empire_id
+                      << " object: " << object_id
+                      << ". Trying to forget visibility of own object.";
+        return;
+    }
+
+    const std::set<int> children = obj->VisibleContainedObjectIDs(empire_id);
+
+    for (std::set<int>::const_iterator child_id = children.begin();
+         child_id != children.end(); ++child_id) {
+        if (TemporaryPtr<UniverseObject> child = objects.Object(*child_id) )
+            ForgetKnownObject(empire_id, child->ID());
+    }
+
+    if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
+        if (TemporaryPtr<UniverseObject> container = objects.Object(container_id)) {
+            if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(container))
+                system->Remove(object_id);
+            else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(container))
+                planet->RemoveBuilding(object_id);
+            else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(container))
+                fleet->RemoveShip(object_id);
+        }
+    }
+
+    objects.Remove(object_id);
+}
+
 void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
     if (empire_id == ALL_EMPIRES || object_id == INVALID_OBJECT_ID)
         return;

@@ -59,7 +59,7 @@ public:
         client-side during game loading. */
     void           ApplyOrders();
 
-    bool           RecindOrder(int order);    ///< removes the order from the OrderSet; returns true on success, false if there was no such order or the order is non-recindable
+    bool           RescindOrder(int order);    ///< removes the order from the OrderSet; returns true on success, false if there was no such order or the order is non-rescindable
     void           Reset(); ///< clears all orders; should be called at the beginning of a new turn
     //@}
 

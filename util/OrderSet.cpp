@@ -30,7 +30,7 @@ void OrderSet::ApplyOrders() {
         it->second->Execute();
 }
 
-bool OrderSet::RecindOrder(int order) {
+bool OrderSet::RescindOrder(int order) {
     bool retval = false;
     OrderMap::iterator it = m_orders.find(order);
     if (it != m_orders.end()) {

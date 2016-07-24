@@ -155,6 +155,7 @@ public:
     void            SelectFleet(TemporaryPtr<Fleet> fleet);                              //!< programatically selects fleets
     void            ReselectLastFleet();                                    //!< re-selects the most recent selected fleet, if a valid one exists
 
+    void            RemoveFleet(int fleet_id); //!< removes specified fleet.
     void            SetFleetMovementLine(const FleetButton* fleet_button);  //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
     void            SetFleetMovementLine(int fleet_id);                     //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
@@ -166,7 +167,7 @@ public:
      * fleets following the specified route.  Move lines originates from the
      * fleets' button locations. */
     void            SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids, const std::list<int>& travel_route);
-    void            RemoveProjectedFleetMovementLine(int fleet_id); //!< removes projected fleet movement line for specified fleet.
+
     void            ClearProjectedFleetMovementLines();             //!< removes all projected fleet movement lines
 
     void            ResetEmpireShown();                             //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)

@@ -2683,7 +2683,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             std::map<int, int> pending_scrap_orders = PendingScrapOrders();
             std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
             if (it != pending_scrap_orders.end())
-                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
             break;
         }
 
@@ -3435,6 +3435,18 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     }
 
 
+    // Allow dismissal of stale visibility information
+    if (!fleet->OwnedBy(client_empire_id)){
+        Universe::VisibilityTurnMap visibility_turn_map =
+            GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
+        Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
+        if (last_turn_visible_it != visibility_turn_map.end()
+            && last_turn_visible_it->second < CurrentTurn())
+        {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),   13, false, false));
+        }
+   }
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
@@ -3523,7 +3535,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                     if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
                         if (order->ObjectID() == ship_id) {
-                            HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                            HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
@@ -3550,11 +3562,32 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                     boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
                 {
                     if (order->ObjectID() == fleet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
             }
+            break;
+        }
+
+        case 13: { // Remove visibility information for this fleet from
+                   // the empire's visibility table.
+            // Server changes for permanent effect
+            // Tell the server to change what the empire wants to know
+            // in future so that the server doesn't keep resending this
+            // fleet information.
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ForgetOrder(client_empire_id, fleet->ID()))
+            );
+            // Client changes for immediate effect
+            // Force the client to change immediately.
+            GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet->ID());
+
+            // Force a redraw
+            this->Refresh();
+            ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet->ID());
+
+            break;
         }
 
         default: { // check for menu item indicating give to other empire order

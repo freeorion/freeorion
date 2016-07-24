@@ -675,6 +675,39 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/////////////////////////////////////////////////////
+// ForgetOrder
+/////////////////////////////////////////////////////
+/** ForgetOrder removes the object from the empire's known objects. */
+class FO_COMMON_API ForgetOrder : public Order {
+public:
+    /** \name Structors */ //@{
+    ForgetOrder();
+    ForgetOrder(int empire, int object_id);
+    //@}
+
+    /** \name Accessors */ //@{
+    int             ObjectID() const { return m_object_id; }///< returns ID of object selected in this order
+    //@}
+
+private:
+    /**
+     *  Preconditions:
+     *     - m_object_id must be the ID of an object not owned by issuing empire
+     *
+     *  Postconditions:
+     *     - the object is removed from the table of known objects.
+     */
+    virtual void    ExecuteImpl() const;
+
+    int m_object_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
 // Note: *::serialize() implemented in SerializeOrderSet.cpp.
 
 #endif // _Order_h_

@@ -28,6 +28,7 @@ BOOST_CLASS_EXPORT(ShipDesignOrder)
 BOOST_CLASS_EXPORT(ScrapOrder)
 BOOST_CLASS_EXPORT(AggressiveOrder)
 BOOST_CLASS_EXPORT(GiveObjectToEmpireOrder)
+BOOST_CLASS_EXPORT(ForgetOrder)
 
 
 template <class Archive>
@@ -185,6 +186,13 @@ void GiveObjectToEmpireOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_object_id)
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id);
+}
+
+template <class Archive>
+void ForgetOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
 template <class Archive>

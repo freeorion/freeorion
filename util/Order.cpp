@@ -1304,3 +1304,26 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
     }
     return false;
 }
+
+////////////////////////////////////////////////
+// ForgetOrder
+////////////////////////////////////////////////
+ForgetOrder::ForgetOrder() :
+    Order(),
+    m_object_id(INVALID_OBJECT_ID)
+{}
+
+ForgetOrder::ForgetOrder(int empire, int object_id) :
+    Order(empire),
+    m_object_id(object_id)
+{}
+
+void ForgetOrder::ExecuteImpl() const {
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+
+    DebugLogger() << "ForgetOrder::ExecuteImpl empire: " << empire_id
+                  << " for object: " << m_object_id;
+
+    GetUniverse().ForgetKnownObject(empire_id, m_object_id);
+}

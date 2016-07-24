@@ -1916,7 +1916,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                     boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
                 {
                     if (order->ObjectID() == planet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2038,7 +2038,7 @@ namespace {
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                 if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(it->second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2050,7 +2050,7 @@ namespace {
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2062,7 +2062,7 @@ namespace {
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                 if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
                     if (order->ObjectID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2074,7 +2074,7 @@ namespace {
             for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
                if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(it->second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2100,7 +2100,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
 
     if (it != pending_colonization_orders.end()) {
         // cancel previous colonization order for planet
-        HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+        HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
 
     } else {
         // find colony ship and order it to colonize
@@ -2146,7 +2146,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
         // cancel previous invasion orders for this planet
         for (std::set<int>::const_iterator o_it = planet_invade_orders.begin();
              o_it != planet_invade_orders.end(); ++o_it)
-        { HumanClientApp::GetApp()->Orders().RecindOrder(*o_it); }
+        { HumanClientApp::GetApp()->Orders().RescindOrder(*o_it); }
 
     } else {
         // order selected invasion ships to invade planet
@@ -2194,7 +2194,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
         // cancel previous bombard orders for this planet
         for (std::set<int>::const_iterator o_it = planet_bombard_orders.begin();
              o_it != planet_bombard_orders.end(); ++o_it)
-        { HumanClientApp::GetApp()->Orders().RecindOrder(*o_it); }
+        { HumanClientApp::GetApp()->Orders().RescindOrder(*o_it); }
 
     } else {
         // order selected bombard ships to bombard planet

@@ -3816,6 +3816,13 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
     fleet_wnd->SelectFleet(fleet->ID());
 }
 
+void MapWnd::RemoveFleet(int fleet_id) {
+    m_fleet_lines.erase(fleet_id);
+    m_projected_fleet_lines.erase(fleet_id);
+    m_selected_fleet_ids.erase(fleet_id);
+    RefreshFleetButtons();
+}
+
 void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button) {
     assert(fleet_button);
     // each fleet represented by button could have different move path
@@ -3927,12 +3934,6 @@ void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
 {
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
         SetProjectedFleetMovementLine(*it, travel_route);
-}
-
-void MapWnd::RemoveProjectedFleetMovementLine(int fleet_id) {
-    std::map<int, MovementLineData>::iterator it = m_projected_fleet_lines.find(fleet_id);
-    if (it != m_projected_fleet_lines.end())
-        m_projected_fleet_lines.erase(it);
 }
 
 void MapWnd::ClearProjectedFleetMovementLines()
@@ -4779,7 +4780,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // plot empty move pathes if destination is not a known system
         if (system_id == INVALID_OBJECT_ID) {
-            RemoveProjectedFleetMovementLine(fleet_id);
+            m_projected_fleet_lines.erase(fleet_id);
             continue;
         }
 
@@ -5070,15 +5071,8 @@ void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
-        std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
-        if (it1 != m_fleet_lines.end())
-            m_fleet_lines.erase(it1);
-
-        std::map<int, MovementLineData>::iterator it2 = m_projected_fleet_lines.find(fleet->ID());
-        if (it2 != m_projected_fleet_lines.end())
-            m_projected_fleet_lines.erase(it2);
-    }
+    if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj))
+        RemoveFleet(fleet->ID());
 }
 
 void MapWnd::RegisterPopup(MapWndPopup* popup) {
