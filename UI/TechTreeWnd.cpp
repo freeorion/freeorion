@@ -36,7 +36,7 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.tech-layout-horz-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 1.0,  RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("UI.tech-layout-horz-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25,  RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("UI.tech-layout-vert-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
@@ -45,7 +45,7 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     GG::X   TechPanelWidth()
-    { return GG::X(ClientUI::Pts()*32); }
+    { return GG::X(ClientUI::Pts()*38); }
     GG::Y   TechPanelHeight()
     { return GG::Y(ClientUI::Pts()*6); }
 
@@ -637,11 +637,13 @@ private:
 
     const std::string&              m_tech_name;
     std::string                     m_name_text;
+    std::string                     m_cost_and_duration_text;
     std::string                     m_eta_text;
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
     std::vector<GG::StaticGraphic*> m_unlock_icons;
     GG::TextControl*                m_name_label;
+    GG::TextControl*                m_cost_and_duration_label;
     GG::TextControl*                m_eta_label;
     GG::Clr                         m_colour;
     TechStatus                      m_status;
@@ -655,11 +657,13 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     GG::Wnd(GG::X0, GG::Y0, TechPanelWidth(), TechPanelHeight(), GG::INTERACTIVE),
     m_tech_name(tech_name),
     m_name_text(),
+    m_cost_and_duration_text(),
     m_eta_text(),
     m_layout_panel(panel),
     m_icon(0),
     m_unlock_icons(),
     m_name_label(0),
+    m_cost_and_duration_label(0),
     m_eta_label(0),
     m_colour(GG::CLR_GRAY),
     m_status(TS_RESEARCHABLE),
@@ -671,7 +675,9 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
     m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
-    m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+
+    m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+    m_cost_and_duration_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_VCENTER | GG::FORMAT_RIGHT);
     m_eta_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
 
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
@@ -684,6 +690,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 TechTreeWnd::LayoutPanel::TechPanel::~TechPanel() {
     delete m_icon;
     delete m_name_label;
+    delete m_cost_and_duration_label;
     delete m_eta_label;
     for (std::vector<GG::StaticGraphic*>::iterator it = m_unlock_icons.begin();
          it != m_unlock_icons.end(); ++it)
@@ -754,16 +761,33 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         // render tech panel text; for small font sizes, remove shadow
         glEnable(GL_TEXTURE_2D);
 
-        if (font_pts < 10)
+        if (font_pts < 10) {
             m_name_label->SetText(m_name_text);
-        else
+            m_cost_and_duration_label->SetText(m_cost_and_duration_text);
+        }
+        else {
             m_name_label->SetText("<s>" + m_name_text + "</s>");
+            m_cost_and_duration_label->SetText("<s>" + m_cost_and_duration_text + "</s>");
+        }
 
-        GG::Pt text_ul(text_left + 4, text_top);
+        GG::Pt text_ul(text_left + PAD/2, text_top);
         GG::Pt text_size(text_width + PAD, m_unlock_icons.empty() ? text_height*2 : text_height - PAD/2);
         m_name_label->SizeMove(text_ul, text_ul + text_size);
+
+        // show cost and duration for unresearched techs
+        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
+            if (empire->TechResearched(m_tech_name))
+                m_cost_and_duration_label->Hide();
+            else {
+                GG::Pt text_ll(text_left + PAD / 2, TechPanelHeight() - font_pts - PAD);
+                text_size = GG::Pt(text_width + PAD / 2, GG::Y(font_pts));
+                m_cost_and_duration_label->SizeMove(text_ll, text_ll + text_size);
+                m_cost_and_duration_label->Show();
+            }
+
         /// Need to render children too
         GG::GUI::GetGUI()->RenderWindow(m_name_label);
+        GG::GUI::GetGUI()->RenderWindow(m_cost_and_duration_label);
 
         // box around whole panel to indicate enqueue
         if (m_enqueued) {
@@ -1002,6 +1026,13 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
     m_name_text = UserString(m_tech_name);
     m_name_label->SetText("<s>" + m_name_text + "</s>");
+
+    if (const Tech* tech = GetTech(m_tech_name))
+        m_cost_and_duration_text = boost::io::str(FlexibleFormat(UserString("TECH_TOTAL_COST_ALT_STR"))
+            % DoubleToString(tech->ResearchCost(client_empire_id), 1, false)
+            % std::to_string((int)tech->ResearchTime(client_empire_id)));
+    m_cost_and_duration_label->SetText("<s>" + m_cost_and_duration_text + "<s>");
+
     m_eta_label->SetText("<s>" + m_eta_text + "</s>");
 
     ClearBrowseInfoWnd();
