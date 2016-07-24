@@ -1404,12 +1404,12 @@ std::string Fleet::GenerateFleetName() {
         }
     }
 
-    std::vector< TemporaryPtr<const Ship> >::iterator it = ships.begin();
+    std::vector<TemporaryPtr<const Ship> >::iterator it = ships.begin();
 
     // TODO C++11 replace all of these loops with std::all_of
     bool all_monster(true);
     while (it != ships.end()) {
-        if(!(*it)->IsMonster()) {
+        if (!(*it)->IsMonster()) {
             all_monster = false;
             break;
         }
@@ -1422,7 +1422,7 @@ std::string Fleet::GenerateFleetName() {
     bool all_colony(true);
     it = ships.begin();
     while (it != ships.end()) {
-        if(!(*it)->CanColonize()) {
+        if (!(*it)->CanColonize()) {
             all_colony = false;
             break;
         }
@@ -1435,7 +1435,7 @@ std::string Fleet::GenerateFleetName() {
     bool all_non_coms(true);
     it = ships.begin();
     while (it != ships.end()) {
-        if((*it)->IsArmed() || (*it)->CanHaveTroops() || (*it)->CanBombard()) {
+        if ((*it)->IsArmed() || (*it)->CanHaveTroops() || (*it)->CanBombard()) {
             all_non_coms = false;
             break;
         }
@@ -1448,7 +1448,7 @@ std::string Fleet::GenerateFleetName() {
     bool all_troop(true);
     it = ships.begin();
     while (it != ships.end()) {
-        if(!(*it)->CanHaveTroops()) {
+        if (!(*it)->CanHaveTroops()) {
             all_troop = false;
             break;
         }
@@ -1461,7 +1461,7 @@ std::string Fleet::GenerateFleetName() {
     bool all_bombard(true);
     it = ships.begin();
     while (it != ships.end()) {
-        if(!(*it)->CanBombard()) {
+        if (!(*it)->CanBombard()) {
             all_bombard = false;
             break;
         }
@@ -1474,7 +1474,7 @@ std::string Fleet::GenerateFleetName() {
     bool mixed_combat(true);
     it = ships.begin();
     while (it != ships.end()) {
-        if(!((*it)->IsArmed() || (*it)->CanHaveTroops() || (*it)->CanBombard())) {
+        if (!((*it)->IsArmed() || (*it)->CanHaveTroops() || (*it)->CanBombard())) {
             mixed_combat = false;
             break;
         }
