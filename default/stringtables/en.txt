@@ -148,6 +148,24 @@ Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
 
+NEW_MONSTER_FLEET_NAME
+Herd %1%
+
+NEW_COLONY_FLEET_NAME
+Colony Fleet %1%
+
+NEW_RECON_FLEET_NAME
+Recon Fleet %1%
+
+NEW_TROOP_FLEET_NAME
+Troop Fleet %1%
+
+NEW_BOMBARD_FLEET_NAME
+Bomber Fleet %1%
+
+NEW_BATTLE_FLEET_NAME
+Battle Fleet %1%
+
 # new asteroids or new planet names...
 # used to generate name for effect-created planets, when no name = (string) is specified.
 # When specifying an object name for these effects, if the specified string matches a

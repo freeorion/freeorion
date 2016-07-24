@@ -78,8 +78,7 @@ namespace {
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());
-        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, fleet->ID());
-        fleet->Rename(fleet_name);
+        fleet->Rename(fleet->GenerateFleetName());
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         fleet->AddShip(ship->ID());
