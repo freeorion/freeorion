@@ -264,12 +264,6 @@ private:
                                     double thickness, bool coloured, bool doBase);
     void            RenderFields();                             //!< renders field objects
 
-    /* Gets systemID path (reversed) along supplylanes via BFS, is used to
-     * build ResourceGroupCores ideally, instead, a supplylane filter would be
-     * added the the universe graph impl. */
-    std::vector<int> GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
-                                   const std::set<std::pair<int, int> >& supplylanes, const ObjectMap& objMap);
-
     /* renders the dashed lines indicating where each fleet is going */
     void            RenderFleetMovementLines();
 
@@ -452,8 +446,6 @@ private:
     GG::GLRGBAColorBuffer               m_starfield_colours;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
-
-    std::vector<std::pair<GG::Pt, ShapeOrientation> > m_delete_me_supply_rendering_mishaps;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
