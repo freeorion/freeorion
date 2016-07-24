@@ -3,4 +3,4 @@ Article
     category = "CATEGORY_USER_INTERFACE"
     short_description = "HIDDEN_SETTINGS_ARTICLE_TITLE"
     description = "HIDDEN_SETTINGS__ARTICLE_TEXT"
-    icon = "icons/tech/galactic_exploration.png"
+    icon = "icons/buttons/menu_mouseover.png"
