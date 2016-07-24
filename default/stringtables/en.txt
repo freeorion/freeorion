@@ -3102,6 +3102,9 @@ Navigation
 TECH_TOTAL_COST_STR
 %1% RP and %2% Turns
 
+TECH_TOTAL_COST_ALT_STR
+%1% RP / %2% Turns
+
 TECH_TURN_COST_STR
 +%1% / %2% RP
 
