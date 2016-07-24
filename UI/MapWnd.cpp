@@ -5235,6 +5235,11 @@ bool MapWnd::ReturnToMap() {
     if (some_subscreen_was_visible)
         return true;
 
+    if (m_combat_report_wnd->Visible()) {
+        m_combat_report_wnd->Hide();
+        return true;
+    }
+
     if (m_pedia_panel->Visible()) {
         TogglePedia();
         return true;
@@ -5242,6 +5247,11 @@ bool MapWnd::ReturnToMap() {
 
     if (m_object_list_wnd->Visible()) {
         ToggleObjects();
+        return true;
+    }
+
+    if (m_moderator_wnd->Visible()) {
+        ToggleModeratorActions();
         return true;
     }
 
