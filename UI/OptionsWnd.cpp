@@ -403,8 +403,8 @@ OptionsWnd::OptionsWnd():
     // Audio settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUDIO"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
-    MusicVolumeOption(current_page, 0);
-    VolumeOption(current_page, 0, "UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), &OptionsWnd::UISoundsVolumeSlid, UI_sound_enabled);
+    MusicVolumeOption(current_page, 0, m_sound_feedback);
+    VolumeOption(current_page, 0, "UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
     FileOption(current_page, 0, "UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
                ValidMusicFile);
@@ -831,7 +831,7 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     return spin;
 }
 
-void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level) {
+void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback &fb) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::StateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
@@ -850,12 +850,14 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level) {
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
-    GG::Connect(button->CheckedSignal, &OptionsWnd::MusicClicked, this);
-    GG::Connect(slider->SlidSignal, &OptionsWnd::MusicVolumeSlid, this);
+    fb.SetMusicButton(button);
+    GG::Connect(button->CheckedSignal, &OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb);
+    GG::Connect(slider->SlidSignal, &OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb);
 }
 
-void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
-                              VolumeSliderHandler volume_slider_handler, bool toggle_value)
+void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
+                              const std::string& volume_option_name, const std::string& text,
+                              bool toggle_value, SoundOptionsFeedback &fb)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
@@ -875,8 +877,9 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
-    GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(toggle_option_name));
-    GG::Connect(slider->SlidAndStoppedSignal, volume_slider_handler, this);
+    fb.SetEffectsButton(button);
+    GG::Connect(button->CheckedSignal,        &OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb);
+    GG::Connect(slider->SlidAndStoppedSignal, &OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb);
 }
 
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const fs::path& path,
@@ -1118,26 +1121,62 @@ void OptionsWnd::DoneClicked()
     m_done = true;
 }
 
-void OptionsWnd::MusicClicked(bool checked)
-{
+void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
     if (checked) {
-        GetOptionsDB().Set("UI.sound.music-enabled", true);
-        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+        try {
+            Sound::GetSound().Enable();
+            GetOptionsDB().Set("UI.sound.enabled", true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+        } catch (Sound::InitializationFailureException const &e) {
+            SoundInitializationFailure(e);
+        }
     } else {
-        GetOptionsDB().Set("UI.sound.music-enabled", false);
-        Sound::GetSound().StopMusic();
+        GetOptionsDB().Set("UI.sound.enabled", false);
+        if (!GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+            Sound::GetSound().Disable();
     }
 }
 
-void OptionsWnd::MusicVolumeSlid(int pos, int low, int high)
-{
+void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
+    if (checked) {
+        try {
+            Sound::GetSound().Enable();
+            GetOptionsDB().Set("UI.sound.music-enabled", true);
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+        } catch (Sound::InitializationFailureException const &e) {
+            SoundInitializationFailure(e);
+        }
+    } else {
+        GetOptionsDB().Set("UI.sound.music-enabled", false);
+        Sound::GetSound().StopMusic();
+        if (!GetOptionsDB().Get<bool>("UI.sound.enabled"))
+            Sound::GetSound().Disable();
+    }
+}
+
+void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("UI.sound.music-volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
-void OptionsWnd::UISoundsVolumeSlid(int pos, int low, int high)
-{
+void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("UI.sound.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+}
+
+void OptionsWnd::SoundOptionsFeedback::SetMusicButton(GG::StateButton* button)
+{ m_music_button = button; }
+
+void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(GG::StateButton* button)
+{ m_effects_button = button; }
+
+void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {
+    GetOptionsDB().Set("UI.sound.enabled", false);
+    GetOptionsDB().Set("UI.sound.music-enabled", false);
+    if (m_effects_button)
+        m_effects_button->SetCheck(false);
+    if (m_music_button)
+        m_music_button->SetCheck(false);
+    ClientUI::MessageBox(UserString(e.what()), false);
 }

@@ -220,13 +220,21 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     SetMinDragTime(0);
 
+    bool inform_user_sound_failed(false);
+    try {
+        if (GetOptionsDB().Get<bool>("UI.sound.enabled") || GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+            Sound::GetSound().Enable();
+
+        if ((GetOptionsDB().Get<bool>("UI.sound.music-enabled")))
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+
+        Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("UI.sound.music-volume"));
+        Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
+    } catch (Sound::InitializationFailureException const &) {
+        inform_user_sound_failed = true;
+    }
+
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
-
-    if ((GetOptionsDB().Get<bool>("UI.sound.music-enabled")))
-        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
-
-    Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("UI.sound.music-volume"));
-    Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
 
     EnableFPS();
     UpdateFPSLimit();
@@ -291,6 +299,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     if (fake_mode_change && !FramebuffersAvailable()) {
         ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
     }
+
+    // Placed after mouse initialization.
+    if (inform_user_sound_failed)
+        ClientUI::MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
+
     m_fsm->initiate();
 }
 
