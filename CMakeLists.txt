@@ -541,4 +541,6 @@ cpack_add_component(
     REQUIRED
 )
 
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if (BUILD_TESTS)
+    add_subdirectory(test EXCLUDE_FROM_ALL)
+endif ()
