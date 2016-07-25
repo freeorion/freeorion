@@ -148,6 +148,24 @@ Flotte %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
+NEW_MONSTER_FLEET_NAME
+Meute %1%
+
+NEW_COLONY_FLEET_NAME
+Flotte de Colonisation %1%
+
+NEW_RECON_FLEET_NAME
+Flotte de Reconnaissance %1%
+
+NEW_TROOP_FLEET_NAME
+Flotte d'Infanterie %1%
+
+NEW_BOMBARD_FLEET_NAME
+Flotte de Bombardement %1%
+
+NEW_BATTLE_FLEET_NAME
+Flotte de Combat %1%
+
 # new asteroids or new planet names...
 # used to generate name for effect-created planets, when no name = (string) is specified.
 # When specifying an object name for these effects, if the specified string matches a
@@ -210,6 +228,15 @@ Sans propriétaire
 
 NOWHERE
 Ne peut pas être produit
+
+#############################################################
+####               M A J O R   E R R O R S               ####
+#############################################################
+
+ERROR_SOUND_INITIALIZATION_FAILED
+'''L'initialisation du système audio OpenAL a échoué.
+Consultez le fichier log pour le détail des messages d'erreur.
+'''
 
 ################################## 
 # FORMAT_LIST items are for lists of the form
@@ -1591,9 +1618,6 @@ Contenu des colonnes Fenêtre Objets
 OPTIONS_DB_OBJECTS_LIST_COLUMN_WIDTH
 Largeur des colonnes Fenêtre Objets
 
-HOTKEY_MAP_OBJECTS
-Fenêtre Objets [on/off]
-
 OPTIONS_DB_FLEET_WND_AGGRESSION
 Comportement par défaut des Flottes
 
@@ -2574,8 +2598,6 @@ Messages
 MAP_PRODUCTION_TITLE  # translated
 Production
 
-
-
 MAP_PROD_WASTED_TITLE
 Production inutilisée
 
@@ -3001,6 +3023,10 @@ Retirer ce type d'astronef de la Flotte
 FW_SPLIT_SHIPS_ALL_DESIGNS
 Créer une Flotte pour chaque type d'astronef
 
+# Remove old visibility information from the client empire's saved information
+FW_ORDER_DISMISS_SENSOR_GHOST
+Supprimer les données obsolètes de Détection
+
 ORDER_SHIP_SCRAP
 Envoyer l'astronef à la casse
 
@@ -3092,13 +3118,16 @@ TECH_NAVIGATION  # translated
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% PR & %2% tours
+%1% PR & %2% Tours
+
+TECH_TOTAL_COST_ALT_STR
+%1% PR / %2% Tours
 
 TECH_TURN_COST_STR
 +%1% / %2% PR
 
 TECH_TURNS_LEFT_STR
-%1% tour(s)
+%1% Tour(s)
 
 TECH_TURNS_LEFT_NEVER
 Jamais
@@ -3221,13 +3250,13 @@ PRODUCTION_WND_REDUNDANT
 Redondants
 
 PRODUCTION_TOTAL_COST_STR
-%1% PP & %2% tours
+%1% PP & %2% Tours
 
 PRODUCTION_TURN_COST_STR  # translated
 +%1% / %2% PP
 
 PRODUCTION_TURNS_LEFT_STR
-%1% tours restant(s)
+%1% Tour(s)
 
 PRODUCTION_TURNS_LEFT_NEVER
 Jamais
@@ -3694,6 +3723,24 @@ ENC_HOMEWORLDS
 
 ENC_INDEX
 Index de l'Encyclopédie
+
+SEARCH_RESULTS
+Résultats de la recherche
+
+ENC_SEARCH_EXACT_MATCHES
+Correspondances exactes
+
+ENC_SEARCH_WORD_MATCHES
+Correspondances mot(s)
+
+ENC_SEARCH_PARTIAL_MATCHES
+Correspondances partielles mot(s)
+
+ENC_SEARCH_IN_TEXT_MATCHES
+Correspondances dans texte article
+
+ENC_SEARCH_NOTHING_FOUND
+Aucun résultat trouvé
 
 # type of thing being shown. %1% is a bit of detail, and %2% is the general type.
 # for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
@@ -7454,10 +7501,10 @@ DESC_CONTAINS_NOT
 ''' qui ne contient pas un objet%1%'''
 
 DESC_PLANET_TYPE
-''' qui est un astre de type %1%'''
+''' qui est une planète %1%'''
 
 DESC_PLANET_TYPE_NOT
-''' qui n'est pas un astre de type %1%'''
+''' qui n'est pas une planète %1%'''
 
 DESC_PLANET_SIZE
 ''' qui est une planète %1%'''
@@ -12016,6 +12063,21 @@ Fenêtre Recherche [on/off]
 
 HOTKEY_MAP_DESIGN
 Fenêtre Conception [on/off]
+
+HOTKEY_MAP_OBJECTS
+Fenêtre Objets [on/off]
+
+HOTKEY_MAP_MESSAGES
+Fenêtre Messages [on/off]
+
+HOTKEY_MAP_EMPIRES
+Fenêtre Empires [on/off]
+
+HOTKEY_MAP_PEDIA
+Fenêtre Encyclopédie [on/off]
+
+HOTKEY_MAP_GRAPHS
+Afficher liste des Graphiques
 
 HOTKEY_MAP_PRODUCTION
 Fenêtre Production [on/off]
