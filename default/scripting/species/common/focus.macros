@@ -120,7 +120,7 @@ HAS_ADVANCED_FOCI
                     OwnerHasTech name = "CON_PLANET_DRIVE"
                 ]
             ]
-            graphic = "icons/focus/planet_drive.png"
+            graphic = "icons/building/planetary_stardrive.png"
 
         Focus
             name = "FOCUS_DISTORTION"

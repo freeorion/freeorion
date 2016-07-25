@@ -87,7 +87,7 @@ ADVANCED_FOCUS_EFFECTS
                 ]
                 GenerateSitRepMessage
                         message = "EFFECT_PLANET_DRIVE"
-                    icon = "icons/focus/planet_drive.png"
+                    icon = "icons/building/planetary_stardrive.png"
                         parameters = [
                                 tag = "planet" data = Source.ID
                                 tag = "system" data = Source.SystemID
