@@ -24,7 +24,7 @@ XENOPHOBIC_SELF
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             priority = [[LATE_PRIORITY]]
             effects = [ 
-                SetTargetIndustry value = Value * 0.2 - 1
+                SetTargetIndustry value = Value * 0.9
                 SetTargetResearch value = Value * 0.9
                 SetTargetHappiness value = Value - (
                     Count condition = And [
