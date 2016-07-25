@@ -1029,8 +1029,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
     if (const Tech* tech = GetTech(m_tech_name))
         m_cost_and_duration_text = boost::io::str(FlexibleFormat(UserString("TECH_TOTAL_COST_ALT_STR"))
-            % DoubleToString(tech->ResearchCost(client_empire_id), 1, false)
-            % std::to_string((int)tech->ResearchTime(client_empire_id)));
+                                                  % DoubleToString(tech->ResearchCost(client_empire_id), 1, false)
+                                                  % boost::lexical_cast<int>(tech->ResearchTime(client_empire_id)));
     m_cost_and_duration_label->SetText("<s>" + m_cost_and_duration_text + "<s>");
 
     m_eta_label->SetText("<s>" + m_eta_text + "</s>");
