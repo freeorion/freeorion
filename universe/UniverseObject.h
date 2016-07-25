@@ -127,7 +127,7 @@ public:
     std::map<MeterType, Meter>&
                             Meters() { return m_meters; }           ///< returns this UniverseObject's meters
     Meter*                  GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual void            BackPropegateMeters();                  ///< sets all this UniverseObject's meters' initial values equal to their current values
+    virtual void            BackPropagateMeters();                  ///< sets all this UniverseObject's meters' initial values equal to their current values
 
     virtual void            SetOwner(int id);                       ///< sets the empire that owns this object
 

@@ -1490,9 +1490,9 @@ const Meter* Empire::GetMeter(const std::string& name) const {
         return 0;
 }
 
-void Empire::BackPropegateMeters() {
+void Empire::BackPropagateMeters() {
     for (std::map<std::string, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-        it->second.BackPropegate();
+        it->second.BackPropagate();
 }
 
 bool Empire::ResearchableTech(const std::string& name) const {
@@ -1921,7 +1921,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();
 
-    // as of this writing, only planets can generate supply propegation
+    // as of this writing, only planets can generate supply propagation
     std::vector<TemporaryPtr<const UniverseObject> > owned_planets;
     for (std::set<int>::const_iterator it = known_objects.begin(); it != known_objects.end(); ++it) {
         if (TemporaryPtr<const Planet> planet = GetPlanet(*it))
@@ -2107,7 +2107,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             }
 
         } else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end()) {
-            // if there are no friendly ships and no enemy ships, supply can propegate
+            // if there are no friendly ships and no enemy ships, supply can propagate
             m_supply_unobstructed_systems.insert(sys_id);
 
         } else if (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()) {
@@ -2999,7 +2999,7 @@ void Empire::CheckProductionProgress() {
                 float cur_meter = meter->Current();
                 float new_meter = cur_meter - it->second * elem.blocksize;
                 meter->SetCurrent(new_meter);
-                meter->BackPropegate();
+                meter->BackPropagate();
             }
         }
 
@@ -3080,7 +3080,7 @@ void Empire::CheckProductionProgress() {
                 // have been applied, letting new ships start with maxed
                 // everything that is traced with an associated max meter.
                 ship->SetShipMetersToMax();
-                ship->BackPropegateMeters();
+                ship->BackPropagateMeters();
 
                 ship->Rename(NewShipName());
 

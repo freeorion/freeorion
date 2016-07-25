@@ -1709,7 +1709,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     ship->ResetPairedActiveMeters();
     ship->SetShipMetersToMax();
 
-    ship->BackPropegateMeters();
+    ship->BackPropagateMeters();
 
     GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
 

@@ -364,7 +364,7 @@ public:
     int                     NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
 
     /** Returns distance in jumps away from each system that this empire can
-      * propegate supply. */
+      * propagate supply. */
     const std::map<int, float>&             SystemSupplyRanges() const;
 
     /** Returns set of system ids that are able to propagate supply from one
@@ -409,7 +409,7 @@ public:
     /** Returns the alignment meter with the indicated \a name, if any, or 0 if
       * no such alignment meter exists. */
     Meter*      GetMeter(const std::string& name);
-    void        BackPropegateMeters();
+    void        BackPropagateMeters();
 
     /** Adds \a tech to the research queue, placing it before position \a pos.
       * If \a tech is already in the queue, it is moved to \a pos, then removed
@@ -474,14 +474,14 @@ public:
 
     /** Calculates ranges that systems can send fleet and resource supplies,
       * using the specified st of \a known_objects as the source for supply-
-      * producing objects and systems through which it can be propegated. */
+      * producing objects and systems through which it can be propagated. */
     void        UpdateSystemSupplyRanges(const std::set<int>& known_objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void        UpdateSystemSupplyRanges();
-    /** Calculates systems that can propegate supply (fleet or resource) using
+    /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void        UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems);
-    /** Calculates systems that can propegate supply using this empire's own /
+    /** Calculates systems that can propagate supply using this empire's own /
       * internal list of explored systems. */
     void        UpdateSupplyUnobstructedSystems();
     /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not blockaded post-combat 

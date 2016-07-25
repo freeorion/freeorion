@@ -2808,7 +2808,7 @@ std::vector<int> MapWnd::GetLeastJumps(int start_sys_it, int end_sys_it, const s
             int newSys = laneIt->first;
             std::pair<int, int> lane_forward = std::make_pair(sysID, newSys);
             std::pair<int, int> lane_backward = std::make_pair(newSys, sysID);
-            // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted. if not, skip this lane
+            // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted. if not, skip this lane
             if (supplylanes.find(lane_forward) == supplylanes.end() && supplylanes.find(lane_backward) == supplylanes.end())
                 continue;
             if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
@@ -3025,7 +3025,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
                     std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
 
-                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
                         lane_colour = empire->Color();
                         //std::cout << "selected colour of empire " << empire->Name() << " for this full lane" << std::endl;
@@ -3084,7 +3084,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes =
                         GetSupplyManager().SupplyObstructedStarlaneTraversals(empire_it->first);
 
-                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
                         // found an empire that has a half lane here, so add it.
                         rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes

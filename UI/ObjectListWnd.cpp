@@ -138,7 +138,7 @@ namespace {
             col_types[std::make_pair(UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE"),   UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
             col_types[std::make_pair(UserStringNop("PLANET_SIZE"),                  UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetSize>("PlanetSize");
             col_types[std::make_pair(UserStringNop("PLANET_ENVIRONMENT"),           UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
-            col_types[std::make_pair(UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<double>("PropegatedSupplyRange");
+            col_types[std::make_pair(UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<double>("PropagatedSupplyRange");
 
             // ship/fleet
             col_types[std::make_pair(UserStringNop("SPECIES"),                      UserStringNop("FLEETS_SUBMENU"))] = UserStringValueRef("Species");

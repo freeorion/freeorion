@@ -63,7 +63,7 @@ public:
     iterator    begin();
     iterator    end();
 
-    void        BackPropegateMeters();
+    void        BackPropagateMeters();
 
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
     void        HandleDiplomaticMessage(const DiplomaticMessage& message);

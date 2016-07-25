@@ -48,7 +48,7 @@ namespace {
                 |   tok.Size_
                 |   tok.DistanceFromOriginalType_
                 |   tok.Attack_
-                |   tok.PropegatedSupplyRange_
+                |   tok.PropagatedSupplyRange_
                 ;
 
             free_variable_name

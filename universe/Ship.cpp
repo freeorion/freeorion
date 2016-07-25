@@ -549,12 +549,12 @@ void Ship::SetArrivedOnTurn(int turn) {
     }
 }
 
-void Ship::BackPropegateMeters() {
-    UniverseObject::BackPropegateMeters();
+void Ship::BackPropagateMeters() {
+    UniverseObject::BackPropagateMeters();
 
-    // ship part meter back propegation, since base class function doesn't do this...
+    // ship part meter back propagation, since base class function doesn't do this...
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
-        it->second.BackPropegate();
+        it->second.BackPropagate();
 }
 
 void Ship::Resupply() {
@@ -564,7 +564,7 @@ void Ship::Resupply() {
         ErrorLogger() << "Ship::Resupply couldn't get fuel meters!";
     } else {
         fuel_meter->SetCurrent(max_fuel_meter->Current());
-        fuel_meter->BackPropegate();
+        fuel_meter->BackPropagate();
     }
 
     // set all part capacities equal to any associated max capacity
@@ -583,7 +583,7 @@ void Ship::Resupply() {
         const Meter& max_meter = max_it->second;
 
         it->second.SetCurrent(max_meter.Current());
-        it->second.BackPropegate();
+        it->second.BackPropagate();
     }
 }
 

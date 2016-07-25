@@ -100,35 +100,35 @@ namespace {
         std::map<int, int> retval;
         const std::set<int>& empire_supplyable_system_ids = GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID());
         const std::map<int, std::set<int> >& empire_starlanes = empire.KnownStarlanes();
-        std::list<int> propegating_list;
+        std::list<int> propagating_list;
 
         for (std::set<int>::const_iterator sys_it = empire_supplyable_system_ids.begin();
              sys_it != empire_supplyable_system_ids.end(); ++sys_it)
         {
             retval[*sys_it] = 0;
-            propegating_list.push_back(*sys_it);
+            propagating_list.push_back(*sys_it);
         }
 
-        // iteratively propegate supply out from supplied systems, to determine
+        // iteratively propagate supply out from supplied systems, to determine
         // how many jumps away from supply each unsupplied system is...
-        while (!propegating_list.empty()) {
+        while (!propagating_list.empty()) {
             // get next system and distance from the list
-            int from_sys_id = propegating_list.front();
-            propegating_list.pop_front();
+            int from_sys_id = propagating_list.front();
+            propagating_list.pop_front();
             int from_sys_dist = retval[from_sys_id];
 
             // get lanes connected to this system
             std::map<int, std::set<int> >::const_iterator lane_set_it = empire_starlanes.find(from_sys_id);
             if (lane_set_it == empire_starlanes.end())
-                continue;   // no lanes to propegate from for this supply source
+                continue;   // no lanes to propagate from for this supply source
             const std::set<int>& lane_ends = lane_set_it->second;
 
-            // propegate to any not-already-counted adjacent system
+            // propagate to any not-already-counted adjacent system
             for (std::set<int>::const_iterator lane_it = lane_ends.begin(); lane_it != lane_ends.end(); ++lane_it) {
                 if (retval.find(*lane_it) != retval.end())
                     continue;   // system already processed
-                // system not yet processed; add it to list to propegate from, and set its range to one more than this system
-                propegating_list.push_back(*lane_it);
+                // system not yet processed; add it to list to propagate from, and set its range to one more than this system
+                propagating_list.push_back(*lane_it);
                 retval[*lane_it] = from_sys_dist - 1;   // negative values used to indicate jumps to nearest supply for historical compatibility reasons
             }
         }

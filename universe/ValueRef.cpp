@@ -689,8 +689,8 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
             return ship->TotalWeaponsDamage();
 
-    } else if (property_name == "PropegatedSupplyRange") {
-        const std::map<int, float>& ranges = GetSupplyManager().PropegatedSupplyRanges();
+    } else if (property_name == "PropagatedSupplyRange") {
+        const std::map<int, float>& ranges = GetSupplyManager().PropagatedSupplyRanges();
         std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;

@@ -904,7 +904,7 @@ void Fleet::MovementPhase() {
                     TemporaryPtr<Ship> ship = *ship_it;
                     if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                         fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
-                        fuel_meter->BackPropegate();
+                        fuel_meter->BackPropagate();
                     }
                 }
             }
@@ -1037,7 +1037,7 @@ void Fleet::MovementPhase() {
             TemporaryPtr<Ship> ship = *ship_it;
             if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                 meter->AddToCurrent(-fuel_consumed);
-                meter->BackPropegate();
+                meter->BackPropagate();
             }
         }
     }
@@ -1048,7 +1048,7 @@ void Fleet::ResetTargetMaxUnpairedMeters() {
 
     // give fleets base stealth very high, so that they can (almost?) never be
     // seen by empires that don't own them, unless their ships are seen and
-    // that visibility is propegated to the fleet that contains the ships
+    // that visibility is propagated to the fleet that contains the ships
     if (Meter* stealth = GetMeter(METER_STEALTH)) {
         stealth->ResetCurrent();
         stealth->AddToCurrent(2000.0f);

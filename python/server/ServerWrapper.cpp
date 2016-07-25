@@ -848,7 +848,7 @@ namespace {
         ship->ResetPairedActiveMeters();
         ship->SetShipMetersToMax();
 
-        ship->BackPropegateMeters();
+        ship->BackPropagateMeters();
 
         //return the new ships id
         return ship->ID();

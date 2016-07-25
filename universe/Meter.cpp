@@ -57,5 +57,5 @@ void Meter::AddToCurrent(float adjustment)
 void Meter::ClampCurrentToRange(float min/* = DEFAULT_VALUE*/, float max/* = LARGE_VALUE*/)
 { m_current_value = std::max(std::min(m_current_value, max), min); }
 
-void Meter::BackPropegate()
+void Meter::BackPropagate()
 { m_initial_value = m_current_value; }

@@ -654,21 +654,21 @@ void Planet::Conquer(int conquerer) {
     SetOwner(conquerer);
 
     GetMeter(METER_SUPPLY)->SetCurrent(0.0f);
-    GetMeter(METER_SUPPLY)->BackPropegate();
+    GetMeter(METER_SUPPLY)->BackPropagate();
     GetMeter(METER_INDUSTRY)->SetCurrent(0.0f);
-    GetMeter(METER_INDUSTRY)->BackPropegate();
+    GetMeter(METER_INDUSTRY)->BackPropagate();
     GetMeter(METER_RESEARCH)->SetCurrent(0.0f);
-    GetMeter(METER_RESEARCH)->BackPropegate();
+    GetMeter(METER_RESEARCH)->BackPropagate();
     GetMeter(METER_TRADE)->SetCurrent(0.0f);
-    GetMeter(METER_TRADE)->BackPropegate();
+    GetMeter(METER_TRADE)->BackPropagate();
     GetMeter(METER_CONSTRUCTION)->SetCurrent(0.0f);
-    GetMeter(METER_CONSTRUCTION)->BackPropegate();
+    GetMeter(METER_CONSTRUCTION)->BackPropagate();
     GetMeter(METER_DEFENSE)->SetCurrent(0.0f);
-    GetMeter(METER_DEFENSE)->BackPropegate();
+    GetMeter(METER_DEFENSE)->BackPropagate();
     GetMeter(METER_SHIELD)->SetCurrent(0.0f);
-    GetMeter(METER_SHIELD)->BackPropegate();
+    GetMeter(METER_SHIELD)->BackPropagate();
     GetMeter(METER_HAPPINESS)->SetCurrent(0.0f);
-    GetMeter(METER_HAPPINESS)->BackPropegate();
+    GetMeter(METER_HAPPINESS)->BackPropagate();
 }
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
@@ -733,7 +733,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     // set colony population
     GetMeter(METER_POPULATION)->SetCurrent(population);
     GetMeter(METER_TARGET_POPULATION)->SetCurrent(population);
-    BackPropegateMeters();
+    BackPropagateMeters();
 
 
     // set specified empire as owner
