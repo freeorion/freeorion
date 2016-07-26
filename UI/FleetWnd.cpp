@@ -1566,6 +1566,9 @@ void FleetDataPanel::Refresh() {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
 
+        boost::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
+        m_fleet_icon = new GG::StaticGraphic(new_fleet_texture, DataPanelIconStyle());
+        AttachChild(m_fleet_icon);
     } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
@@ -3099,7 +3102,7 @@ void FleetWnd::DoLayout() {
 
     if (show_new_fleet_drop_target) {
         AttachChild(m_new_fleet_drop_target);
-        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT + GG::X(PAD), top), GG::Pt(RIGHT - ClientUI::ScrollWidth() - GG::X(PAD), top + ROW_HEIGHT));
+        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT + GG::X(PAD), top), GG::Pt(RIGHT - GG::X(PAD), top + ROW_HEIGHT));
         top += ROW_HEIGHT + GG::Y(PAD);
     } else {
         if (m_new_fleet_drop_target)
