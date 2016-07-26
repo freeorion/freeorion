@@ -3,6 +3,7 @@ from collections import OrderedDict as odict
 from time import time
 import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from common.print_utils import Table, Text, Float
 
 import AIFleetMission
 import ExplorationAI
@@ -875,6 +876,11 @@ class AIstate(object):
         min_threat_rating = {'overall': MilitaryAI.MinThreat, 'attack': MilitaryAI.MinThreat ** 0.5, 'health': MilitaryAI.MinThreat ** 0.5}
         fighters = {(0, ((0, 0),), 0.0, 5.0): [0]}  # start with a dummy entry
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
+
+        fleet_table = Table([
+            Text('fleet'), Float('old rating'), Float('new rating'),
+            Text('location'), Text('destination'), Text('summary')
+        ])
         for fleet_id in fleet_list:
             status = self.fleetStatus.setdefault(fleet_id, {})
             rating = status.get('rating', {'overall': 0, 'attack': 0, 'health': 0})
@@ -909,37 +915,37 @@ class AIstate(object):
                     del self.fleetStatus[fleet_id]
                 continue
             else:  # fleet in ok fleets
-                sys1 = universe.getSystem(sys_id)
-                if sys_id == -1:
-                    sys1_name = 'starlane'
-                else:
-                    sys1_name = (sys1 and sys1.name) or "unknown"
-                next_sys_id = fleet.nextSystemID
-                sys2 = universe.getSystem(next_sys_id)
-                if next_sys_id == -1:
-                    sys2_name = 'starlane'
-                else:
-                    sys2_name = (sys2 and sys2.name) or "unknown"
-                print "Fleet %d (%s) oldRating: %6d | new_rating %6d | at system %d (%s) | next system %d (%s)" % (fleet_id, fleet.name, rating.get('overall', 0), new_rating.get('overall', 0),
-                                                                                                                   fleet.systemID, sys1_name, fleet.nextSystemID, sys2_name)
-                print "Fleet %d (%s) summary: %s" % (fleet_id, fleet.name, rating.get('summary', None))
+                this_sys = universe.getSystem(sys_id)
+                next_sys = universe.getSystem(fleet.nextSystemID)
+
+                fleet_table.add_row(
+                    [
+                        fleet,
+                        rating.get('overall', 0),
+                        new_rating.get('overall', 0),
+                        this_sys or 'starlane',
+                        next_sys or 'starlane',
+                        rating.get('summary', None)
+                    ])
+
                 status['rating'] = new_rating
                 for count, sum_stats in new_rating['summary']:
                     if sum_stats[0] > 0:
                         fighters.setdefault(sum_stats, [0])[0] += count
-                if next_sys_id != -1:
-                    status['sysID'] = next_sys_id
-                elif sys_id != -1:
-                    status['sysID'] = sys_id
+                if next_sys:
+                    status['sysID'] = next_sys.id
+                elif this_sys:
+                    status['sysID'] = this_sys.id
                 else:
-                    main_missin = self.get_fleet_mission(fleet_id)
-                    main_mission_type = (main_missin.getAIMissionTypes() + [-1])[0]
+                    main_mission = self.get_fleet_mission(fleet_id)
+                    main_mission_type = (main_mission.getAIMissionTypes() + [-1])[0]
                     if main_mission_type != -1:
-                        targets = main_missin.getAITargets(main_mission_type)
+                        targets = main_mission.getAITargets(main_mission_type)
                         if targets:
                             m_mt0 = targets[0]
                             if isinstance(m_mt0.target_type, System):
                                 status['sysID'] = m_mt0.target.id  # hmm, but might still be a fair ways from here
+        fleet_table.print_table()
         self.shipCount = ship_count
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
         self.empire_standard_fighter = std_fighter
