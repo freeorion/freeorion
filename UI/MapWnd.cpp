@@ -2782,7 +2782,7 @@ void MapWnd::ClearSystemRenderingBuffers() {
 }
 
 namespace {
-    // SupplyLaneMap map keyed by system containing all system
+    // SupplyLaneMap map keyed by system containing all systems
     // corresponding to valid supply lane destinations
     typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
 
@@ -2818,7 +2818,7 @@ namespace {
             return;
 
         boost::unordered_map<int, AncestorInfo> ancestors;
-        std::deque<PrevCurrInfo> tryNext;
+        std::deque<PrevCurrInfo> try_next;
         std::vector<int> path;
 
         // A list of all reachable midpoints between at least two different terminal points
@@ -2826,18 +2826,19 @@ namespace {
 
         // Start from all terminal points.
         for (boost::unordered_set<int>::const_iterator start_it = terminal_points.begin();
-             start_it != terminal_points.end(); ++start_it) {
-            tryNext.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
+             start_it != terminal_points.end(); ++start_it)
+        {
+            try_next.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
             ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it, *start_it)));
         }
 
         // Find all reachable midpoints where paths from two different
         // terminal points meet.
-        while (!tryNext.empty() ) {
-            const PrevCurrInfo & curr = tryNext.front();
+        while (!try_next.empty() ) {
+            const PrevCurrInfo & curr = try_next.front();
 
-            std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator> supplylane_endpoints
-                = supply_lanes.equal_range(curr.curr);
+            std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator>
+                supplylane_endpoints = supply_lanes.equal_range(curr.curr);
             for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
                  sup_it != supplylane_endpoints.second; ++sup_it)
             {
@@ -2849,35 +2850,34 @@ namespace {
                 // Unvisited system, so create new ancestor.
                 if (ancestor == ancestors.end()) {
                     ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr, curr.origin)));
-                    tryNext.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
-                }
+                    try_next.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
 
                 // Previously visited so modify older ancestor to merge
                 // paths/create end points.
-                else {
+                } else {
 
                     // Same origin so add to ancestors.
                     if (ancestor->second.single_origin
-                        && ancestor->second.single_origin == curr.origin) {
+                        && ancestor->second.single_origin == curr.origin)
+                    {
                         ancestor->second.ids.push_back(curr.curr);
-                    }
 
                     // Different origins so mark both as ends of good paths
-                    else if (ancestor->second.single_origin
-                        && ancestor->second.single_origin != curr.origin) {
+                    } else if (ancestor->second.single_origin
+                        && ancestor->second.single_origin != curr.origin)
+                    {
                         // Single origin becomes multi origin and these
                         // points are marked as midpoints.
                         ancestor->second.single_origin = boost::none;
                         reachable_midpoints.push_back(curr.curr);
                         reachable_midpoints.push_back(next);
-                    }
 
                     // Already multi-origin so add to ancestors
-                    else
+                    } else
                         ancestor->second.ids.push_back(curr.curr);
                 }
             }
-            tryNext.pop_front();
+            try_next.pop_front();
         }
 
         // Queue is exhausted.
@@ -2889,8 +2889,8 @@ namespace {
         // Return all systems on any path back to a terminal point.
         boost::unordered_set<int> ancestors_on_path;
         for (std::vector<int>::const_iterator reached_it = reachable_midpoints.begin();
-             reached_it != reachable_midpoints.end(); ++reached_it) {
-
+             reached_it != reachable_midpoints.end(); ++reached_it)
+        {
             boost::unordered_map<int, AncestorInfo>::const_iterator ancestor_ii_sys;
             int ii_sys;
             ancestors_on_path.insert(*reached_it);
@@ -2898,7 +2898,8 @@ namespace {
                 ii_sys = *ancestors_on_path.begin();
                 ancestors_on_path.erase(ancestors_on_path.begin());
                 if ((ancestor_ii_sys = ancestors.find(ii_sys)) != ancestors.end()
-                       && (good_path.count(ancestor_ii_sys->first) == 0 )) {
+                    && (good_path.count(ancestor_ii_sys->first) == 0 ))
+                {
                     good_path.insert(ancestor_ii_sys->first);
                     ancestors_on_path.insert(ancestor_ii_sys->second.ids.begin(), ancestor_ii_sys->second.ids.end());
                 }
@@ -2911,7 +2912,7 @@ namespace {
     /** Look a \p kkey in \p mmap and if not found allocate a new
         shared_ptr with the default constructor.*/
     template <typename Map>
-    typename Map::mapped_type& lookup_or_make_shared(Map & mmap, typename Map::key_type const & kkey) {
+    typename Map::mapped_type& lookup_or_make_shared(Map& mmap, typename Map::key_type const& kkey) {
         typename Map::iterator map_it = mmap.find(kkey);
         if (map_it == mmap.end()) {
             map_it = mmap.insert(map_it,
@@ -2952,12 +2953,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     if (this_client_empire) {
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
-        const std::map<std::set<int>, float>& allocatedPP(queue.AllocatedPP());
-        const std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+        const std::map<std::set<int>, float>& allocated_pp(queue.AllocatedPP());
+        const std::map<std::set<int>, float> available_pp(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
 
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
-        for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+        for (std::map<std::set<int>, float>::const_iterator it = available_pp.begin(); it != available_pp.end(); ++it) {
             float group_pp = it->second;
             if (group_pp < 1e-4f)
                 continue;
@@ -2974,7 +2975,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                TemporaryPtr<const System> system = Objects().Object<const System>(system_id);
+                TemporaryPtr<const System> system = GetSystem(system_id);
                 if (!system)
                     continue;
 
@@ -2982,7 +2983,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
             // this_pool += ")";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
-            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocatedPP[it->first] << " PP allocated";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocated_pp[it->first] << " PP allocated";
         }
 
 
@@ -3036,13 +3037,13 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
 
         // Take note of all systems of under allocated resource groups.
-        for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+        for (std::map<std::set<int>, float>::const_iterator it = available_pp.begin(); it != available_pp.end(); ++it) {
             float group_pp = it->second;
             if (group_pp < 1e-4f)
                 continue;
 
-            std::map<std::set<int>, float>::const_iterator allocated_it = allocatedPP.find(it->first);
-            if (allocated_it == allocatedPP.end() || (group_pp > allocated_it->second + 0.05)) {
+            std::map<std::set<int>, float>::const_iterator allocated_it = allocated_pp.find(it->first);
+            if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
                 boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(it->first);
                 if (group_core_it != res_group_cores.end())
                     under_alloc_res_grp_core_members = group_core_it->second;
@@ -3154,7 +3155,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     lane_colour = this_client_empire->Color();
                     float indicatorExtent = 0.5f;
                     if (under_alloc_res_grp_core_members
-                        && (under_alloc_res_grp_core_members->find(start_system->ID()) != under_alloc_res_grp_core_members->end() ) ) {
+                        && (under_alloc_res_grp_core_members->find(start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
+                    {
                         GG::Clr eclr= this_client_empire->Color();
                         lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
@@ -3167,7 +3169,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     if (start_core != member_to_core.end() && dest_core != member_to_core.end()
                         && (start_core->second != dest_core->second)
                         && (*(start_core->second) != *(dest_core->second)))
+                    {
                         indicatorExtent = 0.2f;
+                    }
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
                                                  lane_endpoints.Y1);
                     m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
