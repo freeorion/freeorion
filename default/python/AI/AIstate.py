@@ -91,7 +91,7 @@ class AIstate(object):
         self.systemStatus = {}
         self.needsEmergencyExploration = []
         self.newlySplitFleets = {}
-        self.aggression = aggression
+        self.aggression = int(aggression)
         self.shipCount = 4
         self.misc = {}
         self.qualifyingColonyBaseTargets = {}
