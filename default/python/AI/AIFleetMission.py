@@ -522,12 +522,11 @@ class AIFleetMission(object):
 
     def __str__(self):
         fleet = self.fleet.get_object()
-        if self.type is not None:
-            fleet_id = self.fleet.id
-            return "%-20s [%10s mission]: %3d ships, total rating: %7d target: %s" % (fleet,
-                                                                                      self.type,
-                                                                                      (fleet and len(fleet.shipIDs)) or 0,
-                                                                                      foAI.foAIstate.get_rating(fleet_id).get('overall', 0),
-                                                                                      self.target)
-        else:
-            return 'Mission of %s without mission types' % fleet
+
+        fleet_id = self.fleet.id
+        return "%-25s [%-11s] ships: %2d; total rating: %4d; target: %s" % (fleet,
+                                                                            "NONE" if self.type is None else self.type,
+                                                                            (fleet and len(fleet.shipIDs)) or 0,
+                                                                            foAI.foAIstate.get_rating(fleet_id).get(
+                                                                                'overall', 0),
+                                                                            self.target or 'no target')

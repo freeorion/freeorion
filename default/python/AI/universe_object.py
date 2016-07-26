@@ -16,12 +16,8 @@ class UniverseObject(object):
     def __str__(self):
         target = self.get_object()
         if target is None:
-            target_name = "%4d" % self.id
-        else:
-            target_name = target.name
-        return "{ %7s : [%4d] %9s}" % (
-            self.object_name, self.id, target_name
-        )
+            target = "inaccessible %s_%s<>" % (self.object_name, self.id)
+        return str(target)
 
     def get_object(self):
         """
