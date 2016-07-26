@@ -9478,6 +9478,14 @@ BLD_CULTURE_LIBRARY_DESC
 
 Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the population of the high tech natives reaches zero.'''
 
+BLD_AUTO_HISTORY_ANALYSER
+Automated History Analyser
+
+BLD_AUTO_HISTORY_ANALYSER_DESC
+'''The Automated History Analyser can only be build on a planet with [[buildingtype BLD_CULTURE_ARCHIVES]]. Increases target [[encyclopedia RESEARCH_TITLE]] by 5.
+
+An automated research center with enormous computing power that scours the digitalised cultural archieves to come up with patterns, interdisciplinary parallels and lost or unfinished insights.'''
+
 BLD_IMPERIAL_PALACE
 Imperial Palace
 

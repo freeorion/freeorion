@@ -1,11 +1,11 @@
 Tech
     name = "LRN_PHYS_BRAIN"
     description = "LRN_PHYS_BRAIN_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     category = "LEARNING_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    tags = "THEORY"
+    unlock = Item type = Building name = "BLD_AUTO_HISTORY_ANALYSER"
     graphic = "icons/tech/the_physical_brain.png"
 
 #include "/scripting/common/base_prod.macros"
