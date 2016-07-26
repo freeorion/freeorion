@@ -2986,23 +2986,24 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
 
 
+        // Convert supply starlanes to non-directional.
+        SupplyLaneMMap resource_supply_lanes_undirected;
+        const std::set<std::pair<int, int> >
+            resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+
+        for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
+             sp_it != resource_supply_lanes_directed.end(); ++sp_it)
+        {
+            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->first, sp_it->second));
+            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
+        }
+
         // For each pool of resources find all paths available through
         // the supply network.
 
         for (boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
-            // Convert supply starlanes to non-directional.
-            SupplyLaneMMap resource_supply_lanes_undirected;
-            const std::set<std::pair<int, int> > resource_supply_lanes_directed
-                = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
-
-            for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
-                 sp_it != resource_supply_lanes_directed.end(); ++sp_it) {
-                resource_supply_lanes_undirected.insert(std::make_pair(sp_it->first, sp_it->second));
-                resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
-            }
-
             boost::shared_ptr<std::set<int> >& group_core = lookup_or_make_shared(res_group_cores, res_pool_sys_it->first);
 
             // All individual resource system are included in the
