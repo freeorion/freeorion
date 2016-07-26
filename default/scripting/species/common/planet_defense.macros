@@ -1,14 +1,13 @@
 
 NATIVE_PLANETARY_DEFENSE
-'''[[BASIC_PLANETARY_DEFENSE]]
-
-EffectsGroup
+'''EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Unowned
             ]
             accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = [
                 SetMaxDefense value = Value + 10
                 SetDetection value = Value + 10
@@ -17,78 +16,7 @@ EffectsGroup
 '''
 
 AVERAGE_PLANETARY_DEFENSE
-'''[[BASIC_PLANETARY_DEFENSE]]
-
-//EffectsGroup
-//            scope = Source
-//            activation = Planet
-//          accountinglabel = "AVERAGE_SHIELDS_LABEL"
-//            effects = SetMaxDefense value = Value * 1
-            
-    [[PROTECTION_FOCUS_DEFENSE]]
-'''
-
-BASIC_PLANETARY_DEFENSE
-'''EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Contains Building name = "BLD_IMPERIAL_PALACE"
-            ]
-            activation = Planet
-            stackinggroup = "PALACE_DEFENSE_STACK"
-            accountinglabel = "BLD_IMPERIAL_PALACE"
-            effects = SetMaxDefense value = Value + 5
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_DEFENSE_NET_1"
-            ]
-            stackinggroup = "DEFENSE_NET_STACK_1"
-            accountinglabel = "DEF_DEFENSE_NET_1"
-            effects = SetMaxDefense value = Value + 5
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_DEFENSE_NET_2"
-            ]
-            stackinggroup = "DEFENSE_NET_STACK_2"
-            accountinglabel = "DEF_DEFENSE_NET_2"
-            effects = SetMaxDefense value = Value + 15
-
-EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            activation = And [
-                Planet
-                OwnerHasTech name = "DEF_DEFENSE_NET_3"
-            ]
-            stackinggroup = "DEFENSE_NET_STACK_3"
-            accountinglabel = "DEF_DEFENSE_NET_3"
-            effects = SetMaxDefense value = Value + 25
-
-EffectsGroup
-            scope = Source
-            activation = And [
-                PopulationCenter
-                OwnerHasTech name = "GRO_ENERGY_META"
-            ]
-            stackinggroup = "DEFENSE_NET_STACK_GM"
-            accountinglabel = "GRO_ENERGY_META"
-            effects = SetMaxDefense value = Value + 10
-'''
+'''[[PROTECTION_FOCUS_DEFENSE]]'''
 
 PROTECTION_FOCUS_DEFENSE
 '''EffectsGroup
@@ -98,6 +26,8 @@ PROTECTION_FOCUS_DEFENSE
                 Focus type = "FOCUS_PROTECTION"
             ]
             stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
-            accountinglabel = "FOCUS_PROTECTION_LABEL"
-            effects = SetMaxDefense value = Value * 2
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetMaxDefense value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
 '''
+
+#include "/scripting/common/priorities.macros"

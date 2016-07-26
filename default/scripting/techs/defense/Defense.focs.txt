@@ -1,4 +1,3 @@
-//CORRESPONDING MAX TROOP, DEFENSE, & SHIELD VALUES ARE SPECIFIED IN SPECIES
 Tech
     name = "DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
@@ -6,6 +5,16 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 1
     researchturns = 1
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxShield value = Value + 1 accountinglabel = "DEF_ROOT_DEFENSE"
+    ]
     graphic = ""
 
 Tech
