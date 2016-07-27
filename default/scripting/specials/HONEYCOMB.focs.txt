@@ -37,7 +37,9 @@ Special
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
                 ]
             ]
-            activation = Turn high = 0 
+            activation = Turn high = 0
+            stackinggroup = "GAME_START_MOD_STACK"
+            priority = [[VERY_EARLY_PRIORITY]]
             effects = [
                 SetPlanetSize planetsize = asteroids
                 SetPlanetType type = asteroids
@@ -45,7 +47,9 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = Turn high = 0 
+            activation = Turn high = 0
+            stackinggroup = "GAME_START_MOD_STACK"
+            priority = [[VERY_EARLY_PRIORITY]]
             effects = [
                 SetPlanetSize planetsize = Huge
                 SetPlanetType type = Barren
