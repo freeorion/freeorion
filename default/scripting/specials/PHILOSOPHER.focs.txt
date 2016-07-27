@@ -28,6 +28,8 @@ Special
         EffectsGroup
             scope = Source
             activation = Turn high = 0
+            stackinggroup = "GAME_START_MOD_STACK"
+            priority = [[VERY_EARLY_PRIORITY]]
             effects = SetPlanetType type = Radiated
 
         EffectsGroup

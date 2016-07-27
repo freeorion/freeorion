@@ -38,6 +38,7 @@ Hull
             ]
             activation = Not Turn low = 1
             accountinglabel = "ADD_NEST_SPECIAL_EFFECT_1"
+            stackinggroup = "GAME_START_MOD_STACK"
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
 
         [[MONSTER_MOVE_ALWAYS]]

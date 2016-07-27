@@ -35,6 +35,7 @@ Hull
                 ]
             ]
             activation = Turn high = 2
+            stackinggroup = "GAME_START_MOD_STACK"
             effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
 
         [[MONSTER_MOVE_ALWAYS]]
