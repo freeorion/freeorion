@@ -70,17 +70,15 @@ class AIstate(object):
         universe = fo.getUniverse()
         empire = fo.getEmpire()
         self.empireID = empire.empireID
-        self.origHomeworldID = empire.capitalID
-        homeworld = universe.getPlanet(self.origHomeworldID)
-        self.origSpeciesName = (homeworld and homeworld.speciesName) or ""
+        homeworld = universe.getPlanet(empire.capitalID)
         if homeworld:
-            self.origHomeSystemID = homeworld.systemID
+            self.__origin_home_system_id = homeworld.systemID
         else:
-            self.origHomeSystemID = -1
-        self.visBorderSystemIDs = {self.origHomeSystemID: 1}
+            self.__origin_home_system_id = -1
+        self.visBorderSystemIDs = {self.__origin_home_system_id: 1}
         self.visInteriorSystemIDs = {}
         self.exploredSystemIDs = {}
-        self.unexploredSystemIDs = {self.origHomeSystemID: 1}
+        self.unexploredSystemIDs = {self.__origin_home_system_id: 1}
         self.fleetStatus = {}  # keys: 'sysID', 'nships', 'rating'
         # systemStatus keys: 'name', 'neighbors' (sysIDs), '2jump_ring' (sysIDs), '3jump_ring', '4jump_ring'
         # 'fleetThreat', 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'totalThreat', 'localEnemyFleetIDs',
@@ -97,7 +95,7 @@ class AIstate(object):
         self.qualifyingColonyBaseTargets = {}
         self.qualifyingOutpostBaseTargets = {}
         self.qualifyingTroopBaseTargets = {}
-        self.empire_standard_fighter = (4, ((4, 1),), 0.0, 10.0)
+        self.__empire_standard_fighter = (4, ((4, 1),), 0.0, 10.0)
         self.empire_standard_enemy = (4, ((4, 1),), 0.0, 10.0)  # TODO: track on a per-empire basis
         self.empire_standard_enemy_rating = 40  # TODO: track on a per-empire basis
 
@@ -146,7 +144,7 @@ class AIstate(object):
         invasionTargets[:] = []
         exploration_center = PlanetUtilsAI.get_capital_sys_id()
         if exploration_center == -1:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
-            exploration_center = self.origHomeSystemID
+            exploration_center = self.__origin_home_system_id
 
         # check if planets in cache is still present. Remove destroyed.
         for system_id, info in sorted(self.systemStatus.items()):
@@ -308,7 +306,7 @@ class AIstate(object):
                             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
                             if not fleet.ownedBy(-1):
                                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
-                                rating = self.rate_fleet(fleet_id, self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
+                                rating = self.rate_fleet(fleet_id, self.fleet_sum_tups_to_estat_dicts([(1, self.__empire_standard_fighter)]))
                                 if rating.get('overall', 0) > 0.25 * my_milship_rating:
                                     self.misc.setdefault('dangerous_enemies_sighted', {}).setdefault(current_turn, []).append(fleet_id)
         e_f_dict = [cur_e_fighters, old_e_fighters][len(cur_e_fighters) == 1]
@@ -350,7 +348,7 @@ class AIstate(object):
                 fleet = universe.getFleet(fid)
                 if not fleet:
                     continue
-                newstyle_rating = self.rate_fleet(fid, self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
+                newstyle_rating = self.rate_fleet(fid, self.fleet_sum_tups_to_estat_dicts([(1, self.__empire_standard_fighter)]))
                 if fleet.speed == 0:
                     monster_ratings.append(newstyle_rating)
                     if verbose:
@@ -948,7 +946,7 @@ class AIstate(object):
         fleet_table.print_table()
         self.shipCount = ship_count
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
-        self.empire_standard_fighter = std_fighter
+        self.__empire_standard_fighter = std_fighter
         print "------------------------"
         # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", ship_count
