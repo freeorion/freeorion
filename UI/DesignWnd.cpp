@@ -407,6 +407,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
 
     PartGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
     void            CullSuperfluousParts(std::vector<const PartType* >& this_group,
@@ -427,6 +428,10 @@ public:
 
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
+
+protected:
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
@@ -509,6 +514,21 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
     }
+}
+
+/** Accept parts being discarded from the ship under design.*/
+void PartsListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
+    if (wnds.size() != 1) {
+        // delete any extra wnds that won't be processed below
+        std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
+        ++it;
+        for (; it != wnds.end(); ++it)
+            delete *it;
+        ErrorLogger() << "PartsListBox::AcceptDrops given multiple wnds unexpectedly...";
+    }
+
+    const GG::Wnd* wnd = *(wnds.begin());
+    delete wnd;
 }
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
@@ -2531,6 +2551,26 @@ void SlotControl::SetPart(const PartType* part_type) {
 void SlotControl::EmitNullSlotContentsAlteredSignal()
 { SlotContentsAlteredSignal(0); }
 
+
+/** PartsListBox accepts parts that are being removed from a SlotControl.*/
+void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+{
+    for (DropsAcceptableIter it = first; it != last; ++it)
+        it->second = false;
+
+    // if more than one control dropped somehow, reject all
+    if (std::distance(first, last) != 1)
+        return;
+
+    const GG::Wnd* parent = first->first->Parent();
+    if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING
+        && parent
+        && dynamic_cast<const SlotControl*>(parent))
+    {
+        first->second = true;
+    }
+}
 
 //////////////////////////////////////////////////
 // DesignWnd::MainPanel                         //
