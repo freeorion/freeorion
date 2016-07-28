@@ -14,8 +14,6 @@ from turn_state import state
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
 from common.print_utils import print_in_columns
 
-AIDependencies = Dep  # TODO: fix remaining references and remove this line
-
 inProgressTechs = {}
 
 
@@ -611,8 +609,8 @@ def get_research_queue_techs():
 
 
 def exclude_tech(tech_name):
-    return ((foAI.foAIstate.aggression < AIDependencies.TECH_EXCLUSION_MAP_1.get(tech_name, fo.aggression.invalid)) or
-            (foAI.foAIstate.aggression > AIDependencies.TECH_EXCLUSION_MAP_2.get(tech_name, fo.aggression.maniacal)) or
+    return ((foAI.foAIstate.aggression < Dep.TECH_EXCLUSION_MAP_1.get(tech_name, fo.aggression.invalid)) or
+            (foAI.foAIstate.aggression > Dep.TECH_EXCLUSION_MAP_2.get(tech_name, fo.aggression.maniacal)) or
             tech_name in TechsListsAI.unusable_techs())
 
 
@@ -759,8 +757,8 @@ def generate_classic_research_orders():
     # pro sing gen
     # death ray 1 cleanup
 
-    nest_tech = AIDependencies.NEST_DOMESTICATION_TECH
-    artif_minds = AIDependencies.ART_MINDS
+    nest_tech = Dep.NEST_DOMESTICATION_TECH
+    artif_minds = Dep.ART_MINDS
     if state.have_nest and not tech_is_complete(nest_tech):
         if artif_minds in research_queue_list:
             insert_idx = 1 + research_queue_list.index(artif_minds)
@@ -1003,12 +1001,12 @@ def generate_classic_research_orders():
     # if we own a blackhole, accelerate sing_gen and conc camp
     if True:  # just to help with cold-folding / organization
         if (fo.currentTurn() > 50 and len(AIstate.empireStars.get(fo.starType.blackHole, [])) != 0 and
-                foAI.foAIstate.aggression > fo.aggression.cautious and not tech_is_complete(AIDependencies.PRO_SINGULAR_GEN) and
-                tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN)):
+                foAI.foAIstate.aggression > fo.aggression.cautious and not tech_is_complete(Dep.PRO_SINGULAR_GEN) and
+                tech_is_complete(Dep.PRO_SOL_ORB_GEN)):
             # sing_tech_list = [ "LRN_GRAVITONICS" , "PRO_SINGULAR_GEN"]  # formerly also "CON_ARCH_PSYCH", "CON_CONC_CAMP",
-            sing_gen_tech = fo.getTech(AIDependencies.PRO_SINGULAR_GEN)
+            sing_gen_tech = fo.getTech(Dep.PRO_SINGULAR_GEN)
             sing_tech_list = [pre_req for pre_req in sing_gen_tech.recursivePrerequisites(empire_id) if not tech_is_complete(pre_req)]
-            sing_tech_list += [AIDependencies.PRO_SINGULAR_GEN]
+            sing_tech_list += [Dep.PRO_SINGULAR_GEN]
             for singTech in sing_tech_list:
                 if singTech not in research_queue_list[:num_techs_accelerated + 1]:
                     res = fo.issueEnqueueTechOrder(singTech, num_techs_accelerated)

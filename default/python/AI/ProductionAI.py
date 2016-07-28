@@ -20,20 +20,21 @@ from TechsListsAI import EXOBOT_TECH_NAME
 from common.print_utils import Table, Sequence, Text
 
 
-best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
-design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
-shipTypeMap = {PriorityType.PRODUCTION_EXPLORATION: ShipDesignTypes.explorationShip,
-               PriorityType.PRODUCTION_OUTPOST: ShipDesignTypes.outpostShip,
-               PriorityType.PRODUCTION_ORBITAL_OUTPOST: ShipDesignTypes.outpostBase,
-               PriorityType.PRODUCTION_COLONISATION: ShipDesignTypes.colonyShip,
-               PriorityType.PRODUCTION_ORBITAL_COLONISATION: ShipDesignTypes.colonyBase,
-               PriorityType.PRODUCTION_INVASION: ShipDesignTypes.troopShip,
-               PriorityType.PRODUCTION_MILITARY: ShipDesignTypes.attackShip,
-               PriorityType.PRODUCTION_ORBITAL_DEFENSE: ShipDesignTypes.defenseBase,
-               PriorityType.PRODUCTION_ORBITAL_INVASION: ShipDesignTypes.troopBase,
-               }
+_best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
+_design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
+_ship_type_map = {
+    PriorityType.PRODUCTION_EXPLORATION: ShipDesignTypes.explorationShip,
+    PriorityType.PRODUCTION_OUTPOST: ShipDesignTypes.outpostShip,
+    PriorityType.PRODUCTION_ORBITAL_OUTPOST: ShipDesignTypes.outpostBase,
+    PriorityType.PRODUCTION_COLONISATION: ShipDesignTypes.colonyShip,
+    PriorityType.PRODUCTION_ORBITAL_COLONISATION: ShipDesignTypes.colonyBase,
+    PriorityType.PRODUCTION_INVASION: ShipDesignTypes.troopShip,
+    PriorityType.PRODUCTION_MILITARY: ShipDesignTypes.attackShip,
+    PriorityType.PRODUCTION_ORBITAL_DEFENSE: ShipDesignTypes.defenseBase,
+    PriorityType.PRODUCTION_ORBITAL_INVASION: ShipDesignTypes.troopBase,
+}
 
-design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
+_design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
 _CHAT_DEBUG = False
 
@@ -41,16 +42,16 @@ _CHAT_DEBUG = False
 def find_best_designs_this_turn():
     """Calculate the best designs for each ship class available at this turn."""
     ShipDesignAI.Cache.update_for_new_turn()
-    design_cache.clear()
-    design_cache[PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.OrbitalColonisationShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
-    design_cache[PriorityType.PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
+    _design_cache.clear()
+    _design_cache[PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.OrbitalColonisationShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
+    _design_cache[PriorityType.PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     if fo.currentTurn() % 10 == 0:
         ShipDesignAI.Cache.print_best_designs()
@@ -66,12 +67,12 @@ def get_design_cost(design, pid):  # TODO: Use new framework
     :return: cost of the design
     """
     cur_turn = fo.currentTurn()
-    if cur_turn in design_cost_cache:
-        cost_cache = design_cost_cache[cur_turn]
+    if cur_turn in _design_cost_cache:
+        cost_cache = _design_cost_cache[cur_turn]
     else:
-        design_cost_cache.clear()
+        _design_cost_cache.clear()
         cost_cache = {}
-        design_cost_cache[cur_turn] = cost_cache
+        _design_cost_cache[cur_turn] = cost_cache
     loc_invariant = design.costTimeLocationInvariant
     if loc_invariant:
         loc = -1
@@ -86,16 +87,16 @@ def cur_best_military_design_rating():
     :return: float: rating of the best military design
     """
     current_turn = fo.currentTurn()
-    if current_turn in best_military_design_rating_cache:
-        return best_military_design_rating_cache[current_turn]
+    if current_turn in _best_military_design_rating_cache:
+        return _best_military_design_rating_cache[current_turn]
     priority = PriorityType.PRODUCTION_MILITARY
-    if priority in design_cache:
-        if design_cache[priority] and design_cache[priority][0]:
-            rating, pid, design_id, cost = design_cache[priority][0]
+    if priority in _design_cache:
+        if _design_cache[priority] and _design_cache[priority][0]:
+            rating, pid, design_id, cost = _design_cache[priority][0]
             pilots = fo.getUniverse().getPlanet(pid).speciesName
             ship_id = -1  # no existing ship
             design_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=[(ship_id, design_id, pilots)])['overall']
-            best_military_design_rating_cache[current_turn] = design_rating
+            _best_military_design_rating_cache[current_turn] = design_rating
             return max(design_rating, 0.001)
         else:
             return 0.001
@@ -113,8 +114,8 @@ def get_best_ship_info(priority, loc=None):
         planet_ids = [loc]
     else:  # problem
         return None, None, None
-    if priority in design_cache:
-        best_designs = design_cache[priority]
+    if priority in _design_cache:
+        best_designs = _design_cache[priority]
         if not best_designs:
             return None, None, None
 
@@ -152,8 +153,8 @@ def get_best_ship_ratings(planet_ids):
     priority = PriorityType.PRODUCTION_MILITARY
     planet_ids = set(planet_ids).intersection(ColonisationAI.empire_shipyards)
 
-    if priority in design_cache:  # use new framework
-        build_choices = design_cache[priority]
+    if priority in _design_cache:  # use new framework
+        build_choices = _design_cache[priority]
         loc_choices = [[item[0], item[1], item[2], fo.getShipDesign(item[2])]
                        for item in build_choices if item[1] in planet_ids]
         if not loc_choices:

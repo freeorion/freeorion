@@ -78,14 +78,6 @@ def get_priority_production_types():
     return PriorityType.range(6, 12)
 
 
-def get_priority_research_types():
-    return PriorityType.range(12, 19)
-
-
-def get_priority_types():
-    return PriorityType.range(0, 19)
-
-
 class ExplorableSystemType(Enum):
     UNREACHABLE = 0
     UNEXPLORED = 1
@@ -152,10 +144,6 @@ class ShipRoleType(Enum):  # this is also used in determining fleetRoles
     BASE_INVASION = 10
     BASE_OUTPOST = 11
     BASE_COLONISATION = 12
-
-
-def get_ship_roles_types():
-    return ShipRoleType.range(0, 9)
 
 
 class EmpireProductionTypes(Enum):
