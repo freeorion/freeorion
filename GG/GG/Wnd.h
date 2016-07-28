@@ -449,7 +449,7 @@ public:
     /** When the user drops Wnds onto this Wnd, a DragDropHere event is
         generated, which determines which of the dropped Wnds are acceptable
         by the dropped-on Wnd by calling DropsAcceptable. The acceptable Wnds
-        are then passed to AcceptDrops(), which handles the eceipt of one or
+        are then passed to AcceptDrops(), which handles the receipt of one or
         more drag-and-drop wnds into this Wnd. */
     virtual void AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys);
 
