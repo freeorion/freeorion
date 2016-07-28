@@ -1097,25 +1097,9 @@ void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
     throw BadGlyph(boost::io::str(boost::format(format_str) % boost::io::str(format % c)));
 }
 
-Pt Font::DetermineLinesImpl(const std::string& text,
+void Font::FillTextElements(const std::string& text,
                             Flags<TextFormat>& format,
-                            X box_width,
-                            std::vector<LineData>& line_data,
-                            std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const
-{
-    ValidateFormat(format);
-
-#if DEBUG_DETERMINELINES
-    std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
-              << static_cast<const void*>(&*text.begin()) << ") format="
-              << format << " box_width=" << box_width << ")" << std::endl;
-#endif
-
-    std::vector<boost::shared_ptr<TextElement> > local_text_elements;
-
-    std::vector<boost::shared_ptr<TextElement> >& text_elements =
-        text_elements_ptr ? *text_elements_ptr : local_text_elements;
-
+                            std::vector<boost::shared_ptr<TextElement> >& text_elements) const {
     if (text_elements.empty()) {
         using namespace boost::xpressive;
 
@@ -1255,6 +1239,28 @@ Pt Font::DetermineLinesImpl(const std::string& text,
         std::cout << std::endl;
 #endif
     }
+}
+
+Pt Font::DetermineLinesImpl(const std::string& text,
+                            Flags<TextFormat>& format,
+                            X box_width,
+                            std::vector<LineData>& line_data,
+                            std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const
+{
+    ValidateFormat(format);
+
+#if DEBUG_DETERMINELINES
+    std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
+              << static_cast<const void*>(&*text.begin()) << ") format="
+              << format << " box_width=" << box_width << ")" << std::endl;
+#endif
+
+    std::vector<boost::shared_ptr<TextElement> > local_text_elements;
+
+    std::vector<boost::shared_ptr<TextElement> >& text_elements =
+        text_elements_ptr ? *text_elements_ptr : local_text_elements;
+
+    FillTextElements(text, format, text_elements);
 
     RenderState render_state;
     int tab_width = 8; // default tab width

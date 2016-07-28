@@ -564,6 +564,11 @@ private:
 
     typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
 
+    /** Parse XML in text and add glyphs to text_elements. */
+    void FillTextElements(const std::string& text,
+                          Flags<TextFormat>& format,
+                          std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
+
     Pt DetermineLinesImpl(const std::string& text,
                           Flags<TextFormat>& format,
                           X box_width,
