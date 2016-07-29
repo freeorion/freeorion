@@ -71,8 +71,8 @@ class AdjacencyGrid(object):
             candidates = [pos for cell in ring for pos in self.grid[cell]]
             if candidates:
                 (_, pt) = min((util.distance(pos, p), pos) for pos in candidates)
-                return [pt]
-        return []
+                return pt
+        return None
 
     def too_close_to_other_positions(self, pos):
         """
@@ -341,8 +341,8 @@ def enforce_max_distance(positions, adjacency_grid):
             adjacency_grid.remove_pos(pos)
         # Find nearest neighbour
         (_, p1, p2) = min([(util.distance(pos, nn), pos, nn)
-                           for nn in adjacency_grid.nearest_neighbor(pos)
-                           for pos in smallest_cluster])
+                           for pos in smallest_cluster
+                           for nn in [adjacency_grid.nearest_neighbor(pos)] if nn])
 
         for pos in smallest_cluster:
             adjacency_grid.insert_pos(pos)
