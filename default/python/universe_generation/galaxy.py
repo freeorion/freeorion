@@ -250,6 +250,15 @@ class Clusterer(object):
         ''p1'' and ''p2'' are the closest positions between
         the clusters and the positions in ''stitches'' are only
         between ''p1'' and ''p2''
+
+        After stitch_clusters there will be one fewer clusters in
+        the clusterer, unless there were fewer than two clusters
+        to begin with.
+
+        If ''p1'' or ''p2'' are not in clusters then stitch_clusters
+        just stitches two random clusters together.  This preserves
+        the invariant that stitch_clusters always reduces the number
+        of clusters.
         """
         len_dset1 = None
         len_dset2 = None
@@ -258,7 +267,13 @@ class Clusterer(object):
                 len_dset1 = len_dset
             if p2 in len_dset[1]:
                 len_dset2 = len_dset
-        assert len_dset1 and len_dset2, "p1 and p2 must be points in disjoint sets of positions"
+
+        if not len_dset1 or not len_dset2:
+            util.report_error("p1 and p2 must be points in disjoint sets of positions")
+            if len(self.clusters) < 2:
+                return
+            len_dset1, len_dset2 = list(self.clusters)[0:2]
+
         self.clusters.remove(len_dset1)
         self.clusters.remove(len_dset2)
         # Decorate the new cluster with its length to speed sorting
