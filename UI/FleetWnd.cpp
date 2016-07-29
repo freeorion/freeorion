@@ -2059,6 +2059,12 @@ public:
         //std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
     }
 
+    void            Refresh() {
+        const GG::Pt row_size = ListRowSize();
+        for (GG::ListBox::iterator it = begin(); it != end(); ++it)
+            (*it)->Resize(row_size);
+    }
+
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
@@ -2399,6 +2405,7 @@ public:
     void            SetSelectedShips(const std::set<int>& ship_ids);///< sets the currently-selected ships in the ships list
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            Refresh();
 
     void            EnableOrderIssuing(bool enabled = true);
 
@@ -2408,7 +2415,6 @@ public:
 
 private:
     int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
-    void            Refresh();
     void            DoLayout();
     void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
@@ -3261,6 +3267,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
         }
     }
 
+    m_fleet_detail_panel->Refresh();
     SelectedFleetsChangedSignal();
 }
 
@@ -3671,6 +3678,7 @@ void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
     m_fleet_detail_panel->SetSelectedShips(std::set<int>());
 
     CreateNewFleetFromShips(ship_ids, aggression);
+    m_fleets_lb->Refresh();
 }
 
 void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
