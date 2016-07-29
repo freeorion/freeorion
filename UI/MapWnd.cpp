@@ -54,6 +54,9 @@
 
 #include <boost/timer.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/PtRect.h>
@@ -2778,57 +2781,148 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_circle_vertices.clear();
 }
 
-std::vector<int> MapWnd::GetLeastJumps(int start_sys_it, int end_sys_it, const std::set<int>& resGroup,
-                                       const std::set<std::pair<int, int> >& supplylanes,
-                                       const ObjectMap& objMap)
-{
-    //std::map<int,bool> sysChecked;
-    std::map<int,int> ancestor;
-    std::deque<int> tryNext;
-    std::vector<int> path;
-    path.push_back(start_sys_it);
-    if (start_sys_it==end_sys_it)
-        return path;
+namespace {
+    // SupplyLaneMap map keyed by system containing all systems
+    // corresponding to valid supply lane destinations
+    typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
 
-    for (std::set<int>::const_iterator sysIt = resGroup.begin(); sysIt!=resGroup.end(); sysIt++)
-        ancestor[*sysIt] = -1;
-    ancestor[start_sys_it] = start_sys_it;
-    tryNext.push_back(start_sys_it);
+    // AncestorInfo stores the \p ids of systems one back on the path.
+    struct AncestorInfo {
+        AncestorInfo(int a, int o) : ids(1, a), single_origin(o) {}
+        std::vector<int> ids;  // previous systems
+        // originating terminal or nothing for connected resources
+        boost::optional<int> single_origin;
+    };
 
-    while (!tryNext.empty() ) {
-        int sysID = tryNext.front();
+    struct PrevCurrInfo {
+        PrevCurrInfo(int p, int n, int o) : prev(p), curr(n), origin(o) {}
+        int prev, curr, origin;
+    };
 
-        TemporaryPtr<const System> system = objMap.Object<const System>(sysID);
-        if (!system)
-            continue;
-        const std::map<int, bool>& lanes = system->StarlanesWormholes();
-        for (std::map<int, bool>::const_iterator laneIt = lanes.begin();
-             laneIt != lanes.end(); ++laneIt)
+    /**
+       Returns either:
+       a) a \p good_path between from any \p terminal_points to all
+       reachable \p terminal_points along the \p supply_lanes.
+       b) empty indicating no more work to do.
+
+     */
+    void GetPathsThroughSupplyLanes(
+        boost::unordered_set<int> & good_path,
+        const boost::unordered_set<int> & terminal_points,
+        const SupplyLaneMMap& supply_lanes)
+    {
+        good_path.clear();
+
+        // No terminal points, so all paths lead nowhere.
+        if (terminal_points.empty())
+            return;
+
+        boost::unordered_map<int, AncestorInfo> ancestors;
+        std::deque<PrevCurrInfo> try_next;
+        std::vector<int> path;
+
+        // A list of all reachable midpoints between at least two different terminal points
+        std::vector<int> reachable_midpoints;
+
+        // Start from all terminal points.
+        for (boost::unordered_set<int>::const_iterator start_it = terminal_points.begin();
+             start_it != terminal_points.end(); ++start_it)
         {
-            int newSys = laneIt->first;
-            std::pair<int, int> lane_forward = std::make_pair(sysID, newSys);
-            std::pair<int, int> lane_backward = std::make_pair(newSys, sysID);
-            // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted. if not, skip this lane
-            if (supplylanes.find(lane_forward) == supplylanes.end() && supplylanes.find(lane_backward) == supplylanes.end())
-                continue;
-            if (!laneIt->second && ( ancestor[newSys] == -1 )) { //is a starlane, and not yet visited newSys //TODO: should allow wormholes here?
-                ancestor[newSys] = sysID;
-                if (newSys==end_sys_it) {
-                    int iSys = newSys;
-                    while ((ancestor[iSys] !=-1)&&( ancestor[iSys] != iSys )) {
-                        path.push_back(iSys);
-                        iSys = ancestor[iSys];
-                    }
-                    return path;
+            try_next.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
+            ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it, *start_it)));
+        }
+
+        // Find all reachable midpoints where paths from two different
+        // terminal points meet.
+        while (!try_next.empty() ) {
+            const PrevCurrInfo & curr = try_next.front();
+
+            std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator>
+                supplylane_endpoints = supply_lanes.equal_range(curr.curr);
+            for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
+                 sup_it != supplylane_endpoints.second; ++sup_it)
+            {
+                int next = sup_it->second;
+                if (next == curr.prev)
+                    continue;
+                boost::unordered_map<int, AncestorInfo>::iterator ancestor = ancestors.find(next);
+
+                // Unvisited system, so create new ancestor.
+                if (ancestor == ancestors.end()) {
+                    ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr, curr.origin)));
+                    try_next.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
+
+                // Previously visited so modify older ancestor to merge
+                // paths/create end points.
+                } else {
+
+                    // Same origin so add to ancestors.
+                    if (ancestor->second.single_origin
+                        && ancestor->second.single_origin == curr.origin)
+                    {
+                        ancestor->second.ids.push_back(curr.curr);
+
+                    // Different origins so mark both as ends of good paths
+                    } else if (ancestor->second.single_origin
+                        && ancestor->second.single_origin != curr.origin)
+                    {
+                        // Single origin becomes multi origin and these
+                        // points are marked as midpoints.
+                        ancestor->second.single_origin = boost::none;
+                        reachable_midpoints.push_back(curr.curr);
+                        reachable_midpoints.push_back(next);
+
+                    // Already multi-origin so add to ancestors
+                    } else
+                        ancestor->second.ids.push_back(curr.curr);
                 }
-                tryNext.push_back(newSys);
+            }
+            try_next.pop_front();
+        }
+
+        // Queue is exhausted.
+
+        // No terminal point has a path to any other terminal point.
+        if (reachable_midpoints.empty())
+            return;
+
+        // Return all systems on any path back to a terminal point.
+        boost::unordered_set<int> ancestors_on_path;
+        for (std::vector<int>::const_iterator reached_it = reachable_midpoints.begin();
+             reached_it != reachable_midpoints.end(); ++reached_it)
+        {
+            boost::unordered_map<int, AncestorInfo>::const_iterator ancestor_ii_sys;
+            int ii_sys;
+            ancestors_on_path.insert(*reached_it);
+            while (!ancestors_on_path.empty()) {
+                ii_sys = *ancestors_on_path.begin();
+                ancestors_on_path.erase(ancestors_on_path.begin());
+                if ((ancestor_ii_sys = ancestors.find(ii_sys)) != ancestors.end()
+                    && (good_path.count(ancestor_ii_sys->first) == 0 ))
+                {
+                    good_path.insert(ancestor_ii_sys->first);
+                    ancestors_on_path.insert(ancestor_ii_sys->second.ids.begin(), ancestor_ii_sys->second.ids.end());
+                }
             }
         }
-        tryNext.pop_front();
+        return;
     }
-    //found no path, return empty vec
-    std::vector<int> nullPath;
-    return nullPath;
+
+
+    /** Look a \p kkey in \p mmap and if not found allocate a new
+        shared_ptr with the default constructor.*/
+    template <typename Map>
+    typename Map::mapped_type& lookup_or_make_shared(Map& mmap, typename Map::key_type const& kkey) {
+        typename Map::iterator map_it = mmap.find(kkey);
+        if (map_it == mmap.end()) {
+            map_it = mmap.insert(map_it,
+                                 std::make_pair(kkey,
+                                                boost::make_shared<typename Map::mapped_type::element_type>()));
+            if (map_it == mmap.end())
+                ErrorLogger() << "Unable to insert new empty set into map.";
+        }
+        return map_it->second;
+    }
 }
 
 void MapWnd::InitStarlaneRenderingBuffers() {
@@ -2847,30 +2941,32 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const Empire* this_client_empire = GetEmpire(client_empire_id);
-    std::set<int> under_alloc_res_sys;
 
-    std::map<std::set<int>, std::set<int> > res_pool_systems;       // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
-    std::map<std::set<int>, std::set<int> > res_pool_to_group_map;  // map keyed by ResourcePool (set of objects) to the corresponding ResourceGroup (which may be larger than the above resPoolSystem set)
-    std::map<std::set<int>, std::set<int> > res_group_cores;        // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
+    boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_pool_systems;
+    // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_group_cores;
+
     std::set<int>                           res_group_core_members;
-    std::map<int, std::set<int> >           member_to_pool;
-    std::set<int>                           under_alloc_res_grp_core_members;
+    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >   member_to_core;
+    boost::shared_ptr<std::set<int> >       under_alloc_res_grp_core_members;
 
     if (this_client_empire) {
-        const std::set<std::set<int> >& res_groups = GetSupplyManager().ResourceSupplyGroups(client_empire_id);
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
-        std::map<std::set<int>, float> allocatedPP(queue.AllocatedPP());
-        std::map<std::set<int>, float> availablePP(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+        const std::map<std::set<int>, float>& allocated_pp(queue.AllocatedPP());
+        const std::map<std::set<int>, float> available_pp(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
 
-        for (std::map<std::set<int>, float>::const_iterator it = availablePP.begin(); it != availablePP.end(); ++it) {
+        // For each industry set,
+        // add all planet's systems to res_pool_systems[industry set]
+        for (std::map<std::set<int>, float>::const_iterator it = available_pp.begin(); it != available_pp.end(); ++it) {
             float group_pp = it->second;
             if (group_pp < 1e-4f)
                 continue;
 
-            std::string this_pool = "( ";
+            // std::string this_pool = "( ";
             for (std::set<int>::const_iterator obj_it = it->first.begin(); obj_it != it->first.end(); ++obj_it) {
                 int object_id = *obj_it;
-                this_pool += boost::lexical_cast<std::string>(object_id) +", ";
+                // this_pool += boost::lexical_cast<std::string>(object_id) +", ";
 
                 TemporaryPtr<const Planet> planet = GetPlanet(object_id);
                 if (!planet)
@@ -2879,82 +2975,82 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                res_pool_systems[it->first].insert(system_id);
+                TemporaryPtr<const System> system = GetSystem(system_id);
+                if (!system)
+                    continue;
 
-                if (group_pp > allocatedPP[it->first] + 0.05)
-                    under_alloc_res_sys.insert(system_id);
+                lookup_or_make_shared(res_pool_systems, it->first)->insert(system_id);
             }
-            this_pool += ")";
+            // this_pool += ")";
             //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << it->second << " PP available";
-            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocatedPP[it->first] << " PP allocated";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << this_pool << ") has (" << allocated_pp[it->first] << " PP allocated";
         }
-        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
-        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
+
+
+        // Convert supply starlanes to non-directional.
+        SupplyLaneMMap resource_supply_lanes_undirected;
+        const std::set<std::pair<int, int> >
+            resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+
+        for (std::set<std::pair<int, int> >::const_iterator sp_it = resource_supply_lanes_directed.begin();
+             sp_it != resource_supply_lanes_directed.end(); ++sp_it)
+        {
+            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->first, sp_it->second));
+            resource_supply_lanes_undirected.insert(std::make_pair(sp_it->second, sp_it->first));
+        }
+
+        // For each pool of resources find all paths available through
+        // the supply network.
+
+        for (boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator res_pool_sys_it = res_pool_systems.begin();
              res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
         {
-            for (std::set<std::set<int> >::const_iterator rg_it = res_groups.begin(); rg_it != res_groups.end(); ++rg_it) {
-                bool placed_pool = false;
-                for (std::set<int>::iterator sysIt=res_pool_sys_it->second.begin(); sysIt!=res_pool_sys_it->second.end(); sysIt++) {
-                    if (rg_it->find(*sysIt) != rg_it->end()) {
-                        res_pool_to_group_map[res_pool_sys_it->first] = *rg_it;
-                        placed_pool = true;
-                        break;
-                    }
-                }
-                if (placed_pool)
-                    break;
-            }
-        }
-        // TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
-        // DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
+            boost::shared_ptr<std::set<int> >& group_core = lookup_or_make_shared(res_group_cores, res_pool_sys_it->first);
 
-        std::set<std::pair<int, int> > resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
-        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
-             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
-        {
-            std::string this_pool_ctrs = "( ";
-            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
-                 start_sys_it != res_pool_sys_it->second.end(); start_sys_it++)
+            // All individual resource system are included in the
+            // network on their own.
+            for (std::set<int>::iterator sys_it=res_pool_sys_it->second->begin();
+                 sys_it != res_pool_sys_it->second->end(); sys_it++)
             {
-                this_pool_ctrs += boost::lexical_cast<std::string>(*start_sys_it) +", ";
+                group_core->insert(*sys_it);
+                res_group_core_members.insert(*sys_it);
             }
-            this_pool_ctrs += ")";
-            //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << this_pool_ctrs << ")";
 
-            res_group_cores[res_pool_sys_it->first].insert(*(res_pool_sys_it->second.begin())); // if pool only has one sys, ensure it is added to core
-            res_group_core_members.insert(*(res_pool_sys_it->second.begin()));
-            std::set<int>::iterator lastSys = res_pool_sys_it->second.end();
-            lastSys--;
-            for (std::set<int>::iterator start_sys_it=res_pool_sys_it->second.begin();
-                 start_sys_it != lastSys; start_sys_it++)
+            boost::unordered_set<int> paths;
+            boost::unordered_set<int> terminal_points;
+            for (std::set<int>::iterator source_it=res_pool_sys_it->second->begin();
+                 source_it != res_pool_sys_it->second->end(); source_it++)
             {
-                // since res_pool_sys_it->second cannot be empty
-                std::set<int>::iterator next_sys_it = start_sys_it;
-                for (std::set<int>::iterator end_sys_it = ++next_sys_it;
-                     end_sys_it != res_pool_sys_it->second.end(); end_sys_it++)
-                {
-                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*start_sys_it) << " to "<< (*end_sys_it) ;
-                    std::vector<int> path = GetLeastJumps(*start_sys_it, *end_sys_it, res_pool_to_group_map[res_pool_sys_it->first],
-                                                          resource_supply_lanes, Objects());
-                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
-                    for (std::vector<int>::iterator path_sys_it = path.begin(); path_sys_it!= path.end(); path_sys_it++) {
-                        res_group_cores[ res_pool_sys_it->first ].insert(*path_sys_it);
-                        res_group_core_members.insert(*path_sys_it);
-                        member_to_pool[*path_sys_it] = res_pool_sys_it->first;
-                    }
+                terminal_points.insert(*source_it);
+            }
+
+            GetPathsThroughSupplyLanes(paths, terminal_points, resource_supply_lanes_undirected);
+
+            // All systems on the paths become valid end points
+            if (!paths.empty()) {
+                for (boost::unordered_set<int>::iterator path_it = paths.begin(); path_it!= paths.end(); path_it++) {
+                    group_core->insert(*path_it);
+                    res_group_core_members.insert(*path_it);
+                    member_to_core[*path_it] = group_core;
                 }
             }
         }
-        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
-        for (std::map<std::set<int>, std::set<int> >::iterator res_pool_sys_it = res_pool_systems.begin();
-             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
-        {
-            if (under_alloc_res_sys.find(*(res_pool_sys_it->second.begin())) != under_alloc_res_sys.end())
-                under_alloc_res_grp_core_members.insert(res_group_cores[ res_pool_sys_it->first].begin(),
-                                                        res_group_cores[ res_pool_sys_it->first].end());
+        // Take note of all systems of under allocated resource groups.
+        for (std::map<std::set<int>, float>::const_iterator it = available_pp.begin(); it != available_pp.end(); ++it) {
+            float group_pp = it->second;
+            if (group_pp < 1e-4f)
+                continue;
+
+            std::map<std::set<int>, float>::const_iterator allocated_it = allocated_pp.find(it->first);
+            if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
+                boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(it->first);
+                if (group_core_it != res_group_cores.end())
+                    under_alloc_res_grp_core_members = group_core_it->second;
+            }
         }
     }
+
     //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
@@ -3058,7 +3154,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 if ( (this_client_empire) &&(res_group_core_members.find(start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
                     lane_colour = this_client_empire->Color();
                     float indicatorExtent = 0.5f;
-                    if (under_alloc_res_grp_core_members.find(start_system->ID()) != under_alloc_res_grp_core_members.end() ) {
+                    if (under_alloc_res_grp_core_members
+                        && (under_alloc_res_grp_core_members->find(start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
+                    {
                         GG::Clr eclr= this_client_empire->Color();
                         lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
@@ -3066,8 +3164,14 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    if (res_group_cores[ member_to_pool[start_system->ID()]] != res_group_cores[ member_to_pool[dest_system->ID()]])
+                    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >::const_iterator start_core = member_to_core.find(start_system->ID());
+                    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >::const_iterator dest_core = member_to_core.find(dest_system->ID());
+                    if (start_core != member_to_core.end() && dest_core != member_to_core.end()
+                        && (start_core->second != dest_core->second)
+                        && (*(start_core->second) != *(dest_core->second)))
+                    {
                         indicatorExtent = 0.2f;
+                    }
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
                                                  lane_endpoints.Y1);
                     m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane

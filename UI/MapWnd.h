@@ -264,12 +264,6 @@ private:
                                     double thickness, bool coloured, bool doBase);
     void            RenderFields();                             //!< renders field objects
 
-    /* Gets systemID path (reversed) along supplylanes via BFS, is used to
-     * build ResourceGroupCores ideally, instead, a supplylane filter would be
-     * added the the universe graph impl. */
-    std::vector<int> GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
-                                   const std::set<std::pair<int, int> >& supplylanes, const ObjectMap& objMap);
-
     /* renders the dashed lines indicating where each fleet is going */
     void            RenderFleetMovementLines();
 
