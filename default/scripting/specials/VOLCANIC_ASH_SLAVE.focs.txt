@@ -8,7 +8,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Not Or [
-                HasSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
+                HasSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
                 OwnerHasTech name = "SPY_STEALTH_2"
             ]
             effects = RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
