@@ -3,16 +3,12 @@ import freeorion as fo
 import util
 import statistics
 import universe_tables
-from timers import Timer
 
 
 def generate_monsters(monster_freq, systems):
     """
     Adds space monsters to systems.
     """
-    generate_monsters_timer = Timer('generate_monsters_bucket')
-    generate_monsters_timer.start("Initialization")
-
     # first, calculate the basic chance for monster generation in a system
     # based on the monster frequency that has been passed
     # get the corresponding value for the specified monster frequency from the universe tables
@@ -24,13 +20,9 @@ def generate_monsters(monster_freq, systems):
     expectation_tally = 0.0
     actual_tally = 0
 
-    generate_monsters_timer.start("Fleet Plan")
-
     # get all monster fleets that have a spawn rate and limit both > 0 and at least one monster ship design in it
     # (a monster fleet with no monsters in it is pointless) and store them in a list
     fleet_plans = fo.load_monster_fleet_plan_list()
-
-    generate_monsters_timer.start("Spawn Counters")
 
     # create a map where we store a spawn counter for each monster fleet
     # this counter will be set to the spawn limit initially and decreased every time the monster fleet is spawned
@@ -50,8 +42,6 @@ def generate_monsters(monster_freq, systems):
     if not fleet_plans:
         return
 
-    generate_monsters_timer.start("Dump List to Log")
-
     # dump a list of all monster fleets meeting these conditions and their properties to the log
     print "Monster fleets available for generation at game start:"
     for fleet_plan in fleet_plans:
@@ -59,21 +49,17 @@ def generate_monsters(monster_freq, systems):
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
         if len(systems) < 100:
-            generate_monsters_timer.start("Log Number of Systems")
             # Note: The WithinStarlaneJumps condition in fp.location() is the most time costly function in universe generation
             print "/ can be spawned at", len([s for s in systems if fleet_plan.location(s)]), "systems"
         else:
             print  # to terminate the print line
         if fleet_plan.name() in nest_name_map.values():
-            generate_monsters_timer.start("Statistics Monster Chance")
             statistics.tracked_monsters_chance[fleet_plan.name()] = basic_chance * fleet_plan.spawn_rate()
 
     # for each system in the list that has been passed to this function, find a monster fleet that can be spawned at
     # the system and which hasn't already been added too many times, then attempt to add that monster fleet by
     # testing the spawn rate chance
     for system in systems:
-        generate_monsters_timer.start("Compile tracked nest locations")
-
         # collect info for tracked monster nest valid locations
         for planet in fo.sys_get_planets(system):
             for nest in tracked_nest_valid_locations:
@@ -81,14 +67,10 @@ def generate_monsters(monster_freq, systems):
                 if fo.special_location(nest, planet):
                     tracked_nest_valid_locations[nest] += 1
 
-        generate_monsters_timer.start("Compile tracked plan locations")
-
         # collect info for tracked monster valid locations
         for fp in tracked_plan_valid_locations:
             if fp.location(system):
                 tracked_plan_valid_locations[fp] += 1
-
-        generate_monsters_timer.start("Filter fleet plans fo spawn limits and location")
 
         # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0.
         # Note: The WithinStarlaneJumps condition in fp.location() is the most time costly function in universe generation.
@@ -96,8 +78,6 @@ def generate_monsters(monster_freq, systems):
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
             continue
-
-        generate_monsters_timer.start("Test spawn rate of single fleet")
 
         # randomly select one monster fleet out of the suitable ones and then test if we want to add it to this system
         # by making a roll against the basic chance multiplied by the spawn rate of this monster fleet
@@ -113,8 +93,6 @@ def generate_monsters(monster_freq, systems):
         if fleet_plan.name() in tracked_plan_counts:
             tracked_plan_counts[fleet_plan.name()] += 1
 
-        generate_monsters_timer.start("Spawn monster fleet")
-
         # all prerequisites and the test have been met, now spawn this monster fleet in this system
         print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
         # decrement counter for this monster fleet
@@ -125,8 +103,6 @@ def generate_monsters(monster_freq, systems):
         if monster_fleet == fo.invalid_object():
             util.report_error("Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name())
             continue
-
-        generate_monsters_timer.start("Spawn monsters in fleet")
 
         # add monsters to fleet
         for design in fleet_plan.ship_designs():
@@ -141,7 +117,3 @@ def generate_monsters(monster_freq, systems):
     statistics.tracked_monsters_summary.update(tracked_plan_counts)
     statistics.tracked_monsters_location_summary.update([(fp.name(), count) for fp, count in tracked_plan_valid_locations.iteritems()])
     statistics.tracked_nest_location_summary.update([(nest_name_map[nest], count) for nest, count in tracked_nest_valid_locations.items()])
-
-    generate_monsters_timer.stop()
-    generate_monsters_timer.print_aggregate()
-
