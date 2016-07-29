@@ -7,7 +7,7 @@ Special
         EffectsGroup
             scope = Source
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
-            effects = AddSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
+            effects = AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
 
         [[REMOVE_CLOUD_COVER]]
     ]
