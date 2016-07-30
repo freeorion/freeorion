@@ -127,6 +127,10 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     for fid in all_military_fleet_ids:
         num_milships += foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
 
+    this_tot_mil_rating = sum(map(lambda x: foAI.foAIstate.get_rating(x).get('overall', 0), all_military_fleet_ids))
+    if "Main" in thisround:
+        totMilRating = this_tot_mil_rating
+
     enemy_rating = foAI.foAIstate.empire_standard_enemy_rating
 
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
