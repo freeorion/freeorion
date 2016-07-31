@@ -1198,22 +1198,14 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             if special in planet_specials:
                 mining_bonus += 1
 
-        pro_sing_val = [0, 4][(len(claimed_stars.get(fo.starType.blackHole, [])) > 0)]
         base_pop_ind = 0.2
         ind_mult = 1 * max(ind_tag_mod,
                            0.5 * (ind_tag_mod + res_tag_mod))  # TODO: repport an actual calc for research value
-        ind_tech_map = {"GRO_ENERGY_META": 0.5,
-                        "PRO_ROBOTIC_PROD": 0.4,
-                        "PRO_FUSION_GEN": 1.0,
-                        "PRO_INDUSTRY_CENTER_I": 1,
-                        "PRO_INDUSTRY_CENTER_II": 1,
-                        "PRO_INDUSTRY_CENTER_III": 1,
-                        "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
-                        AIDependencies.PRO_SINGULAR_GEN: pro_sing_val,
-                        }
+        ind_tech_map = AIDependencies.INDUSTRY_EFFECTS_PER_POP
+        has_blackhole = (len(claimed_stars.get(fo.starType.blackHole, [])) > 0)
 
         for tech in ind_tech_map:
-            if tech_is_complete(tech):
+            if tech_is_complete(tech) and (not tech == AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
                 ind_mult += ind_tech_map[tech]
         max_ind_factor = 0
         if tech_is_complete("PRO_SENTIENT_AUTOMATION"):

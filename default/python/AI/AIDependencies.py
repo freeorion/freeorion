@@ -406,6 +406,19 @@ SHIP_TECHS_REQUIRING_BLACK_HOLE = (
     "SHP_SOLAR_CONT",
 )
 
+
+# Industry modifiers per population
+INDUSTRY_EFFECTS_PER_POP = {
+    "GRO_ENERGY_META": 0.5,
+    "PRO_ROBOTIC_PROD": 0.4,
+    "PRO_FUSION_GEN": 1.0,
+    "PRO_INDUSTRY_CENTER_I": 1,
+    "PRO_INDUSTRY_CENTER_II": 1,
+    "PRO_INDUSTRY_CENTER_III": 1,
+    "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
+    PRO_SINGULAR_GEN: 4.0,
+    }
+
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
 # note that BLD_SHIPYARD_BASE is not an absolute prereq for BLD_NEUTRONIUM_FORGE, but is a practical one
