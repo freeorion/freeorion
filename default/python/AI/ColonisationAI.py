@@ -1198,8 +1198,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             if special in planet_specials:
                 mining_bonus += 1
 
-        base_pop_ind = 0.2
-
         has_blackhole = (len(claimed_stars.get(fo.starType.blackHole, [])) > 0)
         ind_tech_map_before_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES
         ind_tech_map_after_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES
@@ -1222,8 +1220,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if FocusType.FOCUS_INDUSTRY in species.foci:
             if 'TIDAL_LOCK_SPECIAL' in planet.specials:
                 ind_mult += 1
-            max_ind_factor += base_pop_ind * mining_bonus
-            max_ind_factor += base_pop_ind * ind_mult
+            max_ind_factor += AIDependencies.INDUSTRY_PER_POP * mining_bonus
+            max_ind_factor += AIDependencies.INDUSTRY_PER_POP * ind_mult
         cur_pop = 1.0  # assume an initial colonization value
         if planet.speciesName != "":
             cur_pop = planet.currentMeterValue(fo.meterType.population)
@@ -1237,19 +1235,18 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
         for special in [spec for spec in planet_specials if spec in AIDependencies.metabolismBoosts]:
             # TODO: also consider potential future benefit re currently unpopulated planets
-            gbonus = discount_multiplier * base_pop_ind * ind_mult * empire_metabolisms.get(
+            gbonus = discount_multiplier * AIDependencies.INDUSTRY_PER_POP * ind_mult * empire_metabolisms.get(
                 AIDependencies.metabolismBoosts[special], 0)  # due to growth applicability to other planets
             growth_val += gbonus
             detail.append("Bonus for %s: %.1f" % (special, gbonus))
 
-        base_pop_res = 0.2  # will also be doubling value of research, below
         if FocusType.FOCUS_RESEARCH in species.foci:
-            research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size
+            research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size
             if "ANCIENT_RUINS_SPECIAL" in planet.specials or "ANCIENT_RUINS_DEPLETED_SPECIAL" in planet.specials:
-                research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 5
+                research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size * 5
                 detail.append("Ruins Research")
             if "TEMPORAL_ANOMALY_SPECIAL" in planet.specials:
-                research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 25
+                research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size * 25
                 detail.append("Temporal Anomaly Research")
             if "COMPUTRONIUM_SPECIAL" in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
