@@ -2781,45 +2781,44 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_circle_vertices.clear();
 }
 
-namespace {
+namespace GetPathsThroughSupplyLanes {
     // SupplyLaneMap map keyed by system containing all systems
     // corresponding to valid supply lane destinations
     typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
 
-    // AncestorInfo stores the \p ids of systems one hop back on the path
-    // and the \p o originating terminal point that the path to this
-    // ancestor started from.
-    struct AncestorInfo {
-        AncestorInfo(int a, int o) : one_hop_back(1, a), single_origin(o) {}
-        AncestorInfo(int o) : one_hop_back(), single_origin(o) {}
-        // systems one hop back on the path
-        std::vector<int> one_hop_back;
-        // originating terminal or none for resources connected to at
-        // least two terminal points.
-        boost::optional<int> single_origin;
-    };
-
-    struct PrevCurrInfo {
-        PrevCurrInfo(int p, int n, int o) : prev(p), curr(n), origin(o) {}
-        int prev, curr, origin;
-    };
 
     /**
-       Returns either:
-       a) a \p good_path between from any \p terminal_points to all
-       reachable \p terminal_points along the \p supply_lanes.
-       b) empty indicating no more work to do.
+       GetPathsThroughSupplyLanes starts with:
+
+       \p terminal_points are system ids of systems that contain either
+       a resource source or a resource sink.
+
+       \p supply_lanes are pairs of system ids at the end of supply
+       lanes.
+
+       GetPathsThroughSupplyLanes returns a \p good_path.
+
+       The \p good_path is all system ids of systems connecting any \p
+       terminal_point to any other reachable \p terminal_point along the
+       \p supply_lanes. The \p good_path is all systems that could
+       transport a resource from a source to a sink along a starlane
+       that is part of the supply. The \p good_path includes the
+       terminal point system ids that are part of the network.  The \p
+       good_path will exclude terminal_points not connected to a supply
+       lane, islands of supply lane not connected to at least two
+       terminal points, and dead-end lengths of supply lane that don't
+       connect between two terminal points.
+
 
        Algorithm Descrition:
 
-       The algorithm starts with terminal points, which are system ids
-       and supply lanes which are pairs of system ids.  It finds all
-       paths from any terminal point to any other terminal point
-       connected only by supply lanes.
+       The algorithm starts with terminal points and supply lanes.  It
+       finds all paths from any terminal point to any other terminal
+       point connected only by supply lanes.
 
-       The algorithm has two parts:  find all paths between terminal
-       points along supply lanes and return a set of all the system ids
-       of the found paths.
+       The algorithm has two parts:
+       1) find all paths between terminal points along supply lanes
+       2) return a set of all the system ids of the found paths.
 
 
        In the first part, it starts a breadth first search from every
@@ -2835,7 +2834,7 @@ namespace {
 
 
        In the second part, it starts from the mid points and works its
-       way back to the terminal points, recoding every system along the
+       way back to the terminal points, recording every system along the
        path as part of the good path.  It stops when it reaches a system
        already in the good path.
 
@@ -2843,12 +2842,38 @@ namespace {
        The algorithm is fast because neither the first nor the second
        part visits any system more than once.
 
-       The first part uses ancestors to track already visited systems.
+       The first part uses visited to track already visited systems.
 
        The second part stops back tracking along paths when it reaches
        systems already on the good path.
 
      */
+    void GetPathsThroughSupplyLanes(
+        boost::unordered_set<int> & good_path,
+        const boost::unordered_set<int> & terminal_points,
+        const SupplyLaneMMap& supply_lanes);
+
+    
+    // PathInfo stores the \p ids of systems one hop back on a path
+    // toward an \p o originating terminal system.
+    struct PathInfo {
+        PathInfo(int a, int o) : one_hop_back(1, a), single_origin(o) {}
+        PathInfo(int o) : one_hop_back(), single_origin(o) {}
+        // system(s) one hop back on the path.
+        // The terminal point has no preceding system.
+        // Merged paths are indicated with multiple preceding systems.
+        std::vector<int> one_hop_back;
+        // The originating terminal point.
+        // If single origin is boost::none then two paths with at least
+        // two different terminal points merged.
+        boost::optional<int> single_origin;
+    };
+
+    struct PrevCurrInfo {
+        PrevCurrInfo(int p, int n, int o) : prev(p), curr(n), origin(o) {}
+        int prev, curr, origin;
+    };
+
     void GetPathsThroughSupplyLanes(
         boost::unordered_set<int> & good_path,
         const boost::unordered_set<int> & terminal_points,
@@ -2867,27 +2892,27 @@ namespace {
         // that have not had the supply lanes leaving them explored.
         std::deque<PrevCurrInfo> try_next;
 
-        // ancestors holds systems already reached by the breadth first search.
-        boost::unordered_map<int, AncestorInfo> ancestors;
+        // visited holds systems already reached by the breadth first search.
+        boost::unordered_map<int, PathInfo> visited;
 
         // reachable_midpoints holds all systems reachable from at least
         // two different terminal points.
         std::vector<int> reachable_midpoints;
 
-        // Initialize with all the terminal points, by addind all
-        // terminal points to the queue and to ancestors.
+        // Initialize with all the terminal points, by adding all
+        // terminal points to the queue, and to visited.
         for (boost::unordered_set<int>::const_iterator start_it = terminal_points.begin();
              start_it != terminal_points.end(); ++start_it)
         {
             try_next.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
-            ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it)));
+            visited.insert(std::make_pair(*start_it, PathInfo(*start_it)));
         }
 
         // Find all reachable midpoints where paths from two different
         // terminal points meet.
         while (!try_next.empty() ) {
             // Try the next system from the queue.
-            const PrevCurrInfo & curr = try_next.front();
+            const PrevCurrInfo& curr = try_next.front();
 
             // Check each supply lane that exits this sytem.
             std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator>
@@ -2901,45 +2926,45 @@ namespace {
                 if (next == curr.prev)
                     continue;
 
-                boost::unordered_map<int, AncestorInfo>::iterator ancestor = ancestors.find(next);
+                boost::unordered_map<int, PathInfo>::iterator previous = visited.find(next);
 
-                // next has no ancestor so it is an unvisited
-                // system. Create a new ancestor from curr->next with
+                // next has no previous so it is an unvisited
+                // system. Create a new previous from curr->next with
                 // the same originating terminal point as the current
                 // system.
-                if (ancestor == ancestors.end()) {
-                    ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr, curr.origin)));
+                if (previous == visited.end()) {
+                    visited.insert(std::make_pair(next, PathInfo(curr.curr, curr.origin)));
                     try_next.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
 
                 // next has an ancester so it was visited. Modify the
-                // older ancestor to merge paths/create mid points.
+                // older previous to merge paths/create mid points.
                 } else {
 
-                    // curr and the ancestor have the same origin so add
+                    // curr and the previous have the same origin so add
                     // curr to the systems one hop back along the path
-                    // to ancestor.
-                    if (ancestor->second.single_origin
-                        && ancestor->second.single_origin == curr.origin)
+                    // to previous.
+                    if (previous->second.single_origin
+                        && previous->second.single_origin == curr.origin)
                     {
-                        ancestor->second.one_hop_back.push_back(curr.curr);
+                        previous->second.one_hop_back.push_back(curr.curr);
 
-                    // curr and the ancestor have different origins so
+                    // curr and the previous have different origins so
                     // mark both as reachable midpoints along a good path.
-                    } else if (ancestor->second.single_origin
-                        && ancestor->second.single_origin != curr.origin)
+                    } else if (previous->second.single_origin
+                        && previous->second.single_origin != curr.origin)
                     {
                         // Single origin becomes multi-origin and these
                         // points are both marked as midpoints.
-                        ancestor->second.single_origin = boost::none;
+                        previous->second.single_origin = boost::none;
                         reachable_midpoints.push_back(curr.curr);
                         reachable_midpoints.push_back(next);
 
-                    // ancestor is multi-origin so it is already a mid
+                    // previous is multi-origin so it is already a mid
                     // point on a good path to multiple terminal
                     // points.  Add curr to the systems one hop back
-                    // along the path to ancestor.
+                    // along the path to previous.
                     } else
-                        ancestor->second.one_hop_back.push_back(curr.curr);
+                        previous->second.one_hop_back.push_back(curr.curr);
                 }
             }
             try_next.pop_front();
@@ -2960,37 +2985,39 @@ namespace {
         // Stop back tracking when you hit a system already on the good
         // path.
 
-        // All ancestors on the path(s) from this midpoint not yet tried.
-        boost::unordered_set<int> ancestors_on_path;
+        // All visited systems on the path(s) from this midpoint not yet processed.
+        boost::unordered_set<int> unprocessed;
 
         for (std::vector<int>::const_iterator reached_it = reachable_midpoints.begin();
              reached_it != reachable_midpoints.end(); ++reached_it)
         {
-            boost::unordered_map<int, AncestorInfo>::const_iterator ancestor_ii_sys;
+            boost::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
             int ii_sys;
 
-            // Add the mid point to ancestors_on_path and while there
-            // are more ancestors_on_path keep checking if the next
-            // ancestor is in the good_path.
-            ancestors_on_path.insert(*reached_it);
-            while (!ancestors_on_path.empty()) {
-                ii_sys = *ancestors_on_path.begin();
-                ancestors_on_path.erase(ancestors_on_path.begin());
+            // Add the mid point to unprocessed, and while there
+            // are more unprocessed keep checking if the next system is
+            // in the good_path.
+            unprocessed.insert(*reached_it);
+            while (!unprocessed.empty()) {
+                ii_sys = *unprocessed.begin();
+                unprocessed.erase(unprocessed.begin());
 
                 // If ii_sys is not in the good_path, then add it to the
-                // good_path and add all of its ancestors to the ancestors_on_path.
-                if ((ancestor_ii_sys = ancestors.find(ii_sys)) != ancestors.end()
-                    && (good_path.count(ancestor_ii_sys->first) == 0 ))
+                // good_path and add all of its visited to the unprocessed.
+                if ((previous_ii_sys = visited.find(ii_sys)) != visited.end()
+                    && (good_path.count(ii_sys) == 0 ))
                 {
-                    good_path.insert(ancestor_ii_sys->first);
-                    ancestors_on_path.insert(ancestor_ii_sys->second.one_hop_back.begin(),
-                                             ancestor_ii_sys->second.one_hop_back.end());
+                    good_path.insert(ii_sys);
+                    unprocessed.insert(previous_ii_sys->second.one_hop_back.begin(),
+                                       previous_ii_sys->second.one_hop_back.end());
                 }
             }
         }
         return;
     }
+}
 
+namespace {
 
     /** Look a \p kkey in \p mmap and if not found allocate a new
         shared_ptr with the default constructor.*/
@@ -3072,7 +3099,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
         // Convert supply starlanes to non-directional.  This saves half
         // of the lookups.
-        SupplyLaneMMap resource_supply_lanes_undirected;
+        GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
         const std::set<std::pair<int, int> >
             resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
 
@@ -3110,7 +3137,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
 
             boost::unordered_set<int> paths;
-            GetPathsThroughSupplyLanes(paths, terminal_points, resource_supply_lanes_undirected);
+            GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
+                paths, terminal_points, resource_supply_lanes_undirected);
 
             // All systems on the paths are valid end points so they are
             // added to the core group of systems that will be rendered
