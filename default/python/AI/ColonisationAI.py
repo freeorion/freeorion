@@ -1199,14 +1199,23 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 mining_bonus += 1
 
         base_pop_ind = 0.2
-        ind_mult = 1 * max(ind_tag_mod,
-                           0.5 * (ind_tag_mod + res_tag_mod))  # TODO: repport an actual calc for research value
-        ind_tech_map = AIDependencies.INDUSTRY_EFFECTS_PER_POP
-        has_blackhole = (len(claimed_stars.get(fo.starType.blackHole, [])) > 0)
 
-        for tech in ind_tech_map:
+        has_blackhole = (len(claimed_stars.get(fo.starType.blackHole, [])) > 0)
+        ind_tech_map_before_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES
+        ind_tech_map_after_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES
+
+        ind_mult = 1
+        for tech in ind_tech_map_before_species_mod:
             if tech_is_complete(tech) and (not tech == AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
-                ind_mult += ind_tech_map[tech]
+                ind_mult += ind_tech_map_before_species_mod[tech]
+
+        ind_mult = ind_mult * max(ind_tag_mod,
+                                  0.5 * (ind_tag_mod + res_tag_mod))  # TODO: repport an actual calc for research value
+
+        for tech in ind_tech_map_after_species_mod:
+            if tech_is_complete(tech) and (not tech == AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
+                ind_mult += ind_tech_map_after_species_mod[tech]
+
         max_ind_factor = 0
         if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
             fixed_ind += discount_multiplier * 5
