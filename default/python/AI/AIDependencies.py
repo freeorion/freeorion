@@ -409,14 +409,14 @@ SHIP_TECHS_REQUIRING_BLACK_HOLE = (
 
 # Industry modifiers per population
 INDUSTRY_EFFECTS_PER_POP = {
-    "GRO_ENERGY_META": 0.5,
-    "PRO_ROBOTIC_PROD": 0.4,
+    "GRO_ENERGY_META": 1.0,
+    "PRO_ROBOTIC_PROD": 0.5,
     "PRO_FUSION_GEN": 1.0,
-    "PRO_INDUSTRY_CENTER_I": 1,
-    "PRO_INDUSTRY_CENTER_II": 1,
-    "PRO_INDUSTRY_CENTER_III": 1,
+    "PRO_INDUSTRY_CENTER_I": 1.0,
+    "PRO_INDUSTRY_CENTER_II": 1.0,
+    "PRO_INDUSTRY_CENTER_III": 1.0,
     "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
-    PRO_SINGULAR_GEN: 4.0,
+    PRO_SINGULAR_GEN: 5.0,
     }
 
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
