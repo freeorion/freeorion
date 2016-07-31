@@ -823,11 +823,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                          for psize in [-1, planet.size] for _special in
                          set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
 
-    common_grades = {'NO': 0.0, 'BAD': 0.5, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 4.0}
-    ind_tag_mod = common_grades.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
-    res_tag_mod = common_grades.get(get_ai_tag_grade(tag_list, "RESEARCH"), 1.0)
-    pop_tag_mod = {'BAD': 0.75, 'GOOD': 1.25}.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
-    supply_tag_mod = {'BAD': 0, 'GREAT': 2, 'ULTIMATE': 3}.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
+    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
+    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_ai_tag_grade(tag_list, "RESEARCH"), 1.0)
+    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
+    supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
 
     # determine the potential supply provided by owning this planet, and if the planet is currently populated by
     # the evaluated species, then save this supply value in a cache.
