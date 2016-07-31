@@ -2791,6 +2791,7 @@ namespace {
     // ancestor started from.
     struct AncestorInfo {
         AncestorInfo(int a, int o) : one_hop_back(1, a), single_origin(o) {}
+        AncestorInfo(int o) : one_hop_back(), single_origin(o) {}
         // systems one hop back on the path
         std::vector<int> one_hop_back;
         // originating terminal or none for resources connected to at
@@ -2879,7 +2880,7 @@ namespace {
              start_it != terminal_points.end(); ++start_it)
         {
             try_next.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
-            ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it, *start_it)));
+            ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it)));
         }
 
         // Find all reachable midpoints where paths from two different
