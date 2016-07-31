@@ -9,7 +9,6 @@ def generate_monsters(monster_freq, systems):
     """
     Adds space monsters to systems.
     """
-
     # first, calculate the basic chance for monster generation in a system
     # based on the monster frequency that has been passed
     # get the corresponding value for the specified monster frequency from the universe tables
@@ -49,7 +48,8 @@ def generate_monsters(monster_freq, systems):
         print "...", fleet_plan.name(), ": spawn rate", fleet_plan.spawn_rate(),
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
-        if len(systems) < 1000:
+        if len(systems) < 100:
+            # Note: The WithinStarlaneJumps condition in fp.location() is the most time costly function in universe generation
             print "/ can be spawned at", len([s for s in systems if fleet_plan.location(s)]), "systems"
         else:
             print  # to terminate the print line
@@ -72,7 +72,8 @@ def generate_monsters(monster_freq, systems):
             if fp.location(system):
                 tracked_plan_valid_locations[fp] += 1
 
-        # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0
+        # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0.
+        # Note: The WithinStarlaneJumps condition in fp.location() is the most time costly function in universe generation.
         suitable_fleet_plans = [fp for fp in fleet_plans if spawn_limits[fp] and fp.location(system)]
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
@@ -102,6 +103,7 @@ def generate_monsters(monster_freq, systems):
         if monster_fleet == fo.invalid_object():
             util.report_error("Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name())
             continue
+
         # add monsters to fleet
         for design in fleet_plan.ship_designs():
             # create monster, if creation fails, report an error and try to continue with the next design
