@@ -1,0 +1,123 @@
+Species
+    name = "SP_LEMBALALAM"
+    description = "SP_LEMBALALAM_DESC"
+    gameplay_description = "SP_LEMBALALAM_GAMEPLAY_DESC"
+    Native
+
+    tags = [ "ORGANIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_GOOD_STEALTH"]
+
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_GROWTH_FOCUS]]*/
+        /*[[HAS_MINING_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    preferredfocus = "FOCUS_RESEARCH"
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[GOOD_RESEARCH]]
+
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        [[GOOD_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            //stackinggroup = "GAME_START_MOD_STACK"
+            effects = [
+                AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+                AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" 
+            ]
+            activation = Turn high = 0
+            //stackinggroup = "GAME_START_MOD_STACK"
+            effects = AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+
+        EffectsGroup
+            description = "FIXED_LOW_POPULATION"
+            scope = Source
+            activation = Planet
+            priority = 130
+            effects = [
+                SetTargetPopulation value = 5 accountinglabel = "IMMORTAL_LABEL"
+                SetPopulation value = Target.TargetPopulation
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                NotOwnerHasTech name = "SPY_STEALTH_1"
+            ]
+            stackinggroup = "LEMBALALAM_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech name = "SPY_STEALTH_1" empire = Target.Owner                
+                GenerateSitRepMessage
+                    message = "EFFECT_NATIVES_TECH"
+                    icon = "icons/species/other-01.png"
+                    parameters = [
+                        tag = "species" data = "SP_LEMBALALAM"
+                        tag = "tech" data = "SPY_STEALTH_1"
+                    ]
+                    empire = Source.Owner
+           ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                NotOwnerHasTech name = "SPY_STEALTH_2"
+                OwnerHasTech name = "SPY_STEALTH_1"
+            ]
+            stackinggroup = "LEMBALALAM_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech name = "SPY_STEALTH_2" empire = Target.Owner                
+                GenerateSitRepMessage
+                    message = "EFFECT_NATIVES_TECH"
+                    icon = "icons/species/other-01.png"
+                    parameters = [
+                        tag = "species" data = "SP_LEMBALALAM"
+                        tag = "tech" data = "SPY_STEALTH_2"
+                    ]
+                    empire = Source.Owner
+           ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                NotOwnerHasTech name = "GRO_LIFECYCLE_MAN"
+            ]
+            stackinggroup = "LEMBALALAM_TECH_UNLOCK"
+            effects = [
+                GiveEmpireTech name = "GRO_LIFECYCLE_MAN" empire = Target.Owner                
+                GenerateSitRepMessage
+                    message = "EFFECT_NATIVES_TECH"
+                    icon = "icons/species/other-01.png"
+                    parameters = [
+                        tag = "species" data = "SP_LEMBALALAM"
+                        tag = "tech" data = "GRO_LIFECYCLE_MAN"
+                    ]
+                    empire = Source.Owner
+           ]
+    ]
+
+    [[DESERT_STANDARD_EP]]
+
+    graphic = "icons/species/other-01.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"
