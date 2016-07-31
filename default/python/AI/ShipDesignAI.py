@@ -548,7 +548,7 @@ class ShipDesignCache(object):
         print "Caching buildable ship parts per planet..."
         for pid in inhabited_planets:
             local_testhulls = [hull for hull in self.testhulls
-                               if hull in self.hulls_for_planets[pid][:number_of_testhulls]]
+                               if hull in self.hulls_for_planets[pid]]
             this_planet = universe.getPlanet(pid)
             if verbose:
                 print "Testhulls for %s are %s" % (this_planet, local_testhulls)
