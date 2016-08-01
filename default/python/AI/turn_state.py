@@ -8,7 +8,7 @@ class State(object):
     """
     This class represent state for current turn.
     It contains variables that renewed each turn.
-    Before each turn `clean` method should be called at the beginning of each turn.
+    Before each turn `update` method should be called at the beginning of each turn.
 
     Each variable should have a getter that returns value or deepcopy of value if it is immutable
     and one or couple setters (if need to change inner collections in collection).
