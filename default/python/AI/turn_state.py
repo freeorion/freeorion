@@ -60,12 +60,13 @@ class State(object):
         """
         Return list of empire planet ids with species.
 
-        :rtype: set[int]
+        :param species: species name
+        :type species: str
+        :rtype: tuple[int]
         """
         if not species:
             return []
-        empire_id = fo.empireID()
-        return tuple(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species == species)
+        return tuple(self.get_species_planets().get(species, []))
 
     def get_species_planets(self):
         """
