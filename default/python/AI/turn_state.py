@@ -51,21 +51,21 @@ class State(object):
         """
         Return set of empire planet ids with species.
 
-        :rtype: set
+        :rtype: set[int]
         """
         empire_id = fo.empireID()
-        return {x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species}
+        return frozenset(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species)
 
     def get_planets_for_species(self, species):
         """
         Return list of empire planet ids with species.
 
-        :rtype: list[int]
+        :rtype: set[int]
         """
         if not species:
             return []
         empire_id = fo.empireID()
-        return [x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species == species]
+        return tuple(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species == species)
 
     def get_species_planets(self):
         """
