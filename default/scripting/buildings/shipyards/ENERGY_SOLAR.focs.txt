@@ -21,7 +21,15 @@ BuildingType
         Or [
             Star type = BlackHole
             Enqueued type = Building name = "BLD_ART_BLACK_HOLE"
+            ContainedBy And [
+                Star type = Red
+                Contains And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Enqueued type = Building name = "BLD_ART_BLACK_HOLE"
+                ]
             ]
+        ]
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
