@@ -65,7 +65,7 @@ bool PythonBase::Initialize()
 
     DebugLogger() << "Initializing C++ interfaces for Python";
 
-    systemExit = import("exceptions").attr("SystemExit");
+    m_system_exit = import("exceptions").attr("SystemExit");
     try {
         // get main namespace, needed to run other interpreted code
         object py_main = import("__main__");
@@ -108,7 +108,7 @@ void PythonBase::HandleErrorAlreadySet() {
     }
 
     // Matches system exit
-    if (PyErr_ExceptionMatches(systemExit.ptr()))
+    if (PyErr_ExceptionMatches(m_system_exit.ptr()))
     {
         Finalize();
         ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
@@ -125,10 +125,6 @@ void PythonBase::Finalize() {
         Py_Finalize();
         DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
-}
-
-void PythonBase::ExecScript(const std::string script) {
-    exec(script.c_str(), m_namespace, m_namespace);
 }
 
 void PythonBase::SetCurrentDir(const std::string dir) {

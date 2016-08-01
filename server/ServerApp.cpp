@@ -1308,7 +1308,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
-            ErrorLogger() << "Python interpreter is no longer running.  Attemting to restart.";
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
             if (m_python_server.Initialize()) {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
