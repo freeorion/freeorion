@@ -6429,11 +6429,6 @@ Hidden Burrowers
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
 This planet has monsters burrowing around in its core causing high volcanic activity. These burrowers are undergoing metamorphosis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
 
-VOLCANIC_ACTIVITY_SPECIAL
-High Volcanic Activity
-VOLCANIC_ACTIVITY_SPECIAL_DESC
-This planet has high levels of volcanic activity, possibly obscuring the planet's surface.
-
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
@@ -11329,7 +11324,7 @@ NO_INDUSTRY
 −−−	No [[encyclopedia INDUSTRY_TITLE]]
 
 BAD_INDUSTRY
-−	Bad [[encyclopedia INDUSTRY_TITLE]]: -50%
+−	Bad [[encyclopedia INDUSTRY_TITLE]]: -25%
 
 AVERAGE_INDUSTRY
 '''	Average [[encyclopedia INDUSTRY_TITLE]]: 100%'''
@@ -11341,13 +11336,13 @@ GREAT_INDUSTRY
 ++	Great [[encyclopedia INDUSTRY_TITLE]]: 200%
 
 ULTIMATE_INDUSTRY
-+++	Ultimate [[encyclopedia INDUSTRY_TITLE]]: 400%
++++	Ultimate [[encyclopedia INDUSTRY_TITLE]]: 300%
 
 NO_RESEARCH
 −−−	No [[encyclopedia RESEARCH_TITLE]]
 
 BAD_RESEARCH
-−	Bad [[encyclopedia RESEARCH_TITLE]]: -50%
+−	Bad [[encyclopedia RESEARCH_TITLE]]: -25%
 
 AVERAGE_RESEARCH
 '''	Average [[encyclopedia RESEARCH_TITLE]]: 100%'''
@@ -11359,7 +11354,7 @@ GREAT_RESEARCH
 ++	Great [[encyclopedia RESEARCH_TITLE]]: 200%
 
 ULTIMATE_RESEARCH
-+++	Ultimate [[encyclopedia RESEARCH_TITLE]]: 400%
++++	Ultimate [[encyclopedia RESEARCH_TITLE]]: 300%
 
 NO_DEFENSE_TROOPS
 −−−	No Defensive Ground [[encyclopedia TROOP_TITLE]]
