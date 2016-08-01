@@ -7892,7 +7892,7 @@ LRN_PSIONICS
 Psionics
 
 LRN_PSIONICS_DESC
-'''[[encyclopedia RESEARCH_TITLE]] cost is greatly reduced for empires that include a telepathic species.
+'''[[encyclopedia RESEARCH_TITLE]] cost of this technology is greatly reduced for empires that include a [[encyclopedia TELEPATHIC_TITLE]] species.
 
 Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body. Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives. Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.'''
 
