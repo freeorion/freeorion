@@ -44,12 +44,14 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     }
 
     InitLogger(AICLIENT_LOG_FILENAME, "AI");
-    DebugLogger() << PlayerName() + " logger initialized.";
+    DebugLogger() << PlayerName() + " ai client initialized.";
 }
 
 AIClientApp::~AIClientApp() {
-    delete m_AI;
-    DebugLogger() << "Shutting down " + PlayerName() + " logger...";
+    if (Networking().Connected())
+        Networking().DisconnectFromServer();
+
+    DebugLogger() << "Shutting down " + PlayerName() + " ai client.";
 }
 
 void AIClientApp::operator()()
@@ -67,28 +69,44 @@ AIClientApp* AIClientApp::GetApp()
 { return static_cast<AIClientApp*>(s_app); }
 
 const AIBase* AIClientApp::GetAI()
-{ return m_AI; }
+{ return m_AI.get(); }
 
 void AIClientApp::Run() {
     ConnectToServer();
 
-    StartPythonAI();
+    try {
+        StartPythonAI();
 
-    // join game
-    Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
+        // join game
+        Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
 
-    // respond to messages until disconnected
-    while (1) {
-        if (!Networking().Connected())
-            break;
-        if (Networking().MessageAvailable()) {
-            Message msg;
-            Networking().GetMessage(msg);
-            HandleMessage(msg);
-        } else {
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
+        // respond to messages until disconnected
+        while (1) {
+            try {
+
+                if (!Networking().Connected())
+                    break;
+                if (Networking().MessageAvailable()) {
+                    Message msg;
+                    Networking().GetMessage(msg);
+                    HandleMessage(msg);
+                } else {
+                    boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
+                }
+
+            } catch (boost::python::error_already_set) {
+                /* If the python interpreter is still running then keep
+                   going, otherwise exit.*/
+                m_AI->HandleErrorAlreadySet();
+                if (m_AI->IsPythonRunning())
+                    throw;
+            }
         }
+    } catch (boost::python::error_already_set) {
+        HandlePythonAICrash();
     }
+
+    Networking().DisconnectFromServer();
 }
 
 void AIClientApp::ConnectToServer() {
@@ -114,23 +132,25 @@ void AIClientApp::ConnectToServer() {
 }
 
 void AIClientApp::StartPythonAI() {
-    PythonAI* python_ai = new PythonAI();
-    if (!(python_ai->Initialize())) {
-        delete python_ai;  //TODO use smart pointer
-        //Note: At this point in the initialization the AI has not been associated with a PlayerConnection
-        //so the server will no know the AI's PlayerName.
-        std::stringstream err_msg;
-        err_msg << "AIClientApp::AIClientApp: Failed to initialize Python AI for " << PlayerName() << ".  Exiting Soon.";
-        ErrorLogger() << err_msg.str();
-        Networking().SendMessage(
-            ErrorMessage(str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
-        boost::this_thread::sleep_for(boost::chrono::seconds(2));
-        Networking().DisconnectFromServer();
-        throw std::runtime_error(err_msg.str());
+    m_AI.reset(new PythonAI());
+    if (!(m_AI.get())->Initialize()) {
+        HandlePythonAICrash();
+        throw std::runtime_error("PythonAI failed to initialize.");
     }
-    m_AI = python_ai;
-
 }
+
+void AIClientApp::HandlePythonAICrash() {
+    // Note: If python crashed during initialization then the AI has not
+    // been associated with a PlayerConnection so the server will not
+    // know the AI's PlayerName.
+    std::stringstream err_msg;
+    err_msg << "AIClientApp failed due to error in python AI code for " << PlayerName() << ".  Exiting Soon.";
+    ErrorLogger() << err_msg.str() << " id = " << PlayerID();
+    Networking().SendMessage(
+        ErrorMessage(PlayerID(), str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
+}
+
 
 void AIClientApp::HandleMessage(const Message& msg) {
     //DebugLogger() << "AIClientApp::HandleMessage " << msg.Type();

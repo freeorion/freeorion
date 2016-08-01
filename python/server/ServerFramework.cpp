@@ -73,20 +73,10 @@ bool PythonServer::InitModules() {
         ErrorLogger() << "Can't find folder containing universe generation scripts";
         return false;
     }
-    if (!AddToSysPath(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't add folder containing universe generation scripts to sys.path";
-        return false;
-    }
+    AddToSysPath(GetPythonUniverseGeneratorDir());
 
-    try {
-        // import universe generator script file
-        m_python_module_universe_generator = import("universe_generator");
-    }
-    catch (error_already_set err) {
-        ErrorLogger() << "Unable to import universe generator script";
-        PyErr_Print();
-        return false;
-    }
+    // import universe generator script file
+    m_python_module_universe_generator = import("universe_generator");
 
     // Confirm existence of the directory containing the turn event Python
     // scripts and add it to Pythons sys.path to make sure Python will find
@@ -95,20 +85,10 @@ bool PythonServer::InitModules() {
         ErrorLogger() << "Can't find folder containing turn events scripts";
         return false;
     }
-    if (!AddToSysPath(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't add folder containing turn events scripts to sys.path";
-        return false;
-    }
+    AddToSysPath(GetPythonTurnEventsDir());
 
-    try {
-        // import universe generator script file
-        m_python_module_turn_events = import("turn_events");
-    }
-    catch (error_already_set err) {
-        ErrorLogger() << "Unable to import turn events script";
-        PyErr_Print();
-        return false;
-    }
+    // import universe generator script file
+    m_python_module_turn_events = import("turn_events");
 
     DebugLogger() << "Server Python modules successfully initialized!";
     return true;
@@ -132,27 +112,16 @@ bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_d
         return false;
     }
 
-    try { success = f(py_player_setup_data); }
-    catch (error_already_set err) {
-        success = false;
-        PyErr_Print();
-    }
-    return success;
+    return f(py_player_setup_data);
 }
 
 bool PythonServer::ExecuteTurnEvents() {
-    bool success;
     object f = m_python_module_turn_events.attr("execute_turn_events");
     if (!f) {
         ErrorLogger() << "Unable to call Python function execute_turn_events ";
         return false;
     }
-    try { success = f(); }
-    catch (error_already_set err) {
-        success = false;
-        PyErr_Print();
-    }
-    return success;
+    return f();
 }
 
 const std::string GetPythonUniverseGeneratorDir()

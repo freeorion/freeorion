@@ -22,13 +22,16 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
 }
 
 PythonBase::PythonBase() :
-    m_python_interpreter_initialized(false),
 #if defined(FREEORION_MACOSX)
     m_home_dir(""),
     m_program_name(""),
 #endif
     m_python_module_error(NULL)
 {}
+
+PythonBase::~PythonBase() {
+    Finalize();
+}
 
 bool PythonBase::Initialize()
 {
@@ -50,7 +53,6 @@ bool PythonBase::Initialize()
 #endif
         // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
-        m_python_interpreter_initialized = true;
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python version: " << Py_GetVersion();
         DebugLogger() << "Python prefix: " << Py_GetPrefix();
@@ -63,49 +65,32 @@ bool PythonBase::Initialize()
 
     DebugLogger() << "Initializing C++ interfaces for Python";
 
+    m_system_exit = import("exceptions").attr("SystemExit");
     try {
         // get main namespace, needed to run other interpreted code
         object py_main = import("__main__");
         m_namespace = extract<dict>(py_main.attr("__dict__"));
-    }
-    catch (error_already_set err) {
-        ErrorLogger() << "Unable to set up main namespace in Python";
-        PyErr_Print();
-        return false;
-    }
 
-    // allow the "freeorion_logger" C++ module to be imported within Python code
-    try {
-        initfreeorion_logger();
-    } catch (...) {
-        ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
-        return false;
-    }
+        // add the directory containing common Python modules used by all Python scripts to Python sys.path
+        AddToSysPath(GetPythonCommonDir());
 
-    // set up logging by redirecting stdout and stderr to exposed logging functions
-    std::string script = "import sys\n"
-    "import freeorion_logger\n"
-    "class dbgLogger:\n"
-    "  def write(self, msg):\n"
-    "    freeorion_logger.log(msg)\n"
-    "class errLogger:\n"
-    "  def write(self, msg):\n"
-    "    freeorion_logger.error(msg)\n"
-    "sys.stdout = dbgLogger()\n"
-    "sys.stderr = errLogger()\n"
-    "print('Python stdout and stderr redirected')";
-    if (!ExecScript(script)) {
-        ErrorLogger() << "Unable to redirect Python stdout and stderr";
-        return false;
-    }
+        // allow the "freeorion_logger" C++ module to be imported within Python code
+        try {
+            initfreeorion_logger();
+        } catch (...) {
+            ErrorLogger() << "Unable to initialize FreeOrion Python logging module";
+            return false;
+        }
 
-    // add the directory containing common Python modules used by all Python scripts to Python sys.path
-    if (!AddToSysPath(GetPythonCommonDir()))
-        return false;
+        // Allow C++ modules implemented by derived classes to be imported
+        // within Python code
 
-    // Allow C++ modules implemented by derived classes to be imported within Python code
-    if (!InitModules()) {
-        ErrorLogger() << "Unable to initialize FreeOrion Python modules";
+        if (!InitModules()) {
+            ErrorLogger() << "Unable to initialize FreeOrion Python modules";
+            return false;
+        }
+    } catch (error_already_set &err) {
+        HandleErrorAlreadySet();
         return false;
     }
 
@@ -113,43 +98,46 @@ bool PythonBase::Initialize()
     return true;
 }
 
+bool PythonBase::IsPythonRunning()
+{ return Py_IsInitialized(); }
+
+void PythonBase::HandleErrorAlreadySet() {
+    if (!Py_IsInitialized()) {
+        ErrorLogger() << "Python interpreter not initialized and exception handler called.";
+        return;
+    }
+
+    // Matches system exit
+    if (PyErr_ExceptionMatches(m_system_exit.ptr()))
+    {
+        Finalize();
+        ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
+        return;
+    }
+
+    PyErr_Print();
+    return;
+}
+
+
 void PythonBase::Finalize() {
-    if (m_python_interpreter_initialized) {
+    if (Py_IsInitialized()) {
         Py_Finalize();
-        m_python_interpreter_initialized = false;
+        DebugLogger() << "Cleaned up FreeOrion Python interface";
     }
-    DebugLogger() << "Cleaned up FreeOrion Python interface";
 }
 
-bool PythonBase::ExecScript(const std::string script) {
-    try {
-        object ignored = exec(script.c_str(), m_namespace, m_namespace);
-    }
-    catch (error_already_set err) {
-        PyErr_Print();
-        return false;
-    }
-    return true;
-}
-
-bool PythonBase::SetCurrentDir(const std::string dir) {
+void PythonBase::SetCurrentDir(const std::string dir) {
     std::string script = "import os\n"
     "os.chdir(r'" + dir + "')\n"
     "print 'Python current directory set to', os.getcwd()";
-    if (!ExecScript(script)) {
-        ErrorLogger() << "Unable to set Python current directory";
-        return false;
-    }
-    return true;
+    exec(script.c_str(), m_namespace, m_namespace);
 }
 
-bool PythonBase::AddToSysPath(const std::string dir) {
-    std::string command = "sys.path.append(r'" + dir + "')";
-    if (!ExecScript(command)) {
-        ErrorLogger() << "Unable to add " << dir << " to sys.path";
-        return false;
-    }
-    return true;
+void PythonBase::AddToSysPath(const std::string dir) {
+    std::string script = "import sys\n"
+        "sys.path.append(r'" + dir + "')";
+    exec(script.c_str(), m_namespace, m_namespace);
 }
 
 void PythonBase::SetErrorModule(object& module)
@@ -168,7 +156,7 @@ std::vector<std::string> PythonBase::ErrorReport() {
         list py_err_list;
         try { py_err_list = extract<list>(f()); }
         catch (error_already_set err) {
-            PyErr_Print();
+            HandleErrorAlreadySet();
             return err_list;
         }
 
