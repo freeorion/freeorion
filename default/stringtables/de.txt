@@ -190,17 +190,15 @@ Bomberflotte %1%
 NEW_BATTLE_FLEET_NAME
 Kriegsflotte %1%
 
-# Name for a newly created asteroid belt.
-# %1% name of the system this asteroid belt is created in.
-# %2% orbit number where this asteroid belt is created on.
-NEW_ASTEROIDS_NAME
-Überreste von %1% %2%
-
-# Name for a newly created planet. When creating a new planet it is assumed this
-# planet is the first one within the system.
-# %1% name of the system this planet is created in.
+# This string remains as a non-compile mechanisim to override the default name of new planets.
+# This string remains as a non-compile mechanisim to override the default name of new planets.
+# Planet suffix is a roman number, except for asteriods which are unique (see NEW_ASTEROID_SUFFIX_ORBIT_I)
+# During universe generaton, the roman number is ordinal with other non-asteroids, in order of orbit
+# For all other instances, the roman number is the orbital position of the planet
+# %1% represents the system name
+# %2% represents the planet suffix
 #NEW_PLANET_NAME
-#%1% I
+#%1% %2%
 
 EMPTY_SPACE
 Tiefe des Alls

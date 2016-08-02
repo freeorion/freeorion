@@ -106,7 +106,7 @@ EFFECT_CREATE_ASTEROID
 '''CreatePlanet
     type = asteroids
     planetsize = asteroids
-    name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name % Target.OrbitalSuffix
+    name = UserString("NEW_PLANET_NAME") % Target.Name % Target.OrbitalSuffix
 '''
 
 EFFECT_CREATE_GASGIANT
