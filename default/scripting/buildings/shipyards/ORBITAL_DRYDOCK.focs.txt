@@ -77,9 +77,12 @@ BuildingType
                 InSystem id = Source.SystemID
                 OwnedBy empire = Source.Owner
                 Structure high = LocalCandidate.MaxStructure - 0.001
+                Turn low = LocalCandidate.ArrivedOnTurn + 1
                 (Source.Planet.Happiness < [[CONST_ORB_DRYDOCK_MIN_HAPPY]])
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 1
+            stackinggroup = "SHIP_REPAIR"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_NONE"
