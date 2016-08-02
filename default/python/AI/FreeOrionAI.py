@@ -6,9 +6,6 @@ import random
 
 from common import configure_logging
 
-# IMPORTANT! this import also execute python code to update freeOrionAIInterface interface,
-# removing this import will brake AI in unexpected way.
-
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 from common.option_tools import parse_config
@@ -73,6 +70,7 @@ class AIStateMock(AIstate.AIstate):
 # AIstate
 foAIstate = AIStateMock()
 diplomatic_corp = None
+
 
 @chat_on_error
 def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name

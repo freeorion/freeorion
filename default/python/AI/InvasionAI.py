@@ -448,8 +448,6 @@ def assign_invasion_fleets_to_invade():
     """Assign fleet targets to invadable planets."""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    fleet_suppliable_system_ids = empire.fleetSupplyableSystemIDs
-    fleet_suppliable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_suppliable_system_ids)
 
     all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.
                                                                         ORBITAL_INVASION)

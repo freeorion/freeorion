@@ -542,7 +542,6 @@ class ShipDesignCache(object):
                 print "ERROR: hull in testhull cache not in available_hulls",
                 print "even though it is supposed to be a proper subset."
                 traceback.print_exc()
-        number_of_testhulls = len(self.testhulls)
 
         # 4. Cache the list of buildable ship parts for each planet
         print "Caching buildable ship parts per planet..."

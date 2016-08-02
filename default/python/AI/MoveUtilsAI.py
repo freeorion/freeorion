@@ -167,16 +167,19 @@ def get_nearest_supplied_system(start_system_id):
 
 def get_best_drydock_system_id(start_system_id, fleet_id):
     """
+
     Get system_id of best drydock capable of repair, where best is nearest drydock
     that has a current and target happiness greater than the HAPPINESS _THRESHOLD
     with a path that is not blockaded or that the fleet can fight through to with
     acceptable losses.
 
-     :param start_system_id: current location of fleet - used to find closest target
-     :type start_system_id: int
-     :return: closest system_id capable of repairing
-     :rtype: int
-     """
+    :param start_system_id: current location of fleet - used to find closest target
+    :type start_system_id: int
+    :param fleet_id: fleet that need path to drydock
+    :type: int
+    :return: closest system_id capable of repairing
+    :rtype: int
+    """
     if start_system_id == -1:
         print >> sys.stderr, "get_best_drydock_system_id passed bad system id."
         return None
