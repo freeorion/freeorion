@@ -24,7 +24,10 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = OwnedBy affiliation = AnyEmpire
+            activation = Or [
+                OwnedBy affiliation = AnyEmpire
+                Not Species
+            ]
             effects = RemoveSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     graphic = "icons/tech/categories/learning.png"
