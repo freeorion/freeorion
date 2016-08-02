@@ -4,7 +4,7 @@ Species
     gameplay_description = "SP_LEMBALALAM_GAMEPLAY_DESC"
     Native
 
-    tags = [ "ORGANIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_GOOD_STEALTH"]
+    tags = [ "ORGANIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GOOD_STEALTH"]
 
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/
@@ -30,6 +30,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
 
+        // Start the game with Volcanic Ash stealth special
         EffectsGroup
             scope = Source
             activation = Turn high = 0
@@ -39,6 +40,7 @@ Species
                 AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
             ]
 
+        // Always start the game as High Tech natives
         EffectsGroup
             scope = And [
                 Source
@@ -48,6 +50,7 @@ Species
             //stackinggroup = "GAME_START_MOD_STACK"
             effects = AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
 
+        // Max Population is fixed at 5
         EffectsGroup
             description = "FIXED_LOW_POPULATION"
             scope = Source
@@ -55,9 +58,9 @@ Species
             priority = 130
             effects = [
                 SetTargetPopulation value = 5 accountinglabel = "IMMORTAL_LABEL"
-                SetPopulation value = Target.TargetPopulation
             ]
 
+        // Give techs to empire
         EffectsGroup
             scope = Source
             activation = And [
