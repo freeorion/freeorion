@@ -136,7 +136,8 @@ def generate_monsters(monster_freq, systems):
                     if fp.spawn_rate() > 0.0 and fp.spawn_limit() > 0 and fp.ship_designs()}
 
     # map nests to monsters for ease of reporting
-    nest_name_map = dict(zip(["KRAKEN_NEST_SPECIAL", "SNOWFLAKE_NEST_SPECIAL", "JUGGERNAUT_NEST_SPECIAL"], ["SM_KRAKEN_1", "SM_SNOWFLAKE_1", "SM_JUGGERNAUT_1"]))
+    nest_name_map = dict(zip(["KRAKEN_NEST_SPECIAL", "SNOWFLAKE_NEST_SPECIAL", "JUGGERNAUT_NEST_SPECIAL"],
+                             ["SM_KRAKEN_1", "SM_SNOWFLAKE_1", "SM_JUGGERNAUT_1"]))
     tracked_plan_tries = {name: 0 for name in nest_name_map.values()}
     tracked_plan_counts = {name: 0 for name in nest_name_map.values()}
     tracked_plan_valid_locations = {fp: 0 for fp in fleet_plans if fp.name() in tracked_plan_counts}
@@ -152,7 +153,8 @@ def generate_monsters(monster_freq, systems):
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
         if len(systems) < 100:
-            # Note: The WithinStarlaneJumps condition in fp.location() is the most time costly function in universe generation
+            # Note: The WithinStarlaneJumps condition in fp.location()
+            # is the most time costly function in universe generation
             print "/ can be spawned at", len([s for s in systems if fleet_plan.location(s)]), "systems"
         else:
             print  # to terminate the print line
@@ -166,7 +168,8 @@ def generate_monsters(monster_freq, systems):
         # collect info for tracked monster nest valid locations
         for planet in fo.sys_get_planets(system):
             for nest in tracked_nest_valid_locations:
-                #print "\t tracked monster check planet: %d size: %s for nest: %20s  | result: %s" % (planet, fo.planet_get_size(planet), nest, fo.special_location(nest, planet))
+                # print "\t tracked monster check planet: %d size: %s for nest: %20s  | result: %s"
+                # % (planet, fo.planet_get_size(planet), nest, fo.special_location(nest, planet))
                 if fo.special_location(nest, planet):
                     tracked_nest_valid_locations[nest] += 1
 
@@ -176,7 +179,8 @@ def generate_monsters(monster_freq, systems):
                 tracked_plan_valid_locations[fp] += 1
 
         # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0.
-        # Note: The WithinStarlaneJumps condition in fp.location() is the most time costly function in universe generation.
+        # Note: The WithinStarlaneJumps condition in fp.location() is
+        # the most time costly function in universe generation.
         suitable_fleet_plans = [fp for fp in fleet_plans if spawn_limits[fp] and fp.location(system)]
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
@@ -184,12 +188,14 @@ def generate_monsters(monster_freq, systems):
 
         # randomly select one monster fleet out of the suitable ones and then test if we want to add it to this system
         # by making a roll against the basic chance multiplied by the spawn rate of this monster fleet
-        expectation_tally += basic_chance * sum([fp.spawn_rate() for fp in suitable_fleet_plans]) / len(suitable_fleet_plans)
+        expectation_tally += basic_chance * sum([fp.spawn_rate()
+                                                 for fp in suitable_fleet_plans]) / len(suitable_fleet_plans)
         fleet_plan = random.choice(suitable_fleet_plans)
         if fleet_plan.name() in tracked_plan_tries:
             tracked_plan_tries[fleet_plan.name()] += 1
         if random.random() > basic_chance * fleet_plan.spawn_rate():
-            print "\t\t At system %4d rejected monster fleet %s from %d suitable fleets" % (system, fleet_plan.name(), len(suitable_fleet_plans))
+            print("\t\t At system %4d rejected monster fleet %s from %d suitable fleets"
+                  % (system, fleet_plan.name(), len(suitable_fleet_plans)))
             # no, test failed, continue with the next system
             continue
         actual_tally += 1
@@ -212,5 +218,7 @@ def generate_monsters(monster_freq, systems):
     statistics.monsters_summary = [(fp.name(), fp.spawn_limit() - counter) for fp, counter in spawn_limits.iteritems()]
     statistics.tracked_monsters_tries.update(tracked_plan_tries)
     statistics.tracked_monsters_summary.update(tracked_plan_counts)
-    statistics.tracked_monsters_location_summary.update([(fp.name(), count) for fp, count in tracked_plan_valid_locations.iteritems()])
-    statistics.tracked_nest_location_summary.update([(nest_name_map[nest], count) for nest, count in tracked_nest_valid_locations.items()])
+    statistics.tracked_monsters_location_summary.update([(fp.name(), count)
+                                                         for fp, count in tracked_plan_valid_locations.iteritems()])
+    statistics.tracked_nest_location_summary.update([(nest_name_map[nest], count)
+                                                     for nest, count in tracked_nest_valid_locations.items()])
