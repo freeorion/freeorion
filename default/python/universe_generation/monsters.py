@@ -4,6 +4,9 @@ import freeorion as fo
 import util
 import statistics
 import universe_tables
+from galaxy import DisjointSets
+
+
 def populate_monster_fleet(fleet_plan, system):
     """
     Create a monster fleet in ''system'' according to ''fleet_plan''
@@ -27,6 +30,81 @@ def populate_monster_fleet(fleet_plan, system):
 
     print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
 
+monsters_that_alter_starlanes = {"SM_EXP_OUTPOST"}
+
+
+def place_experimentors(systems):
+    """
+    Place the expermentor outpost system.  Check that removing all of the
+    starlanes entering the system does not break the rest of the galaxy
+    into more than one connected piece.
+    """
+
+    random.shuffle(systems)
+
+    # Find the Experimentor output fleet plan
+    plans = [plan for plan in fo.load_monster_fleet_plan_list()
+             if (plan.name() in monsters_that_alter_starlanes
+                 and plan.spawn_rate() > 0.0
+                 and plan.spawn_limit() > 0
+                 and plan.ship_designs())]
+    if not plans:
+        return
+
+    plan = plans[0]
+    spawn_limit = plan.spawn_limit()
+    placed = []
+    removed_lanes = set()
+
+    starlanes = [(s1, s2) for s1 in systems for s2 in fo.sys_get_starlanes(s1) if s1 < s2]
+
+    for system in systems:
+        # Quit when no more to spawn
+        if len(placed) >= spawn_limit:
+            return
+
+        # Continue if system is not suitable.
+        if not plan.location(system):
+            continue
+
+        # Compute the disjoint set of the galaxy without the starlanes
+        # from the proposed system.  Don't place an experimentor outpost
+        # if there will be more connected regions than the number of
+        # placed experimentor outposts plus one.
+        local_lanes = {(min(system, s), max(system, s)) for s in fo.sys_get_starlanes(system)}
+
+        dsets = DisjointSets()
+        for s3 in systems:
+            dsets.add(s3)
+
+        for lane in starlanes:
+            if lane in removed_lanes or lane in local_lanes:
+                continue
+            dsets.link(lane[0], lane[1])
+
+        num_contiguous_regions = len(dsets.complete_sets())
+        expected_num_contiguous_regions = (len(placed) + 2)
+
+        if num_contiguous_regions > expected_num_contiguous_regions:
+            continue
+
+        if num_contiguous_regions < expected_num_contiguous_regions:
+            print >> sys.stderr, ("Number of contiguos regions %d is below the expected number "
+                                  "of contiguous regions %d when placing %d monster %s that can "
+                                  "break starlanes."
+                                  % (num_contiguous_regions, expected_num_contiguous_regions,
+                                     len(placed) + 1, plan.name()))
+            continue
+
+        # create monster fleet
+        try:
+            populate_monster_fleet(plan, system)
+            placed.append(system)
+            removed_lanes |= local_lanes
+
+        except RuntimeError as e:
+            print >> sys.stderr, str(e)
+            continue
 
 
 def generate_monsters(monster_freq, systems):
@@ -46,7 +124,8 @@ def generate_monsters(monster_freq, systems):
 
     # get all monster fleets that have a spawn rate and limit both > 0 and at least one monster ship design in it
     # (a monster fleet with no monsters in it is pointless) and store them in a list
-    fleet_plans = fo.load_monster_fleet_plan_list()
+    fleet_plans = [fp for fp in fo.load_monster_fleet_plan_list()
+                   if not fp.name() in monsters_that_alter_starlanes]
 
     # create a map where we store a spawn counter for each monster fleet
     # this counter will be set to the spawn limit initially and decreased every time the monster fleet is spawned
