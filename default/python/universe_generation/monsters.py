@@ -1,8 +1,32 @@
+import sys
 import random
 import freeorion as fo
 import util
 import statistics
 import universe_tables
+def populate_monster_fleet(fleet_plan, system):
+    """
+    Create a monster fleet in ''system'' according to ''fleet_plan''
+    """
+
+    # create monster fleet
+    monster_fleet = fo.create_monster_fleet(system)
+    # if fleet creation fails, report an error and try to continue with next system
+    if monster_fleet == fo.invalid_object():
+        errstr = "Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name()
+        util.report_error(errstr)
+        raise RuntimeError(errstr)
+
+    # add monsters to fleet
+    for design in fleet_plan.ship_designs():
+        # create monster, if creation fails, report an error and try to continue with the next design
+        if fo.create_monster(design, monster_fleet) == fo.invalid_object():
+            errstr = "Python generate_monsters: unable to create monster %s" % design
+            util.report_error(errstr)
+            raise RuntimeError(errstr)
+
+    print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
+
 
 
 def generate_monsters(monster_freq, systems):
@@ -94,21 +118,15 @@ def generate_monsters(monster_freq, systems):
             tracked_plan_counts[fleet_plan.name()] += 1
 
         # all prerequisites and the test have been met, now spawn this monster fleet in this system
-        print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
-        # decrement counter for this monster fleet
-        spawn_limits[fleet_plan] -= 1
         # create monster fleet
-        monster_fleet = fo.create_monster_fleet(system)
-        # if fleet creation fails, report an error and try to continue with next system
-        if monster_fleet == fo.invalid_object():
-            util.report_error("Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name())
-            continue
+        try:
+            populate_monster_fleet(fleet_plan, system)
+            # decrement counter for this monster fleet
+            spawn_limits[fleet_plan] -= 1
 
-        # add monsters to fleet
-        for design in fleet_plan.ship_designs():
-            # create monster, if creation fails, report an error and try to continue with the next design
-            if fo.create_monster(design, monster_fleet) == fo.invalid_object():
-                util.report_error("Python generate_monsters: unable to create monster %s" % design)
+        except RuntimeError as e:
+            print >> sys.stderr, str(e)
+            continue
 
     print "Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally)
     # finally, compile some statistics to be dumped to the log later
