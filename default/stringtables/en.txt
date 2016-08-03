@@ -6373,6 +6373,24 @@ PHILOSOPHER_SPECIAL_DESC
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
+ASTEROID_COATING_SPECIAL
+Asteroid Coating
+
+ASTEROID_COATING_SPECIAL_DESC
+'''An outpost or colony on these asteroids will grand a structure bonus of +10% to all ships with Asteroid hulls in the empire.
+
+These asteroids are infected by transdimensional worms that eat tunnels through the rock, leaving behind a sticky slime that seems to automatically spread over the whole surface of the affected asteroid and prevents it from breaking appart.
+Applied to ships build with asteroid hulls the slime will naturally increase their durability. While scientists were unable to reproduce the substance or catch a living worm, they found out that just a small amount of fresh slime is enough to enhance whole fleets.'''
+
+ASTEROID_COATING_OWNED_SPECIAL
+Asteroid Coating
+
+ASTEROID_COATING_OWNED_SPECIAL_DESC
+'''An outpost or colony on these asteroids will grand a structure bonus of +10% to all ships with Asteroid hulls in the empire.
+
+These asteroids are infected by transdimensional worms that eat tunnels through the rock, leaving behind a sticky slime that seems to automatically spread over the whole surface of the affected asteroid and prevents it from breaking appart.
+Applied to ships build with asteroid hulls the slime will naturally increase their durability. While scientists were unable to reproduce the substance or catch a living worm, they found out that just a small amount of fresh slime is enough to enhance whole fleets.'''
+
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
 ABANDONED_COLONY_SPECIAL_DESC
