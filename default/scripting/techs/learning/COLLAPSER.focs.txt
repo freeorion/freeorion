@@ -1,6 +1,6 @@
 Tech
     name = "LRN_COLLAPSER"
-    description = "LRN_COLLAPSER"
+    description = "LRN_COLLAPSER_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     category = "LEARNING_CATEGORY"
     researchcost = 1500 * [[TECH_COST_MULTIPLIER]]
