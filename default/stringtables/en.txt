@@ -1,15 +1,17 @@
 English
 
-#This is the English String Table file for FreeOrion
-#Translate this file to other languages.
+# This is the English String Table file for FreeOrion
+# Translate this file to other languages.
 
-# Notes: to avoid potential conflict with functional keys in other files, do not make
-# any stringtable keys beginning with "FUNCTIONAL_"
-# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#################
-#    Common     #
-#################
+
+##
+## Common phrases
+##
 
 APPNAME
 FreeOrion
@@ -56,7 +58,7 @@ Yes
 NO
 No
 
-# ELLIPSIS is used as a placeholder for unexpanded content in the combat log window.
+# Used as a placeholder for unexpanded content in the combat log window.
 ELLIPSIS
 ...
 
@@ -229,9 +231,10 @@ Unowned
 NOWHERE
 Cannot be produced
 
-#############################################################
-####               M A J O R   E R R O R S               ####
-#############################################################
+
+##
+## Major errors
+##
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''OpenAL audio system initialization failed.
@@ -295,108 +298,128 @@ FORMAT_LIST_10_ITEMS
 FORMAT_LIST_MANY_ITEMS
 %1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
 SD_CARRIER
 Prototype Carrier
+
 SD_CARRIER_DESC
 Prototype design that launches fighters in battle instead of using direct-fire weapons.
 
 SD_FLAK
 Prototype Flak Ship
+
 SD_FLAK_DESC
 Prototype design that uses flak cannons as a cheap fighter countermeasure.
 
 SD_SCOUT
 Scout
+
 SD_SCOUT_DESC
 Small and cheap unarmed vessel designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_AST_SCOUT
 Asteroid Scout
+
 SD_AST_SCOUT_DESC
 Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_SCOUT_2
 Radar Scout
+
 SD_SCOUT_2_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_3
 Scanner Scout
+
 SD_SCOUT_3_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_4
 Sensor Scout
+
 SD_SCOUT_4_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ENG_SCOUT
 Energy Scout
+
 SD_ENG_SCOUT_DESC
 Small and fast unarmed vessel designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_SMALL_MARK_1
 Corvette (M)
+
 SD_SMALL_MARK1_DESC
 Small and cheap mass-driver ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SMALL_MARK_2
 Corvette (L)
+
 SD_SMALL_MARK2_DESC
 Small and cheap laser ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_1
 Frigate (M1)
+
 SD_MARK1_DESC
 Basic mass-driver frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_2
 Frigate (M2)
+
 SD_MARK2_DESC
 Improved mass-driver frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_3
 Frigate (L1)
+
 SD_MARK3_DESC
 Basic laser frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_4
 Frigate (L2)
+
 SD_MARK4_DESC
 Improved laser frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_1
 Destroyer (M1)
+
 SD_LARGE_MARK1_DESC
 Basic mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_2
 Destroyer (M2)
+
 SD_LARGE_MARK2_DESC
 Improved mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_3
 Cruiser (L1)
+
 SD_LARGE_MARK3_DESC
 Improved fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_4
 Cruiser (L2)
+
 SD_LARGE_MARK4_DESC
 Improved fighter with heavy lasers and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ROBOTIC_OUTPOST
 Robotic Outpost
+
 SD_ROBOTIC_OUTPOST_DESC
 Can establish outposts on faraway worlds.
 
 SD_ROBOTIC_COLONY
 Robotic Colony
+
 SD_ROBOTIC_COLONY_DESC
 Can establish colonies on faraway worlds.
 
@@ -426,16 +449,19 @@ Fast advanced troop carrier
 
 SD_ROBOTIC1
 Robocruiser (M1)
+
 SD_ROBOTIC1_DESC
 Robotic mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC2
 Robocruiser (M2)
+
 SD_ROBOTIC2_DESC
 Robotic fighter heavy armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC3
 Robocruiser (L)
+
 SD_ROBOTIC3_DESC
 Improved robotic fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
@@ -447,273 +473,327 @@ Advanced heavy cruiser capable of self repair
 
 SD_GRAVITATING1
 Gravitic Battleship (P)
+
 SD_GRAVITATING1_DESC
 Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_GRAVITATING2
 Gravitic Battleship (D)
+
 SD_GRAVITATING2_DESC
 Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_ROBO_TITAN1
 Dreadnaught
+
 SD_ROBO_TITAN1_DESC
 Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_ORGANIC1
 Organic Frigate (M1)
+
 SD_ORGANIC1_DESC
 Organic fighter with preliminary weaponry and defence technology. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC2
 Organic Frigate (M2)
+
 SD_ORGANIC2_DESC
 Organic fighter with improved armour. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC3
 Organic Frigate (L)
+
 SD_ORGANIC3_DESC
 Organic fighter with heavy lasers and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_1
 Organic Heavy Frigate (M)
+
 SD_SHIELD_BUG_1_DESC
 Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_2
 Organic Heavy Frigate (L)
+
 SD_SHIELD_BUG_2_DESC
 Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_1
 Rock Destroyer (L)
+
 SD_AST_1_DESC
 A hollowed-out asteroid armed with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_2
 Rock Destroyer (P1)
+
 SD_AST_2_DESC
 A hollowed-out asteroid armed with plasma cannons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_3
 Rock Destroyer (P2)
+
 SD_AST_3_DESC
 A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
 
 SD_HEAVY_AST_1
 Rock Battleship (L)
+
 SD_HEAVY_AST_1_DESC
 A large hollowed-out asteroid armed with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_2
 Rock Battleship (P)
+
 SD_HEAVY_AST_2_DESC
 A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
 
 SD_CRYSTAL
 Crystal Destroyer (P)
+
 SD_CRYSTAL_DESC
 A crystallized asteroid armed with heavy plasma cannons and crystal rock armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
 
 SD_ENDO_1
 Endomorphic Cruiser (L)
+
 SD_ENDO_1_DESC
 Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_2
 Endomorphic Cruiser (P1)
+
 SD_ENDO_2_DESC
 Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_3
 Endomorphic Cruiser (P2)
+
 SD_ENDO_3_DESC
 Advanced endomorphic fighter with heavy weaponry and diamond armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_FRACTAL_1
 Fractal Battleship (P)
+
 SD_FRACTAL_1_DESC
 An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_FRACTAL_2
 Fractal Battleship (D)
+
 SD_FRACTAL_2_DESC
 An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_COLONY_SHIP
 Colony Ship
+
 SD_COLONY_SHIP_DESC
 Unarmed vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
 Organic Colony Ship
+
 SD_ORG_COLONY_SHIP_DESC
 Unarmed organic vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
+
 SD_CRYONIC_COLONY_SHIP_DESC
 Unarmed vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
 Organic Cryonic Colony Ship
+
 SD_ORG_CRYOCOL_SHIP_DESC
 Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
 Cryonic Colony Asteroid
+
 SD_AST_CRYOCOL_SHIP_DESC
 Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]], in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Outpost Ship
+
 SD_OUTPOST_SHIP_DESC
 Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_OUTPOST_SHIP
 Organic Outpost Ship
+
 SD_ORG_OUTPOST_SHIP_DESC
 Unarmed organic vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
 Colony Base
+
 SD_COLONY_BASE_DESC
 Unarmed vessel capable of creating a colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_CRYONIC_COLONY_BASE
 Cryonic Colony Base
+
 SD_CRYONIC_COLONY_BASE_DESC
 Unarmed vessel capable of creating a large colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_OUTPOST_BASE
 Outpost Base
+
 SD_OUTPOST_BASE_DESC
 Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
 
 SD_BASE_DECOY
 Comsat
+
 SD_BASE_DECOY_DESC
 Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_DROP
 Troop Drop
+
 SD_TROOP_DROP_DESC
 Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
 
 SD_TROOP_DROP_HVY
 Heavy Troop Drop
+
 SD_TROOP_DROP_HVY_DESC
 Carries a brigade of ground advanced [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
 
 SD_SMALL_TROOP_SHIP
 Small Troop Ship
+
 SD_SMALL_TROOP_SHIP_DESC
 Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_SHIP
 Troop Ship
+
 SD_TROOP_SHIP_DESC
 Carries 3 brigades of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_TROOP_SHIP
 Organic Troop Ship
+
 SD_ORG_TROOP_SHIP_DESC
 Carries 4 brigades of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
 Energy Troop Ship
+
 SD_ENG_TROOP_SHIP_DESC
 Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_ENG1
 Energy Corvette (L)
+
 SD_ENG1_DESC
 Small fast combat vessel. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_ENG2
 Energy Corvette (P)
+
 SD_ENG2_DESC
 Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
+
 SD_DRAGON_TOOTH_DESC
 Ancient ship design with advanced weaponry and defensive systems. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
-############
-# Monsters #
-############
+
+##
+## Monsters
+##
 
 SM_MONSTER
 Monster
 
 SM_KRILL_1
 Small Krill Swarm
+
 SM_KRILL_1_DESC
 Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation and block resupply. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_2
 Medium Krill Swarm
+
 SM_KRILL_2_DESC
 Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation and block resupply. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_3
 Large Krill Swarm
+
 SM_KRILL_3_DESC
 Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become aggressive towards ships. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_4
 Plague of Krill
+
 SM_KRILL_4_DESC
 Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_TREE
 Dyson Forest
+
 SM_TREE_DESC
 A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the starlanes to colonize other stars.
 
 SM_FLOATER
 Floater
+
 SM_FLOATER_DESC
 A gas-filled bulbous sac drifting through space, sent as a seed by a Dyson Forest to found a new forest around other stars.
 
 SM_DRAGON
 Vacuum Dragon
+
 SM_DRAGON_DESC
 A terrifying giant monster that prowls space for prey, wreaking havoc on populated areas.
 
 SM_DRONE
 Drone
+
 SM_DRONE_DESC
 A tool of a forgotten war, still fulfilling its original purpose: to mindlessly attack any ships in range.
 
 SM_DRONE_FACTORY
 Drone Factory
+
 SM_DRONE_FACTORY_DESC
 A production facility built in some long-forgotten war to defend long-vanished builders, Amazingly, it still functions, slowly producing new Drone Fighters.
 
 SM_GUARD_0
 Maintenance Ship
+
 SM_GUARD_0_DESC
 An unmanned ship programmed by the Precursors to maintain the starlane entries of the system. It is armed only lightly, but will attack all intruders.
 
 SM_GUARD_1
 Sentry
+
 SM_GUARD_1_DESC
 A small unmanned guard ship programmed by the Precursors to defend the system against intruders.
 
 SM_GUARD_2
 Sentinel
+
 SM_GUARD_2_DESC
 An unmanned guard ship programmed by the Precursors to defend the system against intruders.
 
 SM_GUARD_3
 Warden
+
 SM_GUARD_3_DESC
 A powerful unmanned guard ship programmed by the Precursors to defend the system against intruders.
 
 SM_KRAKEN_1
 Larval Kraken
+
 SM_KRAKEN_1_DESC
 '''In the larval form, a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarm. A well-fed larval kraken may grow into a larger and more dangerous adult form.
 
@@ -721,6 +801,7 @@ Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of
 
 SM_KRAKEN_2
 Kraken
+
 SM_KRAKEN_2_DESC
 '''A formidable medium-weight space monster. Its natural prey is the krill swarm. A well-fed kraken may grow into an even larger and more dangerous form.
 
@@ -728,6 +809,7 @@ Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of
 
 SM_KRAKEN_3
 Great Kraken
+
 SM_KRAKEN_3_DESC
 '''A formidable and very tough space monster.
 
@@ -735,6 +817,7 @@ Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of
 
 SM_BLACK_KRAKEN
 Black Kraken
+
 SM_BLACK_KRAKEN_DESC
 '''A powerful, unnatural-seeming space monster.
 
@@ -742,6 +825,7 @@ Black Kraken are bioengineered space monsters, incredibly tough, with dangerous 
 
 SM_SNOWFLAKE_1
 Small Snowflake
+
 SM_SNOWFLAKE_1_DESC
 '''A small and harmless space monster with exceptional vision.
 
@@ -749,6 +833,7 @@ Favored Environment: Small planets. Snowflake nests are normally found in the or
 
 SM_SNOWFLAKE_2
 Snowflake
+
 SM_SNOWFLAKE_2_DESC
 '''A light-weight space monster with exceptional vision.
 
@@ -756,6 +841,7 @@ Favored Environment: Small planets. Snowflake nests are normally found in the or
 
 SM_SNOWFLAKE_3
 Large Snowflake
+
 SM_SNOWFLAKE_3_DESC
 '''A formidable light-weight space monster.
 
@@ -763,6 +849,7 @@ Favored Environment: Small planets. Snowflake nests are normally found in the or
 
 SM_PSIONIC_SNOWFLAKE
 Psionic Snowflake
+
 SM_PSIONIC_SNOWFLAKE_DESC
 '''A monster with the power to neutralize the minds of organic beings.
 
@@ -770,6 +857,7 @@ Psionic Snowflakes are bioengineered space monsters with dangerous weapons and t
 
 SM_JUGGERNAUT_1
 Small Juggernaut
+
 SM_JUGGERNAUT_1_DESC
 '''A formidable heavy-weight space monster with some protective shielding.
 
@@ -777,6 +865,7 @@ Favored Environment: Asteroids. Juggernaut nests are normally found within Aster
 
 SM_JUGGERNAUT_2
 Juggernaut
+
 SM_JUGGERNAUT_2_DESC
 '''A formidable heavy-weight space monster with moderate protective shielding.
 
@@ -784,6 +873,7 @@ Favored Environment: Asteroids. Juggernaut nests are normally found within Aster
 
 SM_JUGGERNAUT_3
 Large Juggernaut
+
 SM_JUGGERNAUT_3_DESC
 '''A formidable heavy-weight space monster with powerful protective shielding.
 
@@ -791,6 +881,7 @@ Favored Environment: Asteroids. Juggernaut nests are normally found within Aster
 
 SM_BLOATED_JUGGERNAUT
 Bloated Juggernaut
+
 SM_BLOATED_JUGGERNAUT_DESC
 '''A massive, sickly-looking space monster.
 
@@ -798,41 +889,49 @@ Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dan
 
 SM_CLOUD
 Space Cloud
+
 SM_CLOUD_DESC
 A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
 
 SM_ASH
 Space Volcano
+
 SM_ASH_DESC
 A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
 
 SM_DIM
 Dimensional Drifter
+
 SM_DIM_DESC
 A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
 
 SM_VOID
 Behemoth of the Void
+
 SM_VOID_DESC
 A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
 
 SM_SNAIL
 Asteroid Snail
+
 SM_SNAIL_DESC
 A timid monster, feeding on minerals. Its shell strongly resembles a normal asteroid, increasing its [[encyclopedia STEALTH_TITLE]] if it can hide inside an asteroid belt.
 
 SM_DAMPENING_CLOUD
 Dampening Cloud
+
 SM_DAMPENING_CLOUD_DESC
 A cosmic cloud of highly energetic particles that has gained some form of sentience. It is repelled by the energy signatures of populated colonies. It is nonetheless highly attracted to reserves of potential energy, and will steal the [[encyclopedia FUEL_TITLE]] from vessels in the system.
 
 SM_ACIREMA_GUARD
 Acirema Guard Ship
+
 SM_ACIREMA_GUARD_DESC
 An unmanned armed ship built by the Acirema, standing guard over the system.
 
 SM_EXP_OUTPOST
 Experiment Zero
+
 SM_EXP_OUTPOST_DESC
 '''An ancient creation of the Experimentors that reduces [[encyclopedia SHIELDS_TITLE]] and [[encyclopedia DAMAGE_TITLE]].
 
@@ -840,14 +939,16 @@ Experiment Zero was sent to this galaxy to guard the outpost of the Experimentor
 
 SM_COSMIC_DRAGON
 Cosmic Dragon
+
 SM_COSMIC_DRAGON_DESC
 '''A fearsome space monster with the power to destroy entire star systems.
 
 Cosmic Dragons are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A very powerful fleet with high [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack inhabited planets, and are able to vaporise entire star systems if left alone.'''
 
-##########
-# Fields #
-##########
+
+##
+## Fields
+##
 
 FLD_ION_STORM
 Ion Storm
@@ -885,9 +986,10 @@ Accretion Disc
 FLD_ACCRETION_DISC_DESC
 An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[encyclopedia SUPPLY_TITLE]] penalty of -1.
 
-##############################
-# Predefined Starting Fleets #
-##############################
+
+##
+## Predefined starting fleets
+##
 
 FN_HOME_FLEET
 Home Fleet
@@ -907,9 +1009,10 @@ Invasion Fleet
 MONSTERS
 Monsters
 
-##########################
-# Status Update Messages #
-##########################
+
+##
+## Status update messages
+##
 
 RETURN_TO_INTRO
 Returning to Main Menu.
@@ -987,9 +1090,9 @@ ERROR_PYTHON_AI_CRASHED
 Python AI for %1% crashed.
 
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Usage: '''
@@ -1622,9 +1725,9 @@ OPTIONS_DB_FLEET_WND_AGGRESSION
 Fleet window default aggression setting
 
 
-#################
-# File Dialog   #
-#################
+##
+## File dialog
+##
 
 FILE_DLG_FILES
 File(s):
@@ -1654,9 +1757,10 @@ does not exist.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Device is not ready.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 New
@@ -1685,16 +1789,13 @@ V:
 COLOR_DLG_ALPHA
 A:
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion Main Menu
-
-#Button names####
 
 INTRO_BTN_SINGLE_PLAYER
 Single Player
@@ -1723,24 +1824,19 @@ Credits
 INTRO_BTN_EXIT
 Exit
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Timed out while attempting to connect to server
 
 ERR_VERSION_MISMATCH
 '''Cannot connect to server because this client is using different versions of the following settings and/or source files: '''
 
-########################
-# Server Setup Screen  #
-########################
 
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Connect to Server
-
-#Static labels####
 
 LAN_GAME_LABEL
 Lan game at:
@@ -1751,8 +1847,6 @@ Internet game at:
 PLAYER_NAME_LABEL
 Player name
 
-#Button names####
-
 HOST_GAME_BN
 Host a new game (use XML serialisation in Options/Other)
 
@@ -1762,9 +1856,10 @@ Join a game (use XML serialisation in Options/Other)
 REFRESH_LIST_BN
 Refresh list
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Multiplayer Setup
@@ -1802,16 +1897,14 @@ Load game
 START_GAME_BN
 Start game
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Galaxy Setup
 
-#Strings
 GSETUP_GRAPHICS_FILES
 Graphics Files
 
@@ -1830,93 +1923,117 @@ Starting Species
 GSETUP_NUMBER_AIS
 Number of AI Players
 
-#Drop-down list labels and choices####
-
 GSETUP_SEED
 Seed
+
 GSETUP_RANDOM_SEED
 Generate a random seed
+
 GSETUP_RANDOMIZE
 Randomize
+
 GSETUP_STARS
 Systems
+
 GSETUP_SHAPE
 Galaxy Shape
+
 GSETUP_AGE
 Galaxy Age
+
 GSETUP_STARLANE_FREQ
 Starlane Frequency
+
 GSETUP_PLANET_DENSITY
 Planet Density
+
 GSETUP_SPECIALS_FREQ
 Specials Frequency
+
 GSETUP_MONSTER_FREQ
 Monster Frequency
+
 GSETUP_NATIVE_FREQ
 Native Frequency
+
 GSETUP_AI_AGGR
 Max AI Aggression
 
 GSETUP_2ARM
 Spiral, 2-arm
+
 GSETUP_3ARM
 Spiral, 3-arm
+
 GSETUP_4ARM
 Spiral, 4-arm
+
 GSETUP_CLUSTER
 Cluster
+
 GSETUP_ELLIPTICAL
 Elliptical
+
 GSETUP_DISC
 Disc
+
 GSETUP_BOX
 Box
+
 GSETUP_IRREGULAR
 Irregular
+
 GSETUP_RING
 Ring
 
 GSETUP_RANDOM
 Random
+
 GSETUP_NONE
 None
+
 GSETUP_LOW
 Low
+
 GSETUP_MEDIUM
 Medium
+
 GSETUP_HIGH
 High
 
 GSETUP_YOUNG
 Young
+
 GSETUP_MATURE
 Mature
+
 GSETUP_ANCIENT
 Ancient
 
 GSETUP_BEGINNER
 Beginner Mode
+
 GSETUP_TURTLE
 Turtle
+
 GSETUP_CAUTIOUS
 Cautious
+
 GSETUP_TYPICAL
 Typical
+
 GSETUP_AGGRESSIVE
 Aggressive
+
 GSETUP_MANIACAL
 Maniacal
-
-#Error messages####
 
 GSETUP_ERR_NOEXIST
 does not exist.
 
-###########################
-# About Dialog            #
-###########################
-
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 License
@@ -1933,9 +2050,10 @@ Vision
 FREEORION_VISION
 FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model.
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_WINDOW_TITLE
 Menu
@@ -1958,9 +2076,10 @@ Button Disabled
 SAVE_DISABLED_BROWSE_TEXT
 The Save Game button is disabled, either because this is a multiplayer game in which you are neither Host nor Moderator, or because at the time this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
 
-###########################
-# Save Game Dialog        #
-###########################
+
+##
+## Save game dialog
+##
 
 SAVE_TIME_TITLE
 <u>Time</u>
@@ -2047,9 +2166,10 @@ Are you sure you want to delete %1%?
 SAVE_REALLY_OVERRIDE
 Are you sure you want to override %1%?
 
-###########################
-# Game Options            #
-###########################
+
+##
+## Game options
+##
 
 OPTIONS_TITLE
 Options
@@ -2543,9 +2663,10 @@ Add All Saved Ship Designs at Game Start
 OPTIONS_USE_BINARY_SERIALIZATION
 Create Binary Save Files
 
-#################
-# Main Map      #
-#################
+
+##
+## Main map window
+##
 
 MAP_BTN_TURN_UPDATE
 Turn %1%
@@ -2658,96 +2779,138 @@ Fleet Count
 MAP_FLEET_TEXT
 Total number of ships
 
-#################
-# SidePanel     #
-#################
+
+##
+## Side panel
+##
 
 SIDE_PANEL
 Side Panel
+
+
+##
+## Side panel/System information
+##
 
 SP_SYSTEM_PRODUCTION
 System Resource Output
 
 RESOURCE_PRODUCTION_TOOLTIP
 System %1%: %2%
+
 RESOURCE_ALLOCATION_TOOLTIP
 System %1%: %2%
 
 INDUSTRY_PRODUCTION
 Industrial Output
+
 RESEARCH_PRODUCTION
 Research Output
+
 TRADE_PRODUCTION
 Trade Output
 
 INDUSTRY_CONSUMPTION
 Industrial Consumption
+
 RESEARCH_CONSUMPTION
 Research Consumption
+
 TRADE_CONSUMPTION
 Trade Consumption
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Inter-System Exchange
+
 IMPORT_EXPORT_TOOLTIP
 Import / Export
+
 RESOURCE_IMPORT
 Importing
+
 RESOURCE_EXPORT
 Available for Export
+
 RESOURCE_SELF_SUFFICIENT
 No Import or Export
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Planet Panel
+
 PL_ASTEROID_BELT
 Asteroids
+
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroids
+
 PL_UNINHABITED
 Uninhabited
+
 PL_SIZE
 Size
+
 PL_COLONIZE
 Colonize (%1% / %2%)
+
 PL_CANCEL_COLONIZE
 Cancel Colonization
+
 PL_OUTPOST
 Place Outpost
+
 PL_CANCEL_OUTPOST
 Cancel Outpost
+
 PL_INVADE
 Invade (+%1%)
+
 PL_CANCEL_INVADE
 Cancel Invasion
+
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Select colony ship to colonize.
+
 PL_BOMBARD
 Bombard
+
 PL_CANCEL_BOMBARD
 Cancel Bombarding
+
 PL_TYPE_SIZE
 %1% %2%
+
 PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
+
 PL_NO_VISIBILITY
 Planet is not currently visible.
+
 PL_BASIC_VISIBILITY
 Planet is obscured from sensors.
+
 PL_LAST_TURN_SEEN
 Last seen on turn %1%.
+
 PL_LAST_TURN_SCANNED
 Last scanned on turn %1%.
+
 PL_NEVER_SEEN
 This planet has never been seen by your empire.
+
 PL_NEVER_SCANNED
 This planet has never been thoroughly scanned by your empire.
+
 PL_NOT_IN_RANGE
 This planet is out of range of your empire's scanners.
+
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Latest known [[encyclopedia STEALTH_TITLE]] (%1%) exceeds [[DETECTION_TITLE]] (%2%).
+
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 Latest known [[encyclopedia STEALTH_TITLE]] is out of date. Actual stealth exceeds [[DETECTION_TITLE]] or local [[DETECTION_RANGE_TITLE]] is excessively impaired.
 
@@ -2760,12 +2923,18 @@ Queue Building
 MENUITEM_ENQUEUE_SHIPDESIGN
 Queue Ship
 
-## Resources Panel ##########
+
+##
+## Side panel/Resources panel
+##
 
 RP_FOCUS_TOOLTIP
 Focus: %1%
 
-## Specials Panel ##########
+
+##
+## Side panel/Specials panel
+##
 
 SPECIAL_CAPACITY
 Capacity: %1%
@@ -2776,7 +2945,10 @@ Present Since Turn: %1%
 ADDED_ON_INITIAL_TURN
 Present Since the Initial Turn
 
-## Buildings Panel##########
+
+##
+## Side panel/Buildings panel
+##
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
 '''%1% (Incomplete)
@@ -2794,7 +2966,10 @@ Scrap Building
 ORDER_CANCEL_BUIDLING_SCRAP
 Cancel Scrapping Building
 
-## General Tooltips#########
+
+##
+## General tooltips
+##
 
 TT_THIS_TURN
 This Turn
@@ -2856,9 +3031,10 @@ Enter new planet name
 SP_PLANET_SUITABILITY
 Planet Suitability
 
-#################
-# Fleet Window  #
-#################
+
+##
+## Fleet window
+##
 
 FW_FLEET_HOLDING_AT
 Holding at %1%
@@ -3057,9 +3233,10 @@ Give Planet To...
 ORDER_CANCEL_GIVE_PLANET
 Cancel Giving Planet
 
-###############
-#  Moderator  #
-###############
+
+##
+## Moderator
+##
 
 MOD_NONE
 No Moderator Action
@@ -3082,9 +3259,10 @@ Add Starlane
 MOD_REMOVE_STARLANE
 Remove Starlane
 
-###############
-#  Diplomacy  #
-###############
+
+##
+## Diplomacy
+##
 
 DIPLOMACY
 Diplomacy
@@ -3107,9 +3285,10 @@ Cancel Peace Proposal
 PEACE_ACCEPT
 Accept Peace Proposal
 
-###############
-# TechTreeWnd #
-###############
+
+##
+## TechTreeWnd
+##
 
 TECH_DISPLAY
 Display
@@ -3187,9 +3366,10 @@ TECH_WND_PROGRESS
 TECH_WND_ETA
 %1% turns left
 
-#######################
-# ProductionInfoPanel #
-#######################
+
+##
+## Production info panel
+##
 
 PRODUCTION_INFO_AT_LOCATION_TITLE
 %3% %1% at %2%
@@ -3206,9 +3386,10 @@ Wasted Points
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points Available Here
 
-###############
-# ResearchWnd #
-###############
+
+##
+## Research window
+##
 
 RESEARCH_WND_TITLE
 Research
@@ -3224,9 +3405,10 @@ RESEARCH_QUEUE_PROMPT
 
 Hold control while clicking to add to the top of the queue.'''
 
-####################
-# BuildSelectorWnd #
-####################
+
+##
+## Build selector window
+##
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Producible Items
@@ -3276,9 +3458,10 @@ Center on Build
 PRODUCTION_QUEUE_PROMPT
 Double-click on an available item to add it to the production queue.
 
-#################
-# ProductionWnd #
-#################
+
+##
+## Production window
+##
 
 PRODUCTION_WND_TITLE
 Production
@@ -3345,12 +3528,14 @@ Production time
 PRODUCTION_WND_TOOLTIP_PARTS
 Ship Parts
 
+# %1% FIXME
 PRODUCTION_WND_TOOLTIP_FAILED_COND
 Unmet requirements to produce at %1%
 
-###############
-#  DesignWnd  #
-###############
+
+##
+## Design window
+##
 
 SHIP_DESIGN_FILES
 Design Files
@@ -3466,9 +3651,11 @@ Choose an existing design to update.
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
 Select a hull, add parts and then click "[[DESIGN_WND_ADD]]" to create an available design.
 
-################
-## Statistics ##
-################
+
+##
+## Statistics
+##
+
 SHIP_COUNT
 Ship Count
 
@@ -3529,9 +3716,10 @@ Statistics Test 2
 STATISTICS_TEST_3
 Statistics Test 3
 
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
+
+##
+## Encyclopedia
+##
 
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
 '''%1%:	'''
@@ -3961,9 +4149,9 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% could not damage %1% targets:
 
 
-###########################################
-# Combat Report #
-###########################################
+##
+## Combat report
+##
 
 NEUTRAL
 Neutral
@@ -4074,9 +4262,10 @@ health'''
 COMBAT_DESTROYED_LABEL
 Lost: %1%
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
+
+##
+## Encyclopedia article categories and short descriptions
+##
 
 CATEGORY_GUIDES
 **Guides**
@@ -4111,22 +4300,26 @@ Meters
 POPULATION_TITLE_SHORT_DESC
 Population
 
-###########################################
-# ARTICLES #
-###########################################
+
+##
+## Encyclopedia articles
+##
 
 PEACE_TITLE
 Peace
+
 PEACE_TEXT
 Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]] lines, and not to impede colonization.
 
 OUTPOSTS_TITLE
 Outpost
+
 OUTPOSTS_TEXT
 Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.
 
 FOCUS_TITLE
 Planetary Focus
+
 FOCUS_TEXT
 '''Each planet has a focus setting, dictating what the inhabitants will put more effort toward, such as [[encyclopedia INDUSTRY_TITLE]] or [[encyclopedia RESEARCH_TITLE]]. Not all areas of focus are always available. They may be restricted because the species can not focus on that area, the technology is not yet known, or other factors such as the availability of a [[encyclopedia ENC_SPECIAL]].
 
@@ -4136,6 +4329,7 @@ A planet will default to the inhabiting species' preferred focus if it has one, 
 
 GROWTH_FOCUS_TITLE
 Growth Focus
+
 GROWTH_FOCUS_TEXT
 '''The Growth Focus represents exporting rare materials and substances that can increase population of planets. Is only available in certain situations: on some homeworlds, and on planets with growth specials that can be exported.
 
@@ -4147,22 +4341,26 @@ A Homeworld focused on Growth only helps other planets of the same species.
 
 MINING_FOCUS_TITLE
 Mining Focus
+
 MINING_FOCUS_TEXT
 Mining Focus is currently disabled.
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Trade Focus
+
 TRADE_FOCUS_TEXT
 Trade doesn't do anything, yet. It is just a placeholder to show that more resources are planned.
 
 PROTECTION_FOCUS_TITLE
 Protection Focus
+
 PROTECTION_FOCUS_TEXT
 The Protection focus represents a planet wholly focused on defending itself. [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.
 
 INDUSTRY_TITLE
 Industry
+
 INDUSTRY_TEXT
 '''Industry represents the production and modification of physical goods. It is needed to produce buildings, space ships and other projects.
 
@@ -4174,6 +4372,7 @@ The project at the top of the queue is given PPs first. Any remaining PP are the
 
 RESEARCH_TITLE
 Research
+
 RESEARCH_TEXT
 '''The Research (or RP "Research Points") of all planets in the empire is combined to discover new technologies. Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it. For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
 The tech at the top of the queue is given RPs first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
@@ -4182,21 +4381,25 @@ Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be u
 
 HAPPINESS_TITLE
 Happiness
+
 HAPPINESS_TEXT
 The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors.  A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
 
 INFRASTRUCTURE_TITLE
 Infrastructure
+
 INFRASTRUCTURE_TEXT
 The term Infrastructure refers to technical structures that support a colonized planet: energy, transportation, telecommunication and social services for the citizens.
 
 DEFENSE_TITLE
 Defense
+
 DEFENSE_TEXT
 The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the [[encyclopedia DAMAGE_TITLE]] value of a space ship.
 
 SHIELDS_TITLE
 Shields
+
 SHIELDS_TEXT
 '''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge -- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barrier shields take more time to recharge.  The result of that seemingly small difference makes a very noticeable difference in combat, however.
 
@@ -4209,16 +4412,19 @@ One further difference between the two types of shields is that a ship's shields
 
 ARMOR_TITLE
 Armor Plating
+
 ARMOR_TEXT
 Increases the maximum [[encyclopedia STRUCTURE_TITLE]] of its ship by the strength rating of the armor plating part.
 
 SLOT_TITLE
 Slot
+
 SLOT_TEXT
 A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
 
 STEALTH_TITLE
 Stealth
+
 STEALTH_TEXT
 '''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] higher than or equal to the Stealth value can see the object.
 
@@ -4226,6 +4432,7 @@ Space ships, buildings, specials, systems and planets have a Stealth meter.'''
 
 DETECTION_TITLE
 Detection Strength
+
 DETECTION_TEXT
 '''The term Detection Strength represents the technological level of an empire's sensors. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its Detection Strength and are within [[encyclopedia DETECTION_RANGE_TITLE]] of a controlled space ship or planet.
 
@@ -4233,6 +4440,7 @@ Empires have a Detection Strength meter.'''
 
 DETECTION_RANGE_TITLE
 Detection Range
+
 DETECTION_RANGE_TEXT
 '''The Detection Range represents the distance in uu that sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
@@ -4240,6 +4448,7 @@ Space ships and planets have a Detection Range meter. There is the option to dis
 
 TROOP_TITLE
 Troops
+
 TROOP_TEXT
 '''The term Troops combines all kinds of military forces capable of operating on a planet's surface.
 
@@ -4261,21 +4470,25 @@ When terraforming a planet (by [[encyclopedia RESEARCH_TITLE]] or if the planet 
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
+
 ORGANIC_SPECIES_TEXT
 Organic species are more or less, 'life as we know it'. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.
 
 LITHIC_SPECIES_TITLE
 Lithic Metabolism
+
 LITHIC_SPECIES_TEXT
 Lithic species are silicon or mineral-based. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.
 
 ROBOTIC_SPECIES_TITLE
 Robotic Metabolism
+
 ROBOTIC_SPECIES_TEXT
 Robotic species are sapient machines. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
+
 PHOTOTROPHIC_SPECIES_TEXT
 '''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star - the bigger the better. Growth specials do not benefit them.
 
@@ -4288,16 +4501,19 @@ Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
+
 SELF_SUSTAINING_SPECIES_TEXT
 Self-Sustaining species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
 
 TELEPATHIC_TITLE
 Telepathy
+
 TELEPATHY_TEXT
 Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].
 
 XENOPHOBIC_SPECIES_TITLE
 Xenophobic
+
 XENOPHOBIC_SPECIES_TEXT
 '''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harassing the alien species, has not been determined) resulting in a reduced maximum population.
 
@@ -4305,11 +4521,13 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 
 FUEL_TITLE
 Fuel
+
 FUEL_TEXT
 Fuel allows ships to travel the starlanes outside of [[encyclopedia SUPPLY_TITLE]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[encyclopedia SUPPLY_TITLE]] lines, fuel will slowly regenerate. The amount of fuel a [[encyclopedia ENC_SHIP_DESIGN]] has depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
 
 SUPPLY_TITLE
 Supply
+
 SUPPLY_TEXT
 '''The supply meter on a planet represents the number of star-lanes supply can extend through. Smaller planets can supply greater distances, large planets reduced distances.
 
@@ -4321,11 +4539,13 @@ Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply o
 
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
+
 FLEET_UPKEEP_TEXT
 The cost of a fleet is more than the sum of the cost of its ships due to the operational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] as well as all the colony buildings instead increase by 6% for each planet already owned by the empire.
 
 EVACUATION_TITLE
 Evacuation
+
 EVACUATION_TEXT
 '''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disappears into the vastness of space.
 During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
@@ -4359,21 +4579,25 @@ Maniacal:
 
 STRUCTURE_TITLE
 Structure
+
 STRUCTURE_TEXT
 Structure is amount of [[encyclopedia DAMAGE_TITLE]] that ship can take until it is destroyed. Structure can be restored by repairing, and its max value increased with [[encyclopedia ARMOR_TITLE]].
 
 DAMAGE_TITLE
 Damage
+
 DAMAGE_TEXT
 Defines the base extent that a weapon will reduce the [[encyclopedia STRUCTURE_TITLE]] of another ship (or the [[encyclopedia SHIELDS_TITLE]], [[encyclopedia DEFENSE_TITLE]] and [[encyclopedia INFRASTRUCTURE_TITLE]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[encyclopedia SHIELDS_TITLE]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[encyclopedia SHIELDS_TITLE]].
 
 STARLANE_SPEED_TITLE
 Starlane Speed
+
 STARLANE_SPEED_TEXT
 Speed on galaxy map  (uu/turn). The uu distance travelled by a ship in one turn is equal to its starlane speed value and is displayed on the map by a dotted line followed by a circle showing the number of turns required to travel the full starlane and reach the next system. If a ship starlane speed is less than the starlane length, it will require at least 2 turns to complete the journey. Each starlane traversed will consume only 1 unit of [[encyclopedia FUEL_TITLE]], regardless of the turns required.
 
 MAP_WINDOW_ARTICLE_TITLE
 Map Window
+
 MAP_WINDOW_ARTICLE_TEXT
 '''The Map Window can be considered the 'main' game screen, which shows the galaxy and from which nearly all other windows can be accessed. A number of control elements are displayed in the upper bar.
 
@@ -4385,6 +4609,7 @@ On the right hand side of the control bar are a number of icons for toggling dis
 
 DESIGN_WINDOW_ARTICLE_TITLE
 Design Window
+
 DESIGN_WINDOW_ARTICLE_TEXT
 '''The [[DESIGN_WINDOW_ARTICLE_TITLE]] is for viewing or altering the designs of monsters or ships.
 
@@ -4418,6 +4643,7 @@ Click "[[DESIGN_WND_UPDATE]]" to replace the most recently selected [[DESIGN_WND
 
 FLEET_MOVEMENT_ARTICLE_TITLE
 Fleet Movement
+
 FLEET_MOVEMENT_ARTICLE_TEXT
 '''Fleets can be found on the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] as a stack of symbols in the upper right of star systems. They can be selected with a left-click, which opens a window with a list of all fleets in the stack.
 
@@ -4431,6 +4657,7 @@ Right-click on a fleet in the fleet window to access additional options like swi
 
 HIDDEN_SETTINGS_ARTICLE_TITLE
 Hidden Settings
+
 HIDDEN_SETTINGS__ARTICLE_TEXT
 '''There are a number of User Interface (UI) settings and other game settings that can be changed by the user via the Options Menu; there are also a number of UI settings which do not appear in the Options pages, but which can be changed by the user by directly editing the config.xml file, located in the logging directory.  Directions for identifying the location of this file on the various different platforms is available at the FreeOrion Wiki.
 
@@ -4444,15 +4671,18 @@ show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in 
 
 FIELDS_TITLE
 Interstellar Fields
+
 FIELDS_TEXT
 There are several [[encyclopedia ENC_FIELD_TYPE]]s.  They each have a distinctive, somewhat diffuse, appearance.  Right-clicking on them in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] brings up a small popup menu identifying their type and providing an option to look up their details.
 
-#
-# Guides
-#
+
+##
+## Guides
+##
 
 GENERAL_PEDIA_REFERENCE
 Information such as this is accessible via the "Pedia" [[encyclopedia ENC_INDEX]].
+
 DETAILED_PEDIA_REFERENCE
 [[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]].  The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window.
 
@@ -4479,6 +4709,7 @@ Further information is available at freeorion.org
 
 QUICK_START_GUIDE_TITLE
 *Quick Start Guide*
+
 QUICK_START_GUIDE_TEXT
 '''This is a brief introduction to FreeOrion gameplay.  This guide was just born recently, and is currently quite tiny but growing rapidly.  A somewhat less brief Quick Play Guide is available at freeorion.org, (current URL: http://freeorion.org/index.php/V0.4_Quick_Play_Guide )
 
@@ -4495,6 +4726,7 @@ The server sent a message that could not be understood.
 
 ORBITAL_DRYDOCK_REPAIR_TITLE
 Orbital Drydock Repair
+
 ORBITAL_DRYDOCK_REPAIR_TEXT
 '''The [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]] is considered the best repair facility available, able to restore a ship to pristine condition.
 
@@ -4505,9 +4737,9 @@ Repairs are delayed for one turn for ships just entering the system. Ships need 
 Any combat in the system will disrupt repairs for that turn.'''
 
 
-####################
-# Combat Messages  #
-####################
+##
+## Combat messages
+##
 
 COMBAT_WINDOW_TITLE
 Combat Window
@@ -4542,9 +4774,10 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
 ''' Lost!'''
 
-####################
-# TurnProgress     #
-####################
+
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Fleet Movement
@@ -4585,9 +4818,10 @@ Error processing message from server
 ERROR_EARLY_TURN_UPDATE
 Received unexpected turn update from server.
 
-########################
-# Messages Panel       #
-########################
+
+##
+## Messages panel
+##
 
 MESSAGES_PANEL_TITLE
 Messages
@@ -4595,9 +4829,10 @@ Messages
 MESSAGES_PANEL_INTRO
 Status and Chat Messages
 
-########################
-# Players List         #
-########################
+
+##
+## Players list
+##
 
 PLAYERS_LIST_PANEL_TITLE
 Empires
@@ -4611,9 +4846,10 @@ Combat
 WAITING
 Waiting
 
-####################
-## Objects Window ##
-####################
+
+##
+## Objects window
+##
 
 SORT
 Sort
@@ -4627,9 +4863,10 @@ Collapse All
 EXPAND_ALL
 Expand All
 
-#####################
-## Objects Columns ##
-#####################
+
+##
+## Objects columns
+##
 
 COLUMN_SORT_NONE
 %1%
@@ -4751,9 +4988,10 @@ Next Turn Population Growth
 NUM_SPECIALS
 Number of Specials
 
-####################
-## Filters Dialog ##
-####################
+
+##
+## Filters dialog
+##
 
 VISIBLE
 Visible
@@ -4830,11 +5068,11 @@ Asteroids with Planet of type
 CONDITION_ANY
 Any
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
 
-#Window title####
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Situation Report - Initial turn
@@ -4863,8 +5101,6 @@ SITREP_SNOOZE_CLEAR_INDEFINITE
 SITREP_SNOOZE_CLEAR_ALL
 '''  Show all hidden or dismissed SitReps'''
 
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
-
 SITREP_WELCOME
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
 
@@ -4876,424 +5112,514 @@ SITREP_GAS_GIANT_GENERATION_REMINDER
 
 SITREP_SHIP_BUILT
 At %system%: a new %shipdesign%, the '%ship%', has been produced.
+
 SITREP_SHIP_BUILT_LABEL
 Ship Produced
 
 SITREP_SHIP_BATCH_BUILT
 At %system%: %rawtext%x %shipdesign% have been produced.
+
 SITREP_SHIP_BATCH_BUILT_LABEL
 Ship Batch Produced
 
 SITREP_BUILDING_BUILT
 On %planet%: a %building% has been produced.
+
 SITREP_BUILDING_BUILT_LABEL
 Building Produced
 
 SITREP_TECH_RESEARCHED
 %tech% has been researched.
+
 SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
 SITREP_TECH_UNLOCKED
 %tech% has been unlocked and can now be researched.
+
 SITREP_TECH_UNLOCKED_LABEL
 Tech Unlocked
 
 SITREP_SHIP_PART_UNLOCKED
 %shippart% has been unlocked and can now be produced in ship designs.
+
 SITREP_SHIP_PART_UNLOCKED_LABEL
 Ship Part Unlocked
 
 SITREP_SHIP_HULL_UNLOCKED
 %shiphull% has been unlocked and can now be produced in ship designs.
+
 SITREP_SHIP_HULL_UNLOCKED_LABEL
 Ship Hull Unlocked
 
 SITREP_BUILDING_TYPE_UNLOCKED
 %buildingtype% has been unlocked and can now be produced.
+
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Building Type Unlocked
 
 SITREP_COMBAT_SYSTEM
 At %system%: there was %combat%.
+
 SITREP_COMBAT_SYSTEM_LABEL
 Combat at System
+
 SITREP_COMBAT_SYSTEM_ENEMY
 At %system%: there was %combat% with %empire%.
+
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
 Combat at System
+
 COMBAT
 Combat
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 At %system%: an unidentified object was destroyed.
+
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Object Destroyed
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
 At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed.
+
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Own Ship Destroyed
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 At %system%: a %shipdesign% (the %empire% ship '%ship%') was destroyed.
+
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Empire Ship Destroyed
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 At %system%: a %shipdesign% was destroyed.
+
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Unowned Ship Destroyed
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 At %system%: the %empire% fleet '%fleet%' was destroyed.
+
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Empire Fleet Destroyed
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 At %system%: the fleet '%fleet%' was destroyed.
+
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Unowned Fleet Destroyed
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
 At %system%: planet %planet% (owned by %empire%) was destroyed!
+
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Empire Planet Destroyed
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 At %system%: planet %planet% was destroyed!
+
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Unowned Planet Destroyed
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 On %planet%: a %building% (owned by  %empire%) was demolished in %system%.
+
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Empire Building Destroyed
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 On %planet%: a %building% was demolished in %system%.
+
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Unowned Building Destroyed
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
 At %system%: an unidentified object was damaged.
+
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Object Damaged
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 At %system%: a %empire% %shipdesign%, the '%ship%', was damaged.
+
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Empire Ship Damaged
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 At %system%: a %shipdesign% was damaged.
+
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Unowned Ship Damaged
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 At %system%: the %empire% planet %planet% was bombarded.
+
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Empire Planet Bombarded
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 At %system%: The planet %planet% was bombarded.
+
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Unowned Planet Bombarded
 
 SITREP_GROUND_BATTLE
 On %planet%: there was a ground battle.
+
 SITREP_GROUND_BATTLE_LABEL
 Ground Battle
+
 SITREP_GROUND_BATTLE_ENEMY
 On %planet%: there was a ground battle with %empire%.
+
 SITREP_GROUND_BATTLE_ENEMY_LABEL
 Ground Battle
 
 SITREP_PLANET_CAPTURED
 %planet% was captured by %empire%.
+
 SITREP_PLANET_CAPTURED_LABEL
 Planet Captured
 
 SITREP_PLANET_DEPOPULATED
 The population of %planet% has died out entirely!
+
 SITREP_PLANET_DEPOPULATED_LABEL
 Planet Destroyed
 
 SITREP_PLANET_COLONIZED
 %planet% has been colonized with %species%.
+
 SITREP_PLANET_COLONIZED_LABEL
 Planet Colonized
 
 SITREP_PLANET_OUTPOSTED
 %planet% had an outpost established.
+
 SITREP_PLANET_OUTPOSTED_LABEL
 Planet Outposted
 
 SITREP_NEW_COLONY_ESTABLISHED
 On %planet%: A new %species% colony has been established.
+
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 New Colony Established
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 At %system%: %fleet% (%rawtext% ships) has arrived.
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Misc. Fleet Arrived
 
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
 At %system%: a %shipdesign% arrived.
+
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Monster Arrived
 
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 At %system%: a %fleet% fleet (%rawtext% ships) has arrived.
+
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monsters Fleet Arrived
 
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
 At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
+
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Own Ship Arrived
 
 SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION
 At %system%: the %empire% fleet '%fleet%' (%rawtext%x %shipdesign) has arrived.
+
 SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION_LABEL
 Own Fleet Arrived
 
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
+
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Own Fleet Arrived
 
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
 At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
+
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Foreign Ship Arrived
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
+
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
 SITREP_POP_THRESHOLD
 On %planet%: The colony has reached sufficient size and [[encyclopedia HAPPINESS_TITLE]] to be a settler source for colonizing other planets.
+
 SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %system%!
+
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Experimentor Monster Spawn
 
 EFFECT_ANCIENT_SHIP
 On %planet%: A %predefinedshipdesign% was revealed in the Ancient Ruins!
+
 EFFECT_ANCIENT_SHIP_LABEL
 Ancient Ruins Ship
 
 EFFECT_ANCIENT_SHIP_RUMORS
 Rumors spread through the galaxy that a %predefinedshipdesign% was revealed to a xenoarcheology expedition at Ancient Ruins!
+
 EFFECT_ANCIENT_SHIP_RUMORS_LABEL
 Ancient Ruins Ship Rumors
 
 EFFECT_ANCIENT_BUILDING
 On %planet%: A %buildingtype% was revealed in the Ancient Ruins!
+
 EFFECT_ANCIENT_BUILDING_LABEL
 Ancient Ruins Building
 
 EFFECT_ANCIENT_BUILDING_RUMORS
 Rumors spread through the galaxy that a %buildingtype% was revealed to a xenoarcheology expedition at Ancient Ruins!
+
 EFFECT_ANCIENT_BUILDING_RUMORS_LABEL
 Ancient Ruins Building Rumors
 
 EFFECT_ANCIENT_TECH
 On %planet%: %tech% was revealed in the Ancient Ruins!
+
 EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
 
 EFFECT_ANCIENT_TECH_RUMORS
 Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology expedition at Ancient Ruins!
+
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
 
 EFFECT_ANCIENT_EXTINCT_SPECIES
 On %planet%: Well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+
 EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
 Ancient Ruins Extinct Species
 
 EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
 Rumors spread through the galaxy that well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+
 EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
 Ancient Ruins Extinct Species Rumors
 
 EFFECT_ANCIENT_RUINS_EMPTY
 On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
+
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Ancient Ruins Empty Excavation
 
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
+
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Ethnic Cleansing
 
 SITREP_SHIP_REPAIR_DOCK
 Orbital Dock Ship Repairs
+
 EFFECT_DRYDOCK_SHIP_REPAIR_NONE
 On %planet%: The %building% could not start repairs on %ship%, due to low [[encyclopedia HAPPINESS_TITLE]].
+
 EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
 On %planet%: the %building% performed partial repairs on the %ship%.
+
 EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 On %planet%: the %building% completed repairs on the %ship%.
 
 EFFECT_MONSTER_SPAWNING
 In %system%: A %predefinedshipdesign% was spawned.
+
 EFFECT_MONSTER_SPAWNING_LABEL
 Monster Spawn
 
 EFFECT_GAIAN_TERRAFORM
 On %planet%: The Gaian planet has terraformed itself to better accommodate its inhabitants.
+
 EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia Terraform
 
 EFFECT_GAIA
 On %planet%: The citizens rejoice as their world is now a [[special GAIA_SPECIAL]] paradise.
+
 EFFECT_GAIA_LABEL
 Gaia Paradise
 
 EFFECT_TERRAFORM
 %planet% has been terraformed.
+
 EFFECT_TERRAFORM_LABEL
 Terraform
 
 EFFECT_STARLANE_BORE
 At %system%: a new starlane has opened linking to a nearby system.
+
 EFFECT_STARLANE_BORE_LABEL
 Starlane Bore
 
 EFFECT_BLACKHOLE
 %system% has been collapsed to create a black hole.
+
 EFFECT_BLACKHOLE_LABEL
 Black Hole
 
 EFFECT_ART_PLANET
 %planet% has been turned into an artificial planet.
+
 EFFECT_ART_PLANET_LABEL
 Black Hole
 
 EFFECT_STARVATION
 Famine struck %planet%.
+
 EFFECT_STARVATION_LABEL
 Famine
 
 EFFECT_TAME_MONSTER_HATCHED
 At %planet%: a tamed %predefinedshipdesign% is ready for service.
+
 EFFECT_TAME_MONSTER_HATCHED_LABEL
 Monster Hatched
 
 EFFECT_TAME_MONSTER_MATURED
 At %system%: a more powerful tame %predefinedshipdesign% has matured from a lesser form.
+
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Monster Matured
 
 EFFECT_SENTRY_CREATED
 At %planet%: a %predefinedshipdesign% is ready for service.
+
 EFFECT_SENTRY_CREATED_LABEL
 Sentry Created
 
 EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
+
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
 Gateway Void Destroy
 
 EFFECT_DAMP_CLOUD
 At %system%: the crew of %ship% report they are losing fuel to a %predefinedshipdesign%.
+
 EFFECT_DAMP_CLOUD_LABEL
 Dampening Cloud
 
 EFFECT_NEBULA
 At %system%: astronomers report they have observed a new star being formed from a nebula.
+
 EFFECT_NEBULA_LABEL
 Nebula
 
 EFFECT_TREE
 At %system%: a new Dyson Forest has started to grow and surround the star.
+
 EFFECT_TREE_LABEL
 Dyson Forest
 
 EFFECT_DERELICT_MINERALS
 At %system%: 20 minerals were scavenged from an abandoned derelict.
+
 EFFECT_DERELICT_MINERALS_LABEL
 Derelict Minerals
 
 EFFECT_DERELICT_MAP
 At %system%: information on the area was obtained from an abandoned %special%.
+
 EFFECT_DERELICT_MAP_LABEL
 Derelict Map
 
 EFFECT_DERELICT_FUEL
 At %system%: ships were refueled from the residual supply found in an abandoned %special%.
+
 EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
 EFFECT_BIOWEAPON
 %planet% has lost %rawtext% population due to a %shippart% attack.
+
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
 EFFECT_EVACUEES
 At %planet%: evacuees have settled.
+
 EFFECT_EVACUEES_LABEL
 Evacuees
 
 EFFECT_STARGATE
 At %system%: the fleet %fleet% has arrived by Stargate.
+
 EFFECT_STARGATE_LABEL
 Stargate Use
 
 EFFECT_PLANET_DRIVE
 At %system%: the planet %planet% has arrived by use of its [[encyclopedia BLD_PLANET_DRIVE]].
+
 EFFECT_PLANET_DRIVE_LABEL
 Planetary Starlane Drive Engaged
 
 SITREP_PLANET_DRIVE_FAILURE
 At %system%: Due to a lack of guidance by a nearby [[encyclopedia SPY_LIGHTHOUSE]], the [[encyclopedia BLD_PLANET_DRIVE]] of %planet% suffered catastrophic failure upon arrival, destroying the entire planet!
+
 SITREP_PLANET_DRIVE_FAILURE_LABEL
 Planetary Starlane Drive Failure
 
 EFFECT_PSY_DOM
 The %empire% ship %ship% has been psychically controlled!
+
 EFFECT_PSY_DOM_LABEL
 Psychogenic Domination
 
 EFFECT_MINES
 At %system%: Mines caused %rawtext% damage to the %empire% fleet %fleet%.
+
 EFFECT_MINES_SINGLE_SHIP
 At %system%: Mines caused %rawtext% damage to %ship%, a %shipdesign%.
+
 EFFECT_MINES_LABEL
 System Mines
 
 EFFECT_MINES_SHIP_DESTROYED
 At %system%: mines destroyed the %empire% ship %ship%.
+
 EFFECT_MINES_UNOWNED_DESTROYED
 At %system%: mines destroyed the ship %ship%, a %shipdesign%.
+
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
 EFFECT_MINES_UNKNOWN
 At %system%: An unknown object has triggered your mines.
+
 EFFECT_MINES_UNKNOWN_LABEL
 System Mines Unknown Ship
 
 EFFECT_FLEET_MOVED_TOWARDS
 At %planet%: [[tech LRN_SPATIAL_DISTORT_GEN]] moved %fleet% back towards %system%. They were initially %rawtext% uu apart.
+
 EFFECT_FLEET_MOVED_TOWARDS_LABEL
 Fleet Moved Towards
 
 EFFECT_FLEET_MOVED_TO
 At %planet%: [[tech LRN_SPATIAL_DISTORT_GEN]] moved %fleet% back into %system%. They were initially %rawtext% uu apart.
+
 EFFECT_FLEET_MOVED_TO_LABEL
 Fleet Moved Into
 
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
+
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
 
@@ -5315,9 +5641,10 @@ Custom_3
 CUSTOM_4
 Custom_4
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+
+##
+## Victory/defeat
+##
 
 VICTORY_TECH
 VICTORY! The %empire% has transcended our reality and wins a technological victory.
@@ -5336,9 +5663,11 @@ The %empire% has been defeated!
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire Eliminated
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
+
+##
+## Random beginner hints
+##
+
 BEGINNER_HINTS
 Random Game Hints
 
@@ -5456,9 +5785,10 @@ BEGINNER_HINT_20
 BEGINNER_HINT_21
 21: You can set a destination for a ship that is still in the production queue. With the production screen open: click on the target system in the galaxy map, then right click on the ship in the production queue. When a menu of choices for that ship pops up choose 'Rally to ' and it should have the name of the selected system where you want the ship to automatically go once construction completes.
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+
+##
+## Species
+##
 
 HOMEWORLD
 Homeworld:
@@ -5498,6 +5828,7 @@ Opinions of Other Species:
 
 SP_HUMAN
 Human
+
 SP_HUMAN_GAMEPLAY_DESC
 '''Relentless, tribal pursuit predators.
 Prefer Terran planets.
@@ -5514,6 +5845,7 @@ Modern humans have formed geographic nation states with a strong basis in histor
 
 SP_SCYLIOR
 Scylior
+
 SP_SCYLIOR_GAMEPLAY_DESC
 '''Three-tentacled, aquatic nautiloids.
 Prefer Ocean planets.
@@ -5537,6 +5869,7 @@ Millennia ago an expedition of the precursors discovered the Mind controlling th
 
 SP_GYSACHE
 Gysache
+
 SP_GYSACHE_GAMEPLAY_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
@@ -5559,6 +5892,7 @@ Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. 
 
 SP_CHATO
 Chato
+
 SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Gormoshk.
 Prefer Toxic planets.
@@ -5575,6 +5909,7 @@ In Chato'matou society, age is the most important factor as they are nearly immo
 
 SP_TRITH
 Trith
+
 SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
@@ -5591,6 +5926,7 @@ The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind)
 
 SP_HAPPY
 Happybirthday
+
 SP_HAPPY_GAMEPLAY_DESC
 '''Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
 Prefer Ocean planets.
@@ -5618,6 +5954,7 @@ Whether it is the initial lonely quest to explore their homeworld, their abandon
 
 SP_HHHOH
 Hhhoh
+
 SP_HHHOH_GAMEPLAY_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Prefer Tundra planets.
@@ -5635,6 +5972,7 @@ Hhhohs describe themselves as social pragmatists. Elders are very much revered, 
 
 SP_EAXAW
 Eaxaw
+
 SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic aggressive worms.
 Prefer Terran planets.
@@ -5654,6 +5992,7 @@ A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld
 
 SP_DERTHREAN
 Derthrean
+
 SP_DERTHREAN_GAMEPLAY_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
@@ -5670,6 +6009,7 @@ The Derthrean are a sharply divided race, split by the legacy of their forebears
 
 SP_LAENFA
 Laenfa
+
 SP_LAENFA_GAMEPLAY_DESC
 '''Sneaky, telepathic, sentient vines.
 Prefer Ocean Planets.
@@ -5686,6 +6026,7 @@ The Laenfa have a unified culture due to their telepathy but because their telep
 
 SP_TAEGHIRUS
 Tae Ghirus
+
 SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
@@ -5702,6 +6043,7 @@ The Tae Ghirus are very social and cooperative to make up for their weak bodies.
 
 SP_MUURSH
 Mu Ursh
+
 SP_MUURSH_GAMEPLAY_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
@@ -5715,6 +6057,7 @@ To their regret, their natural abilities seem to make them exceptionally gifted 
 
 SP_GEORGE
 George
+
 SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
@@ -5730,6 +6073,7 @@ The units that make up George look like 2.5 meter long, 0.5 meter tall centipede
 
 SP_CRAY
 Cray
+
 SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
@@ -5747,6 +6091,7 @@ Day to day decisions run on an extremely complex web of favors. All Cray will ha
 
 SP_ETTY
 Etty
+
 SP_ETTY_GAMEPLAY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
@@ -5765,6 +6110,7 @@ The Etty are exceedingly polite and strictly honor all contracts and agreements.
 
 SP_CYNOS
 Cynos
+
 SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -5785,6 +6131,7 @@ The Cynos cannot reproduce without their mother plants, nor can they bring thems
 
 SP_PHINNERT
 Phinnert
+
 SP_PHINNERT_GAMEPLAY_DESC
 '''Industrious Flying Monkeys.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -5803,6 +6150,7 @@ Their planet has low gravity and a very thick atmosphere. Its composition is uni
 
 SP_EGASSEM
 Egassem
+
 SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
@@ -5822,6 +6170,7 @@ A world wracked with tidal and geological heating, as well as the more conventio
 
 SP_SSLITH
 Sslith
+
 SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
@@ -5838,6 +6187,7 @@ The Sslith are organized into groups called Pnacra which serve as independent go
 
 SP_FIFTYSEVEN
 Fifty-seven
+
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -5859,6 +6209,7 @@ The Fifty-Seven are in constant contact with most of the rest of their species, 
 
 SP_SETINON
 Setinon
+
 SP_SETINON_GAMEPLAY_DESC
 '''Individualistic sentient microscopic cells.
 Prefer Swamp planets.
@@ -5878,6 +6229,7 @@ A swamp world with a dense atmosphere and fairly dense biosphere.
 
 SP_NYMNMN
 Nymnmn
+
 SP_NYMNMN_GAMEPLAY_DESC
 '''Planet-wide sapient magnetic waveforms.
 Prefer Desert planets.
@@ -5889,6 +6241,7 @@ SP_NYMNMN_DESC
 
 SP_TRENCHERS
 Trenchers
+
 SP_TRENCHERS_GAMEPLAY_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
@@ -5900,6 +6253,7 @@ SP_TRENCHERS_DESC
 
 SP_RAAAGH
 Raaagh
+
 SP_RAAAGH_GAMEPLAY_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
@@ -5921,6 +6275,7 @@ There's not bit of land big enough for an individual Raaagh to live on that hasn
 
 SP_BEIGEGOO
 Beige Goo
+
 SP_BEIGEGOO_GAMEPLAY_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
@@ -5933,6 +6288,7 @@ SP_BEIGEGOO_DESC
 
 SP_SILEXIAN
 Silexian
+
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
@@ -5955,6 +6311,7 @@ The Silexians were created by the Caretakers in order to increase the efficiency
 
 SP_KOBUNTURA
 Kobuntura
+
 SP_KOBUNTURA_GAMEPLAY_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
@@ -5971,6 +6328,7 @@ The Kobuntura have a guild system since ancient times, but one of the guilds, th
 
 SP_UGMORS
 Ugmors
+
 SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
@@ -5994,6 +6352,7 @@ The Ugmor homeworld is a rocky planet that rotates very quickly (once every 3 an
 
 SP_GISGUFGTHRIM
 Gis Guf Gthrim
+
 SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
@@ -6006,6 +6365,7 @@ SP_GISGUFGTHRIM_DESC
 
 SP_HIDDENGARDENER
 Hidden Gardener
+
 SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
@@ -6023,6 +6383,7 @@ The wide ranging, delicate fungi-nets are too large and integrated into the soil
 
 SP_ABADDONI
 Abaddoni
+
 SP_ABADDONI_GAMEPLAY_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created.
 Prefers Inferno planets.
@@ -6040,6 +6401,7 @@ The entire Abaddonnian species lives in a dictatorship ruled by a sentient artif
 
 SP_ACIREMA
 Acirema
+
 SP_ACIREMA_GAMEPLAY_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
@@ -6063,6 +6425,7 @@ They can't stay here long enough to actually move to another planet and still su
 
 SP_OURBOOLS
 Ourbools
+
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer Ocean planets.
@@ -6086,6 +6449,7 @@ The Ourbools find their sense of position via the regular movements of the 23 mo
 
 SP_VOLP
 Volp-Uglush
+
 SP_VOLP_GAMEPLAY_DESC
 '''Highly bureaucratic, overcrowded burrowers.
 Prefer Barren planets.
@@ -6108,6 +6472,7 @@ Volp-Uglush are now too integrated and ingrown. They now totally lack the indepe
 
 SP_FURTHEST
 Furthest
+
 SP_FURTHEST_GAMEPLAY_DESC
 '''Paranoid three-headed, tripedal herbivores.
 Prefer Tundra planets.
@@ -6130,6 +6495,7 @@ The Furthest generally consider space travel far too dangerous for a sane being,
 
 SP_BANFORO
 Banforo
+
 SP_BANFORO_GAMEPLAY_DESC
 '''Cute, sedulous star gazers.
 Prefer Barren planets.
@@ -6149,6 +6515,7 @@ It hasn't been sufficiently clarified, but scientists suspect that a cosmic even
 
 SP_KILANDOW
 Kilandow
+
 SP_KILANDOW_GAMEPLAY_DESC
 '''Radiation-absorbing, prickly, unhurried experimenters.
 Prefer Radiated planets.
@@ -6169,6 +6536,7 @@ The reasons are believed to be their peaceful nature and their low reproduction 
 
 SP_MISIORLA
 Misiorla
+
 SP_MISIORLA_GAMEPLAY_DESC
 '''Chaotic, liberal, born pilots.
 Prefer Toxic planets.
@@ -6188,6 +6556,7 @@ At one point in history the Final Ones, one of the Precursor civilizations, deci
 
 SP_EXOBOT
 Exobot
+
 SP_EXOBOT_GAMEPLAY_DESC
 '''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -6199,6 +6568,7 @@ SP_EXOBOT_DESC
 
 SP_EXPERIMENTOR
 Experimentor
+
 SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Precursor mad scientists
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -6209,6 +6579,7 @@ The Experimentors are an ancient precursor race, whose existence is devoted to t
 
 SP_SUPER_TEST
 Super Testers
+
 SP_SUPER_TEST_GAMEPLAY_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. ([[encyclopedia STEALTH_TITLE]]-busting power only works when they are in a Capital)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -6218,9 +6589,10 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 SP_SUPER_TEST_DESC
 ''''''
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
+
+##
+## Specials
+##
 
 MODERATE_TECH_NATIVES_SPECIAL
 Moderate Tech Natives
@@ -6307,6 +6679,7 @@ Unlocks an extinct species
 
 PANOPTICON_SPECIAL
 Panopticon Complex
+
 PANOPTICON_SPECIAL_DESC
 '''Increases empire-wide [[encyclopedia DETECTION_TITLE]] by 10. Also increases [[encyclopedia DETECTION_RANGE_TITLE]] on this planet by 75.
 
@@ -6314,6 +6687,7 @@ Buried deep within the crust of the planet, the Panopticon is a powerful relic o
 
 FORTRESS_SPECIAL
 Fortress
+
 FORTRESS_SPECIAL_DESC
 '''Increases [[encyclopedia SHIELDS_TITLE]] by +100, [[encyclopedia DEFENSE_TITLE]] by +30, [[encyclopedia TROOP_TITLE]] by +30 and [[encyclopedia DETECTION_RANGE_TITLE]] by +30. Shields will be regenerated by 5 per turn and Defense by 1 per turn. Mines will reduce the [[encyclopedia STRUCTURE_TITLE]] of enemy ships in the system by 3 per turn. Every turn there is a 5% chance of a Sentry being spawned to protect the system, unless one is already present.
 
@@ -6354,6 +6728,7 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 
 COMPUTRONIUM_SPECIAL
 Computronium Moon
+
 COMPUTRONIUM_SPECIAL_DESC
 '''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain 0.2 [[encyclopedia RESEARCH_TITLE]] per Population.
 
@@ -6361,6 +6736,7 @@ Left by some vanished civilization, the entire moon - from surface to core - is 
 
 HONEYCOMB_SPECIAL
 Honeycomb
+
 HONEYCOMB_SPECIAL_DESC
 '''When a planet with a Honeycomb is focused on [[encyclopedia INDUSTRY_TITLE]], all industry focused [[encyclopedia SUPPLY_TITLE]] connected planets gain 0.5 [[encyclopedia INDUSTRY_TITLE]] per Population.
 
@@ -6368,6 +6744,7 @@ The Honeycomb is a planet that was prepared as a stash by the Builders in ancien
 
 PHILOSOPHER_SPECIAL
 Philosopher Planet
+
 PHILOSOPHER_SPECIAL_DESC
 '''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[encyclopedia RESEARCH_TITLE]] increased by 5. [[encyclopedia INFRASTRUCTURE_TITLE]] on the Philosopher Planet is decreased by 20.
 
@@ -6375,26 +6752,31 @@ The lone remnant of a planet-sized space wandering species has found his final r
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
+
 ABANDONED_COLONY_SPECIAL_DESC
 An old abandoned colony. Some of the [[encyclopedia INFRASTRUCTURE_TITLE]] should still be useful.
 
 KRAKEN_NEST_SPECIAL
 Kraken Nest
+
 KRAKEN_NEST_SPECIAL_DESC
 At some point young kraken will rise from this place. With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 SNOWFLAKE_NEST_SPECIAL
 Snowflake Nest
+
 SNOWFLAKE_NEST_SPECIAL_DESC
 At some point young snowflakes will rise from this place. With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 JUGGERNAUT_NEST_SPECIAL
 Juggernaut Nest
+
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place.  With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
 
 HEAD_ON_A_SPIKE_SPECIAL
 Head on a Spike
+
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
 
@@ -6406,62 +6788,76 @@ Cowering in fear
 
 CONC_CAMP_MASTER_SPECIAL
 Pall of Death
+
 CONC_CAMP_MASTER_SPECIAL_DESC
 A visitor may not see [[buildingtype BLD_CONC_CAMP]] operating on this planet, but they have been operating relentlessly and exact a harsh toll on the population; a Pall of Death can be discerned by sensitive beings.
 
 CONC_CAMP_SLAVE_SPECIAL
 Psychic Fatigue
+
 CONC_CAMP_SLAVE_SPECIAL_DESC
 There may no longer be [[buildingtype BLD_CONC_CAMP]] operating on this planet today, but memories are still close to the surface, and remnants such as poorly hidden mass graves are still occasionally found. A psychic wound still lies upon the populace, and they do not thrive.
 
 CLOUD_COVER_MASTER_SPECIAL
 Cloud Spawns
+
 CLOUD_COVER_MASTER_SPECIAL_DESC
 This planet is populated with aerial creatures that emit humidity, causing high cloud cover. Later in their lifecycle, they will burrow into the ground, causing high amounts of volcanic activity.
 
 CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
+
 CLOUD_COVER_SLAVE_SPECIAL_DESC
 This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_1]].
 
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
+
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
 This planet has monsters burrowing around in its core causing high volcanic activity. These burrowers are undergoing metamorphosis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
 
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
+
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
 This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_2]].
 
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
+
 DIM_RIFT_MASTER_SPECIAL_DESC
 This planet has monsters burrowing around in its core causing dimensional tears in and around the planet. Later on, these monsters will mature and begin dragging the planet into the void.
 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
+
 DIM_RIFT_SLAVE_SPECIAL_DESC
 This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_3]].
 
 VOID_MASTER_SPECIAL
 Void Monsters
+
 VOID_MASTER_SPECIAL_DESC
 Monsters inside the core of this planet are dragging it into the void. There should perhaps be some impending doom associated with this special.
 
 VOID_SLAVE_SPECIAL
 Void Metamorphosis
+
 VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_4]].
 
 DERELICT_SPECIAL
 Derelict
+
 DERELICT_SPECIAL2
 Derelict Scout
+
 DERELICT_SPECIAL3
 Derelict Tanker
+
 DERELICT_SPECIAL_REMOVE
 Derelict
+
 DERELICT_SPECIAL_DESC
 An ancient, derelict ship from an unknown species. Who knows what it could reveal...
 
@@ -6473,99 +6869,125 @@ An accretion disc is a structure (often a circumstellar disc) formed by diffused
 
 SUPERNOVA_SPECIAL
 New Supernova
+
 SUPERNOVA_SPECIAL2
 Young Supernova
+
 SUPERNOVA_SPECIAL3
 Mature Supernova
+
 SUPERNOVA_SPECIAL4
 Supernova Remnant
+
 SUPERNOVA_SPECIAL_DESC
 A supernova occurred in this system in the relatively recent past, leaving only scattered debris where another majestic star system once lay.
 
 NOVA_BOMB_ACTIVATOR_SPECIAL
 Nova Bomb Activator
+
 NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
 This dimensional integrity of this region of space is highly unstable, causing any Nova Bombs in the vicinity to detonate.
 
 EXPERIMENTOR_OUTPOST_SPECIAL
 Experimentor Outpost
+
 EXPERIMENTOR_OUTPOST_SPECIAL_DESC
 An Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
 
 PROBIOTIC_SPECIAL
 Probiotic Soup
+
 PROBIOTIC_SPECIAL_DESC
 The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.
 
 FRUIT_SPECIAL
 Caretaker's Fruit
+
 FRUIT_SPECIAL_DESC
 What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.
 
 SPICE_SPECIAL
 Ki Spice
+
 SPICE_SPECIAL_DESC
 A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.
 
 MONOPOLE_SPECIAL
 Monopole Magnets
+
 MONOPOLE_SPECIAL_DESC
 Monopole Magnets make stronger robots!
 
 SUPERCONDUCTOR_SPECIAL
 Ambient Superconductors
+
 SUPERCONDUCTOR_SPECIAL_DESC
 Ambient Superconductors make faster robots!
 
 POSITRONIUM_SPECIAL
 Positronium Ash
+
 POSITRONIUM_SPECIAL_DESC
 Positronium Ash makes better robot brains!
 
 MINERALS_SPECIAL
 Ferric Minerals
+
 MINERALS_SPECIAL_DESC
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.
 
 CRYSTALS_SPECIAL
 Silmaline Crystals
+
 CRYSTALS_SPECIAL_DESC
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.
 
 ELERIUM_SPECIAL
 Native Elerium
+
 ELERIUM_SPECIAL_DESC
 This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.
 
 STARSPAWN_NEBULA_SPECIAL
 Starspawn Nebula
+
 STARSPAWN_NEBULA_SPECIAL_DESC
 Systems with this special have a nebula created around them. This nebula may collapse to form a new star.
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
+
+##
+## Enumeration values
+##
 
 # UniverseObjectTypes
 
 INVALID_UNIVERSE_OBJECT_TYPE
 Generic Object
+
 OBJ_BUILDING
 Building
+
 OBJ_SHIP
 Ship
+
 OBJ_FLEET
 Fleet
+
 OBJ_PLANET
 Planet
+
 OBJ_POP_CENTER
 Population center
+
 OBJ_PROD_CENTER
 Production center
+
 OBJ_SYSTEM
 System
+
 OBJ_FIELD
 Field
+
 OBJ_FIGHTER
 Fighter
 
@@ -6573,20 +6995,28 @@ Fighter
 
 STAR_BLUE
 blue
+
 STAR_WHITE
 white
+
 STAR_YELLOW
 yellow
+
 STAR_ORANGE
 orange
+
 STAR_RED
 red
+
 STAR_NEUTRON
 neutron
+
 STAR_BLACK
 black hole
+
 STAR_NONE
 no star
+
 INVALID_STAR_TYPE
 unknown star type
 
@@ -6594,24 +7024,34 @@ unknown star type
 
 PT_SWAMP
 Swamp
+
 PT_TOXIC
 Toxic
+
 PT_INFERNO
 Inferno
+
 PT_RADIATED
 Radiated
+
 PT_BARREN
 Barren
+
 PT_TUNDRA
 Tundra
+
 PT_DESERT
 Desert
+
 PT_TERRAN
 Terran
+
 PT_OCEAN
 Ocean
+
 PT_ASTEROIDS
 Asteroids
+
 PT_GASGIANT
 Gas Giant
 
@@ -6619,18 +7059,25 @@ Gas Giant
 
 SZ_NOWORLD
 Nothing to see here; move along.
+
 SZ_TINY
 Tiny
+
 SZ_SMALL
 Small
+
 SZ_MEDIUM
 Medium
+
 SZ_LARGE
 Large
+
 SZ_HUGE
 Huge
+
 SZ_ASTEROIDS
 Asteroids
+
 SZ_GASGIANT
 Gas giant
 
@@ -6638,12 +7085,16 @@ Gas giant
 
 PE_UNINHABITABLE
 Uninhabitable
+
 PE_HOSTILE
 Hostile
+
 PE_POOR
 Poor
+
 PE_ADEQUATE
 Adequate
+
 PE_GOOD
 Good
 
@@ -6651,42 +7102,61 @@ Good
 
 INVALID_FOCUS_TYPE
 invalid focus type
+
 FOCUS_GROWTH
 Growth
+
 FOCUS_INDUSTRY
 Industry
+
 FOCUS_MINING
 Mining
+
 FOCUS_HEAVY_MINING
 Heavy Mining
+
 FOCUS_RESEARCH
 Research
+
 FOCUS_TRADE
 Trade
+
 FOCUS_LOGISTICS
 Logistics
+
 FOCUS_STEALTH
 Stealth
+
 FOCUS_BIOTERROR
 Bioterror
+
 FOCUS_STARGATE_SEND
 Stargate Send
+
 FOCUS_STARGATE_SEND_DESC
 Send ships in the system through the Stargate
+
 FOCUS_STARGATE_RECEIVE
 Stargate Receive
+
 FOCUS_STARGATE_RECEIVE_DESC
 Open the Stargate to ships being sent from elsewhere
+
 FOCUS_PLANET_DRIVE
 Planet Drive
+
 FOCUS_DISTORTION
 Spatial Distortion
+
 FOCUS_PROTECTION
 Protection
+
 FOCUS_PROTECTION_DESC
 Increases shields, defenses and troops.
+
 FOCUS_DOMINATION
 Psychic Domination
+
 FOCUS_DOMINATION_DESC
 Psychically controls enemy ships.
 
@@ -6694,82 +7164,121 @@ Psychically controls enemy ships.
 
 INVALID_METER_TYPE
 Invalid Meter Type
+
 METER_TARGET_POPULATION
 Target Population
+
 METER_TARGET_HEALTH
 Target Health
+
 METER_TARGET_INDUSTRY
 Target Industry
+
 METER_TARGET_RESEARCH
 Target Research
+
 METER_TARGET_TRADE
 Target Trade
+
 METER_TARGET_MINING
 Target Mining
+
 METER_TARGET_CONSTRUCTION
 Target Infrastructure
+
 METER_TARGET_HAPPINESS
 Target Happiness
+
 METER_MAX_FUEL
 Max Fuel
+
 METER_MAX_SHIELD
 Max Shield
+
 METER_MAX_STRUCTURE
 Max Structure
+
 METER_MAX_DEFENSE
 Max Defense
+
 METER_MAX_TROOPS
 Max Troops
+
 METER_MAX_REBEL_TROOPS
 Max Rebel Troops
+
 METER_MAX_SUPPLY
 Max Supply
+
 METER_MAX_CAPACITY
 Max Capacity
+
 METER_MAX_SECONDARY_STAT
 Max Secondary Stat
+
 METER_POPULATION
 Population
+
 METER_HEALTH
 Health
+
 METER_GROWTH
 Growth
+
 METER_INDUSTRY
 Industry
+
 METER_RESEARCH
 Research
+
 METER_TRADE
 Trade
+
 METER_MINING
 Mining
+
 METER_CONSTRUCTION
 Infrastructure
+
 METER_HAPPINESS
 Happiness
+
 METER_FUEL
 Fuel
+
 METER_SHIELD
 Shield
+
 METER_STRUCTURE
 Structure
+
 METER_DEFENSE
 Defense
+
 METER_TROOPS
 Troops
+
 METER_REBEL_TROOPS
 Rebel Troops
+
 METER_SUPPLY
 Supply
+
 METER_STEALTH
 Stealth
+
 METER_DETECTION
 Detection Range
+
 METER_SPEED
 Speed
+
 METER_CAPACITY
 Capacity
+
 METER_SECONDARY_STAT
 Secondary Stat
+
 METER_SIZE
 Size
 
@@ -6810,10 +7319,13 @@ Use of artificial sentience and automation
 
 AFFIL_SELF
 self
+
 AFFIL_ENEMY
 enemy
+
 AFFIL_ALLY
 ally
+
 AFFIL_ANY
 any
 
@@ -6821,12 +7333,16 @@ any
 
 INVALID_UNLOCKABLE_ITEM_TYPE
 Invalid Unlockable Item Type
+
 UIT_BUILDING
 Building
+
 UIT_SHIP_PART
 Ship Part
+
 UIT_SHIP_HULL
 Ship Hull
+
 UIT_TECH
 Technology
 
@@ -6834,8 +7350,10 @@ Technology
 
 TT_THEORY
 Theory
+
 TT_APPLICATION
 Application
+
 TT_REFINEMENT
 Refinement
 
@@ -6843,8 +7361,10 @@ Refinement
 
 BT_NOT_BUILDING
 no build
+
 BT_BUILDING
 building
+
 BT_SHIP
 ship
 
@@ -6852,8 +7372,10 @@ ship
 
 ST_FOOD
 food
+
 ST_MINERAL
 mineral
+
 ST_TRADE
 trade
 
@@ -6861,12 +7383,16 @@ trade
 
 RE_FOOD
 food
+
 RE_MINERALS
 mineral
+
 RE_TRADE
 trade
+
 RE_INDUSTRY
 industry
+
 RE_RESEARCH
 research
 
@@ -6874,10 +7400,13 @@ research
 
 SL_EXTERNAL
 External Slot
+
 SL_INTERNAL
 Internal Slot
+
 SL_CORE
 Core Slot
+
 SL_TOOLTIP_DESC
 Empty
 
@@ -6885,36 +7414,52 @@ Empty
 
 PC_DIRECT_WEAPON
 Direct Weapon
+
 PC_FIGHTER_HANGAR
 Hangar
+
 PC_FIGHTER_BAY
 Launch Bay
+
 PC_SHIELD
 Shields
+
 PC_ARMOUR
 Armor
+
 PC_TROOPS
 Ground Troops
+
 PC_DETECTION
 Detection
+
 PC_STEALTH
 Stealth
+
 PC_FUEL
 Fuel
+
 PC_COLONY
 Colonization
+
 PC_SPEED
 Speed
+
 PC_GENERAL
 General
+
 PC_BOMBARD
 Bombardment
+
 PC_INDUSTRY
 Industry
+
 PC_RESEARCH
 Research
+
 PC_TRADE
 Trade
+
 PC_PRODICTION_LOCATION
 Production
 
@@ -6933,11 +7478,9 @@ VIS_FULL_VISIBILITY
 Full
 
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
-
-# ValueRef
+##
+## FOCS value references, effects & condition descriptions
+##
 
 DESC_VAR_PLANET
 planet
@@ -7031,68 +7574,100 @@ a free variable
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
+
 DESC_VAR_TARGETHEALTH
 [[METER_TARGET_HEALTH]]
+
 DESC_VAR_TARGETINDUSTRY
 [[METER_TARGET_INDUSTRY]]
+
 DESC_VAR_TARGETRESEARCH
 [[METER_TARGET_RESEARCH]]
+
 DESC_VAR_TARGETTRADE
 [[METER_TARGET_TRADE]]
+
 DESC_VAR_TARGETMINING
 [[METER_TARGET_MINING]]
+
 DESC_VAR_TARGETCONSTRUCTION
 [[METER_TARGET_CONSTRUCTION]]
+
 DESC_VAR_MAXFUEL
 [[METER_MAX_FUEL]]
+
 DESC_VAR_MAXSHIELD
 [[METER_MAX_SHIELD]]
+
 DESC_VAR_MAXSTRUCTURE
 [[METER_MAX_STRUCTURE]]
+
 DESC_VAR_MAXDEFENSE
 [[METER_MAX_DEFENSE]]
+
 DESC_VAR_MAXTROOPS
 [[METER_MAX_TROOPS]]
+
 DESC_VAR_MAXCAPACITY
 [[METER_MAX_CAPACITY]]
+
 DESC_VAR_MAX_SECONDARY_STAT
 [[METER_MAX_SECONDARY_STAT]]
+
 DESC_VAR_POPULATION
 [[METER_POPULATION]]
+
 DESC_VAR_HEALTH
 [[METER_HEALTH]]
+
 DESC_VAR_INDUSTRY
 [[METER_INDUSTRY]]
+
 DESC_VAR_RESEARCH
 [[METER_RESEARCH]]
+
 DESC_VAR_TRADE
 [[METER_TRADE]]
+
 DESC_VAR_MINING
 [[METER_MINING]]
+
 DESC_VAR_CONSTRUCTION
 [[METER_CONSTRUCTION]]
+
 DESC_VAR_FUEL
 [[METER_FUEL]]
+
 DESC_VAR_SHIELD
 [[METER_SHIELD]]
+
 DESC_VAR_STRUCTURE
 [[METER_STRUCTURE]]
+
 DESC_VAR_DEFENSE
 [[METER_DEFENSE]]
+
 DESC_VAR_TROOPS
 [[METER_TROOPS]]
+
 DESC_VAR_SUPPLY
 [[METER_SUPPLY]]
+
 DESC_VAR_STEALTH
 [[METER_STEALTH]]
+
 DESC_VAR_DETECTION
 [[METER_DETECTION]]
+
 DESC_VAR_SPEED
 [[METER_SPEED]]
+
 DESC_VAR_CAPACITY
 [[METER_CAPACITY]]
+
 DESC_VAR_SECONDARY_STAT
 [[METER_SECONDARY_STAT]]
+
 DESC_VAR_SIZE
 [[METER_SIZE]]
 
@@ -7101,8 +7676,10 @@ trade stockpile
 
 DESC_VAR_TRADEOUTPUT
 trade output
+
 DESC_VAR_INDUSTRYOUTPUT
 industry output
+
 DESC_VAR_RESEARCHOUTPUT
 research output
 
@@ -7210,7 +7787,10 @@ DESC_VALUE_REF_MULTIPART_VARIABLE5
 DESC_VALUE_REF_MULTIPART_VARIABLE6
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
 
-# Effects
+
+##
+## FOCS effect descriptions
+##
 
 DESC_EFFECTS_GROUP_SCOPE
 Objects affected: Any object%1%
@@ -7233,7 +7813,10 @@ DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 %2%
 '''
 
-# SetMeter
+
+##
+## FOCS meter setter
+##
 
 DESC_SIMPLE_SET_METER
 %1% %2%%3%
@@ -7247,7 +7830,10 @@ Set %1% for %2% to %3%
 DESC_SET_EMPIRE_METER
 Set %2% of the %1% empire to %3%
 
-# others
+
+##
+## FOCS other setters
+##
 
 DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the %3% empire to %2%
@@ -7343,17 +7929,22 @@ DESC_SET_VIS_ALLIES
 Sets the visibility of the object to %1% for allies of empire %2%
 DESC_SET_VIS_ENEMIES
 Sets the visibility of the object to %1% for enemies of empire %2%
+
 DESC_SET_VIS_NONE
 Sets the visibility of the object for no empires
+
 DESC_SET_VIS_ALL
 Sets the visibility of the object to %1% for all empires
+
 DESC_SET_VIS
 Sets the visibility of the object to %1% for empire %2%
 
 DESC_CONDITIONAL
 Applies various effects depending on whether or not the target is an object %1%
 
-# Object Creation
+##
+## FOCS object creation
+##
 
 DESC_CREATE_PLANET
 Creates a new planet of type %1% and size %2%
@@ -7379,7 +7970,10 @@ Creates a new system of star type %1%
 DESC_CREATE_SYSTEM
 Creates a new system
 
-# Conditions
+
+##
+## FOCS condition descriptions
+##
 
 DESC_ALL
 ''' in the universe'''
@@ -7834,34 +8428,45 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
 ''' that is not %1%'''
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+
+##
+## Technology categories
+##
 
 LEARNING_CATEGORY
 Learning
+
 PRODUCTION_CATEGORY
 Production
+
 CONSTRUCTION_CATEGORY
 Construction
+
 GROWTH_CATEGORY
 Growth
+
 ECONOMICS_CATEGORY
 Economics
+
 SHIP_HULLS_CATEGORY
 Ship Hulls
+
 SHIP_PARTS_CATEGORY
 Engineering
+
 SHIP_WEAPONS_CATEGORY
 Ship Weapons
+
 DEFENSE_CATEGORY
 Defense
+
 SPY_CATEGORY
 Intelligence
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Technology theories
+##
 
 THEORY_SHORT_DESC
 Theoretical Prerequisite
@@ -8482,9 +9087,10 @@ Deception
 SPY_ROOT_DECEPTION_DESC
 The art of deception is not natural to every species, but the ability to hide the truth can be most useful.
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
+
+##
+## Technology application
+##
 
 VICTORY_SHORT_DESC
 Brings Victory!
@@ -8945,76 +9551,91 @@ Allows development of planetary bombardment weapons.
 
 SHP_WEAPON_1_2
 Mass Driver 2
+
 SHP_WEAPON_1_2_DESC
 Improves Mass Driver by one level, increasing strength by 1.
 
 SHP_WEAPON_1_3
 Mass Driver 3
+
 SHP_WEAPON_1_3_DESC
 Improves Mass Driver by two levels, increasing strength by 2.
 
 SHP_WEAPON_1_4
 Mass Driver 4
+
 SHP_WEAPON_1_4_DESC
 Improves Mass Driver by three levels, increasing strength by 3.
 
 SHP_WEAPON_2_1
 Laser Weapons
+
 SHP_WEAPON_2_1_DESC
 Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.
 
 SHP_WEAPON_2_2
 Laser 2
+
 SHP_WEAPON_2_2_DESC
 Improves Laser weapons by one level, increasing strength by 2.
 
 SHP_WEAPON_2_3
 Laser 3
+
 SHP_WEAPON_2_3_DESC
 Improves Laser weapons by two levels, increasing strength by 4.
 
 SHP_WEAPON_2_4
 Laser 4
+
 SHP_WEAPON_2_4_DESC
 Improves Laser weapons by three levels, increasing strength by 6.
 
 SHP_WEAPON_3_1
 Plasma Cannons
+
 SHP_WEAPON_3_1_DESC
 Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.
 
 SHP_WEAPON_3_2
 Plasma Cannon 2
+
 SHP_WEAPON_3_2_DESC
 Improves Plasma Cannon by one level, increasing strength by 3.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
+
 SHP_WEAPON_3_3_DESC
 Improves Plasma Cannon two levels increasing strength by 6.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
+
 SHP_WEAPON_3_4_DESC
 Improves Plasma Cannon three levels increasing base strength by 9.
 
 SHP_WEAPON_4_1
 Death Rays
+
 SHP_WEAPON_4_1_DESC
 Unlocks the Death Ray, the ultimate ship's weapon.
 
 SHP_WEAPON_4_2
 Death Ray 2
+
 SHP_WEAPON_4_2_DESC
 Improves Death Ray by one level, increasing strength by 5.
 
 SHP_WEAPON_4_3
 Death Ray 3
+
 SHP_WEAPON_4_3_DESC
 Improves Death Ray by two levels, increasing strength by 10.
 
 SHP_WEAPON_4_4
 Death Ray 4
+
 SHP_WEAPON_4_4_DESC
 Improves Death Ray by three levels increasing strength by 15. The ultimate refinement of the ultimate weapon.
 
@@ -9430,9 +10051,10 @@ Increases the natural [[encyclopedia STEALTH_TITLE]] of all planets to 5, so tha
 BASIC_PLANET_STEALTH
 Universal Basic Stealth
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
+
+##
+## Technology refinement
+##
 
 BUILDING_REFINE_SHORT_DESC
 Refines Building
@@ -9460,9 +10082,10 @@ PRO_ENVIRO_MINING_DESC
 
 Halves the population penalties on planets with the Heavy Mining focus.'''
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+
+##
+## Buildings
+##
 
 BLD_EVACUATION
 Evacuation
@@ -9504,6 +10127,7 @@ Represents imperial power and prestige and functions as a center of control for 
 
 BLD_SUPER_TEST
 Super-Tester Takeover
+
 BLD_SUPER_TEST_DESC
 Switches the species of the planet to Super-Testers. For Official Testing Purposes, or for cheating.
 
@@ -9927,11 +10551,13 @@ Creates a [[predefinedshipdesign SD_COLONY_BASE]] ship which can be used to colo
 
 BLD_EXPERIMENTOR_OUTPOST
 Experimentor Outpost
+
 BLD_EXPERIMENTOR_OUTPOST_DESC
 The outpost of the Experimentors, used for carrying out highly advanced experiments. This structure also acts as a cloak to prevent anyone from interfering with their work.
 
 BLD_NOVA_BOMB_ACTIVATOR
 Nova Bomb Activator
+
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all [[shippart SP_NOVA_BOMB]]s within one starlane jump.
 
@@ -10124,9 +10750,10 @@ Super Tester Colony
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] Super Tester colony. [[BLD_COL_PART_2]] Super Tester colony [[BLD_COL_PART_3]].
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
+
+##
+## Hull and ship part description templates
+##
 
 HULL_DESC
 '''[[encyclopedia STARLANE_SPEED_TITLE]]: %1%
@@ -10154,77 +10781,91 @@ PART_DESC_HANGAR_STATS
 Fighter Capacity: %1%'''
 
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+##
+## Ship parts
+##
 
 FT_WEAPON_1
 Fighter Weapon
+
 FT_WEAPON_1_DESC
 Prototype weapon system for use with fighters. Does not function as a ship weapon.
 
 FT_BAY_1
 Fighter Bay
+
 FT_BAY_1_DESC
 Launch system for fighters.
 
 FT_HANGAR_0
 Hangar 0
+
 FT_HANGAR_0_DESC
 Storage system for unarmed decoy craft.
 
 FT_HANGAR_1
 Hangar 1
+
 FT_HANGAR_1_DESC
 Storage system for minimally armed fighters.
 
 FT_HANGAR_2
 Hangar 2
+
 FT_HANGAR_2_DESC
 Storage system for lightly armed fighters.
 
 FT_HANGAR_3
 Hangar 3
+
 FT_HANGAR_3_DESC
 Storage system for moderately armed fighters.
 
 FT_HANGAR_4
 Hangar 4
+
 FT_HANGAR_4_DESC
 Storage system for heavily armed fighters.
 
 FT_KRILL
 Krill Swarm
+
 FT_KRILL_DESC
 Krill Swarm.
 
 FT_BAY_KRILL
 Krill Swarm
+
 FT_BAY_KRILL_DESC
 When Krill swarms are big enough, single Krills leave the swarm to attack ships the swarm encounters.
 
 SR_WEAPON_0_1
 Flak Cannon
+
 SR_WEAPON_0_1_DESC
 The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
 
 SR_WEAPON_1_1
 Mass Driver
+
 SR_WEAPON_1_1_DESC
 The Mass Driver, a basic weapon.
 
 SR_WEAPON_2_1
 Laser Weapon
+
 SR_WEAPON_2_1_DESC
 The Laser, a more powerful ship's weapon than the Mass Driver.
 
 SR_WEAPON_3_1
 Plasma Cannons
+
 SR_WEAPON_3_1_DESC
 The Plasma Cannon, a more powerful ship's weapon than the Laser.
 
 SR_WEAPON_4_1
 Death Ray
+
 SR_WEAPON_4_1_DESC
 The Death Ray, the ultimate ship's weapon.
 
@@ -10236,21 +10877,25 @@ A huge spinal mount mass driver firing heavy projectiles made of antimatter.
 
 SR_JAWS
 Jaws
+
 SR_JAWS_DESC
 Jaws of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
 
 SR_SPINES
 Spines
+
 SR_SPINES_DESC
 Spines of a space monster, a powerful strike of the space monster can deal big damage to a ship.
 
 SR_TENTACLE
 Tentacle
+
 SR_TENTACLE_DESC
 Tentacle of a kraken, can damage ships.
 
 SR_PLASMA_DISCHARGE
 Plasma Discharge
+
 SR_PLASMA_DISCHARGE_DESC
 Plasma Discharge of a space monster, capable of melting most armor.
 
@@ -10733,9 +11378,10 @@ Autotrader
 RS_AUTOTRADER_DESC
 Generates trade for owner.
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
+
+##
+## Ship hulls
+##
 
 SH_ROBOTIC
 Robotic Hull
@@ -11039,6 +11685,7 @@ This hull requires a great deal of energy to construct and can only be built at 
 
 SH_ENERGY_FRIGATE
 Energy Frigate
+
 SH_ENERGY_FRIGATE_DESC
 '''This fast hull combines compressed energy and warship technology to create a fast but fragile attack ship.
 
@@ -11078,6 +11725,7 @@ This ship requires a tremendous amount of energy to construct and must harness e
 
 SH_BASIC_SMALL
 Basic Small Hull
+
 SH_BASIC_SMALL_DESC
 '''A small, basic interstellar hull. It has only one external slot but can make an extra jump compared to other basic hulls.
 
@@ -11087,6 +11735,7 @@ Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is construc
 
 SH_BASIC_MEDIUM
 Basic Medium Hull
+
 SH_BASIC_MEDIUM_DESC
 '''A medium-sized, basic interstellar hull, with two external slots and one internal slot.
 
@@ -11143,111 +11792,133 @@ Large strong body with fearsome natural weapons and strong natural armor.
 
 SH_GUARD_MONSTER_BODY
 Guard Hull
+
 SH_GUARD_MONSTER_BODY_DESC
 A Strong Hull for Guardian Class Monsters.
 
 SH_GUARD_0_BODY
 Maintenance Ship Hull
+
 SH_GUARD_0_BODY_DESC
 Maintenance Ship Hull
 
 SH_GUARD_1_BODY
 Sentry Hull
+
 SH_GUARD_1_BODY_DESC
 A basic hull for Guardian Class Monsters.
 
 SH_GUARD_3_BODY
 Warden Hull
+
 SH_GUARD_3_BODY_DESC
 A powerful hull for Guardian Class Monsters.
 
 SH_KRILL_1_BODY
 Krill Body 1
+
 SH_KRILL_1_BODY_DESC
 Krill Body 1
 
 SH_KRILL_2_BODY
 Krill Body 2
+
 SH_KRILL_2_BODY_DESC
 Krill Body 2
 
 SH_KRILL_3_BODY
 Krill Body 3
+
 SH_KRILL_3_BODY_DESC
 Krill Body 3
 
 SH_KRILL_4_BODY
 Krill Body 4
+
 SH_KRILL_4_BODY_DESC
 Krill Body 4
 
 SH_DRONE_BODY
 Drone Hull
+
 SH_DRONE_BODY_DESC
 Drone Hull
 
 SH_IMMOBILE_FACTORY
 Drone Factory
+
 SH_IMMOBILE_FACTORY_DESC
 Drone Factory
 
 SH_KRAKEN_1_BODY
 Larval Kraken Body
+
 SH_KRAKEN_1_BODY_DESC
 A formidable light-weight space monster.
 
 SH_KRAKEN_2_BODY
 Kraken Body
+
 SH_KRAKEN_2_BODY_DESC
 A formidable medium-weight space monster.
 
 SH_KRAKEN_3_BODY
 Great Kraken Body
+
 SH_KRAKEN_3_BODY_DESC
 A formidable heavy-weight space monster.
 
 SH_BLACK_KRAKEN_BODY
 Black Kraken Body
+
 SH_BLACK_KRAKEN_BODY_DESC
 A monstrous black Kraken with an unnatural aura about it.
 
 SH_SNOWFLAKE_1_BODY
 Small Snowflake Body
+
 SH_SNOWFLAKE_1_BODY_DESC
 A formidable light-weight space monster.
 
 SH_SNOWFLAKE_2_BODY
 Snowflake Body
+
 SH_SNOWFLAKE_2_BODY_DESC
 A formidable light-weight space monster.
 
 SH_SNOWFLAKE_3_BODY
 Large Snowflake Body
+
 SH_SNOWFLAKE_3_BODY_DESC
 A formidable light-weight space monster.
 
 SH_PSIONIC_SNOWFLAKE_BODY
 Psionic Snowflake Body
+
 SH_PSIONIC_SNOWFLAKE_BODY_DESC
 A mentally powerful space monster.
 
 SH_JUGGERNAUT_1_BODY
 Small Juggernaut Body
+
 SH_JUGGERNAUT_1_BODY_DESC
 A formidable heavy-weight space monster.
 
 SH_JUGGERNAUT_2_BODY
 Juggernaut Body
+
 SH_JUGGERNAUT_2_BODY_DESC
 A formidable heavy-weight space monster.
 
 SH_JUGGERNAUT_3_BODY
 Large Juggernaut Body
+
 SH_JUGGERNAUT_3_BODY_DESC
 A formidable heavy-weight space monster.
 
 SH_BLOATED_JUGGERNAUT_BODY
 Bloated Juggernaut Body
+
 SH_BLOATED_JUGGERNAUT_BODY_DESC
 An unnaturally large space monster.
 
@@ -11256,36 +11927,42 @@ Nebulous Body
 
 SH_EXP_OUTPOST_HULL
 Experimentor Outpost Hull
+
 SH_EXP_OUTPOST_HULL_DESC
 A hull used by the Experimentors use to transport experimental equipment to other galaxies.
 
 SH_COSMIC_DRAGON_BODY
 Cosmic Dragon Body
+
 SH_COSMIC_DRAGON_BODY_DESC
 A fearsome space dragon the size of a small planet.
 
 SH_DAMPENING_CLOUD_BODY
 Dampening Cloud Body
+
 SH_DAMPENING_CLOUD_BODY_DESC
 A cosmic cloud of high energetic particles.
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
+
+##
+## Buildings macros
+##
 
 NO_STACK_SUPPLY_CONNECTION_TEXT
 More than one in the same [[encyclopedia SUPPLY_TITLE]] connected Resource Group do not stack and add no extra bonus.
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
+
+##
+## Tech macros
+##
 
 COLONY_BUILDING_TIME_DECREASE
 Among other things, this technology decreases the time to build a colony building far away from the corresponding species in the empire.
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+
+##
+## Growth macros
+##
 
 GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].
@@ -11316,9 +11993,10 @@ GROWTH_SPECIALS_ENTRY_LIST
 [[encyclopedia LITHIC_SPECIES_TITLE]] specials:
 [[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
+
+##
+## Species picks
+##
 
 NO_INDUSTRY
 −−−	No [[encyclopedia INDUSTRY_TITLE]]
@@ -11486,9 +12164,9 @@ TELEPATHIC_DETECTION
 +	Telepathic Detection: can sense nearby populated planets.
 
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
+##
+## Accounting labels
+##
 
 STANDARD_CONSTRUCTION_LABEL
 %1% Average [[encyclopedia INFRASTRUCTURE_TITLE]]
@@ -11727,9 +12405,10 @@ Cloak Cross-Interference
 TRANSPATIAL_CLOAK_INTERACTION
 Transpatial Drive - Cloak Interaction
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
+
+##
+## Tags
+##
 
 ANTIQUATED
 Antiquated
@@ -11758,9 +12437,10 @@ Telepathic
 ORBITAL
 Orbital
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
+
+##
+## AI strings
+##
 
 ### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
 ### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
@@ -11855,9 +12535,11 @@ Krill Spawner
 
 ### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## AI diplomacy strings and lists
+##
+## Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+## For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
 
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Nice to hear from you again.
@@ -12029,11 +12711,10 @@ AI_FIRST_TURN_GREETING_MSG606
 AI_FIRST_TURN_GREETING_MSG607
 AI_FIRST_TURN_GREETING_MSG608'''
 
-### End of AI Diplomacy Message Lists
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
+##
+## Hotkey names and descriptions
+##
 
 OPTIONS_PAGE_HOTKEYS
 Keyboard shortcuts
@@ -12167,9 +12848,10 @@ Quit current game
 HOTKEY_FULLSCREEN
 Toggle fullscreen
 
-################
-## Name Lists ##
-################
+
+##
+## Name lists
+##
 
 STAR_GROUP_WORDS
 '''Alpha
