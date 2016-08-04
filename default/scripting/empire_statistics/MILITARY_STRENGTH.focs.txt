@@ -1,6 +1,0 @@
-Statistic name = "MILITARY_STRENGTH_STAT" value =
-    Statistic Sum value = (LocalCandidate.Attack * (LocalCandidate.Structure + 2 * LocalCandidate.MaxShield))
-        condition = And [
-            Ship
-            OwnedBy empire = Source.Owner
-        ]

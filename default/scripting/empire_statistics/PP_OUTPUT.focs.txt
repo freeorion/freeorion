@@ -1,5 +1,0 @@
-Statistic name = "PP_OUTPUT" value =
-    Statistic Sum value = LocalCandidate.Industry condition = And [
-        Planet
-        OwnedBy empire = Source.Owner
-    ]

@@ -1,5 +1,0 @@
-Statistic name = "RP_OUTPUT" value =
-    Statistic Sum value = LocalCandidate.Research condition = And [
-        Planet
-        OwnedBy empire = Source.Owner
-    ]

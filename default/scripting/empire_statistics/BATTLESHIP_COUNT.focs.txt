@@ -1,8 +1,0 @@
-Statistic name = "BATTLESHIP_COUNT" value =
-    Statistic Count condition = And [
-        And [
-            Ship  
-            Armed
-        ]
-        OwnedBy empire = Source.Owner
-    ]
