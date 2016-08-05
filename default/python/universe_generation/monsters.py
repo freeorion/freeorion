@@ -7,6 +7,67 @@ import universe_tables
 from galaxy import DisjointSets
 
 
+monsters_that_alter_starlanes = {"SM_EXP_OUTPOST"}
+
+
+class MapAlteringMonsters(object):
+    def __init__(self, systems):
+        self.systems = systems
+        self.placed = []
+        self.removed_lanes = set()
+        self.starlanes = [(s1, s2) for s1 in systems for s2 in fo.sys_get_starlanes(s1) if s1 < s2]
+
+    def matches(self, plan):
+        return plan.name() in monsters_that_alter_starlanes
+
+    def can_place_at(self, system, plan):
+        # Check if the map altering monster fleet ''plan'' can be placed at ''system''
+        # without disjoining the galaxy map.
+        # Compute the disjoint set of the galaxy without the starlanes
+        # from the proposed system.  Return False if there will be more
+        # connected regions than the number of placed experimentor
+        # outposts plus one, otherwise True.
+        local_lanes = {(min(system, s), max(system, s)) for s in fo.sys_get_starlanes(system)}
+
+        dsets = DisjointSets()
+        for s3 in self.systems:
+            dsets.add(s3)
+
+        for lane in self.starlanes:
+            if lane in self.removed_lanes or lane in local_lanes:
+                continue
+            dsets.link(lane[0], lane[1])
+
+        num_contiguous_regions = len(dsets.complete_sets())
+        expected_num_contiguous_regions = (len(self.placed) + 2)
+
+        if num_contiguous_regions > expected_num_contiguous_regions:
+            return False
+
+        if num_contiguous_regions < expected_num_contiguous_regions:
+            util.report_error("Number of contiguos regions %d is below the expected number "
+                              "of contiguous regions %d when placing %d monster %s that can "
+                              "break starlanes."
+                              % (num_contiguous_regions, expected_num_contiguous_regions,
+                                 len(self.placed) + 1, plan.name()))
+            return False
+
+        return True
+
+    def place(self, system, plan):
+        # create map altering monster fleet ''plan'' at ''system''.
+        local_lanes = {(min(system, s), max(system, s)) for s in fo.sys_get_starlanes(system)}
+
+        try:
+            populate_monster_fleet(plan, system)
+            if system not in self.placed:
+                self.placed.append(system)
+            self.removed_lanes |= local_lanes
+
+        except RuntimeError as e:
+            util.report_error(str(e))
+
+
 def populate_monster_fleet(fleet_plan, system):
     """
     Create a monster fleet in ''system'' according to ''fleet_plan''
@@ -106,7 +167,6 @@ def place_experimentors(systems):
             print >> sys.stderr, str(e)
             continue
 
-
 def generate_monsters(monster_freq, systems):
     """
     Adds space monsters to systems.
@@ -161,6 +221,10 @@ def generate_monsters(monster_freq, systems):
         if fleet_plan.name() in nest_name_map.values():
             statistics.tracked_monsters_chance[fleet_plan.name()] = basic_chance * fleet_plan.spawn_rate()
 
+    # initialize a manager for monsters that can alter the map
+    # required to prevent their placement from disjoining the map
+    map_altering_monsters = MapAlteringMonsters(systems)
+
     # for each system in the list that has been passed to this function, find a monster fleet that can be spawned at
     # the system and which hasn't already been added too many times, then attempt to add that monster fleet by
     # testing the spawn rate chance
@@ -181,7 +245,11 @@ def generate_monsters(monster_freq, systems):
         # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0.
         # Note: The WithinStarlaneJumps condition in fp.location() is
         # the most time costly function in universe generation.
-        suitable_fleet_plans = [fp for fp in fleet_plans if spawn_limits[fp] and fp.location(system)]
+        suitable_fleet_plans = [fp for fp in fleet_plans
+                                if spawn_limits[fp]
+                                and fp.location(system)
+                                and (not map_altering_monsters.matches(fp)
+                                     or map_altering_monsters.can_place_at(system, fp))]
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
             continue
@@ -205,12 +273,15 @@ def generate_monsters(monster_freq, systems):
         # all prerequisites and the test have been met, now spawn this monster fleet in this system
         # create monster fleet
         try:
-            populate_monster_fleet(fleet_plan, system)
+            if map_altering_monsters.matches(fleet_plan):
+                map_altering_monsters.place(system, fleet_plan)
+            else:
+                populate_monster_fleet(fleet_plan, system)
             # decrement counter for this monster fleet
             spawn_limits[fleet_plan] -= 1
 
         except RuntimeError as e:
-            print >> sys.stderr, str(e)
+            util.report_error(str(e))
             continue
 
     print "Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally)
