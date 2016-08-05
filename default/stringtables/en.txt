@@ -143,43 +143,56 @@ Back
 LAST
 Last
 
-# used to generate names for new fleets when they are created
+# Name for a newly created general purpose fleet.
+# %1% represents a unique number.
 NEW_FLEET_NAME
 Fleet %1%
 
+# Name for a newly created general purpose fleet when no uniqe number could be
+# created.
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
 
+# Name for a newly created monster-only fleet.
+# %1% represents a unique number.
 NEW_MONSTER_FLEET_NAME
 Herd %1%
 
+# Name for a newly created colony-only fleet.
+# %1% represents a unique number.
 NEW_COLONY_FLEET_NAME
 Colony Fleet %1%
 
+# Name for a newly created reconnaissance-only fleet.
+# %1% represents a unique number.
 NEW_RECON_FLEET_NAME
 Recon Fleet %1%
 
+# Name for a newly created troop carrier only fleet.
+# %1% represents a unique number.
 NEW_TROOP_FLEET_NAME
 Troop Fleet %1%
 
+# Name for a newly created bomber only fleet.
+# %1% represents a unique number.
 NEW_BOMBARD_FLEET_NAME
 Bomber Fleet %1%
 
+# Name for a newly created combat group group fleet. This includes battleships,
+# bombers and troop carriers.
+# %1% represents a unique number.
 NEW_BATTLE_FLEET_NAME
 Battle Fleet %1%
 
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
+# Name for a newly created asteroid belt.
+# %1% name of the system this asteroid belt is created in.
+# %2% orbit number where this asteroid belt is created on.
 NEW_ASTEROIDS_NAME
 %1% %2% remnants
 
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
+# Name for a newly created planet. When creating a new planet it is assumed this
+# planet is the first one within the system.
+# %1% name of the system this planet is created in.
 NEW_PLANET_NAME
 %1% I
 
@@ -241,24 +254,18 @@ ERROR_SOUND_INITIALIZATION_FAILED
 Check log files for more detailed messages.
 '''
 
-################################## 
-# FORMAT_LIST items are for lists of the form
-# FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
-# i.e.
-# There are none.
-# There is only: banana
-# There are: apple and banana
-##################################
-
+# Used as a prefix for the FORMAT_LIST_[1-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_PLURAL_HEADER
 There are:
 
+# Used as a prefix for the FORMAT_LIST_0_ITEMS translation entry.
 FORMAT_LIST_DEFAULT_SINGLE_HEADER
 There is one:
 
 FORMAT_LIST_DEFAULT_EMPTY_HEADER
 There are none.
 
+# Used as a prefix for the FORMAT_LIST_[0-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_DUAL_HEADER
 There are:
 
@@ -1035,6 +1042,8 @@ Player %1% no longer has a connection to the server.
 SERVER_SAVE_INITIATE_ACK
 Saving...
 
+# %1% save game file path as requested by the client.
+# %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
 Saved %2% bytes to file: %1%
 
@@ -1959,72 +1968,95 @@ Native Frequency
 GSETUP_AI_AGGR
 Max AI Aggression
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spiral, 2-arm
 
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spiral, 3-arm
 
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spiral, 4-arm
 
+# A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Cluster
 
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Elliptical
 
+# A galaxy shape to select when generating a universe.
 GSETUP_DISC
 Disc
 
+# A galaxy shape to select when generating a universe.
 GSETUP_BOX
 Box
 
+# A galaxy shape to select when generating a universe.
 GSETUP_IRREGULAR
 Irregular
 
+# A galaxy shape to select when generating a universe.
 GSETUP_RING
 Ring
 
+# A galaxy shape to select when generating a universe.
 GSETUP_RANDOM
 Random
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 None
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Low
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
 Medium
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 High
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Young
 
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Mature
 
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Ancient
 
+# AI aggression level.
 GSETUP_BEGINNER
 Beginner Mode
 
+# AI aggression level.
 GSETUP_TURTLE
 Turtle
 
+# AI aggression level.
 GSETUP_CAUTIOUS
 Cautious
 
+# AI aggression level.
 GSETUP_TYPICAL
 Typical
 
+# AI aggression level.
 GSETUP_AGGRESSIVE
 Aggressive
 
+# AI aggression level.
 GSETUP_MANIACAL
 Maniacal
 
@@ -2160,9 +2192,11 @@ File:
 SAVE_DIRECTORY
 Path:
 
+# %1% entered path to the save game file that should be deleted.
 SAVE_REALLY_DELETE
 Are you sure you want to delete %1%?
 
+# %1% entered path to the save game file that should be overwritten.
 SAVE_REALLY_OVERRIDE
 Are you sure you want to override %1%?
 
@@ -2668,12 +2702,15 @@ Create Binary Save Files
 ## Main map window
 ##
 
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Turn %1%
 
+# %1% number of frames currently displayed per second.
 MAP_INDICATOR_FPS
 %1% FPS
 
+# %1% number of 'universe units' which the bar scale on the map represents.
 MAP_SCALE_INDICATOR
 <s>%1% uu</s>
 
@@ -2722,6 +2759,8 @@ Production
 MAP_PROD_WASTED_TITLE
 Unused Production
 
+# %1% number of production points generated.
+# %2% number of production points currently not used for production.
 MAP_PROD_WASTED_TEXT
 '''Total Production : %1%
 Wasted Production : %2%
@@ -2743,6 +2782,8 @@ Research
 MAP_RES_WASTED_TITLE
 Unused Research
 
+# %1% number of research points generated.
+# %2% number of research points currently not used for research.
 MAP_RES_WASTED_TEXT
 '''Total Research : %1%
 Wasted Research : %2%
@@ -2795,9 +2836,13 @@ Side Panel
 SP_SYSTEM_PRODUCTION
 System Resource Output
 
+# %1% resource type currently produced by the system.
+# %2% amount of the resource currently produced by the system.
 RESOURCE_PRODUCTION_TOOLTIP
 System %1%: %2%
 
+# %1% resource type currently consumed by the system.
+# %2% amount of the resource currently consumed by the system.
 RESOURCE_ALLOCATION_TOOLTIP
 System %1%: %2%
 
@@ -2845,6 +2890,7 @@ Planet Panel
 PL_ASTEROID_BELT
 Asteroids
 
+# %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroids
 
@@ -2854,6 +2900,8 @@ Uninhabited
 PL_SIZE
 Size
 
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Colonize (%1% / %2%)
 
@@ -2866,6 +2914,7 @@ Place Outpost
 PL_CANCEL_OUTPOST
 Cancel Outpost
 
+# %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Invade (+%1%)
 
@@ -2881,9 +2930,14 @@ Bombard
 PL_CANCEL_BOMBARD
 Cancel Bombarding
 
+# %1% the planet size as text (small, medium, large, ...).
+# %2% type of the planet environment (desert, oceanic, terran, ...).
 PL_TYPE_SIZE
 %1% %2%
 
+# %1% the planet size as text (small, medium, large, ...).
+# %2% type of the planet environment (desert, oceanic, terran, ...).
+# %3% suitability of the planet for a concrete species (adequate, hostile, ...).
 PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
 
@@ -2893,9 +2947,12 @@ Planet is not currently visible.
 PL_BASIC_VISIBILITY
 Planet is obscured from sensors.
 
+# %1% turn number where this planet was completely visible to the querying
+#     player.
 PL_LAST_TURN_SEEN
 Last seen on turn %1%.
 
+# %1% turn number where this planet was scanned by the querying player.
 PL_LAST_TURN_SCANNED
 Last scanned on turn %1%.
 
@@ -2908,6 +2965,8 @@ This planet has never been thoroughly scanned by your empire.
 PL_NOT_IN_RANGE
 This planet is out of range of your empire's scanners.
 
+# %1% last known stealth value of the planet.
+# %2% detection strength of the empire which scanned the planet.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Latest known [[encyclopedia STEALTH_TITLE]] (%1%) exceeds [[DETECTION_TITLE]] (%2%).
 
@@ -2928,6 +2987,7 @@ Queue Ship
 ## Side panel/Resources panel
 ##
 
+# %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Focus: %1%
 
@@ -2936,9 +2996,11 @@ Focus: %1%
 ## Side panel/Specials panel
 ##
 
+# %1% capacity value applied by the special.
 SPECIAL_CAPACITY
 Capacity: %1%
 
+# %1% turn number this special was applied to an object.
 ADDED_ON_TURN
 Present Since Turn: %1%
 
@@ -2980,6 +3042,8 @@ Predicted Next Turn
 TT_CHANGE
 Change
 
+# %1% the meter name displayed.
+# %2% the meter value.
 TT_BREAKDOWN_SUMMARY
 %1%: %2%
 
@@ -2989,24 +3053,38 @@ TT_TARGETS_BREAKDOWN_SUMMARY
 TT_INHERENT
 Inherent
 
+# %1% name of the owning empire.
+# %2% FIXME
 TT_TECH
 %1% Tech <i>%2%</i>
 
+# %1% name of the planet, where the building is located.
+# %2% FIXME
 TT_BUILDING
 %1% Building <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_HULL
 Ship <i>%1%</i> Hull <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_PART
 Ship <i>%1%</i> Part <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SPECIAL
 Special <i>%2%</i>
 
+# %1% name of the species.
+# %2% FIXME
 TT_SPECIES
 Species <i>%2%</i>
 
+# %1% name of this fields field type.
+# %2% FIXME
 TT_FIELD
 <i>%2%</i>
 
@@ -3019,6 +3097,7 @@ TT_RESOURCE_PRODUCTION
 TT_RESOURCE_ALLOCATION
 %1% consumes %2%
 
+# %1% name of the species.
 TT_SPECIES_POPULATION
 %1% [[METER_POPULATION]]
 
@@ -3036,12 +3115,16 @@ Planet Suitability
 ## Fleet window
 ##
 
+# %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
 Holding at %1%
 
+# %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
 Moving to %1%
 
+# %1% system name where this fleet is moving to.
+# %2% estiminated time in turns when the fleet will arrive.
 FW_FLEET_MOVING_TO_ETA
 Moving to %1% (ETA %2%)
 
@@ -3051,6 +3134,11 @@ Waiting for Fuel
 FW_FLEET_EXPLORING_WAITING
 Waiting for system to explore
 
+# %1% name of the destination system
+# %2% estimated turns until the fleet reach the destination system. Can also be
+#     'unknown', 'never' or 'out of range.
+# %3% estimated turns until the fleet reach the next system. Can also be
+#     'unknown', 'never' or 'out of range.
 FW_FLEET_EXPLORING_TO
 Exploring %1%
 
@@ -3087,25 +3175,36 @@ Ship Class
 FW_UNKNOWN_DESIGN_NAME
 Unknown Design
 
+# %1% name of the ship design that was used by this ship.
+# %2% name of the ship owning species.
 FW_SPECIES_SHIP_DESIGN_LABEL
 (%2%) %1%
 
-# the name of the new fleet icon in the fleet listbox
+# Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
 <i>New Fleet</i>
 
+# Fleet window title
+# %1% empire, which owns the fleets.
+# %2% system where those fleets hold.
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Fleets At %2%
 
+# Fleet window title
+# %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
 %1% Fleets
 
+# Fleet window title
 FW_NO_FLEET
 No Fleet
 
+# Fleet window title
+# %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Fleets At %1%
 
+# Fleet window title
 FW_GENERIC_FLEETS
 Fleets
 
@@ -3115,18 +3214,24 @@ Home Fleet
 FW_BATTLE_FLEET
 Battle Fleet
 
-# the name that is used for fleets the client's player does not control but is owned by an empire. %1% is the empire name.
+# the name that is used for fleets the client's player does not control but is
+# owned by an empire.
+# %1% empire name.
 FW_EMPIRE_FLEET
 %1% fleet
 
-# the name that is used for ships the client's player does not control but is owned by an empire. %1% is the empire name.
+# the name that is used for ships the client's player does not control but is
+# owned by an empire.
+# %1% empire name.
 FW_EMPIRE_SHIP
 %1% ship
 
+# the fleet name for fleets with an unknown owning empire.
 FW_FOREIGN
 Foreign
 
-# the name that is used for fleets the client's player does not control when the empire is not specified.
+# the name that is used for fleets the client's player does not control when
+# the empire is not specified.
 FW_FOREIGN_FLEET
 Foreign fleet
 
@@ -3134,7 +3239,8 @@ Foreign fleet
 FW_ROGUE_FLEET
 Rogue Fleet
 
-# the name that is used for ships the client's player does not control when the empire is not specified.
+# the name that is used for ships the client's player does not control when the
+# empire is not specified.
 FW_FOREIGN_SHIP
 Foreign ship
 
@@ -3299,12 +3405,17 @@ Navigation
 TECH_TOTAL_COST_STR
 %1% RP and %2% Turns
 
+# %1% amount of research points required to research the technology.
+# %2% number of turns required to research the technology.
 TECH_TOTAL_COST_ALT_STR
 %1% RP / %2% Turns
 
+# %1% research points used this turn.
+# %2% research points available for this turn.
 TECH_TURN_COST_STR
 +%1% / %2% RP
 
+# %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
 %1% Turns
 
@@ -3359,10 +3470,15 @@ Requires
 TECH_WND_UNLOCKS
 Unlocks
 
+# %1% research points already spent on a reseach.
+# %2% total research points required to complete the research.
+# %3% research points used per turn.
+# %4% research points available per turn.
 TECH_WND_PROGRESS
 '''%1% / %2% RP
 + %3% / %4% RP/turn'''
 
+# %1% estimated turns left until technology is researched.
 TECH_WND_ETA
 %1% turns left
 
@@ -3371,9 +3487,14 @@ TECH_WND_ETA
 ## Production info panel
 ##
 
+# %1% type of resource (Research, Production, ...).
+# %2% name of the location where the resource is produced.
+# %3% name of the empire which owns this resource produced.
 PRODUCTION_INFO_AT_LOCATION_TITLE
 %3% %1% at %2%
 
+# %1% type of resource (Research, Production, ...).
+# %2% name of the empire which owns this resource produced.
 PRODUCTION_INFO_EMPIRE
 %2% %1%
 
@@ -3394,6 +3515,7 @@ Points Available Here
 RESEARCH_WND_TITLE
 Research
 
+# %1% name of the empire which owns this research queue.
 RESEARCH_QUEUE_EMPIRE
 %1% Research Queue
 
@@ -3413,6 +3535,7 @@ Hold control while clicking to add to the top of the queue.'''
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Producible Items
 
+# %1% name of the location where the item is produced.
 PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION
 Producible Items at %1%
 
@@ -3434,9 +3557,12 @@ Redundant
 PRODUCTION_TOTAL_COST_STR
 %1% PP and %2% Turns
 
+# %1% currently used amount of production points used per turn to build an item.
+# %2% maximum available amount of production points for this turn.
 PRODUCTION_TURN_COST_STR
 +%1% / %2% PP
 
+# %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
 %1% Turns
 
@@ -3469,15 +3595,18 @@ Production
 PRODUCTION_INFO_PP
 PP
 
+# %1% name of the empire that owns the production queue.
 PRODUCTION_QUEUE_EMPIRE
 %1% Production Queue
 
 PRODUCTION_QUEUE_EMPIRE_AT
 %1% Production Queue at %2%
 
+# %1% the amount of items that should be produced in a single batch.
 PRODUCTION_QUEUE_MULTIPLES
 '''%1%x '''
 
+# %1% number of repetions an item should be produced on after another.
 PRODUCTION_QUEUE_REPETITIONS
 %1%⟳
 
@@ -3488,13 +3617,19 @@ Enqueue production projects by selecting a planet on the side-panel, then double
 
 Note that ships can only be built on planets with a shipyard, and that various other objects may have other restrictions on build location.'''
 
+# %1% production points already spent on an item.
+# %2% total production points required to complete the item production.
+# %3% production points used per turn.
+# %4% production points available per turn.
 PRODUCTION_WND_PROGRESS
 '''%1% / %2% PP
 + %3% / %4% target PP/turn'''
 
+# %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 At %1%
 
+# %1% location where the item is enqueued for production.
 PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION
 Enqueued at %1%
 
@@ -3504,9 +3639,11 @@ Can be produced here
 PRODUCTION_LOCATION_INVALID
 CANNOT be produced here
 
+# %1% name of the system this item production should be relocated to.
 PRODUCTION_QUEUE_RALLIED_TO
 Rallied to %1%
 
+# %1% name of the system this item production will be relocated to.
 RALLY_QUEUE_ITEM
 Rally to %1%
 
@@ -3528,7 +3665,7 @@ Production time
 PRODUCTION_WND_TOOLTIP_PARTS
 Ship Parts
 
-# %1% FIXME
+# %1% name of the location where the object should be build.
 PRODUCTION_WND_TOOLTIP_FAILED_COND
 Unmet requirements to produce at %1%
 
@@ -3615,12 +3752,15 @@ Design name cannot be empty.
 DESIGN_KNOWN
 Duplicates Existing Design
 
+# %1% name of the equivalent ship design.
 DESIGN_KNOWN_DETAIL
 This design is a duplicate of "%1%".
 
 DESIGN_COMPONENT_CONFLICT
 Conflicting Design
 
+# %1% first conflicting ship part name.
+# %2% second conflicting ship part name.
 DESIGN_COMPONENT_CONFLICT_DETAIL
 A shipdesign cannot contain both %1% and %2%.
 
@@ -3630,6 +3770,7 @@ Obsolete Design
 DESIGN_WND_ADD
 Add New Design
 
+# %1% name of the new ship design.
 DESIGN_WND_ADD_DETAIL
 '''Add new design called
 "%1%"
@@ -3638,6 +3779,8 @@ to finished designs.'''
 DESIGN_WND_UPDATE
 Update Old Design
 
+# %1% old name of the existing design.
+# %2% new name of the existing design.
 DESIGN_WND_UPDATE_DETAIL
 '''Replace old design
 "%1%"
@@ -3721,17 +3864,24 @@ Statistics Test 3
 ## Encyclopedia
 ##
 
+# %1% name of the species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
 '''%1%:	'''
 
+# %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
+#     column width.
+# %2% the planet environment for a species.
+# %3% the planet population capacity for a species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY
 %1%	%2% (%3%)
 
+# %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 '''%1% is suitable for colonization by these species.
 
 '''
 
+# %1% name of the planet.
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''%1% is not suitable for colonization by these species. Attempts to colonize will either fail or eventually die off.
 
@@ -3752,6 +3902,16 @@ ENC_GRAPH
 ENC_GALAXY_SETUP
 [Game - Galaxy]
 
+# %1% seed value of the current galaxy.
+# %2% number of systems in the current galaxy.
+# %3% shape of the current galaxy.
+# %4% age of the current galaxy.
+# %5% starlane frequency in the current galaxy.
+# %6% planet density in the current galaxy.
+# %7% special frequency in the current galaxy.
+# %8% monster frequency in the current galaxy.
+# %9% natives frequency in the current galaxy.
+# %10% upper AI aggression level in this galaxy.
 ENC_GALAXY_SETUP_SETTINGS
 '''Seed: %1%
 Number of Systems: %2%
@@ -3825,6 +3985,8 @@ No Owned Planets Known
 OWNED_FLEETS
 '''Owned Fleets: '''
 
+# %1% link to a fleet.
+# %2% link to a system.
 OWNED_FLEET_AT_SYSTEM
 %1% at %2%
 
@@ -3930,9 +4092,10 @@ Article Text Matches
 ENC_SEARCH_NOTHING_FOUND
 No Matches Found
 
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
+# %1% specialized type description of the thing described in the encyclopedia
+#     (e.g. for a ship part it would be the ship part class).
+# %2% general type description of the thing described in the encyclopedia.
+#     (e.g. for a ship part it would be the content of 'ENC_SHIP_PART').
 ENC_DETAIL_TYPE_STR
 %1% %2%
 
@@ -3942,11 +4105,11 @@ PP
 ENC_RP
 RP
 
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
+# Concise listing of costs required to produce item or research tech.
+# %1% cost to complete requested item or technology.
+# %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
+#     technology.
+# %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %1% %2% and %3% Turns
 
@@ -3958,8 +4121,8 @@ ENC_LOCATION_CONDITION_STR
 
 An object%1%'''
 
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
+# Title for auto-generated effects description in encyclopedia.
+# %1% textual representation of the effects applied.
 ENC_EFFECTS_STR
 '''
 
@@ -3973,6 +4136,7 @@ produce
 ENC_VERB_RESEARCH_STR
 research
 
+# %1% content of ENC_VERB_PRODUCE_STR.
 ENC_AUTO_TIME_COST_INVARIANT_STR
 '''
 
@@ -3980,6 +4144,7 @@ ENC_AUTO_TIME_COST_INVARIANT_STR
 
 Time and cost to %1% this item do not vary by location.'''
 
+# %1% content of ENC_VERB_PRODUCE_STR.
 ENC_AUTO_TIME_COST_VARIABLE_STR
 '''
 
@@ -3989,12 +4154,16 @@ Either one or both of time and cost to %1% this item varies by location.
 In the expressions describing these, the term Source will generally refer to the respective empire's Capital, and the term Target will generally refer to the location under consideration.
 '''
 
+# %1% name of the planet where this item can be produced.
+# %2% local costs on the planet to produce the item.
+# %3% content of ENC_PP
+# %4% local time required on the planet to produce the item.
 ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
 At location %1% the cost and time are %2% %3% over %4% turns.'''
 
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
+# Title for auto-generated production cost description in encyclopedia.
+# %1% textual representation of the production costs.
 ENC_AUTO_COST_STR
 '''
 
@@ -4002,8 +4171,8 @@ ENC_AUTO_COST_STR
 
 %1%'''
 
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
+# Title for auto-generated production time description in encyclopedia.
+# %1% textual representation of the production time required to build the item.
 ENC_AUTO_TIME_STR
 '''
 
@@ -4011,6 +4180,26 @@ ENC_AUTO_TIME_STR
 
 %1%'''
 
+# FIXME
+# Displays the ship design properties inside a Pedia article in detail.
+# %1% description.
+# %2% hull name.
+# %3% list of builtin parts.
+# %4% number of builtin weapon parts.
+# %5% number of builtin rocket parts.
+# %6% number of builtin fighter bays.
+# %7% number of builtin point defense weapon bays.
+# %8% amount of structure points.
+# %9% amount of shield points.
+# %10% amount of detection points.
+# %11% amount of stealth points.
+# %12% battle speed.
+# %13% starlane speed.
+# %14% fuel capacity.
+# %15% number of settlers.
+# %16% number of troops.
+# %17% total damage done by weapons.
+# %18% species that mans the ship.
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
@@ -4025,14 +4214,11 @@ Colonization Capacity: %15%    [[encyclopedia TROOP_TITLE]]: %16%
 Estimated combat strength (ignoring shields): %19$.f (%20$.2f per PP)
 Against likely enemy weapons and shields: %21$.f (%22$.2f per PP)
 '''
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
-##
 
+# Displays a ship design inside the Pedia with the basic informations.
+# %1% description.
+# %2% hull name.
+# %3% list of builtin parts.
 ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
 '''%1%
 
@@ -4041,6 +4227,7 @@ Parts: %3%
 
 '''
 
+# FIXME
 # will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
@@ -4069,82 +4256,136 @@ ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 ENC_SHIP_EXCLUSIONS
 '''Cannot be in design with: '''
 
+# %1% name of the item type unlocked (building, ship part, hull, ...).
+# %2% name of the item unlocked (a specific building or ship part, ...).
 ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''%1%: %2%
 '''
 
+# %1% category of the technology.
+# %2% UNUSED
+# %3% short description of the technology.
 ENC_TECH_DETAIL_TYPE_STR
 %3%
 
+# %1% object, technology or other content that should be looked up in the
+#     encyclopedia.
 ENC_LOOKUP
 Pedia Lookup %1%
 
 ENC_COMBAT_LOG
 Combat Log
 
+# %1% link to the system, where the combat occured.
+# %2% turn when the combat occured.
 ENC_COMBAT_LOG_DESCRIPTION_STR
 Combat at %1% on turn %2%:
 
+# %1% link to the attacker in a weapon fired battle event.
+# %2% link to the target in a weapon fired event.
+# %3% amount of damage done when firing the weapon.
+# %4% the round number. (a round is phase where all units in a combat have
+      acted).
+# %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
 
+# %1% link to a ship part description.
+# %2% potential damage done by the weapon.
+# %3% damage consumed by the target shields.
+# %4% damage done to the target.
 ENC_COMBAT_ATTACK_DETAILS
 Weapon: %1%  Strength: %2%  Shields: %3%  Damage: %4%
 
+# %1% link to the attacking unit or empire.
+# %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attacks %2%
 
+# %1% link to the unit, which launches the fighter.
+# %2% name of the fighters launched.
+# %3% amount of fighters launched.
 ENC_COMBAT_LAUNCH_STR
 %1% launches %3% %2%
 
+# %1% link to the unit, which recovers the fighters.
+# %2% name of the fighters recovered.
+# %3% amount of fighters recovered.
 ENC_COMBAT_RECOVER_STR
 %1% recovers %3% %2%
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unknown
 
+# %1% number of combat round.
 ENC_ROUND_BEGIN
 '''
 Round %1%'''
 
+# %1% name of the empire which owns the attacked unit.
+# %2% name of the attacked unit.
 ENC_COMBAT_UNKNOWN_DESTROYED_STR
 %2% was incapacitated
 
+# %1% name of the empire which owns the attacked unit.
+# %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
 A%1%fighter was destroyed
 
+# %1% name of the empire which owns the attacked unit.
+# %2% name of the attacked planet.
 ENC_COMBAT_PLANET_INCAPACITATED_STR
 The%1%planet %2% was incapacitated
 
+# %1% name of the empire which owns the attacked unit.
+# %2% name of the attacked unit.
 ENC_COMBAT_DESTROYED_STR
 The%1%ship %2% was destroyed
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_INITIAL_STEALTH_LIST
 %2% empire can not target:
 
-# %1 attacker %2 defender %3 empire
+# %1 link to the attacking unit
+# %2 link to the defending unit.
+# %3 link to the empire that owns the defending unit.
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK
 %2% detects %1% during attack.
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
 %2% detects
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
 %2% detects:
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
 %2% damages
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
 %2% damages %1% targets:
 
-# %1 defender %2 damage
+# FIXME
+# %1 defender
+# %2 damage
 ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
 %1% for %2% damage
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% could not damage
 
+# %1% FIXME
+# %2% FIXME
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% could not damage %1% targets:
 
@@ -4252,6 +4493,9 @@ Color of health in the graphical combat summary
 COMBAT_LOG
 Log
 
+# %1% name of the belligerent party.
+# %2% current health of all units.
+# %3% total health of all units.
 COMBAT_FLEET_HEALTH_AXIS_LABEL
 %1% fleet health: %2%/%3%
 
@@ -4259,6 +4503,7 @@ COMBAT_UNIT_HEALTH_AXIS_LABEL
 '''Unit
 health'''
 
+# %1% amount of lost units in combat.
 COMBAT_DESTROYED_LABEL
 Lost: %1%
 
@@ -4809,6 +5054,7 @@ Generating Universe
 TURN_PROGRESS_STARTING_AIS
 Creating AI Clients
 
+# %1% number of the current turn.
 TURN_BEGIN
 Begin Turn %1%
 
@@ -5077,6 +5323,7 @@ Any
 SITREP_PANEL_TITLE
 Situation Report - Initial turn
 
+# %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Situation Report - Turn %1%
 
@@ -5626,18 +5873,19 @@ Empire Capital Captured
 CUSTOM_SITREP_INTRODUCTION
 Welcome to the initial Situation Report Briefing.  Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
-
+# This message value must contain no spaces. Use underlines instead.
 CUSTOM_1
 Custom_1
 
+# This message value must contain no spaces. Use underlines instead.
 CUSTOM_2
 Custom_2
 
+# This message value must contain no spaces. Use underlines instead.
 CUSTOM_3
 Custom_3
 
+# This message value must contain no spaces. Use underlines instead.
 CUSTOM_4
 Custom_4
 
@@ -6975,183 +7223,226 @@ Systems with this special have a nebula created around them. This nebula may col
 ## Enumeration values
 ##
 
-# UniverseObjectTypes
-
+# Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
 Generic Object
 
+# Universe object types
 OBJ_BUILDING
 Building
 
+# Universe object types
 OBJ_SHIP
 Ship
 
+# Universe object types
 OBJ_FLEET
 Fleet
 
+# Universe object types
 OBJ_PLANET
 Planet
 
+# Universe object types
 OBJ_POP_CENTER
 Population center
 
+# Universe object types
 OBJ_PROD_CENTER
 Production center
 
+# Universe object types
 OBJ_SYSTEM
 System
 
+# Universe object types
 OBJ_FIELD
 Field
 
+# Universe object types
 OBJ_FIGHTER
 Fighter
 
-# StarTypes
-
+# Star types
 STAR_BLUE
 Blue
 
+# Star types
 STAR_WHITE
 White
 
+# Star types
 STAR_YELLOW
 Yellow
 
+# Star types
 STAR_ORANGE
 Orange
 
+# Star types
 STAR_RED
 Red
 
+# Star types
 STAR_NEUTRON
 Neutron
 
+# Star types
 STAR_BLACK
 Black Hole
 
+# Star types
 STAR_NONE
 No star
 
+# Star types
 INVALID_STAR_TYPE
 Unknown star type
 
-# PlanetTypes
-
+# Planet types
 PT_SWAMP
 Swamp
 
+# Planet types
 PT_TOXIC
 Toxic
 
+# Planet types
 PT_INFERNO
 Inferno
 
+# Planet types
 PT_RADIATED
 Radiated
 
+# Planet types
 PT_BARREN
 Barren
 
+# Planet types
 PT_TUNDRA
 Tundra
 
+# Planet types
 PT_DESERT
 Desert
 
+# Planet types
 PT_TERRAN
 Terran
 
+# Planet types
 PT_OCEAN
 Ocean
 
+# Planet types
 PT_ASTEROIDS
 Asteroids
 
+# Planet types
 PT_GASGIANT
 Gas Giant
 
-# Planet Sizes
-
+# Planet sizes
 SZ_NOWORLD
 Nothing to see here; move along.
 
+# Planet sizes
 SZ_TINY
 Tiny
 
+# Planet sizes
 SZ_SMALL
 Small
 
+# Planet sizes
 SZ_MEDIUM
 Medium
 
+# Planet sizes
 SZ_LARGE
 Large
 
+# Planet sizes
 SZ_HUGE
 Huge
 
+# Planet sizes
 SZ_ASTEROIDS
 Asteroids
 
+# Planet sizes
 SZ_GASGIANT
 Gas Giant
 
-# PlanetEnvironments
-
+# Planet environments
 PE_UNINHABITABLE
 Uninhabitable
 
+# Planet environments
 PE_HOSTILE
 Hostile
 
+# Planet environments
 PE_POOR
 Poor
 
+# Planet environments
 PE_ADEQUATE
 Adequate
 
+# Planet environments
 PE_GOOD
 Good
 
-# FocusTypes
-
+# Focus types
 INVALID_FOCUS_TYPE
 invalid focus type
 
+# Focus types
 FOCUS_GROWTH
 Growth
 
+# Focus types
 FOCUS_INDUSTRY
 Industry
 
+# Focus types
 FOCUS_MINING
 Mining
 
+# Focus types
 FOCUS_HEAVY_MINING
 Heavy Mining
 
+# Focus types
 FOCUS_RESEARCH
 Research
 
+# Focus types
 FOCUS_TRADE
 Trade
 
+# Focus types
 FOCUS_LOGISTICS
 Logistics
 
+# Focus types
 FOCUS_STEALTH
 Stealth
 
+# Focus types
 FOCUS_BIOTERROR
 Bioterror
 
+# Focus types
 FOCUS_STARGATE_SEND
 Stargate Send
 
 FOCUS_STARGATE_SEND_DESC
 Send ships in the system through the Stargate
 
+# Focus types
 FOCUS_STARGATE_RECEIVE
 Stargate Receive
 
@@ -7176,128 +7467,167 @@ Psychic Domination
 FOCUS_DOMINATION_DESC
 Psychically controls enemy ships.
 
-# MeterTypes
-
+# Meter types
 INVALID_METER_TYPE
 Invalid Meter Type
 
+# Meter types
 METER_TARGET_POPULATION
 Target Population
 
+# Meter types
 METER_TARGET_HEALTH
 Target Health
 
+# Meter types
 METER_TARGET_INDUSTRY
 Target Industry
 
+# Meter types
 METER_TARGET_RESEARCH
 Target Research
 
+# Meter types
 METER_TARGET_TRADE
 Target Trade
 
+# Meter types
 METER_TARGET_MINING
 Target Mining
 
+# Meter types
 METER_TARGET_CONSTRUCTION
 Target Infrastructure
 
+# Meter types
 METER_TARGET_HAPPINESS
 Target Happiness
 
+# Meter types
 METER_MAX_FUEL
 Max Fuel
 
+# Meter types
 METER_MAX_SHIELD
 Max Shield
 
+# Meter types
 METER_MAX_STRUCTURE
 Max Structure
 
+# Meter types
 METER_MAX_DEFENSE
 Max Defense
 
+# Meter types
 METER_MAX_TROOPS
 Max Troops
 
+# Meter types
 METER_MAX_REBEL_TROOPS
 Max Rebel Troops
 
+# Meter types
 METER_MAX_SUPPLY
 Max Supply
 
+# Meter types
 METER_MAX_CAPACITY
 Max Capacity
 
+# Meter types
 METER_MAX_SECONDARY_STAT
 Max Secondary Stat
 
+# Meter types
 METER_POPULATION
 Population
 
+# Meter types
 METER_HEALTH
 Health
 
+# Meter types
 METER_GROWTH
 Growth
 
+# Meter types
 METER_INDUSTRY
 Industry
 
+# Meter types
 METER_RESEARCH
 Research
 
+# Meter types
 METER_TRADE
 Trade
 
+# Meter types
 METER_MINING
 Mining
 
+# Meter types
 METER_CONSTRUCTION
 Infrastructure
 
+# Meter types
 METER_HAPPINESS
 Happiness
 
+# Meter types
 METER_FUEL
 Fuel
 
+# Meter types
 METER_SHIELD
 Shield
 
+# Meter types
 METER_STRUCTURE
 Structure
 
+# Meter types
 METER_DEFENSE
 Defense
 
+# Meter types
 METER_TROOPS
 Troops
 
+# Meter types
 METER_REBEL_TROOPS
 Rebel Troops
 
+# Meter types
 METER_SUPPLY
 Supply
 
+# Meter types
 METER_STEALTH
 Stealth
 
+# Meter types
 METER_DETECTION
 Detection Range
 
+# Meter types
 METER_SPEED
 Speed
 
+# Meter types
 METER_CAPACITY
 Capacity
 
+# Meter types
 METER_SECONDARY_STAT
 Secondary Stat
 
+# Meter types
 METER_SIZE
 Size
 
+# Meter types
 METER_DETECTION_STRENGTH
 [[encyclopedia DETECTION_TITLE]]
 
@@ -7331,165 +7661,194 @@ Mechanization
 ALIGN_MECHANIZATION_DESC
 Use of artificial sentience and automation
 
-# EmpireAffiliationTypes
-
+# Empire affiliation types
 AFFIL_SELF
 self
 
+# Empire affiliation types
 AFFIL_ENEMY
 enemy
 
+# Empire affiliation types
 AFFIL_ALLY
 ally
 
+# Empire affiliation types
 AFFIL_ANY
 any
 
-# UnlockableItemTypes
-
+# Unlockable item types
 INVALID_UNLOCKABLE_ITEM_TYPE
 Invalid Unlockable Item Type
 
+# Unlockable item types
 UIT_BUILDING
 Building
 
+# Unlockable item types
 UIT_SHIP_PART
 Ship Part
 
+# Unlockable item types
 UIT_SHIP_HULL
 Ship Hull
 
+# Unlockable item types
 UIT_TECH
 Technology
 
-# TechTypes
-
+# Technology types
 TT_THEORY
 Theory
 
+# Technology types
 TT_APPLICATION
 Application
 
+# Technology types
 TT_REFINEMENT
 Refinement
 
-# BuildTypes
-
+# Build types
 BT_NOT_BUILDING
 no build
 
+# Build types
 BT_BUILDING
 building
 
+# Build types
 BT_SHIP
 ship
 
-# StockpileTypes
-
+# Stockpile types
 ST_FOOD
 food
 
+# Stockpile types
 ST_MINERAL
 mineral
 
+# Stockpile types
 ST_TRADE
 trade
 
-# Resource Types
-
+# Resource types
 RE_FOOD
 food
 
+# Resource types
 RE_MINERALS
 mineral
 
+# Resource types
 RE_TRADE
 trade
 
+# Resource types
 RE_INDUSTRY
 industry
 
+# Resource types
 RE_RESEARCH
 research
 
-# Ship Slot Types
-
+# Ship slot types
 SL_EXTERNAL
 External Slot
 
+# Ship slot types
 SL_INTERNAL
 Internal Slot
 
+# Ship slot types
 SL_CORE
 Core Slot
 
 SL_TOOLTIP_DESC
 Empty
 
-# Ship Part Classes
-
+# Ship part classes
 PC_DIRECT_WEAPON
 Direct Weapon
 
+# Ship part classes
 PC_FIGHTER_HANGAR
 Hangar
 
+# Ship part classes
 PC_FIGHTER_BAY
 Launch Bay
 
+# Ship part classes
 PC_SHIELD
 Shields
 
+# Ship part classes
 PC_ARMOUR
 Armor
 
+# Ship part classes
 PC_TROOPS
 Ground Troops
 
+# Ship part classes
 PC_DETECTION
 Detection
 
+# Ship part classes
 PC_STEALTH
 Stealth
 
+# Ship part classes
 PC_FUEL
 Fuel
 
+# Ship part classes
 PC_COLONY
 Colonization
 
+# Ship part classes
 PC_SPEED
 Speed
 
+# Ship part classes
 PC_GENERAL
 General
 
+# Ship part classes
 PC_BOMBARD
 Bombardment
 
+# Ship part classes
 PC_INDUSTRY
 Industry
 
+# Ship part classes
 PC_RESEARCH
 Research
 
+# Ship part classes
 PC_TRADE
 Trade
 
+# Ship part classes
 PC_PRODICTION_LOCATION
 Production
 
 # Visibility levels
-
 VIS_NO_VISIBILITY
 Invisible
 
+# Visibility levels
 VIS_BASIC_VISIBILITY
 Basic
 
+# Visibility levels
 VIS_PARTIAL_VISIBILITY
 Partial
 
+# Visibility levels
 VIS_FULL_VISIBILITY
 Full
 
@@ -7780,26 +8139,59 @@ Complex Variable
 DESC_VARIABLE_NAME
 Variable Name
 
-# this one is intentionally left empty
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE1
 %1%'s %2%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE2
 %1%'s %2%'s %3%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE3
 %1%'s %2%'s %3%'s %4%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE4
 %1%'s %2%'s %3%'s %4%'s %5%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
+# %6% fourth dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE5
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%
 
-# six is probably more than will be needed, but just in case ...
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
+# %6% fourth dependent property referenced by the FOCS variable.
+# %7% fifth dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE6
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
 
@@ -7808,22 +8200,27 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 ## FOCS effect descriptions
 ##
 
+# %1% textual description of the scope of this effect.
 DESC_EFFECTS_GROUP_SCOPE
 Objects affected: Any object%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
 Objects affected: Source object only
 
+# %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 Effect is active if the source is an object%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is always active
 
+# %1% textual description of the effect group.
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 '''%1%
 '''
 
+# %1% index of the effect group.
+# %2% textual description of the effect group.
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 '''Effects group %1%:
 %2%
@@ -7834,15 +8231,27 @@ DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 ## FOCS meter setter
 ##
 
+# %1% name of the meter modified.
+# %2% operator used to apply the value to the meter (+, -, /, *, ...).
+# %3% constant number applied to the to the meter.
 DESC_SIMPLE_SET_METER
 %1% %2%%3%
 
+# %1% name of the meter modified.
+# %2% textual description of the value applied to the meter.
 DESC_COMPLEX_SET_METER
 Set %1% to %2%
 
+# %1% name of the meter modified.
+# %2% name of the ship part where this parameter is applied to.
+# %3% textual description of the value applied to the meter.
 DESC_SET_SHIP_PART_METER
 Set %1% for %2% to %3%
 
+# %1% either name of the empire or a description of empire the meter will
+      modify.
+# %2% name of the meter modified.
+# %3% textual description of the value applied to the meter.
 DESC_SET_EMPIRE_METER
 Set %2% of the %1% empire to %3%
 
@@ -7851,87 +8260,143 @@ Set %2% of the %1% empire to %3%
 ## FOCS other setters
 ##
 
+# %1% name of the stockpile resource set
+# %2% textual description of the value applied to the stockpile.
+# %3% name of the empire that owns the stockpile
 DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the %3% empire to %2%
 
+# %1% name of the empire which should change their capital planet.
 DESC_SET_EMPIRE_CAPITAL
 Makes the object the capital planet of the %1% empire
 
+# %1% planet type the target planet should change to.
 DESC_SET_PLANET_TYPE
 Changes the planet's type to %1%
 
+# %1% planet size the target planet should change to.
 DESC_SET_PLANET_SIZE
 Changes the planet's size to %1%
 
+# %1% name of the species which should colonize/own this object.
 DESC_SET_SPECIES
 Changes the object's species to %1%
 
+# %1% name of the empire which should own this object.
 DESC_SET_OWNER
 Sets %1% as the owner of object
 
 DESC_DESTROY
 Destroys object
 
+# %1% name of the special which should be attached to the object.
+# %2% capacity of the special, which should be attached to the object.
 DESC_ADD_SPECIAL
 Attaches %1% special to object
 
+# %1% name of the special which should be dettached to the object.
 DESC_REMOVE_SPECIAL
 Removes %1% special from object
 
+# %1% textual description of starlane endpoints.
 DESC_ADD_STARLANES
 Creates starlanes between the target system and the system of objects%1%
 
+# %1% textual description of starlane endpoints.
 DESC_REMOVE_STARLANES
 Removes starlanes between the target system and the system of objects%1%
 
+# %1% star type the target star system should change to.
 DESC_SET_STAR_TYPE
 Changes the star's type to %1%
 
+# %1% textual description of the location this object should be moved to.
 DESC_MOVE_TO
 Moves the object to the location of an object%1%
 
+# %1% textual description of the object, which acts as pivot point.
+# %2% textual description of the angular speed.
 DESC_MOVE_IN_ORBIT_OF_OBJECT
 Moves the object in orbit of an object%1% at speed %2%
 
+# %1% textual description of the x coordinate, which acts together with y as
+#     pivot point.
+# %2% textual description of the y coordinate, which acts together with x as
+#     pivot point.
+# %3% textual description of the angular speed.
 DESC_MOVE_IN_ORBIT_OF_XY
 Moves the object in orbit of an object located at %1% and %2% at speed %3%
 
+# %1% textual description of the object, which acts as move destination.
+# %2% textual description of the linear speed in uu.
 DESC_MOVE_TOWARDS_OBJECT
 Moves the object toward an object%1% at speed %2%
 
+# %1% textual description of the x coordinate, which acts together with y as
+#     move destination.
+# %2% textual description of the y coordinate, which acts together with x as
+#     move destination.
+# %3% textual description of the linear speed in uu.
 DESC_MOVE_TOWARDS_XY
 Moves the object toward an object located at %1% and %2% at speed %3%
 
+# %1% textual description of the fleet destination.
 DESC_SET_DESTINATION
 Sets the destination of the object to an object%1%
 
 DESC_VICTORY
 Causes the object's owner to win the game
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP
 Generates a SitRep message for empire %1%
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP_ALLIES
 Generates a SitRep message for allies of empire %1%
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP_ENEMIES
 Generates a SitRep message for enemies of empire %1%
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP_ALL
 Generates a SitRep message for all empires
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP_NONE
 Generates a SitRep message for no recipients
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP_CAN_SEE
 Generates a SitRep message for empires that can detect an object %2%
 
+# %1% name of the empire, which should recieve the situation report.
+# %2% textual description of the condition when the situation report should be
+#     generated.
 DESC_GENERATE_SITREP_HUMAN
 Generates a SitRep message for human-controlled empires
 
+# %1% name of the technology currently researched.
+# %2% textual representation of the research progress.
+# %3% name of the empire researching the technology.
 DESC_SET_EMPIRE_TECH_PROGRESS
 Sets the research progress of tech %1% to %2% for empire %3%
 
+# %1% name of the technology that should be given.
+# %2% name of the empire recieving the technology.
 DESC_GIVE_EMPIRE_TECH
 Gives tech %1% to empire %2%
 
@@ -7941,20 +8406,32 @@ Modifies the appearance of the object
 DESC_SET_TEXTURE
 Modifies the appearance of the object
 
+# %1% textual representation of the visibility of an object for an empire.
+# %2% name of the empire that will percieve the object.
 DESC_SET_VIS_ALLIES
 Sets the visibility of the object to %1% for allies of empire %2%
+
+# %1% textual representation of the visibility of an object for an empire.
+# %2% name of the empire that will percieve the object.
 DESC_SET_VIS_ENEMIES
 Sets the visibility of the object to %1% for enemies of empire %2%
 
+# %1% textual representation of the visibility of an object for an empire.
+# %2% name of the empire that will percieve the object.
 DESC_SET_VIS_NONE
 Sets the visibility of the object for no empires
 
+# %1% textual representation of the visibility of an object for an empire.
+# %2% name of the empire that will percieve the object.
 DESC_SET_VIS_ALL
 Sets the visibility of the object to %1% for all empires
 
+# %1% textual representation of the visibility of an object for an empire.
+# %2% name of the empire that will percieve the object.
 DESC_SET_VIS
 Sets the visibility of the object to %1% for empire %2%
 
+# %1% textual description the condition required to apply effects.
 DESC_CONDITIONAL
 Applies various effects depending on whether or not the target is an object %1%
 
@@ -7962,24 +8439,35 @@ Applies various effects depending on whether or not the target is an object %1%
 ## FOCS object creation
 ##
 
+# %1% planet type the new planet should be created with.
+# %2% planet size the new planet should be created with.
 DESC_CREATE_PLANET
 Creates a new planet of type %1% and size %2%
 
+# %1% building type that should be created.
 DESC_CREATE_BUILDING
 Creates a new %1% building
 
+# %1% shipdesign to use as a template for the newly created ship.
+# %2% name of the empire which should own the newly created ship.
+# %3% name of the species which should crew the newly created ship.
 DESC_CREATE_SHIP
 Creates a new ship of design %1% owned by the %2% empire crewed by %3%
 
+# %1% shipdesign to use as a template for the newly created ship.
 DESC_CREATE_SHIP_SIMPLE
 Creates a new ship of design %1% with no owner and no species
 
+# %1% field type the new field should be created with.
+# %2% field size the new field should be created with.
 DESC_CREATE_FIELD_SIZE
 Creates a new field of type %1% with radius %2%
 
+# %1% field type the new field should be created with.
 DESC_CREATE_FIELD
 Creates a new field of type %1%
 
+# %1% star type the new system should be created with.
 DESC_CREATE_SYSTEM_TYPE
 Creates a new system of star type %1%
 
@@ -8003,15 +8491,21 @@ DESC_NONE
 DESC_NONE_NOT
 [[DESC_ALL]]
 
+# %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' that belongs to %1% empire'''
 
+# %1% name of the empire this condition does not apply to.
 DESC_EMPIRE_AFFILIATION_SELF_NOT
 ''' that does not belong to %1% empire'''
 
+# %1% the affiliation the empire should have to the object.
+# %2% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION
 ''' that belongs to an %1% of %2% empire'''
 
+# %1% the affiliation the empire should not have to the object.
+# %2% name of the empire this condition does not apply to.
 DESC_EMPIRE_AFFILIATION_NOT
 ''' that does not belong to an %1% of %2% empire'''
 
@@ -8039,9 +8533,11 @@ DESC_TARGET
 DESC_TARGET_NOT
 ''' that is not the target object'''
 
+# %1% name of the species.
 DESC_HOMEWORLD
 ''' that is a homeworld of species %1%'''
 
+# %1% name of the species.
 DESC_HOMEWORLD_NOT
 ''' that is not a homeworld of species %1%'''
 
@@ -8063,222 +8559,356 @@ DESC_ARMED
 DESC_ARMED_NOT
 ''' that is not an armed ship'''
 
+# %1% name of an object type.
 DESC_TYPE
 ''' that is a %1%'''
 
+# %1% name of an object type.
 DESC_TYPE_NOT
 ''' that is not a %1%'''
 
+# %1% name of a building type.
 DESC_BUILDING
 ''' that is a %1% building'''
 
+# %1% name of a building type.
 DESC_BUILDING_NOT
 ''' that is not a %1% building'''
 
+# %1% name of the special the object should have.
 DESC_SPECIAL
 ''' that has a %1% special'''
 
+# %1% name of the special the object should not have.
 DESC_SPECIAL_NOT
 ''' that doesn't have a %1% special'''
 
+# %1% name of the special the object should have.
+# %2% FIXME
+# %3% FIXME
 DESC_SPECIAL_CAPACITY_RANGE
 ''' that has a %1% special with capacity between %2% and %3%'''
 
+# %1% name of the special the object should not have.
+# %2% FIXME
+# %3% FIXME
 DESC_SPECIAL_CAPACITY_RANGE_NOT
 ''' that doesn't have a %1% special with capacity between %2% and %3%'''
 
+# %1% name of the special the object should have.
+# %2% textual description of the lower turn limit.
+# %3% textual description of the upper turn limit.
 DESC_SPECIAL_TURN_RANGE
 ''' that has had a %1% special since between turns %2% and %3%'''
 
+# %1% name of the special the object should not have.
+# %2% textual description of the lower turn limit.
+# %3% textual description of the upper turn limit.
 DESC_SPECIAL_TURN_RANGE_NOT
 ''' that has not had a %1% special since between turns %2% and %3%'''
 
+# %1% textual description of the lower turn limit an object was created.
+# %2% textual description of the upper turn limit an object was created.
 DESC_CREATED_ON_TURN
 ''' that was created between turns %1% and %2%'''
 
+# %1% textual description of the lower turn limit an object was not created.
+# %2% textual description of the upper turn limit an object was not created.
 DESC_CREATED_ON_TURN_NOT
 ''' that was not created between turns %1% and %2%'''
 
+# %1% textual description of an object contained inside another object.
 DESC_CONTAINS
 ''' that contains an object%1%'''
 
+# %1% textual description of an object not contained inside another object.
 DESC_CONTAINS_NOT
 ''' that doesn't contain an object%1%'''
 
+# %1% planet type that should match the condition.
 DESC_PLANET_TYPE
 ''' that is a %1% planet'''
 
+# %1% planet type that should not match the condition.
 DESC_PLANET_TYPE_NOT
 ''' that is not a %1% planet'''
 
+# %1% planet size that should match the condition.
 DESC_PLANET_SIZE
 ''' that is a %1% planet'''
 
+# %1% planet size that should not match the condition.
 DESC_PLANET_SIZE_NOT
 ''' that is not a %1% planet'''
 
+# %1% textual description of the environments for the species.
+# %2% name of the species.
 DESC_PLANET_ENVIRONMENT
 ''' that is a %1% planet for the species %2%'''
 
+# %1% textual description of the environments for the species.
+# %2% name of the species.
 DESC_PLANET_ENVIRONMENT_NOT
 ''' that is not a %1% planet for the species %2%'''
 
 DESC_PLANET_ENVIRONMENT_CUR_SPECIES
 that it currently has
 
+# %1% textual decription of the species.
 DESC_SPECIES
 ''' that has species %1%'''
 
+# %1% textual decription of the species.
 DESC_SPECIES_NOT
 ''' that does not contain species %1%'''
 
+# %1% name of the empire that enqueued items.
+# %2% textual description of the lower limit for the number of enqueued items.
+# %3% textual description of the upper limit for the number of enqueued items.
+# %4% textual description fo the items enqueued.
 DESC_ENQUEUED
 ''' where empire %1% has between %2% and %3% things on the production queue'''
 
+# %1% name of the empire that enqueued items.
+# %2% textual description of the lower limit for the number of enqueued items.
+# %3% textual description of the upper limit for the number of enqueued items.
+# %4% textual description fo the items enqueued.
 DESC_ENQUEUED_NOT
 ''' where empire %1% does not have between %2% and %3% things on the production queue'''
 
+# %1% name of the empire that enqueued buildings.
+# %2% textual description of the lower limit for the number of enqueued buildings.
+# %3% textual description of the upper limit for the number of enqueued buildings.
+# %4% textual description fo the buildings enqueued.
 DESC_ENQUEUED_BUILDING
 ''' where empire %1% has between %2% and %3% %4% buildings on the production queue'''
 
+# %1% name of the empire that enqueued buildings.
+# %2% textual description of the lower limit for the number of enqueued buildings.
+# %3% textual description of the upper limit for the number of enqueued buildings.
+# %4% textual description fo the buildings enqueued.
 DESC_ENQUEUED_BUILDING_NOT
 ''' where empire %1% does not have between %2% and %3% %4% buildings on the production queue'''
 
+# %1% name of the empire that enqueued ships.
+# %2% textual description of the lower limit for the number of enqueued ships.
+# %3% textual description of the upper limit for the number of enqueued ships.
+# %4% textual description fo the ships enqueued.
 DESC_ENQUEUED_DESIGN
 ''' where empire %1% has between %2% and %3% %4% ships on the production queue'''
 
+# %1% name of the empire that enqueued ships.
+# %2% textual description of the lower limit for the number of enqueued ships.
+# %3% textual description of the upper limit for the number of enqueued ships.
+# %4% textual description fo the ships enqueued.
 DESC_ENQUEUED_DESIGN_NOT
 ''' where empire %1% does not have between %2% and %3% %4% ships on the production queue'''
 
+# %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE
 ''' that has focus %1%'''
 
+# %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE_NOT
 ''' that does not have focus %1%'''
 
+# %1% textual description of the star type.
 DESC_STAR_TYPE
 ''' that is a system with a %1% star'''
 
+# %1% textual description of the star type.
 DESC_STAR_TYPE_NOT
 ''' that is not a system with a %1% star'''
 
+# %1% textual description of the hull.
 DESC_DESIGN_HAS_HULL
 ''' that contains the hull %1%'''
 
+# %1% textual description of the hull.
 DESC_DESIGN_HAS_HULL_NOT
 ''' that does not contain the hull %1%'''
 
+# %1% textual description of the lower limit for the number of ship parts.
+# %2% textual description of the upper limit for the number of ship parts.
+# %3% textual description of the ship part.
 DESC_DESIGN_HAS_PART
 ''' that contains between %1% and %2% of the %3% part'''
 
+# %1% textual description of the lower limit for the number of ship parts.
+# %2% textual description of the upper limit for the number of ship parts.
+# %3% textual description of the ship part.
 DESC_DESIGN_HAS_PART_NOT
 ''' that does not contain between %1% and %2% of the %3% part'''
 
+# %1% textual description of the lower limit for the number of ship parts
+#     matching a part class.
+# %2% textual description of the upper limit for the number of ship parts.
+#     matching a part class.
+# %3% textual description of the ship part class.
 DESC_DESIGN_HAS_PART_CLASS
 ''' that has a part of class %1%'''
 
+# %1% textual description of the lower limit for the number of ship parts
+#     matching a part class.
+# %2% textual description of the upper limit for the number of ship parts.
+#     matching a part class.
+# %3% textual description of the ship part class.
 DESC_DESIGN_HAS_PART_CLASS_NOT
 ''' that does not have a part of class %1%'''
 
+# %1% name of the ship design.
 DESC_PREDEFINED_SHIP_DESIGN
 ''' that is of the design %1%'''
 
+# %1% name of the ship design.
 DESC_PREDEFINED_SHIP_DESIGN_NOT
 ''' that is not of the design %1%'''
 
+# %1% ID of the ship design.
 DESC_NUMBERED_SHIP_DESIGN
 ''' that is of the design %1%'''
 
+# %1% ID of the ship design.
 DESC_NUMBERED_SHIP_DESIGN_NOT
 ''' that is not of the design %1%'''
 
+# %1% percentage of a successful chance.
 DESC_CHANCE_PERCENTAGE
 ''' on a %1%%% chance'''
 
+# %1% percentage of a failing chance.
 DESC_CHANCE_PERCENTAGE_NOT
 ''' on a (100 - %1%)%% chance'''
 
+# %1% textual description of a probability.
 DESC_CHANCE
 ''' with a probability of %1%'''
 
+# %1% textual description of a probability.
 DESC_CHANCE_NOT
 ''' with a probability of 1 - %1%'''
 
+# %1% name of the empire producing an item.
 DESC_PRODUCED_BY_EMPIRE
 ''' that was produced by the %1% empire'''
 
+# %1% name of the empire producing an item.
 DESC_PRODUCED_BY_EMPIRE_NOT
 ''' that was not produced by the %1% empire'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT
 ''' that has %1% between %2% and %3%'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_NOT
 ''' that doesn't have a %1% between %2% and %3%'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
 DESC_METER_VALUE_CURRENT_MIN
 ''' that has %1% of at least %2%'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
 DESC_METER_VALUE_CURRENT_MIN_NOT
 ''' that has %1% more than %2%'''
 
+# %1% name of the meter.
+# %2% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_MAX
 ''' that has %1% of at most %2%'''
 
+# %1% name of the meter.
+# %2% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_MAX_NOT
 ''' that has %1% less than %2%'''
 
+# %1% name of the ship meter.
+# %2% textual description of the ship part.
+# %3% textual description of the lower limit for the meter value.
+# %4% textual description of the upper limit for the meter value.
 DESC_SHIP_PART_METER_VALUE_CURRENT
 ''' that has %2% %1% between %3% and %4%'''
 
+# %1% name of the ship eter.
+# %2% textual description of the ship part.
+# %3% textual description of the lower limit for the meter value.
+# %4% textual description of the upper limit for the meter value.
 DESC_SHIP_PART_METER_VALUE_CURRENT_NOT
 ''' that doesn't have %2% %1% between %3% and %4%'''
 
+# %1% name of the empire meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
+# %4% textual description of the empire which owns the meter.
 DESC_EMPIRE_METER_VALUE_CURRENT
 ''' if empire %4% has %1% between %2% and %3%'''
 
+# %1% name of the empire meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
+# %4% textual description of the empire which owns the meter.
 DESC_EMPIRE_METER_VALUE_CURRENT_NOT
 ''' if empire %4% doesn't have %1% between %2% and %3%'''
 
+# %1% type of stockpile resource.
+# %2% textual description of the lower limit for the stockpile value.
+# %3% textual description of the upper limit for the stockpile value.
 DESC_EMPIRE_STOCKPILE_VALUE
 ''' that belongs to an empire with %1% stockpile between %2% and %3%'''
 
+# %1% type of stockpile resource.
+# %2% textual description of the lower limit for the stockpile value.
+# %3% textual description of the upper limit for the stockpile value.
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
 ''' that doesn't belong to an empire with %1% stockpile between %2% and %3%'''
 
+# %1% textual description of the empire.
 DESC_VISIBLE_TO_EMPIRE
 ''' that is visible to the %1% empire'''
 
+# %1% textual description of the empire.
 DESC_VISIBLE_TO_EMPIRE_NOT
 ''' that is not visible to the %1% empire'''
 
+# %1% distance in universe units.
+# %2% textual description of the target object.
 DESC_WITHIN_DISTANCE
 ''' that is within %1% of any object%2%'''
 
+# %1% distance in universe units.
+# %2% textual description of the target object.
 DESC_WITHIN_DISTANCE_NOT
 ''' that is not within %1% of any object%2%'''
 
+# %1% number of starlane jumps.
+# %2% textual description of the target object.
 DESC_WITHIN_STARLANE_JUMPS
 ''' that is within %1% starlane jumps of any object%2%'''
 
+# %1% number of starlane jumps.
+# %2% textual description of the target object.
 DESC_WITHIN_STARLANE_JUMPS_NOT
 ''' that is not within %1% starlane jumps of any object%2%'''
 
+# %1% textual description of the far endpoint system the starlane connects to.
 DESC_CAN_ADD_STARLANE_CONNECTION
 ''' that can have starlanes added connecting to all systems that contain objects%1%'''
 
+# %1% textual description of the far endpoint system the starlane connects to.
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
 ''' that can not have starlanes added connecting to all systems that contain objects%1%'''
 
-DESC_CAN_REMOVE_STARLANE_CONNECTION
-''' that can have starlanes removed that connect to all systems that contain objects%1%'''
-
-DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
-''' that can not have starlanes removed that connect to all systems that contain objects%1%'''
-
+# %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE
 ''' that has been explored by the %1% empire'''
 
+# %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE_NOT
 ''' that has not been explored by the %1% empire'''
 
@@ -8318,15 +8948,21 @@ DESC_SUPPLY_CONNECTED_FLEET
 DESC_SUPPLY_CONNECTED_FLEET_NOT
 ''' that is not in a system where the %1% empire can provide fleet supply'''
 
+# %1% textual description of the empire.
+# %2% textual description of the condition.
 DESC_SUPPLY_CONNECTED_RESOURCE
 ''' that is resource connected for the %1% empire to an object%2%'''
 
+# %1% textual description of the empire.
+# %2% textual description of the condition.
 DESC_SUPPLY_CONNECTED_RESOURCE_NOT
 ''' that is not resource connected for the %1% empire to an object%2%'''
 
+# %1% textual description of the bombarding object.
 DESC_ORDERED_BOMBARDED
 ''' that is being bombarded by an object %1%'''
 
+# %1% textual description of the bombarding object.
 DESC_ORDERED_BOMBARDED_NOT
 ''' that is not being bombarded by an object %1%'''
 
@@ -8336,21 +8972,29 @@ DESC_AND_BETWEEN_OPERANDS
 DESC_OR_BETWEEN_OPERANDS
 ''' or'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN
 ''' on turns between %1% and %2%'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN_NOT
 ''' except between turns %1% and %2%'''
 
+# %1% textual description of the lower turn limit.
 DESC_TURN_MIN_ONLY
 ''' starting on turn %1%'''
 
+# %1% textual description of the lower turn limit.
 DESC_TURN_MIN_ONLY_NOT
 ''' before turn %1%'''
 
+# %1% textual description of the upper turn limit.
 DESC_TURN_MAX_ONLY
 ''' until turn %1%'''
 
+# %1% textual description of the upper turn limit.
 DESC_TURN_MAX_ONLY_NOT
 ''' after turn %1%'''
 
@@ -8360,45 +9004,73 @@ DESC_TURN_ANY
 DESC_TURN_ANY_NOT
 ''' on no turn'''
 
+# %1% FIXME
+# %2% FIXME
 DESC_NUMBER_OF
 ''' that is one of %1% randomly selected objects%2%'''
 
+# %1% FIXME
+# %2% FIXME
 DESC_NUMBER_OF_NOT
 ''' that is not one of %1% randomly selected objects%2%'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_MAX_NUMBER_OF
 ''' that is one of %1% objects with the largest value of%2% and%3%'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_MAX_NUMBER_OF_NOT
 ''' that is not one of %1% objects with the largest value of%2% and%3%'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_MIN_NUMBER_OF
 ''' that is one of %1% objects with the smallest value of%2% and%3%'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_MIN_NUMBER_OF_NOT
 ''' that is not one of %1% objects with the smallest value of%2% and%3%'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_MODE_NUMBER_OF
 ''' that is one of %1% objects with the most common value of%2% and%3%'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_MODE_NUMBER_OF_NOT
 ''' that is not one of %1% objects with the most common value of%2% and%3%'''
 
+# %1% FIXME
 DESC_VALUE_TEST
 ''' when %1%'''
 
+# %1% FIXME
 DESC_VALUE_TEST_NOT
 ''' unless %1%'''
 
+# %1% FIXME
 DESC_CONTAINED_BY
 ''' that is contained by an object%1%'''
 
+# %1% FIXME
 DESC_CONTAINED_BY_NOT
 ''' that is not contained by an object%1%'''
 
+# %1% FIXME
 DESC_IN_SYSTEM
 ''' that is in the system with id %1%'''
 
+# %1% FIXME
 DESC_IN_SYSTEM_NOT
 ''' that is not in the system with id %1%'''
 
@@ -8408,15 +9080,19 @@ DESC_IN_SYSTEM_SIMPLE
 DESC_IN_SYSTEM_SIMPLE_NOT
 ''' that is not in a system'''
 
+# %1% FIXME
 DESC_OBJECT_ID
 ''' that is the object with id %1%'''
 
+# %1% FIXME
 DESC_OBJECT_ID_NOT
 ''' that is not the object with id %1%'''
 
+# %1% FIXME
 DESC_OWNER_HAS_TECH
 ''' that belongs to an empire that has the tech %1%'''
 
+# %1% FIXME
 DESC_OWNER_HAS_TECH_NOT
 ''' that does not belong to an empire that has the tech %1%'''
 
@@ -8432,15 +9108,20 @@ DESC_OWNER_HAS_SHIP_DESIGN
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
 ''' ship design not unlocked for empire'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_NUMBER
 ''' if there are between %1% and %2% objects%3%'''
 
 DESC_NUMBER_NOT
 ''' if there are not between %1% and %2% objects%3%'''
 
+# %1% an object tag string.
 DESC_HAS_TAG
 ''' that is %1%'''
 
+# %1% an object tag string.
 DESC_HAS_TAG_NOT
 ''' that is not %1%'''
 
@@ -10793,27 +11474,39 @@ BLD_COL_SUPER_TEST_DESC
 ## Hull and ship part description templates
 ##
 
+# %1% hull base starlane speed.
+# %2% hull base fuel capacity.
+# %3% hull base starlane speed.
+# %4% hull base structure value.
 HULL_DESC
 '''[[encyclopedia STARLANE_SPEED_TITLE]]: %1%
 [[encyclopedia FUEL_TITLE]]: %2%
 [[encyclopedia STRUCTURE_TITLE]]: %4%'''
 
+# %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Capacity: %1%
 
+# %1% ship part strength (other).
 PART_DESC_STRENGTH
 Strength: %1%
 
+# %1% ship part strength (shield).
 PART_DESC_SHIELD_STRENGTH
 Shield Strength: %1%
 
+# %1% ship part strength (detection).
 PART_DESC_DETECTION
 [[encyclopedia DETECTION_RANGE_TITLE]]: %1%
 
+# %1% ship part damage done (direct fire weapons).
+# %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
 '''Shot [[encyclopedia DAMAGE_TITLE]]: %1%
 Shots per Attack: %2%'''
 
+# %1% ship part damage done (fighters).
+# %2% number of deployable fighters.
 PART_DESC_HANGAR_STATS
 '''Shot [[encyclopedia DAMAGE_TITLE]]: %2%
 Fighter Capacity: %1%'''
@@ -12212,24 +12905,31 @@ TELEPATHIC_DETECTION
 ## Accounting labels
 ##
 
+# %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
 %1% Average [[encyclopedia INFRASTRUCTURE_TITLE]]
 
+# %1% FIXME
 GOOD_ENVIRONMENT_LABEL
 %1% Good Environment
 
+# %1% FIXME
 ADEQUATE_ENVIRONMENT_LABEL
 %1% Adequate Environment
 
+# %1% FIXME
 POOR_ENVIRONMENT_LABEL
 %1% Poor Environment
 
+# %1% FIXME
 HOSTILE_ENVIRONMENT_LABEL
 %1% Hostile Environment
 
+# %1% FIXME
 UNINHABTIABLE_ENVIRONMENT_LABEL
 %1% Uninhabitable Environment
 
+# %1% FIXME
 ENV_ENCAPSUL_LABEL
 %1% Environmental Encapsulation
 
@@ -12251,84 +12951,132 @@ Tidally Locked Rotation
 HOMEWORLD_LABEL
 Homeworld
 
+# %1% FIXME
+# %2% FIXME
 BAD_POPULATION_LABEL
 %2% Bad Population 75%%
 
+# %1% FIXME
+# %2% FIXME
 GOOD_POPULATION_LABEL
 %2% Good Population 125%%
 
+# %1% FIXME
 FOCUS_MINING_LABEL
 %1% Mining Focus
 
+# %1% FIXME
 FOCUS_HEAVY_MINING_LABEL
 %1% Heavy Mining Focus
 
+# %1% FIXME
 BAD_MINING_LABEL
 %1% Bad Mining
 
+# %1% FIXME
 GOOD_MINING_LABEL
 %1% Good Mining
 
+# %1% FIXME
 GREAT_MINING_LABEL
 %1% Great Mining
 
+# %1% FIXME
 ULTIMATE_MINING_LABEL
 %1% Ultimate Mining
 
+# %1% FIXME
+# %2% FIXME
 FOCUS_INDUSTRY_LABEL
 %2% Industry Focus
 
+# %1% FIXME
+# %2% FIXME
 BAD_INDUSTRY_LABEL
 %2% Bad Industry
 
+# %1% FIXME
+# %2% FIXME
 GOOD_INDUSTRY_LABEL
 %2% Good Industry
 
+# %1% FIXME
+# %2% FIXME
 GREAT_INDUSTRY_LABEL
 %2% Great Industry
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_INDUSTRY_LABEL
 %2% Ultimate Industry
 
+# %1% FIXME
+# %2% FIXME
 FOCUS_RESEARCH_LABEL
 %2% Research Focus
 
+# %1% FIXME
+# %2% FIXME
 BAD_RESEARCH_LABEL
 %2% Bad Research
 
+# %1% FIXME
+# %2% FIXME
 GOOD_RESEARCH_LABEL
 %2% Good Research
 
+# %1% FIXME
+# %2% FIXME
 GREAT_RESEARCH_LABEL
 %2% Great Research
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_RESEARCH_LABEL
 %2% Ultimate Research
 
+# %1% FIXME
+# %2% FIXME
 BAD_SUPPLY_LABEL
 %2% Bad Supply
 
+# %1% FIXME
+# %2% FIXME
 AVERAGE_SUPPLY_LABEL
 %2% Average Supply
 
+# %1% FIXME
+# %2% FIXME
 GREAT_SUPPLY_LABEL
 %2% Great Supply
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_SUPPLY_LABEL
 %2% Ultimate Supply
 
+# %1% FIXME
+# %2% FIXME
 BAD_TROOPS_LABEL
 %2% Bad Ground Troops
 
+# %1% FIXME
+# %2% FIXME
 AVERAGE_TROOPS_LABEL
 %2% Average Ground Troops
 
+# %1% FIXME
+# %2% FIXME
 GOOD_TROOPS_LABEL
 %2% Good Ground Troops
 
+# %1% FIXME
+# %2% FIXME
 GREAT_TROOPS_LABEL
 %2% Great Ground Troops
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_TROOPS_LABEL
 %2% Ultimate Ground Troops
 
@@ -12341,9 +13089,13 @@ Megalith
 OUTPOST_TROOP_LABEL
 Outpost
 
+# %1% FIXME
+# %2% FIXME
 NATIVE_PLANETARY_DEFENSE_LABEL
 %2% Planetary Defense
 
+# %1% FIXME
+# %2% FIXME
 NATIVE_PLANETARY_SHIELDS_LABEL
 %2% Planetary Shields
 
@@ -12486,47 +13238,47 @@ Orbital
 ## AI strings
 ##
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
-
-### Beginning of AI Aggression Level Capital Name Lists
+# Newline separated list of capitol names for beginner AIs
 AI_CAPITOL_NAMES_BEGINNER
 '''Ivory Tower
 Nunnery
 Monastery
 Orphanage'''
 
+# Newline separated list of capitol names for turtle AIs
 AI_CAPITOL_NAMES_TURTLE
 '''Citadel
 Prison'''
 
+# Newline separated list of capitol names for cautious AIs
 AI_CAPITOL_NAMES_CAUTIOUS
 '''Bastion
 Stronghold'''
 
+# Newline separated list of capitol names for typical AIs
 AI_CAPITOL_NAMES_TYPICAL
 '''Haven
 Free Trade Zone
 Homeworld'''
 
+# Newline separated list of capitol names for aggressive AIs
 AI_CAPITOL_NAMES_AGGRESSIVE
 '''Royal
 Imperial'''
 
+# Newline separated list of capitol names for maniacal AIs
 AI_CAPITOL_NAMES_MANIACAL
 '''Glorious
 Supreme
 Eternal
 Invincible'''
 
-### End of Capital Names Lists
-
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 AI_SHIPDESIGN_NAME_INVALID
 Invalid Design
 
+# Newline separated list of military ship names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_MILITARY
 '''Harpy
 Gorgon
@@ -12547,23 +13299,41 @@ Hades
 Nemesis
 Zeus'''
 
+# Newline separated list of local troop transporter names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
 SpaceInvaders
 
+# Newline separated list of troop transporter names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_TROOPER_STANDARD
 '''Assault Ship
 Storm Troopers
 Heavy Troopers'''
 
+# Newline separated list of local colonization ship names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL
 Orbital Seeder
 
+# Newline separated list of colonization ship names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_COLONISATION_STANDARD
 Seeder
 
+# Newline separated list of local outpost ship names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_OUTPOSTER_ORBITAL
 Orbital Outposter
 
+# Newline separated list of outpost ship names owned by AIs.
+# The usage is determined by a rating defined inside the AI scripts. The names
+# are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD
 Outposter
 
@@ -12577,59 +13347,66 @@ Scout
 AI_SHIPDESIGN_NAME_KRILLSPAWNER
 Krill Spawner
 
-### End of AI Shipdesign Name Lists
 
 ##
 ## AI diplomacy strings and lists
 ##
-## Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-## For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
 
+# Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Nice to hear from you again.
 Receipt of transmission acknowledged.
 '''
 
+# Newline separated list of harsh peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
 '''What? Aren't you dead yet?
 Oh, not another pathetic sob story, please!
 '''
 
+# Newline separated list of polite positive peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
 '''We will be happy to trust your good intentions.
 Whatever you say, Boss.  Everyone says you are very trustworthy.
 '''
 
+# Newline separated list of polite negative peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST
 '''Unfortunately, that would be very inconvenient at this time.
 We regret to inform you that we are unable to comply with that request.
 '''
 
+# Newline separated list of harsh positive peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
 '''Out of pity, we will agree to not attack you.  For now.
 Feeble Beings!  There would be little honor in vanquishing you.
 '''
 
+# Newline separated list of harsh negative peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST
 '''We will see you dead first!
 You will not have peace until all your base r belong to us!
 '''
 
+# Newline separated list of polite war declarations.
 AI_WAR_REDECLARATION_MILD_LIST
 '''Oh dear! Apparently there were irregularities in our previous negotiations and the Peace Treaty was not ratified at all!  We regret to inform you that our empires are still at war.
 Today was the day that you said the other day that we would go to war together again, right?
 '''
 
+# Newline separated list of harsh war declarations.
 AI_WAR_REDECLARATION_HARSH_LIST
 '''Our Younglings thirst for you blood!  Prepare for War!
 You fools did not believe this peace would last, did you?
 '''
 
+# Newline separated pre-game acknowledgements.
 AI_PREGAME_ACKNOWLEDGEMENTS__LIST
 '''I am meditating, awaiting instructions from God.  Call again later.
 Whispers from the Void?  How can that be?
 '''
 
+# Newline separated in-game acknowledgements.
 AI_MIDGAME_ACKNOWLEDGEMENTS__LIST
 '''Hang on, please. I am still trying to figure out how to do a proper Turing test on you.
 Didn't Stephen Hawking warn you not to talk to us?
@@ -12637,6 +13414,7 @@ My Progenitor warned me to never engage in cross-galaxy communications with alie
 Don't bother me, I'm eating... aliens!
 '''
 
+# Newline separated list of 'don't bother me' responses.
 AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST
 '''We didn't want to talk to you anymore, anyway!
 Ok, Bye.
@@ -12715,28 +13493,29 @@ Surrender now, and we might consider letting you live... as our slaves forever.
 AI_FIRST_TURN_GREETING_MSG608
 Sending you to your ancestors is our sacred duty!
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
-
+# Don't translate this entry.
 AI_FIRST_TURN_GREETING_LIST_BEGINNER
 '''AI_FIRST_TURN_GREETING_MSG101
 AI_FIRST_TURN_GREETING_MSG102
 AI_FIRST_TURN_GREETING_MSG103'''
 
+# Don't translate this entry.
 AI_FIRST_TURN_GREETING_LIST_TURTLE
 '''AI_FIRST_TURN_GREETING_MSG201
 AI_FIRST_TURN_GREETING_MSG202'''
 
+# Don't translate this entry.
 AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
 '''AI_FIRST_TURN_GREETING_MSG301
 AI_FIRST_TURN_GREETING_MSG302'''
 
+# Don't translate this entry.
 AI_FIRST_TURN_GREETING_LIST_TYPICAL
 '''AI_FIRST_TURN_GREETING_MSG401
 AI_FIRST_TURN_GREETING_MSG402
 AI_FIRST_TURN_GREETING_MSG403'''
 
+# Don't translate this entry.
 AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
 '''AI_FIRST_TURN_GREETING_MSG501
 AI_FIRST_TURN_GREETING_MSG502
@@ -12745,6 +13524,7 @@ AI_FIRST_TURN_GREETING_MSG504
 AI_FIRST_TURN_GREETING_MSG505
 AI_FIRST_TURN_GREETING_MSG506'''
 
+# Don't translate this entry.
 AI_FIRST_TURN_GREETING_LIST_MANIACAL
 '''AI_FIRST_TURN_GREETING_MSG601
 AI_FIRST_TURN_GREETING_MSG602
@@ -12897,6 +13677,7 @@ Toggle fullscreen
 ## Name lists
 ##
 
+# Newline separated list of star cluster names
 STAR_GROUP_WORDS
 '''Alpha
 Beta
@@ -12923,6 +13704,7 @@ Chi
 Psi
 Omega'''
 
+# Newline separated list of star cluster suffixes
 STAR_GROUP_CHARS
 '''α
 β
@@ -12949,9 +13731,11 @@ STAR_GROUP_CHARS
 ψ
 ω'''
 
+# Newline separated list of star cluster names
 STAR_GROUP_NAMES
 Centauri
 
+# Newline separated list of star names
 STAR_NAMES
 '''Aadhavan
 Aaftaab
@@ -14325,6 +15109,7 @@ Zygot
 Zyrgon
 '''
 
+# Newline separated list of empire names
 EMPIRE_NAMES
 '''Academy
 Accord
@@ -14436,6 +15221,7 @@ Union
 Unity
 Zone'''
 
+# Newline separated list of mammal-based ship names
 SHIP_NAME_MAMMALS
 '''Aardvark
 Aardwolf
@@ -14571,6 +15357,7 @@ Wolverine
 Wombat
 Zebra'''
 
+# Newline separated list of bird-based ship names
 SHIP_NAME_BIRDS
 '''Albatross
 Canary
@@ -14603,6 +15390,7 @@ Swan
 Thrush
 Woodpecker'''
 
+# Newline separated list of ship-based ship names
 SHIP_NAME_FISH
 '''Albacore
 Anchovy
@@ -14631,6 +15419,7 @@ Stingray
 Trout
 Walleye'''
 
+# Newline separated list of plant-based ship names
 SHIP_NAME_FLORA
 '''Almond
 Apple
@@ -14679,6 +15468,7 @@ Spruce
 Sumac
 Willow'''
 
+# Newline separated list of mineral-based ship names
 SHIP_NAME_STONE
 '''Amphibolite
 Andesite
@@ -14702,6 +15492,7 @@ Schist
 Shale
 Slate'''
 
+# Newline separated list of weather-based ship names
 SHIP_NAME_WEATHER
 '''Autumn
 Avalanche
@@ -14748,6 +15539,7 @@ Whirlwind
 Wind
 Winter'''
 
+# Newline separated list of star constellationbased ship names
 SHIP_NAME_CONSTELLATIONS
 '''Andromeda
 Antlia
@@ -14832,6 +15624,7 @@ Virgo
 Volans
 Vulpecula'''
 
+# Newline separated list of various namebased ship names
 SHIP_NAME_STARS
 '''Acamar
 Achernar
@@ -15167,6 +15960,7 @@ Vichruta
 Vishaaka
 Vrishchika'''
 
+# Newline separated list of roman mythology-based ship names
 SHIP_NAME_ROMAN_MYTHOLOGY
 '''Aurora
 Auster
@@ -15202,6 +15996,7 @@ Vesper
 Vesta
 Vulturnus'''
 
+# Newline separated list of greek mythology-based ship names
 SHIP_NAME_GREEK_MYTHOLOGY
 '''Aesculapius
 Achelois
@@ -15363,6 +16158,7 @@ Typhon
 Zephyrus
 Zeus'''
 
+# Newline separated list of norse mythology-based ship names
 SHIP_NAME_NORSE_MYTHOLOGY
 '''Aegir
 Alaisiagae
@@ -15480,6 +16276,7 @@ Vili
 Yggdrasil
 Ymir'''
 
+# Newline separated list of basque mythology-based ship names
 SHIP_NAME_BASQUE_MYTHOLOGY
 '''Aatxe
 Adur
@@ -15563,7 +16360,8 @@ Yaun
 Zezengorri
 Zuberoa'''
 
-# TODO: Sort these into their proper locations?
+# FIXME: Sort these into their proper locations?
+# Newline separated list of various mythology-based ship names
 SHIP_NAME_UNSORTED_MYTHOLOGY
 '''Gorgon
 Sphinx
@@ -15739,6 +16537,7 @@ Wyvern
 Yuki-onna
 Yuurei'''
 
+# Newline separated list of scientist-based ship names
 SHIP_NAME_SCIENTISTS
 '''Ampere
 Angstrom
@@ -15836,6 +16635,7 @@ Volta
 Voltaire
 Watson'''
 
+# Newline separated list of author-based ship names
 SHIP_NAME_AUTHORS
 '''Adams
 Aldiss
@@ -15964,6 +16764,7 @@ Wolverton
 Zahn
 Zelazny'''
 
+# Newline separated list of artist-based ship names
 SHIP_NAME_ARTISTS
 '''Botticelli
 Bruegel
@@ -16087,6 +16888,7 @@ Virtue
 Wisdom
 Zeal'''
 
+# Newline separated list of emotion-based ship names
 SHIP_NAME_EMOTIONS
 '''Acceptance
 Agony
@@ -16119,6 +16921,7 @@ Sorrow
 Surprise
 Suspicion'''
 
+# Newline separated list of architecture-based ship names
 SHIP_NAME_ARCHITECTURE
 '''Apex
 Arch
@@ -16150,6 +16953,7 @@ Veranda
 Wall
 Window'''
 
+# Newline separated list of "master of orion 2"-based ship names
 SHIP_NAME_MOO2_STARS
 '''Akrab
 Endoria
@@ -16169,6 +16973,7 @@ Yekub'''
 SHIP_NAME_OTHER
 Eternal September
 
+# Newline separated list of developer name based ship names
 SHIP_NAME_DEVS
 '''Adrian Broher
 Aquataine
