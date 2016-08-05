@@ -1369,9 +1369,6 @@ Spiel starten
 GSETUP_WINDOW_TITLE
 Galaxie erzeugen
 
-GSETUP_GRAPHICS_FILES
-Grafikdateien
-
 GSETUP_PLAYER_NAME
 Name des Spielers
 
@@ -1392,9 +1389,6 @@ Saat
 
 GSETUP_RANDOM_SEED
 Erzeuge eine zufällige Saat
-
-GSETUP_RANDOMIZE
-Randomisieren
 
 GSETUP_STARS
 Systeme
@@ -1514,9 +1508,6 @@ Aggressiv
 # AI aggression level.
 GSETUP_MANIACAL
 Wahnsinnig
-
-GSETUP_ERR_NOEXIST
-existiert nicht.
 
 
 ##
@@ -2082,9 +2073,6 @@ Hier klicken um das Forschungsmenü zu öffnen'''
 MAP_POPULATION_DISTRIBUTION
 Volkszählung
 
-#MAP_POPULATION_COUNT
-#%1%: %2%
-
 CENSUS_SPECIES_HEADER
 Spezies
 
@@ -2281,11 +2269,6 @@ Fokus: %1%
 ## Side panel/Buildings panel
 ##
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (unvollständig)
-
-%2%'''
-
 ORDER_BUIDLING_SCRAP
 Gebäude abreißen
 
@@ -2310,9 +2293,6 @@ TT_CHANGE
 # %2% the meter value.
 #TT_BREAKDOWN_SUMMARY
 #%1%: %2%
-
-TT_TARGETS_BREAKDOWN_SUMMARY
-%1% Änderungen: %2%
 
 TT_INHERENT
 Inhärent
@@ -2354,12 +2334,6 @@ Spezies <i>%2%</i>
 
 TT_UNKNOWN
 Unbekannt
-
-TT_RESOURCE_PRODUCTION
-%1% produziert %2%
-
-TT_RESOURCE_ALLOCATION
-%1% verbraucht %2%
 
 # %1% name of the species.
 #TT_SPECIES_POPULATION
@@ -2460,9 +2434,6 @@ Flotte in %1%
 # Fleet window title
 FW_GENERIC_FLEETS
 Flotten
-
-FW_HOME_FLEET
-Heimatflotte
 
 FW_BATTLE_FLEET
 Kampfflotte
@@ -2621,12 +2592,6 @@ Friedensangebot annehmen
 TECH_DISPLAY
 Anzeige
 
-#TECH_NAVIGATION
-#Navigation
-
-TECH_TOTAL_COST_STR
-%1% FP und %2% Rnd
-
 # %1% amount of research points required to research the technology.
 # %2% number of turns required to research the technology.
 TECH_TOTAL_COST_ALT_STR
@@ -2767,9 +2732,6 @@ Verfügbar
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Nicht verfüg.
-
-PRODUCTION_TOTAL_COST_STR
-%1% PP und %2% Rnd
 
 # %1% currently used amount of production points used per turn to build an item.
 # %2% maximum available amount of production points for this turn.
@@ -3378,9 +3340,6 @@ Kampffenster
 COMBAT_BATTLE
 '''KAMPF : '''
 
-COMBAT_SYSTEM
-Das %1% System
-
 COMBAT_MILITARY_SHIPS
 Militärschiffe
 
@@ -3499,15 +3458,6 @@ Aufklappen
 ##
 ## Objects columns
 ##
-
-#COLUMN_SORT_NONE
-#%1%
-
-#COLUMN_SORT_ASCENDING
-#%1% △
-
-#COLUMN_SORT_DESCENDING
-#%1% ▽
 
 AGE
 Alter
