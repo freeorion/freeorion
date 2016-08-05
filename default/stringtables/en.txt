@@ -1914,9 +1914,6 @@ Start game
 GSETUP_WINDOW_TITLE
 Galaxy Setup
 
-GSETUP_GRAPHICS_FILES
-Graphics Files
-
 GSETUP_PLAYER_NAME
 Player Name
 
@@ -1937,9 +1934,6 @@ Seed
 
 GSETUP_RANDOM_SEED
 Generate a random seed
-
-GSETUP_RANDOMIZE
-Randomize
 
 GSETUP_STARS
 Systems
@@ -2060,8 +2054,6 @@ Aggressive
 GSETUP_MANIACAL
 Maniacal
 
-GSETUP_ERR_NOEXIST
-does not exist.
 
 ##
 ## About dialog
@@ -2793,9 +2785,6 @@ Click here to open the research menu'''
 MAP_POPULATION_DISTRIBUTION
 Census
 
-MAP_POPULATION_COUNT
-%1%: %2%
-
 CENSUS_SPECIES_HEADER
 Species
 
@@ -3012,16 +3001,6 @@ Present Since the Initial Turn
 ## Side panel/Buildings panel
 ##
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Incomplete)
-
-%2%'''
-
-BP_COMPLETE_BUILDING_TOOLTIP
-'''%1%
-
-%2%'''
-
 ORDER_BUIDLING_SCRAP
 Scrap Building
 
@@ -3046,9 +3025,6 @@ Change
 # %2% the meter value.
 TT_BREAKDOWN_SUMMARY
 %1%: %2%
-
-TT_TARGETS_BREAKDOWN_SUMMARY
-%1% Modifications: %2%
 
 TT_INHERENT
 Inherent
@@ -3090,12 +3066,6 @@ TT_FIELD
 
 TT_UNKNOWN
 Unknown
-
-TT_RESOURCE_PRODUCTION
-%1% produces %2%
-
-TT_RESOURCE_ALLOCATION
-%1% consumes %2%
 
 # %1% name of the species.
 TT_SPECIES_POPULATION
@@ -3207,9 +3177,6 @@ Fleets At %1%
 # Fleet window title
 FW_GENERIC_FLEETS
 Fleets
-
-FW_HOME_FLEET
-Home Fleet
 
 FW_BATTLE_FLEET
 Battle Fleet
@@ -3399,12 +3366,6 @@ Accept Peace Proposal
 TECH_DISPLAY
 Display
 
-TECH_NAVIGATION
-Navigation
-
-TECH_TOTAL_COST_STR
-%1% RP and %2% Turns
-
 # %1% amount of research points required to research the technology.
 # %2% number of turns required to research the technology.
 TECH_TOTAL_COST_ALT_STR
@@ -3554,9 +3515,6 @@ Unavailable
 PRODUCTION_WND_REDUNDANT
 Redundant
 
-PRODUCTION_TOTAL_COST_STR
-%1% PP and %2% Turns
-
 # %1% currently used amount of production points used per turn to build an item.
 # %2% maximum available amount of production points for this turn.
 PRODUCTION_TURN_COST_STR
@@ -3598,9 +3556,6 @@ PP
 # %1% name of the empire that owns the production queue.
 PRODUCTION_QUEUE_EMPIRE
 %1% Production Queue
-
-PRODUCTION_QUEUE_EMPIRE_AT
-%1% Production Queue at %2%
 
 # %1% the amount of items that should be produced in a single batch.
 PRODUCTION_QUEUE_MULTIPLES
@@ -4992,9 +4947,6 @@ Combat Window
 COMBAT_BATTLE
 '''BATTLE : '''
 
-COMBAT_SYSTEM
-The %1% System
-
 COMBAT_MILITARY_SHIPS
 Military Ships
 
@@ -5113,15 +5065,6 @@ Expand All
 ##
 ## Objects columns
 ##
-
-COLUMN_SORT_NONE
-%1%
-
-COLUMN_SORT_ASCENDING
-%1% △
-
-COLUMN_SORT_DESCENDING
-%1% ▽
 
 METERS_SUBMENU
 Meters
