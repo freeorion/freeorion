@@ -16,6 +16,9 @@ English
 # جامعة
 # یای مجهو
 
+FREEORION_DEVELOPERS
+Криворукие долбоебы
+
 
 ##
 ## Common phrases
