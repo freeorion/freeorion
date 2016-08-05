@@ -838,9 +838,6 @@ GSETUP_WINDOW_TITLE
 '''Impostazioni Galassia '''
 
 #Strings
-GSETUP_GRAPHICS_FILES
-File Grafici
-
 GSETUP_PLAYER_NAME
 Nome Giocatore
 
@@ -860,8 +857,6 @@ Numero di giocatori controllati dal computer
 
 GSETUP_SEED
 Seme
-GSETUP_RANDOMIZE
-Randomizza
 GSETUP_STARS
 Sistemi
 GSETUP_SHAPE
@@ -922,11 +917,6 @@ GSETUP_AGGRESSIVE
 Aggressivo
 GSETUP_MANIACAL
 Maniacale
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-non esiste.
 
 ###########################
 # About Dialog            #
@@ -1491,11 +1481,6 @@ Obbiettivo: %1%
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Incompleto)
-
-%2%'''
-
 ORDER_BUIDLING_SCRAP
 Demolisci Struttura
 
@@ -1515,9 +1500,6 @@ Variazione
 
 TT_BREAKDOWN_SUMMARY
 '''%1%: %2% '''
-
-TT_TARGETS_BREAKDOWN_SUMMARY
-%1% Modifiche: %2%
 
 TT_INHERENT
 Innato
@@ -1542,12 +1524,6 @@ Specie <i>%2%</i>
 
 TT_UNKNOWN
 Sconosciuto
-
-TT_RESOURCE_PRODUCTION
-%1% produce %2%
-
-TT_RESOURCE_ALLOCATION
-%1% consuma %2%
 
 SP_RENAME_PLANET
 Rinomina Pianeta
@@ -1622,9 +1598,6 @@ Flotte su %1%
 
 FW_GENERIC_FLEETS
 Flotte
-
-FW_HOME_FLEET
-Flotta Interna
 
 FW_BATTLE_FLEET
 Flotta da battaglia
@@ -1744,12 +1717,6 @@ Accetta Proposta di Pace
 TECH_DISPLAY
 Schermo
 
-TECH_NAVIGATION
-Navigazione
-
-TECH_TOTAL_COST_STR
-%1% PR e %2% Turni
-
 TECH_TURN_COST_STR
 +%1% PR
 
@@ -1855,9 +1822,6 @@ Disponibile
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Non disponibile
-
-PRODUCTION_TOTAL_COST_STR
-%1% PP e %2% Turni
 
 PRODUCTION_TURNS_LEFT_STR
 %1% Turni
@@ -2324,9 +2288,6 @@ Finestra di Combattimento
 
 COMBAT_BATTLE
 '''BATTAGLIA : '''
-
-COMBAT_SYSTEM
-'''Il sistema %1% '''
 
 COMBAT_MILITARY_SHIPS
 Navi militari

@@ -608,9 +608,6 @@ GSETUP_WINDOW_TITLE
 Ustawienia galaktyki
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Pliki graficzne
-
 GSETUP_EMPIRE_NAME
 Nazwa imperium
 
@@ -663,11 +660,6 @@ GSETUP_MATURE
 Dojrzała
 GSETUP_ANCIENT
 Prastara
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-nie istnieje.
 
 ###########################
 # About Dialog            #
@@ -783,11 +775,6 @@ Kolonizuj
 ## Specials Panel ##########
 
 ## Buildings Panel##########
-
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (niedokończone)
-
-%2%'''
 
 ## General Tooltips#########
 

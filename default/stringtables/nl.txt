@@ -500,9 +500,6 @@ GSETUP_WINDOW_TITLE
 Melkwegconfiguratie
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Grafische Bestanden
-
 GSETUP_EMPIRE_NAME
 Naam van het Rijk
 
@@ -548,11 +545,6 @@ GSETUP_MATURE
 Volwassen
 GSETUP_ANCIENT
 Oud
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-bestaat niet.
 
 ###########################
 # About Dialog            #
@@ -869,12 +861,6 @@ Koloniseren
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-%1% (Incompleet)\n\n%2%
-
-BP_COMPLETE_BUILDING_TOOLTIP
-%1%\n\n%2%
-
 ## General Tooltips#########
 
 TT_CHANGE
@@ -924,9 +910,6 @@ Nieuwe Vloot
 FW_EMPIRE_FLEETS
 %1% Vloten
 
-FW_HOME_FLEET
-Thuis Vloot
-
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
 Allochtone vloot
@@ -953,12 +936,6 @@ Allochtoon schip
 
 TECH_DISPLAY
 Weergave
-
-TECH_NAVIGATION
-Navigatie
-
-TECH_TOTAL_COST_STR
-%1% OP / Beurt @ %2% Beurten
 
 TECH_TURN_COST_STR
 %1% OP / Beurt @ %2% Beurten
@@ -1037,9 +1014,6 @@ Beschikbaar
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Onbeschikbaar
-
-PRODUCTION_TOTAL_COST_STR
-%1% PP / %2% Beurten
 
 PRODUCTION_TURN_COST_STR
 %1% PP / %2% Beurten
@@ -1192,9 +1166,6 @@ Gevechtsvenster
 
 COMBAT_BATTLE
 '''GEVECHT : '''
-
-COMBAT_SYSTEM
-Het %1% Systeem
 
 COMBAT_MILITARY_SHIPS
 Militaire Schepen

@@ -506,9 +506,6 @@ GSETUP_WINDOW_TITLE
 Nastavení galaxie
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Grafické soubory
-
 GSETUP_PLAYER_NAME
 Jméno hráče
 
@@ -564,11 +561,6 @@ GSETUP_MATURE
 Zralý
 GSETUP_ANCIENT
 Starověký
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-Neexistuje!
 
 ###########################
 # About Dialog            #
@@ -882,12 +874,6 @@ Rychlost
 TECH_DISPLAY
 Displej
 
-TECH_NAVIGATION
-Navigace
-
-TECH_TOTAL_COST_STR
-%2% Tahů @ %1% RP / Tah
-
 TECH_TURNS_LEFT_STR
 %1% tahů
 
@@ -962,9 +948,6 @@ Dostupné
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Nedostupné
-
-PRODUCTION_TOTAL_COST_STR
-%1% PP / Turn @ %2% Turns
 
 PRODUCTION_TURNS_LEFT_STR
 %1% tahů zbývá
@@ -1054,9 +1037,6 @@ Bitevní okno
 
 COMBAT_BATTLE
 '''Bitva : '''
-
-COMBAT_SYSTEM
-Systém "%1%"
 
 COMBAT_MILITARY_SHIPS
 Vojenská loď

@@ -768,9 +768,6 @@ GSETUP_WINDOW_TITLE
 Configurar Galaxia
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Archivos Gráficos
-
 GSETUP_PLAYER_NAME
 Nombre del Jugador
 
@@ -829,11 +826,6 @@ GSETUP_MATURE
 Maduro
 GSETUP_ANCIENT
 Antigua
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-No existe.
 
 ###########################
 # About Dialog            #
@@ -1296,11 +1288,6 @@ Enfoque: %1%
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Incompleto)
-
-%2%'''
-
 ORDER_BUIDLING_SCRAP
 Derruir Edificio
 
@@ -1341,12 +1328,6 @@ Especies <i>%1%</i>
 
 TT_UNKNOWN
 Desconocido
-
-TT_RESOURCE_PRODUCTION
-%1% produce %2%
-
-TT_RESOURCE_ALLOCATION
-%1% consume %2%
 
 SP_RENAME_PLANET
 Renombrar planeta
@@ -1398,9 +1379,6 @@ Flotas en el Sistema %1%
 FW_GENERIC_FLEETS
 Flotas
 
-FW_HOME_FLEET
-Flota Hogar
-
 FW_BATTLE_FLEET
 Flota de Batalla
 
@@ -1451,12 +1429,6 @@ Cancelar Destruir Nave
 
 TECH_DISPLAY
 Presentación
-
-TECH_NAVIGATION
-Navegación
-
-TECH_TOTAL_COST_STR
-%2% Turnos %1% RP/T
 
 TECH_TURN_COST_STR
 %2%Turnos %1% RP/T
@@ -1535,9 +1507,6 @@ Disponible
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 No disponible
-
-PRODUCTION_TOTAL_COST_STR
-%1% PP/T %2% Turnos
 
 PRODUCTION_TURNS_LEFT_STR
 %1% Turnos
@@ -1749,9 +1718,6 @@ Ventana de Combate
 
 COMBAT_BATTLE
 BATALLA :
-
-COMBAT_SYSTEM
-El sistema %1%
 
 COMBAT_MILITARY_SHIPS
 Naves Militares

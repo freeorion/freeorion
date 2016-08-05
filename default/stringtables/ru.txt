@@ -1097,9 +1097,6 @@ GSETUP_WINDOW_TITLE
 Параметры галактики
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Графические файлы
-
 GSETUP_PLAYER_NAME
 Имя игрока
 
@@ -1121,8 +1118,6 @@ GSETUP_SEED
 Зерно
 GSETUP_RANDOM_SEED
 Создать случайное зерно
-GSETUP_RANDOMIZE
-Случайно
 GSETUP_STARS
 Звезды
 GSETUP_SHAPE
@@ -1185,11 +1180,6 @@ GSETUP_AGGRESSIVE
 Агрессивный
 GSETUP_MANIACAL
 Маниакальный
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-не существует.
 
 ###########################
 # About Dialog            #
@@ -1841,11 +1831,6 @@ ADDED_ON_INITIAL_TURN
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Незавершен)
-
-%2%'''
-
 ORDER_BUIDLING_SCRAP
 Уничтожить здание
 
@@ -1865,9 +1850,6 @@ TT_CHANGE
 
 TT_BREAKDOWN_SUMMARY
 '''%1%: %2% '''
-
-TT_TARGETS_BREAKDOWN_SUMMARY
-Модификации %1%: %2%
 
 TT_INHERENT
 Присущий
@@ -1892,12 +1874,6 @@ TT_SPECIES
 
 TT_UNKNOWN
 Неизвестный
-
-TT_RESOURCE_PRODUCTION
-%1% производит %2%
-
-TT_RESOURCE_ALLOCATION
-%1% потребляет %2%
 
 SP_RENAME_PLANET
 Переименовать планету
@@ -1972,9 +1948,6 @@ FW_GENERIC_FLEETS_AT_SYSTEM
 
 FW_GENERIC_FLEETS
 Флоты
-
-FW_HOME_FLEET
-Домашний флот
 
 FW_BATTLE_FLEET
 Боевой флот
@@ -2118,12 +2091,6 @@ PEACE_ACCEPT
 TECH_DISPLAY
 Экран
 
-TECH_NAVIGATION
-Навигация
-
-TECH_TOTAL_COST_STR
-%2% ходов @ %1% RP / ход
-
 TECH_TURN_COST_STR
 %2% ходов @ %1% RP / ход
 
@@ -2229,9 +2196,6 @@ PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 
 PRODUCTION_WND_REDUNDANT
 Устаревший
-
-PRODUCTION_TOTAL_COST_STR
-%1% ОП / ход @ %2% ходов
 
 PRODUCTION_TURN_COST_STR
 +%1% ОП
@@ -2932,9 +2896,6 @@ COMBAT_WINDOW_TITLE
 
 COMBAT_BATTLE
 БИТВА:
-
-COMBAT_SYSTEM
-Система %1%
 
 COMBAT_MILITARY_SHIPS
 Военные корабли
@@ -3877,11 +3838,6 @@ VOLCANIC_ASH_MASTER_SPECIAL
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
 Вокруг ядра этой планеты обитают монстры, которые вызывают вулканическую активность. Вырастая, эти землеройки превращаются в существ, способных делать проходы между измерениями в окружающем космосе.
 
-VOLCANIC_ACTIVITY_SPECIAL
-Высокая вулканическая активность
-VOLCANIC_ACTIVITY_SPECIAL_DESC
-На этой планете высокая вулканическая активность, из-за чего поверхность планеты иногда трудно увидеть.
-
 VOLCANIC_ASH_SLAVE_SPECIAL
 Вулканический пепел
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
@@ -4803,12 +4759,6 @@ DESC_CAN_ADD_STARLANE_CONNECTION
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
 это нельзя соединить звездными путями с любой системой, имеющей объект%1%
-
-DESC_CAN_REMOVE_STARLANE_CONNECTION
-''' можно убрать звездные пути к любой системы, имеющей объект%1%'''
-
-DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
-нельзя убрать звездные пути к любой системы, имеющей объект%1%
 
 DESC_EXPLORED_BY_EMPIRE
 ''' исследовано империей %1%'''

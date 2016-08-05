@@ -601,9 +601,6 @@ GSETUP_WINDOW_TITLE
 Galaksin asetukset
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Grafiikkatiedostot
-
 GSETUP_PLAYER_NAME
 Pelaajan nimi
 
@@ -662,11 +659,6 @@ GSETUP_MATURE
 Kypsä
 GSETUP_ANCIENT
 Ikivanha
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-ei ole olemassa.
 
 ###########################
 # About Dialog            #
@@ -1081,11 +1073,6 @@ Painotus: %1%
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (keskeneräinen)
-
-%2%'''
-
 ORDER_BUIDLING_SCRAP
 Pura rakennus
 
@@ -1126,12 +1113,6 @@ Laji <i>%1%</i>
 
 TT_UNKNOWN
 Tuntematon
-
-TT_RESOURCE_PRODUCTION
-%1% tuottaa %2%
-
-TT_RESOURCE_ALLOCATION
-%1% kuluttaa %2%
 
 SP_RENAME_PLANET
 Uudelleen nimeä planeetta
@@ -1183,9 +1164,6 @@ Laivastoja %1% järjestelmässä
 FW_GENERIC_FLEETS
 Laivastoja
 
-FW_HOME_FLEET
-Kotilaivasto
-
 FW_BATTLE_FLEET
 Taistelulaivasto
 
@@ -1236,12 +1214,6 @@ Peruuta aluksen purkaminen
 
 TECH_DISPLAY
 Näytä
-
-TECH_NAVIGATION
-Navigointi
-
-TECH_TOTAL_COST_STR
-%2% Vuoroa @ %1% TP / Vuoro
 
 TECH_TURNS_LEFT_STR
 %1% Vuoroa
@@ -1320,9 +1292,6 @@ Saatavissa
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Ei saatavissa
-
-PRODUCTION_TOTAL_COST_STR
-%1% TUP / Vuoro @ %2% Vuoroa
 
 PRODUCTION_TURN_COST_STR
 +%1% TUP
@@ -1539,9 +1508,6 @@ Taisteluikkuna
 
 COMBAT_BATTLE
 '''TAISTELU : '''
-
-COMBAT_SYSTEM
-%1% tähtijärjestelmä
 
 COMBAT_MILITARY_SHIPS
 '''Sotilasaluksia '''

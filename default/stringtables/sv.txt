@@ -341,9 +341,6 @@ GSETUP_WINDOW_TITLE
 Galaxinställningar
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Grafiska filer
-
 GSETUP_EMPIRE_NAME
 Imperiets namn
 
@@ -394,11 +391,6 @@ GSETUP_MATURE
 Mogen
 GSETUP_ANCIENT
 Uråldrig
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-existerar inte.
 
 ###########################
 # About Dialog            #
@@ -709,12 +701,6 @@ Kolonisera
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-%1% (Påbörjad)\n\n%2%
-
-BP_COMPLETE_BUILDING_TOOLTIP
-%1%\n\n%2%
-
 ## General Tooltips#########
 
 TT_CHANGE
@@ -770,9 +756,6 @@ Ny flotta
 FW_EMPIRE_FLEETS
 %1%-flottor
 
-FW_HOME_FLEET
-Moderflotta
-
 FW_BATTLE_FLEET
 Stridsflotta
 
@@ -802,12 +785,6 @@ Främmande skepp
 
 TECH_DISPLAY
 Visa
-
-TECH_NAVIGATION
-Översikt
-
-TECH_TOTAL_COST_STR
-%1% FP / drag @ %2% drag
 
 TECH_TURN_COST_STR
 %1% FP / drag @ %2% drag
@@ -886,9 +863,6 @@ Tillgängliga
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Otillgängliga
-
-PRODUCTION_TOTAL_COST_STR
-%1% PP / drag @ %2% drag
 
 PRODUCTION_TURNS_LEFT_STR
 %1% drag kvar

@@ -163,9 +163,6 @@ GSETUP_WINDOW_TITLE
 Galakse Opsætning
 
 #Strings
-GSETUP_GRAPHICS_FILES
-Grafik Filer
-
 #Drop-down list labels and choices####
 
 GSETUP_STARS
@@ -205,11 +202,6 @@ GSETUP_MATURE
 Voksen
 GSETUP_ANCIENT
 Antik
-
-#Error messages####
-
-GSETUP_ERR_NOEXIST
-Eksistere ikke.
 
 ###########################
 # About Dialog            #
