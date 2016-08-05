@@ -20,7 +20,7 @@ CHANCE_OF_GUARD_1
             scope = Source
             activation = AND [
                 Turn high = 0
-                Random probability = 0.60
+                Random probability = 0.70
                 (GalaxyMaxAIAggression >= 1)
                 (GalaxyMonsterFrequency >= 1)
                 Not ContainedBy Contains OR [
@@ -29,7 +29,16 @@ CHANCE_OF_GUARD_1
                     And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
                 ]
             ]
-            effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
+            effects = [
+                If condition = Random probability = 0.6
+                    effects = [
+                        CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
+                    ]
+                else = [
+                    SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                    SetPopulation value = Target.Population
+                ]
+            ]
 '''
 
 // NOTE: Unused

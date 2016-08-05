@@ -5129,6 +5129,11 @@ On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Ancient Ruins Empty Excavation
 
+EFFECT_ANCIENT_GUARDIANS_CAPTURED
+On %planet%: The [[species SP_ANCIENT_GUARDIANS]] self-destructed when the planet was captured!
+EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL
+Ancient Guardians seld destruct
+
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
 EFFECT_CONC_CAMP_COMLETE_LABEL
@@ -6195,6 +6200,18 @@ SP_EXOBOT_GAMEPLAY_DESC
 
 SP_EXOBOT_DESC
 '''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more Exobots.
+'''
+
+SP_ANCIENT_GUARDIANS
+Ancient Guardians
+SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
+'''Guardian Robots constructed by the Precursor civilizations aeons ago
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+Will self-destruct when conquered
+'''
+
+SP_ANCIENT_GUARDIANS_DESC
+'''Constructed by precusor technology these ancient machines can adapt to and fight in any kind of environment. With unwavering loyalty and duteousness they have protected the planet from any invaders, never wasting time to repair and improve the fortifications. Upon being captured every Guardian Robot will automatically self-destruct.
 '''
 
 SP_EXPERIMENTOR
@@ -11374,6 +11391,9 @@ GREAT_DEFENSE_TROOPS
 ULTIMATE_DEFENSE_TROOPS
 +++	Ultimate Defensive Ground [[encyclopedia TROOP_TITLE]]: 300%
 
+ANCIENT_DEFENSE_TROOPS
++++	Ancient Defensive Ground [[encyclopedia TROOP_TITLE]]: 10 per population
+
 NO_OFFENSE_TROOPS
 −−−	No Offensive Ground [[encyclopedia TROOP_TITLE]]
 
@@ -11457,6 +11477,9 @@ GOOD_SHIP_SHIELD
 
 GOOD_PLANETARY_SHIELD
 +	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
+
+ANCIENT_PLANETARY_SHIELD
++++	Ancient planetary [[encyclopedia SHIELDS_TITLE]]: +500
 
 GOOD_PLANETARY_DEFENSE
 +	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
