@@ -5132,7 +5132,7 @@ Ancient Ruins Empty Excavation
 EFFECT_ANCIENT_GUARDIANS_CAPTURED
 On %planet%: The [[species SP_ANCIENT_GUARDIANS]] self-destructed when the planet was captured!
 EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL
-Ancient Guardians seld destruct
+Ancient Guardians self destruct
 
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
@@ -6205,13 +6205,13 @@ SP_EXOBOT_DESC
 SP_ANCIENT_GUARDIANS
 Ancient Guardians
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
-'''Guardian Robots constructed by the Precursor civilizations aeons ago
+'''Guardian Robots constructed by a Precursor civilization aeons ago
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 Will self-destruct when conquered
 '''
 
 SP_ANCIENT_GUARDIANS_DESC
-'''Constructed by precusor technology these ancient machines can adapt to and fight in any kind of environment. With unwavering loyalty and duteousness they have protected the planet from any invaders, never wasting time to repair and improve the fortifications. Upon being captured every Guardian Robot will automatically self-destruct.
+'''Constructed by precusor technology these ancient machines can adapt to and fight in any kind of environment. With unwavering loyalty and commitment they have protected the planet from any invaders, never wasting time to repair and improve the fortifications. Upon being captured every Guardian Robot will automatically self-destruct.
 '''
 
 SP_EXPERIMENTOR
