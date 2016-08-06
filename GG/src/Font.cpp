@@ -1098,13 +1098,12 @@ void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
 }
 
 void Font::FillTextElements(const std::string& text,
-                            Flags<TextFormat>& format,
+                            bool ignore_tags,
                             std::vector<boost::shared_ptr<TextElement> >& text_elements) const {
     if (text_elements.empty()) {
         using namespace boost::xpressive;
 
         std::stack<Substring> tag_stack;
-        bool ignore_tags = format & FORMAT_IGNORETAGS;
         MatchesKnownTag matches_known_tag(KnownTags(), ignore_tags);
         MatchesTopOfStack matches_tag_stack(tag_stack, ignore_tags);
 
@@ -1260,7 +1259,8 @@ Pt Font::DetermineLinesImpl(const std::string& text,
     std::vector<boost::shared_ptr<TextElement> >& text_elements =
         text_elements_ptr ? *text_elements_ptr : local_text_elements;
 
-    FillTextElements(text, format, text_elements);
+    bool ignore_tags = format & FORMAT_IGNORETAGS;
+    FillTextElements(text, ignore_tags, text_elements);
 
     RenderState render_state;
     int tab_width = 8; // default tab width
