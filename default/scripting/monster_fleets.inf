@@ -182,6 +182,7 @@ MonsterFleet
     ]
     spawnrate = 1000.0
     spawnlimit = 1
+    CanAlterStarlanes
     location = And [
         Contains And [
             Planet

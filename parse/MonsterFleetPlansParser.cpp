@@ -31,8 +31,9 @@ namespace {
 #endif
 
         MonsterFleetPlan* operator()(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-                                     double spawn_rate, int spawn_limit, Condition::ConditionBase* location) const
-        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, location); }
+                                     double spawn_rate, int spawn_limit, bool can_alter_starlanes,
+                                     Condition::ConditionBase* location) const
+        { return new MonsterFleetPlan(fleet_name, ship_design_names, spawn_rate, spawn_limit, location, can_alter_starlanes); }
     };
     const boost::phoenix::function<new_monster_fleet_plan_> new_monster_fleet_plan;
 
@@ -75,14 +76,19 @@ namespace {
                      )
                 ;
 
+            monster_fleet_params
+                =   (tok.CanAlterStarlanes_ [ phoenix::ref(_e) = true ] | eps [ phoenix::ref(_e) = false ] )
+                ;
+
             monster_fleet_plan
                 =    (
                             monster_fleet_plan_prefix
                         >   ships
                         >   spawns
-                        > -(parse::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
+                        >   monster_fleet_params
+                        > -(parse::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_f) = _1 ])
                      )
-                     [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
+                [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e), phoenix::ref(_f)) ]
                 ;
 
             start
@@ -121,6 +127,7 @@ namespace {
         generic_rule            monster_fleet_plan_prefix;
         generic_rule            ships;
         generic_rule            spawns;
+        generic_rule            monster_fleet_params;
         monster_fleet_plan_rule monster_fleet_plan;
         start_rule              start;
 
@@ -129,7 +136,8 @@ namespace {
         std::vector<std::string>    _b;
         double                      _c;
         int                         _d;
-        Condition::ConditionBase*   _e;
+        bool                        _e;
+        Condition::ConditionBase*   _f;
     };
 
 }

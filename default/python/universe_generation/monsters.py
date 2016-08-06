@@ -7,18 +7,12 @@ import universe_tables
 from galaxy import DisjointSets
 
 
-monsters_that_alter_starlanes = {"SM_EXP_OUTPOST"}
-
-
 class MapAlteringMonsters(object):
     def __init__(self, systems):
         self.systems = systems
         self.placed = []
         self.removed_lanes = set()
         self.starlanes = [(s1, s2) for s1 in systems for s2 in fo.sys_get_starlanes(s1) if s1 < s2]
-
-    def matches(self, plan):
-        return plan.name() in monsters_that_alter_starlanes
 
     def can_place_at(self, system, plan):
         # Check if the map altering monster fleet ''plan'' can be placed at ''system''
@@ -91,8 +85,6 @@ def populate_monster_fleet(fleet_plan, system):
 
     print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
 
-monsters_that_alter_starlanes = {"SM_EXP_OUTPOST"}
-
 
 def place_experimentors(systems):
     """
@@ -105,7 +97,7 @@ def place_experimentors(systems):
 
     # Find the Experimentor output fleet plan
     plans = [plan for plan in fo.load_monster_fleet_plan_list()
-             if (plan.name() in monsters_that_alter_starlanes
+             if (plan.can_alter_starlanes()
                  and plan.spawn_rate() > 0.0
                  and plan.spawn_limit() > 0
                  and plan.ship_designs())]
@@ -184,8 +176,7 @@ def generate_monsters(monster_freq, systems):
 
     # get all monster fleets that have a spawn rate and limit both > 0 and at least one monster ship design in it
     # (a monster fleet with no monsters in it is pointless) and store them in a list
-    fleet_plans = [fp for fp in fo.load_monster_fleet_plan_list()
-                   if not fp.name() in monsters_that_alter_starlanes]
+    fleet_plans = [fp for fp in fo.load_monster_fleet_plan_list()]
 
     # create a map where we store a spawn counter for each monster fleet
     # this counter will be set to the spawn limit initially and decreased every time the monster fleet is spawned
@@ -248,7 +239,7 @@ def generate_monsters(monster_freq, systems):
         suitable_fleet_plans = [fp for fp in fleet_plans
                                 if spawn_limits[fp]
                                 and fp.location(system)
-                                and (not map_altering_monsters.matches(fp)
+                                and (not fp.can_alter_starlanes()
                                      or map_altering_monsters.can_place_at(system, fp))]
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
@@ -273,7 +264,7 @@ def generate_monsters(monster_freq, systems):
         # all prerequisites and the test have been met, now spawn this monster fleet in this system
         # create monster fleet
         try:
-            if map_altering_monsters.matches(fleet_plan):
+            if fleet_plan.can_alter_starlanes():
                 map_altering_monsters.place(system, fleet_plan)
             else:
                 populate_monster_fleet(fleet_plan, system)

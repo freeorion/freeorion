@@ -454,7 +454,7 @@ namespace {
             }
             m_monster_fleet_plan =
             new MonsterFleetPlan(fleet_name, designs, spawn_rate,
-                                 spawn_limit, 0, false);
+                                 spawn_limit, 0, false, false);
         }
 
         // dtor
@@ -479,6 +479,9 @@ namespace {
 
         int SpawnLimit()
         { return m_monster_fleet_plan->SpawnLimit(); }
+
+        int CanAlterStarlanes()
+        { return m_monster_fleet_plan->CanAlterStarlanes(); }
 
         bool Location(int object_id) {
             // get the universe object to test and check if it exists
@@ -1220,11 +1223,12 @@ namespace FreeOrionPython {
             .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
         class_<MonsterFleetPlanWrapper>("MonsterFleetPlan", init<const std::string&, const list&, double, int>())
-            .def("name",            &MonsterFleetPlanWrapper::Name)
-            .def("ship_designs",    &MonsterFleetPlanWrapper::ShipDesigns)
-            .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
-            .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
-            .def("location",        &MonsterFleetPlanWrapper::Location);
+            .def("name",                &MonsterFleetPlanWrapper::Name)
+            .def("ship_designs",        &MonsterFleetPlanWrapper::ShipDesigns)
+            .def("spawn_rate",          &MonsterFleetPlanWrapper::SpawnRate)
+            .def("spawn_limit",         &MonsterFleetPlanWrapper::SpawnLimit)
+            .def("can_alter_starlanes", &MonsterFleetPlanWrapper::CanAlterStarlanes)
+            .def("location",            &MonsterFleetPlanWrapper::Location);
 
         def("get_universe",                         GetUniverse,                    return_value_policy<reference_existing_object>());
         def("get_all_empires",                      GetAllEmpires);
