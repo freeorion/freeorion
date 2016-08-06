@@ -2,6 +2,7 @@ import sys
 import random
 import freeorion as fo
 import util
+from util import MapGenerationError
 import statistics
 import universe_tables
 from galaxy import DisjointSets
@@ -52,14 +53,9 @@ class MapAlteringMonsters(object):
         # create map altering monster fleet ''plan'' at ''system''.
         local_lanes = {(min(system, s), max(system, s)) for s in fo.sys_get_starlanes(system)}
 
-        try:
-            populate_monster_fleet(plan, system)
-            if system not in self.placed:
-                self.placed.append(system)
-            self.removed_lanes |= local_lanes
-
-        except RuntimeError as e:
-            util.report_error(str(e))
+        if system not in self.placed:
+            self.placed.append(system)
+        self.removed_lanes |= local_lanes
 
 
 def populate_monster_fleet(fleet_plan, system):
@@ -69,19 +65,16 @@ def populate_monster_fleet(fleet_plan, system):
 
     # create monster fleet
     monster_fleet = fo.create_monster_fleet(system)
-    # if fleet creation fails, report an error and try to continue with next system
+
     if monster_fleet == fo.invalid_object():
         errstr = "Python generate_monsters: unable to create new monster fleet %s" % fleet_plan.name()
-        util.report_error(errstr)
-        raise RuntimeError(errstr)
+        raise MapGenerationError(errstr)
 
     # add monsters to fleet
     for design in fleet_plan.ship_designs():
-        # create monster, if creation fails, report an error and try to continue with the next design
         if fo.create_monster(design, monster_fleet) == fo.invalid_object():
             errstr = "Python generate_monsters: unable to create monster %s" % design
-            util.report_error(errstr)
-            raise RuntimeError(errstr)
+            raise MapGenerationError(errstr)
 
     print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
 
@@ -155,8 +148,8 @@ def place_experimentors(systems):
             placed.append(system)
             removed_lanes |= local_lanes
 
-        except RuntimeError as e:
-            print >> sys.stderr, str(e)
+        except MapGenerationError as e:
+            util.report_error(str(e))
             continue
 
 def generate_monsters(monster_freq, systems):
@@ -271,7 +264,7 @@ def generate_monsters(monster_freq, systems):
             # decrement counter for this monster fleet
             spawn_limits[fleet_plan] -= 1
 
-        except RuntimeError as e:
+        except MapGenerationError as e:
             util.report_error(str(e))
             continue
 
