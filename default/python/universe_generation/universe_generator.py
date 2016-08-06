@@ -10,7 +10,7 @@ from starsystems import name_planets, generate_systems
 from empires import compile_home_system_list, setup_empire
 from fields import generate_fields
 from natives import generate_natives
-from monsters import generate_monsters, place_experimentors
+from monsters import generate_monsters
 from specials import distribute_specials
 from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
@@ -135,7 +135,6 @@ def create_universe(psd_map):
 
     print "Generating Space Monsters"
     seed_rng(seed_pool.pop())
-    place_experimentors(systems)
     generate_monsters(gsd.monster_frequency, systems)
 
     print "Distributing Starting Specials"
