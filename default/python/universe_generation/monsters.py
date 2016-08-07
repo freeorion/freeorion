@@ -162,7 +162,10 @@ def generate_monsters(monster_freq, systems):
         suitable_fleet_plans = [fp for fp in fleet_plans
                                 if spawn_limits[fp]
                                 and fp.location(system)
-                                and (not fp.can_alter_starlanes()
+                                and (not False # TODO next commit
+                                     # replace monster fleet starlane
+                                     # altering code with monster hull
+                                     # starlane altering code .fp.can_alter_starlanes()
                                      or starlane_altering_monsters.can_place_at(system, fp))]
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
@@ -187,7 +190,7 @@ def generate_monsters(monster_freq, systems):
         # all prerequisites and the test have been met, now spawn this monster fleet in this system
         # create monster fleet
         try:
-            if fleet_plan.can_alter_starlanes():
+            if False: # TODO replace with tag implementation next commit fleet_plan.can_alter_starlanes():
                 starlane_altering_monsters.place(system, fleet_plan)
             else:
                 populate_monster_fleet(fleet_plan, system)

@@ -45,7 +45,6 @@
     (BuildingTypesScrapped)                     \
     (BuildTime)                                 \
     (CanAddStarlanesTo)                         \
-    (CanAlterStarlanes)                         \
     (CanColonize)                               \
     (CanProduceShips)                           \
     (CanSee)                                    \
