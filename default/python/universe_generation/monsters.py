@@ -120,12 +120,20 @@ def generate_monsters(monster_freq, systems):
     if not fleet_plans:
         return
 
+    universe = fo.get_universe()
+
+    # Fleet plans that include ships capable of altering starlanes.
+    fleet_can_alter_starlanes = {fp for fp in fleet_plans
+                                 if any([universe.getShipDesignByName(design).hull_type.hasTag("CAN_ALTER_STARLANES")
+                                         for design in fp.ship_designs()])}
+
     # dump a list of all monster fleets meeting these conditions and their properties to the log
     print "Monster fleets available for generation at game start:"
     for fleet_plan in fleet_plans:
         print "...", fleet_plan.name(), ": spawn rate", fleet_plan.spawn_rate(),
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
+
         if len(systems) < 100:
             # Note: The WithinStarlaneJumps condition in fp.location()
             # is the most time costly function in universe generation
@@ -162,10 +170,7 @@ def generate_monsters(monster_freq, systems):
         suitable_fleet_plans = [fp for fp in fleet_plans
                                 if spawn_limits[fp]
                                 and fp.location(system)
-                                and (not False # TODO next commit
-                                     # replace monster fleet starlane
-                                     # altering code with monster hull
-                                     # starlane altering code .fp.can_alter_starlanes()
+                                and (fp not in fleet_can_alter_starlanes
                                      or starlane_altering_monsters.can_place_at(system, fp))]
         # if there are no suitable monster fleets for this system, continue with the next
         if not suitable_fleet_plans:
@@ -190,7 +195,7 @@ def generate_monsters(monster_freq, systems):
         # all prerequisites and the test have been met, now spawn this monster fleet in this system
         # create monster fleet
         try:
-            if False: # TODO replace with tag implementation next commit fleet_plan.can_alter_starlanes():
+            if fleet_plan in fleet_can_alter_starlanes:
                 starlane_altering_monsters.place(system, fleet_plan)
             else:
                 populate_monster_fleet(fleet_plan, system)

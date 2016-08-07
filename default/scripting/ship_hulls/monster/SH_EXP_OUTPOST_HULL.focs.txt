@@ -12,6 +12,7 @@ Hull
     buildcost = 1
     buildtime = 1
     Unproducible
+    tags = [ "CAN_ALTER_STARLANES" ]
     location = All
     effectsgroups = [
         EffectsGroup
