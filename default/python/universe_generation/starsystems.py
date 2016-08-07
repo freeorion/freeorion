@@ -7,11 +7,11 @@ import universe_tables
 from itertools import product
 
 # tuple of available star types
-star_types = (fo.starType.blue, fo.starType.white,   fo.starType.yellow,    fo.starType.orange,
-              fo.starType.red,  fo.starType.neutron, fo.starType.blackHole, fo.starType.noStar)
+star_types = (fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange,
+              fo.starType.red, fo.starType.neutron, fo.starType.blackHole, fo.starType.noStar)
 
 # tuple of "real" star types (that is, blue to red, not neutron, black hole or even no star)
-star_types_real = (fo.starType.blue,   fo.starType.white, fo.starType.yellow,
+star_types_real = (fo.starType.blue, fo.starType.white, fo.starType.yellow,
                    fo.starType.orange, fo.starType.red)
 
 

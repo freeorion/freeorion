@@ -29,7 +29,7 @@ def distribute_specials(specials_freq, universe_objects):
     # attempt to apply a special to each universe object in the list that has been passed to this function
     # by finding a special that can be applied to it and hasn't been added too many times, and then attempt
     # to add that special by testing its spawn rate
-    repeat_rate = {1 : 0.08, 2 : 0.05, 3 : 0.01, 4 : 0.00}
+    repeat_rate = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
     for univ_obj in universe_objects:
         # for this universe object, find a suitable special
         # start by shuffling our specials list, so each time the specials are considered in a new random order

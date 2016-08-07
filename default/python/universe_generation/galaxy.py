@@ -20,7 +20,7 @@ class AdjacencyGrid(object):
 
     def cell(self, pos):
         """Returns cell index."""
-        return (int(pos[0] / self.cell_size), int(pos[1] / self.cell_size))
+        return int(pos[0] / self.cell_size), int(pos[1] / self.cell_size)
 
     def insert_pos(self, pos):
         """Inserts pos."""
@@ -45,7 +45,7 @@ class AdjacencyGrid(object):
         i_radius = 0
         i_radius_max = ceil(max_radius / self.cell_size) if max_radius else (self.width + 1)
         outer = set()
-        ring = set([1])
+        ring = {1}
         while ring and i_radius <= i_radius_max:
             inner = outer
             outer = set(self._square_indices_containing_cell(cell, i_radius))
@@ -297,8 +297,8 @@ def stitching_positions(p1, p2):
 
     # Pick a random point in an 2:1 ratio ellipse and then rotate and slide it in between p1 and p2
     p1_p2_theta = acos((p2[0] - p1[0]) / p1_p2_dist)
-    p1_p2_scale = (p1_p2_dist - 2 * min_dist)/2
-    p1_p2_translation = ((p1[0] + p2[0])/2, (p1[1] + p2[1])/2)
+    p1_p2_scale = (p1_p2_dist - 2 * min_dist) / 2
+    p1_p2_translation = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2)
 
     radius_0space = uniform(0.0, 1.0)
     angle_0space = uniform(0.0, 2.0 * pi)
@@ -458,17 +458,13 @@ def elliptical_galaxy_calc_positions(positions, adjacency_grid, size, width):
     gap_constant = 0.95
     gap_size = 1.0 - gap_constant * gap_constant * gap_constant
 
-    # random number generators
-    radius_dist = lambda: uniform(0.0, gap_constant)
-    random_angle = lambda: uniform(0.0, 2.0 * pi)
-
     for i in range(size):
         attempts = 100
         while attempts > 0:
-            radius = radius_dist()
+            radius = uniform(0.0, gap_constant)
             # adjust for bigger density near center and create gap
             radius = radius * radius * radius + gap_size
-            angle = random_angle()
+            angle = uniform(0.0, 2.0 * pi)
 
             # rotate for individual angle and apply elliptical shape
             x1 = radius * cos(angle)
@@ -563,8 +559,6 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
     # second tuple stores help values for cluster rotation (sin,cos)
     clusters_position = []
 
-    random_angle = lambda: uniform(0.0, 2.0*pi)
-
     for i in range(clusters):
         attempts = 100
         while attempts > 0:
@@ -572,7 +566,7 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
             x = ((random() * 2.0 - 1.0) / (clusters + 1.0)) * clusters
             y = ((random() * 2.0 - 1.0) / (clusters + 1.0)) * clusters
             # ensure all clusters have a min separation to each other (search isn't optimized, not worth the effort)
-            if all(((cp[0][0] - x) * (cp[0][0] - x) + (cp[0][1] - y) * (cp[0][1] - y)) > (2.0/clusters)
+            if all(((cp[0][0] - x) * (cp[0][0] - x) + (cp[0][1] - y) * (cp[0][1] - y)) > (2.0 / clusters)
                    for cp in clusters_position):
                 break
             attempts -= 1
@@ -588,7 +582,7 @@ def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
             else:
                 cluster = clusters_position[i % len(clusters_position)]
                 radius = random()
-                angle = random_angle()
+                angle = uniform(0.0, 2.0 * pi)
 
                 x1 = radius * cos(angle)
                 y1 = radius * sin(angle) * ellipse_width_vs_height
@@ -630,14 +624,11 @@ def ring_galaxy_calc_positions(positions, adjacency_grid, size, width):
     ring_width = width / 4.0
     ring_radius = (width - ring_width) / 2.0
 
-    theta_dist = lambda: uniform(0.0, 2.0 * pi)
-    radius_dist = lambda: gauss(ring_radius, ring_width / 3.0)
-
     for i in range(size):
         attempts = 100
         while attempts > 0:
-            theta = theta_dist()
-            radius = radius_dist()
+            theta = uniform(0.0, 2.0 * pi)
+            radius = gauss(ring_radius, ring_width / 3.0)
 
             x = width / 2.0 + radius * cos(theta)
             y = width / 2.0 + radius * sin(theta)
