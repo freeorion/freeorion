@@ -10719,7 +10719,7 @@ PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
 PRO_INDUSTRY_CENTER_II_DESC
-Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic [[buildingtype BLD_INDUSTRY_CENTER]]s.
+Improved centralized management of dispersed industrial activities further increases industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic [[buildingtype BLD_INDUSTRY_CENTER]]s.
 
 PRO_INDUSTRY_CENTER_III
 Supreme Industrial Center
