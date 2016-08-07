@@ -54,7 +54,7 @@ Hull
             ]
     ]
     icon = ""
-    graphic = ""
+    graphic = "icons/monsters/experiment0.png"
 
 #include "monster.macros"
 
