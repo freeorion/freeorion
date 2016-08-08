@@ -1243,9 +1243,8 @@ void Font::FillTextElements(const std::string& text,
     if (text_elements.empty()) {
         using namespace boost::xpressive;
 
-        std::stack<Substring> tag_stack;
-        MatchesKnownTag matches_known_tag(StaticTagHandler().KnownTags(), ignore_tags);
-        MatchesTopOfStack matches_tag_stack(tag_stack, ignore_tags);
+        sregex & regex = StaticTagHandler().Regex(text, ignore_tags);
+        sregex_iterator it(text.begin(), text.end(), regex);
 
         mark_tag tag_name_tag(1);
         mark_tag open_bracket_tag(2);
@@ -1253,24 +1252,6 @@ void Font::FillTextElements(const std::string& text,
         mark_tag whitespace_tag(4);
         mark_tag text_tag(5);
 
-        const sregex TAG_PARAM =
-            -+~set[_s | '<'];
-        const sregex OPEN_TAG_NAME =
-            (+_w)[check(matches_known_tag)];
-        const sregex CLOSE_TAG_NAME =
-            (+_w)[check(matches_tag_stack)];
-        const sregex WHITESPACE =
-            (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
-        const sregex TEXT =
-            ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
-        const sregex EVERYTHING =
-            ('<' >> (tag_name_tag = OPEN_TAG_NAME) >> repeat<0, 9>(+blank >> TAG_PARAM) >> (open_bracket_tag.proto_base() = '>'))
-            [Push(boost::xpressive::ref(text), boost::xpressive::ref(tag_stack), ref(ignore_tags), tag_name_tag)] |
-            ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
-            (whitespace_tag = WHITESPACE) |
-            (text_tag = TEXT);
-
-        sregex_iterator it(text.begin(), text.end(), EVERYTHING);
         sregex_iterator end_it;
         while (it != end_it)
         {
