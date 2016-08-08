@@ -1,15 +1,17 @@
 Français
 
-#This is the French String Table file for FreeOrion.
-#Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction terminée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
+# This is the French String Table file for FreeOrion.
+# Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction terminée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
 
 # Notes: to avoid potential conflict with functional keys in other files, do not make
-# any stringtable keys beginning with "FUNCTIONAL_"
-# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
+# any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#################
-#    Common     #
-#################
+
+##
+## Common phrases
+##
 
 #APPNAME
 #FreeOrion
@@ -56,7 +58,7 @@ Oui
 NO
 Non
 
-# ELLIPSIS is used as a placeholder for unexpanded content in the combat log window.
+# Used as a placeholder for unexpanded content in the combat log window.
 #ELLIPSIS  
 #...
 
@@ -229,9 +231,10 @@ Sans propriétaire
 NOWHERE
 Ne peut pas être produit
 
-#############################################################
-####               M A J O R   E R R O R S               ####
-#############################################################
+
+##
+## Major errors
+##
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''L'initialisation du système audio OpenAL a échoué.
@@ -295,108 +298,128 @@ FORMAT_LIST_10_ITEMS
 #FORMAT_LIST_MANY_ITEMS
 #%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
 SD_CARRIER
 Prototype Porteur
+
 SD_CARRIER_DESC
 Modèle prototype propulsant des chasseurs en cours de bataille en lieu et place d'une puissance de feu directe.
 
 SD_FLAK
 Prototype Antiaérien
+
 SD_FLAK_DESC
 Modèle prototype équipé de canons antiaériens comme moyen de riposte contre les chasseurs.
 
 SD_SCOUT
 Éclaireur
+
 SD_SCOUT_DESC
 Petit astronef économique mais non-armé, spécialement conçu pour la reconnaissance et l'exploration. La [[encyclopedia RESEARCH_TITLE]] basée sur l'amélioration du [[encyclopedia DETECTION_RANGE_TITLE]] permettra la conception de meilleurs modèles. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_AST_SCOUT
 Éclaireur Astéroïdal
+
 SD_AST_SCOUT_DESC
 Petit astronef économique mais non-armé, fabriqué à partir d'un astéroïde, conçu pour la reconnaissance et l'exploration. La [[encyclopedia RESEARCH_TITLE]] basée sur l'amélioration du [[encyclopedia DETECTION_RANGE_TITLE]] permettra la conception de meilleurs modèles. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_SCOUT_2
 Éclaireur Radar
+
 SD_SCOUT_2_DESC
 Petit astronef économique mais non-armé, equipé d'un [[encyclopedia DETECTION_RANGE_TITLE]] légèrement amélioré, conçu pour la reconnaissance et l'exploration. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_3
 Éclaireur Scanner
+
 SD_SCOUT_3_DESC
 Petit astronef économique mais non-armé, equipé d'un [[encyclopedia DETECTION_RANGE_TITLE]] grandement amélioré, conçu pour la reconnaissance et l'exploration. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_4
 Éclaireur Capteur
+
 SD_SCOUT_4_DESC
 Petit astronef économique mais non-armé, equipé d'un [[encyclopedia DETECTION_RANGE_TITLE]] de dernière génération, conçu pour la reconnaissance et l'exploration. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ENG_SCOUT
 Éclaireur Energy
+
 SD_ENG_SCOUT_DESC
 Astronef compact et rapide mais non-armé, conçu pour la reconnaissance et l'exploration. La [[encyclopedia RESEARCH_TITLE]] basée sur l'amélioration du [[encyclopedia DETECTION_RANGE_TITLE]] permettra la conception de meilleurs modèles. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_SMALL_MARK_1  # translated
 Corvette (M)
+
 SD_SMALL_MARK1_DESC
 Petit astronef équipé d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SMALL_MARK_2  # translated
 Corvette (L)
+
 SD_SMALL_MARK2_DESC
 Petit astronef équipé d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_1
 Escorteur (M1)
+
 SD_MARK1_DESC
 Frégate basique équipée d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_2
 Escorteur (M2)
+
 SD_MARK2_DESC
 Frégate améliorée équipée d'un Canon Mitrailleur. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_3
 Escorteur (L1)
+
 SD_MARK3_DESC
 Frégate basique équipée d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_4
 Escorteur (L2)
+
 SD_MARK4_DESC
 Frégate améliorée équipée d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_1  # translated
 Destroyer (M1)
+
 SD_LARGE_MARK1_DESC
 Chasseur basique équipé de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_2  # translated
 Destroyer (M2)
+
 SD_LARGE_MARK2_DESC
 Chasseur amélioré équipé de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_3
 Croiseur (L1)
+
 SD_LARGE_MARK3_DESC
 Chasseur amélioré équipé de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_4
 Croiseur (L2)
+
 SD_LARGE_MARK4_DESC
 Chasseur amélioré équipé d'un Blindage évolué et de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ROBOTIC_OUTPOST
 Bâtisseur Robotique
+
 SD_ROBOTIC_OUTPOST_DESC
 Peut établir des avant-postes dans les systèmes très lointains.
 
 SD_ROBOTIC_COLONY
 Colon Robotique
+
 SD_ROBOTIC_COLONY_DESC
 Peut établir des colonies dans les systèmes très lointains.
 
@@ -426,16 +449,19 @@ Transporteur rapide d'infanterie améliorée
 
 SD_ROBOTIC1
 Robocroiseur (M1)
+
 SD_ROBOTIC1_DESC
 Chasseur robotique équipé de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC2
 Robocroiseur (M2)
+
 SD_ROBOTIC2_DESC
 Chasseur robotique équipé d'un Blindage amélioré et de Canons Mitrailleurs. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC3
 Robocroiseur (L)
+
 SD_ROBOTIC3_DESC
 Chasseur robotique amélioré équipé d'un Blindage évolué et de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
@@ -447,273 +473,327 @@ Croiseur lourd évolué capable de s'auto-réparer.
 
 SD_GRAVITATING1
 Cuirassé Gravitator (P)
+
 SD_GRAVITATING1_DESC
 Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_GRAVITATING2
 Cuirassé Gravitator (D)
+
 SD_GRAVITATING2_DESC
 Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 #SD_ROBO_TITAN1
 #Dreadnaught
+
 SD_ROBO_TITAN1_DESC
 Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_ORGANIC1
 Escorteur Organic (M1)
+
 SD_ORGANIC1_DESC
 Chasseur organique équipé de technologies basiques d'armement et de défense. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC2
 Escorteur Organic (M2)
+
 SD_ORGANIC2_DESC
 Chasseur organique équipé de Blindages améliorés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC3
 Escorteur Organic (L)
+
 SD_ORGANIC3_DESC
 Chasseur organique équipé de Blindages améliorés et d'un Canon Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_1
 Escorteur Organic Lourd (M)
+
 SD_SHIELD_BUG_1_DESC
 Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_2
 Escorteur Organic Lourd (L)
+
 SD_SHIELD_BUG_2_DESC
 Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_1
 Destroyer Rock (L)
+
 SD_AST_1_DESC
 Un astronef astéroïdal équipé de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_2
 Destroyer Rock (P1)
+
 SD_AST_2_DESC
 Un astronef astéroïdal équipé de Canons Plasma. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_3
 Destroyer Rock (P2)
+
 SD_AST_3_DESC
 Un astronef astéroïdal équipé de Canons Plasma et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
 SD_HEAVY_AST_1
 Cuirassé Rock (L)
+
 SD_HEAVY_AST_1_DESC
 Un astronef astéroïdal massif équipé de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_2
 Cuirassé Rock (P)
+
 SD_HEAVY_AST_2_DESC
 Un astronef astéroïdal massif équipé de Canons Plasma et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
 SD_CRYSTAL
 Destroyer Crystal (P)
+
 SD_CRYSTAL_DESC
 Un astronef astéroïdal cristallisé équipé de Canons Plasma et d'un Blindage Cristal. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
 SD_ENDO_1
 Croiseur Endomorphic (L)
+
 SD_ENDO_1_DESC
 Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Laser. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_2
 Croiseur Endomorphic (P1)
+
 SD_ENDO_2_DESC
 Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Plasma. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_3
 Croiseur Endomorphic (P2)
+
 SD_ENDO_3_DESC
 Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]] améliorés, de Blindages Diamant et de Canons Plasma. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_FRACTAL_1
 Cuirassé Fractal (P)
+
 SD_FRACTAL_1_DESC
 Un bâtiment de guerre exotique, basé sur l'énergie fractale. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_FRACTAL_2
 Cuirassé Fractal (D)
+
 SD_FRACTAL_2_DESC
 Un bâtiment de guerre exotique, basé sur l'énergie fractale. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_COLONY_SHIP
 Colon Galactique
+
 SD_COLONY_SHIP_DESC
 Astronef non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
 Colon Galactique Organic
+
 SD_ORG_COLONY_SHIP_DESC
 Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
 Colon Galactique Cryogenic
+
 SD_CRYONIC_COLONY_SHIP_DESC
 Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
 Colon Galactique Cryo-Organic
+
 SD_ORG_CRYOCOL_SHIP_DESC
 Astronef organique non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, et possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
 Colon Galactique Cryo-Astéroïdal
+
 SD_AST_CRYOCOL_SHIP_DESC
 Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3, possédant un [[buildingtype BLD_SHIPYARD_BASE]], et dans un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Bâtisseur Galactique
+
 SD_OUTPOST_SHIP_DESC
 Astronef non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_OUTPOST_SHIP
 Bâtisseur Galactique Organic
+
 SD_ORG_OUTPOST_SHIP_DESC
 Astronef organique non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
 Colon Stellaire
+
 SD_COLONY_BASE_DESC
 Astronef non-armé pouvant créer une colonie sur une planète habitable, seulement dans le système où il a été construit. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3.
 
 SD_CRYONIC_COLONY_BASE
 Colon Stellaire Cryogenic
+
 SD_CRYONIC_COLONY_BASE_DESC
 Astronef non-armé pouvant créer une large colonie sur une planète habitable, dans le système où il a été construit. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3.
 
 SD_OUTPOST_BASE
 Bâtisseur Stellaire
+
 SD_OUTPOST_BASE_DESC
 Astronef stellaire non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable, seulement dans le système où il a été construit. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
 SD_BASE_DECOY  # translated
 Comsat
+
 SD_BASE_DECOY_DESC
 Satellite non-armé pouvant engager les défenses planétaires contre tout ennemi détecté (y compris passif), et n'a aucune autre fonction sinon de se mettre dans la ligne de feu de l'ennemi. Peut être construit sur toute planète peuplée par une espèce pouvant produire des astronefs, et ne requiert pas de [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_DROP
 Largueur d'Infanterie
+
 SD_TROOP_DROP_DESC
 Transporte un régiment d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_TROOP_DROP_HVY
 Largueur d'Infanterie Lourde
+
 SD_TROOP_DROP_HVY_DESC
 Transporte un régiment d'[[encyclopedia TROOP_TITLE]] améliorée et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_SMALL_TROOP_SHIP
 Mini-Transport d'Infanterie
+
 SD_SMALL_TROOP_SHIP_DESC
 Transporte un régiment d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_SHIP
 Transport d'Infanterie
+
 SD_TROOP_SHIP_DESC
 Transporte 3 régiments d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_TROOP_SHIP
 Transport Organic d'Infanterie
+
 SD_ORG_TROOP_SHIP_DESC
 Transporte 4 régiments d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
 Transport Energy d'Infanterie
+
 SD_ENG_TROOP_SHIP_DESC
 Transporte un régiment d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_ENG1
 Corvette Energy (L)
+
 SD_ENG1_DESC
 Astronef de combat compact et rapide. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_ENG2
 Corvette Energy (P)
+
 SD_ENG2_DESC
 Astronef de combat compact et rapide, avec armement amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 #SD_DRAGON_TOOTH
 #Dragon Tooth
+
 SD_DRAGON_TOOTH_DESC
 Astronef issu d'une civilisation antique, équipé de systèmes avancés d'armement et de défense. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-############
-# Monsters #
-############
+
+##
+## Monsters
+##
 
 SM_MONSTER
 Monstre
 
 SM_KRILL_1
 Petit Essaim de Krill
+
 SM_KRILL_1_DESC
 Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. D'ordinaire non agressifs, leur grand nombre les transforme en potentielle menace pour la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_2
 Essaim de Krill Moyen
+
 SM_KRILL_2_DESC
 Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. D'ordinaire non agressifs, leur grand nombre les transforme en potentielle menace pour la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_3
 Grand Essaim de Krill
+
 SM_KRILL_3_DESC
 Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. Lorsque ce dernier atteint une population importante, il commence à se montrer agressif envers tout astronef passant à proximité. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_4
 Fléau Krill
+
 SM_KRILL_4_DESC
 Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le krill spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. Le comportements du Krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le Krill Spatial, d'ordinaire pacifique, devient alors agressif, attaquant les astronefs et détruisant les structures orbitales. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_TREE
 Forêt Dyson
+
 SM_TREE_DESC
 Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales afin de coloniser d'autres étoiles.
 
 SM_FLOATER
 Flotteur
+
 SM_FLOATER_DESC
 Les Forêts Dyson produisent par intermittence des bulbes remplis de gaz, relâchés sous forme de graines dérivant sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
 
 SM_DRAGON
 Dragon du Vide
+
 SM_DRAGON_DESC
 Un terrifiant monstre géant, rôdant dans l'espace à la recherche d'une proie et semant la dévastation dans les zones habitées.
 
 SM_DRONE  # translated
 Drone
+
 SM_DRONE_DESC
 Outils d'une guerre oubliée depuis longtemps, les Drones remplissent encore aujourd'hui l'objectif qui leur fut initialement fixé : attaquer systématiquement tout astronef à leur portée.
 
 SM_DRONE_FACTORY
 Drone Usine
+
 SM_DRONE_FACTORY_DESC
 Un dispositif de production conçu lors d'une guerre depuis longtemps oubliée afin de défendre ses constructeurs désormais disparus. Contre toute attente, il fonctionne encore aujourd'hui, produisant lentement mais de manière continue, de nouveaux Drones.
 
 SM_GUARD_0
 Vaisseau de Maintenance
+
 SM_GUARD_0_DESC
 Un astronef sans équipage conçu par les Précurseurs pour entretenir les Voies spatiales d'un système. Bien que peu armé, il attaquera tout intrus à proximité.
 
 SM_GUARD_1
 Factionnaire
+
 SM_GUARD_1_DESC
 Un petit astronef de défense sans équipage, programmé par les Précurseurs comme Gardien protégeant un système contre tout intrus potentiel.
 
 SM_GUARD_2
 Sentinelle
+
 SM_GUARD_2_DESC
 Un astronef de défense sans équipage, programmé par les Précurseurs comme Gardien protégeant un système contre tout intrus potentiel.
 
 SM_GUARD_3
 Défenseur
+
 SM_GUARD_3_DESC
 Un puissant astronef de défense sans équipage, programmé par les Précurseurs comme Gardien protégeant un système contre tout intrus potentiel.
 
 SM_KRAKEN_1
 Kraken Larvaire
+
 SM_KRAKEN_1_DESC
 '''Dans sa forme larvaire, un Kraken est un animal spatial prudent et relativement inoffensif. Ses proies naturelles sont les essaims de Krill. Une larve de Kraken bien nourrie peut se transformer en un spécimen adulte bien plus massif et dangereux.
 
@@ -721,6 +801,7 @@ Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalem
 
 SM_KRAKEN_2  # translated
 Kraken
+
 SM_KRAKEN_2_DESC
 '''Un redoutable monstre de l'espace de taille intermédiaire. Ses proies naturelles sont les essaims de Krill. Un Kraken bien nourri peut se transformer en un spécimen encore plus massif et dangereux.
 
@@ -728,6 +809,7 @@ Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalem
 
 SM_KRAKEN_3
 Kraken Massif
+
 SM_KRAKEN_3_DESC
 '''Un redoutable monstre de l'espace de grande taille.
 
@@ -735,6 +817,7 @@ Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalem
 
 SM_BLACK_KRAKEN
 Kraken Noir
+
 SM_BLACK_KRAKEN_DESC
 '''Un puissant Kraken Noir réputé comme surnaturel.
 
@@ -742,6 +825,7 @@ Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroya
 
 SM_SNOWFLAKE_1
 Flocon de Neige Juvénile
+
 SM_SNOWFLAKE_1_DESC
 '''Un petit monstre de l'espace inoffensif, doté une exceptionnelle vision.
 
@@ -749,6 +833,7 @@ Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouven
 
 SM_SNOWFLAKE_2
 Flocon de Neige
+
 SM_SNOWFLAKE_2_DESC
 '''Un monstre de l'espace de petite masse, doté une exceptionnelle vision.
 
@@ -756,6 +841,7 @@ Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouven
 
 SM_SNOWFLAKE_3
 Flocon de Neige Massif
+
 SM_SNOWFLAKE_3_DESC
 '''Un redoutable monstre de l'espace de petite masse.
 
@@ -763,6 +849,7 @@ Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouven
 
 SM_PSIONIC_SNOWFLAKE
 Flocon de Neige Psionique
+
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
@@ -770,6 +857,7 @@ Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ing�
 
 SM_JUGGERNAUT_1
 Mastodonte Juvénile
+
 SM_JUGGERNAUT_1_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection.
 
@@ -777,6 +865,7 @@ Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalem
 
 SM_JUGGERNAUT_2
 Mastodonte
+
 SM_JUGGERNAUT_2_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection assez résistant.
 
@@ -784,6 +873,7 @@ Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalem
 
 SM_JUGGERNAUT_3
 Mastodonte Massif
+
 SM_JUGGERNAUT_3_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection très résistant.
 
@@ -791,6 +881,7 @@ Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalem
 
 SM_BLOATED_JUGGERNAUT
 Mastodonte Déformé
+
 SM_BLOATED_JUGGERNAUT_DESC
 '''Un monstre de l'espace massif à l'allure repoussante.
 
@@ -798,41 +889,49 @@ Les Mastodontes Déformés sont des monstres spatiaux issus de la bio-ingénieri
 
 SM_CLOUD
 Nuage Spatial
+
 SM_CLOUD_DESC
 Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de planètes aléatoires.
 
 SM_ASH
 Volcan Spatial
+
 SM_ASH_DESC
 Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de planètes aléatoires.
 
 SM_DIM
 Dériveur Dimensionnel
+
 SM_DIM_DESC
 Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de planètes aléatoires.
 
 SM_VOID
 Béhémoth du Vide
+
 SM_VOID_DESC
 Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de planètes aléatoires.
 
 SM_SNAIL
 Astergot
+
 SM_SNAIL_DESC
 Un monstre timide se nourrissant de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre à un banal astéroïde, sa [[encyclopedia STEALTH_TITLE]] augmente grandement une fois dissimulé dans une ceinture d'astéroïdes.
 
 SM_DAMPENING_CLOUD
 Nuage Siphonnant
+
 SM_DAMPENING_CLOUD_DESC
 Un nuage cosmique de particules de haute énergie ayant développé une forme de sensibilité. Repoussé par les signatures énergétiques des colonies habitées, il est cependant irrésistiblement attiré par les réserves d'énergie potentielle, et dérobera le [[encyclopedia FUEL_TITLE]] de tous les astronefs présents dans un système.
 
 SM_ACIREMA_GUARD
 Astrogarde Acirema
+
 SM_ACIREMA_GUARD_DESC
 Un astronef armé, sans équipage, conçu par les Acirema afin de défendre un système stellaire.
 
 SM_EXP_OUTPOST
 Expérience Zero
+
 SM_EXP_OUTPOST_DESC
 '''Une ancienne création des Expérimentateurs réduisant les [[encyclopedia SHIELDS_TITLE]] et [[encyclopedia DAMAGE_TITLE]] adverses.
 
@@ -840,14 +939,16 @@ L'Expérience Zero fut envoyée dans cette galaxie afin de protéger les avant-p
 
 SM_COSMIC_DRAGON
 Dragon Cosmique
+
 SM_COSMIC_DRAGON_DESC
 '''Un terrifiant montre de l'espace capable de détruire des systèmes stellaires entiers.
 
 Les Dragons Cosmiques sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[encyclopedia STEALTH_TITLE]], et munis d'armes dangereuses. Une flotte très puissante et une [[encyclopedia DETECTION_TITLE]] très performante seront nécessaires pour en découdre avec ces organismes. Ils recherchent et attaquent les planètes habitées, et sont capables de réduire à néant des systèmes stellaires entiers s'ils ne sont pas combattus.'''
 
-##########
-# Fields #
-##########
+
+##
+## Fields
+##
 
 FLD_ION_STORM
 Tempête Ionique
@@ -885,9 +986,10 @@ Disque d'Accrétion
 FLD_ACCRETION_DISC_DESC
 Un disque d'accrétion est une structure astrophysique (la plupart du temps un disque circumstellaire) composée de matière diffuse en orbite autour d'un corps massif central. Toutes les planètes d'un système se situant dans la zone d'influence d'un disque d'accrétion ont un malus d'[[encyclopedia SUPPLY_TITLE]] de -1.
 
-##############################
-# Predefined Starting Fleets #
-##############################
+
+##
+## Predefined starting fleets
+##
 
 FN_HOME_FLEET
 Flotte Locale
@@ -907,9 +1009,10 @@ Flotte Invasion
 MONSTERS
 Monstres
 
-##########################
-# Status Update Messages #
-##########################
+
+##
+## Status update messages
+##
 
 RETURN_TO_INTRO
 Retour au Menu principal
@@ -987,9 +1090,9 @@ ERROR_PYTHON_AI_CRASHED
 L'IA Python pour %1% a rencontré une erreur fatale.
 
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Usage : '''
@@ -1622,9 +1725,9 @@ OPTIONS_DB_FLEET_WND_AGGRESSION
 Comportement par défaut des Flottes
 
 
-#################
-# File Dialog   #
-#################
+##
+## File dialog
+##
 
 FILE_DLG_FILES
 Fichier(s):
@@ -1654,9 +1757,10 @@ n'existe pas.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Périphérique indisponible.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 Néo
@@ -1685,16 +1789,13 @@ V
 COLOR_DLG_ALPHA
 A
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
-'''Menu principal'''
-
-#Button names####
+Menu principal
 
 INTRO_BTN_SINGLE_PLAYER
 Partie solo
@@ -1723,24 +1824,19 @@ Crédits
 INTRO_BTN_EXIT
 Quitter
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Délai de connexion au serveur dépassé.
 
 ERR_VERSION_MISMATCH
 '''Connexion au serveur impossible, ce client utilise une version différente des paramètres et/ou fichiers suivants: '''
 
-########################
-# Server Setup Screen  #
-########################
 
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Connexion au Serveur
-
-#Static labels####
 
 LAN_GAME_LABEL
 Partie locale chez :
@@ -1751,8 +1847,6 @@ Partie Internet chez :
 PLAYER_NAME_LABEL
 Nom du joueur
 
-#Button names####
-
 HOST_GAME_BN
 Héberger une partie (sérialisation XML conseillée)
 
@@ -1762,9 +1856,10 @@ Rejoindre une partie (Cf. Options/Autres)
 REFRESH_LIST_BN
 Rafraîchir
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Configuration multijoueurs
@@ -1802,16 +1897,14 @@ Charger partie
 START_GAME_BN
 Lancer partie
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Création de la Galaxie
 
-#Strings
 GSETUP_GRAPHICS_FILES
 Fichiers graphiques
 
@@ -1830,93 +1923,117 @@ Espèce de départ
 GSETUP_NUMBER_AIS
 Nombre de joueurs d'IA
 
-#Drop-down list labels and choices####
-
 GSETUP_SEED
 Graine de hasard
+
 GSETUP_RANDOM_SEED
 Génère une Graine de hasard aléatoire
+
 GSETUP_RANDOMIZE
 Aléatoire
+
 GSETUP_STARS
 Systèmes
+
 GSETUP_SHAPE
 Type de la galaxie
+
 GSETUP_AGE
 Âge de la galaxie
+
 GSETUP_STARLANE_FREQ
 Voies spatiales
+
 GSETUP_PLANET_DENSITY
 Planètes par système
+
 GSETUP_SPECIALS_FREQ
 Particularités
+
 GSETUP_MONSTER_FREQ
 Fréquence Monstres
+
 GSETUP_NATIVE_FREQ
 Populations indigènes
+
 GSETUP_AI_AGGR
 Agressivité max des IAs
 
 GSETUP_2ARM
 Spirale à deux bras
+
 GSETUP_3ARM
 Spirale à trois bras
+
 GSETUP_4ARM
 Spirale à quatre bras
+
 GSETUP_CLUSTER
 Amas
+
 GSETUP_ELLIPTICAL
 Elliptique
+
 GSETUP_DISC
 Disque
+
 GSETUP_BOX  # translated
 Box
+
 GSETUP_IRREGULAR
 Irrégulière
+
 GSETUP_RING
 Annulaire
 
 GSETUP_RANDOM
 Aléatoire
+
 GSETUP_NONE
 Aucun
+
 GSETUP_LOW
 Bas
+
 GSETUP_MEDIUM
 Moyen
+
 GSETUP_HIGH
 Haut
 
 GSETUP_YOUNG
 Jeune
+
 GSETUP_MATURE
 Adulte
+
 GSETUP_ANCIENT
 Ancienne
 
 GSETUP_BEGINNER
 Balbutiant
+
 GSETUP_TURTLE
 Pusillanime
+
 GSETUP_CAUTIOUS
 Prudent
+
 GSETUP_TYPICAL
 Entreprenant
+
 GSETUP_AGGRESSIVE
 Agressif
+
 GSETUP_MANIACAL
 Maniaque
 
-#Error messages####
-
 GSETUP_ERR_NOEXIST
-n'existe pas !
+n'existe pas.
 
-###########################
-# About Dialog            #
-###########################
-
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Licence
@@ -1933,9 +2050,10 @@ Vision
 FREEORION_VISION
 FreeOrion, projet open-source s'inspirant de Master of Orion, est un jeu épique de stratégie spatiale au tour par tour, incorporant au modèle classique des "4X", des éléments de développement de nation présents dans des titres tels Europa Universalis 2, ainsi qu'un moteur polyvalent de combat tactique. Bien que sa conception modulaire et ouverte autorise des modifications et personnalisations significatives par la communauté, tant au niveau du moteur de jeu que des éléments de scénario, l'équipe de FreeOrion se consacre à la conception d'un univers vivant et cohérent sur le modèle d'une 'grande campagne'.
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_WINDOW_TITLE  # translated
 Menu
@@ -1958,9 +2076,10 @@ Bouton désactivé
 SAVE_DISABLED_BROWSE_TEXT
 Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont vous n'êtes ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
 
-###########################
-# Save Game Dialog        #
-###########################
+
+##
+## Save game dialog
+##
 
 SAVE_TIME_TITLE
 <u>Date</u>
@@ -2047,9 +2166,10 @@ SAVE_REALLY_DELETE
 SAVE_REALLY_OVERRIDE
 Êtes-vous sûr(e) de vouloir écraser %1%?
 
-###########################
-# Game Options            #
-###########################
+
+##
+## Game options
+##
 
 OPTIONS_TITLE  # translated
 Options
@@ -2543,9 +2663,10 @@ Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 OPTIONS_USE_BINARY_SERIALIZATION
 Utiliser des fichiers de sauvegarde binaire
 
-#################
-# Main Map      #
-#################
+
+##
+## Main map window
+##
 
 MAP_BTN_TURN_UPDATE
 Tour %1%
@@ -2658,96 +2779,138 @@ Flottes
 MAP_FLEET_TEXT
 Nombre total d'astronefs
 
-#################
-# SidePanel     #
-#################
+
+##
+## Side panel
+##
 
 SIDE_PANEL
 Panneau latéral
+
+
+##
+## Side panel/System information
+##
 
 SP_SYSTEM_PRODUCTION
 Système - Capacité Ressources
 
 RESOURCE_PRODUCTION_TOOLTIP
 Système - %1% : %2%
+
 RESOURCE_ALLOCATION_TOOLTIP
 Syst. - %1% : %2%
 
 INDUSTRY_PRODUCTION
 Capacité industrielle
+
 RESEARCH_PRODUCTION
 Capacité scientifique
+
 TRADE_PRODUCTION
 Capacité commerciale
 
 INDUSTRY_CONSUMPTION
 Consommation industrielle
+
 RESEARCH_CONSUMPTION
 Consommation scientifique
+
 TRADE_CONSUMPTION
 Consommation commerciale
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Échanges entre systèmes
+
 IMPORT_EXPORT_TOOLTIP  # translated
 Import / Export
+
 RESOURCE_IMPORT
 Importations
+
 RESOURCE_EXPORT
 Disponible à l'exportation
+
 RESOURCE_SELF_SUFFICIENT
 Aucun échange
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Panneau planétaire
+
 PL_ASTEROID_BELT
 Ceinture d'astéroïdes
+
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Astéroïdes
+
 PL_UNINHABITED
 Inhabité
+
 PL_SIZE
 Taille
+
 PL_COLONIZE
 Coloniser (%1% / %2%)
+
 PL_CANCEL_COLONIZE
 Annuler colonisation
+
 PL_OUTPOST
 Placer un avant-poste
+
 PL_CANCEL_OUTPOST
 Annuler avant-poste
+
 PL_INVADE
 Envahir (+%1%)
+
 PL_CANCEL_INVADE
 Annuler invasion
+
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Choisir astronef colonisateur
+
 PL_BOMBARD
 Bombarder
+
 PL_CANCEL_BOMBARD
 Annuler bombardement
+
 #PL_TYPE_SIZE
 #%1% %2%
+
 #PL_TYPE_SIZE_ENV
 #%1% %2% (%3%)
+
 PL_NO_VISIBILITY
 La planète n'est pas visible actuellement.
+
 PL_BASIC_VISIBILITY
 La planète déjoue la détection de vos capteurs.
+
 PL_LAST_TURN_SEEN
 Planète vue la dernière fois au tour %1%.
+
 PL_LAST_TURN_SCANNED
 Planète détectée la dernière fois au tour %1%.
+
 PL_NEVER_SEEN
 Cette planète n'a jamais été vue par votre empire.
+
 PL_NEVER_SCANNED
 Cette planète n'a jamais été complètement détectée par votre empire.
+
 PL_NOT_IN_RANGE
 Cette planète est hors de portée des détecteurs de votre empire.
+
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 La dernière [[encyclopedia STEALTH_TITLE]] connue (%1%) dépasse votre [[DETECTION_TITLE]] (%2%).
+
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 La dernière [[encyclopedia STEALTH_TITLE]] connue est obsolète. La furtivité réelle dépasse votre [[DETECTION_TITLE]] ou le [[DETECTION_RANGE_TITLE]] local est fortement perturbé.
 
@@ -2760,12 +2923,18 @@ Produire Structure
 MENUITEM_ENQUEUE_SHIPDESIGN
 Produire Astronef
 
-## Resources Panel ##########
+
+##
+## Side panel/Resources panel
+##
 
 RP_FOCUS_TOOLTIP
 Focus %1%
 
-## Specials Panel ##########
+
+##
+## Side panel/Specials panel
+##
 
 SPECIAL_CAPACITY
 Capacité : %1%
@@ -2776,7 +2945,10 @@ Disponible depuis Tour : %1%
 ADDED_ON_INITIAL_TURN
 Disponible depuis 1er Tour
 
-## Buildings Panel##########
+
+##
+## Side panel/Buildings panel
+##
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
 '''%1% (Incomplet)
@@ -2794,7 +2966,10 @@ Détruire la structure
 ORDER_CANCEL_BUIDLING_SCRAP
 Annuler la destruction
 
-## General Tooltips#########
+
+##
+## General tooltips
+##
 
 TT_THIS_TURN
 Tour Actuel
@@ -2856,9 +3031,10 @@ Entrer le nouveau nom de la planète
 SP_PLANET_SUITABILITY
 Habitabilité de la planète
 
-#################
-# Fleet Window  #
-#################
+
+##
+## Fleet window
+##
 
 FW_FLEET_HOLDING_AT
 Dans %1%
@@ -3057,9 +3233,10 @@ Offrir la planète à...
 ORDER_CANCEL_GIVE_PLANET
 Annuler l'offre de la planète
 
-###############
-#  Moderator  #
-###############
+
+##
+## Moderator
+##
 
 MOD_NONE
 Pas d'action de la part du modérateur
@@ -3082,9 +3259,10 @@ Ajouter une Voie spatiale
 MOD_REMOVE_STARLANE
 Supprimer une Voie spatiale
 
-###############
-#  Diplomacy  #
-###############
+
+##
+## Diplomacy
+##
 
 DIPLOMACY
 Diplomatie
@@ -3107,9 +3285,10 @@ Annuler la proposition de paix
 PEACE_ACCEPT
 Accepter la proposition de paix
 
-###############
-# TechTreeWnd #
-###############
+
+##
+## TechTreeWnd
+##
 
 TECH_DISPLAY
 Affichage
@@ -3187,9 +3366,10 @@ TECH_WND_PROGRESS
 TECH_WND_ETA
 %1% tour(s) restant(s)
 
-#######################
-# ProductionInfoPanel #
-#######################
+
+##
+## Production info panel
+##
 
 PRODUCTION_INFO_AT_LOCATION_TITLE
 %1% %3% sur %2%
@@ -3206,9 +3386,10 @@ Points gaspillés
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points disponibles ici
 
-###############
-# ResearchWnd #
-###############
+
+##
+## Research window
+##
 
 RESEARCH_WND_TITLE
 Recherche
@@ -3224,9 +3405,10 @@ RESEARCH_QUEUE_PROMPT
 
 Maintenir CONTROL lors du clic pour les ajouter directement en tête de liste.'''
 
-####################
-# BuildSelectorWnd #
-####################
+
+##
+## Build selector window
+##
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Projets disponibles
@@ -3276,9 +3458,10 @@ Centrer sur construction
 PRODUCTION_QUEUE_PROMPT
 Double-clic sur les projets disponibles pour les ajouter à la file d'attente de Production.
 
-#################
-# ProductionWnd #
-#################
+
+##
+## Production window
+##
 
 PRODUCTION_WND_TITLE  # translated
 Production
@@ -3345,12 +3528,14 @@ Temps production
 PRODUCTION_WND_TOOLTIP_PARTS
 Équipements Astronef
 
+# %1% FIXME
 PRODUCTION_WND_TOOLTIP_FAILED_COND
 Conditions non remplies pour produire sur %1%
 
-###############
-#  DesignWnd  #
-###############
+
+##
+## Design window
+##
 
 SHIP_DESIGN_FILES
 Fichiers Modèle
@@ -3466,9 +3651,11 @@ Choisir un modèle existant à actualiser.
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
 Choisissez une coque, ajoutez des équipements, puis cliquez sur "[[DESIGN_WND_ADD]]" pour créer un modèle utilisable.
 
-################
-## Statistics ##
-################
+
+##
+## Statistics
+##
+
 SHIP_COUNT
 Nombre d'astronefs
 
@@ -3529,9 +3716,10 @@ Planètes envahies
 #STATISTICS_TEST_3
 #Statistics Test 3
 
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
+
+##
+## Encyclopedia
+##
 
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
 '''%1% :	'''
@@ -3961,9 +4149,9 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% n'a pas pu endommagé %1% cibles :
 
 
-###########################################
-# Combat Report #
-###########################################
+##
+## Combat report
+##
 
 NEUTRAL
 Neutre
@@ -4074,9 +4262,10 @@ Unité'''
 COMBAT_DESTROYED_LABEL
 Perdues: %1%
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
+
+##
+## Encyclopedia article categories and short descriptions
+##
 
 CATEGORY_GUIDES  # translated
 **Guides**
@@ -4111,22 +4300,26 @@ Indicateurs
 POPULATION_TITLE_SHORT_DESC  # translated
 Population
 
-###########################################
-# ARTICLES #
-###########################################
+
+##
+## Encyclopedia articles
+##
 
 PEACE_TITLE
 Paix
+
 PEACE_TEXT
 La paix est le rapport diplomatique entre empires ayant convenu de ne pas attaquer planètes et astronefs, de ne pas bloquer les lignes d'[[encyclopedia SUPPLY_TITLE]] et de ne pas faire obstacle à l'essor des colonies de chacun d'entre eux.
 
 OUTPOSTS_TITLE
 Avant-Poste
+
 OUTPOSTS_TEXT
 Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
 FOCUS_TITLE
 Focus Planétaire
+
 FOCUS_TEXT
 '''Chaque planète dispose d'un réglage 'Focus', indiquant quel domaine sera privilégié par ses habitants, comme l'[[encyclopedia INDUSTRY_TITLE]] ou la [[encyclopedia RESEARCH_TITLE]]. Toutes les possibilités de Focus ne sont pas toujours disponibles, ces dernières dépendant parfois de l'espèce peuplant la planète, d'une technologie encore inconnue, ou bien d'autres facteurs tels que la présence d'une [[encyclopedia ENC_SPECIAL]].
 
@@ -4136,6 +4329,7 @@ Une planète sera réglée par défaut sur le Focus favori de l'espèce la peupl
 
 GROWTH_FOCUS_TITLE
 Focus Croissance
+
 GROWTH_FOCUS_TEXT
 '''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
@@ -4147,22 +4341,26 @@ Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à cro�
 
 MINING_FOCUS_TITLE
 Focus Extraction minière
+
 MINING_FOCUS_TEXT
 Option pour le moment désactivée.
 #Le Focus Extraction Minière n'est possible que sur les planètes présentant des Particularités rares. Privilégier l'extraction minière procure un bonus de production significatif.
 
 TRADE_FOCUS_TITLE
 Focus Commerce
+
 TRADE_FOCUS_TEXT
 Le Commerce est encore sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.
 
 PROTECTION_FOCUS_TITLE
 Focus Protection
+
 PROTECTION_FOCUS_TEXT
 Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la solidité de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.
 
 INDUSTRY_TITLE
 Industrie
+
 INDUSTRY_TEXT
 '''L'Industrie, mesurée en Points de Production (PP), représente la capacité de production et de transformation de biens matériels de l'ensemble des planètes de l'empire. Elle est nécessaire pour la construction des structures, des astronefs et tout autre projet.
 
@@ -4174,6 +4372,7 @@ Les PP sont alloués aux projets selon leur position dans de la file d'attente :
 
 RESEARCH_TITLE
 Recherche
+
 RESEARCH_TEXT
 '''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles technologies. La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 PR et requiert 5 tours, un maximum de 4 PR seulement par tour peut lui être consacré.
 Les PR sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
@@ -4182,21 +4381,25 @@ Les PR sont affectés aux technologies à acquérir selon leur position dans la 
 
 HAPPINESS_TITLE
 Bonheur
+
 HAPPINESS_TEXT
 Le Bonheur de la population d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puissent lancer la colonisation d'autres planètes.
 
 INFRASTRUCTURE_TITLE  # translated
 Infrastructure
+
 INFRASTRUCTURE_TEXT
 L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque planète colonisée présente un indicateur 'Infrastructure'.
 
 DEFENSE_TITLE
 Défense
+
 DEFENSE_TEXT
 L'indicateur 'Défense' d'une planète représente la puissance de feu (mesurée par l'ampleur des dégâts qu'elle cause) de l'ensemble des armes sol/air installées. Il est comparable à l'indicateur '[[encyclopedia DAMAGE_TITLE]]' des astronefs.
 
 SHIELDS_TITLE
 Boucliers
+
 SHIELDS_TEXT
 '''Le terme 'Boucliers' désigne toutes sortes de champs d'énergie de protection, ces derniers constituant en général la première barrière défensive contre toute attaque. Il existe deux types distincts de boucliers: les Boucliers d'astronefs et les Boucliers planétaires, les astronefs comme les planètes ayant tous deux un indicateur 'Bouclier'. La principale différence entre les deux types de boucliers est la manière dont ils se rechargent: les boucliers d'astronefs se rechargent instantanément après chaque tir subi, tandis que les boucliers planétaires nécessitent un temps de recharge plus important. Cette légère nuance de fonctionnement peut paraître minime de prime abord mais engendre une différence notable en situation de combat.
 
@@ -4209,16 +4412,19 @@ Une différence supplémentaire réside dans le fait que les boucliers d'astrone
 
 ARMOR_TITLE
 Blindage
+
 ARMOR_TEXT
 Augmente la [[encyclopedia STRUCTURE_TITLE]] max d'un astronef de la valeur de puissance du blindage.
 
 SLOT_TITLE
 Niche
+
 SLOT_TEXT
 Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
 
 STEALTH_TITLE
 Furtivité
+
 STEALTH_TEXT
 '''L'indicateur 'Furtivité' représente la capacité d'un objet à déjouer toutes sortes de capteurs radars. Seuls les empires dotés d'une [[encyclopedia DETECTION_TITLE]] supérieure ou égale à la valeur de Furtivité peuvent voir cet objet.
 
@@ -4226,6 +4432,7 @@ Les astronefs, les structures, les objets à particularité, les systèmes et pl
 
 DETECTION_TITLE
 Capacité de Détection
+
 DETECTION_TEXT
 '''L'indicateur 'Capacité de Détection' représente le niveau technologique des capteurs d'un empire. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] d'une valeur inférieure ou égale à sa propre [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le [[encyclopedia DETECTION_RANGE_TITLE]] d'un astronef ou d'une planète qu'il contrôle.
 
@@ -4233,6 +4440,7 @@ Chaque empire présente un indicateur 'Capacité de détection'.'''
 
 DETECTION_RANGE_TITLE
 Champ de Détection
+
 DETECTION_RANGE_TEXT
 '''L'indicateur 'Champ de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
 
@@ -4240,6 +4448,7 @@ Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le 
 
 TROOP_TITLE
 Infanterie
+
 TROOP_TEXT
 '''Le terme 'Infanterie' désigne toutes sortes de forces militaires capables d'opérer à la surface d'une planète.
 
@@ -4261,21 +4470,25 @@ Lors de la terraformation d'une planète dans le but de mieux l'adapter aux pré
 
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
+
 ORGANIC_SPECIES_TEXT
 Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
+
 LITHIC_SPECIES_TEXT
 Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
+
 ROBOTIC_SPECIES_TEXT
 Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
+
 PHOTOTROPHIC_SPECIES_TEXT
 '''Les espèces phototropiques vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile - plus elle est importante, plus elle est bénéfique. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
 
@@ -4288,16 +4501,19 @@ Influence sur la population / taille planète:
 
 SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
+
 SELF_SUSTAINING_SPECIES_TEXT
 Les espèces autosuffisantes sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément de trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
 
 TELEPATHIC_TITLE
 Télépathie
+
 TELEPATHY_TEXT
 Les espèces télépathiques sont immunisées contre le contrôle de l'esprit, ce qui les rend beaucoup plus performantes en Recherche [[tech LRN_PSIONICS]].
 
 XENOPHOBIC_SPECIES_TITLE
 Xénophobe
+
 XENOPHOBIC_SPECIES_TEXT
 '''Les espèces xénophobes utilisent une partie de leur Industrie pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de Métabolisme Autosuffisant considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa population maximale (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
 
@@ -4305,11 +4521,13 @@ La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèc
 
 FUEL_TITLE
 Carburant
+
 FUEL_TEXT
 Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[encyclopedia SUPPLY_TITLE]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). La quantité initiale de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'astronef</encyclopedia> dépend de son type de <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia>, et peut être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia>.
 
 SUPPLY_TITLE
 Approvisionnement
+
 SUPPLY_TEXT
 '''L'indicateur d'approvisionnement d'une planète représente le nombre de Voies spatiales sur lesquelles l'approvisionnement peut être distribué. Les petites planètes peuvent déployer l'approvisionnement sur de grandes distances mais peu de lignes, tandis que les grandes planètes peuvent approvisionner davantage de lignes mais sur de moins grandes distances.
 
@@ -4321,11 +4539,13 @@ Les lignes d'approvisionnement peuvent également servir à ravitailler en [[enc
 
 FLEET_UPKEEP_TITLE
 Entretien des Flottes
+
 FLEET_UPKEEP_TEXT
 Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, en raison des coûts opérationnels et de gestion de l'ensemble des astronefs. Lorsqu'un nouvel astronef est produit, le coût de ce dernier augmente de 1% multiplié par le nombre d'astronefs dont l'empire est déjà propriétaire. Les coûts du [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% multiplié par le nombre de planètes que l'empire possède.
 
 EVACUATION_TITLE
 Évacuation
+
 EVACUATION_TEXT
 '''La construction d'un projet d'[[buildingtype BLD_EVACUATION]] retire toute la population d'une planète. À chaque tour, une partie de la population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[encyclopedia SUPPLY_TITLE]], l'une d'entre elles sera choisie au hasard et la population y sera déplacée. Si aucune planète appropriée n'est disponible, la population évacuée disparaîtra dans l'espace infini.
 Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le processus d'[[buildingtype BLD_EVACUATION]] est terminé.'''
@@ -4359,21 +4579,25 @@ Maniaque:
 
 STRUCTURE_TITLE
 Résistance
+
 STRUCTURE_TEXT
 La Résistance indique la quantité de [[encyclopedia DAMAGE_TITLE]] qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation, et sa valeur max améliorée à l'aide d'un [[encyclopedia ARMOR_TITLE]].
 
 DAMAGE_TITLE
 Dommages
+
 DAMAGE_TEXT
 Définit la valeur de base qu'un armement d'astronef ôtera à la [[encyclopedia STRUCTURE_TITLE]] d'un autre astronef (ou aux [[encyclopedia SHIELDS_TITLE]], à la [[encyclopedia DEFENSE_TITLE]] et à l'[[encyclopedia INFRASTRUCTURE_TITLE]] d'une planète), en une passe de combat (pour un total de trois passes par tour). Si l'astronef ciblé est équipé de [[encyclopedia SHIELDS_TITLE]], les dommages causés par chaque tir seront égaux à cette valeur de base moins la valeur de solidité des [[encyclopedia SHIELDS_TITLE]] de l'astronef.
 
 STARLANE_SPEED_TITLE
 Vitesse sur Voie spatiale
+
 STARLANE_SPEED_TEXT
 Vitesse sur la carte galactique  (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tour requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse sur Voie spatiale d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[encyclopedia FUEL_TITLE]], quel que soit le nombre de tour requis.
 
 MAP_WINDOW_ARTICLE_TITLE
 Fenêtre Carte
+
 MAP_WINDOW_ARTICLE_TEXT
 '''La Fenêtre Carte peut être considérée comme l'écran de jeu 'principal' de FreeOrion. Ce dernier affiche la carte de la galaxie et permet d'accéder à toutes les autres fenêtres ou menus du jeu.  La barre supérieure réunit les éléments principaux de contrôle.
 
@@ -4385,6 +4609,7 @@ Sur le côté droit de la barre de contrôle se trouvent les icônes permettant 
 
 DESIGN_WINDOW_ARTICLE_TITLE
 Fenêtre Conception
+
 DESIGN_WINDOW_ARTICLE_TEXT
 '''La [[DESIGN_WINDOW_ARTICLE_TITLE]] permet de visualiser ou de modifier les modèles de monstres ou d'astronefs.
 
@@ -4418,6 +4643,7 @@ Le bouton "[[DESIGN_WND_UPDATE]]" remplace par un nouveau modèle le dernier mod
 
 FLEET_MOVEMENT_ARTICLE_TITLE
 Déplacement des Flottes
+
 FLEET_MOVEMENT_ARTICLE_TEXT
 '''Les flottes sont représentées dans la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] via une superposition des icônes de flottes (chaque type de flotte ayant un icône différent) se trouvant dans un système stellaire (dans le coin supérieur droit). Les flottes peuvent être sélectionnées avec un clic-gauche, lequel ouvre la Fenêtre Flottes listant le détail des flottes se trouvant dans le système.
 
@@ -4431,6 +4657,7 @@ Un clic-droit sur une flotte dans la Fenêtre Flottes donne accès aux options a
 
 HIDDEN_SETTINGS_ARTICLE_TITLE
 Réglages Cachés
+
 HIDDEN_SETTINGS__ARTICLE_TEXT
 '''Un certain nombre de réglages de l'Interface Utilisateur (User Interface soit UI) et de jeu peuvent être modifiés par le joueur via le Menu Options. Cependant, d'autres réglages de l'UI n'apparaissent pas dans le Menu Options mais peuvent être modifiés par l'utilisateur en éditant directement le fichier config.xml, situé dans les dossiers d'installation du jeu. L'emplacement de ce fichier selon la plateforme ou le système d'exploitation est disponible sur le Wiki FreeOrion.
 
@@ -4444,15 +4671,18 @@ show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte
 
 FIELDS_TITLE
 Régions Interstellaires
+
 FIELDS_TEXT
 Il existe plus d'un [[encyclopedia ENC_FIELD_TYPE]] interstellaires, ayant chacune une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
 
-#
-# Guides
-#
+
+##
+## Guides
+##
 
 GENERAL_PEDIA_REFERENCE
 Tous les articles d'aide et d'information sont disponibles via l'[[encyclopedia ENC_INDEX]].
+
 DETAILED_PEDIA_REFERENCE
 [[GENERAL_PEDIA_REFERENCE]] L'Encyclopédie peut être affichée/cachée via l'icône violette surmontée d'un point d'interrogation, située dans la partie supérieure droite de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. Les hyperliens ainsi que les flèches dans le coin inférieur droit de la Fenêtre Encyclopédie permettent de naviguer dans cette dernière.
 
@@ -4479,6 +4709,7 @@ Des informations complémentaires sont disponibles sur le site web freeorion.org
 
 QUICK_START_GUIDE_TITLE
 *Guide de Démarrage Rapide*
+
 QUICK_START_GUIDE_TEXT
 '''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org, (URL actuelle: http://freeorion.org/index.php/V0.4_Quick_Play_Guide )
 
@@ -4495,6 +4726,7 @@ Le serveur a envoyé un message ne pouvant être interprété.
 
 ORBITAL_DRYDOCK_REPAIR_TITLE
 Réparation en Cale Sèche
+
 ORBITAL_DRYDOCK_REPAIR_TEXT
 '''La [[building BLD_SHIPYARD_ORBITAL_DRYDOCK]] est considérée comme la meilleure structure de réparation, capable de remettre à neuf tout astronef endommagé.
 
@@ -4505,9 +4737,9 @@ Les réparations sont différées d'un tour pour les astronefs pénétrant tout 
 Tout combat au sein d'un système interrompt les réparations pour le tour en cours.'''
 
 
-####################
-# Combat Messages  #
-####################
+##
+## Combat messages
+##
 
 COMBAT_WINDOW_TITLE
 Fenêtre de Combat
@@ -4542,9 +4774,10 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
 ''' Perdu!'''
 
-####################
-# TurnProgress     #
-####################
+
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Mouvement des flottes
@@ -4585,9 +4818,10 @@ Erreur de traitement du message serveur
 ERROR_EARLY_TURN_UPDATE
 Réception d'un état de tour inattendu de la part du serveur.
 
-########################
-# Messages Panel       #
-########################
+
+##
+## Messages panel
+##
 
 MESSAGES_PANEL_TITLE  # translated
 Messages
@@ -4595,9 +4829,10 @@ Messages
 MESSAGES_PANEL_INTRO
 Statut et messages du chat
 
-########################
-# Players List         #
-########################
+
+##
+## Players list
+##
 
 PLAYERS_LIST_PANEL_TITLE  # translated
 Empires
@@ -4611,9 +4846,10 @@ Combat
 WAITING
 Attend
 
-####################
-## Objects Window ##
-####################
+
+##
+## Objects window
+##
 
 SORT
 Trier
@@ -4627,9 +4863,10 @@ Replier
 EXPAND_ALL
 Déplier
 
-#####################
-## Objects Columns ##
-#####################
+
+##
+## Objects columns
+##
 
 #COLUMN_SORT_NONE
 #%1%
@@ -4751,9 +4988,10 @@ Croiss. Pop. au Prochain Tour
 NUM_SPECIALS
 Nombre de Particularités
 
-####################
-## Filters Dialog ##
-####################
+
+##
+## Filters dialog
+##
 
 VISIBLE  # translated
 Visible
@@ -4830,11 +5068,11 @@ Astéroides avec Planète de type
 CONDITION_ANY
 Tout
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
 
-#Window title####
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Rapport de Situation - Tour initial
@@ -4863,8 +5101,6 @@ SITREP_SNOOZE_CLEAR_INDEFINITE
 SITREP_SNOOZE_CLEAR_ALL
 '''  Réafficher tous les SitReps masqués ou désactivés'''
 
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
-
 SITREP_WELCOME  # translated
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
 
@@ -4876,424 +5112,514 @@ La planète %planet% est un emplacement favorable pour la structure %buildingtyp
 
 SITREP_SHIP_BUILT
 Dans %system% : un astronef %shipdesign%, baptisé '%ship%', a été produit.
+
 SITREP_SHIP_BUILT_LABEL
 Astronef produit
 
 SITREP_SHIP_BATCH_BUILT
 Dans %system% : %rawtext% astronefs %shipdesign% ont été produits.
+
 SITREP_SHIP_BATCH_BUILT_LABEL
 Lot d'astronefs produit
 
 SITREP_BUILDING_BUILT
 Sur %planet% : la structure %building% a été construite.
+
 SITREP_BUILDING_BUILT_LABEL
 Structure achevée
 
 SITREP_TECH_RESEARCHED
 La technologie %tech% a été assimilée.
+
 SITREP_TECH_RESEARCHED_LABEL
 Technologie assimilée
 
 SITREP_TECH_UNLOCKED
 La technologie %tech% a été débloquée et peut désormais être assimilée grâce à la Recherche.
+
 SITREP_TECH_UNLOCKED_LABEL
 Technologie débloquée
 
 SITREP_SHIP_PART_UNLOCKED
 L'équipement %shippart% a été débloqué et peut désormais être utilisé lors de la conception de modèles d'astronef.
+
 SITREP_SHIP_PART_UNLOCKED_LABEL
 Équipement d'astronef débloqué
 
 SITREP_SHIP_HULL_UNLOCKED
 La coque %shiphull% a été débloquée et peut désormais être utilisée lors de la conception de modèles d'astronef.
+
 SITREP_SHIP_HULL_UNLOCKED_LABEL
 Coque d'astronef débloquée
 
 SITREP_BUILDING_TYPE_UNLOCKED
 La structure %buildingtype% a été débloquée et peut désormais être construite.
+
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Structure débloquée
 
 SITREP_COMBAT_SYSTEM
 Dans %system% : un %combat% a eu lieu.
+
 SITREP_COMBAT_SYSTEM_LABEL
 Combat dans système
+
 SITREP_COMBAT_SYSTEM_ENEMY
 Dans %system% : un %combat% contre %empire% a eu lieu.
+
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
 Combat dans système
+
 COMBAT  # translated
 Combat
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 Dans %system% : un objet non-identifié a été détruit.
+
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
 Dans %system% : un %shipdesign% ('%ship%' de %empire%) a été détruit.
+
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 Dans %system% : un %shipdesign% ('%ship%' de %empire%) a été détruit.
+
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef impérial détruit
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 Dans %system% : un %shipdesign% a été détruit.
+
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef libre détruit
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 Dans %system% : la flotte '%fleet%' de %empire% a été détruite.
+
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotte impériale détruite
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 Dans %system% : la flotte '%fleet%' a été détruite.
+
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotte libre détruite
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
 Dans %system% : la planète %planet% (appartenant à %empire%) a été détruite!
+
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Planète impériale détruite
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 Dans %system% : la planète %planet% a été détruite!
+
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Planète libre détruite
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 Sur %planet% dans %system% : la structure %building% de %empire% a été détruite.
+
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Structure impériale détruite
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 Sur %planet% dans %system% : la structure %building% a été détruite.
+
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Structure libre détruite
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
 Dans %system% : un objet non-identifié a été endommagé.
+
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 Dans %system% : un %shipdesign% de %empire%, le '%ship%', a été endommagé.
+
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef impérial endommagé
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 Dans %system% : un %shipdesign% a été endommagé.
+
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef libre endommagé
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 Dans %system% : la planète %planet% de %empire% a été bombardée.
+
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète impériale bombardée
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 Dans %system% : la planète %planet% a été bombardée.
+
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Planète libre bombardée
 
 SITREP_GROUND_BATTLE
 Sur %planet% : une bataille terrestre s'est déroulée.
+
 SITREP_GROUND_BATTLE_LABEL
 Bataille au sol
+
 SITREP_GROUND_BATTLE_ENEMY
 Sur %planet% : une bataille terrestre s'est déroulée contre %empire%.
+
 SITREP_GROUND_BATTLE_ENEMY_LABEL
 Bataille au sol
 
 SITREP_PLANET_CAPTURED
 La planète %planet% a été capturée par %empire%.
+
 SITREP_PLANET_CAPTURED_LABEL
 Planète capturée
 
 SITREP_PLANET_DEPOPULATED
 La population de la planète %planet% a été totalement décimée!
+
 SITREP_PLANET_DEPOPULATED_LABEL
 Planète détruite
 
 SITREP_PLANET_COLONIZED
 La planète %planet% a été colonisée par l'espèce %species%.
+
 SITREP_PLANET_COLONIZED_LABEL
 Planète colonisée
 
 SITREP_PLANET_OUTPOSTED
 La planète %planet% dispose à présent d'un avant-poste.
+
 SITREP_PLANET_OUTPOSTED_LABEL
 Planète Avant-Poste
 
 SITREP_NEW_COLONY_ESTABLISHED
 Sur %planet% : une nouvelle colonie %species% s'est établie.
+
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 Nouvelle colonie établie
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La flotte %fleet% (%rawtext% astronefs) a atteint le système %system%.
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte inconnue arrivée à destination
 
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
 Un %shipdesign% a atteint le système %system%.
+
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Monstre arrivé à destination
 
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 Des %fleet% (%rawtext%) ont atteint %system%.
+
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monstres arrivés à destination
 
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
 Un %shipdesign% ('%ship%' de %empire%) a atteint le système %system%.
+
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef arrivé à destination
 
 SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION
 La flotte '%fleet%' de %empire% (%rawtext%x %shipdesign) a atteint le système %system%.
+
 SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION_LABEL
 Flotte arrivée à destination
 
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %system%.
+
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte impériale arrivée à destination
 
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
 Un %shipdesign% ('%ship%' de %empire%) a atteint le système %system%.
+
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef étranger arrivé à destination
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %system%.
+
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte étrangère arrivée à destination
 
 SITREP_POP_THRESHOLD
 Sur %planet% : la colonie a atteint la taille et le [[encyclopedia HAPPINESS_TITLE]] prérequis pour entreprendre la colonisation d'autres planètes.
+
 SITREP_POP_THRESHOLD_LABEL
 Seuil de Colonisation
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
+
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Apparition de monstre Expérimentateur
 
 EFFECT_ANCIENT_SHIP
 Sur %planet% : un %predefinedshipdesign% a été découvert dans les Ruines Ancestrales!
+
 EFFECT_ANCIENT_SHIP_LABEL
 Découverte d'astronef ancestral
 
 EFFECT_ANCIENT_SHIP_RUMORS
 Une rumeur se propageant dans toute la galaxie prétend qu'un %predefinedshipdesign% a été découvert par une expédition xénoarchéologique au sein de Ruines Ancestrales!
+
 EFFECT_ANCIENT_SHIP_RUMORS_LABEL
 Rumeur d'astronef ancestral
 
 EFFECT_ANCIENT_BUILDING
 Sur %planet% : un %buildingtype% a été découvert dans les Ruines Ancestrales!
+
 EFFECT_ANCIENT_BUILDING_LABEL
 Découverte de structure ancestrale
 
 EFFECT_ANCIENT_BUILDING_RUMORS
 Une rumeur se propageant dans toute la galaxie prétend qu'un %buildingtype% a été découvert par une expédition xénoarchéologique au sein de Ruines Ancestrales!
+
 EFFECT_ANCIENT_BUILDING_RUMORS_LABEL
 Rumeur de structure ancestrale
 
 EFFECT_ANCIENT_TECH
 Sur %planet% : une technologie %tech% a été découverte dans les Ruines Ancestrales!
+
 EFFECT_ANCIENT_TECH_LABEL
 Découverte de technologie ancestrale
 
 EFFECT_ANCIENT_TECH_RUMORS
 Une rumeur se propageant dans toute la galaxie prétend qu'une technologie %tech% a été découverte par une expédition xénoarchéologique au sein de Ruines Ancestrales!
+
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Rumeur de technologie ancestrale
 
 EFFECT_ANCIENT_EXTINCT_SPECIES
 Sur %planet% : des corps parfaitement conservés de l'espèce éteinte %species% ont été découverts au sein de Ruines Ancestrales!
+
 EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
 Découverte d'une espèce éteinte
 
 EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
 Une rumeur se propageant dans toute la galaxie prétend que des corps parfaitement conservés de l'espèce éteinte %species% ont été découverts au sein de Ruines Ancestrales!
+
 EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
 Rumeur d'une espèce éteinte redécouverte
 
 EFFECT_ANCIENT_RUINS_EMPTY
 Sur %planet% : des Ruines Ancestrales ont été excavées, mais ne révélant que de faibles traces d'une technologie ancestrale.
+
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Fouille infructueuse de Ruines Ancestrales
 
 EFFECT_CONC_CAMP_COMLETE
 L'épuration ethnique est achevée sur la planète %planet%.
+
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Épuration ethnique
 
 SITREP_SHIP_REPAIR_DOCK
 Réparation en Cale Sèche
+
 EFFECT_DRYDOCK_SHIP_REPAIR_NONE
 Sur %planet% : la structure %building% ne peut démarrer les réparations sur l'astronef %ship%, en raison d'un indicateur [[encyclopedia HAPPINESS_TITLE]] trop faible.
+
 EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
 Sur %planet% : la structure %building% a partiellement réparé l'astronef %ship%.
+
 EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 Sur %planet% : la structure %building% a entièrement réparé l'astronef %ship%.
 
 EFFECT_MONSTER_SPAWNING
 Dans %system% : un %predefinedshipdesign% a fait son apparition.
+
 EFFECT_MONSTER_SPAWNING_LABEL
 Apparition de monstre
 
 EFFECT_GAIAN_TERRAFORM
 Sur %planet% : la Particularité Gaia a spontanément terraformée la planète afin de l'adapter à ses habitants.
+
 EFFECT_GAIAN_TERRAFORM_LABEL
 Terraformation Gaia
 
 EFFECT_GAIA
 Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[special GAIA_SPECIAL]].
+
 EFFECT_GAIA_LABEL
 Paradis Gaia
 
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
+
 EFFECT_TERRAFORM_LABEL
 Terraformation
 
 EFFECT_STARLANE_BORE
 Dans %system% : une nouvelle Voie spatiale a été ouverte vers un système proche.
+
 EFFECT_STARLANE_BORE_LABEL
 Générateur de Voies Spatiales
 
 EFFECT_BLACKHOLE
 Effondrement du système %system% afin de créer un Trou Noir.
+
 EFFECT_BLACKHOLE_LABEL
 Trou Noir
 
 EFFECT_ART_PLANET
 La planète %planet% a été transformée en planète artificielle.
+
 EFFECT_ART_PLANET_LABEL
 Trou Noir
 
 EFFECT_STARVATION
 La famine sévit sur la planète %planet%.
+
 EFFECT_STARVATION_LABEL  # translated
 Famine
 
 EFFECT_TAME_MONSTER_HATCHED
 Un %predefinedshipdesign% apprivoisé est disponible sur la planète %planet%.
+
 EFFECT_TAME_MONSTER_HATCHED_LABEL
 Éclosion de monstre
 
 EFFECT_TAME_MONSTER_MATURED
 Dans %system% : un %predefinedshipdesign% apprivoisé a évolué en une forme plus puissante.
+
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Mutation de monstre
 
 EFFECT_SENTRY_CREATED
 Sur %planet% : un %predefinedshipdesign% est prêt pour le service.
+
 EFFECT_SENTRY_CREATED_LABEL
 Création Factionnaire
 
 EFFECT_GATEWAY_VOID_DESTROY
 La structure %buildingtype% a détruit la flotte %fleet% sur la planète %planet%.
+
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
 Destruction par Portail du Vide
 
 EFFECT_DAMP_CLOUD
 Dans %system% : l'équipage de %ship% informe d'une perte de carburant causée par un %predefinedshipdesign%.
+
 EFFECT_DAMP_CLOUD_LABEL
 Nuage Siphonnant
 
 EFFECT_NEBULA
 Dans %system% :  les astronomes indiquent l'observation d'une nouvelle étoile formée au sein d'une nébuleuse.
+
 EFFECT_NEBULA_LABEL
 Nébuleuse
 
 EFFECT_TREE
 Dans %system% : une nouvelle Forêt Dyson a commencé à croître et à entourer l'étoile.
+
 EFFECT_TREE_LABEL
 Forêt Dyson
 
 EFFECT_DERELICT_MINERALS
 Dans %system% : 20 unités de minerai ont été récupérées sur une épave abandonnée.
+
 EFFECT_DERELICT_MINERALS_LABEL
 Découverte de minerai
 
 EFFECT_DERELICT_MAP
 Dans %system% : des informations sur la région de %system% ont été découvertes sur une %special% abandonnée.
+
 EFFECT_DERELICT_MAP_LABEL
 Découverte de carte
 
 EFFECT_DERELICT_FUEL
 Dans %system% : les astronefs ont été réapprovisionnés grâce à des réserves de carburant trouvées sur une %special% abandonnée.
+
 EFFECT_DERELICT_FUEL_LABEL
 Découverte de carburant
 
 EFFECT_BIOWEAPON
 La planète %planet% a perdu une population de %rawtext% suite à une attaque de %shippart%.
+
 EFFECT_BIOWEAPON_LABEL
 Attaque par armes biologiques
 
 EFFECT_EVACUEES
 Sur %planet% : des évacués se sont implantés.
+
 EFFECT_EVACUEES_LABEL
 Évacués
 
 EFFECT_STARGATE
 La flotte %fleet% a atteint le système %system% via un Stargate.
+
 EFFECT_STARGATE_LABEL
 Utilisation Stargate
 
 EFFECT_PLANET_DRIVE
 Dans %system% : la planète %planet% est arrivée à destination grâce à son [[encyclopedia BLD_PLANET_DRIVE]].
+
 EFFECT_PLANET_DRIVE_LABEL
 Réussite Navigation Planétaire
 
 SITREP_PLANET_DRIVE_FAILURE
 Dans %system% : en raison de l'absence d'un [[encyclopedia SPY_LIGHTHOUSE]] à proximité, le [[encyclopedia BLD_PLANET_DRIVE]] de la planète %planet% a été l'objet d'un disfonctionnement fatal lors de la phase d'arrivée, causant la destruction de la planète entière!
+
 SITREP_PLANET_DRIVE_FAILURE_LABEL
 Échec Navigation Planétaire
 
 EFFECT_PSY_DOM
 L'astronef '%ship%' de %empire% est passé sous contrôle psychique!
+
 EFFECT_PSY_DOM_LABEL
 Contrôle psychique
 
 EFFECT_MINES
 Dans %system% : des mines ont causé %rawtext% de dommages à la flotte %fleet% de %empire%.
+
 EFFECT_MINES_SINGLE_SHIP
 Dans %system% : des mines ont causé %rawtext% de dommages à l'astronef %ship%, de type %shipdesign%.
+
 EFFECT_MINES_LABEL
 Dégâts de mines
 
 EFFECT_MINES_SHIP_DESTROYED
 Dans %system% : des mines ont détruit l'astronef '%ship%' de %empire%.
+
 EFFECT_MINES_UNOWNED_DESTROYED
 Dans %system% : des mines ont détruit l'astronef %ship%, de type %shipdesign%.
+
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
 EFFECT_MINES_UNKNOWN
 Dans %system% : un objet non-identifié a déclenché vos mines.
+
 EFFECT_MINES_UNKNOWN_LABEL
 Enclenchement mines par astronef inconnu
 
 EFFECT_FLEET_MOVED_TOWARDS
 Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a repoussé la flotte %fleet% vers le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
+
 EFFECT_FLEET_MOVED_TOWARDS_LABEL
 Flotte repoussée vers
 
 EFFECT_FLEET_MOVED_TO
 Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a renvoyé la flotte %fleet% dans le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
+
 EFFECT_FLEET_MOVED_TO_LABEL
 Flotte renvoyée dans
 
 HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
+
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Capitale d'Empire capturée
 
@@ -5315,9 +5641,10 @@ Custom_3
 CUSTOM_4
 Custom_4
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+
+##
+## Victory/defeat
+##
 
 VICTORY_TECH
 VICTOIRE! L'empire %empire% a transcendé notre réalité et remporte une victoire technologique.
@@ -5336,9 +5663,11 @@ L'empire %empire% a été vaincu!
 SITREP_EMPIRE_ELIMINATED_LABEL
 Empire vaincu
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
+
+##
+## Random beginner hints
+##
+
 BEGINNER_HINTS
 Astuces de Jeu
 
@@ -5456,9 +5785,10 @@ BEGINNER_HINT_20
 BEGINNER_HINT_21
 21: Il est possible de définir une destination pour un astronef se trouvant encore dans la file d'attente de Production. Lorsque la Fenêtre Production est ouverte, cliquez sur le système de destination sur la carte galactique, puis effectuez un clic-droit sur l'astronef présent dans la file d'attente. Parmi la liste des options proposées, choisissez 'Rallier' suivi du nom du système sélectionné, vers lequel l'astronef se rendra automatiquement une fois sa construction terminée.
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+
+##
+## Species
+##
 
 HOMEWORLD
 Planète Natale
@@ -5498,6 +5828,7 @@ Opinions des autres Espèces :
 
 SP_HUMAN
 Humain
+
 SP_HUMAN_GAMEPLAY_DESC
 '''Opiniâtres et prédateurs.
 Préfèrent les Planètes de type terrestre.
@@ -5514,6 +5845,7 @@ Les humains modernes ont formé géographiquement des états-nations, chacun ét
 
 SP_SCYLIOR  # translated
 Scylior
+
 SP_SCYLIOR_GAMEPLAY_DESC
 '''Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes océaniques.
@@ -5537,6 +5869,7 @@ Voici quelques millénaires, une expédition des Précurseurs découvrit une pla
 
 SP_GYSACHE  # translated
 Gysache
+
 SP_GYSACHE_GAMEPLAY_DESC
 '''Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes marécageuses.
@@ -5559,6 +5892,7 @@ Leur Monde d'origine possède une épaisse atmosphère d'azote, d'ammoniaque et 
 
 SP_CHATO  # translated
 Chato
+
 SP_CHATO_GAMEPLAY_DESC
 '''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes toxiques.
@@ -5575,6 +5909,7 @@ Dans la société Chato'matou, l'âge est le paramètre primordial, étant donn�
 
 SP_TRITH  # translated
 Trith
+
 SP_TRITH_GAMEPLAY_DESC
 '''Télépathes xénophobes tourmentés.
 Préfèrent les Planètes désertiques.
@@ -5591,6 +5926,7 @@ La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (
 
 SP_HAPPY  # translated
 Happybirthday
+
 SP_HAPPY_GAMEPLAY_DESC
 '''Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
 Préfèrent les Planètes océaniques.
@@ -5618,6 +5954,7 @@ Que ce soit leur exploration solitaire de leur planète natale, leur abandon par
 
 SP_HHHOH  # translated
 Hhhoh
+
 SP_HHHOH_GAMEPLAY_DESC
 '''Mammouths gigantesques et lents, dotés d'une multi-trompe.
 Préfèrent les Planètes avec toundra.
@@ -5635,6 +5972,7 @@ Les Hhhoh se considèrent comme des pragmatiques sociables. Les anciens sont vé
 
 SP_EAXAW  # translated
 Eaxaw
+
 SP_EAXAW_GAMEPLAY_DESC
 '''Vers amazones agressifs et xénophobes.
 Préfèrent les Planètes de type terrestre.
@@ -5654,6 +5992,7 @@ Il y a bien longtemps, un vaisseau abandonné des Précurseurs s'écrasa sur la 
 
 SP_DERTHREAN  # translated
 Derthrean
+
 SP_DERTHREAN_GAMEPLAY_DESC
 '''Virus végétaux flottants, pacifiques, bio-ingénieurs, souffrant continuellement.
 Préfèrent les Planètes toxiques.
@@ -5670,6 +6009,7 @@ Les Derthrean ont une organisation sociale très segmentée, se divisant en cast
 
 SP_LAENFA  # translated
 Laenfa
+
 SP_LAENFA_GAMEPLAY_DESC
 '''Vignes sensibles, télépathes, et insidieuses.
 Préfèrent les Planètes océaniques.
@@ -5686,6 +6026,7 @@ Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme l
 
 SP_TAEGHIRUS  # translated
 Tae Ghirus
+
 SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Oiseaux fragiles et incapables de voler, unis par une coopération totale.
 Préfèrent les Planètes marécageuses.
@@ -5702,6 +6043,7 @@ Les Tae Ghirus sont très sociaux et coopératifs, afin de compenser la faibless
 
 SP_MUURSH  # translated
 Mu Ursh
+
 SP_MUURSH_GAMEPLAY_DESC
 '''Herbivores pacifiques et activistes.
 Préfèrent les Planètes désertiques.
@@ -5715,6 +6057,7 @@ Mais à leur grand regret, ces compétences naturelles font d'eux des pilotes ex
 
 SP_GEORGE  # translated
 George
+
 SP_GEORGE_GAMEPLAY_DESC
 '''Entité unique élémentaire, télépathique, constituée de millions de centipèdes.
 Préfèrent les Planètes avec toundra.
@@ -5730,6 +6073,7 @@ Les organismes constituant George sont des centipèdes de 2.5m de long et 0.5m d
 
 SP_CRAY  # translated
 Cray
+
 SP_CRAY_GAMEPLAY_DESC
 '''Robots dévoués et enthousiastes.
 Préfèrent les Planètes stériles.
@@ -5747,6 +6091,7 @@ Les décisions quotidiennes fonctionnant selon un système complexe de faveurs, 
 
 SP_ETTY  # translated
 Etty
+
 SP_ETTY_GAMEPLAY_DESC
 '''Plantes cybernétiques.
 Préfèrent les Planètes désertiques.
@@ -5763,8 +6108,9 @@ Structure sociale:
 Les Etty sont excessivement respectueux et honorent immanquablement tous contrats ou accords passés. Leur culture est très élégante, civilisée et courtoise, mais également très repliée sur elle-même. Le système gouvernemental des Etty est une vraie démocratie dont les acteurs sont rigoureusement surveillés par une presse libre et puissante.
 '''
 
-#SP_CYNOS
-#Cynos
+SP_CYNOS  # translated
+Cynos
+
 SP_CYNOS_GAMEPLAY_DESC
 '''Végétaux mobiles entretenus par une plante-mère géante non-sensible.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -5785,6 +6131,7 @@ Les Cynos ne peuvent ni se reproduire sans leur plante-mère d'origine, ni plant
 
 SP_PHINNERT  # translated
 Phinnert
+
 SP_PHINNERT_GAMEPLAY_DESC
 '''Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -5803,6 +6150,7 @@ Leur planète possède une faible gravité et une atmosphère très épaisse. Sa
 
 SP_EGASSEM  # translated
 Egassem
+
 SP_EGASSEM_GAMEPLAY_DESC
 '''Amibes cristallines massives, radioactives et magmatiques.
 Préfèrent les Planètes infernales.
@@ -5822,6 +6170,7 @@ Un environnement soumis à la chaleur générée par les forces de marée et l'a
 
 SP_SSLITH  # translated
 Sslith
+
 SP_SSLITH_GAMEPLAY_DESC
 '''Créatures aquatiques plates et souples.
 Préfèrent les Planètes avec toundra.
@@ -5836,8 +6185,9 @@ Structure sociale:
 Les Sslith sont organisés en groupes appelés Pnacra, servant la communauté en tant qu'unités gouvernementales indépendantes. Bien qu'il y ait quelques lois observées par tous les Sslith de tous les Pnacra, chaque Pnacra édicte ses propres lois et règles de conduite. Les Pnacra se déplacent indépendamment, et n'ont pas d'habitat fixe. Lorsque deux Pnacra ou plus se rencontrent, les membres insatisfaits de leur Pnacra actuel, peuvent migrer vers un autre Pnacra afin d'y tester son organisation et ses coutumes.
 '''
 
-SP_FIFTYSEVEN
+SP_FIFTYSEVEN  # translated
 Fifty-Seven
+
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Serpents célestes mathématiciens, sifflant des mélopées fractales au sein d'une chorale planétaire.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -5859,6 +6209,7 @@ Les Fifty-Seven sont en contact constant avec tous les autres individus de l'esp
 
 SP_SETINON  # translated
 Setinon
+
 SP_SETINON_GAMEPLAY_DESC
 '''Cellules microscopiques sensibles et individualistes.
 Préfèrent les Planètes marécageuses.
@@ -5876,8 +6227,9 @@ Planète Natale:
 Un environnement marécageux doté d'une biosphère très dense.
 '''
 
-#SP_NYMNMN
-#Nymnmn
+SP_NYMNMN  # translated
+Nymnmn
+
 SP_NYMNMN_GAMEPLAY_DESC
 '''Formes d'ondes magnétiques sensibles, intrication planétaire.
 Préfèrent les Planètes désertiques.
@@ -5887,8 +6239,9 @@ Préfèrent les Planètes désertiques.
 #SP_NYMNMN_DESC
 #''''''
 
-#SP_TRENCHERS
-#Trenchers
+SP_TRENCHERS  # translated
+Trenchers
+
 SP_TRENCHERS_GAMEPLAY_DESC
 '''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes stériles.
@@ -5898,8 +6251,9 @@ Préfèrent les Planètes stériles.
 #SP_TRENCHERS_DESC
 #''''''
 
-#SP_RAAAGH
-#Raaagh
+SP_RAAAGH  # translated
+Raaagh
+
 SP_RAAAGH_GAMEPLAY_DESC
 '''Félidés hautement territoriaux.
 Préfèrent les Planètes de type terrestre.
@@ -5919,8 +6273,9 @@ Raison de la sédentarité:
 Il ne reste aucun bout de terre assez grand pour y subsister que les Raaagh n'aient pas découvert. L'instinct génétique d'un Raaagh le pousse à protéger son territoire de sa vie, et lorsque l'occasion se présente, d'occuper une terre adjacente. Abandonner un territoire leur est inconcevable, et un Raaagh contraint à le quitter est instantanément atteint d'une violente démence.
 '''
 
-#SP_BEIGEGOO
-#Beige Goo
+SP_BEIGEGOO  # translated
+Beige Goo
+
 SP_BEIGEGOO_GAMEPLAY_DESC
 '''Essaim de nanorobots à propagation planétaire, féroce auto-protection.
 Préfèrent les Planètes irradiées.
@@ -5933,6 +6288,7 @@ SP_BEIGEGOO_DESC
 
 SP_SILEXIAN  # translated
 Silexian
+
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Robots écologistes brillants, abandonnés à leur sort.
 Préfèrent les Planètes de type terrestre.
@@ -5955,6 +6311,7 @@ Les Silexians furent créés par les Caretakers dans le but d'augmenter l'effica
 
 SP_KOBUNTURA  # translated
 Kobuntura
+
 SP_KOBUNTURA_GAMEPLAY_DESC
 '''Formes sensibles de poussière magnétique, fascinées par la construction et l'infrastructure.
 Préfèrent les Planètes stériles.
@@ -5971,6 +6328,7 @@ Les Kobuntura s'organisent en guilde depuis les temps ancestraux, mais l'une de 
 
 SP_UGMORS  # translated
 Ugmors
+
 SP_UGMORS_GAMEPLAY_DESC
 '''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes infernales.
@@ -5992,8 +6350,9 @@ Planète Natale:
 Le monde d'origine des Ugmors est une planète rocheuse à la période de rotation extrêmement rapide (une rotation complète toutes les 3 heures et demie). 30% de sa surface est recouverte de mers de lave et de métaux liquides.
 '''
 
-#SP_GISGUFGTHRIM
-#Gis Guf Gthrim
+SP_GISGUFGTHRIM  # translated
+Gis Guf Gthrim
+
 SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Herbivores à carapace, vivant uniquement à la surface de planètes recouvertes par un organisme gélatineux parasitaire singulier.
 Préfèrent les Planètes toxiques.
@@ -6004,8 +6363,9 @@ SP_GISGUFGTHRIM_DESC
 '''Les régions équatoriales de la plupart des planètes où résident les Gis Guf Gthrim, sont recouvertes d'un organisme gélatineux nommé la Grande Étendue Ambrée, qui y remplace toute vie végétale. Les Gis (et toutes les autres créatures) vivent et se nourrissent exclusivement sur la Grande Étendue Ambrée. Le cycle de vie des Gis est d'ailleurs étroitement lié à celui de son hôte. L'Étendue elle-même semble immortelle mais toutes les tentatives de clonage ont échoué, ce qui induit qu'il est impossible pour un Gis de quitter sa planète, du fait de sa totale dépendance à la Grande Étendue Ambrée.
 '''
 
-#SP_HIDDENGARDENER
-#Hidden Gardener
+SP_HIDDENGARDENER  # translated
+Hidden Gardener
+
 SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''Réseau fongique sensible, implantion et prédation souterraines.
 Préfèrent les Planètes de type terrestre.
@@ -6023,6 +6383,7 @@ La toile fongique recouvrant le sous-sol est bien trop grande pour quitter la pl
 
 SP_ABADDONI  # translated
 Abaddoni
+
 SP_ABADDONI_GAMEPLAY_DESC
 '''Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers.
 Préfèrent les Planètes infernales.
@@ -6038,8 +6399,9 @@ Structure sociale:
 L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
 '''
 
-#SP_ACIREMA
-#Acirema
+SP_ACIREMA  # translated
+Acirema
+
 SP_ACIREMA_GAMEPLAY_DESC
 '''Une race d'une puissance quasi-illimitée, mais qui ne peut pas survivre dans cet univers.
 Préfèrent les Planètes irradiées.
@@ -6061,8 +6423,9 @@ Raison de la sédentarité:
 Les Acirema ne peuvent pas demeurer assez longtemps dans cet univers pour coloniser d'autres planètes et y survivre.
 '''
 
-#SP_OURBOOLS
-#Ourbools
+SP_OURBOOLS  # translated
+Ourbools
+
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Organismes aquatiques géants et aveugles, s'orientant grâce à la perception de la gravitation.
 Préfèrent les Planètes océaniques.
@@ -6084,8 +6447,9 @@ Raison de la sédentarité:
 Les Ourbools définissent leur position à l'aide des mouvements réguliers des 23 lunes orbitant autour de leur planète. Toute leur perception sensorielle est basée sur ce ressenti gravitationnel. Retirer un Ourbools de cet environnement le désoriente totalement au point de le rendre complètement "aveugle". Sans l'influence gravitationnelle qui lui est familière, un Ourbools ne peut alors plus que percevoir un bruit de fond gravitationnel sans aucune signification pour lui.
 '''
 
-#SP_VOLP
-#Volp-Uglush
+SP_VOLP  # translated
+Volp-Uglush
+
 SP_VOLP_GAMEPLAY_DESC
 '''Organismes fouisseurs très organisés, à forte démographie.
 Préfèrent les Planètes stériles.
@@ -6108,6 +6472,7 @@ Les Volp-Uglush ayant à présent une société hautement complexe et intriquée
 
 SP_FURTHEST  # translated
 Furthest
+
 SP_FURTHEST_GAMEPLAY_DESC
 '''Herbivores paranoïaques, à trois têtes et trois pattes.
 Préfèrent les Planètes avec toundra.
@@ -6130,6 +6495,7 @@ Les Furthest considèrent le voyage spatial comme bien trop dangereux pour un ê
 
 SP_BANFORO  # translated
 Banforo
+
 SP_BANFORO_GAMEPLAY_DESC
 '''Êtres adorables et contemplateurs d'étoiles.
 Préfèrent les Planètes stériles.
@@ -6149,6 +6515,7 @@ La raison de leur disparition n'a pas été clairement établie, mais la thèse 
 
 SP_KILANDOW  # translated
 Kilandow
+
 SP_KILANDOW_GAMEPLAY_DESC
 '''Expérimentateurs nocifs et patentés, absorbant toutes formes de radiation.
 Préfèrent les Planètes irradiées.
@@ -6169,6 +6536,7 @@ La disparition des Kilandow semble résulter de leur nature très paisible ainsi
 
 SP_MISIORLA  # translated
 Misiorla
+
 SP_MISIORLA_GAMEPLAY_DESC
 '''Pilotes de grand talent, chaotiques et fougueux.
 Préfèrent les Planètes toxiques.
@@ -6188,6 +6556,7 @@ Dans une période trouble et peu référencée de l'Histoire, les Ultimes, une d
 
 SP_EXOBOT  # translated
 Exobot
+
 SP_EXOBOT_GAMEPLAY_DESC
 '''Robots semi-autonomes, conçus pour la production industrielle sur les planètes stériles, irradiées et infernales.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -6199,6 +6568,7 @@ SP_EXOBOT_DESC
 
 SP_EXPERIMENTOR
 Expérimentateur
+
 SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Scientifiques fous précurseurs.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -6209,6 +6579,7 @@ Les Expérimentateurs appartiennent à une ancienne race précurseur, dont l'exi
 
 SP_SUPER_TEST
 Super-Testeurs
+
 SP_SUPER_TEST_GAMEPLAY_DESC
 '''Les Super-Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de [[encyclopedia STEALTH_TITLE]] ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -6218,9 +6589,10 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 #SP_SUPER_TEST_DESC
 #''''''
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
+
+##
+## Specials
+##
 
 MODERATE_TECH_NATIVES_SPECIAL
 Indigènes Techno-Compétents
@@ -6307,6 +6679,7 @@ Débloque une espèce éteinte
 
 PANOPTICON_SPECIAL
 Complexe Panoptique
+
 PANOPTICON_SPECIAL_DESC
 '''Augmente de 10 la [[encyclopedia DETECTION_TITLE]] de l'empire et de 75 le [[encyclopedia DETECTION_RANGE_TITLE]] de la planète.
 
@@ -6314,6 +6687,7 @@ Profondément enfoui dans la croûte planétaire, le Panoptique est la puissante
 
 FORTRESS_SPECIAL
 Forteresse
+
 FORTRESS_SPECIAL_DESC
 '''Augmente les [[encyclopedia SHIELDS_TITLE]] de +100, la [[encyclopedia DEFENSE_TITLE]] de +30, l'[[encyclopedia TROOP_TITLE]] de +30 et le [[encyclopedia DETECTION_RANGE_TITLE]] de +30. Les Boucliers se régénèrent de 5 par tour et la Défense de 1 par tour. Les Mines réduisent la [[encyclopedia STRUCTURE_TITLE]] des astronefs ennemis situés dans le système de 3 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
 
@@ -6354,6 +6728,7 @@ La planète possède un satellite naturel dont la période de révolution est sy
 
 COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
+
 COMPUTRONIUM_SPECIAL_DESC
 '''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[encyclopedia RESEARCH_TITLE]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[encyclopedia RESEARCH_TITLE]] de 0.2 par Population.
 
@@ -6361,6 +6736,7 @@ Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, c
 
 HONEYCOMB_SPECIAL
 Réserve Alvéolaire
+
 HONEYCOMB_SPECIAL_DESC
 '''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[encyclopedia INDUSTRY_TITLE]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]], améliorent leur [[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population.
 
@@ -6368,6 +6744,7 @@ La Réserve Alvéolaire est une planète qui fut utilisée comme telle par les C
 
 PHILOSOPHER_SPECIAL
 Planète Métaphysique
+
 PHILOSOPHER_SPECIAL_DESC
 '''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[encyclopedia RESEARCH_TITLE]] accrue de 5 points. L'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] d'une colonie installée sur une Planète Métaphysique est réduit de 20 points.
 
@@ -6375,26 +6752,31 @@ L'unique et dernier représentant d'une espèce vagabonde de taille planétaire 
 
 ABANDONED_COLONY_SPECIAL
 Colonie Abandonnée
+
 ABANDONED_COLONY_SPECIAL_DESC
 La planète abrite une ancienne colonie abandonnée. Une partie de son [[encyclopedia INFRASTRUCTURE_TITLE]] pourrait se révéler encore utilisable.
 
 KRAKEN_NEST_SPECIAL
 Nid Kraken
+
 KRAKEN_NEST_SPECIAL_DESC
 Avec le temps, de jeunes Kraken naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
 
 SNOWFLAKE_NEST_SPECIAL
 Nid Floconneux
+
 SNOWFLAKE_NEST_SPECIAL_DESC
 Avec le temps, de jeunes Flocons de Neige naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
 
 JUGGERNAUT_NEST_SPECIAL
 Nid Mastodonte
+
 JUGGERNAUT_NEST_SPECIAL_DESC
 Avec le temps, de jeunes Mastodontes naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
 
 HEAD_ON_A_SPIKE_SPECIAL
 Tête Empalée
+
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''La tête d'un ancien empereur est empalée à la vue de tous, inspirant une profonde terreur aux ennemis de l'empire.
 
@@ -6406,62 +6788,76 @@ Pétrifié de terreur
 
 CONC_CAMP_MASTER_SPECIAL
 Voile Assassin
+
 CONC_CAMP_MASTER_SPECIAL_DESC
 Tous les [[buildingtype BLD_CONC_CAMP]] implantés sur la planète, fonctionnant sans relâche et exerçant une terreur répressive sur la population, peuvent être dissimulés à tout hôte par le Voile Assassin. Mais tout être sensible reste capable de percer à jour un Voile Assassin.
 
 CONC_CAMP_SLAVE_SPECIAL
 Morosité Psychique
+
 CONC_CAMP_SLAVE_SPECIAL_DESC
 Les [[buildingtype BLD_CONC_CAMP]] n'opèrent peut-être plus aujourd'hui à la surface de la planète, mais leur souvenir est encore vif, et les restes de fosses communes sont encore parfois découverts. Une blessure psychique handicape la population, qui ne peut prospérer.
 
 CLOUD_COVER_MASTER_SPECIAL
 Émetteurs de Nuées
+
 CLOUD_COVER_MASTER_SPECIAL_DESC
 Cette planète est peuplée de créatures aériennes émettant d'importantes quantités d'humidité, ce qui entraîne la formation d'une épaisse couche nuageuse. Plus tardivement dans leur cycle de vie, elles s'enfouissent profondément dans le sol, provoquant une forte intensification de l'activité volcanique.
 
 CLOUD_COVER_SLAVE_SPECIAL
 Couverture Nuageuse
+
 CLOUD_COVER_SLAVE_SPECIAL_DESC
 Cette planète est recouverte d'une épaisse couverture nuageuse qui accroît de 20 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que l'[[tech SPY_STEALTH_1]].
 
 VOLCANIC_ASH_MASTER_SPECIAL
 Fouisseurs Invisibles
+
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
 Cette planète abrite des monstres fouisseurs évoluant autour de son cœur, ce qui engendre une activité volcanique particulièrement intense. Plus tardivement dans leur cycle de vie, ces Fouisseurs subissent une métamorphose les rendant capables d'entrouvrir une faille dimensionnelle dans le tissu de l'espace-temps.
 
 VOLCANIC_ASH_SLAVE_SPECIAL
 Cendres Volcaniques
+
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
 Cette planète est recouverte d'un épais nuage de cendres volcaniques qui accroît de 40 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_2]].
 
 DIM_RIFT_MASTER_SPECIAL
 Fouisseurs Dimensionnels
+
 DIM_RIFT_MASTER_SPECIAL_DESC
 Cette planète abrite des monstres fouisseurs évoluant autour de son cœur, ce qui engendre l'apparition de failles dimensionnelles à l'intérieur et autour de la planète. Ces Fouisseurs, lors de leur dernier stade de mutation, commenceront à entraîner la planète dans le Vide.
 
 DIM_RIFT_SLAVE_SPECIAL
 Faille Dimensionnelle
+
 DIM_RIFT_SLAVE_SPECIAL_DESC
 Cette planète est partiellement dissimulée dans une faille dimensionnelle, ce qui accroît de 60 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_3]].
 
 VOID_MASTER_SPECIAL
 Monstres du Vide
+
 VOID_MASTER_SPECIAL_DESC
 Des monstres évoluant au cœur de la planète l'entraînent dans le Vide. Une catastrophe imminente pourrait peut-être découler de cette Particularité.
 
 VOID_SLAVE_SPECIAL
 Métamorphose du Vide
+
 VOID_SLAVE_SPECIAL_DESC
 Cette planète existe en partie dans cet univers et en partie dans le Vide, ce qui accroît de 80 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_4]].
 
 DERELICT_SPECIAL
 Épave
+
 DERELICT_SPECIAL2
 Épave d'Éclaireur
+
 DERELICT_SPECIAL3
 Épave de Ravitailleur
+
 DERELICT_SPECIAL_REMOVE
 Épave
+
 DERELICT_SPECIAL_DESC
 Une épave ancestrale abandonnée par une espèce inconnue. Qui sait ce qu'elle pourrait révéler...
 
@@ -6473,99 +6869,125 @@ Un disque d'accrétion est une structure astrophysique (la plupart du temps un d
 
 SUPERNOVA_SPECIAL
 Supernova Naissante
+
 SUPERNOVA_SPECIAL2
 Supernova Récente
+
 SUPERNOVA_SPECIAL3
 Supernova Ancienne
+
 SUPERNOVA_SPECIAL4
 Supernova Rémanente
+
 SUPERNOVA_SPECIAL_DESC
 Une étoile a explosé dans un passé relativement proche à l'intérieur de ce système, ne laissant seulement que des débris épars là où s'étendait autrefois un système stellaire majestueux.
 
 NOVA_BOMB_ACTIVATOR_SPECIAL
 Détonateur de Bombe Nova
+
 NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
 L'intégrité dimensionnelle de cette région de l'espace, hautement instable, provoque l'explosion de toute Bombe Nova se trouvant à proximité.
 
 EXPERIMENTOR_OUTPOST_SPECIAL
 Avant-Poste Expérimentateur
+
 EXPERIMENTOR_OUTPOST_SPECIAL_DESC
 Un avant-poste des Expérimentateurs est implanté dans ce système et doit être éliminé pour assurer la sécurité de la galaxie.
 
 PROBIOTIC_SPECIAL
 Soupe Probiotique
+
 PROBIOTIC_SPECIAL_DESC
 La grande diversité d'organismes unicellulaires qu'offre la planète contribue à améliorer la santé et la préservation de tous types de vie organique.
 
 FRUIT_SPECIAL
 Fruits d'Eden
+
 FRUIT_SPECIAL_DESC
 Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un organisme symbiotique de la taille d'un continent. Les fruits de ces arbres contiennent des substances organiques étonnamment complexes mais également bénéfiques à tous types de vie organique.
 
 SPICE_SPECIAL
 Épice Ki
+
 SPICE_SPECIAL_DESC
 Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propriété de prolonger la vie, d'éclairer l'esprit, ou encore d'aiguiser les capacités sensorielles des êtres organiques.
 
 MONOPOLE_SPECIAL
 Aimants Monopolaires
+
 MONOPOLE_SPECIAL_DESC
 Les Aimants Monopolaires rendent les robots plus résistants!
 
 SUPERCONDUCTOR_SPECIAL
 Supraconducteurs Ambiants
+
 SUPERCONDUCTOR_SPECIAL_DESC
 Les Supraconducteurs Ambiants rendent les robots plus efficaces!
 
 POSITRONIUM_SPECIAL
 Cendres Positroniques
+
 POSITRONIUM_SPECIAL_DESC
 Les Cendres Positroniques rendent les robots plus intelligents!
 
 MINERALS_SPECIAL
 Profusion Minière
+
 MINERALS_SPECIAL_DESC
 Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
 
 CRYSTALS_SPECIAL
 Cristaux Silmalins
+
 CRYSTALS_SPECIAL_DESC
 Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
 
 ELERIUM_SPECIAL
 Elerium Originel
+
 ELERIUM_SPECIAL_DESC
 Cette planète abrite de riches gisements d'Elerium pur, augmentant significativement la production ou la croissance des espèces lithiques.
 
 STARSPAWN_NEBULA_SPECIAL
 Nébuleuse Mère
+
 STARSPAWN_NEBULA_SPECIAL_DESC
 Les systèmes présentant cette Particularité se situent au cœur d'une nébuleuse susceptible, en s'effondrant sur elle-même, de donner naissance à une nouvelle étoile.
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
+
+##
+## Enumeration values
+##
 
 # UniverseObjectTypes
 
 INVALID_UNIVERSE_OBJECT_TYPE
 Objet générique
+
 OBJ_BUILDING
 Structure
+
 OBJ_SHIP
 Astronef
+
 OBJ_FLEET
 Flotte
+
 OBJ_PLANET
 Planète
+
 OBJ_POP_CENTER
 Centre de population
+
 OBJ_PROD_CENTER
 Centre de production
+
 OBJ_SYSTEM
 Système
+
 OBJ_FIELD
 Région
+
 OBJ_FIGHTER
 Chasseur
 
@@ -6573,20 +6995,28 @@ Chasseur
 
 STAR_BLUE
 Bleue
+
 STAR_WHITE
 Blanche
+
 STAR_YELLOW
 Jaune
+
 STAR_ORANGE
 Orange
+
 STAR_RED
 Rouge
+
 STAR_NEUTRON
 à Neutrons
+
 STAR_BLACK
 Trou Noir
+
 STAR_NONE
 Pas d'étoile
+
 INVALID_STAR_TYPE
 Type d'étoile inconnu
 
@@ -6594,24 +7024,34 @@ Type d'étoile inconnu
 
 PT_SWAMP
 Marécageuse
+
 PT_TOXIC
 Toxique
+
 PT_INFERNO
 Infernale
+
 PT_RADIATED
 Irradiée
+
 PT_BARREN
 Stérile
+
 PT_TUNDRA
 Toundra
+
 PT_DESERT
 Désertique
+
 PT_TERRAN
 Terrestre
+
 PT_OCEAN
 Océanique
+
 PT_ASTEROIDS
 Astéroïdes
+
 PT_GASGIANT
 Géante Gazeuse
 
@@ -6619,18 +7059,25 @@ Géante Gazeuse
 
 SZ_NOWORLD
 Rien à voir ici, circulez.
+
 SZ_TINY
 Minuscule
+
 SZ_SMALL
 Petite
+
 SZ_MEDIUM
 Moyenne
+
 SZ_LARGE
 Grande
+
 SZ_HUGE
 Immense
+
 SZ_ASTEROIDS
 Astéroïdes
+
 SZ_GASGIANT
 Géante Gazeuse
 
@@ -6638,12 +7085,16 @@ Géante Gazeuse
 
 PE_UNINHABITABLE
 Inhabitable
+
 PE_HOSTILE
 Hostile
+
 PE_POOR
 Pauvre
+
 PE_ADEQUATE
 Convenable
+
 PE_GOOD
 Parfaite
 
@@ -6651,42 +7102,61 @@ Parfaite
 
 INVALID_FOCUS_TYPE
 Type de Focus invalide
+
 FOCUS_GROWTH
 Croissance
+
 FOCUS_INDUSTRY
 Industrie
+
 FOCUS_MINING
 Extraction Minière
+
 FOCUS_HEAVY_MINING
 Extraction Minière Intensive
+
 FOCUS_RESEARCH
 Recherche
+
 FOCUS_TRADE
 Commerce
+
 FOCUS_LOGISTICS
 Logistique
+
 FOCUS_STEALTH
 Furtivité
+
 FOCUS_BIOTERROR
 Bioterrorisme
+
 FOCUS_STARGATE_SEND
 Envoi Stargate
+
 FOCUS_STARGATE_SEND_DESC
 Active le Stargate d'envoi d'astronefs vers un autre système de l'empire
+
 FOCUS_STARGATE_RECEIVE
 Réception Stargate
+
 FOCUS_STARGATE_RECEIVE_DESC
 Active le Stargate de réception d'astronefs envoyés depuis un autre système de l'empire
+
 FOCUS_PLANET_DRIVE
 Déplacement de Planète
+
 FOCUS_DISTORTION
 Distortion Spatiale
+
 FOCUS_PROTECTION  # translated
 Protection
+
 FOCUS_PROTECTION_DESC
 Augmente boucliers, défense et infanterie.
+
 FOCUS_DOMINATION
 Domination Psychique
+
 FOCUS_DOMINATION_DESC
 Contrôle psychique des astronefs ennemis.
 
@@ -6694,82 +7164,121 @@ Contrôle psychique des astronefs ennemis.
 
 INVALID_METER_TYPE
 Type d'indicateur invalide
+
 METER_TARGET_POPULATION
 Population Locale
+
 METER_TARGET_HEALTH
 Santé Locale
+
 METER_TARGET_INDUSTRY
 Industrie Locale
+
 METER_TARGET_RESEARCH
 Recherche Locale
+
 METER_TARGET_TRADE
 Commerce Local
+
 METER_TARGET_MINING
 Extraction Locale
+
 METER_TARGET_CONSTRUCTION
 Infrastructure Locale
+
 METER_TARGET_HAPPINESS
 Bonheur Local
+
 METER_MAX_FUEL
 Max Carburant
+
 METER_MAX_SHIELD
 Max Bouclier
+
 METER_MAX_STRUCTURE
 Max Résistance
+
 METER_MAX_DEFENSE
 Max Défense
+
 METER_MAX_TROOPS
 Max Infanterie
+
 METER_MAX_REBEL_TROOPS
 Max Rebelles
+
 METER_MAX_SUPPLY
 Max Approvisionnement
+
 METER_MAX_CAPACITY
 Max Capacité
+
 METER_MAX_SECONDARY_STAT
 Max Stat Secondaire
+
 METER_POPULATION  # translated
 Population
+
 METER_HEALTH
 Santé
+
 METER_GROWTH
 Croissance
+
 METER_INDUSTRY
 Industrie
+
 METER_RESEARCH
 Recherche
+
 METER_TRADE
 Commerce
+
 METER_MINING
 Extraction minière
+
 METER_CONSTRUCTION  # translated
 Infrastructure
+
 METER_HAPPINESS
 Bonheur
+
 METER_FUEL
 Carburant
+
 METER_SHIELD
 Bouclier
+
 METER_STRUCTURE
 Résistance
+
 METER_DEFENSE
 Défense
+
 METER_TROOPS
 Infanterie
+
 METER_REBEL_TROOPS
 Rebelles
+
 METER_SUPPLY
 Approvisionnement
+
 METER_STEALTH
 Furtivité
+
 METER_DETECTION
 Champ de Détection
+
 METER_SPEED
 Vitesse
+
 METER_CAPACITY
 Capacité
+
 METER_SECONDARY_STAT
 Stat Secondaire
+
 METER_SIZE
 Taille
 
@@ -6810,10 +7319,13 @@ Usage de sens artificiels et de l'automatisation
 
 AFFIL_SELF
 propre
+
 AFFIL_ENEMY
 ennemi
+
 AFFIL_ALLY
 allié
+
 AFFIL_ANY
 chaque
 
@@ -6821,12 +7333,16 @@ chaque
 
 INVALID_UNLOCKABLE_ITEM_TYPE
 Type invalide d'objet déblocable
+
 UIT_BUILDING
 Structure
+
 UIT_SHIP_PART
 Équipement
+
 UIT_SHIP_HULL
 Coque d'astronef
+
 UIT_TECH
 Technologie
 
@@ -6834,8 +7350,10 @@ Technologie
 
 TT_THEORY
 Théorie
+
 TT_APPLICATION  # translated
 Application
+
 TT_REFINEMENT
 Amélioration
 
@@ -6843,8 +7361,10 @@ Amélioration
 
 BT_NOT_BUILDING
 pas de structure
+
 BT_BUILDING
 structure
+
 BT_SHIP
 astronef
 
@@ -6852,8 +7372,10 @@ astronef
 
 ST_FOOD
 nourriture
+
 ST_MINERAL
 minéraux
+
 ST_TRADE
 commerce
 
@@ -6861,12 +7383,16 @@ commerce
 
 RE_FOOD
 nourriture
+
 RE_MINERALS
 minéraux
+
 RE_TRADE
 commerce
+
 RE_INDUSTRY
 industrie
+
 RE_RESEARCH
 recherche
 
@@ -6874,10 +7400,13 @@ recherche
 
 SL_EXTERNAL
 Niche Externe
+
 SL_INTERNAL
 Niche Interne
+
 SL_CORE
 Niche Centrale
+
 SL_TOOLTIP_DESC
 Vide
 
@@ -6885,36 +7414,52 @@ Vide
 
 PC_DIRECT_WEAPON
 Armement
+
 PC_FIGHTER_HANGAR
 Hangar
+
 PC_FIGHTER_BAY
 Rampe Lanc.
+
 PC_SHIELD
 Bouclier
+
 PC_ARMOUR
 Blindage
+
 PC_TROOPS
 Infanterie
+
 PC_DETECTION
 Détection
+
 PC_STEALTH
 Furtivité
+
 PC_FUEL
 Carburant
+
 PC_COLONY
 Colonisation
+
 PC_SPEED
 Vitesse
+
 PC_GENERAL
 Général
+
 PC_BOMBARD
 Bombardement
+
 PC_INDUSTRY
 Industrie
+
 PC_RESEARCH
 Recherche
+
 PC_TRADE
 Commerce
+
 PC_PRODICTION_LOCATION  # translated
 Production
 
@@ -6933,11 +7478,9 @@ VIS_FULL_VISIBILITY
 Complète
 
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
-
-# ValueRef
+##
+## FOCS value references, effects & condition descriptions
+##
 
 DESC_VAR_PLANET
 planète
@@ -7031,68 +7574,100 @@ une variable libre
 
 #DESC_VAR_TARGETPOPULATION
 #[[METER_TARGET_POPULATION]]
+
 #DESC_VAR_TARGETHEALTH
 #[[METER_TARGET_HEALTH]]
+
 #DESC_VAR_TARGETINDUSTRY
 #[[METER_TARGET_INDUSTRY]]
+
 #DESC_VAR_TARGETRESEARCH
 #[[METER_TARGET_RESEARCH]]
+
 #DESC_VAR_TARGETTRADE
 #[[METER_TARGET_TRADE]]
+
 #DESC_VAR_TARGETMINING
 #[[METER_TARGET_MINING]]
+
 #DESC_VAR_TARGETCONSTRUCTION
 #[[METER_TARGET_CONSTRUCTION]]
+
 #DESC_VAR_MAXFUEL
 #[[METER_MAX_FUEL]]
+
 #DESC_VAR_MAXSHIELD
 #[[METER_MAX_SHIELD]]
+
 #DESC_VAR_MAXSTRUCTURE
 #[[METER_MAX_STRUCTURE]]
+
 #DESC_VAR_MAXDEFENSE
 #[[METER_MAX_DEFENSE]]
+
 #DESC_VAR_MAXTROOPS
 #[[METER_MAX_TROOPS]]
+
 #DESC_VAR_MAXCAPACITY
 #[[METER_MAX_CAPACITY]]
+
 #DESC_VAR_MAX_SECONDARY_STAT
 #[[METER_MAX_SECONDARY_STAT]]
+
 #DESC_VAR_POPULATION
 #[[METER_POPULATION]]
+
 #DESC_VAR_HEALTH
 #[[METER_HEALTH]]
+
 #DESC_VAR_INDUSTRY
 #[[METER_INDUSTRY]]
+
 #DESC_VAR_RESEARCH
 #[[METER_RESEARCH]]
+
 #DESC_VAR_TRADE
 #[[METER_TRADE]]
+
 #DESC_VAR_MINING
 #[[METER_MINING]]
+
 #DESC_VAR_CONSTRUCTION
 #[[METER_CONSTRUCTION]]
+
 #DESC_VAR_FUEL
 #[[METER_FUEL]]
+
 #DESC_VAR_SHIELD
 #[[METER_SHIELD]]
+
 #DESC_VAR_STRUCTURE
 #[[METER_STRUCTURE]]
+
 #DESC_VAR_DEFENSE
 #[[METER_DEFENSE]]
+
 #DESC_VAR_TROOPS
 #[[METER_TROOPS]]
+
 #DESC_VAR_SUPPLY
 #[[METER_SUPPLY]]
+
 #DESC_VAR_STEALTH
 #[[METER_STEALTH]]
+
 #DESC_VAR_DETECTION
 #[[METER_DETECTION]]
+
 #DESC_VAR_SPEED
 #[[METER_SPEED]]
+
 #DESC_VAR_CAPACITY
 #[[METER_CAPACITY]]
+
 #DESC_VAR_SECONDARY_STAT
 #[[METER_SECONDARY_STAT]]
+
 #DESC_VAR_SIZE
 #[[METER_SIZE]]
 
@@ -7101,8 +7676,10 @@ stock commercial
 
 DESC_VAR_TRADEOUTPUT
 production commerciale
+
 DESC_VAR_INDUSTRYOUTPUT
 production industrielle
+
 DESC_VAR_RESEARCHOUTPUT
 production de la recherche
 
@@ -7210,7 +7787,10 @@ DESC_VALUE_REF_MULTIPART_VARIABLE5
 DESC_VALUE_REF_MULTIPART_VARIABLE6
 %1% %2% %3% %4% %5% %6% %7%
 
-# Effects
+
+##
+## FOCS effect descriptions
+##
 
 DESC_EFFECTS_GROUP_SCOPE
 Objets affectés : tout objet%1%
@@ -7233,7 +7813,10 @@ DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 %2%
 '''
 
-# SetMeter
+
+##
+## FOCS meter setter
+##
 
 #DESC_SIMPLE_SET_METER
 #%1% %2%%3%
@@ -7247,7 +7830,10 @@ Fixe %1% pour %2% à %3%
 DESC_SET_EMPIRE_METER
 Fixe %2% de l'empire %1% à %3%
 
-# others
+
+##
+## FOCS other setters
+##
 
 DESC_SET_EMPIRE_STOCKPILE
 Définit le stock de %1% du propriétaire de l'objet à %2%
@@ -7343,17 +7929,22 @@ DESC_SET_VIS_ALLIES
 Définit la visibilité de l'objet à %1% pour les alliés de l'empire %2%
 DESC_SET_VIS_ENEMIES
 Définit la visibilité de l'objet à %1% pour les ennemis de l'empire %2%
+
 DESC_SET_VIS_NONE
 Définit la visibilité de l'objet pour aucun empire
+
 DESC_SET_VIS_ALL
 Définit la visibilité de l'objet à %1% pour tous les empires
+
 DESC_SET_VIS
 Définit la visibilité de l'objet à %1% pour l'empire %2%
 
 DESC_CONDITIONAL
 Applique divers effets selon si la cible est ou n'est pas un objet %1%
 
-# Object Creation
+##
+## FOCS object creation
+##
 
 DESC_CREATE_PLANET
 Crée une nouvelle planète de type %1% et de taille %2%
@@ -7379,7 +7970,10 @@ Crée un nouveau système de type d'étoile %1%
 DESC_CREATE_SYSTEM
 Crée un nouveau système
 
-# Conditions
+
+##
+## FOCS condition descriptions
+##
 
 DESC_ALL
 ''' présent dans l'univers'''
@@ -7568,7 +8162,7 @@ DESC_DESIGN_HAS_PART_CLASS
 ''' intégrant un équipement de classe %1%'''
 
 DESC_DESIGN_HAS_PART_CLASS_NOT
-''' n'intégrant pas l'équipement de classe %1%'''
+''' n'intégrant pas un équipement de classe %1%'''
 
 DESC_PREDEFINED_SHIP_DESIGN
 ''' étant du modèle %1%'''
@@ -7834,34 +8428,45 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
 ''' ce n'est pas %1%'''
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+
+##
+## Technology categories
+##
 
 LEARNING_CATEGORY
 Connaissance
+
 PRODUCTION_CATEGORY  # translated
 Production
+
 CONSTRUCTION_CATEGORY  # translated
 Construction
+
 GROWTH_CATEGORY
 Croissance
+
 ECONOMICS_CATEGORY
 Économie
+
 SHIP_HULLS_CATEGORY
 Coques Astronef
+
 SHIP_PARTS_CATEGORY
 Ingénierie
+
 SHIP_WEAPONS_CATEGORY
 Armements Astronef
+
 DEFENSE_CATEGORY
 Défense
+
 SPY_CATEGORY
 Ruse
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Technology theories
+##
 
 THEORY_SHORT_DESC
 Prérequis Théorique
@@ -7892,7 +8497,7 @@ LRN_PSIONICS
 Psionique
 
 LRN_PSIONICS_DESC
-'''Les coûts de la [[encyclopedia RESEARCH_TITLE]] sont grandement réduits si l'empire comprend une espèce télépathique.
+'''Les coûts de [[encyclopedia RESEARCH_TITLE]] concernant cette technologie sont grandement réduits pour les empires abritant une espèce maîtrisant la [[encyclopedia TELEPATHIC_TITLE]].
 
 Via une introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers qui l'entoure, en s'affranchissant des limitations physiques du corps. Des facultés cérébrales telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinésie et la psychoénergie peuvent remplacer ou dépasser les possibilités biologiques ou technologiques classiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la possession et la modification de personnalité, ont un fort impact sur la relation entre les êtres maîtrisant ces facultés et les autres.'''
 
@@ -8482,9 +9087,10 @@ Tromperie
 SPY_ROOT_DECEPTION_DESC
 L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de dissimuler la vérité peut s'avérer bien utile.
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
+
+##
+## Technology application
+##
 
 VICTORY_SHORT_DESC
 Donne la victoire !
@@ -8945,76 +9551,91 @@ Permet le développement d'armes de bombardement planétaire.
 
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
+
 SHP_WEAPON_1_2_DESC
 Améliore le Canon Mitrailleur d'un niveau, augmentant sa Puissance de 1.
 
 SHP_WEAPON_1_3
 Canon Mitrailleur 3
+
 SHP_WEAPON_1_3_DESC
 Améliore le Canon Mitrailleur de deux niveaux, augmentant sa Puissance de 2.
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
+
 SHP_WEAPON_1_4_DESC
 Améliore le Canon Mitrailleur de trois niveaux, augmentant sa Puissance de 3.
 
 SHP_WEAPON_2_1
 Canons Laser
+
 SHP_WEAPON_2_1_DESC
 Débloque le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
 SHP_WEAPON_2_2
 Canon Laser 2
+
 SHP_WEAPON_2_2_DESC
 Améliore le Canon Laser d'un niveau, augmentant sa Puissance de 2.
 
 SHP_WEAPON_2_3
 Canon Laser 3
+
 SHP_WEAPON_2_3_DESC
 Améliore le Canon Laser de deux niveaux, augmentant sa Puissance de 4.
 
 SHP_WEAPON_2_4
 Canon Laser 4
+
 SHP_WEAPON_2_4_DESC
 Améliore le Canon Laser de trois niveaux, augmentant sa Puissance de 6.
 
 SHP_WEAPON_3_1
 Canons Plasma
+
 SHP_WEAPON_3_1_DESC
 Débloque le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
 SHP_WEAPON_3_2
 Canon Plasma 2
+
 SHP_WEAPON_3_2_DESC
 Améliore le Canon Plasma d'un niveau, augmentant sa Puissance de 3.
 
 SHP_WEAPON_3_3
 Canon Plasma 3
+
 SHP_WEAPON_3_3_DESC
 Améliore le Canon Plasma de deux niveaux, augmentant sa Puissance de 6.
 
 SHP_WEAPON_3_4
 Canon Plasma 4
+
 SHP_WEAPON_3_4_DESC
 Améliore le Canon Plasma de trois niveaux, augmentant sa Puissance de 9.
 
 SHP_WEAPON_4_1
 Rayons Gamma
+
 SHP_WEAPON_4_1_DESC
 Débloque le Rayon Gamma, l'armement ultime des astronefs.
 
 SHP_WEAPON_4_2
 Rayon Gamma 2
+
 SHP_WEAPON_4_2_DESC
 Améliore le Rayon Gamma d'un niveau, augmentant sa Puissance de 5.
 
 SHP_WEAPON_4_3
 Rayon Gamma 3
+
 SHP_WEAPON_4_3_DESC
 Améliore le Rayon Gamma de deux niveaux, augmentant sa Puissance de 10.
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
+
 SHP_WEAPON_4_4_DESC
 Améliore le Rayon Gamma de trois niveaux, augmentant sa Puissance de 15. Le perfectionnement ultime de l'arme ultime.
 
@@ -9430,9 +10051,10 @@ Augmente la [[encyclopedia STEALTH_TITLE]] naturelle de toutes les planètes à 
 BASIC_PLANET_STEALTH
 Furtivité Universelle Initiale
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
+
+##
+## Technology refinement
+##
 
 BUILDING_REFINE_SHORT_DESC
 Améliore une structure
@@ -9460,9 +10082,10 @@ PRO_ENVIRO_MINING_DESC
 
 Réduit de moitié les pénalités de Population sur les planètes avec un Focus Extraction Minière Intensive.'''
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+
+##
+## Buildings
+##
 
 BLD_EVACUATION
 Évacuation
@@ -9504,6 +10127,7 @@ Représente le pouvoir et le prestige impérial et remplit la fonction de centre
 
 BLD_SUPER_TEST
 Invasion Super-Testeurs
+
 BLD_SUPER_TEST_DESC
 Remplace l'espèce de la planète par des Super-Testeurs, à des fins de tests logiciels ou tout simplement pour tricher.
 
@@ -9927,11 +10551,13 @@ Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de colonise
 
 BLD_EXPERIMENTOR_OUTPOST
 Avant-Poste Expérimentateur
+
 BLD_EXPERIMENTOR_OUTPOST_DESC
 Un Avant-Poste des Expérimentateurs, utilisé pour la mise en œuvre d'expériences scientifiques très avancées. Cette structure agit également comme un camouflage afin d'empêcher quiconque d'interférer avec leurs travaux.
 
 BLD_NOVA_BOMB_ACTIVATOR
 Détonateur de Bombe Nova
+
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Active tous les exemplaires de [[shippart SP_NOVA_BOMB]] dans un rayon maximum d'une Voie spatiale.
 
@@ -10124,9 +10750,10 @@ Colonie Super-Testeurs
 BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] colonie Super-Testeurs. [[BLD_COL_PART_2]] colonie Super-Testeurs [[BLD_COL_PART_3]].
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
+
+##
+## Hull and ship part description templates
+##
 
 HULL_DESC
 '''[[encyclopedia STARLANE_SPEED_TITLE]] : %1%
@@ -10154,77 +10781,91 @@ PART_DESC_HANGAR_STATS
 Capacité Chasseurs : %1%'''
 
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+##
+## Ship parts
+##
 
 FT_WEAPON_1
 Arme Chasseur
+
 FT_WEAPON_1_DESC
 Prototype d'un système d'armement destiné aux chasseurs. N'est pas compatible comme armement d'astronef.
 
 FT_BAY_1
 Rampe de Lancement
+
 FT_BAY_1_DESC
 Système de lancement pour chasseurs.
 
 FT_HANGAR_0
 Hangar 0
+
 FT_HANGAR_0_DESC
 Système de stockage pour vaisseau leurre non-armé.
 
 FT_HANGAR_1
 Hangar 1
+
 FT_HANGAR_1_DESC
 Système de stockage pour chasseurs faiblement armés.
 
 FT_HANGAR_2
 Hangar 2
+
 FT_HANGAR_2_DESC
 Système de stockage pour chasseurs moyennement armés.
 
 FT_HANGAR_3
 Hangar 3
+
 FT_HANGAR_3_DESC
 Système de stockage pour chasseurs correctement armés.
 
 FT_HANGAR_4
 Hangar 4
+
 FT_HANGAR_4_DESC
 Système de stockage pour chasseurs lourdement armés.
 
 FT_KRILL
 Essaim Krill
+
 FT_KRILL_DESC
 Essaim de Krill.
 
 FT_BAY_KRILL
 Essaim Krill
+
 FT_BAY_KRILL_DESC
 Lorsque les essaims de Krill ont atteint une taille suffisante, certains Krills quittent l'essaim pour attaquer les astronefs rencontrés.
 
 SR_WEAPON_0_1
 Canon Antiaérien
+
 SR_WEAPON_0_1_DESC
 Le Canon Antiaérien inflige des dommages négligeables à la plupart des astronefs, mais reste bon marché et efficace pour contrer les chasseurs.
 
 SR_WEAPON_1_1
 Canon Mitrailleur
+
 SR_WEAPON_1_1_DESC
 Le Canon Mitrailleur, une arme de base.
 
 SR_WEAPON_2_1
 Canon Laser
+
 SR_WEAPON_2_1_DESC
 Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
 SR_WEAPON_3_1
 Canon Plasma
+
 SR_WEAPON_3_1_DESC
 Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
 SR_WEAPON_4_1
 Rayon Gamma
+
 SR_WEAPON_4_1_DESC
 Le Rayon Gamma, l'armement ultime des astronefs.
 
@@ -10236,21 +10877,25 @@ Un gigantesque canon automatique propulsant de lourdes charges explosives faites
 
 SR_JAWS
 Mâchoires
+
 SR_JAWS_DESC
 Mâchoires provenant d'un monstre de l'espace et en mesure d'endommager les astronefs. Les monstres spatiaux de très grande taille sont même capables de dévorer des flottes entières.
 
 SR_SPINES
 Épines
+
 SR_SPINES_DESC
 Épines provenant d'un monstre de l'espace, à l'aide desquelles une frappe puissante peut sérieusement endommager un astronef.
 
 SR_TENTACLE
 Tentacule
+
 SR_TENTACLE_DESC
 Tentacule provenant d'un Kraken et en mesure d'endommager les astronefs.
 
 SR_PLASMA_DISCHARGE
 Décharge Plasma
+
 SR_PLASMA_DISCHARGE_DESC
 Décharge Plasma produite par un monstre de l'espace, en mesure de faire fondre la plupart des blindages.
 
@@ -10733,9 +11378,10 @@ Autotrader
 RS_AUTOTRADER_DESC
 Génère des Points de Commerce pour l'empire.
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
+
+##
+## Ship hulls
+##
 
 SH_ROBOTIC
 Coque Robotique
@@ -11039,6 +11685,7 @@ La construction de cette coque nécessite un important apport d'énergie et ne p
 
 SH_ENERGY_FRIGATE
 Frégate Energy
+
 SH_ENERGY_FRIGATE_DESC
 '''Cette coque très rapide combine l'énergie compressée et la technologie militaire afin de créer un astronef d'attaque véloce mais fragile.
 
@@ -11078,6 +11725,7 @@ Cet astronef nécessite un gigantesque apport d'énergie lors de sa construction
 
 SH_BASIC_SMALL
 Coque Basique Légère
+
 SH_BASIC_SMALL_DESC
 '''Une petite coque interstellaire de base pour astronef. Ne dispose que d'une niche externe, mais comparée aux autres coques de base, elle est capable d'effectuer un voyage supplémentaire sur une Voie spatiale.
 
@@ -11087,6 +11735,7 @@ Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] autour de la planète où la co
 
 SH_BASIC_MEDIUM
 Coque Basique Moyenne
+
 SH_BASIC_MEDIUM_DESC
 '''Une coque interstellaire de base pour astronef de taille moyenne. Elle dispose de deux niches externes et d'une niche interne.
 
@@ -11143,111 +11792,133 @@ Corps massif disposant d'armes naturelles terrifiantes et d'une carapace résist
 
 SH_GUARD_MONSTER_BODY
 Coque Gardien
+
 SH_GUARD_MONSTER_BODY_DESC
 Une coque solide destinée aux monstres-astronefs de type Gardien.
 
 SH_GUARD_0_BODY
 Coque Vaisseau Maintenance
+
 SH_GUARD_0_BODY_DESC
 Coque de Vaisseau Maintenance
 
 SH_GUARD_1_BODY
 Coque Factionnaire
+
 SH_GUARD_1_BODY_DESC
 Une coque basique destinée aux monstres-astronefs de type Gardien.
 
 SH_GUARD_3_BODY
 Coque Défenseur
+
 SH_GUARD_3_BODY_DESC
 Une coque puissante destinée aux monstres-astronefs de type Gardien.
 
 SH_KRILL_1_BODY
 Corps Krill 1
+
 SH_KRILL_1_BODY_DESC
 Corps de Krill 1
 
 SH_KRILL_2_BODY
 Corps Krill 2
+
 SH_KRILL_2_BODY_DESC
 Corps de Krill 2
 
 SH_KRILL_3_BODY
 Corps Krill 3
+
 SH_KRILL_3_BODY_DESC
 Corps de Krill 3
 
 SH_KRILL_4_BODY
 Corps Krill 4
+
 SH_KRILL_4_BODY_DESC
 Corps de Krill 4
 
 SH_DRONE_BODY
 Coque Drone
+
 SH_DRONE_BODY_DESC
 Coque de Drone
 
 SH_IMMOBILE_FACTORY
 Coque Drone Usine
+
 SH_IMMOBILE_FACTORY_DESC
 Drone Usine
 
 SH_KRAKEN_1_BODY
 Corps Kraken Larvaire
+
 SH_KRAKEN_1_BODY_DESC
 Un formidable monstre de l'espace de petite taille.
 
 SH_KRAKEN_2_BODY
 Corps Kraken
+
 SH_KRAKEN_2_BODY_DESC
 Un formidable monstre de l'espace de taille intermédiaire.
 
 SH_KRAKEN_3_BODY
 Corps Kraken Massif
+
 SH_KRAKEN_3_BODY_DESC
 Un formidable monstre de l'espace de grande taille.
 
 SH_BLACK_KRAKEN_BODY
 Corps Kraken Noir
+
 SH_BLACK_KRAKEN_BODY_DESC
 Un puissant Kraken Noir réputé comme surnaturel.
 
 SH_SNOWFLAKE_1_BODY
 Corps Flocon Juvénile
+
 SH_SNOWFLAKE_1_BODY_DESC
 Un redoutable monstre de l'espace de petite masse.
 
 SH_SNOWFLAKE_2_BODY
 Corps Flocon
+
 SH_SNOWFLAKE_2_BODY_DESC
 Un redoutable monstre de l'espace de petite masse.
 
 SH_SNOWFLAKE_3_BODY
 Corps Flocon Massif
+
 SH_SNOWFLAKE_3_BODY_DESC
 Un redoutable monstre de l'espace de petite masse.
 
 SH_PSIONIC_SNOWFLAKE_BODY
 Corps Flocon Psionique
+
 SH_PSIONIC_SNOWFLAKE_BODY_DESC
 Un monstre de l'espace doté de puissantes capacités mentales.
 
 SH_JUGGERNAUT_1_BODY
 Corps Mastodonte Juvénile
+
 SH_JUGGERNAUT_1_BODY_DESC
 Un redoutable monstre de l'espace de masse importante.
 
 SH_JUGGERNAUT_2_BODY
 Corps Mastodonte
+
 SH_JUGGERNAUT_2_BODY_DESC
 Un redoutable monstre de l'espace de masse importante.
 
 SH_JUGGERNAUT_3_BODY
 Corps Mastodonte Massif
+
 SH_JUGGERNAUT_3_BODY_DESC
 Un redoutable monstre de l'espace de masse importante.
 
 SH_BLOATED_JUGGERNAUT_BODY
 Corps Mastodonte Déformé
+
 SH_BLOATED_JUGGERNAUT_BODY_DESC
 Un monstre de l'espace exceptionnellment grand et massif.
 
@@ -11256,36 +11927,42 @@ Corps Nébuleux
 
 SH_EXP_OUTPOST_HULL
 Coque Pionnier Expérimentateur
+
 SH_EXP_OUTPOST_HULL_DESC
 Une coque utilisée par les Expérimentateurs pour transférer du matériel expérimental vers d'autres galaxies.
 
 SH_COSMIC_DRAGON_BODY
 Corps Dragon Cosmique
+
 SH_COSMIC_DRAGON_BODY_DESC
 Un terrifiant dragon de l'espace de la taille d'une petite planète.
 
 SH_DAMPENING_CLOUD_BODY
 Corps Nuage Siphonnant
+
 SH_DAMPENING_CLOUD_BODY_DESC
 Un nuage cosmique constitué de particules de haute énergie.
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
+
+##
+## Buildings macros
+##
 
 NO_STACK_SUPPLY_CONNECTION_TEXT
 Les bonus de plusieurs exemplaires connectés par ligne d'[[encyclopedia SUPPLY_TITLE]] au sein d'un même Groupe Ressource ne s'additionnent pas.
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
+
+##
+## Tech macros
+##
 
 COLONY_BUILDING_TIME_DECREASE
 Entre autres applications, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+
+##
+## Growth macros
+##
 
 GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].
@@ -11316,9 +11993,10 @@ Particularités pour [[encyclopedia ROBOTIC_SPECIES_TITLE]] :
 Particularités pour [[encyclopedia LITHIC_SPECIES_TITLE]] :
 [[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
+
+##
+## Species picks
+##
 
 NO_INDUSTRY
 −−−	Pas d'[[encyclopedia INDUSTRY_TITLE]]
@@ -11486,9 +12164,9 @@ TELEPATHIC_DETECTION
 +	Détection Télépathique: peut percevoir les planètes habitées proches.
 
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
+##
+## Accounting labels
+##
 
 STANDARD_CONSTRUCTION_LABEL
 %1% [[encyclopedia INFRASTRUCTURE_TITLE]] normale
@@ -11727,9 +12405,10 @@ Brouillage Camouflage
 TRANSPATIAL_CLOAK_INTERACTION
 Interaction Propulsion Transpatiale - Camouflage
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
+
+##
+## Tags
+##
 
 ANTIQUATED
 Désuet
@@ -11758,9 +12437,10 @@ Télépathique
 ORBITAL  # translated
 Orbital
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
+
+##
+## AI strings
+##
 
 ### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
 ### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
@@ -11855,9 +12535,11 @@ Invincible'''
 
 ### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## AI diplomacy strings and lists
+##
+## Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+## For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
 
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Heureux de recevoir de vos nouvelles.
@@ -12029,11 +12711,10 @@ Annihilez votre espèce est pour nous un devoir sacré!
 #AI_FIRST_TURN_GREETING_MSG607
 #AI_FIRST_TURN_GREETING_MSG608'''
 
-### End of AI Diplomacy Message Lists
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
+##
+## Hotkey names and descriptions
+##
 
 OPTIONS_PAGE_HOTKEYS
 Raccourcis clavier
@@ -12167,9 +12848,10 @@ Quitter partie en cours
 HOTKEY_FULLSCREEN
 Plein écran [on/off]
 
-################
-## Name Lists ##
-################
+
+##
+## Name lists
+##
 
 #STAR_GROUP_WORDS
 #'''Alpha
