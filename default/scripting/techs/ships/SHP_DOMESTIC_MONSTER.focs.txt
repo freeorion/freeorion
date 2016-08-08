@@ -6,5 +6,6 @@ Tech
     researchcost = 9 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "GRO_PLANET_ECOL"
+    graphic = "icons/monsters/kraken-5.png"
 
 #include "/scripting/common/base_prod.macros"
