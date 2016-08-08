@@ -51,7 +51,7 @@ class State(object):
         """
         Return set of empire planet ids with species.
 
-        :rtype: set[int]
+        :rtype: frozenset[int]
         """
         empire_id = fo.empireID()
         return frozenset(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species)
