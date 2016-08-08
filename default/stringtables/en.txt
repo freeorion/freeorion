@@ -349,7 +349,7 @@ SD_ENG_SCOUT
 Energy Scout
 
 SD_ENG_SCOUT_DESC
-Small and fast unarmed vessel designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+Small and fast unarmed vessel designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
 
 SD_SMALL_MARK_1
 Corvette (M)
@@ -577,13 +577,13 @@ SD_FRACTAL_1
 Fractal Battleship (P)
 
 SD_FRACTAL_1_DESC
-An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
 
 SD_FRACTAL_2
 Fractal Battleship (D)
 
 SD_FRACTAL_2_DESC
-An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
 
 SD_COLONY_SHIP
 Colony Ship
@@ -685,19 +685,19 @@ SD_ENG_TROOP_SHIP
 Energy Troop Ship
 
 SD_ENG_TROOP_SHIP_DESC
-Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
 
 SD_ENG1
 Energy Corvette (L)
 
 SD_ENG1_DESC
-Small fast combat vessel. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+Small fast combat vessel. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
 
 SD_ENG2
 Energy Corvette (P)
 
 SD_ENG2_DESC
-Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
@@ -797,7 +797,7 @@ Larval Kraken
 SM_KRAKEN_1_DESC
 '''In the larval form, a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarm. A well-fed larval kraken may grow into a larger and more dangerous adult form.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of [[PT_GASGIANT]] planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
 
 SM_KRAKEN_2
 Kraken
@@ -813,7 +813,7 @@ Great Kraken
 SM_KRAKEN_3_DESC
 '''A formidable and very tough space monster.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of [[PT_GASGIANT]] planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
 
 SM_BLACK_KRAKEN
 Black Kraken
@@ -861,7 +861,7 @@ Small Juggernaut
 SM_JUGGERNAUT_1_DESC
 '''A formidable heavy-weight space monster with some protective shielding.
 
-Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
+Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
 
 SM_JUGGERNAUT_2
 Juggernaut
@@ -869,7 +869,7 @@ Juggernaut
 SM_JUGGERNAUT_2_DESC
 '''A formidable heavy-weight space monster with moderate protective shielding.
 
-Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
+Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
 
 SM_JUGGERNAUT_3
 Large Juggernaut
@@ -877,7 +877,7 @@ Large Juggernaut
 SM_JUGGERNAUT_3_DESC
 '''A formidable heavy-weight space monster with powerful protective shielding.
 
-Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
+Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
 
 SM_BLOATED_JUGGERNAUT
 Bloated Juggernaut
@@ -4490,14 +4490,14 @@ PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star - the bigger the better. Growth specials do not benefit them.
+'''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star and the planet size - the brighter or bigger, the better. Growth specials do not benefit them.
 
 Population changes:
-Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
-White Star: Tiny +1.5 , Small +3 , Medium +4.5 , Large +6 , Huge +7.5.
-Yellow Star, Orange Star: No changes.
-Red Star, Neutron Star: Tiny -1 , Small -2 , Medium -3 , Large -4 , Huge -5.
-Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.'''
+* [[STAR_BLUE]] star: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
+* [[STAR_WHITE]] star: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
+* [[STAR_YELLOW]] star, [[STAR_ORANGE]] star: (No changes)
+* [[STAR_RED]] star, [[STAR_NEUTRON]] star: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
+* [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
@@ -5831,7 +5831,7 @@ Human
 
 SP_HUMAN_GAMEPLAY_DESC
 '''Relentless, tribal pursuit predators.
-Prefer Terran planets.
+Prefer [[PT_TERRAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -5848,7 +5848,7 @@ Scylior
 
 SP_SCYLIOR_GAMEPLAY_DESC
 '''Three-tentacled, aquatic nautiloids.
-Prefer Ocean planets.
+Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -5872,7 +5872,7 @@ Gysache
 
 SP_GYSACHE_GAMEPLAY_DESC
 '''Cowardly, freakish sheep-like herbivores.
-Prefer Swamp planets.
+Prefer [[PT_SWAMP]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -5895,7 +5895,7 @@ Chato
 
 SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Gormoshk.
-Prefer Toxic planets.
+Prefer [[PT_TOXIC]] planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
@@ -5912,7 +5912,7 @@ Trith
 
 SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
-Prefer Desert planets.
+Prefer [[PT_DESERT]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
@@ -5929,7 +5929,7 @@ Happybirthday
 
 SP_HAPPY_GAMEPLAY_DESC
 '''Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
-Prefer Ocean planets.
+Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 '''
@@ -5957,7 +5957,7 @@ Hhhoh
 
 SP_HHHOH_GAMEPLAY_DESC
 '''Huge, slow, multi-trunked Mammoths.
-Prefer Tundra planets.
+Prefer [[PT_TUNDRA]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -5975,7 +5975,7 @@ Eaxaw
 
 SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic aggressive worms.
-Prefer Terran planets.
+Prefer [[PT_TERRAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
@@ -5995,7 +5995,7 @@ Derthrean
 
 SP_DERTHREAN_GAMEPLAY_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
-Prefer Toxic planets.
+Prefer [[PT_TOXIC]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -6012,7 +6012,7 @@ Laenfa
 
 SP_LAENFA_GAMEPLAY_DESC
 '''Sneaky, telepathic, sentient vines.
-Prefer Ocean Planets.
+Prefer [[PT_OCEAN]] planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -6029,7 +6029,7 @@ Tae Ghirus
 
 SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
-Prefer Swamp planets.
+Prefer [[PT_SWAMP]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -6046,7 +6046,7 @@ Mu Ursh
 
 SP_MUURSH_GAMEPLAY_DESC
 '''Militantly peaceful herbivores.
-Prefer Desert planets.
+Prefer [[PT_DESERT]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6060,7 +6060,7 @@ George
 
 SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
-Prefers Tundra planets.
+Prefers [[PT_TUNDRA]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -6076,7 +6076,7 @@ Cray
 
 SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
-Prefer Barren planets.
+Prefer [[PT_BARREN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -6094,7 +6094,7 @@ Etty
 
 SP_ETTY_GAMEPLAY_DESC
 '''Cybernetic plants.
-Prefer Desert planets.
+Prefer [[PT_DESERT]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -6153,7 +6153,7 @@ Egassem
 
 SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
-Prefer Inferno planets.
+Prefer [[PT_INFERNO]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
@@ -6173,7 +6173,7 @@ Sslith
 
 SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
-Prefer Tundra planets.
+Prefer [[PT_TUNDRA]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -6212,7 +6212,7 @@ Setinon
 
 SP_SETINON_GAMEPLAY_DESC
 '''Individualistic sentient microscopic cells.
-Prefer Swamp planets.
+Prefer [[PT_SWAMP]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6232,7 +6232,7 @@ Nymnmn
 
 SP_NYMNMN_GAMEPLAY_DESC
 '''Planet-wide sapient magnetic waveforms.
-Prefer Desert planets.
+Prefer [[PT_DESERT]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
@@ -6244,7 +6244,7 @@ Trenchers
 
 SP_TRENCHERS_GAMEPLAY_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
-Prefers Barren planets.
+Prefer [[PT_BARREN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -6256,7 +6256,7 @@ Raaagh
 
 SP_RAAAGH_GAMEPLAY_DESC
 '''Highly territorial felinoids.
-Prefer Terran planets.
+Prefer [[PT_TERRAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6278,7 +6278,7 @@ Beige Goo
 
 SP_BEIGEGOO_GAMEPLAY_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
-Prefers Radiated planets.
+Prefers [[PT_RADIATED]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -6291,7 +6291,7 @@ Silexian
 
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Gleaming gardener robots, left on their own.
-Prefer Terran planets.
+Prefer [[PT_TERRAN]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -6314,7 +6314,7 @@ Kobuntura
 
 SP_KOBUNTURA_GAMEPLAY_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
-Prefer Barren planets.
+Prefer [[PT_BARREN]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
@@ -6331,7 +6331,7 @@ Ugmors
 
 SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
-Prefer Inferno planets.
+Prefer [[PT_INFERNO]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
@@ -6355,7 +6355,7 @@ Gis Guf Gthrim
 
 SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
-Prefer Toxic planets.
+Prefer [[PT_TOXIC]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6368,7 +6368,7 @@ Hidden Gardener
 
 SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''A sapient fungal network that tends its plant food from beneath
-Prefers Terran planets
+Prefers [[PT_TERRAN]] planets
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6386,7 +6386,7 @@ Abaddoni
 
 SP_ABADDONI_GAMEPLAY_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created.
-Prefers Inferno planets.
+Prefers [[PT_INFERNO]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
@@ -6404,7 +6404,7 @@ Acirema
 
 SP_ACIREMA_GAMEPLAY_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
-Prefers Radiated planets.
+Prefers [[PT_RADIATED]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
@@ -6428,7 +6428,7 @@ Ourbools
 
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Giant blind swimmers who "see" gravitation.
-Prefer Ocean planets.
+Prefer [[PT_OCEAN]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6452,7 +6452,7 @@ Volp-Uglush
 
 SP_VOLP_GAMEPLAY_DESC
 '''Highly bureaucratic, overcrowded burrowers.
-Prefer Barren planets.
+Prefer [[PT_BARREN]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
@@ -6475,7 +6475,7 @@ Furthest
 
 SP_FURTHEST_GAMEPLAY_DESC
 '''Paranoid three-headed, tripedal herbivores.
-Prefer Tundra planets.
+Prefer [[PT_TUNDRA]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6498,7 +6498,7 @@ Banforo
 
 SP_BANFORO_GAMEPLAY_DESC
 '''Cute, sedulous star gazers.
-Prefer Barren planets.
+Prefer [[PT_BARREN]] planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 '''
 
@@ -6518,7 +6518,7 @@ Kilandow
 
 SP_KILANDOW_GAMEPLAY_DESC
 '''Radiation-absorbing, prickly, unhurried experimenters.
-Prefer Radiated planets.
+Prefer [[PT_RADIATED]] planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
@@ -6539,7 +6539,7 @@ Misiorla
 
 SP_MISIORLA_GAMEPLAY_DESC
 '''Chaotic, liberal, born pilots.
-Prefer Toxic planets.
+Prefer [[PT_TOXIC]] planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
@@ -6558,7 +6558,7 @@ SP_EXOBOT
 Exobot
 
 SP_EXOBOT_GAMEPLAY_DESC
-'''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
+'''Semi-autonomous robots, designed for industry on [[PT_BARREN]], [[PT_RADIATED]], and [[PT_INFERNO]] planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
@@ -6610,7 +6610,13 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforms planets then increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15 and increases max [[encyclopedia HAPPINESS_TITLE]] by 5.
+'''Terraforms planets then increases max Population by planet size:
+• [[SZ_TINY]] (+3)
+• [[SZ_SMALL]] (+6)
+• [[SZ_MEDIUM]] (+9)
+• [[SZ_LARGE]] (+12)
+• [[SZ_HUGE]] (+15)
+and increases max [[encyclopedia HAPPINESS_TITLE]] by 5.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population. If the world is a [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]], a substantial population bonus is added. If it is not, then it will slowly terraform itself in stages to eventually reach [[PE_GOOD]] (NB: [[species SP_EXOBOT]] do not have a [[PE_GOOD]] environment so it cannot improve beyond [[PE_ADEQUATE]] for them).'''
 
@@ -6705,7 +6711,12 @@ TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on this planet by 0.2 per Population when Focus is set to [[encyclopedia INDUSTRY_TITLE]]. Decreases population (regardless of Focus): Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on this planet by 0.2 per Population when Focus is set to [[encyclopedia INDUSTRY_TITLE]]. Decreases population (regardless of Focus) depending on the planet size:
+• [[SZ_TINY]] (-1)
+• [[SZ_SMALL]] (-2)
+• [[SZ_MEDIUM]] (-3)
+• [[SZ_LARGE]] (-4)
+• [[SZ_HUGE]] (-5)
 
 This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
 
@@ -6713,7 +6724,12 @@ TEMPORAL_ANOMALY_SPECIAL
 Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 5 per Population when Focus is set to [[encyclopedia RESEARCH_TITLE]]. Decreases population (regardless of Focus): Tiny: -5, Small: -10, Medium: -15, Large: -20, Huge: -25.
+'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 5 per Population when Focus is set to [[encyclopedia RESEARCH_TITLE]]. Decreases population (regardless of Focus) depending on the planet size: 
+• [[SZ_TINY]] (-5)
+• [[SZ_SMALL]] (-10)
+• [[SZ_MEDIUM]] (-15)
+• [[SZ_LARGE]] (-20)
+• [[SZ_HUGE]] (-25)
 
 The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
@@ -6994,31 +7010,31 @@ Fighter
 # StarTypes
 
 STAR_BLUE
-blue
+Blue
 
 STAR_WHITE
-white
+White
 
 STAR_YELLOW
-yellow
+Yellow
 
 STAR_ORANGE
-orange
+Orange
 
 STAR_RED
-red
+Red
 
 STAR_NEUTRON
-neutron
+Neutron
 
 STAR_BLACK
-black hole
+Black Hole
 
 STAR_NONE
-no star
+No star
 
 INVALID_STAR_TYPE
-unknown star type
+Unknown star type
 
 # PlanetTypes
 
@@ -7079,7 +7095,7 @@ SZ_ASTEROIDS
 Asteroids
 
 SZ_GASGIANT
-Gas giant
+Gas Giant
 
 # PlanetEnvironments
 
@@ -8584,7 +8600,7 @@ LRN_COLLAPSER
 Black Hole Collapser
 
 LRN_COLLAPSER_DESC
-The culmination of spatial distortion and stellar-scale manipulation allows the singularity with a black hole to be inverted, creating a spacetime disruption on an interstellar scale. This disruption is unstable, however, and rapidly collapses upon itself, drawing with it all fleets, planets, or entire systems within range and utterly destroying whatever falls into the centre.
+The culmination of spatial distortion and stellar-scale manipulation allows the singularity with a [[STAR_BLACK]] to be inverted, creating a spacetime disruption on an interstellar scale. This disruption is unstable, however, and rapidly collapses upon itself, drawing with it all fleets, planets, or entire systems within range and utterly destroying whatever falls into the centre.
 
 LRN_TRANSCEND
 Singularity of Transcendence
@@ -8623,7 +8639,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-Increases the max population of [[PE_GOOD]], [[PE_ADEQUATE]], and [[PE_POOR]] planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+Increases the max Population of [[PE_GOOD]], [[PE_ADEQUATE]], and [[PE_POOR]] planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -8651,7 +8667,10 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of [[PE_ADEQUATE]] and [[PE_POOR]] planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and [[PE_HOSTILE]] planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max Population on planets, depending on the planet suitability and planet size:
+
+• [[PE_ADEQUATE]] or [[PE_POOR]] planet: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
+• [[PE_HOSTILE]] planet: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -8675,7 +8694,10 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of [[PE_POOR]] planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5, and [[PE_HOSTILE]] planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10
+'''Increases the max Population on planets, depending on the planet suitability and planet size:
+
+• [[PE_POOR]] planet: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
+• [[PE_HOSTILE]] planet: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
 
 Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
 
@@ -8764,7 +8786,7 @@ PRO_ORBITAL_GEN
 Orbital Generation
 
 PRO_ORBITAL_GEN_DESC
-'''Once troublesome gravity well problems are overcome, gas giants offer a unique opportunity to harvest usable energy quickly and efficiently. Methods which take advantage of the high density atmosphere and belt-zone circulation allow a significant amount of energy to be easily accrued and transported for use in nearby planets.
+'''Once troublesome gravity well problems are overcome, Gas Giants offer a unique opportunity to harvest usable energy quickly and efficiently. Methods which take advantage of the high density atmosphere and belt-zone circulation allow a significant amount of energy to be easily accrued and transported for use in nearby planets.
 
 Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces. Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages. The resulting power may be used in orbit, or may be beamed to the planet to support surface industry. As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.'''
 
@@ -8796,7 +8818,7 @@ PRO_SINGULAR_GEN
 Singularity Generation
 
 PRO_SINGULAR_GEN_DESC
-'''Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains. By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
+'''Harnessing energy from a [[STAR_BLACK]] is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains. By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
 
 As matter is drawn towards a singularity by the intense space-time curvature, or gravitational field, the matter forms a greatly compressed and heated accretion disc. High energy radiation emitted from the disc may be captured and harnessed for power generation. The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity. This method of power generation is significantly more delicate and unstable than the accretion disc method, but can produce an even greater output.'''
 
@@ -8814,7 +8836,7 @@ PRO_NEUTRONIUM_EXTRACTION
 Neutronium Extraction
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
-The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
+The core of a [[STAR_NEUTRON]] star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter. This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
 CON_ARCH_PSYCH
 Architectural Psychology
@@ -8890,13 +8912,15 @@ CON_ORBITAL_HAB
 Orbital Habitation
 
 CON_ORBITAL_HAB_DESC
-Increases Population capacity by planet size on all habitable planets; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Also increases target [[encyclopedia INFRASTRUCTURE_TITLE]] by 10 on populated.
+'''Increases Population capacity by planet size on all habitable planets: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+
+Also increases target [[encyclopedia INFRASTRUCTURE_TITLE]] by 10 on populated.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -9237,7 +9261,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+Increases the max Population on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENOME_BANK
 Genome Bank
@@ -9279,7 +9303,8 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on [[PE_HOSTILE]] planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population.
+'''Increases the max Population on [[PE_HOSTILE]] planets by planet size: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per Population.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -9316,7 +9341,11 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus, per Population and depending on the star type:
+* [[STAR_BLACK]] (x1)
+* [[STAR_NEUTRON]] (x0.75)
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.5)
+* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x0.2)
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -9342,7 +9371,7 @@ LRN_ART_BLACK_HOLE
 Artificial Black Hole
 
 LRN_ART_BLACK_HOLE_DESC
-By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
+By carefully collapsing a [[STAR_RED]] star, a [[STAR_BLACK]] can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
 
 LRN_PSY_DOM
 Psychogenic Domination
@@ -9477,7 +9506,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] by 1 on each owned planet. For species with basic defensive toops, increases max [[encyclopedia TROOP_TITLE]] on the planet by 0.2 per population.
+'''Increases max [[encyclopedia SHIELDS_TITLE]] by 1 on each owned planet. For species with basic defensive troops, increases max [[encyclopedia TROOP_TITLE]] on the planet by 0.2 per population.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -9715,7 +9744,7 @@ SHP_MULTISPEC_SHIELD
 Multi-Spectral Shielding
 
 SHP_MULTISPEC_SHIELD_DESC
-Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty [[encyclopedia STEALTH_TITLE]] bonus.
+Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than [[STAR_BLACK]] and [[STAR_NEUTRON]], receive a mighty [[encyclopedia STEALTH_TITLE]] bonus.
 
 SPY_DETECT_1
 Optical Scanner
@@ -10294,7 +10323,13 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Adds the [[special GAIA_SPECIAL]] to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15, and increases max [[encyclopedia HAPPINESS_TITLE]] by 5.
+'''Adds the [[special GAIA_SPECIAL]] special to the planet which increases max Population for [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]]s, according to planet size: 
+• [[SZ_TINY]] (+3)
+• [[SZ_SMALL]] (+6)
+• [[SZ_MEDIUM]] (+9)
+• [[SZ_LARGE]] (+12)
+• [[SZ_HUGE]] (+15)
+and increases max [[encyclopedia HAPPINESS_TITLE]] by 5.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -10328,7 +10363,7 @@ BLD_ART_BLACK_HOLE
 Artificial Black Hole
 
 BLD_ART_BLACK_HOLE_DESC
-By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a [[STAR_BLACK]]. This technique is limited to [[STAR_RED]] stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_BLACK_HOLE_COLLAPSER
 Black Hole Collapser
@@ -10343,19 +10378,22 @@ BLD_HYPER_DAM_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 0.4 per Population, but decreases Population on such planets by 5.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
+A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a [[STAR_BLACK]].'''
 
 BLD_SOL_ACCEL
 Solar Accelerator
 
 BLD_SOL_ACCEL_DESC
-A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]], [[STAR_RED]]. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population when built in systems with Blue/White, Yellow/Orange, or Red stars, respectively.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets, per Population and depending on the star type: 
+* [[STAR_BLUE]] or [[STAR_WHITE]] (x0.4)
+* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.2) 
+* [[STAR_RED]] (x0.1)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
@@ -10364,7 +10402,7 @@ BLD_CLONING_CENTER
 Cloning Center
 
 BLD_CLONING_CENTER_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max Population on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 [[tech GRO_INDUSTRY_CLONE]] allows made-to-order populations to be produced industrially, significantly improving population.'''
 
@@ -10387,7 +10425,7 @@ BLD_REMOTE_TERRAFORM_DESC
 Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 MACRO_NEUTRONIUM_BUILDINGS
-To use neutronium an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a Neutron Star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used
+To use neutronium an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a [[STAR_NEUTRON]] star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used
 
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
@@ -10395,7 +10433,7 @@ Neutronium Extractor
 BLD_NEUTRONIUM_EXTRACTOR_DESC
 '''Makes Neutronium available to the owning empire.  Neutronium may be used at a [[buildingtype BLD_NEUTRONIUM_FORGE]] to enable construction of ships with Neutronium ship parts, like the [[shippart AR_NEUTRONIUM_PLATE]].
 
-Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
+Before parts can be built using Neutronium, it must be extracted from a [[STAR_NEUTRON]] star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_FORGE
 Neutronium Forge
@@ -10434,7 +10472,7 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 '''Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1 per Population.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a black hole system.'''
+This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a [[STAR_BLACK]] system.'''
 
 BLD_PLANET_DRIVE
 Planetary Starlane Drive
@@ -10456,19 +10494,19 @@ BLD_ART_PLANET
 Artificial Planet
 
 BLD_ART_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_FACTORY_PLANET
 Artificial Factory World
 
 BLD_ART_FACTORY_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_PARADISE_PLANET
 Artificial Paradise World
 
 BLD_ART_PARADISE_PLANET_DESC
-Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it in stages to eventually perfectly suit its inhabitants. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial paradise planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it in stages to eventually perfectly suit its inhabitants. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_MOON
 Artificial Moon
@@ -10476,7 +10514,7 @@ Artificial Moon
 BLD_ART_MOON_DESC
 '''Forms an artificial moon with 1:1 orbital period - rotational period resonance. Adds the [[special RESONANT_MOON_SPECIAL]] special to the planet.
 
-This cannot be constructed at a Gas Giant or Asteroid Belt.
+This cannot be constructed at a [[PT_GASGIANT]] or Asteroid Belt.
 
 Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period. Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below. Ships orbiting the planet would also be able to hide more effectively from aggressors.'''
 
@@ -10484,7 +10522,7 @@ BLD_SOL_REJUV
 Solar Rejuvenator
 
 BLD_SOL_REJUV_DESC
-A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: Red, Orange, Yellow, White, Blue. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: [[STAR_RED]], [[STAR_ORANGE]], [[STAR_YELLOW]], [[STAR_WHITE]], [[STAR_BLUE]]. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_TRANSFORMER
 Transformer
@@ -10520,10 +10558,10 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a [[PT_GASGIANT]] and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
 Multiple copies in the same system do not stack.
 
-A power generator designed to harvest the energy of a Gas Giant.'''
+A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''
 
 BLD_STARLANE_BORE
 Starlane Bore
@@ -11193,7 +11231,7 @@ SH_MULTISPEC
 Multi-Spectral Shield
 
 SH_MULTISPEC_DESC
-'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
+'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a [[STAR_BLACK]] or a [[STAR_NEUTRON]] star and allows the ship to enter a star in combat.
 
 Shields reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -11334,7 +11372,7 @@ SP_KRILL_SPAWNER
 Krill Spawner
 
 SP_KRILL_SPAWNER_DESC
-Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.  When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[encyclopedia STEALTH_TITLE]] (but will not stack with any other [[encyclopedia STEALTH_TITLE]] - causing  parts).
+Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned [[PT_ASTEROIDS]] which do not already contain a krill monster.  When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[encyclopedia STEALTH_TITLE]] (but will not stack with any other [[encyclopedia STEALTH_TITLE]] - causing  parts).
 
 SP_SOLAR_CONCENTRATOR
 Solar Concentrator
@@ -11447,7 +11485,7 @@ SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[encyclopedia STRUCTURE_TITLE]] to double the current when out of combat, meaning ships at at least half strength will fully repair.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[encyclopedia STRUCTURE_TITLE]] to double the current when out of combat, meaning ships with at least half strength will fully repair.
 
 [[encyclopedia STEALTH_TITLE]] is medium, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is average.
 
@@ -11681,7 +11719,7 @@ SH_COMPRESSED_ENERGY_DESC
 
 [[encyclopedia STRUCTURE_TITLE]] is low, [[encyclopedia STEALTH_TITLE]] is very high, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high.
 
-This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+This hull requires a great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_ENERGY_FRIGATE
 Energy Frigate
@@ -11691,7 +11729,7 @@ SH_ENERGY_FRIGATE_DESC
 
 [[encyclopedia STRUCTURE_TITLE]] and [[encyclopedia STEALTH_TITLE]] are medium, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high.
 
-This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+This hull requires a great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_FRACTAL_ENERGY
 Fractal Energy Hull
@@ -11701,7 +11739,7 @@ SH_FRACTAL_ENERGY_DESC
 
 [[encyclopedia STRUCTURE_TITLE]] is moderate, [[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high.
 
-This hull requires a very great deal of energy to construct—it can only be built at a system with a star of type Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+This hull requires a very great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_QUANTUM_ENERGY
 Quantum Energy Hull
@@ -11711,7 +11749,7 @@ SH_QUANTUM_ENERGY_DESC
 
 [[encyclopedia STRUCTURE_TITLE]] is moderate, [[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high.
 
-This hull requires a very great deal of energy to construct—it can only be built at a system with a star of type Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+This hull requires a very great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
 SH_SOLAR
 Solar Hull
@@ -11719,9 +11757,9 @@ Solar Hull
 SH_SOLAR_DESC
 '''This mighty flagship is essentially a miniature sun, and as such is a great source of both [[encyclopedia FUEL_TITLE]] and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots, eight internal slots and a core slot—a far greater internal capacity than any other hull.
 
-[[encyclopedia STRUCTURE_TITLE]] is extremely high, [[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star.
+[[encyclopedia STRUCTURE_TITLE]] is extremely high, [[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is medium and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than [[STAR_BLACK]] or [[STAR_NEUTRON]], and in combat, when it is hiding inside such a star.
 
-This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation. It requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
+This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a [[STAR_BLACK]] in its formation. It requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
 
 SH_BASIC_SMALL
 Basic Small Hull
@@ -11974,7 +12012,13 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''species inhabiting this planet will have the maximum population boosted by planet size (Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5) regardless of planetary [[encyclopedia ENVIRONMENT_TITLE]].
+'''species inhabiting this planet will have the maximum population boosted by planet size:
+• [[SZ_TINY]] (+1)
+• [[SZ_SMALL]] (+2)
+• [[SZ_MEDIUM]] (+3)
+• [[SZ_LARGE]] (+4)
+• [[SZ_HUGE]] (+5)
+regardless of planetary [[encyclopedia ENVIRONMENT_TITLE]].
 
 If this planet is set to the [[encyclopedia GROWTH_FOCUS_TITLE]], the bonus is applied to all [[encyclopedia SUPPLY_TITLE]] connected worlds inhabited by species with'''
 
@@ -12158,7 +12202,7 @@ GREAT_ASTEROID_INDUSTRY
 +	Good Asteroid Miners: + 0.2 [[encyclopedia INDUSTRY_TITLE]] per population when Industry Focused in systems with owned asteroid belts.
 
 LIGHT_SENSITIVE
-−	Light Sensitive: Population is reduced in systems with blue and to a lesser extend white stars.
+−	Light Sensitive: Population is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
 
 TELEPATHIC_DETECTION
 +	Telepathic Detection: can sense nearby populated planets.
