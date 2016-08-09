@@ -1,0 +1,13 @@
+ShipDesign
+    name = "SM_WHITE_KRAKEN"
+    description = "SM_WHITE_KRAKEN_DESC"
+    hull = "SH_WHITE_KRAKEN_BODY"
+    parts = [
+        ""
+        "SR_SPINES"
+        ""
+        ""
+        ""
+    ]
+    icon = "icons/monsters/kraken-5.png"
+    model = "seed"
