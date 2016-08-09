@@ -1425,6 +1425,8 @@ void MapWnd::Render() {
         num_render = 0;
     }
 
+    DeferredRefreshFleetButtons();
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -4338,7 +4340,15 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<cons
     return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
 }
 
-void MapWnd::RefreshFleetButtons() {
+void MapWnd::RefreshFleetButtons()
+{ m_deferred_refresh_fleet_buttons = true; }
+
+void MapWnd::DeferredRefreshFleetButtons() {
+
+    if (!m_deferred_refresh_fleet_buttons)
+        return;
+    m_deferred_refresh_fleet_buttons = false;
+
     num_update += 1.0;
     ScopedTimer timer("RefreshFleetButtons()", true);
 

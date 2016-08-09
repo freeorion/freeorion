@@ -224,7 +224,10 @@ private:
     bool            PanX(GG::X x = GG::X(50));
     bool            PanY(GG::Y y = GG::Y(50));
 
-    void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
+    /** Mark all fleet buttons for a refresh. */
+    void            RefreshFleetButtons();
+    /**  Removes old / existing and create new fleet buttons. Only called once per render interval.*/
+    void            DeferredRefreshFleetButtons();
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);
 
@@ -473,6 +476,9 @@ private:
     GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level
 
     std::set<int>               m_fleets_exploring;
+
+    /// indicates that refresh fleet button work should be done before rendering.
+    bool                        m_deferred_refresh_fleet_buttons;
 
     friend struct IntroMenu;
     friend struct WaitingForGameStart;
