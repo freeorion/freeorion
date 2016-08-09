@@ -4639,7 +4639,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
-        SetFleetMovementLine(it->second);
+        SetFleetMovementLine(it->first);
     }
 }
 
