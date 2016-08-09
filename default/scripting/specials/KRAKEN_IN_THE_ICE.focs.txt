@@ -1,0 +1,19 @@
+Special
+    name = "KRAKEN_IN_THE_ICE_SPECIAL"
+    description = "KRAKEN_IN_THE_ICE_SPECIAL_DESC"
+    stealth = 25
+    spawnrate = 9.0
+    spawnlimit = 1
+    location = And [
+        Planet
+        Planet type = Tundra
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+
+    graphic = "icons/monsters/kraken-5.png"

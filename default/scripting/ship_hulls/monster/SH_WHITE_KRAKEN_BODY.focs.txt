@@ -1,0 +1,28 @@
+Hull
+    name = "SH_WHITE_KRAKEN_BODY"
+    description = "SH_WHITE_KRAKEN_BODY_DESC"
+    speed = 55
+    fuel = 10
+    stealth = 25
+    structure = 530
+    slots = [
+        Slot type = External position = (0.15, 0.45)
+        Slot type = External position = (0.25, 0.70)
+        Slot type = External position = (0.48, 0.88)
+        Slot type = External position = (0.70, 0.20)
+        Slot type = Internal position = (0.55, 0.45)
+    ]
+    buildcost = 1
+    buildtime = 1
+    Unproducible
+    location = All
+    effectsgroups = [
+        [[GOOD_VISION]]
+        [[INFINITE_FUEL]]
+    ]
+    icon = ""
+    graphic = "icons/monsters/kraken-5.png"
+
+#include "monster.macros"
+
+#include "../ship_hulls.macros"

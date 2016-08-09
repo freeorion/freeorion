@@ -10,6 +10,7 @@ BuildingType
             HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
             HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
             HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+            HasSpecial name = "KRAKEN_IN_THE_ICE_SPECIAL"
         ]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
@@ -35,6 +36,24 @@ BuildingType
                 HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
             ]
             effects = GiveEmpireTech name = "TECH_COL_MISIORLA"
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                HasSpecial name = "KRAKEN_IN_THE_ICE_SPECIAL"
+            ]
+            activation = Source
+            effects = [
+                CreateShip designname = "SM_WHITE_KRAKEN" empire = Source.Owner
+                RemoveSpecial name = "KRAKEN_IN_THE_ICE_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_WHITE_KRAKEN_RESURRECTED"
+                    icon = "icons/monsters/kraken-5.png"
+                    parameters = [
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
     ]
     icon = "icons/building/the_caducean_institute.png"
 

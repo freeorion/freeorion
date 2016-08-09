@@ -815,6 +815,12 @@ SM_KRAKEN_3_DESC
 
 Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
 
+SM_WHITE_KRAKEN
+White Kraken
+
+SM_WHITE_KRAKEN_DESC
+'''The White Kraken is a white-colored prehistoric ancestor of the Kraken Space Monster.'''
+
 SM_BLACK_KRAKEN
 Black Kraken
 
@@ -5503,6 +5509,12 @@ At %planet%: a %predefinedshipdesign% is ready for service.
 EFFECT_SENTRY_CREATED_LABEL
 Sentry Created
 
+EFFECT_WHITE_KRAKEN_RESURRECTED
+At %planet%: a [[predefinedshipdesign SM_WHITE_KRAKEN]] has been resurrected and is ready for service.
+
+EFFECT_WHITE_KRAKEN_RESURRECTED_LABEL
+Monster Resurrected
+
 EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
 
@@ -6773,6 +6785,14 @@ Juggernaut Nest
 
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place.  With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
+
+KRAKEN_IN_THE_ICE_SPECIAL
+Kraken in the Ice
+
+KRAKEN_IN_THE_ICE_SPECIAL_DESC
+'''With the knowledge of the technologies [[tech SHP_DOMESTIC_MONSTER]] and [[tech LRN_XENOARCH]], the [[predefinedshipdesign SM_WHITE_KRAKEN]] can be resurrected and controlled by building a [[buildingtype BLD_XENORESURRECTION_LAB]] on this planet.
+
+Deep below the icy crust of this planet lies a white-colored prehistoric ancestor of the Kraken Space Monster.'''
 
 HEAD_ON_A_SPIKE_SPECIAL
 Head on a Spike
@@ -11867,6 +11887,12 @@ Great Kraken Body
 
 SH_KRAKEN_3_BODY_DESC
 A formidable heavy-weight space monster.
+
+SH_WHITE_KRAKEN_BODY
+White Kraken Body
+
+SH_WHITE_KRAKEN_BODY_DESC
+A white-colored prehistoric ancestor of the Kraken Space Monster.
 
 SH_BLACK_KRAKEN_BODY
 Black Kraken Body
