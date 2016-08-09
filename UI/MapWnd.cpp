@@ -4341,6 +4341,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<cons
 void MapWnd::RefreshFleetButtons() {
     num_update += 1.0;
     ScopedTimer timer("RefreshFleetButtons()", true);
+
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
     const ObjectMap& objects = GetUniverse().Objects();
@@ -4351,9 +4352,10 @@ void MapWnd::RefreshFleetButtons() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
+    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > departing_fleets;
+    {ScopedTimer timer("RefreshFleetButtons() P1 departing", true);
     // for each system, each empire's fleets that are ordered to move,
     // but still at the system: "departing fleets"
-    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > departing_fleets;
     std::vector<TemporaryPtr<const UniverseObject> > departing_fleet_objects = objects.FindObjects(OrderedMovingFleetVisitor());
     for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = departing_fleet_objects.begin();
         it != departing_fleet_objects.end(); ++it)
@@ -4396,10 +4398,12 @@ void MapWnd::RefreshFleetButtons() {
     }
     departing_fleet_objects.clear();
 
+    }
+    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > stationary_fleets;
+    {ScopedTimer timer("RefreshFleetButtons() P2 stationary", true);
 
     // for each system, each empire's fleets in a system, not
     // ordered to move: "stationary fleets"
-    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > stationary_fleets;
     std::vector<TemporaryPtr<const UniverseObject> > stationary_fleet_objects = objects.FindObjects(StationaryFleetVisitor());
     for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = stationary_fleet_objects.begin();
          it != stationary_fleet_objects.end(); ++it)
@@ -4443,9 +4447,11 @@ void MapWnd::RefreshFleetButtons() {
     stationary_fleet_objects.clear();
 
 
+    }
+    std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > moving_fleets;
+    {ScopedTimer timer("RefreshFleetButtons() P3 moving", true);
     // for each universe location, map from empire id to fleets
     // moving along starlanes: "moving fleets"
-    std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > moving_fleets;
     std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
     for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = moving_fleet_objects.begin();
          it != moving_fleet_objects.end(); ++it)
@@ -4476,6 +4482,7 @@ void MapWnd::RefreshFleetButtons() {
 
 
 
+    }{ScopedTimer timer("RefreshFleetButtons() P4 clearing", true);
     // clear old fleet buttons
     m_fleet_buttons.clear();            // duplicates pointers in following containers
 
@@ -4494,9 +4501,12 @@ void MapWnd::RefreshFleetButtons() {
     m_moving_fleet_buttons.clear();
 
 
+
+    }
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
 
+    {ScopedTimer timer("RefreshFleetButtons() P5 draw departing", true);
     // departing fleets
     for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          departing_fleets_it = departing_fleets.begin();
@@ -4532,6 +4542,7 @@ void MapWnd::RefreshFleetButtons() {
         }
     }
 
+    }{ScopedTimer timer("RefreshFleetButtons() P6 draw static", true);
     // stationary fleets
     for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          stationary_fleets_it = stationary_fleets.begin();
@@ -4567,6 +4578,7 @@ void MapWnd::RefreshFleetButtons() {
         }
     }
 
+    }{ScopedTimer timer("RefreshFleetButtons() P7 draw moving", true);
     // moving fleets
     for (std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          moving_fleets_it = moving_fleets.begin();
@@ -4603,26 +4615,32 @@ void MapWnd::RefreshFleetButtons() {
         }
     }
 
+    }{ScopedTimer timer("RefreshFleetButtons() P8 pos", true);
 
     // position fleetbuttons
     DoFleetButtonsLayout();
+    }{ScopedTimer timer("RefreshFleetButtons() P9 select", true);
 
 
     // add selection indicators to fleetbuttons
     RefreshFleetButtonSelectionIndicators();
+    }{ScopedTimer timer("RefreshFleetButtons() P10 moveline", true);
 
 
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
         SetFleetMovementLine(it->second);
+    }
 }
 
 void MapWnd::FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("FleetsAddedOrRemoved()", true);
     RefreshFleetButtons();
     RefreshFleetSignals();
 }
 
 void MapWnd::RefreshFleetSignals() {
+    ScopedTimer timer("RefreshFleetSignals()", true);
     // disconnect old fleet statechangedsignal connections
     for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin();
          it != m_fleet_state_change_signals.end(); ++it)
