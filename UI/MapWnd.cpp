@@ -2367,9 +2367,9 @@ void MapWnd::InitTurn() {
     for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         TemporaryPtr<const System> system = *it;
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsInsertedSignal,
-                                                                     &MapWnd::FleetsAddedOrRemoved, this));
+                                                                     &MapWnd::FleetsInsertedSignalHandler, this));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsRemovedSignal,
-                                                                     &MapWnd::FleetsAddedOrRemoved, this));
+                                                                     &MapWnd::FleetsRemovedSignalHandler, this));
     }
 
     RefreshFleetSignals();
@@ -4636,16 +4636,45 @@ void MapWnd::DeferredRefreshFleetButtons() {
     }
 }
 
-void MapWnd::FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
-    ScopedTimer timer("FleetsAddedOrRemoved()", true);
+void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
+        boost::unordered_map<int, boost::signals2::connection>::iterator
+            found_signal = m_fleet_state_change_signals.find(fleet->ID());
+        if (found_signal != m_fleet_state_change_signals.end()) {
+            found_signal->second.disconnect();
+            m_fleet_state_change_signals.erase(found_signal);
+        }
+    }
+}
+
+void MapWnd::AddFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("AddFleetsStateChangedSignal()", true);
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
+        m_fleet_state_change_signals[fleet->ID()] =
+            GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
+    }
+}
+
+void MapWnd::FleetsInsertedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("FleetsInsertedSignalHandler()", true);
     RefreshFleetButtons();
-    RefreshFleetSignals();
+    RemoveFleetsStateChangedSignal(fleets);
+    AddFleetsStateChangedSignal(fleets);
+}
+
+void MapWnd::FleetsRemovedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("FleetsRemovedSignalHandler()", true);
+    RefreshFleetButtons();
+    RemoveFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::RefreshFleetSignals() {
     ScopedTimer timer("RefreshFleetSignals()", true);
     // disconnect old fleet statechangedsignal connections
-    for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin();
+    for (boost::unordered_map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin();
          it != m_fleet_state_change_signals.end(); ++it)
     { it->second.disconnect(); }
     m_fleet_state_change_signals.clear();
@@ -4654,11 +4683,7 @@ void MapWnd::RefreshFleetSignals() {
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
     std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>();
-    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<Fleet> fleet = *it;
-        m_fleet_state_change_signals[fleet->ID()] =
-            GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
-    }
+    AddFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::RefreshSliders() {
@@ -5439,11 +5464,11 @@ void MapWnd::Sanitize() {
 
     m_fleet_buttons.clear();    // contains duplicate pointers of those in moving, departing and stationary set / maps, so don't need to delete again
 
-    for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+    for (boost::unordered_map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();
     m_fleet_state_change_signals.clear();
 
-    for (std::map<int, std::vector<boost::signals2::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
+    for (boost::unordered_map<int, std::vector<boost::signals2::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
         std::vector<boost::signals2::connection>& vec = it->second;
         for (std::vector<boost::signals2::connection>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
             vec_it->disconnect();

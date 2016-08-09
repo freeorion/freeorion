@@ -228,7 +228,16 @@ private:
     /**  Removes old / existing and create new fleet buttons. Only called once per render interval.*/
     void            DeferredRefreshFleetButtons();
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
-    void            FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);
+
+    /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
+    void            AddFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    /** Disconnect all \p fleets StateChangedSignal from RefreshFleetButtons. */
+    void            RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    /** Handle FleetsInsertedSignal by connecting signals and refreshing fleet buttons. */
+    void            FleetsInsertedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    /** Handle FleetsRemovedSignal by disconnecting signals and refreshing fleet buttons. */
+    void            FleetsRemovedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets);
+
 
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
     std::pair<double, double>   MovingFleetMapPositionOnLane(TemporaryPtr<const Fleet> fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
@@ -411,8 +420,8 @@ private:
     std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
     std::map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    std::map<int, boost::signals2::connection>               m_fleet_state_change_signals;
-    std::map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
+    boost::unordered_map<int, boost::signals2::connection>               m_fleet_state_change_signals;
+    boost::unordered_map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
 
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
