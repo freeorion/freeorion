@@ -42,7 +42,7 @@ class FO_COMMON_API MonsterFleetPlan : public FleetPlan {
 public:
     MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999, const Condition::ConditionBase* location = 0,
-                     bool can_alter_starlanes = false, bool lookup_name_userstring = false) :
+                     bool lookup_name_userstring = false) :
         FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
         m_spawn_rate(spawn_rate),
         m_spawn_limit(spawn_limit),
