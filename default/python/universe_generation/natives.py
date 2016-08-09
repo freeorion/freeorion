@@ -55,9 +55,9 @@ def generate_natives(native_freq, systems, empire_home_systems):
     # for which this planet type is a good environment
     # we will need this afterwards when picking natives for a planet
     natives_for_planet_type.clear()  # just to be safe
-    natives_for_planet_type.update( {planet_type: [] for planet_type in planets.planet_types} )
+    natives_for_planet_type.update({planet_type: [] for planet_type in planets.planet_types})
     planet_types_for_natives.clear()
-    planet_types_for_natives.update( {species: set() for species in native_species} )
+    planet_types_for_natives.update({species: set() for species in native_species})
     # iterate over all native species we got
     for species in native_species:
         # check the planet environment for all planet types for this species

@@ -5,10 +5,13 @@ import freeorion as fo
 
 from galaxy import get_systems_within_jumps
 from starsystems import star_types_real, pick_star_type
-from planets import planet_sizes_real, planet_types_real, calc_planet_size, calc_planet_type
+from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
 from names import get_name_list, random_name
+from options import (HS_ACCEPTABLE_PLANET_TYPES, HS_MIN_PLANETS_IN_VICINITY_TOTAL,
+                     HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM, HS_MIN_DISTANCE_PRIORITY_LIMIT, HS_MAX_JUMP_DISTANCE_LIMIT,
+                     HS_VICINITY_RANGE, HS_MIN_SYSTEMS_IN_VICINITY, HS_ACCEPTABLE_PLANET_SIZES)
+
 from util import load_string_list, report_error
-from options import *
 import statistics
 
 
