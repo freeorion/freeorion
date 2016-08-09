@@ -1,0 +1,5 @@
+Statistic name = "OHUENNOST" value =
+    Statistic Sum value =  (LocalCandidate.Industry + LocalCandidate.Research + LocalCandidate.Population) condition = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
