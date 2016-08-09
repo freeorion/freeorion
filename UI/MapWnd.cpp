@@ -2800,14 +2800,15 @@ namespace GetPathsThroughSupplyLanes {
 
        The \p good_path is all system ids of systems connecting any \p
        terminal_point to any other reachable \p terminal_point along the
-       \p supply_lanes. The \p good_path is all systems that could
-       transport a resource from a source to a sink along a starlane
-       that is part of the supply. The \p good_path includes the
-       terminal point system ids that are part of the network.  The \p
-       good_path will exclude terminal_points not connected to a supply
-       lane, islands of supply lane not connected to at least two
-       terminal points, and dead-end lengths of supply lane that don't
-       connect between two terminal points.
+       \p supply_lanes. The \p good_path is all systems on a path that
+       could transport a resource from a source to a sink along a
+       starlane that is part of the starlanes through which supply can
+       flow (See Empire/Supply.h for details.). The \p good_path
+       includes the terminal point system ids that are part of the
+       path.  The \p good_path will exclude terminal_points not
+       connected to a supply lane, islands of supply lane not connected
+       to at least two terminal points, and dead-end lengths of supply
+       lane that don't connect between two terminal points.
 
 
        Algorithm Descrition:
@@ -2816,16 +2817,18 @@ namespace GetPathsThroughSupplyLanes {
        finds all paths from any terminal point to any other terminal
        point connected only by supply lanes.
 
-       The algorithm has two parts:
-       1) find all paths between terminal points along supply lanes
-       2) return a set of all the system ids of the found paths.
+       The algorithm finds and returns all system ids on the \p
+       good_path in two steps:
+       1) find mid points on paths along supply lanes between terminal points,
+       2) return the system ids collected by tracing the paths from
+          mid points to terminal points of the found paths.
 
 
        In the first part, it starts a breadth first search from every
        terminal point at once.  It tracks which terminal point each path
        started from.
 
-       When two paths meet from different terminal points it records
+       When two paths from different terminal points meet it records
        both points that met as mid points on a good path between
        terminal points.
 
@@ -2849,8 +2852,8 @@ namespace GetPathsThroughSupplyLanes {
 
      */
     void GetPathsThroughSupplyLanes(
-        boost::unordered_set<int> & good_path,
-        const boost::unordered_set<int> & terminal_points,
+        boost::unordered_set<int>& good_path,
+        const boost::unordered_set<int>& terminal_points,
         const SupplyLaneMMap& supply_lanes);
 
     
@@ -3005,7 +3008,7 @@ namespace GetPathsThroughSupplyLanes {
                 // If ii_sys is not in the good_path, then add it to the
                 // good_path and add all of its visited to the unprocessed.
                 if ((previous_ii_sys = visited.find(ii_sys)) != visited.end()
-                    && (good_path.count(ii_sys) == 0 ))
+                    && (good_path.count(ii_sys) == 0))
                 {
                     good_path.insert(ii_sys);
                     unprocessed.insert(previous_ii_sys->second.one_hop_back.begin(),
