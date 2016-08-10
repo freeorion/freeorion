@@ -52,3 +52,7 @@ def report_error(msg):
     """
     error_list.append(msg)
     print >> sys.stderr, msg
+
+
+class MapGenerationError(RuntimeError):
+    """Map generation runtime error."""

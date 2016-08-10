@@ -1220,11 +1220,11 @@ namespace FreeOrionPython {
             .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
         class_<MonsterFleetPlanWrapper>("MonsterFleetPlan", init<const std::string&, const list&, double, int>())
-            .def("name",            &MonsterFleetPlanWrapper::Name)
-            .def("ship_designs",    &MonsterFleetPlanWrapper::ShipDesigns)
-            .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
-            .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
-            .def("location",        &MonsterFleetPlanWrapper::Location);
+            .def("name",                &MonsterFleetPlanWrapper::Name)
+            .def("ship_designs",        &MonsterFleetPlanWrapper::ShipDesigns)
+            .def("spawn_rate",          &MonsterFleetPlanWrapper::SpawnRate)
+            .def("spawn_limit",         &MonsterFleetPlanWrapper::SpawnLimit)
+            .def("location",            &MonsterFleetPlanWrapper::Location);
 
         def("get_universe",                         GetUniverse,                    return_value_policy<reference_existing_object>());
         def("get_all_empires",                      GetAllEmpires);

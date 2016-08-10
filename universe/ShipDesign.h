@@ -375,6 +375,8 @@ public:
 
     const std::set<std::string>& Tags() const   { return m_tags; }
 
+    bool HasTag(const std::string& tag) const   { return m_tags.count(tag) != 0; }
+
     const Condition::ConditionBase* Location() const
     { return m_location; }                                                      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
     const std::set<std::string>& Exclusions() const { return m_exclusions; }    ///< returns the names of other content that cannot be used in the same ship design as this part
