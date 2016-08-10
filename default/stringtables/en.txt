@@ -4240,7 +4240,7 @@ Combat at %1% on turn %2%:
 # %2% link to the target in a weapon fired event.
 # %3% amount of damage done when firing the weapon.
 # %4% the round number. (a round is phase where all units in a combat have
-      acted).
+#     acted).
 # %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
 %1% attacks %2% and does %3% damage
@@ -8192,7 +8192,7 @@ DESC_SET_SHIP_PART_METER
 Set %1% for %2% to %3%
 
 # %1% either name of the empire or a description of empire the meter will
-      modify.
+#     modify.
 # %2% name of the meter modified.
 # %3% textual description of the value applied to the meter.
 DESC_SET_EMPIRE_METER
