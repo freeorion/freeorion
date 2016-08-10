@@ -5130,7 +5130,7 @@ EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Ancient Ruins Empty Excavation
 
 EFFECT_NATIVES_TECH
-The technology %tech% was learned from the %species%!
+On %planet%: The technology %tech% was learned from the %species%!
 EFFECT_NATIVES_TECH_LABEL
 Native Tech
 
@@ -11463,7 +11463,7 @@ GOOD_POPULATION
 +	Good Population 125%
 
 FIXED_LOW_POPULATION
-−−	Population is fixed at 5
+−−	Maximum Population is fixed at 5
 
 BAD_SUPPLY
 −	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus

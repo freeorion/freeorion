@@ -64,7 +64,7 @@ Species
         EffectsGroup
             scope = Source
             activation = And [
-                NotOwnerHasTech name = "SPY_STEALTH_1"
+                Not OwnerHasTech name = "SPY_STEALTH_1"
             ]
             stackinggroup = "LEMBALALAM_TECH_UNLOCK"
             effects = [
@@ -73,6 +73,7 @@ Species
                     message = "EFFECT_NATIVES_TECH"
                     icon = "icons/species/other-01.png"
                     parameters = [
+                        tag = "planet" data = Source.ID
                         tag = "species" data = "SP_LEMBALALAM"
                         tag = "tech" data = "SPY_STEALTH_1"
                     ]
@@ -82,7 +83,7 @@ Species
         EffectsGroup
             scope = Source
             activation = And [
-                NotOwnerHasTech name = "SPY_STEALTH_2"
+                Not OwnerHasTech name = "SPY_STEALTH_2"
                 OwnerHasTech name = "SPY_STEALTH_1"
             ]
             stackinggroup = "LEMBALALAM_TECH_UNLOCK"
@@ -92,6 +93,7 @@ Species
                     message = "EFFECT_NATIVES_TECH"
                     icon = "icons/species/other-01.png"
                     parameters = [
+                        tag = "planet" data = Source.ID
                         tag = "species" data = "SP_LEMBALALAM"
                         tag = "tech" data = "SPY_STEALTH_2"
                     ]
@@ -101,7 +103,7 @@ Species
         EffectsGroup
             scope = Source
             activation = And [
-                NotOwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
             ]
             stackinggroup = "LEMBALALAM_TECH_UNLOCK"
             effects = [
@@ -110,6 +112,7 @@ Species
                     message = "EFFECT_NATIVES_TECH"
                     icon = "icons/species/other-01.png"
                     parameters = [
+                        tag = "planet" data = Source.ID
                         tag = "species" data = "SP_LEMBALALAM"
                         tag = "tech" data = "GRO_LIFECYCLE_MAN"
                     ]
