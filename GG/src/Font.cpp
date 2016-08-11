@@ -1253,6 +1253,9 @@ void Font::FillTextElements(const std::string& text,
     if (text_elements.empty()) {
         using namespace boost::xpressive;
 
+        if (text.empty())
+            return;
+
         // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
         sregex& regex = StaticTagHandler().Regex(text, ignore_tags);
         sregex_iterator it(text.begin(), text.end(), regex);
