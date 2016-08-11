@@ -14,13 +14,15 @@
     name, it will output to DebugLogger() the time elapsed while
     the function was executing.
 
-    If \p enable_output is true and duration is greater than 1 ms threshold
-    then print output.
+    If \p enable_output is true and duration is greater than threshold then
+    print output.
 */
 
 class FO_COMMON_API ScopedTimer {
 public:
-    ScopedTimer(const std::string& timed_name, bool enable_output = false);
+    ScopedTimer(const std::string& timed_name, bool enable_output = false,
+                boost::chrono::microseconds threshold = boost::chrono::milliseconds(1));
+    ScopedTimer(const std::string& timed_name, boost::chrono::microseconds threshold);
     ~ScopedTimer();
 private:
     class ScopedTimerImpl;
