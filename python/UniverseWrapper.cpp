@@ -146,9 +146,6 @@ namespace {
     const Ship::PartMeterMap&
                             (Ship::*ShipPartMeters)(void) const =                               &Ship::PartMeters;
 
-    const ShipDesign*       GetGenericShipDesign(const Universe& universe, const std::string& name)
-    { return universe.GetGenericShipDesign(name); }
-
     const std::string&      ShipDesignName(const ShipDesign& ship_design)
     { return ship_design.Name(false); }
     boost::function<const std::string& (const ShipDesign&)> ShipDesignNameFunc =                &ShipDesignName;
@@ -281,7 +278,7 @@ namespace FreeOrionPython {
             .def("getSystem",                   make_function(GetSystemP,           return_value_policy<reference_existing_object>()))
             .def("getField",                    make_function(GetFieldP,            return_value_policy<reference_existing_object>()))
             .def("getBuilding",                 make_function(GetBuildingP,         return_value_policy<reference_existing_object>()))
-            .def("getGenericShipDesign",        &GetGenericShipDesign,              return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).")
+            .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,    return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).")
 
             .add_property("allObjectIDs",       make_function(ObjectIDs,            return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(FleetIDs,             return_value_policy<return_by_value>()))
