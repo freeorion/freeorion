@@ -9,6 +9,7 @@ Tech
     effectsgroups = [
         [[EG_DEFENSE_NET(5,1)]]
     ]
+    graphic = "icons/tech/defense.png"
 
 Tech
     name = "DEF_DEFENSE_NET_2"
@@ -21,6 +22,7 @@ Tech
     effectsgroups = [
         [[EG_DEFENSE_NET(15,2)]]
     ]
+    graphic = "icons/tech/defense.png"
 
 Tech
     name = "DEF_DEFENSE_NET_3"
@@ -33,6 +35,7 @@ Tech
     effectsgroups = [
         [[EG_DEFENSE_NET(25,3)]]
     ]
+    graphic = "icons/tech/defense.png"
 
 Tech
     name = "DEF_DEFENSE_NET_REGEN_1"
