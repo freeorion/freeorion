@@ -2,7 +2,7 @@ Deutsch
 
 # This is the German String Table file for FreeOrion
 #
-# Übersetzer:
+# Translators:
 # * Straputsky
 # * Marcel Metz [adrian_broher]
 # * shivu

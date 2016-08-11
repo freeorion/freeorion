@@ -1,11 +1,19 @@
 Italiano
 
-#Questa è la tabella dei messaggi in italiano per FreeOrion
-#Translated by Claudio Giordano - claudio.giordano@autistici.org
+# This is the Italian String Table file for FreeOrion
+#
+# Translators:
+# * Claudio Giordano <claudio.giordano(at)autistici.org>
+#
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#################
-#    Common     #
-#################
+
+##
+## Common phrases
+##
 
 BROWSE_BTN
 Sfoglia...
@@ -100,23 +108,15 @@ Prec
 LAST
 Ultimo
 
-# used to generate names for new fleets when they are created
+# Name for a newly created general purpose fleet.
+# %1% represents a unique number.
 NEW_FLEET_NAME
 Flotta %1%
 
+# Name for a newly created general purpose fleet when no uniqe number could be
+# created.
 NEW_FLEET_NAME_NO_NUMBER
 Flotta
-
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
-
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 EMPTY_SPACE
 Spazio Profondo
@@ -151,33 +151,43 @@ Tutto Di:
 ANY_OF
 Qualunque Di:
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+
+##
+## Major errors
+##
+
+
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
 SD_SCOUT
 Esploratore
+
 SD_SCOUT_DESC
 Nave piccola ed economica progettata per la ricognizione e l'esplorazione.
 
 SD_MARK_1
 Mark I
+
 SD_MARK1_DESC
 Fregata da pattugliamento di base armata di cannone a rotaia.
 
 SD_MARK_2
 Mark II
+
 SD_MARK2_DESC
 Fregata da pattugliamento migliorata armata di cannone a rotaia.
 
 SD_MARK_3
 Mark III
+
 SD_MARK3_DESC
 Fregata da pattugliamento di base armata di laser.
 
 SD_MARK_4
 Mark IV
+
 SD_MARK4_DESC
 Fregata da pattugliamento migliorata armata di laser.
 
@@ -186,42 +196,49 @@ Massiccia nave da guerra armata e protetta con gli ultimi ritrovati tecnologici.
 
 SD_COLONY_SHIP
 Nave Colonizzatrice
+
 SD_COLONY_SHIP_DESC
 Vascello disarmato capace di trasportare in sicurezza milioni di cittadini su nuovi siti per colonia.
 
 SD_OUTPOST_SHIP
 Nave Avamposto
+
 SD_OUTPOST_SHIP_DESC
 Vascello disarmato capace di creare un avamposto su un mondo inabitabile.
 
 SD_COLONY_BASE
 Base Colonia
+
 SD_COLONY_BASE_DESC
 Vascello disarmato capace di creare una colonia nel sistema dove viene prodotta.
 
 SD_OUTPOST_BASE
 Base Avamposto
+
 SD_OUTPOST_BASE_DESC
 Unarmed vessel capable of creating an outpost in the system where it is produced.
 
 SD_TROOP_SHIP
 Nave Truppa
+
 SD_TROOP_SHIP_DESC
 Trasporta una brigata di terra [[encyclopedia TROOP_TITLE]] ed attrezzature che possono essere utilizzate per invadere un pianeta.
 
 SD_DRAGON_TOOTH_DESC
 Progetto antico di nave con armi avanzate e sistemi difensivi.
 
-############
-# Monsters #
-############
+
+##
+## Monsters
+##
 
 SM_MONSTER
 Mostri
 
-##########
-# Fields #
-##########
+
+##
+## Fields
+##
 
 FLD_ION_STORM
 Tempesta di Ioni
@@ -229,9 +246,10 @@ Tempesta di Ioni
 FLD_ION_STORM_DESC
 Vortice magnetico di particelle cariche relativistiche che possono interferire con i sensori e danneggiare navi e pianeti.
 
-##############################
-# Predefined Starting Fleets #
-##############################
+
+##
+## Predefined starting fleets
+##
 
 FN_HOME_FLEET
 Flotta Interna
@@ -251,9 +269,10 @@ Flotta da invasione
 MONSTERS
 Mostri
 
-##########################
-# Status Update Messages #
-##########################
+
+##
+## Status update messages
+##
 
 RETURN_TO_INTRO
 Ritorna al Menu Principale
@@ -309,9 +328,10 @@ Il server non è in grado di selezionare un sistema ospite.
 SERVER_FOUND_NO_ACTIVE_PLAYERS
 Impossibile generare una partita senza giocatori attivi.
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Utilizzo: '''
@@ -675,9 +695,10 @@ Avvio veloce senza mostrare il menu.
 OPTIONS_DB_AUTO_EFFECT_DESC
 Alterna l'inclusione di testo generato automaticamente in tecnologia, edilizia o descrizioni di parti della nave.
 
-#################
-# File Dialog   #
-#################
+
+##
+## File dialog
+##
 
 FILE_DLG_FILE_TYPES
 Tipo(i):
@@ -704,9 +725,10 @@ non esiste.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Il dispositivo non è pronto.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 Nuovo
@@ -717,16 +739,13 @@ Vecchio
 COLOR_DLG_GREEN
 V:
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion Menu Principale
-
-#Button names####
 
 INTRO_BTN_SINGLE_PLAYER
 Giocatore Singolo
@@ -752,24 +771,19 @@ Ringraziamenti
 INTRO_BTN_EXIT
 Esci
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Tempo scaduto durante il tentativo di connessione al server
 
 ERR_VERSION_MISMATCH
 Impossibile connettersi al server, perché questo client utilizza una versione diversa delle seguenti impostazioni e/o file:
 
-########################
-# Server Setup Screen  #
-########################
 
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Connessione al server
-
-#Static labels####
 
 LAN_GAME_LABEL
 Partita in rete su:
@@ -780,8 +794,6 @@ Partita su internet su:
 PLAYER_NAME_LABEL
 Nome Giocatore
 
-#Button names####
-
 HOST_GAME_BN
 Ospita una nuova partita
 
@@ -791,9 +803,10 @@ Unisciti ad una partita
 REFRESH_LIST_BN
 Aggiorna Lista
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Impostazioni Multigiocatore
@@ -828,16 +841,14 @@ Carica Partita
 START_GAME_BN
 Avvia Partita
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 '''Impostazioni Galassia '''
 
-#Strings
 GSETUP_PLAYER_NAME
 Nome Giocatore
 
@@ -853,76 +864,117 @@ Specie Iniziali
 GSETUP_NUMBER_AIS
 Numero di giocatori controllati dal computer
 
-#Drop-down list labels and choices####
-
 GSETUP_SEED
 Seme
+
 GSETUP_STARS
 Sistemi
+
 GSETUP_SHAPE
 Forma Galassia
+
 GSETUP_AGE
 Età Galassia
+
 GSETUP_STARLANE_FREQ
 Frequenza rotte stellari
+
 GSETUP_PLANET_DENSITY
 Densità Pianeti
+
 GSETUP_SPECIALS_FREQ
 Frequenza Speciali
+
 GSETUP_MONSTER_FREQ
 Frequenza Mostri
+
 GSETUP_NATIVE_FREQ
 Frequenza Nativa
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spirale, 2-bracci
+
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spirale, 3-bracci
+
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spirale, 4-bracci
+
+# A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Agglomerato
+
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Ellittica
+
+# A galaxy shape to select when generating a universe.
 GSETUP_RING
 Ad anello
 
+# A galaxy shape to select when generating a universe.
 GSETUP_RANDOM
 Casuale
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 Nessuna
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Bassa
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
 Media
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 Alta
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Giovane
+
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Matura
+
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Antica
 
+# AI aggression level.
 GSETUP_BEGINNER
 Principiante
+
+# AI aggression level.
 GSETUP_TURTLE
 Testuggine
+
+# AI aggression level.
 GSETUP_CAUTIOUS
 Cauto
+
+# AI aggression level.
 GSETUP_TYPICAL
 Tradizionale
+
+# AI aggression level.
 GSETUP_AGGRESSIVE
 Aggressivo
+
+# AI aggression level.
 GSETUP_MANIACAL
 Maniacale
 
-###########################
-# About Dialog            #
-###########################
 
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Licenza
@@ -939,9 +991,10 @@ Visione
 FREEORION_VISION
 '''FreeOrion, un gioco open-source basato su Master of Orion, è un gioco epico spaziale di strategia a turni che si basa sul classico modello '4X' che prevede la costruzione degli elementi di gioco come Europa Universalis 2 ed un versatile motore della battaglia. Mentre la sua struttura open-source modulare permette un notevole grado di personalizzazione del motore di gioco e degli elementi della storia da parte della comunità, la squadra di FreeOrion si è dedicata alla costruzione di un modello di 'grande campagna' in un universo vivibile e di grande respiro. '''
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_SAVE
 Salva Partita
@@ -955,13 +1008,15 @@ Abbandona
 GAME_MENU_SAVE_FILES
 Salvataggi
 
-###########################
-# Save Game Dialog        #
-###########################
 
-###########################
-# Game Options            #
-###########################
+##
+## Save game dialog
+##
+
+
+##
+## Game options
+##
 
 OPTIONS_TITLE
 Opzioni
@@ -1335,10 +1390,12 @@ Registrazione messaggi dettagliata per debug
 OPTIONS_VERBOSE_SITREP_DESC
 Rapporti sulla situazione con errori
 
-#################
-# Main Map      #
-#################
 
+##
+## Main map window
+##
+
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Turno %1%
 
@@ -1366,6 +1423,8 @@ Produzione
 MAP_PROD_WASTED_TITLE
 Produzione Inutilizzata
 
+# %1% number of production points generated.
+# %2% number of production points currently not used for production.
 MAP_PROD_WASTED_TEXT
 '''Produzione Totale : %1%
 Produzione Sprecata : %2%
@@ -1378,6 +1437,8 @@ Ricerca
 MAP_RES_WASTED_TITLE
 Ricerca Inutilizzata
 
+# %1% number of research points generated.
+# %2% number of research points currently not used for research.
 MAP_RES_WASTED_TEXT
 '''Ricerca Totale : %1%
 Ricerca Sprecata : %2%
@@ -1405,81 +1466,128 @@ Conteggio Flotte
 MAP_FLEET_TEXT
 Numero totale di navi
 
-#################
-# SidePanel     #
-#################
+
+##
+## Side panel
+##
 
 SIDE_PANEL
 Pannello laterale
 
+
+##
+## Side panel/System information
+##
+
 SP_SYSTEM_PRODUCTION
 Produzione Sistema
 
+# %1% resource type currently produced by the system.
+# %2% amount of the resource currently produced by the system.
 RESOURCE_PRODUCTION_TOOLTIP
 Sistema %1%: %2%
+
+# %1% resource type currently consumed by the system.
+# %2% amount of the resource currently consumed by the system.
 RESOURCE_ALLOCATION_TOOLTIP
 Sistema %1%: %2%
 
 INDUSTRY_PRODUCTION
 Produzione Industriale
+
 RESEARCH_PRODUCTION
 Produzione Ricerca
+
 TRADE_PRODUCTION
 Produzione Commercio
 
 INDUSTRY_CONSUMPTION
 Consumo Industriale
+
 RESEARCH_CONSUMPTION
 Consumo Ricerca
+
 TRADE_CONSUMPTION
 Consumo Commercio
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Commercio tra sistemi
+
 IMPORT_EXPORT_TOOLTIP
 Importazione / Esportazione
+
 RESOURCE_IMPORT
 Importazione
+
 RESOURCE_EXPORT
 Disponibile per l'esportazione
+
 RESOURCE_SELF_SUFFICIENT
 Nessuna importazione od esportazione
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Pannello Pianeta
+
 PL_ASTEROID_BELT
 Cintura di asteroidi
+
+# %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroidi
+
 PL_UNINHABITED
 Disabitato
+
 PL_SIZE
 Dimensione
+
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Colonizza (%1%)
+
 PL_CANCEL_COLONIZE
 Annulla Colonizzazione
+
 PL_OUTPOST
 Piazza Avamposto
+
 PL_CANCEL_OUTPOST
 Annulla Avamposto
+
+# %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Invadi (+%1%)
+
 PL_CANCEL_INVADE
 Annulla Invasione
+
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Seleziona nave colonizzatrice per colonizzare.
 
-## Resources Panel ##########
 
+##
+## Side panel/Resources panel
+##
+
+# %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Obbiettivo: %1%
 
-## Specials Panel ##########
 
-## Buildings Panel##########
+##
+## Side panel/Specials panel
+##
+
+
+##
+## Side panel/Buildings panel
+##
 
 ORDER_BUIDLING_SCRAP
 Demolisci Struttura
@@ -1487,7 +1595,10 @@ Demolisci Struttura
 ORDER_CANCEL_BUIDLING_SCRAP
 Annulla demolizione struttura
 
-## General Tooltips#########
+
+##
+## General tooltips
+##
 
 TT_THIS_TURN
 Questo Turno
@@ -1498,27 +1609,41 @@ Turno Successivo
 TT_CHANGE
 Variazione
 
+# %1% the meter name displayed.
+# %2% the meter value.
 TT_BREAKDOWN_SUMMARY
 '''%1%: %2% '''
 
 TT_INHERENT
 Innato
 
+# %1% name of the owning empire.
+# %2% FIXME
 TT_TECH
 %1% Tecnologia <i>%2%</i>
 
+# %1% name of the planet, where the building is located.
+# %2% FIXME
 TT_BUILDING
 %1% Struttura <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_HULL
 Nave <i>%1%</i> Scafo <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_PART
 Nave <i>%1%</i> Parte <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SPECIAL
 Speciale <i>%2%</i>
 
+# %1% name of the species.
+# %2% FIXME
 TT_SPECIES
 Specie <i>%2%</i>
 
@@ -1534,13 +1659,16 @@ Inserisci il nuovo nome del pianeta
 SP_PLANET_SUITABILITY
 Idoneità Pianeta
 
-#################
-# Fleet Window  #
-#################
 
+##
+## Fleet window
+##
+
+# %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
 Mantenimento a %1%
 
+# %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
 Sposta su %1%
 
@@ -1550,6 +1678,11 @@ In attesa di carburante
 FW_FLEET_EXPLORING_WAITING
 Attesa per sistema da esplorare
 
+# %1% name of the destination system
+# %2% estimated turns until the fleet reach the destination system. Can also be
+#     'unknown', 'never' or 'out of range.
+# %3% estimated turns until the fleet reach the next system. Can also be
+#     'unknown', 'never' or 'out of range.
 FW_FLEET_EXPLORING_TO
 Esplorando %1%
 
@@ -1580,29 +1713,39 @@ Classe Nave
 FW_UNKNOWN_DESIGN_NAME
 Progetto sconosciuto
 
-# the name of the new fleet icon in the fleet listbox
+# Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
 <i>Nuova Flotta</i>
 
+# Fleet window title
+# %1% empire, which owns the fleets.
+# %2% system where those fleets hold.
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Flotte su %2%
 
+# Fleet window title
+# %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
 %1% Flotte
 
+# Fleet window title
 FW_NO_FLEET
 No Flotte
 
+# Fleet window title
+# %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Flotte su %1%
 
+# Fleet window title
 FW_GENERIC_FLEETS
 Flotte
 
 FW_BATTLE_FLEET
 Flotta da battaglia
 
-# the name that is used for fleets the player does not control
+# the name that is used for fleets the client's player does not control when
+# the empire is not specified.
 FW_FOREIGN_FLEET
 Flotta straniera
 
@@ -1610,7 +1753,8 @@ Flotta straniera
 FW_ROGUE_FLEET
 Flotta Canaglia
 
-# the name that is used for ships the player does not control
+# the name that is used for ships the client's player does not control when the
+# empire is not specified.
 FW_FOREIGN_SHIP
 Nave straniera
 
@@ -1675,9 +1819,10 @@ Esplora
 ORDER_CANCEL_FLEET_EXPLORE
 Interrompi Esplorazione
 
-###############
-#  Moderator  #
-###############
+
+##
+## Moderator
+##
 
 MOD_DESTROY
 Moderatore: Distruggi
@@ -1685,9 +1830,10 @@ Moderatore: Distruggi
 MOD_SET_OWNER
 Moderatore: Imposta Proprietario
 
-###############
-#  Diplomacy  #
-###############
+
+##
+## Diplomacy
+##
 
 DIPLOMACY
 Diplomazia
@@ -1710,16 +1856,20 @@ Annulla Proposta di Pace
 PEACE_ACCEPT
 Accetta Proposta di Pace
 
-###############
-# TechTreeWnd #
-###############
+
+##
+## TechTreeWnd
+##
 
 TECH_DISPLAY
 Schermo
 
+# %1% research points used this turn.
+# %2% research points available for this turn.
 TECH_TURN_COST_STR
 +%1% PR
 
+# %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
 %1% Turni
 
@@ -1771,16 +1921,22 @@ Richiede
 TECH_WND_UNLOCKS
 Sblocca
 
+# %1% research points already spent on a reseach.
+# %2% total research points required to complete the research.
+# %3% research points used per turn.
+# %4% research points available per turn.
 TECH_WND_PROGRESS
 '''%1% / %2% PR
 + %3% / %4% PR/turno'''
 
+# %1% estimated turns left until technology is researched.
 TECH_WND_ETA
 %1% turni restanti
 
-#######################
-# ProductionInfoPanel #
-#######################
+
+##
+## Production info panel
+##
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Totale Punti Disponibili
@@ -1788,9 +1944,10 @@ Totale Punti Disponibili
 PRODUCTION_INFO_WASTED_PS_LABEL
 Punti Sprecati
 
-###############
-# ResearchWnd #
-###############
+
+##
+## Research window
+##
 
 RESEARCH_WND_TITLE
 Ricerca
@@ -1801,13 +1958,15 @@ PR
 RESEARCH_QUEUE_PROMPT
 Doppio click o Maiuscolo-click su un elemento disponibile per aggiungerlo alla coda di ricerca.
 
-####################
-# BuildSelectorWnd #
-####################
+
+##
+## Build selector window
+##
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Strutture Edificabili
 
+# %1% name of the location where the item is produced.
 PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION
 Strutture Edificabili Presso %1%
 
@@ -1823,6 +1982,7 @@ Disponibile
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Non disponibile
 
+# %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
 %1% Turni
 
@@ -1841,9 +2001,10 @@ Centra sulla Ricerca
 PRODUCTION_QUEUE_PROMPT
 Doppio click su un elemento disponibile per aggiungerlo alla coda di produzione.
 
-#################
-# ProductionWnd #
-#################
+
+##
+## Production window
+##
 
 PRODUCTION_WND_TITLE
 Produzione
@@ -1855,12 +2016,14 @@ Accoda la costruzione di un progetto selezionando un pianeta dal pannello latera
 
 Notare che le navi possono essere costruite solo su pianeti con un cantiere navale e che diversi altri oggetti possono avere altre restrizioni sul luogo di produzione.'''
 
+# %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 Su %1%
 
-###############
-#  DesignWnd  #
-###############
+
+##
+## Design window
+##
 
 DESIGN_NAME_DEFAULT
 Progetto Nave Personalizzato
@@ -1904,25 +2067,27 @@ Rimuovi Parti
 DESIGN_DELETE
 Cancella Progetto
 
-################
-## Statistics ##
-################
 
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
+##
+## Statistics
+##
 
+
+##
+## Encyclopedia
+##
+
+# %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 '''%1% è adatto per la colonizzazione da parte di queste specie.
 
 '''
 
+# %1% name of the planet.
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''%1% non è adatto per la colonizzazione da parte di queste specie. I tentativi di colonizzazione falliranno o alla fine si estinguerà la colonia. 
 
 '''
-
-# types of things that can be shown in encyclopedia
 
 ENC_SHIP_PART
 Parte Nave
@@ -1975,6 +2140,8 @@ Nessun pianeta posseduto noto
 OWNED_FLEETS
 '''Flotte Possedute: '''
 
+# %1% link to a fleet.
+# %2% link to a system.
 OWNED_FLEET_AT_SYSTEM
 %1% su %2%
 
@@ -2011,18 +2178,14 @@ Sistema
 ENC_INDEX
 Indice Enciclopedia
 
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
-
 ENC_RP
 PR
 
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
+# Concise listing of costs required to produce item or research tech.
+# %1% cost to complete requested item or technology.
+# %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
+#     technology.
+# %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %1% %2% e %3% Turni
 
@@ -2034,8 +2197,8 @@ ENC_LOCATION_CONDITION_STR
 
 Un oggetto%1%'''
 
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
+# Title for auto-generated effects description in encyclopedia.
+# %1% textual representation of the effects applied.
 ENC_EFFECTS_STR
 '''
 
@@ -2043,12 +2206,26 @@ ENC_EFFECTS_STR
 
 %1%'''
 
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
+# FIXME
+# Displays the ship design properties inside a Pedia article in detail.
+# %1% description.
+# %2% hull name.
+# %3% list of builtin parts.
+# %4% number of builtin weapon parts.
+# %5% number of builtin rocket parts.
+# %6% number of builtin fighter bays.
+# %7% number of builtin point defense weapon bays.
+# %8% amount of structure points.
+# %9% amount of shield points.
+# %10% amount of detection points.
+# %11% amount of stealth points.
+# %12% battle speed.
+# %13% starlane speed.
+# %14% fuel capacity.
+# %15% number of settlers.
+# %16% number of troops.
+# %17% total damage done by weapons.
+# %18% species that mans the ship.
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
@@ -2065,15 +2242,6 @@ Capacità Colonizzazione: %15%
 Truppe: %16%
 Velocità Stellare: %13%
 '''
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
-##
-
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
 ENC_UNLOCKED_BY
 '''<u>Sbloccato dalle Tecnologie:</u>
@@ -2085,28 +2253,40 @@ ENC_UNLOCKS
 
 '''
 
+# %1% object, technology or other content that should be looked up in the
+# encyclopedia.
 ENC_LOOKUP
 Cerca %1% sulla guida
 
 ENC_COMBAT_LOG
 Log di Combattimento
 
+# %1% link to the system, where the combat occured.
+# %2% turn when the combat occured.
 ENC_COMBAT_LOG_DESCRIPTION_STR
 Combattimento su %1% al turno %2%:
 
+# %1% link to the attacker in a weapon fired battle event.
+# %2% link to the target in a weapon fired event.
+# %3% amount of damage done when firing the weapon.
+# %4% the round number. (a round is phase where all units in a combat have
+#     acted).
+# %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
 Round %4%: %1% attacca %2% e realizza %3% danno
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Sconosciuto
 
-###########################################
-# Combat Report #
-###########################################
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
+##
+## Combat report
+##
+
+
+##
+## Encyclopedia article categories and short descriptions
+##
 
 CATEGORY_GAME_CONCEPTS
 Concetti Partita
@@ -2135,43 +2315,51 @@ Misuratori
 POPULATION_TITLE_SHORT_DESC
 Popolazione
 
-###########################################
-# ARTICLES #
-###########################################
+
+##
+## Encyclopedia articles
+##
 
 PEACE_TITLE
 Pace
+
 PEACE_TEXT
 La pace è lo stato diplomatico tra imperi in cui reciprocamente si impegnano a non attaccare le rispettive navi o pianeti, non ostacolare le rispettive linee di [[encyclopedia SUPPLY_TITLE]], e di non ostacolare la colonizzazione.
 
 OUTPOSTS_TITLE
 Avamposti
+
 OUTPOSTS_TEXT
 Gli avamposti sono stazioni non presidiate che possono essere fondati in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[encyclopedia SUPPLY_TITLE]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.
 
 GROWTH_FOCUS_TITLE
 Focus sulla Crescita
+
 GROWTH_FOCUS_TEXT
 Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita concentrandosi sulla crescita, fà progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
 
 MINING_FOCUS_TITLE
 Focus Minerario
+
 MINING_FOCUS_TEXT
 Il focus minerario è al momento disabilitato.
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
+# The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 TRADE_FOCUS_TITLE
 Focus sul Commercio
+
 TRADE_FOCUS_TEXT
 Il focus sul commercio non fa nulla, ancora. E' solo un segnaposto per i prossimi aggiornamenti.
 
 PROTECTION_FOCUS_TITLE
 Focus sulla Protezione
+
 PROTECTION_FOCUS_TEXT
 Il focus sulla protezione rappresenta un pianeta interamente dedicato sulla sua difesa.  [[encyclopedia TROOP_TITLE]], [[encyclopedia DEFENSE_TITLE]] planetaria e [[encyclopedia SHIELDS_TITLE]] planetari sono raddoppiati.
 
 INDUSTRY_TITLE
 Industria
+
 INDUSTRY_TEXT
 '''L'industria rappresenta la produzione e la modifica di beni fisici. È necessaria per la produzione di edifici, navi spaziali e altri progetti.
 
@@ -2183,6 +2371,7 @@ Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rima
 
 RESEARCH_TITLE
 Ricerca
+
 RESEARCH_TEXT
 '''La ricerca (o PR "Punti Ricerca") di tutti i pianeti dell'impero è combinata per la scoperta di nuove tecnologie. Qualsiasi punto ricerca che non possa essere speso per ricercare una tecnologia è perso ad ogni turno. Ogni tecnologia ha un numero minimo di turni richiesto per essere ricercato. Per esempio, se una tecnologia che costa 15 PR e riechiede un tempo minimo di 3 turni, 5 PR è il massimo per turno che può essere assegnato il suo completamento.
 Alla tecnologia in cima alla coda è assegnata la priorità di ricerca con il massimo numero di PR consentito.  Ogni PR restante è poi fornito alla prossima tecnologia in coda, stessa cosa dicasi per la tecnologia successiva - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
@@ -2191,21 +2380,25 @@ La ricerca non richiede la connessione di linee[[encyclopedia SUPPLY_TITLE]] per
 
 HAPPINESS_TITLE
 Felicità
+
 HAPPINESS_TEXT
 La felicità non svolge ancora nessuna funzione.
 
 INFRASTRUCTURE_TITLE
 Infrastrutture
+
 INFRASTRUCTURE_TEXT
 Il termine infrastruttura si riferisce a strutture tecniche che supportano un pianeta colonizzato: servizi di energia, trasporti, telecomunicazioni e sociali per i cittadini.
 
 DEFENSE_TITLE
 Difesa
+
 DEFENSE_TEXT
 Il misuratore difesa di un pianeta rappresenta il potere delle armi installate dalla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.
 
 SHIELDS_TITLE
 Scudi
+
 SHIELDS_TEXT
 '''Il termine scudi combina tutti i tipi di campi di forza protettivi. Vengono rigenerati ad ogni turno e solitamente sono le prime protezioni che gli attacchi in arrivo devono superare. Ci sono due tipi distinti di scudi che funzionano in modo molto diverso: scudi nave e scudi barriera planetari.
 
@@ -2217,6 +2410,7 @@ Sia le navi spaziali che pianeti hanno un misuratore di Scudi.'''
 
 STEALTH_TITLE
 Occultamento
+
 STEALTH_TEXT
 '''Il termine Occultamento rappresenta la capacità di un oggetto di non essere rilevato da tutti i tipi di sensori. Solo gli imperi con un'alta [[encyclopedia DETECTION_TITLE]] di o uguale al valore di occultamento dell'oggetto che si vuole rilevare.
 
@@ -2224,6 +2418,7 @@ Navi spaziali, strutture, speciali, sistemi e pianeti hanno un misuratore di Occ
 
 DETECTION_TITLE
 Forza di Rlevamento
+
 DETECTION_TEXT
 '''Il termine Forza di Rilevamento rappresenta il livello tecnologico dei sensori di un impero. Un impero può vedere solo gli oggetti che hanno un valore di [[encyclopedia STEALTH_TITLE]] inferiore o uguale alla sua Forza di Rlevamento e sono all'interno di un [[encyclopedia DETECTION_RANGE_TITLE]] controllato da una nave spaziale o un pianeta.
 
@@ -2231,6 +2426,7 @@ Gli imperi hanno un misuratore di Forza di Rlevamento.'''
 
 DETECTION_RANGE_TITLE
 Raggio di Rilevamento
+
 DETECTION_RANGE_TEXT
 '''Il Raggio di Rilevamento rappresenta il numero di uu che isensori possono raggiungere. Un impero può vedere solo gli oggetti che hanno un valore di [[encyclopedia STEALTH_TITLE]] inferiore o uguale alla sua [[encyclopedia DETECTION_TITLE]] e si trova nel Raggio di Rilevamento controllato da una nave spaziale o pianeta.
 
@@ -2238,6 +2434,7 @@ Navi spaziali e pianeti hanno un misuratore di Raggio di Rilevamento. C'è l'opz
 
 TROOP_TITLE
 Truppe
+
 TROOP_TEXT
 '''Il termine Truppe combina tutti i tipi di forze militari in grado di operare sulla superficie dei pianeti.
 
@@ -2245,6 +2442,7 @@ Il misuratore delle truppe su un pianeta rappresenta il potere delle forze di te
 
 ORGANIC_SPECIES_TITLE
 Metabolismo Organico
+
 ORGANIC_SPECIES_TEXT
 Le specie organiche sono, 'la vita come noi la conosciamo', più o meno.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.
 
@@ -2275,13 +2473,15 @@ Mantenimento della Flotta
 EVACUATION_TITLE
 Evacuazione
 
-#
-# Guides
-#
 
-####################
-# Combat Messages  #
-####################
+##
+## Guides
+##
+
+
+##
+## Combat messages
+##
 
 COMBAT_WINDOW_TITLE
 Finestra di Combattimento
@@ -2313,9 +2513,10 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
 ''' Persi!'''
 
-####################
-# TurnProgress     #
-####################
+
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Movimento Flotta ...
@@ -2347,12 +2548,14 @@ Generazione Universo
 TURN_PROGRESS_STARTING_AIS
 Creazione IA Clients
 
+# %1% number of the current turn.
 TURN_BEGIN
 Inizio Turno %1%
 
-########################
-# Messages Panel       #
-########################
+
+##
+## Messages panel
+##
 
 MESSAGES_PANEL_TITLE
 Messaggi
@@ -2360,9 +2563,10 @@ Messaggi
 MESSAGES_PANEL_INTRO
 Stato e Messaggi di Chat
 
-########################
-# Players List         #
-########################
+
+##
+## Players list
+##
 
 PLAYERS_LIST_PANEL_TITLE
 Imperi
@@ -2376,9 +2580,10 @@ Combattimento
 WAITING
 Attesa
 
-####################
-## Objects Window ##
-####################
+
+##
+## Objects window
+##
 
 SORT
 Ordina
@@ -2392,13 +2597,15 @@ Comprimi Tutto
 EXPAND_ALL
 Espandi Tutto
 
-#####################
-## Objects Columns ##
-#####################
 
-####################
-## Filters Dialog ##
-####################
+##
+## Objects columns
+##
+
+
+##
+## Filters dialog
+##
 
 VISIBLE
 Visibile
@@ -2454,15 +2661,16 @@ Impostazione Focus
 CONDITION_STARTYPE
 Tipo Stella
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
 
-#Window title####
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Rapporto Situazione
 
+# %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Rapporto Situazione - Turno %1%
 
@@ -2472,67 +2680,78 @@ Si è verificato un evento sconosciuto.
 FILTERS
 Filtri
 
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
-
 SITREP_SHIP_BUILT
 Il progetto %shipdesign% '%ship%' è stato prodotto in %system%.
+
 SITREP_SHIP_BUILT_LABEL
 Nave Prodotta
 
 SITREP_SHIP_BATCH_BUILT
 %rawtext%x %shipdesign% sono stati prodotti in %system%.
+
 SITREP_SHIP_BATCH_BUILT_LABEL
 Lotto Nave Prodotto
 
 SITREP_BUILDING_BUILT
 %building% è stata edificata su %planet%.
+
 SITREP_BUILDING_BUILT_LABEL
 Struttura Edificata
 
 SITREP_TECH_RESEARCHED
 %tech% è stata ricercata.
+
 SITREP_TECH_RESEARCHED_LABEL
 Tecnologia Ricercata
 
 SITREP_COMBAT_SYSTEM
 Una battaglia si è verificata in %system%.
+
 SITREP_COMBAT_SYSTEM_LABEL
 Combattimento su Sistema
+
 COMBAT
 Combattimento
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 Un oggetto è stato distrutto a %system%.
+
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Oggetto Distrutto
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 The %empire% %shipdesign% '%ship%' è stata distrutta a %system%.
+
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Nave dell'Impero Distrutta
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 Un %shipdesign% è stato distrutto a %system%.
+
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Nave Sconosciuta Distrutta
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 The %empire% flotta %fleet% è stata distrutta a %system%.
+
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotta dell'Impero Distrutta
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 La flotta %fleet% è stata distrutta a %system%.
+
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Flotta Sconosciuta Distrutta
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
 The %empire% pianeta %planet% è stato distrutto a %system%.
+
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Pianeta dell'Impero Distrutto
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 Il pianeta %planet% è stato distrutto a %system%.
+
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Pianeta Sconosciuto Distrutto
 
@@ -2556,26 +2775,31 @@ The %empire% planet %planet% was bombarded at %system%.
 
 SITREP_GROUND_BATTLE
 Una battaglia si è verificata sul pianeta %planet%.
+
 SITREP_GROUND_BATTLE_LABEL
 Battaglia di Terra
 
 SITREP_PLANET_CAPTURED
 %planet% è stato catturato da %empire%.
+
 SITREP_PLANET_CAPTURED_LABEL
 Pianeta Catturato
 
 SITREP_PLANET_DEPOPULATED
 La colonia su %planet% è distrutta.
+
 SITREP_PLANET_DEPOPULATED_LABEL
 Pianeta Distrutto
 
 SITREP_PLANET_COLONIZED
 %planet% è stato colonizzato.
+
 SITREP_PLANET_COLONIZED_LABEL
 Pianeta Colonizzato
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% è arrivata in %system%.
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Gen. Flotta Arrivata
 
@@ -2587,31 +2811,37 @@ SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 %empire% %fleet% è arrivata in %system%.
+
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Arrivata Flotta Straniera
 
 EFFECT_DERELICT_MAP
 Informazioni sull'area sono state ottenute da un relitto abbandonato su %system%.
+
 EFFECT_DERELICT_MAP_LABEL
 Mappa da Relitto
 
 EFFECT_DERELICT_FUEL
 Le navi sono state rifornite tramite la fornitura residua trovata in un relitto abbandonato su %system%.
+
 EFFECT_DERELICT_FUEL_LABEL
 Carburante da Relitto
 
 EFFECT_BIOWEAPON
 %system% ha perso la popolazione a causa di un attacco biologico!
+
 EFFECT_BIOWEAPON_LABEL
 Attacco Arma Biologica
 
 EFFECT_EVACUEES
 Gli sfollati si sono stabiliti su %planet%.
+
 EFFECT_EVACUEES_LABEL
 Sfollati
 
 EFFECT_STARGATE
 La flotta %fleet% ha attraversato il portale spaziale per il sistema %system%.
+
 EFFECT_STARGATE_LABEL
 Uso Portale Spaziale
 
@@ -2620,15 +2850,14 @@ Dominazione Psicogenica
 
 EFFECT_MINES
 La nave dell'impero %empire% della flotta %fleet% ha subito %rawtext% punti di danno alla struttura dalle mine nel sistema %system%.
+
 EFFECT_MINES_LABEL
 Mine di Sistema
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+##
+## Victory/defeat
+##
 
 VICTORY_TECH
 %empire% ha ottenuto una vittoria tecnologica.
@@ -2641,16 +2870,19 @@ Vittoria
 
 SITREP_EMPIRE_ELIMINATED
 %empire% è stato eliminato.
+
 SITREP_EMPIRE_ELIMINATED_LABEL
 Impero Eliminato
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+##
+## Random beginner hints
+##
+
+
+##
+## Species
+##
 
 ENVIRONMENTAL_PREFERENCES
 Preferenze Ambientali:
@@ -2682,9 +2914,10 @@ Preferiscono pianeti tossici.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
+
+##
+## Specials
+##
 
 ANCIENT_RUINS_SPECIAL
 Antiche rovine
@@ -2697,213 +2930,318 @@ This planet holds the ruins of an unknown, advanced ancient race. The first empi
 ECCENTRIC_ORBIT_SPECIAL
 Orbita eccentrica
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
 
-# UniverseObjectTypes
+##
+## Enumeration values
+##
 
+# Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
 Oggetto Generico
+
+# Universe object types
 OBJ_BUILDING
 Edificio
+
+# Universe object types
 OBJ_SHIP
 Nave
+
+# Universe object types
 OBJ_FLEET
 Flotta
+
+# Universe object types
 OBJ_PLANET
 Pianeta
+
+# Universe object types
 OBJ_POP_CENTER
 Centro popolazione
+
+# Universe object types
 OBJ_PROD_CENTER
 Centro di produzione
+
+# Universe object types
 OBJ_SYSTEM
 Sistema
+
+# Universe object types
 OBJ_FIELD
 Campo
 
-# StarTypes
-
+# Star types
 STAR_BLUE
 blu
+
+# Star types
 STAR_WHITE
 bianca
+
+# Star types
 STAR_YELLOW
 gialla
+
+# Star types
 STAR_ORANGE
 arancione
+
+# Star types
 STAR_RED
 rossa
+
+# Star types
 STAR_NEUTRON
 neutrini
+
+# Star types
 STAR_BLACK
 buco nero
+
+# Star types
 STAR_NONE
 nessuna stella
+
+# Star types
 INVALID_STAR_TYPE
 tipo stella sconosciuto
 
-# PlanetTypes
-
+# Planet types
 PT_SWAMP
 paludoso
+
+# Planet types
 PT_TOXIC
 tossico
+
+# Planet types
 PT_RADIATED
 radioattivo
+
+# Planet types
 PT_BARREN
 arido
+
+# Planet types
 PT_DESERT
 deserto
+
+# Planet types
 PT_TERRAN
 terrestre
+
+# Planet types
 PT_OCEAN
 oceanico
+
+# Planet types
 PT_ASTEROIDS
 asteroidi
+
+# Planet types
 PT_GASGIANT
 gigante gassoso
 
-# Planet Sizes
-
+# Planet sizes
 SZ_NOWORLD
 Niente da vedere qui; procedi oltre.
+
+# Planet sizes
 SZ_TINY
 molto piccolo
+
+# Planet sizes
 SZ_SMALL
 piccolo
+
+# Planet sizes
 SZ_MEDIUM
 medio
+
+# Planet sizes
 SZ_LARGE
 grande
+
+# Planet sizes
 SZ_HUGE
 enorme
+
+# Planet sizes
 SZ_ASTEROIDS
 asteroidi
+
+# Planet sizes
 SZ_GASGIANT
 gigante gassoso
 
-# PlanetEnvironments
-
+# Planet environments
 PE_UNINHABITABLE
 inabitabile
+
+# Planet environments
 PE_HOSTILE
 ostile
+
+# Planet environments
 PE_POOR
 povero
+
+# Planet environments
 PE_ADEQUATE
 adatto
+
+# Planet environments
 PE_GOOD
 buono
 
-# FocusTypes
-
+# Focus types
 FOCUS_INDUSTRY
 industry
+
+# Focus types
 FOCUS_MINING
 mining
+
+# Focus types
 FOCUS_RESEARCH
 research
+
+# Focus types
 FOCUS_TRADE
 trade
 
-# MeterTypes
-
-# EmpireAffiliationTypes
-
+# Empire affiliation types
 AFFIL_SELF
 compagno
+
+# Empire affiliation types
 AFFIL_ENEMY
 nemico
+
+# Empire affiliation types
 AFFIL_ALLY
 alleato
+
+# Empire affiliation types
 AFFIL_ANY
 qualsiasi
 
-# UnlockableItemTypes
-
+# Unlockable item types
 UIT_BUILDING
 Struttura
+
+# Unlockable item types
 UIT_SHIP_PART
 Parte Nave
+
+# Unlockable item types
 UIT_SHIP_HULL
 Scafo Nave
+
+# Unlockable item types
 UIT_TECH
 Tecnologia
 
-# TechTypes
-
+# Technology types
 TT_THEORY
 Teoria
+
+# Technology types
 TT_APPLICATION
 Applicazione
+
+# Technology types
 TT_REFINEMENT
 Affinamento
 
-# BuildTypes
-
+# Build types
 BT_NOT_BUILDING
 non edificare
+
+# Build types
 BT_BUILDING
 edificare
+
+# Build types
 BT_SHIP
 nave
 
-# StockpileTypes
-
+# Stockpile types
 ST_FOOD
 cibo
+
+# Stockpile types
 ST_MINERAL
 minerali
+
+# Stockpile types
 ST_TRADE
 commercio
 
-# Resource Types
-
+# Resource types
 RE_FOOD
 cibo
+
+# Resource types
 RE_MINERALS
 minerali
+
+# Resource types
 RE_TRADE
 commercio
+
+# Resource types
 RE_INDUSTRY
 industria
+
+# Resource types
 RE_RESEARCH
 ricerca
 
-# Ship Slot Types
-
+# Ship slot types
 SL_EXTERNAL
 Slot Esterno
+
+# Ship slot types
 SL_INTERNAL
 Slot Interno
+
 SL_TOOLTIP_DESC
 Vuoto
 
-# Ship Part Classes
-
+# Ship part classes
 PC_SHIELD
 Scudi
+
+# Ship part classes
 PC_ARMOUR
 Corazza
+
+# Ship part classes
 PC_TROOPS
 Truppe di Terra
+
+# Ship part classes
 PC_DETECTION
 Rilevamento
+
+# Ship part classes
 PC_STEALTH
 Occultamento
+
+# Ship part classes
 PC_FUEL
 Carburante
+
+# Ship part classes
 PC_COLONY
 Colonizzazione
 
-# Visibility levels
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
-
-# ValueRef
+##
+## FOCS value references, effects & condition descriptions
+##
 
 DESC_VAR_PLANET
 pianeta
@@ -2950,75 +3288,108 @@ producer
 DESC_VAR_CREATIONTURN
 turn of creation
 
-# this one is intentionally left empty
 
-# six is probably more than will be needed, but just in case ...
+##
+## FOCS effect descriptions
+##
 
-# Effects
-
+# %1% textual description of the scope of this effect.
 DESC_EFFECTS_GROUP_SCOPE
 Oggetti interessati: Tutti gli oggetti%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
 Oggetti interessati: Solo l'oggetto di origine
 
+# %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 L'effetto è attivo se la fonte è un oggetto%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 L'effetto è sempre attivo
 
+# %1% index of the effect group.
+# %2% textual description of the effect group.
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 '''Effetti del gruppo %1%:
 %2%
 '''
 
-# SetMeter
 
+##
+## FOCS meter setter
+##
+
+# %1% name of the meter modified.
+# %2% name of the ship part where this parameter is applied to.
+# %3% textual description of the value applied to the meter.
 DESC_SET_SHIP_PART_METER
 Imposta %1% per %2% su %3%
 
+# %1% either name of the empire or a description of empire the meter will
+#     modify.
+# %2% name of the meter modified.
+# %3% textual description of the value applied to the meter.
 DESC_SET_EMPIRE_METER
 Imposta %2% of the %1% impero su %3%
 
-# others
 
+##
+## FOCS other setters
+##
+
+# %1% planet type the target planet should change to.
 DESC_SET_PLANET_TYPE
 Cambia il tipo di pianeta in %1%
 
+# %1% planet size the target planet should change to.
 DESC_SET_PLANET_SIZE
 Cambia la dimensione del pianeta in %1%
 
+# %1% name of the species which should colonize/own this object.
 DESC_SET_SPECIES
 Cambia la specie dell'oggetto in %1%
 
+# %1% name of the empire which should own this object.
 DESC_SET_OWNER
 Imposta %1% come proprietario dell'oggetto
 
 DESC_DESTROY
 Distrugge l'oggetto
 
+# %1% name of the special which should be attached to the object.
+# %2% capacity of the special, which should be attached to the object.
 DESC_ADD_SPECIAL
 Aggiunge speciale %1% all'oggetto
 
+# %1% star type the target star system should change to.
 DESC_SET_STAR_TYPE
 Cambia il tipo di stella a %1%
 
+# %1% textual description of the location this object should be moved to.
 DESC_MOVE_TO
 Muove l'oggetto nella posizione dell'oggetto %1%
 
 DESC_VICTORY
 Fa vincere la partita al possessore dell'oggetto
 
-# Object Creation
 
+##
+## FOCS object creation
+##
+
+# %1% planet type the new planet should be created with.
+# %2% planet size the new planet should be created with.
 DESC_CREATE_PLANET
 Crea un nuovo pianeta di tipo %1% e dimensione %2%
 
+# %1% building type that should be created.
 DESC_CREATE_BUILDING
 Crea una nuova struttura %1%
 
-# Conditions
+
+##
+## FOCS condition descriptions
+##
 
 DESC_ALL
 '''  nell'universo'''
@@ -3026,12 +3397,17 @@ DESC_ALL
 DESC_ALL_NOT
 ''' non nell'universo'''
 
+# %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' che appartengono all'impero %1%'''
 
+# %1% the affiliation the empire should have to the object.
+# %2% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION
 ''' che appartengono ad un %1% dell'impero %2%'''
 
+# %1% the affiliation the empire should not have to the object.
+# %2% name of the empire this condition does not apply to.
 DESC_EMPIRE_AFFILIATION_NOT
 ''' che non appartengono ad un %1% dell'impero %2%'''
 
@@ -3041,9 +3417,11 @@ DESC_EMPIRE_AFFILIATION_ANY_NOT
 DESC_SOURCE
 ''' che è l'oggetto sorgente'''
 
+# %1% name of the species.
 DESC_HOMEWORLD
 ''' che è il sistema di provenienza'''
 
+# %1% name of the species.
 DESC_HOMEWORLD_NOT
 ''' che non è il sistema di provenienza'''
 
@@ -3053,36 +3431,47 @@ DESC_CAPITAL
 DESC_CAPITAL_NOT
 ''' that is not an empirès capital planet'''
 
+# %1% name of an object type.
 DESC_TYPE
 ''' che è un %1%'''
 
+# %1% name of an object type.
 DESC_TYPE_NOT
 ''' che non è un %1%'''
 
+# %1% name of a building type.
 DESC_BUILDING
 ''' che contiene una struttura %1%'''
 
+# %1% name of a building type.
 DESC_BUILDING_NOT
 ''' che non contiene una struttura %1%'''
 
+# %1% name of the special the object should have.
 DESC_SPECIAL
 ''' che ha uno speciale %1%'''
 
+# %1% textual description of an object contained inside another object.
 DESC_CONTAINS
 ''' che contiene un'oggetto %1%'''
 
+# %1% textual description of an object not contained inside another object.
 DESC_CONTAINS_NOT
 ''' che non contiene un'oggetto %1%'''
 
+# %1% planet type that should match the condition.
 DESC_PLANET_TYPE
 ''' che è un pianeta %1%'''
 
+# %1% planet type that should not match the condition.
 DESC_PLANET_TYPE_NOT
 ''' che non è un pianeta %1%'''
 
+# %1% planet size that should match the condition.
 DESC_PLANET_SIZE
 ''' che è un pianeta %1%'''
 
+# %1% planet size that should not match the condition.
 DESC_PLANET_SIZE_NOT
 ''' che non è un pianeta %1%'''
 
@@ -3092,31 +3481,41 @@ DESC_AND_BETWEEN_OPERANDS
 DESC_OR_BETWEEN_OPERANDS
 ''' o'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN
 ''' quando il turno in corso è compreso tra %1% e %2%'''
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+
+##
+## Technology categories
+##
 
 LEARNING_CATEGORY
 Apprendimento
+
 PRODUCTION_CATEGORY
 Produzione
+
 CONSTRUCTION_CATEGORY
 Costruzione
+
 GROWTH_CATEGORY
 Crescita
+
 ECONOMICS_CATEGORY
 Economia
+
 DEFENSE_CATEGORY
 Difesa
+
 SPY_CATEGORY
 Spionaggio
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Technology theories
+##
 
 THEORY_SHORT_DESC
 Prerequisiti Teorici
@@ -3254,6 +3653,7 @@ Sebbene la progettazione iniziale di alto livello e la configurazione iniziale d
 
 PRO_EXOBOTS
 Exobot
+
 PRO_EXOBOTS_DESC
 Permette la costruzione di Exobots ottimizzati per l'industria su pianeti ostili.
 
@@ -3316,9 +3716,10 @@ Materiali Asintotici
 CON_ASYMP_MATS_DESC
 Una volta che determinate le soglie di prestazioni vengono superate, la misurazione delle proprietà fisiche dei materiali, per il confronto relativo, diventa impraticabile in qualsiasi termine  diverso da ordini di grandezza o scale logaritmiche. Molto simile alla superconduttività in elettronica, la resistenza alla trazione, tenacità, densità, elasticità, indice refrattario ed altre proprietà meccaniche dei materiali possono essere controllate efficacemente senza limiti. Con tutte le limitazioni significative precedentemente rimosse, le progettazioni sono ulteriormente facilitate, e si possono ampliare o modificare di svariati ordini di grandezza.
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
+
+##
+## Technology application
+##
 
 VICTORY_SHORT_DESC
 Porta alla Vittoria!
@@ -3648,16 +4049,18 @@ Biointercettori
 SHP_BIOBOMBER
 Biobombardieri
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
+
+##
+## Technology refinement
+##
 
 BUILDING_REFINE_SHORT_DESC
 Raffineria
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+
+##
+## Buildings
+##
 
 BLD_OBSERVATORY
 Osservatorio
@@ -3729,22 +4132,31 @@ Dispositivo di Occultamento Planetario
 BLD_STARGATE
 Portale Spaziale
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
 
+##
+## Hull and ship part description templates
+##
+
+# %1% hull base starlane speed.
+# %2% hull base fuel capacity.
+# %3% hull base starlane speed.
+# %4% hull base structure value.
 HULL_DESC
 '''Velocità Rotta Spaziale: %1%
 Capacità Carburante: %2%
 Velocità di Combattimento: %3%
 Salute: %4%'''
 
+# %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Capacità: %1%
 
+# %1% ship part strength (other).
 PART_DESC_STRENGTH
 Resistenza: %1%
 
+# %1% ship part damage done (direct fire weapons).
+# %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
 '''Danno Attacco: %1%
 
@@ -3794,9 +4206,10 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+
+##
+## Ship parts
+##
 
 FU_SINGULARITY_ENGINE_CORE_DESC
 '''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. '''
@@ -3839,9 +4252,10 @@ CO_SUSPEND_ANIM_POD_DESC
 
 All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
+
+##
+## Ship hulls
+##
 
 SH_ROBOTIC
 Scafo Robotico
@@ -3852,32 +4266,39 @@ Scafo Nano-Robotico
 SH_TITANIC
 Scafo Titanico
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
+##
+## Buildings macros
+##
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
+##
+## Tech macros
+##
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
 
+##
+## Growth macros
+##
+
+
+##
+## Species picks
+##
+
+
+##
+## Accounting labels
+##
+
+# %1% FIXME
 ENV_ENCAPSUL_LABEL
 %1% Incapsulamento Ambientale
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
+
+##
+## Tags
+##
 
 ANTIQUATED
 Antiquato
@@ -3903,42 +4324,25 @@ Telepatico
 ORBITAL
 Orbitale
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+##
+## AI strings
+##
 
-### Beginning of AI Aggression Level Capital Name Lists
 
-### End of Capital Names Lists
+##
+## AI diplomacy strings and lists
+##
 
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 
-### End of AI Shipdesign Name Lists
+##
+## Hotkey names and descriptions
+##
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
-
-### End of AI Diplomacy Message Lists
-
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
-
-################
-## Name Lists ##
-################
-
-# TODO: Sort these into their proper locations?
+##
+## Name lists
+##
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"

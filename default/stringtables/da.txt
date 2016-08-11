@@ -1,12 +1,16 @@
 Danish
 
-#This is the Danish String Table file for FreeOrion
+# This is the Danish String Table file for FreeOrion
+#
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#################
-# Common        #
-#################
 
-#Anyone can use these for basic buttons
+##
+## Common phrases
+##
 
 BROWSE_BTN
 Gennemse...
@@ -26,39 +30,35 @@ Indlæs
 SAVE
 Gem
 
-# used to generate names for new fleets when they are created
 
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
+##
+## Major errors
+##
 
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
-############
-# Monsters #
-############
 
-##########
-# Fields #
-##########
+##
+## Monsters
+##
 
-##############################
-# Predefined Starting Fleets #
-##############################
 
-##########################
-# Status Update Messages #
-##########################
+##
+## Fields
+##
+
+
+##
+## Predefined starting fleets
+##
+
+
+##
+## Status update messages
+##
 
 SERVER_TIMEOUT
 Serveren svarer ikke
@@ -66,28 +66,28 @@ Serveren svarer ikke
 SERVER_LOST
 Forbindelsen til serveren er mistet.
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
 
-#################
-# File Dialog   #
-#################
+##
+## Command-line and options database entries
+##
 
-#################
-# Color Dialog  #
-#################
 
-#################
-# Intro Screen  #
-#################
+##
+## File dialog
+##
 
-#Window title####
+
+##
+## Color selection dialog
+##
+
+
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion Hoved Menu
-
-#Button names####
 
 INTRO_BTN_LOAD_GAME
 Indlæs Gammelt Spil
@@ -98,21 +98,16 @@ Omkring
 INTRO_BTN_EXIT
 Afslut
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Fik timeout mens vi prøvede at tilslutte til serveren
 
-########################
-# Server Setup Screen  #
-########################
 
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Tilslut til server
-
-#Static labels####
 
 LAN_GAME_LABEL
 Lan spil på:
@@ -123,8 +118,6 @@ Internet spil på:
 PLAYER_NAME_LABEL
 Spiller navn:
 
-#Button names####
-
 HOST_GAME_BN
 Start et nyt spil
 
@@ -134,9 +127,10 @@ Deltag i et spil
 REFRESH_LIST_BN
 Opdater listen
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Multiplayer Opsætning
@@ -153,61 +147,80 @@ Indlæs gammelt spil
 START_GAME_BN
 Start spil
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Galakse Opsætning
 
-#Strings
-#Drop-down list labels and choices####
-
 GSETUP_STARS
 Stjerner
+
 GSETUP_SHAPE
 Galakse Form
+
 GSETUP_AGE
 Galakse Alder
+
 GSETUP_STARLANE_FREQ
 Stjernevejs Hyppighed
+
 GSETUP_PLANET_DENSITY
 Planet Forekomst
+
 GSETUP_SPECIALS_FREQ
 Karak.træks Hyppighed
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spiral, 2-arme
+
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spiral, 3-arme
+
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spiral, 4-arme
+
+# A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Kluster
+
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Elliptisk
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 Ingen
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Lav
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 Høj
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Ung
+
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Voksen
+
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Antik
 
-###########################
-# About Dialog            #
-###########################
 
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Licens
@@ -218,9 +231,10 @@ Omkring FreeOrion v0.1a
 CREDITS
 Lavet af
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_SAVE
 Gem Spil
@@ -234,155 +248,155 @@ Afslut Spil
 GAME_MENU_SAVE_FILES
 Gemte Spil filer
 
-###########################
-# Save Game Dialog        #
-###########################
 
-###########################
-# Game Options            #
-###########################
+##
+## Save game dialog
+##
 
-#################
-# Main Map      #
-#################
 
+##
+## Game options
+##
+
+
+##
+## Main map window
+##
+
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Tur %1%
 
-#################
-# SidePanel     #
-#################
+
+##
+## Side panel
+##
+
+
+##
+## Side panel/System information
+##
 
 SP_SYSTEM_PRODUCTION
 System Produktion
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PL_UNINHABITED
 Ubeboet
+
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Kolonisér
 
-## Resources Panel ##########
 
-## Specials Panel ##########
-
-## Buildings Panel##########
-
-## General Tooltips#########
-
-#################
-# Fleet Window  #
-#################
-
-# the name of the new fleet icon in the fleet listbox
-
-# the name that is used for fleets the player does not control
-
-# the name that is used for fleets that no player controls
-
-# the name that is used for ships the player does not control
-
-# the name that is used for ships that no player controls
-
-###############
-#  Moderator  #
-###############
-
-###############
-#  Diplomacy  #
-###############
-
-###############
-# TechTreeWnd #
-###############
-
-#######################
-# ProductionInfoPanel #
-#######################
-
-###############
-# ResearchWnd #
-###############
-
-####################
-# BuildSelectorWnd #
-####################
-
-#################
-# ProductionWnd #
-#################
-
-###############
-#  DesignWnd  #
-###############
-
-################
-## Statistics ##
-################
-
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
-
-# types of things that can be shown in encyclopedia
-
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
-
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
-
-# auto-generated location condition description
-
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
+##
+## Side panel/Resources panel
 ##
 
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
-###########################################
-# Combat Report #
-###########################################
+##
+## Side panel/Specials panel
+##
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
 
-###########################################
-# ARTICLES #
-###########################################
+##
+## Side panel/Buildings panel
+##
 
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-#
-# Guides
-#
+##
+## General tooltips
+##
 
-####################
-# Combat Messages  #
-####################
 
-####################
-# TurnProgress     #
-####################
+##
+## Fleet window
+##
+
+
+##
+## Moderator
+##
+
+
+##
+## Diplomacy
+##
+
+
+##
+## TechTreeWnd
+##
+
+
+##
+## Production info panel
+##
+
+
+##
+## Research window
+##
+
+
+##
+## Build selector window
+##
+
+
+##
+## Production window
+##
+
+
+##
+## Design window
+##
+
+
+##
+## Statistics
+##
+
+
+##
+## Encyclopedia
+##
+
+
+##
+## Combat report
+##
+
+
+##
+## Encyclopedia article categories and short descriptions
+##
+
+
+##
+## Encyclopedia articles
+##
+
+
+##
+## Guides
+##
+
+
+##
+## Combat messages
+##
+
+
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Bevægelse af Flåder
@@ -399,36 +413,39 @@ Venter på at spillere færdigører deres tur
 TURN_PROGRESS_PHASE_ORDERS
 Udfører ordre
 
-########################
-# Messages Panel       #
-########################
 
-########################
-# Players List         #
-########################
+##
+## Messages panel
+##
 
-####################
-## Objects Window ##
-####################
 
-#####################
-## Objects Columns ##
-#####################
+##
+## Players list
+##
 
-####################
-## Filters Dialog ##
-####################
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
+##
+## Objects window
+##
 
-#Window title####
+
+##
+## Objects columns
+##
+
+
+##
+## Filters dialog
+##
+
+
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Situations Report
-
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
@@ -436,173 +453,150 @@ Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
 SITREP_TECH_RESEARCHED
 Teknologien %tech% er blevet opfundet.
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+##
+## Victory/defeat
+##
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+##
+## Random beginner hints
+##
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
+##
+## Species
+##
 
-# UniverseObjectTypes
 
-# StarTypes
+##
+## Specials
+##
 
-# PlanetTypes
 
-# Planet Sizes
+##
+## Enumeration values
+##
 
-# PlanetEnvironments
 
-# FocusTypes
+##
+## FOCS value references, effects & condition descriptions
+##
 
-# MeterTypes
 
-# EmpireAffiliationTypes
+##
+## FOCS effect descriptions
+##
 
-# UnlockableItemTypes
 
-# TechTypes
+##
+## FOCS meter setter
+##
 
-# BuildTypes
 
-# StockpileTypes
+##
+## FOCS other setters
+##
 
-# Resource Types
 
-# Ship Slot Types
+##
+## FOCS object creation
+##
 
-# Ship Part Classes
 
-# Visibility levels
+##
+## FOCS condition descriptions
+##
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
 
-# ValueRef
+##
+## Technology categories
+##
 
-# this one is intentionally left empty
 
-# six is probably more than will be needed, but just in case ...
+##
+## Technology theories
+##
 
-# Effects
 
-# SetMeter
+##
+## Technology application
+##
 
-# others
 
-# Object Creation
+##
+## Technology refinement
+##
 
-# Conditions
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+##
+## Buildings
+##
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
+##
+## Hull and ship part description templates
+##
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+##
+## Ship parts
+##
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+##
+## Ship hulls
+##
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
+##
+## Buildings macros
+##
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+##
+## Tech macros
+##
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
+##
+## Growth macros
+##
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
+##
+## Species picks
+##
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
-### Beginning of AI Aggression Level Capital Name Lists
+##
+## Accounting labels
+##
 
-### End of Capital Names Lists
 
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+##
+## Tags
+##
 
-### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## AI strings
+##
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
 
-### End of AI Diplomacy Message Lists
+##
+## AI diplomacy strings and lists
+##
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
 
-################
-## Name Lists ##
-################
+##
+## Hotkey names and descriptions
+##
 
-# TODO: Sort these into their proper locations?
+
+##
+## Name lists
+##
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"

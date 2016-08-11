@@ -1,13 +1,16 @@
 Nederlands
 
-#This is the Dutch String Table file for FreeOrion
-#Translate this file to other languages.
+# This is the Dutch String Table file for FreeOrion
+#
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#################
-# Common        #
-#################
 
-#Anyone can use these for basic buttons
+##
+## Common phrases
+##
 
 BROWSE_BTN
 Bladeren...
@@ -57,39 +60,35 @@ Voer een nieuwe naam in
 CHAT_WHISPER
 fluister
 
-# used to generate names for new fleets when they are created
 
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
+##
+## Major errors
+##
 
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
-############
-# Monsters #
-############
 
-##########
-# Fields #
-##########
+##
+## Monsters
+##
 
-##############################
-# Predefined Starting Fleets #
-##############################
 
-##########################
-# Status Update Messages #
-##########################
+##
+## Fields
+##
+
+
+##
+## Predefined starting fleets
+##
+
+
+##
+## Status update messages
+##
 
 SERVER_WONT_START
 De server kon niet gestart worden.
@@ -106,9 +105,10 @@ De server zond een bericht dat het spel afgelopen is.
 PLAYER_DISCONNECTED
 Speler %1% heeft geen verbinding met de server meer.
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Gebruik: '''
@@ -356,9 +356,10 @@ Zet het aantal beurten die moeten verstrijken tussen een auto-opslaan.
 OPTIONS_DB_MUSIC_VOLUME
 Het volume (0 tot 255) waarop de muziek afgespeeld moet worden.
 
-#################
-# File Dialog   #
-#################
+
+##
+## File dialog
+##
 
 FILE_DLG_FILES
 Bestand(en):
@@ -381,9 +382,10 @@ Bestand "%1%"\nbestaat niet.
 FILE_DLG_DEVICE_IS_NOT_READY
 Apparaat is niet gereed.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 Nieuw
@@ -400,16 +402,13 @@ V:
 COLOR_DLG_VALUE
 W:
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion Hoofdmenu
-
-#Button names####
 
 INTRO_BTN_SINGLE_PLAYER
 Enkele Speler
@@ -429,24 +428,19 @@ Over FreeOrion
 INTRO_BTN_EXIT
 Afsluiten
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Verbinding met server leggen duurde te lang.
 
 ERR_VERSION_MISMATCH
 Kon niet met de server verbinden, omdat deze client verschillende versies van de volgende instellingen en bestanden gebruikt:
 
-########################
-# Server Setup Screen  #
-########################
 
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Verbinden met Server
-
-#Static labels####
 
 LAN_GAME_LABEL
 Lan spel op:
@@ -457,8 +451,6 @@ Internet spel op:
 PLAYER_NAME_LABEL
 Naam van de speler:
 
-#Button names####
-
 HOST_GAME_BN
 Start een nieuw netwerkspel
 
@@ -468,9 +460,10 @@ Meld aan bij een bestaand netwerkspel
 REFRESH_LIST_BN
 Ververs lijst
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Netwerkspel Instellingen
@@ -490,67 +483,86 @@ Laad spel
 START_GAME_BN
 Start spel
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Melkwegconfiguratie
 
-#Strings
 GSETUP_EMPIRE_NAME
 Naam van het Rijk
 
 GSETUP_EMPIRE_COLOR
 Kleur van het Rijk
 
-#Drop-down list labels and choices####
-
 GSETUP_STARS
 Sterren
+
 GSETUP_SHAPE
 Melkweg Vorm
+
 GSETUP_AGE
 Melkweg Leeftijd
+
 GSETUP_STARLANE_FREQ
 Sterrenbaan Frequentie
+
 GSETUP_PLANET_DENSITY
 Planetendichtheid
+
 GSETUP_SPECIALS_FREQ
 Specials Frequentie
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spiraal, 2-arm
+
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spiraal, 3-arm
+
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spiraal, 4-arm
+
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Elliptisch
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 Geen
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Laag
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
 Gemiddeld
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 Hoog
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Jong
+
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Volwassen
+
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Oud
 
-###########################
-# About Dialog            #
-###########################
 
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Licentie
@@ -564,9 +576,10 @@ Visie
 FREEORION_VISION
 FreeOrion, een open source spel gebaseerd op Master of Orion, is een beurt-gebaseerd spel van epische ruimte strategie, dat voorbouwt op het klassieke '4X' model door natie-opbouw elementen zoals spellen als Europa Universalis 2 en een uitgebreide tactische gevechts engine erin te bouwen. Door z'n modulaire, open source ontwerp is er veel ruimte voor aanpassing van de spel engine en verhaal elementen door de gemeenschap, het FreeOrion team is toegewijd aan het bouwen van een levend en ademend universum in een 'grand campagne' model.
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_SAVE
 Spel Opslaan
@@ -580,13 +593,15 @@ Opgeven
 GAME_MENU_SAVE_FILES
 Spelbestanden Opslaan
 
-###########################
-# Save Game Dialog        #
-###########################
 
-###########################
-# Game Options            #
-###########################
+##
+## Save game dialog
+##
+
+
+##
+## Game options
+##
 
 OPTIONS_TITLE
 Opties
@@ -813,10 +828,12 @@ Muziekbestanden
 OPTIONS_SOUND_FILE
 Geluidbestanden
 
-#################
-# Main Map      #
-#################
 
+##
+## Main map window
+##
+
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 '''Beurt '''
 
@@ -832,46 +849,79 @@ Productie
 MAP_BTN_DESIGN
 Ontwerp
 
-#################
-# SidePanel     #
-#################
+
+##
+## Side panel
+##
 
 SIDE_PANEL
 Zijpaneel
 
+
+##
+## Side panel/System information
+##
+
 SP_SYSTEM_PRODUCTION
 Systeem Productie
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Planeet Paneel
+
 PL_ASTEROID_BELT
 Asteroïdengordel
+
 PL_UNINHABITED
 Onbewoond
+
 PL_SIZE
 Grootte
+
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Koloniseren
 
-## Resources Panel ##########
 
-## Specials Panel ##########
+##
+## Side panel/Resources panel
+##
 
-## Buildings Panel##########
 
-## General Tooltips#########
+##
+## Side panel/Specials panel
+##
+
+
+##
+## Side panel/Buildings panel
+##
+
+
+##
+## General tooltips
+##
 
 TT_CHANGE
 Verandering
 
+# %1% name of the owning empire.
+# %2% FIXME
 TT_TECH
 %1% Technologie <i>%2%</i>
 
+# %1% name of the planet, where the building is located.
+# %2% FIXME
 TT_BUILDING
 %1% Gebouw <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SPECIAL
 Speciaal <i>%1%</i>
 
@@ -884,10 +934,12 @@ Hernoem Planeet
 SP_ENTER_NEW_PLANET_NAME
 Geef een nieuwe planeetnaam op
 
-#################
-# Fleet Window  #
-#################
 
+##
+## Fleet window
+##
+
+# %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
 Verplaating naar %1%, Verwachte aankomsttijd %2%
 
@@ -903,43 +955,49 @@ FW_SHIP_CLASS
 FW_UNKNOWN_DESIGN_NAME
 Onbekend
 
-# the name of the new fleet icon in the fleet listbox
+# Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
 Nieuwe Vloot
 
+# Fleet window title
+# %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
 %1% Vloten
 
-# the name that is used for fleets the player does not control
+# the name that is used for fleets the client's player does not control when
+# the empire is not specified.
 FW_FOREIGN_FLEET
 Allochtone vloot
 
-# the name that is used for fleets that no player controls
-
-# the name that is used for ships the player does not control
+# the name that is used for ships the client's player does not control when the
+# empire is not specified.
 FW_FOREIGN_SHIP
 Allochtoon schip
 
-# the name that is used for ships that no player controls
 
-###############
-#  Moderator  #
-###############
+##
+## Moderator
+##
 
-###############
-#  Diplomacy  #
-###############
 
-###############
-# TechTreeWnd #
-###############
+##
+## Diplomacy
+##
+
+
+##
+## TechTreeWnd
+##
 
 TECH_DISPLAY
 Weergave
 
+# %1% research points used this turn.
+# %2% research points available for this turn.
 TECH_TURN_COST_STR
 %1% OP / Beurt @ %2% Beurten
 
+# %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
 %1% Beurten
 
@@ -976,9 +1034,10 @@ Vereist
 TECH_WND_UNLOCKS
 Opent
 
-#######################
-# ProductionInfoPanel #
-#######################
+
+##
+## Production info panel
+##
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Totaal Beschikbare Punten
@@ -986,9 +1045,10 @@ Totaal Beschikbare Punten
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verspilde Punten
 
-###############
-# ResearchWnd #
-###############
+
+##
+## Research window
+##
 
 RESEARCH_WND_TITLE
 Onderzoek
@@ -996,9 +1056,10 @@ Onderzoek
 RESEARCH_INFO_RP
 OP
 
-####################
-# BuildSelectorWnd #
-####################
+
+##
+## Build selector window
+##
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Bouwbare Objecten
@@ -1015,9 +1076,12 @@ Beschikbaar
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Onbeschikbaar
 
+# %1% currently used amount of production points used per turn to build an item.
+# %2% maximum available amount of production points for this turn.
 PRODUCTION_TURN_COST_STR
 %1% PP / %2% Beurten
 
+# %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
 %1% Beurten over
 
@@ -1033,16 +1097,18 @@ Aan Wachtrij Toevoegen
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centreer op Bouwen
 
-#################
-# ProductionWnd #
-#################
+
+##
+## Production window
+##
 
 PRODUCTION_WND_TITLE
 Productie
 
-###############
-#  DesignWnd  #
-###############
+
+##
+## Design window
+##
 
 DESIGN_NAME_DEFAULT
 Aangepast scheepsontwerp
@@ -1083,15 +1149,15 @@ Bevestig nieuw ontwerp
 DESIGN_WND_CLEAR
 Onderelen wissen
 
-################
-## Statistics ##
-################
 
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
+##
+## Statistics
+##
 
-# types of things that can be shown in encyclopedia
+
+##
+## Encyclopedia
+##
 
 ENC_SHIP_PART
 Scheepsonderdeel
@@ -1108,58 +1174,30 @@ Scheepsontwerp
 ENC_BUILDING
 Gebouw
 
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
 
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
-
-# auto-generated location condition description
-
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
+##
+## Combat report
 ##
 
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
-###########################################
-# Combat Report #
-###########################################
+##
+## Encyclopedia article categories and short descriptions
+##
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
 
-###########################################
-# ARTICLES #
-###########################################
+##
+## Encyclopedia articles
+##
 
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-#
-# Guides
-#
+##
+## Guides
+##
 
-####################
-# Combat Messages  #
-####################
+
+##
+## Combat messages
+##
 
 COMBAT_WINDOW_TITLE
 Gevechtsvenster
@@ -1191,9 +1229,10 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
 ''' Verloren!'''
 
-####################
-# TurnProgress     #
-####################
+
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Vloten verplaatsing
@@ -1213,36 +1252,39 @@ Orders uitvoeren
 TURN_PROGRESS_PHASE_DOWNLOADING
 Nieuwe spelstatus downloaden
 
-########################
-# Messages Panel       #
-########################
 
-########################
-# Players List         #
-########################
+##
+## Messages panel
+##
 
-####################
-## Objects Window ##
-####################
 
-#####################
-## Objects Columns ##
-#####################
+##
+## Players list
+##
 
-####################
-## Filters Dialog ##
-####################
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
+##
+## Objects window
+##
 
-#Window title####
+
+##
+## Objects columns
+##
+
+
+##
+## Filters dialog
+##
+
+
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Situatie Rapport
-
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 De %ship%, een nieuw schip, is geproduceerd in het %system% systeem.
@@ -1262,24 +1304,25 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% arriveerde in het %system% systeem en wacht op verdere opdrachten.
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+##
+## Victory/defeat
+##
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+##
+## Random beginner hints
+##
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
+
+##
+## Species
+##
+
+
+##
+## Specials
+##
 
 ANCIENT_RUINS_SPECIAL
 Oude Ruïnes
@@ -1296,207 +1339,307 @@ De omloopbaan van deze planeet is zeer eccentrisch. Er is een groot verschil tus
 MINERALS_SPECIAL
 Minerale Rijkdom
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
 
-# UniverseObjectTypes
+##
+## Enumeration values
+##
 
+# Universe object types
 OBJ_BUILDING
 gebouw
+
+# Universe object types
 OBJ_SHIP
 schip
+
+# Universe object types
 OBJ_FLEET
 vloot
+
+# Universe object types
 OBJ_PLANET
 planeet
+
+# Universe object types
 OBJ_POP_CENTER
 populatie centrum
+
+# Universe object types
 OBJ_PROD_CENTER
 productie centrum
+
+# Universe object types
 OBJ_SYSTEM
 systeem
 
-# StarTypes
-
+# Star types
 STAR_BLUE
 blauw
+
+# Star types
 STAR_WHITE
 wit
+
+# Star types
 STAR_YELLOW
 geel
+
+# Star types
 STAR_ORANGE
 oranje
+
+# Star types
 STAR_RED
 rood
+
+# Star types
 STAR_NEUTRON
 neutronenster
+
+# Star types
 STAR_BLACK
 zwart gat
 
-# PlanetTypes
-
+# Planet types
 PT_SWAMP
 moeras
+
+# Planet types
 PT_TOXIC
 giftig
+
+# Planet types
 PT_RADIATED
 straling
+
+# Planet types
 PT_BARREN
 onvruchtbaar
+
+# Planet types
 PT_DESERT
 woestijn
+
+# Planet types
 PT_TERRAN
 aarde
+
+# Planet types
 PT_OCEAN
 oceaan
+
+# Planet types
 PT_ASTEROIDS
 asteroÃ¯den
+
+# Planet types
 PT_GASGIANT
 gas reus
 
-# Planet Sizes
-
+# Planet sizes
 SZ_NOWORLD
 Niets te zien hier.
+
+# Planet sizes
 SZ_TINY
 zeer klein
+
+# Planet sizes
 SZ_SMALL
 klein
+
+# Planet sizes
 SZ_MEDIUM
 gemiddeld
+
+# Planet sizes
 SZ_LARGE
 groot
+
+# Planet sizes
 SZ_HUGE
 gigantisch
+
+# Planet sizes
 SZ_ASTEROIDS
 asteroïden
+
+# Planet sizes
 SZ_GASGIANT
 gas reus
 
-# PlanetEnvironments
-
+# Planet environments
 PE_UNINHABITABLE
 onbewoonbaar
+
+# Planet environments
 PE_HOSTILE
 vijandig
+
+# Planet environments
 PE_POOR
 arm
+
+# Planet environments
 PE_ADEQUATE
 voldoet
+
+# Planet environments
 PE_GOOD
 goed
 
-# FocusTypes
-
+# Focus types
 FOCUS_INDUSTRY
 industrie
+
+# Focus types
 FOCUS_MINING
 mijnindustrie
+
+# Focus types
 FOCUS_RESEARCH
 onderzoek
+
+# Focus types
 FOCUS_TRADE
 handel
 
-# MeterTypes
-
+# Meter types
 METER_POPULATION
 populatie
+
+# Meter types
 METER_HEALTH
 gezondheid
+
+# Meter types
 METER_INDUSTRY
 industrie
+
+# Meter types
 METER_RESEARCH
 onderzoek
+
+# Meter types
 METER_TRADE
 handel
+
+# Meter types
 METER_MINING
 mijnindustrie
+
+# Meter types
 METER_CONSTRUCTION
 constructie
+
+# Meter types
 METER_FUEL
 brandstof
+
+# Meter types
 METER_SHIELD
 schild
+
+# Meter types
 METER_DEFENSE
 defensie
+
+# Meter types
 METER_SUPPLY
 voorraad
+
+# Meter types
 METER_STEALTH
 stealth
+
+# Meter types
 METER_DETECTION
 detectie
 
-# EmpireAffiliationTypes
-
+# Empire affiliation types
 AFFIL_SELF
 zelf
+
+# Empire affiliation types
 AFFIL_ENEMY
 vijandig
+
+# Empire affiliation types
 AFFIL_ALLY
 bondgenoot
 
-# UnlockableItemTypes
-
+# Unlockable item types
 UIT_BUILDING
 Gebouw
+
+# Unlockable item types
 UIT_SHIP_PART
 Scheepsonderdeel
 
-# TechTypes
-
+# Technology types
 TT_THEORY
 Theorie
+
+# Technology types
 TT_APPLICATION
 Toepassing
+
+# Technology types
 TT_REFINEMENT
 Verfijning
 
-# BuildTypes
-
+# Build types
 BT_NOT_BUILDING
 geen bouw
+
+# Build types
 BT_BUILDING
 gebouw
+
+# Build types
 BT_SHIP
 schip
 
-# StockpileTypes
-
+# Stockpile types
 ST_FOOD
 voedsel
+
+# Stockpile types
 ST_MINERAL
 mineraal
+
+# Stockpile types
 ST_TRADE
 handel
 
-# Resource Types
-
-# Ship Slot Types
-
+# Ship slot types
 SL_EXTERNAL
 Extern
+
+# Ship slot types
 SL_INTERNAL
 Intern
 
-# Ship Part Classes
-
+# Ship part classes
 PC_ARMOUR
 Bepansering
+
+# Ship part classes
 PC_DETECTION
 Detectie
+
+# Ship part classes
 PC_FUEL
 Brandstof
+
+# Ship part classes
 PC_COLONY
 Kolonizatie
 
-# Visibility levels
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
-
-# ValueRef
+##
+## FOCS value references, effects & condition descriptions
+##
 
 DESC_VAR_PLANET
 planeet
@@ -1521,8 +1664,10 @@ ster type
 
 DESC_VAR_MAXFUEL
 max brandstof
+
 DESC_VAR_MAXSHIELD
 max schild
+
 DESC_VAR_MAXDEFENSE
 max defensie
 
@@ -1541,41 +1686,58 @@ beurt van creatie
 DESC_VAR_CURRENTTURN
 de huidige beurt
 
-# this one is intentionally left empty
 
-# six is probably more than will be needed, but just in case ...
-
-# Effects
+##
+## FOCS effect descriptions
+##
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is altijd actief
 
-# SetMeter
 
-# others
+##
+## FOCS meter setter
+##
 
-# Object Creation
 
-# Conditions
+##
+## FOCS other setters
+##
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+
+##
+## FOCS object creation
+##
+
+
+##
+## FOCS condition descriptions
+##
+
+
+##
+## Technology categories
+##
 
 LEARNING_CATEGORY
 Leren
+
 PRODUCTION_CATEGORY
 Productie
+
 CONSTRUCTION_CATEGORY
 Constructie
+
 GROWTH_CATEGORY
 Groei
+
 ECONOMICS_CATEGORY
 Economie
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Technology theories
+##
 
 THEORY_SHORT_DESC
 Theoretisch Voorvereiste
@@ -1721,9 +1883,10 @@ Galactische Ontdekkingsreizen
 SHP_GAL_EXPLO_DESC
 De Ontdekking van interstellair reizen via sterrenlanen kondigd een nieuw tijdperk voor de gemeenschap aan. Oude politieke onenigheden tussen kleine groepen worden insignificant als de gehele beschaving blootgesteld wordt aan het oneinige potentie van de sterren... voor groei en welvaart, of grote vernietiging.
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
+
+##
+## Technology application
+##
 
 DOES_NOTHING_SHORT_DESC
 Waardeloos: Doet Niets
@@ -1764,86 +1927,80 @@ Ontsluit Actieve Radar scheepsonderdeel.
 SHP_DEUTERIUM_TANK_DESC
 Ontsluit Deuterium Tank scheepsonderdeel.
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+##
+## Technology refinement
+##
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+##
+## Buildings
+##
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
+##
+## Hull and ship part description templates
+##
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+##
+## Ship parts
+##
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
+##
+## Ship hulls
+##
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
+##
+## Buildings macros
+##
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
-### Beginning of AI Aggression Level Capital Name Lists
+##
+## Tech macros
+##
 
-### End of Capital Names Lists
 
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+##
+## Growth macros
+##
 
-### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## Species picks
+##
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
 
-### End of AI Diplomacy Message Lists
+##
+## Accounting labels
+##
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
 
-################
-## Name Lists ##
-################
+##
+## Tags
+##
 
-# TODO: Sort these into their proper locations?
+
+##
+## AI strings
+##
+
+
+##
+## AI diplomacy strings and lists
+##
+
+
+##
+## Hotkey names and descriptions
+##
+
+
+##
+## Name lists
+##
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"
