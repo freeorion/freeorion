@@ -39,6 +39,7 @@
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/xpressive/regex_actions.hpp>
 #include <boost/assign/list_of.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <cmath>
 #include <cctype>
@@ -218,14 +219,14 @@ namespace {
 
     struct MatchesKnownTag
     {
-        MatchesKnownTag(const std::set<std::string>& known_tags,
+        MatchesKnownTag(const boost::unordered_set<std::string>& known_tags,
                         bool& ignore_tags) :
             m_known_tags(known_tags),
             m_ignore_tags(ignore_tags)
         {}
         bool operator()(const boost::xpressive::ssub_match& sub) const
         { return m_ignore_tags ? false : m_known_tags.find(sub.str()) != m_known_tags.end(); }
-        const std::set<std::string>& m_known_tags;
+        const boost::unordered_set<std::string>& m_known_tags;
         bool& m_ignore_tags;
     };
 
@@ -712,7 +713,7 @@ namespace {
         regular expression.*/
     class CompiledRegex {
         public:
-        CompiledRegex(const std::set<std::string>& known_tags, bool strip_unpaired_tags) :
+        CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
             m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
             m_EVERYTHING()
         {
@@ -734,9 +735,11 @@ namespace {
             //+_w one or more greed word chars,  () group no capture,  [] semantic operation
             const xpr::sregex OPEN_TAG_NAME =
                 (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
+
             // (+_w) one or more greedy word check matches stack
             const xpr::sregex CLOSE_TAG_NAME =
                 (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
+
             // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
             // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
             const xpr::sregex WHITESPACE =
@@ -795,7 +798,7 @@ namespace {
         }
 
         const std::string* m_text;
-        const std::set<std::string>* m_known_tags;
+        const boost::unordered_set<std::string>* m_known_tags;
         bool m_ignore_tags;
 
         // m_tag_stack is used to track XML opening/closing tags.
@@ -825,8 +828,9 @@ namespace {
             m_known_tags.clear();
         }
 
-        const std::set<std::string>& KnownTags()
+        const boost::unordered_set<std::string>& KnownTags()
         { return m_known_tags; }
+
         // Return a regex bound to \p text using the currently known
         // tags possible \p ignore_tags and/or \p strip_unpaired_tags
         xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
@@ -838,7 +842,7 @@ namespace {
 
         private:
         // set of tags known to the handler
-        std::set<std::string> m_known_tags;
+        boost::unordered_set<std::string> m_known_tags;
 
         // Compiled regular expression including tag stack
         CompiledRegex m_regex_w_tags;
