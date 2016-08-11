@@ -2254,7 +2254,7 @@ ENC_UNLOCKS
 '''
 
 # %1% object, technology or other content that should be looked up in the
-# encyclopedia.
+#     encyclopedia.
 ENC_LOOKUP
 Cerca %1% sulla guida
 
@@ -2341,10 +2341,10 @@ Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze 
 MINING_FOCUS_TITLE
 Focus Minerario
 
+# Old: The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 MINING_FOCUS_TEXT
 Il focus minerario è al momento disabilitato.
 
-# The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 TRADE_FOCUS_TITLE
 Focus sul Commercio
 

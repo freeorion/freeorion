@@ -4561,9 +4561,9 @@ A Homeworld focused on Growth only helps other planets of the same species.
 MINING_FOCUS_TITLE
 Mining Focus
 
+# Old: The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 MINING_FOCUS_TEXT
 Mining Focus is currently disabled.
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Trade Focus

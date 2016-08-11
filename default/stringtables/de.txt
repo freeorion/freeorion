@@ -390,6 +390,7 @@ Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Sie
 
 SD_OUTPOST_SHIP
 Außenpostenschiff
+
 SD_OUTPOST_SHIP_DESC
 Unbewaffnetes Schiff, fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
 
@@ -2889,8 +2890,8 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''
 
 # types of things that can be shown in encyclopedia
-ENC_TEST
-Test
+#ENC_TEST
+#Test
 
 ENC_SHIP_PART
 Schiffsteil
@@ -4164,7 +4165,7 @@ gelb
 
 # Star types
 #STAR_ORANGE
-#orange
+#Orange
 
 # Star types
 STAR_RED

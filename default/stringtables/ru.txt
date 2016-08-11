@@ -2748,7 +2748,7 @@ ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 Можно установить в:
 
 # %1% object, technology or other content that should be looked up in the
-# encyclopedia.
+#     encyclopedia.
 ENC_LOOKUP
 Справка o %1%
 
@@ -2974,10 +2974,10 @@ GROWTH_FOCUS_TEXT
 MINING_FOCUS_TITLE
 Цель: добыча
 
+# Old: The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 MINING_FOCUS_TEXT
 Цель:добыча сейчас ОТКЛ.
 
-# The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 TRADE_FOCUS_TITLE
 Цель: торговля
 
