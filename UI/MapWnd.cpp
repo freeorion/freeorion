@@ -4333,6 +4333,64 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<cons
     return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
 }
 
+namespace {
+
+    typedef boost::unordered_map<std::pair<TemporaryPtr<const System>, int>, std::vector<int> > SystemXEmpireToFleetsMap;
+    typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int> > LocationXEmpireToFleetsMap;
+
+    /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
+    TemporaryPtr<const Fleet> IsQualifiedFleet(const TemporaryPtr<const UniverseObject>& obj,
+                                               int empire_id,
+                                               const std::set<int>& known_destroyed_objects,
+                                               const std::set<int>& stale_object_info){
+        int object_id = obj->ID();
+        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
+
+        if (fleet
+            && !fleet->Empty()
+            && (known_destroyed_objects.count(object_id) == 0)
+            && (stale_object_info.count(object_id) == 0))
+            return fleet;
+        return TemporaryPtr<const Fleet>();
+    }
+
+    /** If the \p fleet has orders and is departing from a valid system, return the system*/
+    TemporaryPtr<const System> IsDepartingFromSystem(const TemporaryPtr<const Fleet>& fleet) {
+
+        if (fleet->FinalDestinationID() != INVALID_OBJECT_ID
+            && !fleet->TravelRoute().empty()
+            && fleet->SystemID() != INVALID_OBJECT_ID) {
+            TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
+            if (system)
+                return system;
+            ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
+                          << " of a departing fleet named " << fleet->Name();
+        }
+        return TemporaryPtr<const System>();
+    }
+
+    /** If the \p fleet is stationary in a valid system, return the system*/
+    TemporaryPtr<const System> IsStationaryInSystem(const TemporaryPtr<const Fleet>& fleet) {
+        if ((fleet->FinalDestinationID() == INVALID_OBJECT_ID
+             || fleet->TravelRoute().empty())
+            && fleet->SystemID() != INVALID_OBJECT_ID) {
+            TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
+            if (system)
+                return system;
+            ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
+                          << " of a stationary fleet named " << fleet->Name();
+        }
+        return TemporaryPtr<const System>();
+    }
+
+    /** If the \p fleet has a valid destination and it not at a system, return true*/
+    bool IsMoving(const TemporaryPtr<const Fleet>& fleet) {
+        return (fleet->FinalDestinationID() != INVALID_OBJECT_ID
+                && fleet->SystemID() == INVALID_OBJECT_ID);
+    }
+
+}
+
 void MapWnd::RefreshFleetButtons()
 { m_deferred_refresh_fleet_buttons = true; }
 
@@ -4483,6 +4541,40 @@ void MapWnd::DeferredRefreshFleetButtons() {
     }
     moving_fleet_objects.clear();
 
+
+    }
+
+    SystemXEmpireToFleetsMap   departing_fleets_new;
+    SystemXEmpireToFleetsMap   stationary_fleets_new;
+    LocationXEmpireToFleetsMap moving_fleets_new;
+
+    {ScopedTimer timer("RefreshFleetButtons() P234 set all", true);
+        for (std::map<int, TemporaryPtr<UniverseObject> >::const_iterator candidate_it = Objects().ExistingFleetsBegin();
+             candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it) {
+            TemporaryPtr<const Fleet> fleet = IsQualifiedFleet(
+                candidate_it->second, client_empire_id,
+                this_client_known_destroyed_objects, this_client_stale_object_info);
+
+            if (!fleet)
+                continue;
+
+            // Collect fleets with a travel route just departing.
+            if (TemporaryPtr<const System> departure_system = IsDepartingFromSystem(fleet)) {
+                departing_fleets_new[std::make_pair(departure_system/*TODO restore when test ->ID()*/, fleet->Owner())].push_back(fleet->ID());
+
+            // Collect stationary fleets by system.
+            } else if (TemporaryPtr<const System> stationary_system = IsStationaryInSystem(fleet)) {
+                // DebugLogger() << fleet->Name() << " is Stationary." ;
+                stationary_fleets_new[std::make_pair(stationary_system/*->ID()*/, fleet->Owner())].push_back(fleet->ID());
+
+            // Collect traveling fleets between systems by location
+            } else if (IsMoving(fleet)) {
+                // DebugLogger() << fleet->Name() << " is on the move." ;
+                moving_fleets_new[std::make_pair(std::make_pair(fleet->X(), fleet->Y()), fleet->Owner())].push_back(fleet->ID());
+            } else {
+                ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit.";
+            }
+        }
 
 
     }{ScopedTimer timer("RefreshFleetButtons() P4 clearing", true);
