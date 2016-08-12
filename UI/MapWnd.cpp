@@ -4389,6 +4389,36 @@ namespace {
                 && fleet->SystemID() == INVALID_OBJECT_ID);
     }
 
+    /** TEST DELETE below*/
+    template <typename K>
+    void test_map_equivalence(
+        boost::unordered_map<std::pair<K, int>, std::vector<int> > & new_map,
+        std::map<K, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > &ref_map,
+        std::string const & errmsg) {
+        boost::unordered_map<std::pair<K, int>, std::vector<int> > converted_map;
+        for (typename std::map<K, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::const_iterator it = ref_map.begin();
+             it != ref_map.end(); ++it) {
+            for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator jt = it->second.begin();
+                 jt != it->second.end(); ++jt) {
+                for (std::vector<TemporaryPtr<const Fleet> >::const_iterator kt = jt->second.begin();
+                     kt != jt->second.end(); ++kt) {
+                    converted_map[std::make_pair(it->first, jt->first)].push_back((*kt)->ID());
+                    if (new_map.count(std::make_pair(it->first, jt->first)) == 0 )
+                        ErrorLogger() << " missing system, empire or loc,empire key "
+                                      << "(sys,owner,fleet) = (" << (*kt)->SystemID() <<", "
+                                      <<jt->first<<", "<<(*kt)->Name()<<" ("<<(*kt)->ID()<<")";
+                }
+            }
+        }
+        if (new_map != converted_map) {
+            ErrorLogger() << "new_map != converted_map "<< errmsg
+                          << " ref size " << ref_map.size() << " new size " << new_map.size();
+        } else {
+            DebugLogger() << "new_map and old match for " << errmsg;
+        }
+    }
+    /** TEST DELETE above*/
+
 }
 
 void MapWnd::RefreshFleetButtons()
@@ -4576,6 +4606,13 @@ void MapWnd::DeferredRefreshFleetButtons() {
             }
         }
 
+    }{ScopedTimer timer("RefreshFleetButtons() P234 check all", true);
+    /** TEST DELETE below*/
+
+        test_map_equivalence(departing_fleets_new, departing_fleets, "departing_fleets");
+        test_map_equivalence(stationary_fleets_new, stationary_fleets, "stationary_fleets");
+        test_map_equivalence(moving_fleets_new, moving_fleets, "moving_fleets");
+    /** TEST_DELETE above*/
 
     }{ScopedTimer timer("RefreshFleetButtons() P4 clearing", true);
     // clear old fleet buttons
