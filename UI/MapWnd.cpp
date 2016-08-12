@@ -1657,7 +1657,7 @@ void MapWnd::RenderSystemOverlays() {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glLoadIdentity();
-    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+    for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
          it != m_system_icons.end(); ++it)
     { it->second->RenderOverlay(ZoomFactor()); }
     glPopMatrix();
@@ -1729,7 +1729,7 @@ void MapWnd::RenderSystems() {
         glLineWidth(1.5f);
         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+        for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
              it != m_system_icons.end(); ++it)
         {
             const SystemIcon* icon = it->second;
@@ -2551,7 +2551,7 @@ void MapWnd::InitTurnRendering() {
     const ObjectMap& objects = Objects();
 
     // remove old system icons
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
     m_system_icons.clear();
 
@@ -2661,7 +2661,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     }
 
 
-    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
         TemporaryPtr<const System> system = GetSystem(system_id);
@@ -3189,7 +3189,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
     m_starlane_endpoints.clear();
 
-    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         int system_id = it->first;
 
         // skip systems that don't actually exist
@@ -3718,13 +3718,13 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
 }
 
 void MapWnd::ShowSystemNames() {
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         it->second->ShowName();
     }
 }
 
 void MapWnd::HideSystemNames() {
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         it->second->HideName();
     }
 }
@@ -3903,7 +3903,7 @@ void MapWnd::SelectSystem(int system_id) {
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(false);
         }
@@ -3916,7 +3916,7 @@ void MapWnd::SelectSystem(int system_id) {
 
         // place map selection indicator on newly selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(true);
         }
@@ -4189,7 +4189,7 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
@@ -4238,7 +4238,7 @@ void MapWnd::DoFleetButtonsLayout() {
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
 
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        boost::unordered_map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
             ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
@@ -4268,7 +4268,7 @@ void MapWnd::DoFleetButtonsLayout() {
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
 
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        boost::unordered_map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
             ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
@@ -5480,7 +5480,7 @@ void MapWnd::Sanitize() {
 
     m_projected_fleet_lines.clear();
 
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         delete it->second;
     m_system_icons.clear();
 

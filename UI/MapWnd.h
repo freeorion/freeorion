@@ -402,7 +402,7 @@ private:
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
-    std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
+    boost::unordered_map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
     std::map<int, FieldIcon*>   m_field_icons;      //!< field icons in the main map, indexed by field id
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
     ResearchWnd*                m_research_wnd;     //!< research screen
