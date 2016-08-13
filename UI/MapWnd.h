@@ -426,13 +426,8 @@ private:
 
     std::map<int, std::set<FleetButton*> >          m_stationary_fleet_buttons;             //!< icons representing fleets at a system that are not departing, indexed by system
     std::map<int, std::set<FleetButton*> >          m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
-    std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
+    std::map<std::pair<double, double>,  std::set<FleetButton*> > m_moving_fleet_buttons;   //!< icons representing fleets not at a system
     std::map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
-
-    std::map<int, std::set<FleetButton*> >          m_stationary_fleet_buttons_new;             //!< icons representing fleets at a system that are not departing, indexed by system
-    std::map<int, std::set<FleetButton*> >          m_departing_fleet_buttons_new;              //!< icons representing fleets at a system that are departing, indexed by system
-    std::map<std::pair<double, double>,  std::set<FleetButton*> > m_moving_fleet_buttons_new;                 //!< icons representing fleets not at a system
-    std::map<int, FleetButton*>                     m_fleet_buttons_new;                        //!< fleet icons, index by fleet
 
     boost::unordered_map<int, boost::signals2::connection>               m_fleet_state_change_signals;
     boost::unordered_map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
