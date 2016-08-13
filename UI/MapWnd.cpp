@@ -4445,24 +4445,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
         }
 
     }{ScopedTimer timer("RefreshFleetButtons() P4 clearing", true);
-    // clear old fleet buttons
-    m_fleet_buttons.clear();            // duplicates pointers in following containers
-
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
-            delete *set_it;
-    m_stationary_fleet_buttons.clear();
-
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
-            delete *set_it;
-    m_departing_fleet_buttons.clear();
-
-    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
-            delete *set_it;
-    m_moving_fleet_buttons.clear();
-
+        DeleteFleetButtons();
     }
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
@@ -4518,6 +4501,28 @@ void MapWnd::CreateFleetButtonsOfType (
         GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
         GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
     }
+}
+
+void MapWnd::DeleteFleetButtons() {
+    m_fleet_buttons.clear();            // duplicates pointers in following containers
+
+    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin();
+         it != m_stationary_fleet_buttons.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_stationary_fleet_buttons.clear();
+
+    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
+         it != m_departing_fleet_buttons.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_departing_fleet_buttons.clear();
+
+    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator it = m_moving_fleet_buttons.begin();
+         it != m_moving_fleet_buttons.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_moving_fleet_buttons.clear();
 }
 
 void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
@@ -5328,29 +5333,7 @@ void MapWnd::Sanitize() {
 
     m_starlane_endpoints.clear();
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator set_it = set.begin(); set_it != set.end(); ++set_it)
-            delete *set_it;
-        set.clear();
-    }
-    m_stationary_fleet_buttons.clear();
-
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator set_it = set.begin(); set_it != set.end(); ++set_it)
-            delete *set_it;
-        set.clear();
-    }
-    m_departing_fleet_buttons.clear();
-
-    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
-         pos_it != m_moving_fleet_buttons.end(); ++pos_it)
-        for (std::set<FleetButton*>::iterator set_it = pos_it->second.begin(); set_it != pos_it->second.end(); ++set_it)
-            delete *set_it;
-    m_moving_fleet_buttons.clear();
-
-    m_fleet_buttons.clear();    // contains duplicate pointers of those in moving, departing and stationary set / maps, so don't need to delete again
+    DeleteFleetButtons();
 
     for (boost::unordered_map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();

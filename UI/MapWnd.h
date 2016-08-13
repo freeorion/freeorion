@@ -236,6 +236,9 @@ private:
         const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
         const FleetButton::SizeType& fleet_button_size);
 
+    /** Delete all fleet buttons.*/
+    void            DeleteFleetButtons();
+
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
 
     /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
