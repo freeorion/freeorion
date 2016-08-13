@@ -227,6 +227,15 @@ private:
     void            RefreshFleetButtons();
     /**  Removes old / existing and create new fleet buttons. Only called once per render interval.*/
     void            DeferredRefreshFleetButtons();
+
+    /** Use the vectors of fleet ids from \p fleets_map to create fleet buttons in \p
+        type_fleet_buttons and record the fleet buttons in \p m_fleet_buttons.*/
+    template <typename K>
+    void            CreateFleetButtonsOfType(
+        std::map<K, std::set<FleetButton*> >& type_fleet_buttons,
+        const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
+        const FleetButton::SizeType& fleet_button_size);
+
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
 
     /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
@@ -419,6 +428,11 @@ private:
     std::map<int, std::set<FleetButton*> >          m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
     std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
     std::map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
+
+    std::map<int, std::set<FleetButton*> >          m_stationary_fleet_buttons_new;             //!< icons representing fleets at a system that are not departing, indexed by system
+    std::map<int, std::set<FleetButton*> >          m_departing_fleet_buttons_new;              //!< icons representing fleets at a system that are departing, indexed by system
+    std::map<std::pair<double, double>,  std::set<FleetButton*> > m_moving_fleet_buttons_new;                 //!< icons representing fleets not at a system
+    std::map<int, FleetButton*>                     m_fleet_buttons_new;                        //!< fleet icons, index by fleet
 
     boost::unordered_map<int, boost::signals2::connection>               m_fleet_state_change_signals;
     boost::unordered_map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;

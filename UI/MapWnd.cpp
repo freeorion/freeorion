@@ -4335,7 +4335,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<cons
 
 namespace {
 
-    typedef boost::unordered_map<std::pair<TemporaryPtr<const System>, int>, std::vector<int> > SystemXEmpireToFleetsMap;
+    typedef boost::unordered_map<std::pair<int, int>, std::vector<int> > SystemXEmpireToFleetsMap;
     typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int> > LocationXEmpireToFleetsMap;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
@@ -4559,12 +4559,12 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
             // Collect fleets with a travel route just departing.
             if (TemporaryPtr<const System> departure_system = IsDepartingFromSystem(fleet)) {
-                departing_fleets_new[std::make_pair(departure_system/*TODO restore when test ->ID()*/, fleet->Owner())].push_back(fleet->ID());
+                departing_fleets_new[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
             // Collect stationary fleets by system.
             } else if (TemporaryPtr<const System> stationary_system = IsStationaryInSystem(fleet)) {
                 // DebugLogger() << fleet->Name() << " is Stationary." ;
-                stationary_fleets_new[std::make_pair(stationary_system/*->ID()*/, fleet->Owner())].push_back(fleet->ID());
+                stationary_fleets_new[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
             // Collect traveling fleets between systems by location
             } else if (IsMoving(fleet)) {
@@ -4594,12 +4594,34 @@ void MapWnd::DeferredRefreshFleetButtons() {
     m_moving_fleet_buttons.clear();
 
 
+    }{ScopedTimer timer("RefreshFleetButtons() P4 clearing new", true);
+    // clear old fleet buttons
+    m_fleet_buttons_new.clear();            // duplicates pointers in following containers
+
+    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons_new.begin(); it != m_stationary_fleet_buttons_new.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_stationary_fleet_buttons_new.clear();
+
+    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons_new.begin(); it != m_departing_fleet_buttons_new.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_departing_fleet_buttons_new.clear();
+
+    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator it = m_moving_fleet_buttons_new.begin(); it != m_moving_fleet_buttons_new.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_moving_fleet_buttons_new.clear();
 
     }
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
+    {ScopedTimer timer("RefreshFleetButtons() P567 drawing all", true);
+        CreateFleetButtonsOfType(m_departing_fleet_buttons_new,  departing_fleets_new, FLEETBUTTON_SIZE);
+        CreateFleetButtonsOfType(m_stationary_fleet_buttons_new, stationary_fleets_new, FLEETBUTTON_SIZE);
+        CreateFleetButtonsOfType(m_moving_fleet_buttons_new,     moving_fleets_new, FLEETBUTTON_SIZE);
 
-    {ScopedTimer timer("RefreshFleetButtons() P5 draw departing", true);
+    }{ScopedTimer timer("RefreshFleetButtons() P5 draw departing", true);
     // departing fleets
     for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
          departing_fleets_it = departing_fleets.begin();
@@ -4723,6 +4745,37 @@ void MapWnd::DeferredRefreshFleetButtons() {
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
         SetFleetMovementLine(it->first);
+    }
+}
+
+template <typename K>
+void MapWnd::CreateFleetButtonsOfType (
+    std::map<K, std::set<FleetButton*> >& type_fleet_buttons,
+    const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
+    const FleetButton::SizeType & fleet_button_size) {
+    for (typename boost::unordered_map<std::pair<K, int>, std::vector<int> >::const_iterator fleets_it = fleets_map.begin();
+         fleets_it != fleets_map.end(); ++fleets_it)
+    {
+        const K& key = fleets_it->first.first;
+
+        // buttons need fleet IDs
+        const std::vector<int>& fleet_IDs = fleets_it->second;
+        if (fleet_IDs.empty())
+            continue;
+
+        // create new fleetbutton for this cluster of fleets
+        FleetButton* fb = new FleetButton(fleet_IDs, fleet_button_size);
+
+        // store per type of fleet button.
+        type_fleet_buttons[key].insert(fb);
+
+        // store for every fleet
+        for (std::vector<int>::const_iterator fleet_it = fleet_IDs.begin(); fleet_it != fleet_IDs.end(); ++fleet_it)
+            m_fleet_buttons[(*fleet_it)] = fb;
+
+        AttachChild(fb);
+        GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
+        GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
     }
 }
 
