@@ -4027,7 +4027,7 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
             fleet_wnd = manager.NewFleetWnd(system->ID(), fleet->Owner());
         } else {
             // get all (moving) fleets represented by fleet button for this fleet
-            std::map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
+            boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
             if (it == m_fleet_buttons.end()) {
                 ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
                 return;
@@ -4226,7 +4226,7 @@ void MapWnd::DoFleetButtonsLayout() {
     const int SYSTEM_ICON_SIZE = SystemIconSize();
 
     // position departing fleet buttons
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
         // calculate system icon position
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
@@ -4247,8 +4247,8 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        std::set<FleetButton*>& buttons = it->second;
-        for (std::set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
+        boost::unordered_set<FleetButton*>& buttons = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, true);
             ++n;
             (*button_it)->MoveTo(ul + icon_ul);
@@ -4256,7 +4256,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position stationary fleet buttons
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
         // calculate system icon position
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
@@ -4277,8 +4277,8 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        std::set<FleetButton*>& buttons = it->second;
-        for (std::set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
+        boost::unordered_set<FleetButton*>& buttons = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, false);
             ++n;
             (*button_it)->MoveTo(ul + icon_ul);
@@ -4286,9 +4286,9 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position moving fleet buttons
-    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
+    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
          pos_it != m_moving_fleet_buttons.end(); ++pos_it) {
-        for (std::set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
+        for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
             FleetButton* fb = *it;
 
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
@@ -4467,14 +4467,14 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
 
     // create movement lines (after positioning buttons, so lines will originate from button location)
-    for (std::map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
+    for (boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
         SetFleetMovementLine(it->first);
     }
 }
 
 template <typename K>
 void MapWnd::CreateFleetButtonsOfType (
-    std::map<K, std::set<FleetButton*> >& type_fleet_buttons,
+    boost::unordered_map<K, boost::unordered_set<FleetButton*> >& type_fleet_buttons,
     const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
     const FleetButton::SizeType & fleet_button_size) {
     for (typename boost::unordered_map<std::pair<K, int>, std::vector<int> >::const_iterator fleets_it = fleets_map.begin();
@@ -4506,21 +4506,21 @@ void MapWnd::CreateFleetButtonsOfType (
 void MapWnd::DeleteFleetButtons() {
     m_fleet_buttons.clear();            // duplicates pointers in following containers
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin();
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin();
          it != m_stationary_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+        for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
             delete *set_it;
     m_stationary_fleet_buttons.clear();
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
          it != m_departing_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+        for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
             delete *set_it;
     m_departing_fleet_buttons.clear();
 
-    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator it = m_moving_fleet_buttons.begin();
-         it != m_moving_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator
+             it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+        for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
             delete *set_it;
     m_moving_fleet_buttons.clear();
 }
@@ -5211,21 +5211,21 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+        boost::unordered_set<FleetButton*>& set = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
             (*button_it)->SetSelected(false);
     }
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+        boost::unordered_set<FleetButton*>& set = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
             (*button_it)->SetSelected(false);
     }
 
-    for (std::map<std::pair<double, double>, std::set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
+    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
          pos_it != m_moving_fleet_buttons.end(); ++pos_it) {
-        for (std::set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
+        for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
             (*it)->SetSelected(false);
         }
     }
@@ -5233,7 +5233,7 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     // add new selection indicators
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         int fleet_id = *it;
-        std::map<int, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet_id);
+        boost::unordered_map<int, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet_id);
         if (button_it != m_fleet_buttons.end())
             button_it->second->SetSelected(true);
     }
