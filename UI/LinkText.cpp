@@ -455,9 +455,15 @@ void TextLinker::LocateLinks() {
 }
 
 int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
-    for (unsigned int i = 0; i < m_links.size(); ++i) {
-        for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
-            GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
+    std::vector<Link> links = m_links;
+
+    for (unsigned int i = 0; i < links.size(); ++i) {
+        const Link& link = links[i];
+
+        for (unsigned int j = 0; j < link.rects.size(); ++j) {
+            GG::Pt tex_ul = TextUpperLeft();
+            GG::Rect link_rect = link.rects[j];
+            GG::Rect r = tex_ul + link_rect;
             if (r.Contains(pt))
                 return i;
         }
