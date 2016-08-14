@@ -3,28 +3,40 @@
 #include "OptionsDB.h"
 #include "Logger.h"
 
-#include <boost/timer.hpp>
-
+#include <boost/chrono/io/duration_io.hpp>
 
 class ScopedTimer::ScopedTimerImpl {
 public:
     ScopedTimerImpl(const std::string& timed_name, bool always_output) :
-        m_timer(),
+        m_start(boost::chrono::high_resolution_clock::now()),
         m_name(timed_name),
         m_always_output(always_output)
     {}
     ~ScopedTimerImpl() {
-        if (m_timer.elapsed() * 1000.0 > 1 && ( m_always_output || GetOptionsDB().Get<bool>("verbose-logging")))
-            DebugLogger() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+        boost::chrono::nanoseconds duration = boost::chrono::high_resolution_clock::now() - m_start;
+        if (duration >= boost::chrono::milliseconds(1) && ( m_always_output || GetOptionsDB().Get<bool>("verbose-logging")))
+            if (duration >= boost::chrono::milliseconds(10))
+                DebugLogger() << m_name << " time: "
+                              << boost::chrono::symbol_format
+                              << boost::chrono::duration_cast<boost::chrono::milliseconds>(duration);
+            else if (duration >= boost::chrono::microseconds(10))
+                DebugLogger() << m_name << " time: "
+                              << boost::chrono::symbol_format
+                              << boost::chrono::duration_cast<boost::chrono::microseconds>(duration);
+            else
+                DebugLogger() << m_name << " time: "
+                              << boost::chrono::symbol_format
+                              << boost::chrono::duration_cast<boost::chrono::nanoseconds>(duration);
     }
-    boost::timer    m_timer;
-    std::string     m_name;
-    bool            m_always_output;
+    boost::chrono::high_resolution_clock::time_point m_start;
+    std::string                                      m_name;
+    bool                                             m_always_output;
 };
 
 ScopedTimer::ScopedTimer(const std::string& timed_name, bool always_output) :
-    m_impl(new ScopedTimerImpl(timed_name, always_output))
+    pimpl(new ScopedTimerImpl(timed_name, always_output))
 {}
 
+// ~ScopedTimer is required because Impl is defined here.
 ScopedTimer::~ScopedTimer()
-{ delete m_impl; }
+{ }

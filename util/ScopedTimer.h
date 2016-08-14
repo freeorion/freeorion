@@ -5,17 +5,26 @@
 
 #include "Export.h"
 
+// TODO change boost to std when C++11 is adopted.
+#include <boost/chrono/chrono.hpp>
+#include <boost/scoped_ptr.hpp>
+
 /** Wrapper for boost::timer that outputs time during which this object
-  * existed.  Created in the scope of a function, and passed the appropriate
-  * name, it will output to DebugLogger() the time elapsed while
-  * the function was executing. */
+    existed.  Created in the scope of a function, and passed the appropriate
+    name, it will output to DebugLogger() the time elapsed while
+    the function was executing.
+
+    If \p always_output is false it never outputs.
+*/
+
 class FO_COMMON_API ScopedTimer {
 public:
     ScopedTimer(const std::string& timed_name, bool always_output = false);
     ~ScopedTimer();
 private:
     class ScopedTimerImpl;
-    ScopedTimerImpl*    m_impl;
+    // TODO use C++11 unique_ptr
+    boost::scoped_ptr<ScopedTimerImpl> const pimpl;
 };
 
 #endif // _MultiplayerCommon_h_
