@@ -21,7 +21,7 @@ BuildingType
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 5 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/blackhole.png"
