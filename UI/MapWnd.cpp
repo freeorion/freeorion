@@ -4388,7 +4388,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
         return;
     m_deferred_refresh_fleet_buttons = false;
 
-    ScopedTimer timer("RefreshFleetButtons()", true);
+    ScopedTimer timer("RefreshFleetButtons()");
 
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
@@ -4401,60 +4401,49 @@ void MapWnd::DeferredRefreshFleetButtons() {
     SystemXEmpireToFleetsMap   stationary_fleets;
     LocationXEmpireToFleetsMap moving_fleets;
 
-    {ScopedTimer timer("RefreshFleetButtons() P234 set all", true);
-        for (std::map<int, TemporaryPtr<UniverseObject> >::const_iterator candidate_it = Objects().ExistingFleetsBegin();
-             candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it) {
-            TemporaryPtr<const Fleet> fleet = IsQualifiedFleet(
-                candidate_it->second, client_empire_id,
-                this_client_known_destroyed_objects, this_client_stale_object_info);
+    for (std::map<int, TemporaryPtr<UniverseObject> >::const_iterator candidate_it = Objects().ExistingFleetsBegin();
+         candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it) {
+        TemporaryPtr<const Fleet> fleet = IsQualifiedFleet(
+            candidate_it->second, client_empire_id,
+            this_client_known_destroyed_objects, this_client_stale_object_info);
 
-            if (!fleet)
-                continue;
+        if (!fleet)
+            continue;
 
-            // Collect fleets with a travel route just departing.
-            if (TemporaryPtr<const System> departure_system = IsDepartingFromSystem(fleet)) {
-                departing_fleets[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
+        // Collect fleets with a travel route just departing.
+        if (TemporaryPtr<const System> departure_system = IsDepartingFromSystem(fleet)) {
+            departing_fleets[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
             // Collect stationary fleets by system.
-            } else if (TemporaryPtr<const System> stationary_system = IsStationaryInSystem(fleet)) {
-                // DebugLogger() << fleet->Name() << " is Stationary." ;
-                stationary_fleets[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
+        } else if (TemporaryPtr<const System> stationary_system = IsStationaryInSystem(fleet)) {
+            // DebugLogger() << fleet->Name() << " is Stationary." ;
+            stationary_fleets[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
             // Collect traveling fleets between systems by location
-            } else if (IsMoving(fleet)) {
-                // DebugLogger() << fleet->Name() << " is on the move." ;
-                moving_fleets[std::make_pair(std::make_pair(fleet->X(), fleet->Y()), fleet->Owner())].push_back(fleet->ID());
-            } else {
-                ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit.";
-            }
+        } else if (IsMoving(fleet)) {
+            // DebugLogger() << fleet->Name() << " is on the move." ;
+            moving_fleets[std::make_pair(std::make_pair(fleet->X(), fleet->Y()), fleet->Owner())].push_back(fleet->ID());
+        } else {
+            ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit.";
         }
-
-    }{ScopedTimer timer("RefreshFleetButtons() P4 clearing", true);
-        DeleteFleetButtons();
     }
+
+    DeleteFleetButtons();
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
-    {ScopedTimer timer("RefreshFleetButtons() P567 drawing all", true);
-        CreateFleetButtonsOfType(m_departing_fleet_buttons,  departing_fleets, FLEETBUTTON_SIZE);
-        CreateFleetButtonsOfType(m_stationary_fleet_buttons, stationary_fleets, FLEETBUTTON_SIZE);
-        CreateFleetButtonsOfType(m_moving_fleet_buttons,     moving_fleets, FLEETBUTTON_SIZE);
-
-    }{ScopedTimer timer("RefreshFleetButtons() P8 pos", true);
+    CreateFleetButtonsOfType(m_departing_fleet_buttons,  departing_fleets, FLEETBUTTON_SIZE);
+    CreateFleetButtonsOfType(m_stationary_fleet_buttons, stationary_fleets, FLEETBUTTON_SIZE);
+    CreateFleetButtonsOfType(m_moving_fleet_buttons,     moving_fleets, FLEETBUTTON_SIZE);
 
     // position fleetbuttons
     DoFleetButtonsLayout();
-    }{ScopedTimer timer("RefreshFleetButtons() P9 select", true);
-
 
     // add selection indicators to fleetbuttons
     RefreshFleetButtonSelectionIndicators();
-    }{ScopedTimer timer("RefreshFleetButtons() P10 moveline", true);
-
 
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
         SetFleetMovementLine(it->first);
-    }
 }
 
 template <typename K>
