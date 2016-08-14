@@ -687,7 +687,7 @@ VISION
 Johtoajatus
 
 FREEORION_VISION
-'''FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, suuren kampanjan muodossa. '''
+'''FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, »suuren kampanjan» muodossa. '''
 
 ###########################
 # Game Menu               #
