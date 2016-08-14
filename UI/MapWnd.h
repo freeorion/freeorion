@@ -156,7 +156,6 @@ public:
     void            ReselectLastFleet();                                    //!< re-selects the most recent selected fleet, if a valid one exists
 
     void            RemoveFleet(int fleet_id); //!< removes specified fleet.
-    void            SetFleetMovementLine(const FleetButton* fleet_button);  //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
     void            SetFleetMovementLine(int fleet_id);                     //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
     /* creates specially-coloured projected fleet movement line for specified

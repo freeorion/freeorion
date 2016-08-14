@@ -4060,13 +4060,6 @@ void MapWnd::RemoveFleet(int fleet_id) {
     RefreshFleetButtons();
 }
 
-void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button) {
-    assert(fleet_button);
-    // each fleet represented by button could have different move path
-    for (std::vector<int>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it)
-        SetFleetMovementLine(*it);
-}
-
 void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
