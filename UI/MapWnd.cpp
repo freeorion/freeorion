@@ -286,11 +286,6 @@ namespace {
         GetOptionsDB().Set(option_name, !initially_enabled);
         return !initially_enabled;
     }
-
-
-    double last_render_output = 0.0;
-    double num_render = 0.0;
-    double num_update = 0.0;
 }
 
 
@@ -1415,15 +1410,6 @@ void MapWnd::Render() {
         return; // as of this writing, the design screen has a fully opaque background
     if (m_research_wnd->Visible())
         return;
-
-    num_render += 1.0;
-    if ((GG::GUI::GetGUI()->Ticks() - last_render_output) > 1000.0){
-        last_render_output = GG::GUI::GetGUI()->Ticks();
-        double up_per_render = num_update / num_render;
-        DebugLogger() << "Updates per render " << up_per_render << "(" << num_update <<"/"<<num_render<<")";
-        num_update = 0;
-        num_render = 0;
-    }
 
     DeferredRefreshFleetButtons();
 
@@ -4402,7 +4388,6 @@ void MapWnd::DeferredRefreshFleetButtons() {
         return;
     m_deferred_refresh_fleet_buttons = false;
 
-    num_update += 1.0;
     ScopedTimer timer("RefreshFleetButtons()", true);
 
     // determine fleets that need buttons so that fleets at the same location can
