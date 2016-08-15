@@ -33,7 +33,7 @@ public:
         return (duration >= m_threshold && (m_enable_output || GetOptionsDB().Get<bool>("verbose-logging")));
     }
 
-    void FormatDuration(std::stringstream &ss, const boost::chrono::nanoseconds & duration) {
+    void FormatDuration(std::stringstream& ss, const boost::chrono::nanoseconds & duration) {
         ss << boost::chrono::symbol_format << std::setw(8) << std::right;
         if (duration >= boost::chrono::milliseconds(10))
             ss << boost::chrono::duration_cast<boost::chrono::milliseconds>(duration);
@@ -70,8 +70,8 @@ class SectionedScopedTimer::SectionedScopedTimerImpl : public ScopedTimer::Scope
     struct Sections {
         Sections(const boost::chrono::high_resolution_clock::time_point &now,
                  const boost::chrono::nanoseconds& time_from_start) :
-            m_table(), m_section_start(now), m_curr(), m_section_names() {
-
+            m_table(), m_section_start(now), m_curr(), m_section_names()
+        {
             // Create a dummy "" section so that m_curr is always a valid iterator.
             std::pair<SectionTable::iterator, bool> curr = m_table.insert(std::make_pair("", time_from_start));
             m_curr = curr.first;
@@ -79,8 +79,8 @@ class SectionedScopedTimer::SectionedScopedTimerImpl : public ScopedTimer::Scope
 
         /** Add time to the current section and then setup the new section. */
         void Accumulate(const boost::chrono::high_resolution_clock::time_point &now,
-                        const std::string & section_name) {
-
+                        const std::string & section_name)
+        {
             if (m_curr->first == section_name)
                 return;
 
@@ -118,7 +118,7 @@ class SectionedScopedTimer::SectionedScopedTimerImpl : public ScopedTimer::Scope
 
 public:
     SectionedScopedTimerImpl(const std::string& timed_name, bool enable_output,
-                    boost::chrono::microseconds threshold) :
+                             boost::chrono::microseconds threshold) :
         ScopedTimerImpl(timed_name, enable_output, threshold)
     {}
 
@@ -146,13 +146,14 @@ public:
         // Find the longest name to right align the times.
         size_t longest_section_name(0);
         for (std::vector<std::string>::const_iterator it = m_sections->m_section_names.begin();
-             it != m_sections->m_section_names.end(); ++it) {
+             it != m_sections->m_section_names.end(); ++it)
+        {
             longest_section_name = std::max(longest_section_name, it->size());
         }
 
         for (std::vector<std::string>::const_iterator it = m_sections->m_section_names.begin();
-             it != m_sections->m_section_names.end(); ++it) {
-
+             it != m_sections->m_section_names.end(); ++it)
+       {
             Sections::SectionTable::const_iterator jt = m_sections->m_table.find(*it);
             if (jt == m_sections->m_table.end()) {
                 ErrorLogger() << "Missing section " << *it << " in section table.";
