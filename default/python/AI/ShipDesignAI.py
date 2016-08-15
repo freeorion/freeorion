@@ -671,7 +671,6 @@ class ShipDesigner(object):
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
-        self.species = None         # name of the piloting species (string)
         self.hull = None            # hull object (not hullname!)
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
@@ -696,6 +695,10 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
+        # species modifiers
+        self.weapons_grade = ""
+        self.shields_grade = ""
+        self.troops_grade = ""
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -782,13 +785,13 @@ class ShipDesigner(object):
         self.partnames = partname_list
         self.parts = [get_part_type(part) for part in partname_list if part]
 
-    def update_species(self, speciesname):
+    def update_species(self, species):
         """Set the piloting species.
 
-        :param speciesname:
-        :type speciesname: str
+        :param species:
+        :type species: str
         """
-        self.species = speciesname
+        self.weapons_grade, self.shields_grade, self.troops_grade = foAI.foAIstate.get_piloting_grades(species)
 
     def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
@@ -874,11 +877,10 @@ class ShipDesigner(object):
 
         self._apply_hardcoded_effects()
 
-        if self.species and not ignore_species:
-            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
-            self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
+        if not ignore_species:
+            self.shields = foAI.foAIstate.weight_shields(self.shields, self.shields_grade)
             if self.troops:
-                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, troops_grade)
+                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, self.troops_grade)
 
     def _apply_hardcoded_effects(self):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1078,14 +1080,13 @@ class ShipDesigner(object):
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
             # The same is true for the canProduceShips trait which simply means no hull can be built.
-            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
-                relevant_grades.append("WEAPON: %s" % weapons_grade)
+                relevant_grades.append("WEAPON: %s" % self.weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                relevant_grades.append("SHIELDS: %s" % shields_grade)
+                relevant_grades.append("SHIELDS: %s" % self.shields_grade)
             if TROOPS & self.useful_part_classes:
-                relevant_grades.append("TROOPS: %s" % troops_grade)
+                relevant_grades.append("TROOPS: %s" % self.troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
 
@@ -1462,9 +1463,8 @@ class ShipDesigner(object):
             # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
 
         # species modifiers
-        if self.species and not ignore_species:
-            weapons_grade = foAI.foAIstate.get_piloting_grades(self.species)
-            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
+        if not ignore_species:
+            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(self.weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
         return base_damage + total_tech_bonus + species_modifier
@@ -1477,9 +1477,8 @@ class ShipDesigner(object):
             base_shots = 1
 
         # species modifier
-        if self.species and not ignore_species:
-            weapons_grade, _, _ = foAI.foAIstate.get_piloting_grades(self.species)
-            species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
+        if not ignore_species:
+            species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(self.weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
 
@@ -1491,9 +1490,8 @@ class ShipDesigner(object):
         hangar_name = hangar_part.name
         base_damage = hangar_part.secondaryStat
         # species modifier
-        if self.species and not ignore_species:
-            weapons_grade, _, _ = foAI.foAIstate.get_piloting_grades(self.species)
-            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(hangar_name, 0)
+        if not ignore_species:
+            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(self.weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
         # tech modifier
