@@ -30,6 +30,13 @@ TROOPS_PER_POP = 0.2
 
 TECH_COST_MULTIPLIER = 2.0
 
+# Species modifiers (except for weapons, hangars, fighters)
+SPECIES_RESEARCH_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
+SPECIES_INDUSTRY_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
+SPECIES_POPULATION_MODIFIER = {'BAD': 0.75, 'GOOD': 1.25}
+SPECIES_SUPPLY_MODIFIER = {'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
+
+
 #
 # Specials details (some specials are instead covered in the section they most directly affect
 #
@@ -398,6 +405,22 @@ TROOP_POD_TECHS = (
 SHIP_TECHS_REQUIRING_BLACK_HOLE = (
     "SHP_SOLAR_CONT",
 )
+
+
+# Industry modifiers per population - [[EARLY_PRIORITY]]: Affected by species modifiers
+INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES = {
+    "PRO_FUSION_GEN": 1.0,
+    "GRO_ENERGY_META": 1.0,
+    "PRO_INDUSTRY_CENTER_I": 1.0,
+    "PRO_INDUSTRY_CENTER_II": 1.0,
+    "PRO_INDUSTRY_CENTER_III": 1.0,
+}
+# Industry modifiers per population - [[LATE_PRIORITY]] or later: Not affected by species modifiers
+INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES = {
+    "PRO_ROBOTIC_PROD": 0.5,
+    "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
+    PRO_SINGULAR_GEN: 5.0,
+}
 
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
