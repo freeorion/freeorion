@@ -3491,6 +3491,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         }
 
         case 4: {   // split
+            ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
             // remove first ship from set, so it stays in its existing fleet
             std::set<int>::iterator it = ship_ids_set.begin();
             ship_ids_set.erase(it);
