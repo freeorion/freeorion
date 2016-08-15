@@ -2321,16 +2321,19 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     DebugLogger() << "Initializing turn " << turn_number;
-    ScopedTimer init_timer("MapWnd::InitTurn", true);
+    SectionedScopedTimer timer("MapWnd::InitTurn", boost::chrono::milliseconds(1));
+    timer.EnterSection("init");
 
     //DebugLogger() << GetSupplyManager().Dump();
 
     Universe& universe = GetUniverse();
     const ObjectMap& objects = Objects();
 
+    timer.EnterSection("system graph");
     // FIXME: this is actually only needed when there was no mid-turn update
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
+    timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
@@ -2345,9 +2348,11 @@ void MapWnd::InitTurn() {
 
     GetUniverse().ApplyAppearanceEffects();
 
+    timer.EnterSection("rendering");
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
+    timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
     std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
     for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
@@ -2367,6 +2372,7 @@ void MapWnd::InitTurn() {
     MoveChildUp(m_btn_turn);
 
 
+    timer.EnterSection("sitreps");
     // are there any sitreps to show?
     bool show_intro_sitreps = CurrentTurn() == 1 && GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression") <= TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
@@ -2420,25 +2426,21 @@ void MapWnd::InitTurn() {
     RefreshSliders();
 
 
-    boost::timer timer;
+    timer.EnterSection("update resource pools");
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePools();
-    DebugLogger() << "MapWnd::InitTurn updating resource pools time: " << (timer.elapsed() * 1000.0);
 
 
-    timer.restart();
+    timer.EnterSection("refresh research");
     m_research_wnd->Refresh();
-    DebugLogger() << "MapWnd::InitTurn research wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
-    timer.restart();
+    timer.EnterSection("refresh sidepanel");
     SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
-    DebugLogger() << "MapWnd::InitTurn sidepanel refresh time: " << (timer.elapsed() * 1000.0);
 
 
-    timer.restart();
+    timer.EnterSection("refresh production wnd");
     m_production_wnd->Refresh();
-    DebugLogger() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
     if (turn_number == 1 && this_client_empire) {
@@ -2454,20 +2456,19 @@ void MapWnd::InitTurn() {
         CenterOnMapCoord(0.0, 0.0);
     }
 
-    timer.restart();
+    timer.EnterSection("refresh indicators");
     RefreshIndustryResourceIndicator();
     RefreshResearchResourceIndicator();
     RefreshTradeResourceIndicator();
     RefreshFleetResourceIndicator();
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
-    DebugLogger() << "MapWnd::InitTurn indicators refresh time: " << (timer.elapsed() * 1000.0);
 
-    timer.restart();
+    timer.EnterSection("dispatch exploring");
     FleetUIManager::GetFleetUIManager().RefreshAll();
     DispatchFleetsExploring();
-    DebugLogger() << "MapWnd::InitTurn fleet UI refresh and exploring dispatch time: " << (timer.elapsed() * 1000.0);
 
+    timer.EnterSection("enable observers");
     HumanClientApp* app = HumanClientApp::GetApp();
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
         // this client is a moderator
