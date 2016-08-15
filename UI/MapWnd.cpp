@@ -3063,9 +3063,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_group_cores;
 
-    std::set<int>                           res_group_core_members;
+    boost::unordered_set<int>                           res_group_core_members;
     boost::unordered_map<int, boost::shared_ptr<std::set<int> > >   member_to_core;
-    boost::shared_ptr<std::set<int> >       under_alloc_res_grp_core_members;
+    boost::shared_ptr<boost::unordered_set<int> >       under_alloc_res_grp_core_members;
 
     if (this_client_empire) {
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
@@ -3167,7 +3167,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(it->first);
                 if (group_core_it != res_group_cores.end()) {
                     if (!under_alloc_res_grp_core_members)
-                        under_alloc_res_grp_core_members = boost::make_shared<std::set<int> >();
+                        under_alloc_res_grp_core_members = boost::make_shared<boost::unordered_set<int> >();
                     under_alloc_res_grp_core_members->insert(group_core_it->second->begin(), group_core_it->second->end());
                 }
             }
