@@ -4273,7 +4273,8 @@ void MapWnd::DoFleetButtonsLayout() {
 
     // position moving fleet buttons
     for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
-         pos_it != m_moving_fleet_buttons.end(); ++pos_it) {
+         pos_it != m_moving_fleet_buttons.end(); ++pos_it)
+    {
         for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
             FleetButton* fb = *it;
 
@@ -4331,7 +4332,7 @@ namespace {
     TemporaryPtr<const Fleet> IsQualifiedFleet(const TemporaryPtr<const UniverseObject>& obj,
                                                int empire_id,
                                                const std::set<int>& known_destroyed_objects,
-                                               const std::set<int>& stale_object_info){
+                                               const std::set<int>& stale_object_info) {
         int object_id = obj->ID();
         TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
 
@@ -4339,16 +4340,18 @@ namespace {
             && !fleet->Empty()
             && (known_destroyed_objects.count(object_id) == 0)
             && (stale_object_info.count(object_id) == 0))
+        {
             return fleet;
+        }
         return TemporaryPtr<const Fleet>();
     }
 
     /** If the \p fleet has orders and is departing from a valid system, return the system*/
     TemporaryPtr<const System> IsDepartingFromSystem(const TemporaryPtr<const Fleet>& fleet) {
-
         if (fleet->FinalDestinationID() != INVALID_OBJECT_ID
             && !fleet->TravelRoute().empty()
-            && fleet->SystemID() != INVALID_OBJECT_ID) {
+            && fleet->SystemID() != INVALID_OBJECT_ID)
+        {
             TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
             if (system)
                 return system;
@@ -4362,7 +4365,8 @@ namespace {
     TemporaryPtr<const System> IsStationaryInSystem(const TemporaryPtr<const Fleet>& fleet) {
         if ((fleet->FinalDestinationID() == INVALID_OBJECT_ID
              || fleet->TravelRoute().empty())
-            && fleet->SystemID() != INVALID_OBJECT_ID) {
+            && fleet->SystemID() != INVALID_OBJECT_ID)
+        {
             TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
             if (system)
                 return system;
@@ -4402,7 +4406,8 @@ void MapWnd::DeferredRefreshFleetButtons() {
     LocationXEmpireToFleetsMap moving_fleets;
 
     for (std::map<int, TemporaryPtr<UniverseObject> >::const_iterator candidate_it = Objects().ExistingFleetsBegin();
-         candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it) {
+         candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it)
+    {
         TemporaryPtr<const Fleet> fleet = IsQualifiedFleet(
             candidate_it->second, client_empire_id,
             this_client_known_destroyed_objects, this_client_stale_object_info);
@@ -4450,7 +4455,8 @@ template <typename K>
 void MapWnd::CreateFleetButtonsOfType (
     boost::unordered_map<K, boost::unordered_set<FleetButton*> >& type_fleet_buttons,
     const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
-    const FleetButton::SizeType & fleet_button_size) {
+    const FleetButton::SizeType & fleet_button_size)
+{
     for (typename boost::unordered_map<std::pair<K, int>, std::vector<int> >::const_iterator fleets_it = fleets_map.begin();
          fleets_it != fleets_map.end(); ++fleets_it)
     {
@@ -4482,20 +4488,26 @@ void MapWnd::DeleteFleetButtons() {
 
     for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin();
          it != m_stationary_fleet_buttons.end(); ++it)
+    {
         for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
             delete *set_it;
+    }
     m_stationary_fleet_buttons.clear();
 
     for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
          it != m_departing_fleet_buttons.end(); ++it)
+    {
         for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
             delete *set_it;
+    }
     m_departing_fleet_buttons.clear();
 
     for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator
-             it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+         it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+    {
         for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
             delete *set_it;
+    }
     m_moving_fleet_buttons.clear();
 }
 
@@ -5191,17 +5203,19 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
             (*button_it)->SetSelected(false);
     }
 
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
+         it != m_departing_fleet_buttons.end(); ++it)
+    {
         boost::unordered_set<FleetButton*>& set = it->second;
         for (boost::unordered_set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
             (*button_it)->SetSelected(false);
     }
 
     for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
-         pos_it != m_moving_fleet_buttons.end(); ++pos_it) {
-        for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
+         pos_it != m_moving_fleet_buttons.end(); ++pos_it)
+    {
+        for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it)
             (*it)->SetSelected(false);
-        }
     }
 
     // add new selection indicators
