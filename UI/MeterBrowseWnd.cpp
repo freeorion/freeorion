@@ -380,13 +380,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             text += UserString("TT_INHERENT");
             break;
 
-        case ECT_UNKNOWN_CAUSE: {
+        case ECT_UNKNOWN_CAUSE:
         default:
             const std::string& label_template = (info_it->custom_label.empty()
                 ? UserString("TT_UNKNOWN")
                 : UserString(info_it->custom_label));
             text += label_template;
-        }
         }
 
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
