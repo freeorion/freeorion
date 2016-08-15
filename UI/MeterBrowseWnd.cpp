@@ -17,6 +17,8 @@
 #include "CUIDrawUtil.h"
 #include "CUIControls.h"
 
+#include <boost/optional.hpp>
+
 namespace {
     /** Returns text wrapped in GG RGBA tags for specified colour */
     std::string ColourWrappedtext(const std::string& text, const GG::Clr colour)
@@ -184,6 +186,36 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
         Initialize();
 }
 
+namespace {
+    /** Return the vector of accounting information from \p obj_id of \p meter_type.*/
+    boost::optional<const std::vector<Effect::AccountingInfo>& > GetAccountingInfo(
+        int obj_id, const MeterType& meter_type)
+    {
+        // get object and meter, aborting if not valid
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(obj_id);
+        if (!obj) {
+            ErrorLogger() << "Couldn't get object with id " << obj_id;
+            return boost::none;
+        }
+
+        // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
+        const Universe& universe = GetUniverse();
+        const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+        Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(obj_id);
+        if (map_it == effect_accounting_map.end())
+            return boost::none;
+        const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
+
+        // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
+        std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(meter_type);
+        if (meter_it == meter_map.end() || meter_it->second.empty())
+            return boost::none;
+
+        const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
+        return info_vec;
+    }
+}
+
 void MeterBrowseWnd::UpdateSummary() {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj)
@@ -240,24 +272,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     }
     m_effect_labels_and_values.clear();
 
-
-    // get object and meter, aborting if not valid
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
-    if (!obj) {
-        ErrorLogger() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
-        return;
-    }
-
-
-    // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
-    const Universe& universe = GetUniverse();
-    const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(m_object_id);
-    if (map_it == effect_accounting_map.end())
-        return;
-    const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
-
-
     // select which meter type to display accounting for.  if there is a valid
     // secondary meter type, then this is probably the target or max meter and
     // should have accounting displayed.  if there is no valid secondary meter
@@ -271,13 +285,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (accounting_displayed_for_meter == INVALID_METER_TYPE)
         return; // nothing to display
 
-
-    // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
-    std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(accounting_displayed_for_meter);
-    if (meter_it == meter_map.end() || meter_it->second.empty())
-        return; // couldn't find appropriate meter type, or there were no entries for that meter.
-    const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
-
+    boost::optional<const std::vector<Effect::AccountingInfo>&>
+        maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
+    if (!maybe_info_vec)
+        return;
+    const std::vector<Effect::AccountingInfo>& info_vec = *maybe_info_vec;
 
     // add label-value pairs for each alteration recorded for this meter
     for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
