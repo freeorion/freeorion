@@ -569,31 +569,3 @@ XMLDoc::RuleDefiner::RuleDefiner()
         alpha_p >> *(EncNameCh)
         ;
 }
-
-
-////////////////////////////////////////////////
-// Free Functions
-////////////////////////////////////////////////
-std::vector<std::string> Tokenize(const std::string& str)
-{
-    std::vector<std::string> retval;
-    parse(str.c_str(), *space_p >> *((+(anychar_p - space_p))[append(retval)] >> *space_p));
-    return retval;
-}
-
-std::pair<std::vector<std::string>, std::vector<std::string> > TokenizeMapString(const std::string& str)
-{
-    std::pair<std::vector<std::string>, std::vector<std::string> > retval;
-    if (!parse(str.c_str(), 
-               *space_p >> *(
-                   ch_p('(') >> *space_p >> 
-                   (+(anychar_p - space_p - ch_p(',')))[append(retval.first)] >> *space_p >> 
-                   ch_p(',') >> *space_p >> 
-                   (+(anychar_p - space_p - ch_p(')')))[append(retval.second)] >> *space_p >> 
-                   ch_p(')') >> *space_p
-                   )
-            ).full) {
-        throw std::invalid_argument("Tokenize() : The string \"" + str + "\" is not a well-formed map string.");
-    }
-    return retval;
-}
