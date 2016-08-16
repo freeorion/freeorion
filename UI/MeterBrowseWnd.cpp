@@ -18,6 +18,7 @@
 #include "CUIControls.h"
 
 #include <boost/optional.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace {
     /** Returns text wrapped in GG RGBA tags for specified colour */
@@ -213,6 +214,70 @@ namespace {
 
         const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
         return info_vec;
+    }
+}
+
+namespace DualMeter {
+
+    /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
+        actual_meter_type and \p target_meter_type associated with \p obj. */
+    boost::tuple<float, float, float> CurrentProjectedTarget(
+        const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type)
+    {
+        const Meter* actual_meter = obj.GetMeter(actual_meter_type);
+
+        float current = Meter::INVALID_VALUE;
+        float projected = Meter::INVALID_VALUE;
+        if (actual_meter) {
+            current = actual_meter->Initial();
+            projected = obj.NextTurnCurrentMeterValue(actual_meter_type);
+
+            // If there is accounting info, correct the projected result by including the
+            // results of all known effects in addition to the default meter change.
+            if (boost::optional<const std::vector<Effect::AccountingInfo>&>
+                maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
+            {
+                const std::vector<Effect::AccountingInfo>& info_vec = *maybe_info_vec;
+
+                projected -= current;
+                for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin();
+                     info_it != info_vec.end(); ++info_it)
+                {
+                    switch (info_it->cause_type) {
+                    case ECT_TECH:
+                    case ECT_BUILDING:
+                    case ECT_FIELD:
+                    case ECT_SPECIAL:
+                    case ECT_SPECIES:
+                    case ECT_SHIP_HULL:
+                    case ECT_SHIP_PART:
+                    case ECT_INHERENT:
+                        projected += info_it->meter_change;
+                        break;
+                    case ECT_UNKNOWN_CAUSE:
+                    default:
+                        ; // Don't add unknown effects.
+                    }
+                }
+            }
+        }
+
+        const Meter* target_meter = obj.GetMeter(target_meter_type);
+        const float target = target_meter ? target_meter->Current() : Meter::INVALID_VALUE;
+
+        // Clamp projected value with the target value
+        if (actual_meter && target_meter
+            && ((current <= target && target < projected)
+                || (projected < target && target <= current)))
+        {
+            projected = target;
+        }
+
+        // Also clamp With no target
+        if (!target_meter)
+            projected = current;
+
+        return boost::make_tuple(current, projected, target);
     }
 }
 
