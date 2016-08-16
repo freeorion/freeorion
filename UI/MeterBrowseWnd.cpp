@@ -289,37 +289,39 @@ void MeterBrowseWnd::UpdateSummary() {
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
     const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
+    if (!primary_meter) {
+        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
+        return;
+    }
+
     float breakdown_total = 0.0f;
     std::string breakdown_meter_name;
 
-    if (primary_meter && secondary_meter) {
+    if (secondary_meter) {
         if (!m_current_value || !m_next_turn_value || !m_change_value) {
             ErrorLogger() << "MeterBrowseWnd::UpdateSummary has primary and secondary meters, but is missing one or more controls to display them";
             return;
         }
 
-        // Primary meter holds value from turn to turn and changes slow each turn.
-        // The current value of the primary meter doesn't change with focus changes
-        // so its growth from turn to turn is important to show
-        float primary_current = obj->InitialMeterValue(m_primary_meter_type);
-        float primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
-        float primary_change = primary_next - primary_current;
+        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+            *obj, m_primary_meter_type, m_secondary_meter_type);
 
-        m_current_value->SetText(DoubleToString(primary_current, 3, false));
-        m_next_turn_value->SetText(DoubleToString(primary_next, 3, false));
+        m_current_value->SetText(DoubleToString(boost::get<0>(current_projected_target), 3, false));
+        m_next_turn_value->SetText(DoubleToString(boost::get<1>(current_projected_target), 3, false));
+        float primary_change = boost::get<1>(current_projected_target) - boost::get<0>(current_projected_target);
         m_change_value->SetText(ColouredNumber(primary_change));
 
         // target or max meter total for breakdown summary
-        breakdown_total = obj->CurrentMeterValue(m_secondary_meter_type);
+        breakdown_total = boost::get<2>(current_projected_target);
         breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
-
-    } else if (primary_meter) {
-        // unpaired meter total for breakdown summary
-        breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
-        breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     } else {
-        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
-        return;
+        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+            *obj, m_primary_meter_type, m_secondary_meter_type);
+
+        // unpaired meter total for breakdown summary
+        breakdown_total = boost::get<0>(current_projected_target);
+        // breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
+        breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     }
 
     // set accounting breakdown total / summary
