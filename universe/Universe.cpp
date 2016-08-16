@@ -1385,7 +1385,7 @@ void Universe::UpdateMeterEstimates()
 void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
     if (object_id == INVALID_OBJECT_ID) {
         std::vector<int> all_objects_vec = m_objects.FindExistingObjectIDs();
-        for (std::vector< int >::iterator id_it = all_objects_vec.begin(); id_it != all_objects_vec.end(); id_it++)
+        for (std::vector< int >::iterator id_it = all_objects_vec.begin(); id_it != all_objects_vec.end(); ++id_it)
             m_effect_accounting_map[*id_it].clear();
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects

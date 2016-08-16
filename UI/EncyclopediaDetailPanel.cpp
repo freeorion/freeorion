@@ -2152,20 +2152,21 @@ namespace {
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     std::vector< float > this_damage = this_ship->AllWeaponsMaxDamage();
-                    for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); shot_it++)
+                    for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); ++shot_it)
                         DebugLogger() << "Weapons Dmg " << *shot_it;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
             std::set<int> selected_fleets = fleet_manager.ActiveFleetWnd()->SelectedFleetIDs();
-            for (std::set< int >::iterator fleet_it = selected_fleets.begin(); fleet_it != selected_fleets.end(); fleet_it++) {
+            for (std::set< int >::iterator fleet_it = selected_fleets.begin(); fleet_it != selected_fleets.end(); ++fleet_it)
+            {
                 if (const TemporaryPtr<Fleet> this_fleet = GetFleet(*fleet_it)) {
                     chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
                 }
             }
         }
-        for (std::set< int >::iterator ship_it = chosen_ships.begin(); ship_it != chosen_ships.end(); ship_it++)
+        for (std::set< int >::iterator ship_it = chosen_ships.begin(); ship_it != chosen_ships.end(); ++ship_it)
             if (const TemporaryPtr<Ship> this_ship = GetShip(*ship_it))
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
@@ -2184,7 +2185,8 @@ namespace {
         detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
-        for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); spec_it++) {
+        for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); ++spec_it)
+        {
             temp->SetSpecies(*spec_it);
             GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
             temp->Resupply();
@@ -2275,20 +2277,21 @@ namespace {
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     std::vector< float > this_damage = this_ship->AllWeaponsMaxDamage();
-                    for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); shot_it++)
+                    for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); ++shot_it)
                         DebugLogger() << "Weapons Dmg " << *shot_it;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
             std::set<int> selected_fleets = fleet_manager.ActiveFleetWnd()->SelectedFleetIDs();
-            for (std::set< int >::iterator fleet_it = selected_fleets.begin(); fleet_it != selected_fleets.end(); fleet_it++) {
+            for (std::set< int >::iterator fleet_it = selected_fleets.begin(); fleet_it != selected_fleets.end(); ++fleet_it)
+            {
                 if (const TemporaryPtr<Fleet> this_fleet = GetFleet(*fleet_it)) {
                     chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
                 }
             }
         }
-        for (std::set< int >::iterator ship_it = chosen_ships.begin(); ship_it != chosen_ships.end(); ship_it++)
+        for (std::set< int >::iterator ship_it = chosen_ships.begin(); ship_it != chosen_ships.end(); ++ship_it)
             if (const TemporaryPtr<Ship> this_ship = GetShip(*ship_it))
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
@@ -2306,7 +2309,8 @@ namespace {
         detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(), enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
-        for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); spec_it++) {
+        for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); ++spec_it)
+        {
             temp->SetSpecies(*spec_it);
             GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
             temp->Resupply();
@@ -2415,7 +2419,8 @@ namespace {
             }
         }
 
-        for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
+        for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); ++it)
+        {
             TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
             TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
             if (!pc)
@@ -2443,7 +2448,7 @@ namespace {
         GetUniverse().InhibitUniverseObjectSignals(true);
 
         for (std::set<std::string>::const_iterator it = species_names.begin();
-             it != species_names.end(); it++)
+             it != species_names.end(); ++it)
         {
             std::string species_name = *it;
 
@@ -2482,7 +2487,7 @@ namespace {
         bool negative_header_placed = false;
 
         for (std::multimap<float, std::pair<std::string, PlanetEnvironment> >::const_reverse_iterator
-             it = target_population_species.rbegin(); it != target_population_species.rend(); it++)
+             it = target_population_species.rbegin(); it != target_population_species.rend(); ++it)
         {
             std::string user_species_name = UserString(it->second.first);
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % LinkTaggedText(VarText::SPECIES_TAG, it->second.first));
@@ -2734,7 +2739,7 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
         if (m_items_it->first == type && m_items_it->second == name)
             return;
         std::list<std::pair <std::string, std::string> >::iterator end = m_items.end();
-        end--;
+        --end;
         if (m_items_it != end) {
             std::list<std::pair <std::string, std::string> >::iterator i = m_items_it;
             ++i;
@@ -2762,7 +2767,7 @@ void EncyclopediaDetailPanel::PopItem() {
     if (!m_items.empty()) {
         m_items.pop_back();
         if (m_items_it == m_items.end() && m_items_it != m_items.begin())
-            m_items_it--;
+            --m_items_it;
         Refresh();
         m_description_panel->ScrollTo(GG::Y0);   // revert to top for new screen
     }
@@ -2952,7 +2957,7 @@ void EncyclopediaDetailPanel::OnIndex()
 
 void EncyclopediaDetailPanel::OnBack() {
     if (m_items_it != m_items.begin())
-        m_items_it--;
+        --m_items_it;
 
     if (m_items_it == m_items.begin())              // disable Back button, if the beginning is reached
         m_back_button->Disable(true);
@@ -2965,9 +2970,9 @@ void EncyclopediaDetailPanel::OnBack() {
 
 void EncyclopediaDetailPanel::OnNext() {
     std::list<std::pair <std::string, std::string> >::iterator end = m_items.end();
-    end--;
+    --end;
     if (m_items_it != end && !m_items.empty())
-        m_items_it++;
+        ++m_items_it;
 
     if (m_items_it == end)                          // disable Next button, if the end is reached;
         m_next_button->Disable(true);

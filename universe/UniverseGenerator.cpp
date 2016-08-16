@@ -221,7 +221,7 @@ namespace Delauney {
                                     pointNumList.insert(itCur2, Delauney::SortValInt(num, mag));
                                     break;
                                 }
-                                itCur2++;
+                                ++itCur2;
                             }
                             if (itCur2 == itEnd2) {
                                 // point wasn't added, so should go at end
@@ -452,10 +452,10 @@ namespace {
                     accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
                    }
 
-                curSysLanesSetIter++;
+                ++curSysLanesSetIter;
             }
 
-            sysListIter++;
+            ++sysListIter;
         }
         return false; // default
     }
@@ -537,12 +537,12 @@ namespace {
                     tempVectAndMag = VectAndMagTypeQQ(tempVect, mag1);
                     laneVectsMap.insert( MapInsertableTypeQQ(dest1, tempVectAndMag) );
 
-                    laneSetIter1++;
+                    ++laneSetIter1;
                 }
 
                 // iterate through lanes of curSys
                 laneSetIter1 = laneSetArray[curSys].begin();
-                laneSetIter1++;  // start at second, since iterators are used in pairs, and starting both at the first wouldn't be a valid pair
+                ++laneSetIter1;  // start at second, since iterators are used in pairs, and starting both at the first wouldn't be a valid pair
                 while (laneSetIter1 != laneSetEnd) {
                     // get destination of current starlane
                     dest1 = *laneSetIter1;
@@ -603,11 +603,11 @@ namespace {
                                 }
                             }
 
-                            laneSetIter2++;
+                            ++laneSetIter2;
                         }
                     }
 
-                    laneSetIter1++;
+                    ++laneSetIter1;
                 }
             }
         }
@@ -628,7 +628,7 @@ namespace {
                 laneSetArray[lane1.second].insert(lane1.first);
             }
 
-            lanesToRemoveIter++;
+            ++lanesToRemoveIter;
         }
     }
 
@@ -693,7 +693,7 @@ namespace {
                     lanesToRemoveMap.insert( MapInsertableTypeQQ(laneLength2, lane) );
                 } 
 
-                laneSetIter++;
+                ++laneSetIter;
             }
         }
 
@@ -719,7 +719,7 @@ namespace {
                     laneSetArray[lane.second].insert(lane.first);
                 }
             }
-            lanesToRemoveIter++;
+            ++lanesToRemoveIter;
         }
     }
 }
@@ -822,7 +822,7 @@ void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength) {
                 laneSetArray[s1].insert(n);
             }
 
-            laneSetIter++;
+            ++laneSetIter;
         } // end while
     }
 

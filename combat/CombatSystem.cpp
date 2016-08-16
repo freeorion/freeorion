@@ -261,7 +261,8 @@ void CombatInfo::InitializeObjectVisibility()
             continue;
         empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
         empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(empire_id, system->ID());
-        for (std::set< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); obj_it++) {
+        for (std::set< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); ++obj_it)
+        {
             Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(empire_id, *obj_it);
             if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
                 empire_object_visibility[empire_id][*obj_it] = obj_vis;

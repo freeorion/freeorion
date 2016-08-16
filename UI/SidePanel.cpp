@@ -1214,7 +1214,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     GetUniverse().InhibitUniverseObjectSignals(true);
     for (std::vector<TemporaryPtr<const Ship> >::const_iterator
          ship_it = capable_and_available_colony_ships.begin();
-         ship_it != capable_and_available_colony_ships.end(); ship_it++)
+         ship_it != capable_and_available_colony_ships.end(); ++ship_it)
     {
         TemporaryPtr<const Ship> ship = *ship_it;
         if (!ship)
@@ -2842,7 +2842,8 @@ void SidePanel::RefreshImpl() {
         }
         std::vector<GG::DropDownList::Row*> rows;
         rows.reserve(system_map.size());
-        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); sys_it++) {
+        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
+        {
             int sys_id = sys_it->second;
             rows.push_back(new SystemRow(sys_id));
         }

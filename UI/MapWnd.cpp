@@ -372,7 +372,8 @@ public:
             if (TemporaryPtr<const Fleet> fleet = GetFleet(*it)) {
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
-                for (std::set< int >::iterator ship_it = fleet->ShipIDs().begin(); ship_it != fleet->ShipIDs().end(); ship_it++){
+                for (std::set< int >::iterator ship_it = fleet->ShipIDs().begin(); ship_it != fleet->ShipIDs().end(); ++ship_it)
+                {
                     if ( TemporaryPtr< Ship > ship = GetShip(*ship_it)) {
                         const float ship_range = ship->CurrentMeterValue(METER_DETECTION);
                         if (ship_range > 20)
@@ -386,7 +387,8 @@ public:
         }
         // get detection ranges for planets in the selected system (if any)
         if (const TemporaryPtr<const System> system = GetSystem(sel_system_id)) {
-            for (std::set< int >::iterator pid_it = system->PlanetIDs().begin(); pid_it != system->PlanetIDs().end(); pid_it++) {
+            for (std::set< int >::iterator pid_it = system->PlanetIDs().begin(); pid_it != system->PlanetIDs().end(); ++pid_it)
+            {
                 if (const TemporaryPtr< Planet > planet = GetPlanet(*pid_it)) {
                     const float planet_range = planet->CurrentMeterValue(METER_DETECTION);
                     if (planet_range > 20)
@@ -1945,7 +1947,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, float
 
         // get next two vertices
         const MovementLineData::Vertex& vert1 = *verts_it;
-        verts_it++;
+        ++verts_it;
         const MovementLineData::Vertex& vert2 = *verts_it;
 
         // find centres of dots on screen
@@ -3120,14 +3122,14 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // the supply network.
 
         for (boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator res_pool_sys_it = res_pool_systems.begin();
-             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
+             res_pool_sys_it != res_pool_systems.end(); ++res_pool_sys_it)
         {
             boost::shared_ptr<std::set<int> >& group_core = lookup_or_make_shared(res_group_cores, res_pool_sys_it->first);
 
             // All individual resource system are included in the
             // network on their own.
             for (std::set<int>::iterator sys_it=res_pool_sys_it->second->begin();
-                 sys_it != res_pool_sys_it->second->end(); sys_it++)
+                 sys_it != res_pool_sys_it->second->end(); ++sys_it)
             {
                 group_core->insert(*sys_it);
                 res_group_core_members.insert(*sys_it);
@@ -3137,7 +3139,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // unordered_set<int> to improve lookup speed.
             boost::unordered_set<int> terminal_points;
             for (std::set<int>::iterator source_it=res_pool_sys_it->second->begin();
-                 source_it != res_pool_sys_it->second->end(); source_it++)
+                 source_it != res_pool_sys_it->second->end(); ++source_it)
             {
                 terminal_points.insert(*source_it);
             }
@@ -3149,7 +3151,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // All systems on the paths are valid end points so they are
             // added to the core group of systems that will be rendered
             // with thick lines.
-            for (boost::unordered_set<int>::iterator path_it = paths.begin(); path_it!= paths.end(); path_it++) {
+            for (boost::unordered_set<int>::iterator path_it = paths.begin(); path_it!= paths.end(); ++path_it)
+            {
                 group_core->insert(*path_it);
                 res_group_core_members.insert(*path_it);
                 member_to_core[*path_it] = group_core;
@@ -6028,7 +6031,8 @@ void MapWnd::RefreshPopulationIndicator() {
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
-    for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
+    for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); ++it)
+    {
         TemporaryPtr<const UniverseObject> obj = objects.Object(*it);
         TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pc)
@@ -6041,7 +6045,8 @@ void MapWnd::RefreshPopulationIndicator() {
         population_counts[species_name] += this_pop;
         if (const Species* species = GetSpecies(species_name) ) {
             const std::set<std::string>& tags = species->Tags();
-            for (std::set<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++) {
+            for (std::set<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
+            {
                 if (tag_it->compare(0,7, "AI_TAG_") != 0)
                     tag_counts[*tag_it] += this_pop;
             }
@@ -6391,11 +6396,13 @@ namespace { //helper function for DispatchFleetsExploring
     std::set<int> AddNeighboorsToSet(const Empire *empire, const std::set<int> set){
         std::set<int> retval;
         std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
-        for(std::set<int>::iterator el = set.begin(); el != set.end(); el ++){ //for all elements of the set
+        for(std::set<int>::iterator el = set.begin(); el != set.end(); ++el)
+        {
             std::map<int, std::set<int> >::iterator new_neighboors_it = starlanes.find(*el);
             if(new_neighboors_it != starlanes.end()){
                 std::set<int> new_neighboors = new_neighboors_it->second;
-                for(std::set<int>::iterator it = new_neighboors.begin(); it != new_neighboors.end(); it ++){ //for all neighboors of this element
+                for(std::set<int>::iterator it = new_neighboors.begin(); it != new_neighboors.end(); ++it)
+                {
                     retval.insert(*it);
                 }
             }
@@ -6417,7 +6424,8 @@ namespace { //helper function for DispatchFleetsExploring
         bool found = false;
 
         while (distance < 50 && !found) { //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
-            for (std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++) {
+            for (std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; ++sys)
+            {
                 if (supplyable_systems.count(*sys) > 0) {
                     //we found a route to a supplyable system
                     return std::pair<int, int>(*sys, distance);
@@ -6453,7 +6461,7 @@ void MapWnd::DispatchFleetsExploring() {
                 fleet_idle.insert(fleet->ID());
             else
                 systems_being_explored.insert(fleet->FinalDestinationID());
-            it++;
+            ++it;
         }
     }
 
@@ -6473,7 +6481,7 @@ void MapWnd::DispatchFleetsExploring() {
     std::map<int, int> unknown_systems;
     const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
     for (std::set<int>::iterator it = candidates_unknown_systems.begin();
-         it != candidates_unknown_systems.end(); it ++)
+         it != candidates_unknown_systems.end(); ++it)
     {
         TemporaryPtr<System> system = GetSystem(*it);
         if (!system)
@@ -6503,7 +6511,8 @@ void MapWnd::DispatchFleetsExploring() {
         int last_visibility = NUM_VISIBILITIES; // greater than max visibility
         int better_fleet_id;
 
-        for (std::set<int>::iterator it = fleet_idle.begin(); it != fleet_idle.end(); it ++) {
+        for (std::set<int>::iterator it = fleet_idle.begin(); it != fleet_idle.end(); ++it)
+        {
             TemporaryPtr<Fleet> fleet = GetFleet(*it);
             if (!fleet || !fleet->MovePath().empty())
                 continue;
@@ -6511,7 +6520,8 @@ void MapWnd::DispatchFleetsExploring() {
             double far_min_dist = DBL_MAX;
             int far_system_id; //id of the closest unknown system without taking fuel into account
 
-            for (std::map<int, int>::iterator system_it = unknown_systems.begin(); system_it != unknown_systems.end(); system_it ++) {
+            for (std::map<int, int>::iterator system_it = unknown_systems.begin(); system_it != unknown_systems.end(); ++system_it)
+            {
                 if (systems_order_sent.find(system_it->first) != systems_order_sent.end())
                     continue; //someone already went there this turn
 
@@ -6521,7 +6531,8 @@ void MapWnd::DispatchFleetsExploring() {
                 bool is_doable_for_fuel = true;
                 std::list<int> route = pair.first;
                 double current_fuel = fleet->Fuel();
-                for (std::list<int>::iterator route_it = ++(route.begin()); route_it != route.end(); route_it ++) {
+                for (std::list<int>::iterator route_it = ++(route.begin()); route_it != route.end(); ++route_it)
+                {
                     if (supplyable_systems.count(*route_it) > 0) {
                         if (fleet->Fuel() != fleet->MaxFuel()) {
                             is_doable_for_fuel = false; //if we need to ressupply, do it the first time we enter the empire. If we are full, we can cross it.

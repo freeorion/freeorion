@@ -2521,7 +2521,8 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     {
         std::list<GG::ListBox::Row*>::iterator starRow_it = *sel_it;
         bool hasRow = false;
-        for (std::list<GG::ListBox::Row*>::iterator lb_it = m_ships_lb->begin(); lb_it != m_ships_lb->end(); lb_it++) {
+        for (std::list<GG::ListBox::Row*>::iterator lb_it = m_ships_lb->begin(); lb_it != m_ships_lb->end(); ++lb_it)
+        {
             if (lb_it == starRow_it) {
                 hasRow=true;
                 break;

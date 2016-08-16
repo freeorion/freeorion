@@ -251,7 +251,7 @@ void EmpireManager::ResetDiplomacy() {
 
     for (std::map<int, Empire*>::const_iterator emp1_it = m_empire_map.begin(); emp1_it != m_empire_map.end(); ++emp1_it) {
         std::map<int, Empire*>::const_iterator emp2_it = emp1_it;
-        emp2_it++;
+        ++emp2_it;
         for (; emp2_it != m_empire_map.end(); ++emp2_it) {
             const std::pair<int, int> diplo_key = DiploKey(emp1_it->first, emp2_it->first);
             m_empire_diplomatic_statuses[diplo_key] = DIPLO_PEACE;

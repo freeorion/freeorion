@@ -59,7 +59,7 @@ namespace {
     std::vector<std::string>SpeciesFoci(const Species& species) {
         std::vector<std::string> retval;
         const std::vector<FocusType>& foci = species.Foci();
-        for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); f_it++ )
+        for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); ++f_it)
             retval.push_back(f_it->Name());
         return retval;
     }
@@ -165,7 +165,8 @@ namespace {
     std::vector<int>        AttackStatsP(const ShipDesign& ship_design) {
         const std::vector<std::string>& partslist = ship_design.Parts();
         std::vector<int> results;
-        for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); part_it++){
+        for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); ++part_it)
+        {
             const PartType* part = GetPartType(*part_it);
             if (part && part->Class() == PC_DIRECT_WEAPON) { // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
@@ -178,7 +179,7 @@ namespace {
     std::vector<ShipSlotType> HullSlots(const HullType& hull) {
         std::vector<ShipSlotType> retval;
         std::vector< HullType::Slot > slots = hull.Slots();
-        for (std::vector<HullType::Slot>::iterator s_it = slots.begin(); s_it != slots.end(); s_it++ )
+        for (std::vector<HullType::Slot>::iterator s_it = slots.begin(); s_it != slots.end(); ++s_it)
             retval.push_back(s_it->type);
         return retval;
     }

@@ -123,7 +123,8 @@ namespace {
         if (empire_names.empty())
             UserStringList("EMPIRE_NAMES", empire_names);
         std::set<std::string> validNames(empire_names.begin(), empire_names.end());
-        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); player_setup_it++) {
+        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); ++player_setup_it)
+        {
             std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);
             if (name_it != validNames.end())
                 validNames.erase(name_it);

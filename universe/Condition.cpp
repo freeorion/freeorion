@@ -7172,7 +7172,8 @@ namespace {
                 TemporaryPtr<const System> dest_sys1 = *it1;
 
                 // don't need to check a lane in both directions, so start at one past it1
-                std::vector<TemporaryPtr<const System> >::const_iterator it2 = it1; it2++;
+                std::vector<TemporaryPtr<const System> >::const_iterator it2 = it1;
+                ++it2;
                 for (; it2 != m_destination_systems.end(); ++it2) {
                     TemporaryPtr<const System> dest_sys2 = *it2;
                     if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {

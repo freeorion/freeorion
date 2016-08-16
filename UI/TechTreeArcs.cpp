@@ -117,7 +117,7 @@ private:
             const std::vector<TechTreeLayout::Edge*> edges = m_layout.GetOutEdges(*it);
             //prerequisite edge
             for (std::vector<TechTreeLayout::Edge*>::const_iterator edge = edges.begin();
-                 edge != edges.end(); edge++)
+                 edge != edges.end(); ++edge)
             {
                 std::vector<std::pair<double, double> > points;
                 const std::string& from = (*edge)->GetTechFrom();

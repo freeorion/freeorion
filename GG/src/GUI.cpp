@@ -835,7 +835,7 @@ Wnd* GUI::PrevFocusInteractiveWnd() const
     // loop around until finding an interactive enabled control sibling or
     // returning to the focus wnd
     std::list<Wnd*>::const_reverse_iterator loop_it = focus_it;
-    loop_it++;
+    ++loop_it;
     while (loop_it != focus_it) {
         if (loop_it == siblings.rend()) {
             loop_it = siblings.rbegin();
@@ -851,7 +851,7 @@ Wnd* GUI::PrevFocusInteractiveWnd() const
             }
         }
 
-        loop_it++;
+        ++loop_it;
     }
     return focus_wnd;
 }
@@ -878,7 +878,7 @@ Wnd* GUI::NextFocusInteractiveWnd() const
     // loop around until finding an interactive enabled control sibling or
     // returning to the focus wnd
     std::list<Wnd*>::const_iterator loop_it = focus_it;
-    loop_it++;
+    ++loop_it;
     while (loop_it != focus_it) {
         if (loop_it == siblings.end()) {
             loop_it = siblings.begin();
@@ -895,7 +895,7 @@ Wnd* GUI::NextFocusInteractiveWnd() const
         }
 
 
-        loop_it++;
+        ++loop_it;
     }
     return focus_wnd;
 }

@@ -127,7 +127,8 @@ namespace {
             else
                 myQuantSet.insert(quantity);
 
-            for (std::set<int>::iterator it = myQuantSet.begin(); it != myQuantSet.end(); it++) {
+            for (std::set<int>::iterator it = myQuantSet.begin(); it != myQuantSet.end(); ++it)
+            {
                 QuantRow* row =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 

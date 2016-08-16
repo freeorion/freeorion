@@ -2140,7 +2140,7 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
 
 void Empire::UpdateAvailableLanes() {
     for (std::map<int, std::set<int> >::iterator sys_it = m_pending_system_exit_lanes.begin(); 
-         sys_it != m_pending_system_exit_lanes.end(); sys_it++)
+         sys_it != m_pending_system_exit_lanes.end(); ++sys_it)
     {
         m_available_system_exit_lanes[sys_it->first].insert(sys_it->second.begin(), sys_it->second.end());
         sys_it->second.clear();

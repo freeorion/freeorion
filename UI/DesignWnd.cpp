@@ -732,7 +732,7 @@ void PartsListBox::Populate() {
     // if showing parts for a particular empire, cull redundant parts (if enabled)
     if (empire) {
         for (PartGroupsType::iterator group_it=part_groups.begin();
-             group_it != part_groups.end(); group_it++)
+             group_it != part_groups.end(); ++group_it)
         {
             ShipPartClass pclass = group_it->first.first;
             if (!m_show_superfluous_parts)
@@ -745,7 +745,7 @@ void PartsListBox::Populate() {
     // compatible with multiple slot types, ensure it is only displayed once
     std::set<const PartType* > already_added;
     for (PartGroupsType::iterator group_it=part_groups.begin();
-         group_it != part_groups.end(); group_it++)
+         group_it != part_groups.end(); ++group_it)
     {
         std::vector<const PartType* > this_group = group_it->second;
         std::multimap<double, const PartType*> sorted_group;
