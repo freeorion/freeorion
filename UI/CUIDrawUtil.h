@@ -4,6 +4,7 @@
 #include <GG/Clr.h>
 #include <GG/PtRect.h>
 #include <GG/GLClientAndServerBuffer.h>
+#include <boost/scoped_ptr.hpp>
 
 /** adjusts the intensity of the color up or down by \a amount units per color
   * channel; leaves alpha unchanged if \a jointly_capped is true then, if the
@@ -88,6 +89,38 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_r
   * parameters. */
 void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
                                           int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round);
+
+/** ScanlineRenderer renders scanlines in circular/square/arbitrary areas.
+    It loads the scanline shader on first use.
+    There is only expected to by one ScanlineRenderer per compilation unit so
+    that the shader is compiled once.
+
+    Bracketing OpenGL primitives with StartUsing() and StopUsing() will render
+    scanlines in that arbitrary area.*/
+class ScanlineRenderer {
+public:
+    ScanlineRenderer();
+    ~ScanlineRenderer();
+
+    /** Draw scanlines in the circular area bounded by \p ul and \p lr.*/
+    void RenderCircle(const GG::Pt& ul, const GG::Pt& lr);
+
+    /** Draw scanlines in the square area bounded by \p ul and \p lr.*/
+    void RenderRectangle(const GG::Pt& ul, const GG::Pt& lr);
+
+    /** Start using ScanlineRenderer to draw arbitrary shapes with the scanline
+        shader program.*/
+    void StartUsing();
+
+    /** Stop using ScanlineRenderer to draw arbitrary shapes with the scanline
+        shader program.*/
+    void StopUsing();
+
+private:
+    class ScanlineRendererImpl;
+    // TODO use C++11 unique_ptr
+    boost::scoped_ptr<ScanlineRendererImpl> const pimpl;
+};
 
 #endif // _CUIDrawUtil_h_
 

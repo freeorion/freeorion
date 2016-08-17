@@ -1,6 +1,9 @@
 #include "CUIDrawUtil.h"
 
+#include "ShaderProgram.h"
 #include "../util/Logger.h"
+#include "../util/Directories.h"
+#include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
 
@@ -379,3 +382,78 @@ void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG
     buffer.store(lr.x, ul.y + radius);
 }
 
+namespace {
+    const double TWO_PI = 2.0 * 3.14159;
+}
+
+class ScanlineRenderer::ScanlineRendererImpl {
+public:
+    ScanlineRendererImpl() :
+        m_scanline_shader(), m_failed_init(false)
+    {}
+
+    void StartUsing() {
+        if (m_failed_init || (!GetOptionsDB().Get<bool>("UI.system-fog-of-war")))
+            return;
+
+        if (!m_scanline_shader) {
+            if (m_failed_init)
+                return;
+
+            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
+            std::string shader_text;
+            ReadFile(shader_path, shader_text);
+            m_scanline_shader = boost::shared_ptr<ShaderProgram>(
+                ShaderProgram::shaderProgramFactory("", shader_text));
+
+            if (!m_scanline_shader) {
+                ErrorLogger() << "ScanlineRenderer failed to initialize shader.";
+                m_failed_init = true;
+                return;
+            }
+        }
+
+        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
+        m_scanline_shader->Use();
+        m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+    }
+
+    void StopUsing()
+    { m_scanline_shader->stopUse(); }
+
+    void RenderCircle(const GG::Pt& ul, const GG::Pt& lr) {
+        StartUsing();
+        CircleArc(ul, lr, 0.0, TWO_PI, true);
+        StopUsing();
+    }
+
+    void RenderRectangle(const GG::Pt& ul, const GG::Pt& lr) {
+        StartUsing();
+        GG::FlatRectangle(ul, lr, GG::CLR_WHITE, GG::CLR_WHITE, 0u);
+        StopUsing();
+    }
+
+    boost::shared_ptr<ShaderProgram> m_scanline_shader;
+    bool m_failed_init;
+};
+
+
+ScanlineRenderer::ScanlineRenderer() :
+    pimpl(new ScanlineRendererImpl())
+{}
+
+// This destructor is required here because ~ScanlineRendererImpl is declared here.
+ScanlineRenderer::~ScanlineRenderer()
+{}
+
+void ScanlineRenderer::RenderCircle(const GG::Pt& ul, const GG::Pt& lr)
+{ pimpl->RenderCircle(ul, lr); }
+
+void ScanlineRenderer::RenderRectangle(const GG::Pt& ul, const GG::Pt& lr)
+{ pimpl->RenderRectangle(ul, lr); }
+
+void ScanlineRenderer::StartUsing()
+{ pimpl->StartUsing(); }
+
+void ScanlineRenderer::StopUsing()
+{ pimpl->StopUsing(); }
