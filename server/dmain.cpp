@@ -5,6 +5,7 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/Version.h"
 #include "../util/XMLDoc.h"
 
 #include <GG/utf8/checked.h>
@@ -49,6 +50,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     try {
 #endif
         GetOptionsDB().AddFlag('h', "help",         UserStringNop("OPTIONS_DB_HELP"),         false);
+        GetOptionsDB().AddFlag('v', "version",      UserStringNop("OPTIONS_DB_VERSION"),      false);
         GetOptionsDB().AddFlag('s', "singleplayer", UserStringNop("OPTIONS_DB_SINGLEPLAYER"), false);
 
         // TODO Code combining config, persistent_config and commandline args is copy-pasted
@@ -80,6 +82,12 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         if (GetOptionsDB().Get<bool>("help")) {
             GetOptionsDB().GetUsage(std::cerr);
             return 0;
+        }
+
+        // did the player request the version output?
+        if (GetOptionsDB().Get<bool>("version")) {
+            std::cout << "FreeOrionD " << FreeOrionVersionString() << std::endl;
+            return 0;   // quit without actually starting server
         }
 
         parse::init();
