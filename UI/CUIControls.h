@@ -624,4 +624,13 @@ private:
     GG::Clr                             m_checked_color;
 };
 
+/** Renders scanlines over its area. */
+class ScanlineControl : public GG::Control {
+public:
+    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false);
+    virtual void Render();
+private:
+    bool m_square;
+};
+
 #endif // _CUIControls_h_

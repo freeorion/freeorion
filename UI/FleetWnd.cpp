@@ -6,12 +6,10 @@
 #include "MeterBrowseWnd.h"
 #include "ClientUI.h"
 #include "Sound.h"
-#include "ShaderProgram.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Fleet.h"
@@ -422,9 +420,6 @@ namespace {
         return retval;
     }
 
-    const double TWO_PI = 2.0*3.14159;
-    boost::shared_ptr<ShaderProgram> scanline_shader;
-
     void AddOptions(OptionsDB& db) {
         db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
     }
@@ -714,41 +709,6 @@ namespace {
         ShipDataPanel*  m_panel;
     };
 }
-
-/** Renders scanlines over its area. */
-class ScanlineControl : public GG::Control {
-public:
-    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false) :
-        Control(x, y, w, h, GG::NO_WND_FLAGS),
-        m_square(square)
-    {
-        if (!scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-            std::string shader_text;
-            ReadFile(shader_path, shader_text);
-            scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
-        }
-    }
-
-    virtual void Render() {
-        if (!scanline_shader || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
-            return;
-
-        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-        scanline_shader->Use();
-        scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-
-        if (m_square) {
-            GG::FlatRectangle(  UpperLeft(),    LowerRight(), GG::CLR_WHITE, GG::CLR_WHITE, 0u);
-        } else {
-            CircleArc(          UpperLeft(),    LowerRight(), 0.0, TWO_PI, true);
-        }
-        scanline_shader->stopUse();
-    }
-private:
-    bool m_square;
-};
 
 ////////////////////////////////////////////////
 // ShipDataPanel
