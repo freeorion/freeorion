@@ -432,6 +432,7 @@ void HumanClientApp::KillServer() {
 
 void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
+        m_single_player_game = true;
         try {
             StartServer();
         } catch (const std::runtime_error& err) {
@@ -567,6 +568,7 @@ void HumanClientApp::MultiPlayerGame() {
 
     if (server_name == "HOST GAME SELECTED") {
         if (!GetOptionsDB().Get<bool>("force-external-server")) {
+            m_single_player_game = false;
             try {
                 StartServer();
                 FreeServer();
@@ -649,6 +651,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
+        m_single_player_game = true;
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
         StartServer();
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Server started";
@@ -692,6 +695,8 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     std::string  generic_directory = directory;//PathString(fs::path(directory));
     if (!m_networking.Connected()) {
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
+
+        m_single_player_game = true;
         StartServer();
 
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
