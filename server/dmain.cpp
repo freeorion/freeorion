@@ -48,7 +48,8 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
 #endif
-        GetOptionsDB().AddFlag('h', "help",    UserStringNop("OPTIONS_DB_HELP"),    false);
+        GetOptionsDB().AddFlag('h', "help",         UserStringNop("OPTIONS_DB_HELP"),         false);
+        GetOptionsDB().AddFlag('s', "singleplayer", UserStringNop("OPTIONS_DB_SINGLEPLAYER"), false);
 
         // TODO Code combining config, persistent_config and commandline args is copy-pasted
         // slightly differently in chmain, dmain and camain.  Make it into a single function.

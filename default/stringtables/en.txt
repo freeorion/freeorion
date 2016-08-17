@@ -1113,6 +1113,9 @@ COMMAND_LINE_DEFAULT
 OPTIONS_DB_HELP
 Print this help message.
 
+OPTIONS_DB_SINGLEPLAYER
+Start server in single player host mode. This only allows clients on localhost to connect.
+
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file. This will overwrite the current config.xml file, if it exists.
 
