@@ -3,6 +3,7 @@
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/XMLDoc.h"
 
@@ -47,7 +48,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
 #endif
-        GetOptionsDB().AddFlag('h', "help", "Print this help message.");
+        GetOptionsDB().AddFlag('h', "help",    UserStringNop("OPTIONS_DB_HELP"),    false);
 
         // TODO Code combining config, persistent_config and commandline args is copy-pasted
         // slightly differently in chmain, dmain and camain.  Make it into a single function.
