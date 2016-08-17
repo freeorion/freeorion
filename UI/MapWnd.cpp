@@ -1564,22 +1564,18 @@ void MapWnd::RenderFields() {
 
     // if any, render scanlines over not-visible fields
     if (!m_field_scanline_circles.empty() &&
-        m_scanline_shader &&
-        HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES &&
-        GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES)
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         m_field_scanline_circles.activate();
         glBindTexture(GL_TEXTURE_2D, 0);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        m_scanline_shader->Use();
-        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-        m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+        m_scanline_shader.StartUsing();
 
         glDrawArrays(GL_TRIANGLES, 0, m_field_scanline_circles.size());
 
-        m_scanline_shader->stopUse();
+        m_scanline_shader.StopUsing();
         /*glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
@@ -1733,13 +1729,10 @@ void MapWnd::RenderSystems() {
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            if (fog_scanlines && m_scanline_shader) {
-                if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY) {
-                    m_scanline_shader->Use();
-                    m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-                    CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
-                    m_scanline_shader->stopUse();
-                }
+            if (fog_scanlines
+                && (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY))
+            {
+                m_scanline_shader.RenderCircle(circle_ul, circle_lr);
             }
 
             // render circles around systems that have at least one starlane, if circles are enabled.
@@ -2510,16 +2503,6 @@ void MapWnd::MidTurnUpdate() {
 void MapWnd::InitTurnRendering() {
     DebugLogger() << "MapWnd::InitTurnRendering";
     ScopedTimer timer("MapWnd::InitTurnRendering", true);
-
-    if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-        boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-        std::string shader_text;
-        ReadFile(shader_path, shader_text);
-        if (!shader_text.empty()) {
-            m_scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
-        }
-    }
 
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
@@ -5346,8 +5329,6 @@ void MapWnd::Sanitize() {
     for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         delete it->second;
     m_system_icons.clear();
-
-    m_scanline_shader.reset();
 
     m_fleets_exploring.clear();
 

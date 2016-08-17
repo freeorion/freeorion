@@ -616,13 +616,6 @@ public:
         m_initial_rotation(fmod(planet_id / 7.352535, 1.0)),    // arbitrary scale number applied to id to give consistent by varied angles
         m_star_type(star_type)
     {
-        if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-            std::string shader_text;
-            ReadFile(shader_path, shader_text);
-            s_scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
-        }
         Refresh();
     }
 
@@ -646,16 +639,8 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if (s_scanline_shader &&
-            m_visibility <= VIS_BASIC_VISIBILITY &&
-            GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
-        {
-            float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-            s_scanline_shader->Use();
-            s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-            CircleArc(ul, lr, 0.0, TWO_PI, true);
-            s_scanline_shader->stopUse();
-        }
+        if (m_visibility <= VIS_BASIC_VISIBILITY)
+            s_scanline_shader.RenderCircle(ul, lr);
     }
 
     void Refresh() {
@@ -714,9 +699,10 @@ private:
     double                          m_initial_rotation;
     StarType                        m_star_type;
 
-    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
+    static ScanlineRenderer         s_scanline_shader;
 };
-boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boost::shared_ptr<ShaderProgram>();
+
+ScanlineRenderer RotatingPlanetControl::s_scanline_shader;
 
 
 namespace {

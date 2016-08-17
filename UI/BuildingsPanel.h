@@ -2,6 +2,7 @@
 #define _BuildingsPanel_h_
 
 #include "AccordionPanel.h"
+#include "CUIDrawUtil.h"
 
 class BuildingIndicator;
 class MultiTurnProgressBar;
@@ -83,7 +84,7 @@ public:
 private:
     void            DoLayout();
 
-    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
+    static ScanlineRenderer s_scanline_shader;
 
     GG::StaticGraphic*          m_graphic;
     GG::StaticGraphic*          m_scrap_indicator;  ///< shown to indicate building was ordered scrapped
