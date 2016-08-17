@@ -91,6 +91,12 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         return 0;   // quit without actually starting game
     }
 
+    // did the player request version output?
+    if (GetOptionsDB().Get<bool>("version")) {
+        std::cout << "FreeOrion " << FreeOrionVersionString() << "\n";
+        return 0;   // quit without actually starting game
+    }
+
     // set up rendering and run game
     if (mainSetupAndRun() != 0) {
         std::cerr << "main() failed to setup or run SDL." << std::endl;
@@ -121,6 +127,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add<std::string>("load",             UserStringNop("OPTIONS_DB_LOAD"),                  "", Validator<std::string>(), false);
         GetOptionsDB().Add("UI.sound.music-enabled",        UserStringNop("OPTIONS_DB_MUSIC_ON"),              true);
         GetOptionsDB().Add("UI.sound.enabled",              UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
+        GetOptionsDB().AddFlag('v', "version",              UserStringNop("OPTIONS_DB_VERSION"),               false);
         GetOptionsDB().Add<std::string>("version-string",   UserStringNop("OPTIONS_DB_VERSION_STRING"),
                                         FreeOrionVersionString(),   Validator<std::string>(),                  true);
         GetOptionsDB().AddFlag('r', "render-simple",        UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),         false);
