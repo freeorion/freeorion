@@ -1,7 +1,7 @@
 <!--
 Please fill in a a meaningful and concise issue title in the title field above.
 It helps us to classify the issue even  before reading the body and handling the
-issue a bit better.  Prefix the title with labels you find approciate to
+issue a bit better.  Prefix the title with labels you find appropriate to
 describe the issue like "[Bug]" in case of a bug, "[Feature]" for a feature
 request.
 
@@ -61,7 +61,7 @@ expect from the game instead of the issue.
 -->
 
 
-#### Steps to reproduce
+### Steps to reproduce
 <!--
 If this issue is not a bug you can remove this section.
 
