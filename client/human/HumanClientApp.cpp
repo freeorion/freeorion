@@ -409,6 +409,9 @@ void HumanClientApp::StartServer() {
     } else {
         DebugLogger() << "ai-config not set.";
     }
+    if (m_single_player_game) {
+        args.push_back("--singleplayer");
+    }
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 
