@@ -29,5 +29,11 @@ int main(int argc, char *argv[])
         return 0;   // quit without actually starting game
     }
 
+    // did the player request the version output?
+    if (GetOptionsDB().Get<bool>("version")) {
+        std::cout << "FreeOrionCH " << FreeOrionVersionString() << std::endl;
+        return 0;   // quit without actually starting game
+    }
+
     return NSApplicationMain(argc,  (const char **) argv);
 }
