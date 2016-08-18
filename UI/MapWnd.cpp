@@ -1400,19 +1400,30 @@ ModeratorActionSetting MapWnd::GetModeratorActionSetting() const
 bool MapWnd::AutoEndTurnEnabled() const
 { return m_auto_end_turn; }
 
+void MapWnd::PreRender() {
+    GG::Wnd::PreRender();
+    // Save CPU / GPU activity by skipping rendering when it's not needed
+    // As of this writing, the design and research screens have fully opaque backgrounds.
+    if (m_design_wnd->Visible())
+        return;
+    if (m_research_wnd->Visible())
+        return;
+
+    DeferredRefreshFleetButtons();
+}
+
 void MapWnd::Render() {
     // HACK! This is placed here so we can be sure it is executed frequently
     // (every time we render), and before we render any of the
     // FleetWnds.  It doesn't necessarily belong in MapWnd at all.
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
 
-    // save CPU / GPU activity by skipping rendering when it's not needed
+    // Save CPU / GPU activity by skipping rendering when it's not needed
+    // As of this writing, the design and research screens have fully opaque backgrounds.
     if (m_design_wnd->Visible())
-        return; // as of this writing, the design screen has a fully opaque background
+        return;
     if (m_research_wnd->Visible())
         return;
-
-    DeferredRefreshFleetButtons();
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -4350,11 +4361,12 @@ namespace {
     }
 }
 
-void MapWnd::RefreshFleetButtons()
-{ m_deferred_refresh_fleet_buttons = true; }
+void MapWnd::RefreshFleetButtons() {
+    RequirePreRender();
+    m_deferred_refresh_fleet_buttons = true;
+}
 
 void MapWnd::DeferredRefreshFleetButtons() {
-
     if (!m_deferred_refresh_fleet_buttons)
         return;
     m_deferred_refresh_fleet_buttons = false;
@@ -4401,6 +4413,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
     }
 
     DeleteFleetButtons();
+
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
     CreateFleetButtonsOfType(m_departing_fleet_buttons,  departing_fleets, FLEETBUTTON_SIZE);
