@@ -1566,10 +1566,10 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "DEF_DEFENSE", attack_planet->CurrentMeterValue(METER_DEFENSE)));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"), attack_planet->CurrentMeterValue(METER_DEFENSE)));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
-            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "FT_WEAPON_1", attack_fighter->Damage()));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"), attack_fighter->Damage()));
         }
         return weapons;
     }

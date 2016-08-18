@@ -1265,7 +1265,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     }
 
     if (!success)
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
 
     DebugLogger() << "Applying first turn effects and updating meters";
@@ -1320,7 +1320,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
 
     if (!success) {
         ErrorLogger() << "Python scripted turn events failed.";
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 

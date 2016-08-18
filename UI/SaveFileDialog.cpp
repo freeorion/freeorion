@@ -314,7 +314,7 @@ public:
         SetMargin (ROW_MARGIN);
         this->m_filename = full.filename;
 
-        VarText browse_text("SAVE_DIALOG_ROW_BROWSE_TEMPLATE");
+        VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
         for (std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin();
              it != visible_columns.end(); ++it)
