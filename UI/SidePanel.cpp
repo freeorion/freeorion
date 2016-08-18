@@ -2564,6 +2564,7 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
 ////////////////////////////////////////////////
 // static(s)
 int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
+bool                                       SidePanel::s_needs_prerender = false;
 std::set<SidePanel*>                       SidePanel::s_side_panels;
 std::set<boost::signals2::connection>      SidePanel::s_system_connections;
 std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signals;
@@ -2740,10 +2741,19 @@ void SidePanel::InitBuffers() {
     m_vertex_buffer.createServerBuffer();
 }
 
-void SidePanel::Update() {
-    //std::cout << "SidePanel::Update" << std::endl;
+void SidePanel::PreRender() {
+    GG::Wnd::PreRender();
+    if (!s_needs_prerender)
+        return;
+    s_needs_prerender = false;
+
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->UpdateImpl();
+}
+void SidePanel::Update() {
+    s_needs_prerender = true;
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
+        (*it)->RequirePreRender();
 }
 
 void SidePanel::UpdateImpl() {

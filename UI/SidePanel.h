@@ -44,6 +44,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void        PreRender();
     virtual void        Render();
     virtual void        PreRender();
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
@@ -130,6 +131,8 @@ private:
     MultiIconValueIndicator*    m_system_resource_summary;
 
     bool                        m_selection_enabled;
+
+    static bool                 s_needs_prerender;
 
     static int                  s_system_id;
 
