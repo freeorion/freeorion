@@ -407,9 +407,19 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
         if (property_names[i].empty())
              num_references--;
     num_references = std::max(0, num_references);
-    std::string names_size = boost::lexical_cast<std::string>(num_references);
-    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" +
-                                             names_size));
+    std::string format_string;
+    switch (num_references) {
+        case 0: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0"); break;
+        case 1: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1"); break;
+        case 2: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2"); break;
+        case 3: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE3"); break;
+        case 4: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE4"); break;
+        case 5: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE5"); break;
+        case 6: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLE6"); break;
+        default: format_string = UserString("DESC_VALUE_REF_MULTIPART_VARIABLEMANY"); break;
+    }
+
+    boost::format formatter = FlexibleFormat(format_string);
 
     switch (ref_type) {
     case SOURCE_REFERENCE:                    formatter % UserString("DESC_VAR_SOURCE");          break;

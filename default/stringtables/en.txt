@@ -8157,6 +8157,17 @@ DESC_VALUE_REF_MULTIPART_VARIABLE5
 DESC_VALUE_REF_MULTIPART_VARIABLE6
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
+# %6% fourth dependent property referenced by the FOCS variable.
+# %7% fifth dependent property referenced by the FOCS variable.
+DESC_VALUE_REF_MULTIPART_VARIABLEMANY
+%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%'s ...
+
 
 ##
 ## FOCS effect descriptions
