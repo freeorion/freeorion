@@ -1550,6 +1550,17 @@ bool GUI::FocusWndDeselect()
 GUI* GUI::GetGUI()
 { return s_gui; }
 
+void GUI::PreRenderWindow(Wnd* wnd)
+{
+    if (!wnd || !wnd->Visible())
+        return;
+
+    for (std::list<Wnd*>::iterator it = wnd->m_children.begin(); it != wnd->m_children.end(); ++it) {
+        PreRenderWindow(*it);
+    }
+    wnd->PreRender();
+}
+
 void GUI::RenderWindow(Wnd* wnd)
 {
     if (!wnd)
@@ -1633,6 +1644,31 @@ void GUI::ProcessBrowseInfo()
                wnd->Parent() &&
                (dynamic_cast<Control*>(wnd) || dynamic_cast<Layout*>(wnd)))
         { wnd = wnd->Parent(); }
+    }
+}
+
+void GUI::PreRender()
+{
+    // pre-render normal windows back-to-front
+    for (ZList::reverse_iterator it = s_impl->m_zlist.rbegin(); it != s_impl->m_zlist.rend(); ++it) {
+        PreRenderWindow(*it);
+    }
+
+    // pre-render modal windows back-to-front (on top of non-modal Wnds rendered above)
+    for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin();
+         it != s_impl->m_modal_wnds.end(); ++it)
+    {
+        PreRenderWindow(it->first);
+    }
+
+    // pre-render the active browse info window, if any
+    if (s_impl->m_browse_info_wnd && s_impl->m_curr_wnd_under_cursor) {
+        assert(s_impl->m_browse_target);
+        PreRenderWindow(s_impl->m_browse_info_wnd.get());
+    }
+
+    for (std::map<Wnd*, Pt>::const_iterator it = s_impl->m_drag_drop_wnds.begin(); it != s_impl->m_drag_drop_wnds.end(); ++it) {
+        PreRenderWindow(it->first);
     }
 }
 

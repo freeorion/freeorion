@@ -194,6 +194,14 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     current.  Note the use of the phrase "client-area children".  This refers
     to children entirely within the client area of the window.
 
+    <h3>Timing</h3>
+
+    <br>Each render interval the following things happen in this order: events
+    are handled PreRender() and then Render() are called. PreRender() and
+    Render() are only called if the window is visible. Data used to render the
+    window may change multiple times between calls to Render().  PreRender()
+    allows Wnd to perform any expensive updates only once per render interval.
+
     <h3>Browse Info</h3>
 
     <br>Browse info is a non-interactive informational window that pops up
@@ -582,6 +590,13 @@ public:
     /** Sets the margin that should exist between the windows in the layout.
         If no layout exists for the window, this has no effect. */
     void SetLayoutCellMargin(unsigned int margin);
+
+    /** Update Wnd prior to Render().
+        PreRender() is called once each render interval before Render().  This
+        allows the Wnd to consolidate multiple expensive pre rendering data
+        updates into a single update.  PreRender() of child windows will be
+        called before this PreRender(). */
+    virtual void PreRender();
 
     /** Draws this Wnd.  Note that Wnds being dragged for a drag-and-drop
         operation are rendered twice -- once in-place as normal, once in the

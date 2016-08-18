@@ -872,6 +872,8 @@ void Wnd::SetLayoutCellMargin(unsigned int margin)
         m_layout->SetCellMargin(margin);
 }
 
+void Wnd::PreRender() {}
+
 void Wnd::Render() {}
 
 bool Wnd::Run()
