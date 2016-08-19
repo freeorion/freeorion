@@ -1,6 +1,7 @@
 #include "ServerNetworking.h"
 
 #include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 #include "../util/Version.h"
 
 #include <GG/SignalsAndSlots.h>
@@ -309,12 +310,19 @@ ServerNetworking::ServerNetworking(boost::asio::io_service& io_service,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
     m_host_player_id(Networking::INVALID_PLAYER_ID),
-    m_discovery_server(new DiscoveryServer(io_service)),
+    m_discovery_server(0),
     m_player_connection_acceptor(io_service),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
-{ Init(); }
+{
+    if (!GetOptionsDB().Get<bool>("singleplayer")) {
+        // only start discovery service for multiplayer servers.
+        m_discovery_server = new DiscoveryServer(io_service);
+    }
+
+    Init();
+}
 
 ServerNetworking::~ServerNetworking()
 { delete m_discovery_server; }
@@ -475,6 +483,16 @@ void ServerNetworking::SetHostPlayerID(int host_player_id)
 
 void ServerNetworking::Init() {
     tcp::endpoint endpoint(tcp::v4(), MESSAGE_PORT);
+
+    if (GetOptionsDB().Get<bool>("singleplayer")) {
+        // when hosting a single player game only accept connections from
+        // the localhost via the loopback interface instead of the any
+        // interface.
+        // This should prevent unnecessary triggering of Desktop Firewalls as
+        // reported by various users when running single player games.
+        endpoint.address(boost::asio::ip::address_v4::loopback());
+    }
+
     m_player_connection_acceptor.open(endpoint.protocol());
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::reuse_address(true));
