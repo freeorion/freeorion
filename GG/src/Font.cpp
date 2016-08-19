@@ -1273,18 +1273,18 @@ void Font::FillTextElements(const std::string& text,
         {
             // Consolidate adjacent blocks of text.  If adjacent found substrings are all text, merge
             // them into a single Substring.
-            bool need_increment = false;
+            bool need_increment = true;
             Substring combined_text;
-            if ((*it)[text_tag].matched) {
-                while (it != end_it && (*it)[text_tag].matched) {
-                    if (combined_text.empty())
-                        combined_text = Substring(text, (*it)[text_tag]);
-                    else
-                        combined_text += (*it)[text_tag];
-                    ++it;
-                }
-            } else {
-                need_increment = true;
+            sub_match<std::string::const_iterator> const* text_match;
+            while (it != end_it
+                   && (text_match = &(*it)[text_tag])
+                   && text_match->matched) {
+                need_increment = false;
+                if (combined_text.empty())
+                    combined_text = Substring(text, *text_match);
+                else
+                    combined_text += *text_match;
+                ++it;
             }
 
             // If the element is not a text element then it must be an open tag, a close tag or whitespace.
