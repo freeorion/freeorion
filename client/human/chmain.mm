@@ -6,6 +6,7 @@
 #import <Cocoa/Cocoa.h>
 
 #include "../../util/OptionsDB.h"
+#include "../../util/Version.h"
 
 #include "chmain.h"
 #include <iostream>
