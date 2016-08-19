@@ -1167,47 +1167,28 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
 {
     using namespace boost::xpressive;
 
-    bool temp_bool = false;
-    std::stack<Substring> tag_stack;
-    MatchesKnownTag matches_known_tag(StaticTagHandler().KnownTags(), temp_bool);
-    MatchesTopOfStack matches_tag_stack(tag_stack, temp_bool);
+    sregex & regex = StaticTagHandler().Regex(text, false, strip_unpaired_tags);
 
     mark_tag tag_name_tag(1);
     mark_tag open_bracket_tag(2);
     mark_tag close_bracket_tag(3);
-    mark_tag printable_text_tag(4);
-
-    const sregex TAG_PARAM =
-    -+~set[_s | '<'];
-    const sregex OPEN_TAG_NAME =
-        (+_w)[check(matches_known_tag)];
-    const sregex CLOSE_TAG_NAME =
-        (+_w)[check(matches_tag_stack)];
-    const sregex WHITESPACE =
-        (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
-    const sregex TEXT =
-        ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
-    const sregex PRINTABLE_TEXT = WHITESPACE | TEXT;
-    sregex EVERYTHING;
-    if (!strip_unpaired_tags)
-        EVERYTHING =    // push open tag matches to the tag stack, and make sure close tags match the top open tag on the stack
-            ('<' >> (tag_name_tag = OPEN_TAG_NAME) >> repeat<0, 9>(+blank >> TAG_PARAM) >> (open_bracket_tag.proto_base() = '>'))
-            [Push(boost::xpressive::ref(text), boost::xpressive::ref(tag_stack), ref(temp_bool), tag_name_tag)] |
-            ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
-            (printable_text_tag = PRINTABLE_TEXT);
-    else
-        EVERYTHING =    // don't care about matching with tag stack when matching close tags, or updating the stack when matching open tags
-            ('<' >> OPEN_TAG_NAME >> repeat<0, 9>(+blank >> TAG_PARAM) >> '>') |
-            ("</" >> OPEN_TAG_NAME >> '>') |
-            (printable_text_tag = PRINTABLE_TEXT);
+    mark_tag whitespace_tag(4);
+    mark_tag text_tag(5);
 
     std::string retval;
 
     // scan through matched markup and text, saving only the non-tag-text
-    sregex_iterator it(text.begin(), text.end(), EVERYTHING);
+    sregex_iterator it(text.begin(), text.end(), regex);
     sregex_iterator end_it;
     for (; it != end_it; ++it) {
-        retval += Substring(text, (*it)[printable_text_tag]);
+        sub_match<std::string::const_iterator> const* text_match;
+        sub_match<std::string::const_iterator> const* whitespace_match;
+
+        if ((text_match = &(*it)[text_tag]) && (text_match->matched))
+            retval += Substring(text, *text_match);
+
+        else if ((whitespace_match = &(*it)[whitespace_tag]) && whitespace_match->matched)
+            retval += Substring(text, *whitespace_match);
     }
 
     return retval;
