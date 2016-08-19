@@ -1864,10 +1864,10 @@ PLAYER_NAME_LABEL
 Player name
 
 HOST_GAME_BN
-Host a new game (use XML serialisation in Options/Other)
+Host a new game
 
 JOIN_GAME_BN
-Join a game (use XML serialisation in Options/Other)
+Join a game
 
 REFRESH_LIST_BN
 Refresh list
