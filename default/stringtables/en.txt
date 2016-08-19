@@ -1884,7 +1884,7 @@ MPLOBBY_HOST_ABORTED_GAME
 The host player has terminated this game setup.
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Unique empire names and colors required
+Unique names and colors required
 
 MULTIPLAYER_PLAYER_LIST_TYPES
 Type
