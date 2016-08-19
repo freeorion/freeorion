@@ -387,6 +387,9 @@ void SupplyManager::Update() {
 
                 //DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
 
+                // Remove from unobstructed systems
+                empire_supply_unobstructed_systems[empire_id].erase(sys_id);
+
                 std::set<std::pair<int, int> >& lane_traversals = m_supply_starlane_traversals[empire_id];
                 std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;
                 std::set<std::pair<int, int> >& obstructed_traversals = m_supply_starlane_obstructed_traversals[empire_id];
