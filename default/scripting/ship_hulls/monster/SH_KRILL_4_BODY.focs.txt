@@ -32,6 +32,7 @@ Hull
 /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
+                    label = "EFFECT_MONSTER_SPAWNING_LABEL"
                     parameters = [
                         tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID

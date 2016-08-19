@@ -24,6 +24,7 @@ Part
                 SetPopulation value = Value - 1
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
+                    label = "EFFECT_BIOWEAPON_LABEL"
                     icon = "icons/ship_parts/bioterm.png"
                     parameters = [
                         tag = "planet" data = Target.ID
@@ -50,6 +51,7 @@ Part
                 SetPopulation value = Value - 1
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
+                    label = "EFFECT_BIOWEAPON_LABEL"
                     icon = "icons/ship_parts/bioterm.png"
                     parameters = [
                         tag = "planet" data = Target.ID

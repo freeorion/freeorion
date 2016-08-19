@@ -36,6 +36,7 @@ Hull
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
+                    label = "EFFECT_TAME_MONSTER_MATURED_LABEL"
                     icon = "icons/monsters/juggernaut-3.png"
                     parameters = [
                         tag = "system" data = Source.SystemID

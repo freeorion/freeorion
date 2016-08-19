@@ -24,6 +24,7 @@ BuildingType
                 SetPlanetType type = Barren
                 GenerateSitRepMessage
                     message = "EFFECT_ART_PLANET"
+                    label = "EFFECT_ART_PLANET_LABEL"
                     icon = "icons/specials_large/tidal_lock.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner

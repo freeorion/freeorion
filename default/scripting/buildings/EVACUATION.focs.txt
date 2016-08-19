@@ -44,6 +44,7 @@ BuildingType
                 SetPopulation value = Value + 2
                 GenerateSitRepMessage
                     message = "EFFECT_EVACUEES"
+                    label = "EFFECT_EVACUEES_LABEL"
                     icon = "icons/building/evacuation.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner

@@ -33,6 +33,7 @@ Special
                 ]
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_MAP"
+                    label = "EFFECT_DERELICT_MAP_LABEL"
                     icon = "icons/specials_huge/derelict.png"
                     parameters = [
                         tag = "system" data = Source.ID

@@ -43,6 +43,7 @@ BuildingType
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_CONC_CAMP_COMLETE"
+                    label = "EFFECT_CONC_CAMP_COMLETE_LABEL"
                     icon = "icons/building/concentration-camp.png"
                     parameters = tag = "planet" data = Source.PlanetID
                     empire = Source.Owner

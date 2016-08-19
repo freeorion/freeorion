@@ -78,6 +78,7 @@ BuildingType
                 AddSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
                 GenerateSitRepMessage
                     message = "HEAD_ON_A_SPIKE_MESSAGE"
+                    label = "HEAD_ON_A_SPIKE_MESSAGE_LABEL"
                     icon = "icons/sitrep/empire_eliminated.png"
                     parameters = [
                         tag = "empire" data = Source.ProducedByEmpireID

@@ -105,6 +105,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
+                    label = "EFFECT_MINES_LABEL"
                     icon = "icons/sitrep/combat_damage.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -178,6 +179,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
+                    label = "EFFECT_MINES_SHIP_DESTROYED_LABEL"
                     icon = "icons/sitrep/combat_destroyed.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -203,6 +205,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_UNKNOWN"
+                    label = "EFFECT_MINES_UNKNOWN_LABEL"
                     icon = "icons/sitrep/combat_damage.png"
                     parameters = [
                         tag = "system" data = Target.SystemID
@@ -222,6 +225,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
+                    label = "EFFECT_MINES_LABEL"
                     icon = "icons/sitrep/combat_damage.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -245,6 +249,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
+                    label = "EFFECT_MINES_SHIP_DESTROYED_LABEL"
                     icon = "icons/sitrep/combat_destroyed.png"
                     parameters = [
                         tag = "empire" data = Target.Owner

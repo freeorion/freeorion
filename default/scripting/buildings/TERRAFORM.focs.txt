@@ -35,6 +35,7 @@ BuildingType
                 SetPlanetType type = Target.NextBetterPlanetType
                 GenerateSitRepMessage
                     message = "EFFECT_TERRAFORM"
+                    label = "EFFECT_TERRAFORM_LABEL"
                     icon = "icons/building/terraform.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner

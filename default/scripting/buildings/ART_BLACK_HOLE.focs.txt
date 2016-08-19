@@ -21,6 +21,7 @@ BuildingType
                 SetStarType type = BlackHole
                 GenerateSitRepMessage
                     message = "EFFECT_BLACKHOLE"
+                    label = "EFFECT_BLACKHOLE_LABEL"
                     icon = "icons/building/blackhole.png"
                     parameters = tag = "system" data = Source.SystemID
                     empire = Source.Owner

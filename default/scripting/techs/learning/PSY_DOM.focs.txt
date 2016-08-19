@@ -32,6 +32,7 @@ Tech
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_PSY_DOM"
+                    label = "EFFECT_PSY_DOM_LABEL"
                     icon = "icons/sitrep/ship_produced.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -40,6 +41,7 @@ Tech
                     empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_PSY_DOM"
+                    label = "EFFECT_PSY_DOM_LABEL"
                     icon = "icons/sitrep/ship_produced.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
