@@ -17,20 +17,6 @@ SitRepEntry::SitRepEntry() :
     m_label()
 {}
 
-SitRepEntry::SitRepEntry(const std::string& template_string, const std::string& icon) :
-    VarText(template_string, true),
-    m_turn(CurrentTurn() + 1), // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
-    m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon),
-    m_label()
-{}
-
-SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std::string& icon) :
-    VarText(template_string, true),
-    m_turn(turn),
-    m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon),
-    m_label()
-{}
-
 SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup) :
     VarText(template_string, stringtable_lookup),
     m_turn(turn),
@@ -73,13 +59,21 @@ std::string SitRepEntry::Dump() const {
 }
 
 SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name) {
-    SitRepEntry sitrep(UserStringNop("SITREP_TECH_RESEARCHED"), "icons/sitrep/tech_researched.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_TECH_RESEARCHED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/tech_researched.png",
+        UserStringNop("SITREP_TECH_RESEARCHED_LABEL"), true);
     sitrep.AddVariable(VarText::TECH_TAG,          tech_name);
     return sitrep;
 }
 
 SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_SHIP_BUILT"), "icons/sitrep/ship_produced.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_SHIP_BUILT"),
+        CurrentTurn() + 1,
+        "icons/sitrep/ship_produced.png",
+        UserStringNop("SITREP_SHIP_BUILT_LABEL"), true);
     sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
     sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(ship_id));
     sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(shipdesign_id));
@@ -87,7 +81,11 @@ SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id)
 }
 
 SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int number) {
-    SitRepEntry sitrep(UserStringNop("SITREP_SHIP_BATCH_BUILT"), "icons/sitrep/ship_produced.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_SHIP_BATCH_BUILT"),
+        CurrentTurn() + 1,
+        "icons/sitrep/ship_produced.png",
+        UserStringNop("SITREP_SHIP_BATCH_BUILT_LABEL"), true);
     sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
     sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(shipdesign_id));
     sitrep.AddVariable(VarText::RAW_TEXT_TAG,      boost::lexical_cast<std::string>(number));
@@ -95,39 +93,66 @@ SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int num
 }
 
 SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_BUILDING_BUILT"), "icons/sitrep/building_produced.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_BUILDING_BUILT"),
+        CurrentTurn() + 1,
+        "icons/sitrep/building_produced.png",
+        UserStringNop("SITREP_BUILDING_BUILT_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     sitrep.AddVariable(VarText::BUILDING_ID_TAG,   boost::lexical_cast<std::string>(building_id));
     return sitrep;
 }
 
 SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name) {
-    SitRepEntry sitrep(UserStringNop("SITREP_TECH_UNLOCKED"), "icons/sitrep/tech_unlocked.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_TECH_UNLOCKED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/tech_unlocked.png",
+        UserStringNop("SITREP_TECH_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::TECH_TAG,          tech_name);
     return sitrep;
 }
 
 SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name) {
-    SitRepEntry sitrep(UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED"), "icons/sitrep/building_type_unlocked.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/building_type_unlocked.png",
+        UserStringNop("SITREP_BUILDING_TYPE_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::BUILDING_TYPE_TAG,  building_type_name);
     return sitrep;
 }
 
 SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name) {
-    SitRepEntry sitrep(UserStringNop("SITREP_SHIP_HULL_UNLOCKED"), "icons/sitrep/ship_hull_unlocked.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_SHIP_HULL_UNLOCKED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/ship_hull_unlocked.png",
+        UserStringNop("SITREP_SHIP_HULL_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::SHIP_HULL_TAG,      ship_hull_name);
     return sitrep;
 }
 
 SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name) {
-    SitRepEntry sitrep(UserStringNop("SITREP_SHIP_PART_UNLOCKED"), "icons/sitrep/ship_part_unlocked.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_SHIP_PART_UNLOCKED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/ship_part_unlocked.png",
+        UserStringNop("SITREP_SHIP_PART_UNLOCKED_LABEL"), true);
     sitrep.AddVariable(VarText::SHIP_PART_TAG,      ship_part_name);
     return sitrep;
 }
 
 SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id) {
-    SitRepEntry sitrep(enemy_id == ALL_EMPIRES ? UserStringNop("SITREP_COMBAT_SYSTEM") : UserStringNop("SITREP_COMBAT_SYSTEM_ENEMY"),
-                       "icons/sitrep/combat.png");
+    std::string template_string = (enemy_id == ALL_EMPIRES)
+        ? UserStringNop("SITREP_COMBAT_SYSTEM")
+        : UserStringNop("SITREP_COMBAT_SYSTEM_ENEMY");
+    std::string label_string = (enemy_id == ALL_EMPIRES)
+        ? UserStringNop("SITREP_COMBAT_SYSTEM_LABEL")
+        : UserStringNop("SITREP_COMBAT_SYSTEM_ENEMY_LABEL");
+    SitRepEntry sitrep(
+        template_string,
+        CurrentTurn() + 1, "icons/sitrep/combat.png", label_string, true);
     sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
     sitrep.AddVariable(VarText::COMBAT_ID_TAG,  boost::lexical_cast<std::string>(log_id));
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  boost::lexical_cast<std::string>(enemy_id));
@@ -135,15 +160,26 @@ SitRepEntry CreateCombatSitRep(int system_id, int log_id, int enemy_id) {
 }
 
 SitRepEntry CreateGroundCombatSitRep(int planet_id, int enemy_id) {
-    SitRepEntry sitrep(enemy_id == ALL_EMPIRES ? UserStringNop("SITREP_GROUND_BATTLE") : UserStringNop("SITREP_GROUND_BATTLE_ENEMY"),
-                       "icons/sitrep/ground_combat.png");
+    std::string template_string = (enemy_id == ALL_EMPIRES)
+        ? UserStringNop("SITREP_GROUND_BATTLE")
+        : UserStringNop("SITREP_GROUND_BATTLE_ENEMY");
+    std::string label_string = (enemy_id == ALL_EMPIRES)
+        ? UserStringNop("SITREP_GROUND_BATTLE_LABEL")
+        : UserStringNop("SITREP_GROUND_BATTLE_ENEMY_LABEL");
+    SitRepEntry sitrep(
+        template_string,
+        CurrentTurn() + 1, "icons/sitrep/ground_combat.png", label_string, true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(enemy_id));
     return sitrep;
 }
 
 SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_CAPTURED"), "icons/sitrep/planet_captured.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_CAPTURED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/planet_captured.png",
+        UserStringNop("SITREP_PLANET_CAPTURED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
     return sitrep;
@@ -151,13 +187,21 @@ SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id) {
 
 namespace {
     SitRepEntry GenericCombatDamagedObjectSitrep(int combat_system_id) {
-        SitRepEntry sitrep(UserStringNop("SITREP_OBJECT_DAMAGED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
+        SitRepEntry sitrep(
+            UserStringNop("SITREP_OBJECT_DAMAGED_AT_SYSTEM"),
+            CurrentTurn() + 1,
+            "icons/sitrep/combat_damage.png",
+            UserStringNop("SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(combat_system_id));
         return sitrep;
     }
 
     SitRepEntry GenericCombatDestroyedObjectSitrep(int combat_system_id) {
-        SitRepEntry sitrep(UserStringNop("SITREP_OBJECT_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+        SitRepEntry sitrep(
+            UserStringNop("SITREP_OBJECT_DESTROYED_AT_SYSTEM"),
+            CurrentTurn() + 1,
+            "icons/sitrep/combat_destroyed.png",
+            UserStringNop("SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(combat_system_id));
         return sitrep;
     }
@@ -172,17 +216,33 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 
     if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_damage.png",
+                UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL"), true);
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_SHIP_DAMAGED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_SHIP_DAMAGED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_damage.png",
+                UserStringNop("SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
 
     } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/colony_bombarded.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/colony_bombarded.png",
+                UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL"), true);
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/colony_bombarded.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/colony_bombarded.png",
+                UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
 
     } else {
@@ -206,33 +266,69 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
 
     if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL"), true);
         else if (ship->OwnedBy(empire_id))
-            sitrep = SitRepEntry(UserStringNop("SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL"), true);
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_SHIP_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_SHIP_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
 
     } else if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
         if (fleet->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL"), true);
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(object_id));
 
     } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL"), true);
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
 
     } else if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj)) {
         if (building->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL"), true);
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"), "icons/sitrep/combat_destroyed.png");
+            sitrep = SitRepEntry(
+                UserStringNop("SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"),
+                CurrentTurn() + 1,
+                "icons/sitrep/combat_destroyed.png",
+                UserStringNop("SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::BUILDING_ID_TAG,   boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(building->PlanetID()));
     } else {
@@ -246,20 +342,32 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
 }
 
 SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_DEPOPULATED"), "icons/sitrep/colony_destroyed.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_DEPOPULATED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/colony_destroyed.png",
+        UserStringNop("SITREP_PLANET_DEPOPULATED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     return sitrep;
 }
 
 SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species) {
-    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_COLONIZED"), "icons/sitrep/planet_colonized.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_COLONIZED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/planet_colonized.png",
+        UserStringNop("SITREP_PLANET_COLONIZED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,  boost::lexical_cast<std::string>(planet_id));
     sitrep.AddVariable(VarText::SPECIES_TAG,    species);
     return sitrep;
 }
 
 SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_OUTPOSTED"), "icons/sitrep/planet_colonized.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_OUTPOSTED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/planet_colonized.png",
+        UserStringNop("SITREP_PLANET_OUTPOSTED_LABEL"), true);
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     return sitrep;
 }
@@ -288,13 +396,21 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
     //These should really be assembled from several pieces: a fleet description,
     //a system description, and a message template into which both are substituted.
     if (!fleet) {
-        SitRepEntry sitrep(UserStringNop("SITREP_FLEET_ARRIVED_AT_SYSTEM"), "icons/sitrep/fleet_arrived.png");
+        SitRepEntry sitrep(
+            UserStringNop("SITREP_FLEET_ARRIVED_AT_SYSTEM"),
+            CurrentTurn() + 1,
+            "icons/sitrep/fleet_arrived.png",
+            UserStringNop("SITREP_FLEET_ARRIVED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
         sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
         return sitrep;
     } else if (fleet->Unowned() && fleet->HasMonsters()) {
         if (fleet->NumShips() == 1) {
-            SitRepEntry sitrep(UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(
+                UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION"),
+                CurrentTurn() + 1,
+                "icons/sitrep/fleet_arrived.png",
+                UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
             int ship_id = *fleet->ShipIDs().begin();
@@ -303,21 +419,33 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, boost::lexical_cast<std::string>(ship->DesignID()));
             return sitrep;
         } else {
-            SitRepEntry sitrep(UserStringNop("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(
+                UserStringNop("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION"),
+                CurrentTurn() + 1,
+                "icons/sitrep/fleet_arrived.png",
+                UserStringNop("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
             sitrep.AddVariable(VarText::RAW_TEXT_TAG,   boost::lexical_cast<std::string>(fleet->NumShips()));
             return sitrep;
         }
     } else if (fleet->Unowned()) {
-        SitRepEntry sitrep(UserStringNop("SITREP_FLEET_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+        SitRepEntry sitrep(
+            UserStringNop("SITREP_FLEET_ARRIVED_AT_DESTINATION"),
+            CurrentTurn() + 1,
+            "icons/sitrep/fleet_arrived.png",
+            UserStringNop("SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
         sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
         sitrep.AddVariable(VarText::RAW_TEXT_TAG,   boost::lexical_cast<std::string>(fleet->NumShips()));
         return sitrep;
     } else if (fleet->OwnedBy(recipient_empire_id)) {
         if (fleet->NumShips() == 1) {
-            SitRepEntry sitrep(UserStringNop("SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(
+                UserStringNop("SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION"),
+                CurrentTurn() + 1,
+                "icons/sitrep/fleet_arrived.png",
+                UserStringNop("SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(fleet->Owner()));
@@ -327,7 +455,11 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, boost::lexical_cast<std::string>(ship->DesignID()));
             return sitrep;
         } else {
-            SitRepEntry sitrep(UserStringNop("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(
+                UserStringNop("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION"),
+                CurrentTurn() + 1,
+                "icons/sitrep/fleet_arrived.png",
+                UserStringNop("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  boost::lexical_cast<std::string>(fleet->Owner()));
@@ -336,7 +468,11 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         }
     } else {
         if (fleet->NumShips() == 1) {
-            SitRepEntry sitrep(UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(
+                UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION"),
+                CurrentTurn() + 1,
+                "icons/sitrep/fleet_arrived.png",
+                UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(fleet->Owner()));
@@ -346,7 +482,11 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, boost::lexical_cast<std::string>(ship->DesignID()));
             return sitrep;
         } else {
-            SitRepEntry sitrep(UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION"), "icons/sitrep/fleet_arrived.png");
+            SitRepEntry sitrep(
+                UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION"),
+                CurrentTurn() + 1,
+                "icons/sitrep/fleet_arrived.png",
+                UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  boost::lexical_cast<std::string>(system_id));
             sitrep.AddVariable(VarText::FLEET_ID_TAG,   boost::lexical_cast<std::string>(fleet_id));
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,  boost::lexical_cast<std::string>(fleet->Owner()));
@@ -357,7 +497,11 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
 }
 
 SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_EMPIRE_ELIMINATED"), "icons/sitrep/empire_eliminated.png");
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_EMPIRE_ELIMINATED"),
+        CurrentTurn() + 1,
+        "icons/sitrep/empire_eliminated.png",
+        UserStringNop("SITREP_EMPIRE_ELIMINATED_LABEL"), true);
     sitrep.AddVariable(VarText::EMPIRE_ID_TAG, boost::lexical_cast<std::string>(empire_id));
     return sitrep;
 }
