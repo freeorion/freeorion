@@ -1563,8 +1563,9 @@ void MapWnd::RenderFields() {
     }
 
     // if any, render scanlines over not-visible fields
-    if (!m_field_scanline_circles.empty() &&
-        HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES)
+    if (!m_field_scanline_circles.empty()
+        && HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES
+        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         m_field_scanline_circles.activate();
@@ -1696,10 +1697,8 @@ void MapWnd::RenderSystems() {
     float fog_scanline_spacing = 4.0f;
     Universe& universe = GetUniverse();
 
-    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         fog_scanlines = true;
-        fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-    }
 
     RenderScaleCircle();
 

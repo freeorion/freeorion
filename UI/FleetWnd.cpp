@@ -807,8 +807,10 @@ void ShipDataPanel::SetShipIcon() {
     delete m_bombard_indicator;
     m_bombard_indicator = 0;
 
-    delete m_scanline_control;
-    m_scanline_control = 0;
+    if (m_scanline_control) {
+        delete m_scanline_control;
+        m_scanline_control = 0;
+    }
 
     TemporaryPtr<const Ship> ship = GetShip(m_ship_id);
     if (!ship)
@@ -850,7 +852,9 @@ void ShipDataPanel::SetShipIcon() {
         AttachChild(m_bombard_indicator);
     }
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
+    if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
+        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    {
         m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true);
         AttachChild(m_scanline_control);
     }
@@ -1517,8 +1521,10 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
 void FleetDataPanel::Refresh() {
     delete m_fleet_icon;
     m_fleet_icon = 0;
-    delete m_scanline_control;
-    m_scanline_control = 0;
+    if (m_scanline_control) {
+        delete m_scanline_control;
+        m_scanline_control = 0;
+    }
     delete m_gift_indicator;
     m_gift_indicator = 0;
 
@@ -1569,7 +1575,9 @@ void FleetDataPanel::Refresh() {
             AttachChild(m_gift_indicator);
         }
 
-        if (fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
+        if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
+            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        {
             m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), true);
             AttachChild(m_scanline_control);
         }

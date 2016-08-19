@@ -639,7 +639,7 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if (m_visibility <= VIS_BASIC_VISIBILITY)
+        if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
             s_scanline_shader.RenderCircle(ul, lr);
     }
 

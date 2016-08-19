@@ -166,8 +166,10 @@ FleetButton::~FleetButton() {
     DetachChild(m_selection_indicator);
     delete m_selection_indicator;
 
-    DetachChild(m_scanline_control);
-    delete m_scanline_control;
+    if (m_scanline_control) {
+        DetachChild(m_scanline_control);
+        delete m_scanline_control;
+    }
 }
 
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
@@ -310,9 +312,6 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     LayoutIcons();
 
-    // Create scanline renderer control
-    m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, Width(), Height());
-
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
@@ -325,6 +324,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
             break;
         }
     }
+
+    // Create scanline renderer control
+    m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, Width(), Height());
 
     if (!at_least_one_fleet_visible)
         AttachChild(m_scanline_control);

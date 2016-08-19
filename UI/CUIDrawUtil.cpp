@@ -393,13 +393,10 @@ public:
     {}
 
     void StartUsing() {
-        if (m_failed_init || (!GetOptionsDB().Get<bool>("UI.system-fog-of-war")))
+        if (m_failed_init)
             return;
 
         if (!m_scanline_shader) {
-            if (m_failed_init)
-                return;
-
             boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
             std::string shader_text;
             ReadFile(shader_path, shader_text);
