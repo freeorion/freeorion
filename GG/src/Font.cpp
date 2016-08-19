@@ -1175,7 +1175,7 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
     mark_tag whitespace_tag(4);
     mark_tag text_tag(5);
 
-    std::string retval;
+    std::stringstream retval;
 
     // scan through matched markup and text, saving only the non-tag-text
     sregex_iterator it(text.begin(), text.end(), regex);
@@ -1185,13 +1185,13 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
         sub_match<std::string::const_iterator> const* whitespace_match;
 
         if ((text_match = &(*it)[text_tag]) && (text_match->matched))
-            retval += Substring(text, *text_match);
+            retval << Substring(text, *text_match);
 
         else if ((whitespace_match = &(*it)[whitespace_tag]) && whitespace_match->matched)
-            retval += Substring(text, *whitespace_match);
+            retval << Substring(text, *whitespace_match);
     }
 
-    return retval;
+    return retval.str();
 }
 
 Pt Font::TextExtent(const std::string& text, Flags<TextFormat> format/* = FORMAT_NONE*/, X box_width/* = X0*/) const
