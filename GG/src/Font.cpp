@@ -1343,7 +1343,6 @@ void Font::FillTextElements(const std::string& text,
         }
 
         // fill in the widths of code points in each TextElement
-        const GlyphMap::const_iterator WIDE_SPACE_IT = m_glyphs.find(WIDE_SPACE);
         for (std::size_t i = 0; i < text_elements.size(); ++i) {
             std::string::const_iterator it = text_elements[i]->text.begin();
             std::string::const_iterator end_it = text_elements[i]->text.end();
@@ -1354,9 +1353,7 @@ void Font::FillTextElements(const std::string& text,
                     GlyphMap::const_iterator it = m_glyphs.find(c);
                     // use a space when an unrendered glyph is requested (the
                     // space chararacter is always renderable)
-                    if (it == m_glyphs.end())
-                        it = WIDE_SPACE_IT;
-                    text_elements[i]->widths.back() = it->second.advance;
+                    text_elements[i]->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
                 }
             }
         }
