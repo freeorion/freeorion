@@ -1039,9 +1039,9 @@ namespace {
         case OBJ_PLANET:        return UserString("ENC_PLANET");        break;
         case OBJ_BUILDING:      return UserString("ENC_BUILDING");      break;
         case OBJ_SYSTEM:        return UserString("ENC_SYSTEM");        break;
-        case OBJ_FIELD:         return UserString("END_FIELD");         break;
+        case OBJ_FIELD:         return UserString("ENC_FIELD");         break;
         case OBJ_POP_CENTER:    return UserString("ENC_POP_CENTER");    break;
-        case OBJ_PROD_CENTER:   return UserString("END_PROD_CENTER");   break;
+        case OBJ_PROD_CENTER:   return UserString("ENC_PROD_CENTER");   break;
         default:                return EMPTY_STRING;
         }
     }

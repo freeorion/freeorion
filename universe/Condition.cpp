@@ -6220,7 +6220,7 @@ std::string OwnerHasTech::Description(bool negated/* = false*/) const {
     }
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_OWNER_HAS_TECH")
-        : UserString("DESC_OWNER_HAS_TECH"))
+        : UserString("DESC_OWNER_HAS_TECH_NOT"))
         % name_str);
 }
 
