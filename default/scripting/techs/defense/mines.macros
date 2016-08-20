@@ -1,10 +1,10 @@
 // EffectsGroups for System Defense Mines
 // arg1 total damage
-// arg2 priority_macro: unique result
+// arg2 priority
 // arg3 scope of systems effected: SOURCE, EMPIRE
 //
 // This macro handles multiple entries, where only the earliest applicable effects a target.
-//   arg2/priority_macro: the value assigned to the given macro should be unique from any other uses of EG_SYSTEM_MINES
+//   arg2/priority: the value should be unique from any other uses of EG_SYSTEM_MINES
 //   arg3/scope: applies to either the source system only, or to all systems with an empire owned planet.
 // Initial priority order of entries (earliest first):
 //   SYS_DEF_MINES_3
