@@ -217,34 +217,6 @@ namespace {
         FT_Library m_library;
     } g_library;
 
-    struct MatchesKnownTag
-    {
-        MatchesKnownTag(const boost::unordered_set<std::string>& known_tags,
-                        bool& ignore_tags) :
-            m_known_tags(known_tags),
-            m_ignore_tags(ignore_tags)
-        {}
-        bool operator()(const boost::xpressive::ssub_match& sub) const
-        { return m_ignore_tags ? false : m_known_tags.find(sub.str()) != m_known_tags.end(); }
-        const boost::unordered_set<std::string>& m_known_tags;
-        bool& m_ignore_tags;
-    };
-
-    struct PushSubmatchOntoStack
-    {
-        typedef void result_type;
-        void operator()(const std::string& str,
-                        std::stack<Font::Substring>& tag_stack,
-                        bool& ignore_tags,
-                        const boost::xpressive::ssub_match& sub) const
-        {
-            tag_stack.push(Font::Substring(str, sub));
-            if (tag_stack.top() == PRE_TAG)
-                ignore_tags = true;
-        }
-    };
-    const boost::xpressive::function<PushSubmatchOntoStack>::type Push = {{}};
-
     struct PushSubmatchOntoStackP
     {
         typedef void result_type;
@@ -259,33 +231,6 @@ namespace {
         }
     };
     const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
-
-    bool operator==(const Font::Substring& lhs, const boost::xpressive::ssub_match& rhs)
-    {
-        return lhs.size() == static_cast<std::size_t>(rhs.length()) &&
-            !std::memcmp(&*lhs.begin(), &*rhs.first, lhs.size());
-    }
-
-    struct MatchesTopOfStack
-    {
-        MatchesTopOfStack(std::stack<Font::Substring>& tag_stack,
-                          bool& ignore_tags) :
-            m_tag_stack(tag_stack),
-            m_ignore_tags(ignore_tags)
-        {}
-        bool operator()(const boost::xpressive::ssub_match& sub) const
-        {
-            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
-            if (retval) {
-                m_tag_stack.pop();
-                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
-                    m_ignore_tags = false;
-            }
-            return retval;
-        }
-        std::stack<Font::Substring>& m_tag_stack;
-        bool& m_ignore_tags;
-    };
 
     void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data, Alignment orig_just, Alignment prev_just)
     {
@@ -827,9 +772,6 @@ namespace {
         void Clear() {
             m_known_tags.clear();
         }
-
-        const boost::unordered_set<std::string>& KnownTags()
-        { return m_known_tags; }
 
         // Return a regex bound to \p text using the currently known
         // tags possible \p ignore_tags and/or \p strip_unpaired_tags
