@@ -263,7 +263,7 @@ namespace {
         // delete empty fleets from which ships may have been taken
         std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
         for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
-                it != fleets.end(); ++it)
+             it != fleets.end(); ++it)
         {
             TemporaryPtr<const Fleet> fleet = *it;
             if (fleet && fleet->Empty())
