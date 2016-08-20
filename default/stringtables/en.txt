@@ -1743,6 +1743,33 @@ Object list column widths
 OPTIONS_DB_FLEET_WND_AGGRESSION
 Fleet window default aggression setting
 
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
+If true, the bars of battle participants will be scaled horizontally to be proportional to their current health.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
+If true, the color of the bars of battle participant will be interpolated smoothly according to their remaining health percentage.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
+If true, the bars of battle participants will be scaled vertically to be proportional to their max health.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
+If true, the graph of empires in battles will be scaled relative to the maximum maximum health of their ships.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
+Color of dead units in the graphical combat summary
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
+Color of damage in the graphical combat summary
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
+Color of health in the graphical combat summary
+
+OPTIONS_DB_NETWORK_DISCOVERY_PORT
+Network port to use for server discovery.
+
+OPTIONS_DB_NETWORK_MESSAGE_PORT
+Network port to use for client-server messaging.
+
 
 ##
 ## File dialog
@@ -4386,9 +4413,6 @@ Bars:Equal
 COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP
 The widths of the bars are currently boringly equal. Press here for a more exiting mode!
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
-If true, the bars of battle participants will be scaled horizontally to be proportional to their current health.
-
 COMBAT_SUMMARY_HEALTH_SMOOTH
 Health:Smooth
 
@@ -4400,9 +4424,6 @@ Health:Bar
 
 COMBAT_SUMMARY_HEALTH_BAR_TIP
 The healthiness of a ship is currently shown with a two colour bar
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
-If true, the color of the bars of battle participant will be interpolated smoothly according to their remaining health percentage.
 
 COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
 Bar Height:Proportional
@@ -4416,9 +4437,6 @@ The bars of battle participants are currently scaled to show their max health re
 COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP
 The bars of battle participants are currently equal.
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
-If true, the bars of battle participants will be scaled vertically to be proportional to their max health.
-
 COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
 Graph Height:Proportional
 
@@ -4431,9 +4449,6 @@ The graphs of battling empires are currently scaled relative to the highest max 
 COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
 The graphs of of battling empires are currently equal.
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
-If true, the graph of empires in battles will be scaled relative to the maximum maximum health of their ships.
-
 OPTIONS_COMBAT_COLORS
 Combat colors
 
@@ -4445,15 +4460,6 @@ Damage
 
 OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
 Health
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
-Color of dead units in the graphical combat summary
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
-Color of damage in the graphical combat summary
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
-Color of health in the graphical combat summary
 
 COMBAT_LOG
 Log
