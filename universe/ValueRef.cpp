@@ -224,6 +224,9 @@ namespace {
         }
         return meter_name_map;
     }
+
+    // force early init to avoid threading issues later
+    std::map<std::string, MeterType> dummy = GetMeterNameMap();
 }
 
 namespace ValueRef {
