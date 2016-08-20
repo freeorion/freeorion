@@ -80,13 +80,14 @@ namespace {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        TemporaryPtr<const System> dest = GetSystem(fleet->FinalDestinationID());
+        TemporaryPtr<const System> dest_sys = GetSystem(fleet->FinalDestinationID());
         TemporaryPtr<const System> cur_sys = GetSystem(fleet->SystemID());
-        if (dest && dest != cur_sys) {
+        bool returning_to_current_system = (dest_sys == cur_sys) && !fleet->TravelRoute().empty();
+        if (dest_sys && dest_sys != cur_sys || returning_to_current_system) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
-            const std::string& dest_name = dest->ApparentName(client_empire_id);
+            const std::string& dest_name = dest_sys->ApparentName(client_empire_id);
 
             // next system on path
             std::string next_eta_text;
@@ -110,22 +111,22 @@ namespace {
             else
                 final_eta_text = boost::lexical_cast<std::string>(eta.first);
 
-            if(ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
+            if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
                 retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_TO")) %
-                                                dest_name % final_eta_text % next_eta_text);
+                                        dest_name % final_eta_text % next_eta_text);
             else {
                 // "FW_FLEET_MOVING_TO" userstring is currently truncated to drop ETA info
                 // so as to fit better in a small fleet window
                 std::string moving_key = GetOptionsDB().Get<bool>("UI.show-fleet-eta") ?
                                          "FW_FLEET_MOVING_TO_ETA" : "FW_FLEET_MOVING_TO";
-                retval = boost::io::str(FlexibleFormat(UserString(moving_key)) % 
-                                                dest_name % final_eta_text % next_eta_text);
+                retval = boost::io::str(FlexibleFormat(UserString(moving_key)) %
+                                        dest_name % final_eta_text % next_eta_text);
             }
 
         } else if (cur_sys) {
             const std::string& cur_system_name = cur_sys->ApparentName(client_empire_id);
-            if(ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())){ 
-                if(fleet->Fuel() == fleet->MaxFuel())
+            if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())) {
+                if (fleet->Fuel() == fleet->MaxFuel())
                     retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_WAITING")));
                 else
                     retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_REFUEL")));
