@@ -46,7 +46,7 @@ namespace {
             using namespace boost::asio::ip;
             udp::resolver resolver(*m_io_service);
             udp::resolver::query query(udp::v4(), "255.255.255.255",
-                                       boost::lexical_cast<std::string>(DISCOVERY_PORT),
+                                       boost::lexical_cast<std::string>(Networking::DiscoveryPort()),
                                        resolver_query_base::address_configured |
                                        resolver_query_base::numeric_service);
             udp::resolver::iterator end_it;
@@ -170,7 +170,7 @@ bool ClientNetworking::ConnectToServer(
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
     tcp::resolver::query query(tcp::v4(), ip_address,
-                               boost::lexical_cast<std::string>(MESSAGE_PORT),
+                               boost::lexical_cast<std::string>(Networking::MessagePort()),
                                boost::asio::ip::resolver_query_base::numeric_service);
 
     tcp::resolver::iterator end_it;

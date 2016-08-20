@@ -278,7 +278,7 @@ void PlayerConnection::AsyncReadMessage() {
 // DiscoveryServer
 ////////////////////////////////////////////////////////////////////////////////
 DiscoveryServer::DiscoveryServer(boost::asio::io_service& io_service) :
-    m_socket(io_service, udp::endpoint(udp::v4(), DISCOVERY_PORT))
+    m_socket(io_service, udp::endpoint(udp::v4(), Networking::DiscoveryPort()))
 { Listen(); }
 
 void DiscoveryServer::Listen() {
@@ -482,7 +482,7 @@ void ServerNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
 void ServerNetworking::Init() {
-    tcp::endpoint endpoint(tcp::v4(), MESSAGE_PORT);
+    tcp::endpoint endpoint(tcp::v4(), Networking::MessagePort());
 
     if (GetOptionsDB().Get<bool>("singleplayer")) {
         // when hosting a single player game only accept connections from
