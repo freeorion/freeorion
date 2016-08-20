@@ -10,13 +10,17 @@ Italiano
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Sfoglia...
 
 APPLY
 Applica
@@ -27,12 +31,6 @@ Annulla
 DONE
 Fatto
 
-CLOSE
-Chiudi
-
-LOAD
-Carica
-
 SAVE
 Salva
 
@@ -41,9 +39,6 @@ Apri
 
 OR
 o
-
-AND
-e
 
 YES
 Si
@@ -89,15 +84,6 @@ ERRORE
 
 RESET
 Ripristina
-
-TURN
-Turno
-
-CHAT_WHISPER
-Messaggio privato
-
-UP
-Su
 
 NEXT
 Succ
@@ -251,9 +237,6 @@ Vortice magnetico di particelle cariche relativistiche che possono interferire c
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Flotta Interna
-
 FN_BATTLE_FLEET
 Flotta da battaglia
 
@@ -262,9 +245,6 @@ Flotta da esplorazione
 
 FN_COLONY_FLEET
 Flotta colonizzatrice
-
-FN_INVASION_FLEET
-Flotta da invasione
 
 MONSTERS
 Mostri
@@ -286,14 +266,8 @@ Il server non risponde.
 SERVER_LOST
 La connessione al server è stata persa.
 
-SERVER_GAME_END
-Il server ha inviato un messaggio di fine partita. Buh-bye.
-
 PLAYER_DISCONNECTED
 Il giocatore %1% si è disconnesso.
-
-UNKNOWN_EMPIRE
-Impero Sconosciuto
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Il server ha ricevuto dal client dei dati di salvataggio non validi. Alcuni possono essere ignorati.
@@ -356,12 +330,6 @@ Imposta la traccia da riprodurre per il sottofondo musicale.
 
 OPTIONS_DB_FULLSCREEN
 Avvia il gioco in modalità schermo intero. Potrebbe essere necessario riavviare il gioco perchè abbia effetto.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Intervallo di tempo, in secondi, dopo il quale la finestra di chat multiutente scomparirà se non viene utilizzata. Un valore di 0 indica che la finestra non dovrebbe mai scomparire.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Il numero dei messaggi in uscita da mantenere nel box della chat.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rendering della sostanza gassosa per determinare la forma della galassia. Può rallentare il rendering su vecchi sistemi.
@@ -429,9 +397,6 @@ Attiva il limite dei FPS (1 o 0). Il limite è impostato con l'opzione Max FPS.
 OPTIONS_DB_MAX_FPS
 Iposta il limite dei FPS, se abilitato. è attivato con Limit FPS.
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Attiva gli effetti sonori dell'interfaccia (1 o 0).
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Il volume (0 - 255) con il quale vengono riprodotti gli effetti sonori.
 
@@ -488,12 +453,6 @@ Imposta il file del font.
 
 OPTIONS_DB_UI_FONT_BOLD
 Imposta il file del font grassetto.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Imposta il file del font corsivo.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Imposta il file del font grassetto corsivo.
 
 OPTIONS_DB_UI_FONT_SIZE
 Imposta la dimensione del font per l'interfaccia.
@@ -703,16 +662,9 @@ Alterna l'inclusione di testo generato automaticamente in tecnologia, edilizia o
 FILE_DLG_FILE_TYPES
 Tipo(i):
 
-FILE_DLG_MALFORMED_FILENAME
-Nome del file non valido.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% esiste.
 sovrascrivere?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-è un nome di file non valido.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -773,9 +725,6 @@ Esci
 
 ERR_CONNECT_TIMED_OUT
 Tempo scaduto durante il tentativo di connessione al server
-
-ERR_VERSION_MISMATCH
-Impossibile connettersi al server, perché questo client utilizza una versione diversa delle seguenti impostazioni e/o file:
 
 
 ##
@@ -982,9 +931,6 @@ Licenza
 ABOUT_WINDOW_TITLE
 Informazioni su FreeOrion
 
-CREDITS
-Ringraziamenti
-
 VISION
 Visione
 
@@ -1084,9 +1030,6 @@ Modalità video in finestra (richiede riavvio)
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Imposta larghezza ed altezza della modalità a finetra. Questa modalità utilizza i bit per pixel della modalità schermo intero.
 
-OPTIONS_VIDEO_SETTINGS
-Impostazioni video
-
 OPTIONS_APP_WIDTH_WINDOWED
 Larghezza finestra
 
@@ -1110,12 +1053,6 @@ FPS Massimi
 
 OPTIONS_APPLY
 Applica
-
-OPTIONS_CHAT_HISTORY
-Cronologia Chat
-
-OPTIONS_CHAT_HIDE
-Attesa scomparsa chat
 
 OPTIONS_GALAXY_MAP
 Mappa Galassia
@@ -1249,9 +1186,6 @@ Suoni finestre
 OPTIONS_SOUND_BUTTON
 Suoni pulsanti
 
-OPTIONS_SOUND_FLEET
-Suoni pulsanti flotte
-
 OPTIONS_SOUND_ALERT
 Attenzione
 
@@ -1315,9 +1249,6 @@ Incremento statistiche
 OPTIONS_STAT_DECREASE_COLOR
 Decremento statistiche
 
-OPTIONS_INTERIOR_COLOR
-Interno
-
 OPTIONS_WINDOW_COLORS
 Finestre
 
@@ -1362,9 +1293,6 @@ Colore barra
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Sfondo
-
-OPTIONS_ANY_FILE
-Tutti i file
 
 OPTIONS_FOLDER_SETTINGS
 Files di risorse
@@ -1468,19 +1396,8 @@ Numero totale di navi
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Pannello laterale
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Produzione Sistema
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -1510,9 +1427,6 @@ Consumo Ricerca
 TRADE_CONSUMPTION
 Consumo Commercio
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Commercio tra sistemi
-
 IMPORT_EXPORT_TOOLTIP
 Importazione / Esportazione
 
@@ -1533,18 +1447,9 @@ Nessuna importazione od esportazione
 PLANET_PANEL
 Pannello Pianeta
 
-PL_ASTEROID_BELT
-Cintura di asteroidi
-
 # %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroidi
-
-PL_UNINHABITED
-Disabitato
-
-PL_SIZE
-Dimensione
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -1557,18 +1462,12 @@ Annulla Colonizzazione
 PL_OUTPOST
 Piazza Avamposto
 
-PL_CANCEL_OUTPOST
-Annulla Avamposto
-
 # %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Invadi (+%1%)
 
 PL_CANCEL_INVADE
 Annulla Invasione
-
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Seleziona nave colonizzatrice per colonizzare.
 
 
 ##
@@ -1707,9 +1606,6 @@ Nascondi
 FW_PASSIVE_DESC
 La flotta cerca di rimanere nascosta; non bloccherà od inizierà uno scontro.
 
-FW_SHIP_CLASS
-Classe Nave
-
 FW_UNKNOWN_DESIGN_NAME
 Progetto sconosciuto
 
@@ -1741,9 +1637,6 @@ Flotte su %1%
 FW_GENERIC_FLEETS
 Flotte
 
-FW_BATTLE_FLEET
-Flotta da battaglia
-
 # the name that is used for fleets the client's player does not control when
 # the empire is not specified.
 FW_FOREIGN_FLEET
@@ -1764,15 +1657,6 @@ Nave Canaglia
 
 SHIP_DAMAGE_STAT_TITLE
 Danno
-
-SHIP_DAMAGE_STAT_MAIN
-Danno totale inflitto dalle armi della nave per turno di combattimento.
-
-SHIP_SPEED_STAT_TITLE
-Velocità
-
-SHIP_SPEED_STAT_MAIN
-Massima distanza stellare percorribile per turno.
 
 FW_FLEET_FUEL_SUMMARY
 Carburante flotta - Pari al carburante minimo delle navi della flotta.
@@ -1876,24 +1760,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Mai
 
-TECH_WND_TECH_COMPLETED
-COMPLETATO
-
-TECH_WND_TECH_QUEUED
-In coda
-
-TECH_WND_TECH_INCOMPLETE
-Incompleto
-
-TECH_WND_TYPE_THEORIES
-Teorie
-
-TECH_WND_TYPE_APPLICATIONS
-Applicazioni
-
-TECH_WND_TYPE_REFINEMENTS
-Rifiniture
-
 TECH_WND_STATUS_COMPLETED
 Completato
 
@@ -1914,12 +1780,6 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 
 TECH_WND_VIEW_TYPE
 Ad Albero / Come Lista
-
-TECH_WND_REQUIRES
-Richiede
-
-TECH_WND_UNLOCKS
-Sblocca
 
 # %1% research points already spent on a reseach.
 # %2% total research points required to complete the research.
@@ -1989,14 +1849,8 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Mai
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Quantità
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Aggiungi alla coda
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Centra sulla Ricerca
 
 PRODUCTION_QUEUE_PROMPT
 Doppio click su un elemento disponibile per aggiungerlo alla coda di produzione.
@@ -2008,13 +1862,6 @@ Doppio click su un elemento disponibile per aggiungerlo alla coda di produzione.
 
 PRODUCTION_WND_TITLE
 Produzione
-
-PRODUCTION_QUEUE_EMPTY
-'''La coda di produzione dell'impero è vuota.
-
-Accoda la costruzione di un progetto selezionando un pianeta dal pannello laterale e facendo doppio click su un'elemento della lista.
-
-Notare che le navi possono essere costruite solo su pianeti con un cantiere navale e che diversi altri oggetti possono avere altre restrizioni sul luogo di produzione.'''
 
 # %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
@@ -2030,9 +1877,6 @@ Progetto Nave Personalizzato
 
 DESIGN_DESCRIPTION_DEFAULT
 Descrizione Progetto
-
-DESIGN_NO_PART
-Nessuno
 
 DESIGN_WND_STARTS
 Avvia Progettazione
@@ -2058,14 +1902,8 @@ Nome Progetto
 DESIGN_WND_DESIGN_DESCRIPTION
 Descrizione
 
-DESIGN_WND_CONFIRM
-Conferma Nuovo Progetto
-
 DESIGN_WND_CLEAR
 Rimuovi Parti
-
-DESIGN_DELETE
-Cancella Progetto
 
 
 ##
@@ -2153,15 +1991,6 @@ Nave
 
 ENC_MONSTER
 Tipo Mostro
-
-MONSTER_TYPES
-Tipi Mostro
-
-MONSTER_OBJECTS
-'''Mostri: '''
-
-NO_MONSTER_OBJECTS
-Nessun mostro conosciuto
 
 ENC_FLEET
 Flotta
@@ -2257,9 +2086,6 @@ ENC_UNLOCKS
 #     encyclopedia.
 ENC_LOOKUP
 Cerca %1% sulla guida
-
-ENC_COMBAT_LOG
-Log di Combattimento
 
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
@@ -2473,41 +2299,6 @@ Evacuazione
 
 
 ##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Finestra di Combattimento
-
-COMBAT_BATTLE
-'''BATTAGLIA : '''
-
-COMBAT_MILITARY_SHIPS
-Navi militari
-
-COMBAT_CIVILIAN_SHIPS
-Navi Civili
-
-COMBAT_PLANETS
-Pianeti
-
-COMBAT_REMAINING
-''' Rimanenti'''
-
-COMBAT_RETREATED
-''' Ritirati'''
-
-COMBAT_DESTROYED
-''' Distrutti'''
-
-COMBAT_DEFENSELESS
-''' Senza difese'''
-
-COMBAT_LOST
-''' Persi!'''
-
-
-##
 ## Turn progress
 ##
 
@@ -2553,9 +2344,6 @@ Inizio Turno %1%
 MESSAGES_PANEL_TITLE
 Messaggi
 
-MESSAGES_PANEL_INTRO
-Stato e Messaggi di Chat
-
 
 ##
 ## Players list
@@ -2580,9 +2368,6 @@ Attesa
 
 SORT
 Ordina
-
-COLUMNS
-Colonne
 
 COLLAPSE_ALL
 Comprimi Tutto
@@ -2666,9 +2451,6 @@ Rapporto Situazione
 # %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Rapporto Situazione - Turno %1%
-
-SITREP_ERROR
-Si è verificato un evento sconosciuto.
 
 FILTERS
 Filtri
@@ -2965,6 +2747,10 @@ OBJ_FIELD
 Campo
 
 # Star types
+INVALID_STAR_TYPE
+tipo stella sconosciuto
+
+# Star types
 STAR_BLUE
 blu
 
@@ -2995,10 +2781,6 @@ buco nero
 # Star types
 STAR_NONE
 nessuna stella
-
-# Star types
-INVALID_STAR_TYPE
-tipo stella sconosciuto
 
 # Planet types
 PT_SWAMP
@@ -3132,18 +2914,6 @@ Scafo Nave
 UIT_TECH
 Tecnologia
 
-# Technology types
-TT_THEORY
-Teoria
-
-# Technology types
-TT_APPLICATION
-Applicazione
-
-# Technology types
-TT_REFINEMENT
-Affinamento
-
 # Build types
 BT_NOT_BUILDING
 non edificare
@@ -3155,26 +2925,6 @@ edificare
 # Build types
 BT_SHIP
 nave
-
-# Stockpile types
-ST_FOOD
-cibo
-
-# Stockpile types
-ST_MINERAL
-minerali
-
-# Stockpile types
-ST_TRADE
-commercio
-
-# Resource types
-RE_FOOD
-cibo
-
-# Resource types
-RE_MINERALS
-minerali
 
 # Resource types
 RE_TRADE
@@ -3292,9 +3042,6 @@ Oggetti interessati: Solo l'oggetto di origine
 # %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 L'effetto è attivo se la fonte è un oggetto%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-L'effetto è sempre attivo
 
 # %1% index of the effect group.
 # %2% textual description of the effect group.
@@ -3492,9 +3239,6 @@ Costruzione
 GROWTH_CATEGORY
 Crescita
 
-ECONOMICS_CATEGORY
-Economia
-
 DEFENSE_CATEGORY
 Difesa
 
@@ -3574,9 +3318,6 @@ Coscienza Unificata
 LRN_TRANSCEND
 Singolarità Trascendentale
 
-GRO_MEDICAL_PATH
-Patologia Medica
-
 GRO_PLANET_ECOL
 Ecologia Planetaria
 
@@ -3627,9 +3368,6 @@ Metabolismo Energetico Puro
 PRO_MICROGRAV_MAN
 Industria Microgravitazionale
 
-PRO_CORE_MINE
-Tectonic Minerology
-
 PRO_ROBOTIC_PROD
 Produzione Robotica
 
@@ -3645,12 +3383,6 @@ Exobot
 
 PRO_EXOBOTS_DESC
 Permette la costruzione di Exobots ottimizzati per l'industria su pianeti ostili.
-
-PRO_RAPID_EXO_PROD
-Produzione Rapida di Exobot
-
-PRO_RAPID_EXO_PROD_DESC
-Permette più exobots.
 
 PRO_FUSION_GEN
 Generatore di Fusione
@@ -3677,12 +3409,6 @@ PRO_SENTIENT_AUTOMATION_DESC
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
 As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce. When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.'''
-
-PRO_INTSTEL_COPRO
-Coproduzione Interstellare
-
-PRO_INTSTEL_COPRO_DESC
-'''I tradizionali mezzi di produzione sono limitati dal bisogno di autosufficienza dovuti al trasporto e altri problemi logistici. Le cooperazioni regionali dei pianeti permettevano un certo grado di specializzazione e cooperazione, con ogni stabilimento che produceva solo alcune parti o sottosistemi, e l'intero sistema beneficiava nel possedere un elevata esperienza e un economia di scala. Espandendo questo concetto diversi ordini di grandezza, può essere adattato ad una scala galattica, con pianeti o interi sistemi che lavorano nel funzionamento di unica struttura specializzata. Le difficoltà logistiche inerenti a questo paradigma sono inoltre simili a quello precedente e sono scalati nella stessa maniera dei potenziali benefici. '''
 
 PRO_NDIM_ASSMB
 Assemblaggio N-Dimensionale
@@ -3713,9 +3439,6 @@ Una volta che determinate le soglie di prestazioni vengono superate, la misurazi
 VICTORY_SHORT_DESC
 Porta alla Vittoria!
 
-DOES_NOTHING_SHORT_DESC
-Inutile: Non fa Nulla
-
 SHIP_PART_UNLOCK_SHORT_DESC
 Sblocca Parte Nave
 
@@ -3734,12 +3457,6 @@ Migliora Ricerca
 INDUSTRY_SHORT_DESC
 Migliora Industria
 
-TRADE_SHORT_DESC
-Migliora Commercio
-
-CONSTRUCTION_SHORT_DESC
-Migliora Infrastruttura
-
 SUPPLY_SHORT_DESC
 Migliora Rifornimento
 
@@ -3755,14 +3472,8 @@ Migliora Misura Crescita
 POPULATION_SHORT_DESC
 Incrementa Popolazione Massima
 
-HEALTH_SHORT_DESC
-Migliora Salute
-
 STRUCTURE_SHORT_DESC
 Migliora Struttura
-
-FLEET_RANGE_DESC
-Migliora Rifornimento Flotta
 
 SHIP_REPAIR_DESC
 Ripara Navi

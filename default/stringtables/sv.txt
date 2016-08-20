@@ -7,25 +7,23 @@ Svenska
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Bläddra...
 
 CANCEL
 Avbryt
 
 DONE
 Klar
-
-CLOSE
-Stäng
-
-LOAD
-Ladda
 
 SAVE
 Spara
@@ -35,9 +33,6 @@ OPEN
 
 OR
 eller
-
-AND
-och
 
 YES
 Ja
@@ -56,9 +51,6 @@ Döp om
 
 ENTER_NEW_NAME
 Ange nytt namn
-
-CHAT_WHISPER
-viska
 
 
 ##
@@ -99,9 +91,6 @@ Servern svarar inte.
 SERVER_LOST
 Förbindelsen till servern har förlorats.
 
-SERVER_GAME_END
-Servern har meddelat att spelet är slut. Hejsvejs.
-
 PLAYER_DISCONNECTED
 Spelare %1% har inte längre förbindelse med servern.
 
@@ -118,12 +107,6 @@ Väljer bakgrundsspår att spela.
 
 OPTIONS_DB_FULLSCREEN
 Starta spelet i fullskärmsläge.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Tidsintervall, i sekunder, efter vilket chattfönstret i flerspelarläget kommer att stängas om inget läggs till i det. Ett värde av 0 anger att fönstret aldrig kommer stängas.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Antalet utgående meddelanden att behålla i chatthistoriken.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rendera en gasliknande effekt runt systemen som ger galaxen en form. Detta kan orsaka spelet går långsammare på en äldre maskin.
@@ -142,9 +125,6 @@ OPTIONS_DB_COLOR_DEPTH
 
 OPTIONS_DB_SHOW_FPS
 Växlar mellan att visa FPS, på eller av.
-
-OPTIONS_DB_UI_SOUND_ENABLED
-Växlar användargränssnittljud, på eller av.
 
 OPTIONS_DB_UI_SOUND_VOLUME
 Volymen (0 till 255) som användargränssnittljudeffekterna kommer att spelas upp med.
@@ -220,14 +200,8 @@ Fil(er):
 FILE_DLG_FILE_TYPES
 Typ(er):
 
-FILE_DLG_MALFORMED_FILENAME
-Ogiltigt filnamn.
-
 FILE_DLG_OVERWRITE_PROMPT
 %1% existerar redan.\nVill du skriva över den?
-
-FILE_DLG_INVALID_FILENAME
-"%1%"\när ett ogiltigt filnamn.
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 "%1%"\när en katalog.
@@ -272,9 +246,6 @@ Avsluta
 ERR_CONNECT_TIMED_OUT
 Kunde inte få något svar från servern
 
-ERR_VERSION_MISMATCH
-'''Kan inte ansluta till servern eftersom denna klient använder en annan version av följande inställningar och/eller källfiler: '''
-
 
 ##
 ## Server Setup Screen
@@ -308,9 +279,6 @@ Uppdatera lista
 
 MPLOBBY_WINDOW_TITLE
 Flerspelarinställningar
-
-MPLOBBY_HOST_ABORTED_GAME
-Värden för spelet har avslutat pågående spel.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Unikt namn och färg på imperier krävs
@@ -418,9 +386,6 @@ Licens
 ABOUT_WINDOW_TITLE
 Om FreeOrion
 
-CREDITS
-Medverkande
-
 FREEORION_VISION
 FreeOrion, ett öppet källkods-spel baserat på Master of Orion, är ett turordningsbaserat spel om episk rymdstrategi som bygger på den klassiska '4X'-modellen genom att inkludera element som nationsuppbyggnad från spel så som Europa Universalis 2 och en allsidig motor för taktiska strider. Då dess anpassningsbara, öppna, design tillåter en hög grad av personalisering av spelmotorn och spelets handling, vill personerna bakom FreeOrion främja skapandet av ett storskaligt och levande universum.
 
@@ -502,9 +467,6 @@ Bildskärmsläge  (kräver omstart)
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
-OPTIONS_VIDEO_SETTINGS
-Videoinställningar
-
 OPTIONS_FULLSCREEN
 Fullskärm
 
@@ -516,15 +478,6 @@ Begränsa FPS
 
 OPTIONS_MAX_FPS
 Max-FPS
-
-OPTIONS_CHAT
-Chatt
-
-OPTIONS_CHAT_HISTORY
-Chatthistorik
-
-OPTIONS_CHAT_HIDE
-Fördröjning när chattfönstret döljs
 
 OPTIONS_GALAXY_MAP
 Galaxkarta
@@ -562,9 +515,6 @@ Fönsterljud
 OPTIONS_SOUND_BUTTON
 Knappljud
 
-OPTIONS_SOUND_FLEET
-Flottknappljud
-
 OPTIONS_SOUND_ALERT
 Varning
 
@@ -591,9 +541,6 @@ Fyllnad
 
 OPTIONS_BORDER_COLOR
 Kant
-
-OPTIONS_INTERIOR_COLOR
-Innandöme
 
 OPTIONS_WINDOW_COLORS
 Fönster
@@ -646,9 +593,6 @@ Förloppsindikator
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Bakgrund
 
-OPTIONS_ANY_FILE
-Alla filer
-
 OPTIONS_FOLDER_SETTINGS
 Resursfiler
 
@@ -693,19 +637,8 @@ Formgivning
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Sidpanel
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Systemproduktion
 
 
 ##
@@ -714,15 +647,6 @@ Systemproduktion
 
 PLANET_PANEL
 Planetpanel
-
-PL_ASTEROID_BELT
-Asteroidbälte
-
-PL_UNINHABITED
-Obebodd
-
-PL_SIZE
-Storlek
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -801,9 +725,6 @@ Aldrig
 FW_FLEET_ETA_UNKNOWN
 Okänt
 
-FW_SHIP_CLASS
-'''Skeppsklass '''
-
 FW_UNKNOWN_DESIGN_NAME
 Okänt
 
@@ -815,9 +736,6 @@ Ny flotta
 # %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
 %1%-flottor
-
-FW_BATTLE_FLEET
-Stridsflotta
 
 # the name that is used for fleets the client's player does not control when
 # the empire is not specified.
@@ -859,35 +777,11 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Aldrig
 
-TECH_WND_TECH_COMPLETED
-AVSLUTAD
-
-TECH_WND_TECH_QUEUED
-Köad
-
-TECH_WND_TECH_INCOMPLETE
-Påbörjat
-
-TECH_WND_TYPE_THEORIES
-Teorier
-
-TECH_WND_TYPE_APPLICATIONS
-Tillämpningar
-
-TECH_WND_TYPE_REFINEMENTS
-Förfiningar
-
 TECH_WND_STATUS_COMPLETED
 Avslutat
 
 TECH_WND_STATUS_RESEARCHABLE
 Upptäckbara
-
-TECH_WND_REQUIRES
-Kräver
-
-TECH_WND_UNLOCKS
-Tillåter
 
 
 ##
@@ -938,14 +832,8 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Aldrig
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Mängd
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Lägg till i kö
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Centrera tillverkning
 
 
 ##
@@ -966,9 +854,6 @@ Användardefinierad skeppsritning
 DESIGN_DESCRIPTION_DEFAULT
 Beskrivning utav ritning
 
-DESIGN_NO_PART
-Ingen
-
 DESIGN_WND_HULLS
 Empty Hulls
 
@@ -986,9 +871,6 @@ Ritningsnamn
 
 DESIGN_WND_DESIGN_DESCRIPTION
 Beskrivning
-
-DESIGN_WND_CONFIRM
-Bekräfta ny ritning
 
 DESIGN_WND_CLEAR
 Rensa från delar
@@ -1034,41 +916,6 @@ Building
 ##
 ## Guides
 ##
-
-
-##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Stridsfönster
-
-COMBAT_BATTLE
-'''SLAG : '''
-
-COMBAT_MILITARY_SHIPS
-Militära skepp
-
-COMBAT_CIVILIAN_SHIPS
-Civila skepp
-
-COMBAT_PLANETS
-Planeter
-
-COMBAT_REMAINING
-''' Kvarstående'''
-
-COMBAT_RETREATED
-''' Retirerade'''
-
-COMBAT_DESTROYED
-''' Förintad'''
-
-COMBAT_DEFENSELESS
-''' Försvarslös'''
-
-COMBAT_LOST
-''' Förlorade!'''
 
 
 ##
@@ -1365,18 +1212,6 @@ Skeppsdel
 UIT_SHIP_HULL
 Skeppsskrov
 
-# Technology types
-TT_THEORY
-Teorier
-
-# Technology types
-TT_APPLICATION
-Tillämpningar
-
-# Technology types
-TT_REFINEMENT
-Förfiningar
-
 # Build types
 BT_BUILDING
 byggnad
@@ -1384,14 +1219,6 @@ byggnad
 # Build types
 BT_SHIP
 skepp
-
-# Stockpile types
-ST_FOOD
-mat
-
-# Stockpile types
-ST_TRADE
-handel
 
 # Ship slot types
 SL_EXTERNAL
@@ -1519,9 +1346,6 @@ Konstruktion
 
 GROWTH_CATEGORY
 Tillväxt
-
-ECONOMICS_CATEGORY
-Ekonomi
 
 
 ##

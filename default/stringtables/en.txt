@@ -16,15 +16,10 @@ English
 # جامعة
 # یای مجهو
 
+
 ##
 ## Common phrases
 ##
-
-APPNAME
-FreeOrion
-
-BROWSE_BTN
-Browse...
 
 OK
 OK
@@ -38,12 +33,6 @@ Cancel
 DONE
 Done
 
-CLOSE
-Close
-
-LOAD
-Load
-
 SAVE
 Save
 
@@ -55,9 +44,6 @@ Open
 
 OR
 or
-
-AND
-and
 
 YES
 Yes
@@ -102,9 +88,6 @@ No Empire
 DROP_PLAYER
 Drop
 
-HOST
-Host
-
 ALL
 All
 
@@ -131,15 +114,6 @@ ERROR
 
 RESET
 Reset
-
-TURN
-Turn
-
-CHAT_WHISPER
-whisper
-
-UP
-Up
 
 NEXT
 Next
@@ -1005,9 +979,6 @@ An accretion disc is a structure (often a circumstellar disc) formed by diffused
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Home Fleet
-
 FN_BATTLE_FLEET
 Battle Fleet
 
@@ -1016,9 +987,6 @@ Scout Fleet
 
 FN_COLONY_FLEET
 Colony Fleet
-
-FN_INVASION_FLEET
-Invasion Fleet
 
 MONSTERS
 Monsters
@@ -1040,9 +1008,6 @@ The server is not responding.
 SERVER_LOST
 The connection to the server has been lost.
 
-SERVER_GAME_END
-The server has sent an end-game message. Buh-bye.
-
 PLAYER_DISCONNECTED
 Player %1% no longer has a connection to the server.
 
@@ -1053,9 +1018,6 @@ Saving...
 # %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
 Saved %2% bytes to file: %1%
-
-UNKNOWN_EMPIRE
-Unknown Empire
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 The server received invalid client save data. Some may be ignored.
@@ -1153,9 +1115,6 @@ Avoids certain issues with real screen mode changes, which are known to appear o
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Select which monitor to use in fullscreen mode. Primary monitor should be index 0. May require a restart to take effect.
 
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Time interval, in seconds, after which the multiplayer chat window will disappear if nothing is added to it. A value of 0 indicates that the window should never disappear.
-
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 '''List the columns to show in the save file dialog, separated by commas.
 Valid columns: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
@@ -1165,9 +1124,6 @@ If UI.save-file-dialog.[name].wide-as is set, the column will always be wide eno
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
 If UI.save-file-dialog.[name].stretch is set, the column will get that stretch factor if visible.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-The number of outgoing messages to keep in the chat edit box history.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape. May slow rendering on older systems.
@@ -1274,9 +1230,6 @@ Toggles FPS limiting on or off when the game window does not have focus.
 OPTIONS_DB_MAX_FPS_NO_FOCUS
 Sets FPS limit when the game window does not have focus, if enabled.
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Toggles UI sound effects on or off.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 The volume (0 to 255) at which UI sound effects should be played.
 
@@ -1333,12 +1286,6 @@ Sets UI font resource file.
 
 OPTIONS_DB_UI_FONT_BOLD
 Sets UI bold font resource file.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Sets UI italic font resource file.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Sets UI bold-italic font resource file.
 
 OPTIONS_DB_UI_FONT_SIZE
 Sets UI font size.
@@ -1489,12 +1436,6 @@ At game start automatically add all user-saved ship designs to the player-empire
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 In the Design Window, dynamically update the pedia detail page while the design name is being edited.
-
-OPTIONS_DB_CHAT_PANEL_HEIGHT
-Sets the height of the player chat panel, in pixels
-
-OPTIONS_DB_CHAT_PANEL_WIDTH
-Sets the width of the player chat panel, in pixels
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Sets size of system side-panel.
@@ -1784,16 +1725,9 @@ File(s):
 FILE_DLG_FILE_TYPES
 Type(s):
 
-FILE_DLG_MALFORMED_FILENAME
-Invalid file name.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% exists.
 OK to overwrite it?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-is an invalid file name.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -1876,9 +1810,6 @@ Exit
 ERR_CONNECT_TIMED_OUT
 Timed out while attempting to connect to server
 
-ERR_VERSION_MISMATCH
-'''Cannot connect to server because this client is using different versions of the following settings and/or source files: '''
-
 
 ##
 ## Server Setup Screen
@@ -1912,9 +1843,6 @@ Refresh list
 
 MPLOBBY_WINDOW_TITLE
 Multiplayer Setup
-
-MPLOBBY_HOST_ABORTED_GAME
-The host player has terminated this game setup.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Unique names and colors required
@@ -2105,9 +2033,6 @@ License
 ABOUT_WINDOW_TITLE
 About FreeOrion
 
-CREDITS
-Credits
-
 VISION
 Vision
 
@@ -2195,9 +2120,6 @@ SAVE_NUMBER_EMPIRES_TITLE
 
 SAVE_NUMBER_HUMANS_TITLE
 <u>Human Players</u>
-
-SAVE_DIALOG_REMOTE_SUGGESTIVE_ONLY
-These reside on a multiplayer server. Only saves you know about are listed.
 
 SAVE_DIALOG_ROW_BROWSE_TEMPLATE
 '''
@@ -2333,9 +2255,6 @@ Windowed Video Mode
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Sets width and height of window in windowed mode. Windowed bits per pixel uses full-screen mode setting.
 
-OPTIONS_VIDEO_SETTINGS
-Video Settings
-
 OPTIONS_APP_WIDTH_WINDOWED
 Window Width
 
@@ -2380,15 +2299,6 @@ Flush Stringtables
 
 OPTIONS_WINDOW_RESET
 Reposition Windows Now
-
-OPTIONS_CHAT
-Chat
-
-OPTIONS_CHAT_HISTORY
-Chat history
-
-OPTIONS_CHAT_HIDE
-Chat-hide delay
 
 OPTIONS_GALAXY_MAP
 Galaxy Map
@@ -2461,12 +2371,6 @@ Galaxy map zoom slider
 
 OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY
 Unexplored System distinctive mouseover overlay
-
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Galaxy map detection range displayed stealth threshold
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Galaxy map stealth threshold slider
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
@@ -2552,9 +2456,6 @@ Window Sounds
 OPTIONS_SOUND_BUTTON
 Button Sounds
 
-OPTIONS_SOUND_FLEET
-Fleet Button Sounds
-
 OPTIONS_SOUND_ALERT
 Alert
 
@@ -2618,9 +2519,6 @@ Statistic increasing
 OPTIONS_STAT_DECREASE_COLOR
 Statistic decreasing
 
-OPTIONS_INTERIOR_COLOR
-Interior
-
 OPTIONS_WINDOW_COLORS
 Windows
 
@@ -2680,9 +2578,6 @@ Background
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Bar
-
-OPTIONS_ANY_FILE
-All files
 
 OPTIONS_FOLDER_SETTINGS
 Resource Files
@@ -2851,19 +2746,8 @@ Total number of ships
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Side Panel
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-System Resource Output
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -2893,9 +2777,6 @@ Research Consumption
 TRADE_CONSUMPTION
 Trade Consumption
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Inter-System Exchange
-
 IMPORT_EXPORT_TOOLTIP
 Import / Export
 
@@ -2916,18 +2797,9 @@ No Import or Export
 PLANET_PANEL
 Planet Panel
 
-PL_ASTEROID_BELT
-Asteroids
-
 # %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroids
-
-PL_UNINHABITED
-Uninhabited
-
-PL_SIZE
-Size
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -2940,18 +2812,12 @@ Cancel Colonization
 PL_OUTPOST
 Place Outpost
 
-PL_CANCEL_OUTPOST
-Cancel Outpost
-
 # %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Invade (+%1%)
 
 PL_CANCEL_INVADE
 Cancel Invasion
-
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Select colony ship to colonize.
 
 PL_BOMBARD
 Bombard
@@ -3179,9 +3045,6 @@ Automatic Aggression Selection
 FW_AUTO_DESC
 Automatically select aggression for new fleet based on whether ships have weapons.
 
-FW_SHIP_CLASS
-Ship Class
-
 FW_UNKNOWN_DESIGN_NAME
 Unknown Design
 
@@ -3217,9 +3080,6 @@ Fleets At %1%
 # Fleet window title
 FW_GENERIC_FLEETS
 Fleets
-
-FW_BATTLE_FLEET
-Battle Fleet
 
 # the name that is used for fleets the client's player does not control but is
 # owned by an empire.
@@ -3258,20 +3118,11 @@ Rogue Ship
 SHIP_DAMAGE_STAT_TITLE
 Damage
 
-SHIP_DAMAGE_STAT_MAIN
-Total damage done by ship weapons per combat round.
-
 SHIP_TROOPS_TITLE
 Troops
 
 SHIP_TROOPS_STAT
 Total troop capacity of this ship.
-
-SHIP_SPEED_STAT_TITLE
-Speed
-
-SHIP_SPEED_STAT_MAIN
-Maximum distance along starlanes travelled per turn.
 
 FW_FLEET_FUEL_SUMMARY
 Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
@@ -3423,24 +3274,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Never
 
-TECH_WND_TECH_COMPLETED
-COMPLETED
-
-TECH_WND_TECH_QUEUED
-Queued
-
-TECH_WND_TECH_INCOMPLETE
-Incomplete
-
-TECH_WND_TYPE_THEORIES
-Theories
-
-TECH_WND_TYPE_APPLICATIONS
-Applications
-
-TECH_WND_TYPE_REFINEMENTS
-Refinements
-
 TECH_WND_STATUS_COMPLETED
 Complete
 
@@ -3464,12 +3297,6 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 
 TECH_WND_VIEW_TYPE
 Tree View / List View
-
-TECH_WND_REQUIRES
-Requires
-
-TECH_WND_UNLOCKS
-Unlocks
 
 # %1% research points already spent on a reseach.
 # %2% total research points required to complete the research.
@@ -3567,17 +3394,11 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Never
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Quantity
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Add to Queue
 
 PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE
 Add to Top of Queue
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Center on Build
 
 PRODUCTION_QUEUE_PROMPT
 Double-click on an available item to add it to the production queue.
@@ -3604,13 +3425,6 @@ PRODUCTION_QUEUE_MULTIPLES
 # %1% number of repetions an item should be produced on after another.
 PRODUCTION_QUEUE_REPETITIONS
 %1%⟳
-
-PRODUCTION_QUEUE_EMPTY
-'''Empire production queue is empty.
-
-Enqueue production projects by selecting a planet on the side-panel, then double-clicking items in the list.
-
-Note that ships can only be built on planets with a shipyard, and that various other objects may have other restrictions on build location.'''
 
 # %1% production points already spent on an item.
 # %2% total production points required to complete the item production.
@@ -3687,9 +3501,6 @@ Custom Ship Design
 DESIGN_DESCRIPTION_DEFAULT
 Design Description
 
-DESIGN_NO_PART
-None
-
 DESIGN_WND_STARTS
 Design Starts
 
@@ -3717,14 +3528,8 @@ Design Name
 DESIGN_WND_DESIGN_DESCRIPTION
 Description
 
-DESIGN_WND_CONFIRM
-Confirm New Design
-
 DESIGN_WND_CLEAR
 Clear Parts
-
-DESIGN_DELETE
-Delete Design
 
 DESIGN_RENAME
 Rename Design
@@ -3888,9 +3693,6 @@ Suitability is determined by distance from the preferred type of [[encyclopedia 
 '''
 
 # types of things that can be shown in encyclopedia
-ENC_TEST
-Test
-
 ENC_GRAPH
 [Game - Graphs]
 
@@ -4039,15 +3841,6 @@ ENC_MONSTER
 ENC_MONSTER_TYPE
 Monster Types
 
-MONSTER_TYPES
-Monster Types
-
-MONSTER_OBJECTS
-'''Monsters: '''
-
-NO_MONSTER_OBJECTS
-No Known Monsters
-
 ENC_FLEET
 [Game - Fleets]
 
@@ -4080,9 +3873,6 @@ Word Title Matches
 
 ENC_SEARCH_PARTIAL_MATCHES
 Partial-Word Title Matches
-
-ENC_SEARCH_IN_TEXT_MATCHES
-Article Text Matches
 
 ENC_SEARCH_NOTHING_FOUND
 No Matches Found
@@ -4127,9 +3917,6 @@ ENC_EFFECTS_STR
 
 ENC_VERB_PRODUCE_STR
 produce
-
-ENC_VERB_RESEARCH_STR
-research
 
 # %1% content of ENC_VERB_PRODUCE_STR.
 ENC_AUTO_TIME_COST_INVARIANT_STR
@@ -4267,9 +4054,6 @@ ENC_TECH_DETAIL_TYPE_STR
 #     encyclopedia.
 ENC_LOOKUP
 Pedia Lookup %1%
-
-ENC_COMBAT_LOG
-Combat Log
 
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
@@ -4950,41 +4734,6 @@ Any combat in the system will disrupt repairs for that turn.'''
 
 
 ##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Combat Window
-
-COMBAT_BATTLE
-'''BATTLE : '''
-
-COMBAT_MILITARY_SHIPS
-Military Ships
-
-COMBAT_CIVILIAN_SHIPS
-Civilian Ships
-
-COMBAT_PLANETS
-Planets
-
-COMBAT_REMAINING
-''' Remaining'''
-
-COMBAT_RETREATED
-''' Retreated'''
-
-COMBAT_DESTROYED
-''' Destroyed'''
-
-COMBAT_DEFENSELESS
-''' Defenseless'''
-
-COMBAT_LOST
-''' Lost!'''
-
-
-##
 ## Turn progress
 ##
 
@@ -5036,9 +4785,6 @@ Received unexpected turn update from server.
 MESSAGES_PANEL_TITLE
 Messages
 
-MESSAGES_PANEL_INTRO
-Status and Chat Messages
-
 
 ##
 ## Players list
@@ -5063,9 +4809,6 @@ Waiting
 
 SORT
 Sort
-
-COLUMNS
-Columns
 
 COLLAPSE_ALL
 Collapse All
@@ -5281,9 +5024,6 @@ Situation Report - Initial turn
 # %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Situation Report - Turn %1%
-
-SITREP_ERROR
-An unknown event occurred.
 
 FILTERS
 Filters
@@ -5531,12 +5271,6 @@ At %system%: a %shipdesign% (the %empire% ship '%ship%') has arrived.
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Own Ship Arrived
 
-SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION
-At %system%: the %empire% fleet '%fleet%' (%rawtext%x %shipdesign) has arrived.
-
-SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION_LABEL
-Own Fleet Arrived
-
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
 
@@ -5681,12 +5415,6 @@ EFFECT_ART_PLANET
 EFFECT_ART_PLANET_LABEL
 Black Hole
 
-EFFECT_STARVATION
-Famine struck %planet%.
-
-EFFECT_STARVATION_LABEL
-Famine
-
 EFFECT_TAME_MONSTER_HATCHED
 At %planet%: a tamed %predefinedshipdesign% is ready for service.
 
@@ -5728,12 +5456,6 @@ At %system%: a new Dyson Forest has started to grow and surround the star.
 
 EFFECT_TREE_LABEL
 Dyson Forest
-
-EFFECT_DERELICT_MINERALS
-At %system%: 20 minerals were scavenged from an abandoned derelict.
-
-EFFECT_DERELICT_MINERALS_LABEL
-Derelict Minerals
 
 EFFECT_DERELICT_MAP
 At %system%: information on the area was obtained from an abandoned %special%.
@@ -7065,17 +6787,11 @@ Void Metamorphosis
 VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_4]].
 
-DERELICT_SPECIAL
-Derelict
-
 DERELICT_SPECIAL2
 Derelict Scout
 
 DERELICT_SPECIAL3
 Derelict Tanker
-
-DERELICT_SPECIAL_REMOVE
-Derelict
 
 DERELICT_SPECIAL_DESC
 An ancient, derelict ship from an unknown species. Who knows what it could reveal...
@@ -7106,12 +6822,6 @@ Nova Bomb Activator
 
 NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
 This dimensional integrity of this region of space is highly unstable, causing any Nova Bombs in the vicinity to detonate.
-
-EXPERIMENTOR_OUTPOST_SPECIAL
-Experimentor Outpost
-
-EXPERIMENTOR_OUTPOST_SPECIAL_DESC
-An Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
 
 PROBIOTIC_SPECIAL
 Probiotic Soup
@@ -7166,12 +6876,6 @@ Native Elerium
 
 ELERIUM_SPECIAL_DESC
 This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.
-
-STARSPAWN_NEBULA_SPECIAL
-Starspawn Nebula
-
-STARSPAWN_NEBULA_SPECIAL_DESC
-Systems with this special have a nebula created around them. This nebula may collapse to form a new star.
 
 
 ##
@@ -7648,18 +7352,6 @@ Ship Hull
 UIT_TECH
 Technology
 
-# Technology types
-TT_THEORY
-Theory
-
-# Technology types
-TT_APPLICATION
-Application
-
-# Technology types
-TT_REFINEMENT
-Refinement
-
 # Build types
 BT_NOT_BUILDING
 no build
@@ -7672,29 +7364,9 @@ building
 BT_SHIP
 ship
 
-# Stockpile types
-ST_FOOD
-food
-
-# Stockpile types
-ST_MINERAL
-mineral
-
-# Stockpile types
-ST_TRADE
-trade
-
 # Resource types
 INVALID_RESOURCE_TYPE
 invalid resource type
-
-# Resource types
-RE_FOOD
-food
-
-# Resource types
-RE_MINERALS
-mineral
 
 # Resource types
 RE_TRADE
@@ -8178,9 +7850,6 @@ Objects affected: Source object only
 # %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 Effect is active if the source is an object%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effect is always active
 
 # %1% textual description of the effect group.
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
@@ -9110,9 +8779,6 @@ Construction
 GROWTH_CATEGORY
 Growth
 
-ECONOMICS_CATEGORY
-Economics
-
 SHIP_HULLS_CATEGORY
 Ship Hulls
 
@@ -9257,13 +8923,6 @@ Singularity of Transcendence
 LRN_TRANSCEND_DESC
 What is godhood? Is a god concerned with whether it is moral and benevolent or evil and tyrannical? Does a god treat mortals with care and love, hatred and suffering or detached indifference? Does a god even remain aware of the infinitely minuscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
-GRO_MEDICAL_PATH
-Medical Pathology
-
-GRO_MEDICAL_PATH_DESC
-'''Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments. By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
-Treatment of diseases and injuries requires a thorough understanding of their causes. By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.'''
-
 GRO_PLANET_ECOL
 Planetary Ecology
 
@@ -9333,12 +8992,6 @@ GRO_NANOTECH_MED_DESC
 
 While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corrective measures. Nanotechnology may be used to accomplish these tasks, with two important advantages: Correction may be done without invasive surgeries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.'''
 
-GRO_ECO_METAMORPH
-Ecological Metamorphosis
-
-GRO_ECO_METAMORPH_DESC
-Often, it is helpful to think of an ecosystem as a gigantic organism in and of itself, with predator-prey relationships acting as negative feedback loops, with newly introduced species acting as symbiotes or parasites, with populations acting as systems and individuals acting as cells. In this sense, every planet is alive, and as such, goes through various phases of "life". By manipulating these phases as one would in a biological organism, it would be possible to affect a planets environment with comparative ease and efficiency.
-
 GRO_XENO_HYBRIDS
 Xenological Hybridization
 
@@ -9384,16 +9037,6 @@ Mineral resource extraction from sub-planetoid-sized bodies involves challenges 
 
 The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.'''
 
-PRO_CORE_MINE
-Tectonic Mineralogy
-
-PRO_CORE_MINE_DESC
-'''Some sort of very aggressive mining goes here.
-
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to volcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
-
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, volcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
-
 PRO_ROBOTIC_PROD
 Robotic Production
 
@@ -9408,12 +9051,6 @@ PRO_EXOBOTS
 Exobots
 PRO_EXOBOTS_DESC
 Allows the construction of [[species SP_EXOBOT]] colonies optimized for industry on [[PE_HOSTILE]] planets.
-
-PRO_RAPID_EXO_PROD
-Rapid Exobot Production
-
-PRO_RAPID_EXO_PROD_DESC
-Allows more exobots.
 
 PRO_FUSION_GEN
 Fusion Generation
@@ -9448,12 +9085,6 @@ PRO_SENTIENT_AUTOMATION_DESC
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
 As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce. When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.'''
-
-PRO_INTSTEL_COPRO
-Interstellar Co-Production
-
-PRO_INTSTEL_COPRO_DESC
-Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems. Later developments in planetary regional cooperation permit some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefiting from concentrated expertise and economy of scale. Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility. The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
@@ -9581,12 +9212,6 @@ Galactic Exploration
 SHP_GAL_EXPLO_DESC
 The discovery of interstellar travel via starlanes ushers in a new era of development of society. Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
 
-SHP_SPACE_TACTICS
-Space Tactics
-
-SHP_SPACE_TACTICS_DESC
-Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
-
 SHP_INTSTEL_LOG
 Interstellar Logistics
 
@@ -9687,12 +9312,6 @@ Mega-Fauna Endocrine Systems
 SHP_ENDOCRINE_SYSTEMS_DESC
 The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.
 
-SHP_HAB_MEGAFAUN
-Habitable Mega-Fauna
-
-SHP_HAB_MEGAFAUN_DESC
-It is generally uncommon to find comfortable living conditions within a gigantic space monster. This is exactly what must exist within an organic hull however, if it is to be adequately controlled from within. The development of massive, habitable creatures opens up numerous possibilities for ship design.
-
 SHP_MONOCELL_EXP
 Mono-Cellular Expansion
 
@@ -9768,9 +9387,6 @@ The art of deception is not natural to every species, but the ability to hide th
 VICTORY_SHORT_DESC
 Brings Victory!
 
-DOES_NOTHING_SHORT_DESC
-Useless: Does Nothing
-
 SHIP_PART_UNLOCK_SHORT_DESC
 Unlocks Ship Part
 
@@ -9792,12 +9408,6 @@ Improves Research
 INDUSTRY_SHORT_DESC
 Improves Industry
 
-TRADE_SHORT_DESC
-Improves Trade
-
-CONSTRUCTION_SHORT_DESC
-Improves Infrastructure
-
 SUPPLY_SHORT_DESC
 Improves Supply
 
@@ -9813,14 +9423,8 @@ Improves Meter Growth
 POPULATION_SHORT_DESC
 Increases Maximum Population
 
-HEALTH_SHORT_DESC
-Improves Health
-
 STRUCTURE_SHORT_DESC
 Improves Structure
-
-FLEET_RANGE_DESC
-Improves Fleet Supply
 
 SHIP_REPAIR_DESC
 Repairs Ships

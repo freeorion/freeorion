@@ -7,25 +7,23 @@ Danish
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Gennemse...
 
 CANCEL
 Fortryd
 
 DONE
 Luk
-
-CLOSE
-Luk
-
-LOAD
-Indlæs
 
 SAVE
 Gem
@@ -135,9 +133,6 @@ Opdater listen
 MPLOBBY_WINDOW_TITLE
 Multiplayer Opsætning
 
-MPLOBBY_HOST_ABORTED_GAME
-Ham der startede spillet har fortrudt
-
 NEW_GAME_BN
 Nyt spil
 
@@ -228,9 +223,6 @@ Licens
 ABOUT_WINDOW_TITLE
 Omkring FreeOrion v0.1a
 
-CREDITS
-Lavet af
-
 
 ##
 ## In-game menu
@@ -269,24 +261,13 @@ Tur %1%
 
 
 ##
-## Side panel
-##
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-System Produktion
 
 
 ##
 ## Side panel/Planet panel
 ##
-
-PL_UNINHABITED
-Ubeboet
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -386,11 +367,6 @@ Kolonisér
 
 ##
 ## Guides
-##
-
-
-##
-## Combat messages
 ##
 
 

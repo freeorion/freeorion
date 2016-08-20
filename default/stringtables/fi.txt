@@ -10,25 +10,23 @@ Suomi
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Selaa...
 
 CANCEL
 Peruuta
 
 DONE
 Valmis
-
-CLOSE
-Sulje
-
-LOAD
-Lataa
 
 SAVE
 Tallenna
@@ -38,9 +36,6 @@ Avaa
 
 OR
 tai
-
-AND
-ja
 
 YES
 kyllä
@@ -65,12 +60,6 @@ VIRHE
 
 RESET
 Uudelleen aseta
-
-TURN
-Vuoro
-
-CHAT_WHISPER
-kuiskaa
 
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
@@ -131,9 +120,6 @@ Valtava aseistamaton alus, joka kykenee toimittamaan miljoonia kansalaisia uusil
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Kotilaivasto
-
 FN_BATTLE_FLEET
 Taistelulaivasto
 
@@ -151,14 +137,8 @@ Palvelin ei vastaa.
 SERVER_LOST
 Yhteys palvelimeen katkennut.
 
-SERVER_GAME_END
-Palvelin on lähettänyt viestin. Peli ohi. Hei hei.
-
 PLAYER_DISCONNECTED
 Pelaajalla %1% ei ole enää yhteyttä palvelimeen.
-
-UNKNOWN_EMPIRE
-Tuntematon Imperiumi
 
 UNABLE_TO_WRITE_CONFIG_XML
 Config.xml tiedoston kirjoituksessa tapahtui virhe. Asetuksia ei voitu tallentaa.
@@ -194,12 +174,6 @@ Aseta taustamusiikki.
 
 OPTIONS_DB_FULLSCREEN
 Aloita peli täydellä ruudulla.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-'''Aikaväli, sekunneissa, jonka kuluttua moninpelin chat-ikkuna katoaa, jos siihen ei lisätä mitään. Arvo 0 merkitsee, että ikkunan ei pitäisi kadota ollenkaan.  '''
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Lähetettyjen viestien määrä, joka tulisi säilyttää chatin editointilaatikon historiassa.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Renderöi kaasumaiset aineet tähtijärjestelmien ympärille antamaan galaksille selkeämmän muodon. Voi hidastaa renderöintiä vanhemmilla tietokoneilla.
@@ -266,9 +240,6 @@ FPS rajoitin päällä tai poissa. FPS-raja asetetaan "Max FPS" valinnalla.
 
 OPTIONS_DB_MAX_FPS
 Asettaa FPS-rajan. Rajoitus otetaan käyttöön "Rajoita FPS" valinnalla.
-
-OPTIONS_DB_UI_SOUND_ENABLED
-Käyttöliittymän äänet päällä tai poissa.
 
 OPTIONS_DB_UI_SOUND_VOLUME
 Äänenvoimakkuus (0-255) jolla käyttöliittymän ääniefektit tulisi toistaa.
@@ -449,16 +420,9 @@ Tiedosto(t):
 FILE_DLG_FILE_TYPES
 Tyyppi(t):
 
-FILE_DLG_MALFORMED_FILENAME
-Tiedostonimi ei kelpaa.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% on jo olemassa.
 hyväksytkö sen korvaamisen?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-ei kelpaa tiedostonimeksi.'''
 
 FILE_DLG_FILE_DOES_NOT_EXIST
 '''Tiedostoa "%1%"
@@ -525,9 +489,6 @@ Poistu
 ERR_CONNECT_TIMED_OUT
 Aikakatkaisu yritettäessä yhdistää palvelimeen.
 
-ERR_VERSION_MISMATCH
-'''Ei voida yhdistää palvelimeen, koska pelaaja käyttää eri versioita seuraavista asetuksista ja/tai lähdetiedostoista: '''
-
 
 ##
 ## Server Setup Screen
@@ -561,9 +522,6 @@ Päivitä lista
 
 MPLOBBY_WINDOW_TITLE
 Moninpeliasetukset
-
-MPLOBBY_HOST_ABORTED_GAME
-Isännöivä pelaaja on lopettanut tämän pelin.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Imperiumien nimien ja värien tulee olla toisistaan poikkeavia.
@@ -696,9 +654,6 @@ Lisenssi
 ABOUT_WINDOW_TITLE
 Tietoa FreeOrionista
 
-CREDITS
-Tekijät
-
 VISION
 Johtoajatus
 
@@ -789,9 +744,6 @@ Asettaa näytön resoluution ja värin syvyyden yhdellä asetuksella.
 OPTIONS_VIDEO_MODE_WINDOWED
 Näyttötila ikkunassa (käynnistä uudelleen saadaksesi muutokset voimaan).
 
-OPTIONS_VIDEO_SETTINGS
-Grafiikka-asetukset
-
 OPTIONS_APP_WIDTH_WINDOWED
 Leveys ikkunassa
 
@@ -806,12 +758,6 @@ Näytä FPS
 
 OPTIONS_LIMIT_FPS
 Rajoita FPS
-
-OPTIONS_CHAT_HISTORY
-Chat historia
-
-OPTIONS_CHAT_HIDE
-Chat-ikkunan piilotuksen viive
 
 OPTIONS_GALAXY_MAP
 Galaksin kartta
@@ -891,9 +837,6 @@ Ikkuna-äänet
 OPTIONS_SOUND_BUTTON
 Painikeäänet
 
-OPTIONS_SOUND_FLEET
-Laivastopainikeäänet
-
 OPTIONS_SOUND_ALERT
 Hälytys
 
@@ -938,9 +881,6 @@ Valinnan korostaminen
 
 OPTIONS_DROPLIST_ARROW_COLOR
 Pudotuslistan nuoli
-
-OPTIONS_INTERIOR_COLOR
-Sisäpuoli
 
 OPTIONS_WINDOW_COLORS
 Ikkunat
@@ -990,9 +930,6 @@ Palkki
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Tausta
 
-OPTIONS_ANY_FILE
-Kaikki tiedostot
-
 OPTIONS_FOLDER_SETTINGS
 Resurssitiedostot
 
@@ -1040,19 +977,8 @@ Suunnittelu
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Sivupaneeli
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Järjestelmän tuotanto
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -1082,9 +1008,6 @@ Tutkimuskulutus
 TRADE_CONSUMPTION
 Kulutus
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Järjestelmän sisäinen vaihdanta
-
 IMPORT_EXPORT_TOOLTIP
 Tuonti / Vienti
 
@@ -1105,22 +1028,10 @@ Ei vientiä eikä tuontia
 PLANET_PANEL
 Planeettapaneeli
 
-PL_ASTEROID_BELT
-Asteroidivyöhyke
-
-PL_UNINHABITED
-Asumaton
-
-PL_SIZE
-Koko
-
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
 PL_COLONIZE
 Kolonisoi (%1% / %2%)
-
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Valitse kolonisaatioalus kolonisoidaksesi.
 
 
 ##
@@ -1227,9 +1138,6 @@ Ei tietoa
 FW_FLEET_ETA_OUT_OF_RANGE
 Kantaman ulkopuolella
 
-FW_SHIP_CLASS
-Alusluokka
-
 FW_UNKNOWN_DESIGN_NAME
 Tuntematon tyyppi
 
@@ -1261,9 +1169,6 @@ Laivastoja %1% järjestelmässä
 FW_GENERIC_FLEETS
 Laivastoja
 
-FW_BATTLE_FLEET
-Taistelulaivasto
-
 # the name that is used for fleets the client's player does not control when
 # the empire is not specified.
 FW_FOREIGN_FLEET
@@ -1273,12 +1178,6 @@ Vieraslaivasto
 # empire is not specified.
 FW_FOREIGN_SHIP
 Vierasalus
-
-SHIP_SPEED_STAT_TITLE
-Nopeus
-
-SHIP_SPEED_STAT_MAIN
-Suurin mahdollinen kuljettava matka yhden vuoron aikana.
 
 FW_FLEET_FUEL_SUMMARY
 Laivaston polttoaine -  Yhtä suuri kuin laivaston alusten pienin polttoainemäärä.
@@ -1320,24 +1219,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Ei koskaan
 
-TECH_WND_TECH_COMPLETED
-Valmis
-
-TECH_WND_TECH_QUEUED
-Jonossa
-
-TECH_WND_TECH_INCOMPLETE
-Ei valmis
-
-TECH_WND_TYPE_THEORIES
-Teoriat
-
-TECH_WND_TYPE_APPLICATIONS
-Sovellukset
-
-TECH_WND_TYPE_REFINEMENTS
-Parannukset
-
 TECH_WND_STATUS_COMPLETED
 Valmis
 
@@ -1346,12 +1227,6 @@ Mahdollinen tutkia
 
 TECH_WND_VIEW_TYPE
 Puunäkymä / Listanäkymä
-
-TECH_WND_REQUIRES
-Vaatii
-
-TECH_WND_UNLOCKS
-Avaa
 
 
 ##
@@ -1407,14 +1282,8 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Ei koskaan
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Määrä
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Lisää jonoon
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Keskitä voimavarat
 
 
 ##
@@ -1431,13 +1300,6 @@ TUP
 PRODUCTION_QUEUE_MULTIPLES
 %1%x
 
-PRODUCTION_QUEUE_EMPTY
-'''Imperiumin tuotantojono on tyhjä.
-
-Lisää projekteja jonoon valitsemalla ensin planeetta sivupaneelista ja tämän jälkeen tuplaklikkaamalla haluttua projektia.
-
-Huomaa kuitenkin että aluksia voi rakentaa ainoastaan planeetoilta, joilla on alustelakka.'''
-
 # %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 %1%
@@ -1452,9 +1314,6 @@ Luotava alussuunnitelma
 
 DESIGN_DESCRIPTION_DEFAULT
 Suunnitelman kuvaus
-
-DESIGN_NO_PART
-Tyhjä
 
 DESIGN_WND_HULLS
 Tyhjät rungot
@@ -1477,14 +1336,8 @@ Suunnitelman nimi
 DESIGN_WND_DESIGN_DESCRIPTION
 Kuvaus
 
-DESIGN_WND_CONFIRM
-Vahvista uusi suunnitelma
-
 DESIGN_WND_CLEAR
 Tyhjennä osat
-
-DESIGN_DELETE
-Poista suunitelma
 
 
 ##
@@ -1608,41 +1461,6 @@ Häivetaso: %13%
 
 
 ##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Taisteluikkuna
-
-COMBAT_BATTLE
-'''TAISTELU : '''
-
-COMBAT_MILITARY_SHIPS
-'''Sotilasaluksia '''
-
-COMBAT_CIVILIAN_SHIPS
-Siviilialuksia
-
-COMBAT_PLANETS
-Planeetat
-
-COMBAT_REMAINING
-''' Jäljellä'''
-
-COMBAT_RETREATED
-''' Perääntynyt'''
-
-COMBAT_DESTROYED
-''' Tuhottu'''
-
-COMBAT_DEFENSELESS
-''' Puolustuskyvytön'''
-
-COMBAT_LOST
-''' Kadonnut!'''
-
-
-##
 ## Turn progress
 ##
 
@@ -1697,9 +1515,6 @@ Ladataan uutta pelitilaa ...
 
 SITREP_PANEL_TITLE
 Tilanneraportti
-
-SITREP_ERROR
-Tuntematon tapahtuma.
 
 SITREP_SHIP_BUILT
 %ship%, uusi alus,on saatu valmiiksi %system% tähtijärjestelmässä.
@@ -2068,18 +1883,6 @@ Aluksen runko
 UIT_TECH
 Teknologia
 
-# Technology types
-TT_THEORY
-Teoria
-
-# Technology types
-TT_APPLICATION
-Sovellus
-
-# Technology types
-TT_REFINEMENT
-Parannus
-
 # Build types
 BT_NOT_BUILDING
 ei rakennuksia
@@ -2195,9 +1998,6 @@ Kohteet joihin vaikuttaa: Vain lähde
 # %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 Efekti on aktiivinen, jos lähde on kohde%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Vaikutus on aina aktiivinen
 
 # %1% index of the effect group.
 # %2% textual description of the effect group.
@@ -2526,9 +2326,6 @@ Rakentaminen
 GROWTH_CATEGORY
 Kasvu
 
-ECONOMICS_CATEGORY
-Talous
-
 
 ##
 ## Technology theories
@@ -2548,9 +2345,6 @@ Kaiken teoria
 ## Technology application
 ##
 
-DOES_NOTHING_SHORT_DESC
-Hyödytön: Ei tee mitään
-
 SHIP_PART_UNLOCK_SHORT_DESC
 Avaa alusten osia
 
@@ -2566,17 +2360,8 @@ Parantaa tutkimusta
 INDUSTRY_SHORT_DESC
 Parantaa teollisuutta
 
-TRADE_SHORT_DESC
-'''Parantaa vaihdantaa '''
-
-CONSTRUCTION_SHORT_DESC
-Parantaa infrastruktuuria
-
 POPULATION_SHORT_DESC
 Kasvattaa planeetan väestöä
-
-FLEET_RANGE_DESC
-Parantaa alusten täydennysmahdollisuuksia
 
 SHP_ION_CANNON
 Ionikanuuna

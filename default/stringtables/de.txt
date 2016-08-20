@@ -14,16 +14,17 @@ Deutsch
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-#APPNAME
-#FreeOrion
-
-BROWSE_BTN
-Durchsuchen...
 
 #OK
 #OK
@@ -37,12 +38,6 @@ Abbrechen
 DONE
 Fertig
 
-CLOSE
-Schließen
-
-LOAD
-Laden
-
 SAVE
 Speichern
 
@@ -54,9 +49,6 @@ OPEN
 
 OR
 oder
-
-AND
-und
 
 YES
 Ja
@@ -101,9 +93,6 @@ Kein Imperium
 DROP_PLAYER
 Rauswerfen
 
-HOST
-Gastgeber
-
 ALL
 Alle
 
@@ -130,15 +119,6 @@ FEHLER
 
 RESET
 Zurücksetzen
-
-TURN
-Runde
-
-CHAT_WHISPER
-Flüstern
-
-UP
-Hoch
 
 NEXT
 Nächster
@@ -649,9 +629,6 @@ Wolken aus Wasserstoff, die in sich zusammenfallen können um einen neuen Stern 
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Heimatflotte
-
 FN_BATTLE_FLEET
 Kriegsflotte
 
@@ -660,9 +637,6 @@ Kundschafterflotte
 
 FN_COLONY_FLEET
 Siedlungsflotte
-
-FN_INVASION_FLEET
-Invasionflotte
 
 MONSTERS
 Monster
@@ -684,9 +658,6 @@ Der Server antwortet nicht.
 SERVER_LOST
 Die Verbindung zum Server wurde getrennt.
 
-SERVER_GAME_END
-Der Server hat die "Spiel beendet" Nachricht gesendet. Tschö.
-
 PLAYER_DISCONNECTED
 Spieler %1% ist nicht länger mit dem Server verbunden.
 
@@ -697,9 +668,6 @@ Speichere...
 # %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
 Speicherte %2% Bytes als Datei: %1%
-
-UNKNOWN_EMPIRE
-Unbekanntes Imperium
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Der Server hat ungültige Speicherstanddaten vom Client erhalten. Teile davon können ignoriert werden.
@@ -774,12 +742,6 @@ Startet das Spiel im Vollbild. Die Einstellung kann sofort übernommen werden od
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Wählt aus welcher Monitor für den Vollbildmodus genutzt werden soll. Der Primäre Monitor sollte Index 0 sein. Es kann ein Neustart der Anwendung nötig sein.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Verzögerung in Sekunden nach der das Mehrspieler-Chatfenster ausgeblendet wird, wenn nichts geschrieben wurde. Ein Wert von 0 bedeutet, dass das Fenster niemals verschwindet.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Die Anzahl der ausgehender Mitteilungen, welche im Verlauf des Chatfensters verbleiben.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Zeichne Gaswolken um die Systeme um der Galaxie ein Form zu geben. Kann auf alten Systemen das Zeichnen verlangsamen.
@@ -862,9 +824,6 @@ Schaltet die FPS Begrenzung an oder aus. Die Grenze wird mit der Max FPS Einstel
 OPTIONS_DB_MAX_FPS
 Setzt das FPS Limit, falls aktiviert. Aktivierung über Limit-FPS.
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Entscheidet ob die UI Klangeffekte an oder aus sind.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Die Lautstärke (0 bis 255) in der Klangeffekte abgespielt werden sollen.
 
@@ -921,12 +880,6 @@ Setzt die Schriftartdatei für reguläre Oberflächenschriften.
 
 OPTIONS_DB_UI_FONT_BOLD
 Setzt die Schriftartdatei für fette Oberflächenschriften.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Setzt die Schriftartdatei für kursive Oberflächenschriften.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Setzt die Schriftartdatei für fett-kursive Oberflächenschriften.
 
 OPTIONS_DB_UI_FONT_SIZE
 Setzt die Schriftgröße für die Oberfläche.
@@ -1200,16 +1153,9 @@ Datei(en):
 FILE_DLG_FILE_TYPES
 Typ(en):
 
-FILE_DLG_MALFORMED_FILENAME
-Ungültiger Dateiname.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% gibt es bereits.
 Darf überschrieben werden?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-ist ein ungültiger Dateiname.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -1292,9 +1238,6 @@ Beenden
 ERR_CONNECT_TIMED_OUT
 Die Verbindungszeit zum Server wurde überschritten
 
-ERR_VERSION_MISMATCH
-'''Kann keine Verbindung zum Server herstellen, da dieser Klient eine andere Version folgender Einstellungen und/oder Quelldateien verwendet: '''
-
 
 ##
 ## Server Setup Screen
@@ -1328,9 +1271,6 @@ Liste aktualisieren
 
 MPLOBBY_WINDOW_TITLE
 Mehrspieler Aufstellung
-
-MPLOBBY_HOST_ABORTED_GAME
-Der Gastgeber hat die Spieleerstellung abgebrochen.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Eindeutige Imperiennamen und -farben erforderlich
@@ -1521,9 +1461,6 @@ Lizenz
 ABOUT_WINDOW_TITLE
 Über FreeOrion
 
-CREDITS
-Mitwirkende
-
 #VISION
 #Vision
 
@@ -1667,9 +1604,6 @@ Fenstermodus
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Setzt die Breite und Höhe des Fensters im Fenstermodus. Die Farbtiefe ist gleich dem Vollbildmodus.
 
-OPTIONS_VIDEO_SETTINGS
-Videoeinstellungen
-
 OPTIONS_APP_WIDTH_WINDOWED
 Fenstermodusbreite
 
@@ -1696,12 +1630,6 @@ FPS begrenzen
 
 OPTIONS_APPLY
 Anwenden
-
-OPTIONS_CHAT_HISTORY
-Chatverlauf
-
-OPTIONS_CHAT_HIDE
-Chat Ausblendungsverzögerung
 
 OPTIONS_GALAXY_MAP
 Galaxiekarte
@@ -1765,12 +1693,6 @@ Galaxie Maßstabslinie
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxiekarte Vergrösserungsregler
-
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Tarngrenzwert für die Aufklärungsreichweitenanzeige der Galaxiekarte
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Tarngrenzwertregler der Galaxiekarte
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Kreise für Aufklärungsreichweite
@@ -1844,9 +1766,6 @@ Fensterklänge
 OPTIONS_SOUND_BUTTON
 Knöpfe Klänge
 
-OPTIONS_SOUND_FLEET
-Flottenknopf Klänge
-
 OPTIONS_SOUND_ALERT
 Alarm
 
@@ -1910,9 +1829,6 @@ Steigende Werte
 OPTIONS_STAT_DECREASE_COLOR
 Sinkende Werte
 
-OPTIONS_INTERIOR_COLOR
-Inneres
-
 OPTIONS_WINDOW_COLORS
 Fenster
 
@@ -1966,9 +1882,6 @@ Hintergrund
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Leiste
-
-OPTIONS_ANY_FILE
-Alle Dateien
 
 OPTIONS_FOLDER_SETTINGS
 Ressourcendateien
@@ -2100,19 +2013,8 @@ Gesamtanzahl Schiffe
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Seitenfenster
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-System Produktion
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -2142,9 +2044,6 @@ Forschungsverbrauch
 TRADE_CONSUMPTION
 Handelsverbrauch
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Inter-System Austausch
-
 IMPORT_EXPORT_TOOLTIP
 Einfuhr / Ausfuhr
 
@@ -2165,18 +2064,9 @@ Kein Einfuhr oder Ausfuhr
 PLANET_PANEL
 Planetenfenster
 
-PL_ASTEROID_BELT
-Asteroidengürtel
-
 # %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroiden
-
-PL_UNINHABITED
-Unbewohnt
-
-PL_SIZE
-Größe
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -2189,18 +2079,12 @@ Besiedlung abbrechen
 PL_OUTPOST
 Außenposten errichten
 
-PL_CANCEL_OUTPOST
-Außenposten abziehen
-
 # %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Einmarschieren (+%1%)
 
 PL_CANCEL_INVADE
 Einmarschieren abbrechen
-
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Wähle Siedlungsschiff zum kolonisieren.
 
 PL_BOMBARD
 Bombardieren
@@ -2397,9 +2281,6 @@ Verbergen
 FW_PASSIVE_DESC
 Flotte wird versuchen getarnt zu bleiben; sie wird keine Blockade oder Kampf eröffnen.
 
-FW_SHIP_CLASS
-Schiffsklasse
-
 FW_UNKNOWN_DESIGN_NAME
 Unbekannter Entwurf
 
@@ -2435,9 +2316,6 @@ Flotte in %1%
 # Fleet window title
 FW_GENERIC_FLEETS
 Flotten
-
-FW_BATTLE_FLEET
-Kampfflotte
 
 # the name that is used for fleets the client's player does not control but is
 # owned by an empire.
@@ -2476,17 +2354,8 @@ Schurkenraumschiff
 SHIP_DAMAGE_STAT_TITLE
 Schaden
 
-SHIP_DAMAGE_STAT_MAIN
-Gesamter Schaden, den die Waffen des Schiffes pro Kampfrunde anrichten.
-
 SHIP_TROOPS_TITLE
 Truppen
-
-SHIP_SPEED_STAT_TITLE
-Geschwindigkeit
-
-SHIP_SPEED_STAT_MAIN
-Maximale Reisedistanz entlang der Sternstraßen pro Runde.
 
 FW_FLEET_FUEL_SUMMARY
 Flottenkraftstoff - Entspricht dem Minimum an Kraftstoff der Schiffe der Flotte.
@@ -2610,24 +2479,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Nie
 
-TECH_WND_TECH_COMPLETED
-VOLLSTÄNDIG
-
-TECH_WND_TECH_QUEUED
-In Warteliste
-
-TECH_WND_TECH_INCOMPLETE
-Unvollständig
-
-TECH_WND_TYPE_THEORIES
-Theorien
-
-TECH_WND_TYPE_APPLICATIONS
-Anwendungen
-
-TECH_WND_TYPE_REFINEMENTS
-Verfeinerungen
-
 TECH_WND_STATUS_COMPLETED
 Bereits erforscht
 
@@ -2651,12 +2502,6 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 
 TECH_WND_VIEW_TYPE
 Baumansicht / Listenansicht
-
-TECH_WND_REQUIRES
-Benötigt
-
-TECH_WND_UNLOCKS
-Schaltet frei
 
 # %1% research points already spent on a reseach.
 # %2% total research points required to complete the research.
@@ -2746,14 +2591,8 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Nie
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Anzahl
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Zur Liste hinzufügen
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Auf Bau zentrieren
 
 PRODUCTION_QUEUE_PROMPT
 Doppelklick auf ein verfügbares Objekt um es zur Produktionswarteschlange hinzufügen.
@@ -2774,13 +2613,6 @@ Produktion
 #PRODUCTION_QUEUE_REPETITIONS
 #%1%⟳
 
-PRODUCTION_QUEUE_EMPTY
-'''Die Produktionswarteschlange des Imperiums ist leer.
-
-Um Projekte auf die Produktionswarteschlange zu setzen, muss zuerst ein Planet auf dem Seitenfenster ausgewählt sein, bevor ein Objekt auf die Liste hinzugefügt werden kann.
-
-Es ist zu beachten, dass Schiffe nur auf einen Planeten mit einer Werft gebaut werden können und dass verschiedene andere Objekte den verschiedenen anderen Einschränkungen ihres Erstellungsortes unterworfen sein können.'''
-
 # %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 An %1%
@@ -2798,9 +2630,6 @@ Eigener Schiffsentwurf
 
 DESIGN_DESCRIPTION_DEFAULT
 Entwurfsbeschreibung
-
-DESIGN_NO_PART
-Keine
 
 DESIGN_WND_STARTS
 Entwurf beginnen mit
@@ -2829,14 +2658,8 @@ Entwurfsname
 DESIGN_WND_DESIGN_DESCRIPTION
 Beschreibung
 
-DESIGN_WND_CONFIRM
-Entwurf bestätigen
-
 DESIGN_WND_CLEAR
 Alles entfernen
-
-DESIGN_DELETE
-Entwurf löschen
 
 DESIGN_RENAME
 Entwurf umbenennen
@@ -2888,10 +2711,6 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''%1% ist nicht geeignet zur Besiedlung durch diese Spezies. Besiedlungsversuche werden entweder scheitern oder letztendlich aussterben.
 
 '''
-
-# types of things that can be shown in encyclopedia
-#ENC_TEST
-#Test
 
 ENC_SHIP_PART
 Schiffsteil
@@ -2969,15 +2788,6 @@ ENC_MONSTER
 
 ENC_MONSTER_TYPE
 Monstertypen
-
-MONSTER_TYPES
-Monstertypen
-
-MONSTER_OBJECTS
-'''Monster: '''
-
-NO_MONSTER_OBJECTS
-Keine Monster bekannt
 
 ENC_FLEET
 [Spiel - Flotten]
@@ -3108,9 +2918,6 @@ ENC_UNLOCKS
 #     encyclopedia.
 ENC_LOOKUP
 Pedia durchsuchen %1%
-
-ENC_COMBAT_LOG
-Kampflogbuch
 
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
@@ -3332,41 +3139,6 @@ Kartenfenster
 
 
 ##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Kampffenster
-
-COMBAT_BATTLE
-'''KAMPF : '''
-
-COMBAT_MILITARY_SHIPS
-Militärschiffe
-
-COMBAT_CIVILIAN_SHIPS
-Zivilschiffe
-
-COMBAT_PLANETS
-Planeten
-
-COMBAT_REMAINING
-''' Verbleibend'''
-
-COMBAT_RETREATED
-''' Zurückgezogen'''
-
-COMBAT_DESTROYED
-''' Zerstört'''
-
-COMBAT_DEFENSELESS
-''' Wehrlos'''
-
-COMBAT_LOST
-''' Verloren!'''
-
-
-##
 ## Turn progress
 ##
 
@@ -3418,9 +3190,6 @@ Unerwartetes Rundenupdate vom Server.
 MESSAGES_PANEL_TITLE
 Meldungen
 
-MESSAGES_PANEL_INTRO
-Status und Chat Meldungen
-
 
 ##
 ## Players list
@@ -3445,9 +3214,6 @@ Warten
 
 SORT
 Sortieren
-
-COLUMNS
-Kolonnen
 
 COLLAPSE_ALL
 Zuklappen
@@ -3531,9 +3297,6 @@ Lagebericht - Anfangsrunde
 # %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Lagebericht - Runde %1%
-
-SITREP_ERROR
-Ein unbekanntes Ereignis ist aufgetreten.
 
 FILTERS
 Filter
@@ -3766,12 +3529,6 @@ Gaia terraformiert
 EFFECT_TERRAFORM
 %planet% wurde terraformiert.
 
-EFFECT_STARVATION
-Hungersnot hat %planet% getroffen.
-
-EFFECT_STARVATION_LABEL
-Hungersnot
-
 EFFECT_TAME_MONSTER_HATCHED
 Ein gezähmtes %predefinedshipdesign% ist auf %planet% bereit zum Dienst.
 
@@ -3792,12 +3549,6 @@ Zerstörung durch Tor zur Leere
 
 EFFECT_TREE_LABEL
 Dysonwald
-
-EFFECT_DERELICT_MINERALS
-Zwanzig Minerale wurde in  %system% von einem herrenlosen Wrack eingesammelt.
-
-EFFECT_DERELICT_MINERALS_LABEL
-Wrack-Minerale
 
 EFFECT_DERELICT_MAP
 Informationen über die Gegend sind in einem verlassenes Wrack auf %system% gefunden worden.
@@ -4152,6 +3903,10 @@ OBJ_FIELD
 Feld
 
 # Star types
+INVALID_STAR_TYPE
+Unbekannte Sternenklasse
+
+# Star types
 STAR_BLUE
 blau
 
@@ -4182,10 +3937,6 @@ schwarzes Loch
 # Star types
 STAR_NONE
 kein Stern
-
-# Star types
-INVALID_STAR_TYPE
-Unbekannte Sternenklasse
 
 # Planet types
 PT_SWAMP
@@ -4524,18 +4275,6 @@ Schiffsrumpf
 UIT_TECH
 Technologie
 
-# Technology types
-TT_THEORY
-Theorie
-
-# Technology types
-TT_APPLICATION
-Anwendung
-
-# Technology types
-TT_REFINEMENT
-Verbesserung
-
 # Build types
 BT_NOT_BUILDING
 kein Bau
@@ -4547,26 +4286,6 @@ baue
 # Build types
 BT_SHIP
 Schiff
-
-# Stockpile types
-ST_FOOD
-Nahrung
-
-# Stockpile types
-ST_MINERAL
-Mineralien
-
-# Stockpile types
-ST_TRADE
-Handel
-
-# Resource types
-RE_FOOD
-Nahrung
-
-# Resource types
-RE_MINERALS
-Mineralien
 
 # Resource types
 RE_TRADE
@@ -4888,9 +4607,6 @@ Betroffene Objekte: nur das Quell-Objekt
 # %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 Effekt ist aktiv, wenn die Quelle ein Objekt ist%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effekt ist immer aktiv
 
 # %1% textual description of the effect group.
 #DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
@@ -5337,9 +5053,6 @@ Konstruktion
 GROWTH_CATEGORY
 Wachstum
 
-ECONOMICS_CATEGORY
-Wirtschaft
-
 SHIP_HULLS_CATEGORY
 Schiffsrümpfe
 
@@ -5475,9 +5188,6 @@ Transzendenz
 LRN_TRANSCEND_DESC
 Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder böse und tyrannisch verhält? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter Gleichgültigkeit? Ist ein Gott sich der unendlich vielen unbedeutenden Affären des physischen Universums bewußt, oder ist eine wahre Gottheit eine Entität fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
 
-GRO_MEDICAL_PATH
-Medizinische Pathologie
-
 GRO_PLANET_ECOL
 Planetare Ökologie
 
@@ -5531,9 +5241,6 @@ GRO_NANOTECH_MED_DESC
 
 Während genetische Modifikationen die Effekte unerwünschter oder schädlicher Mutationen rückgängig machen können, sind für die Behandlung größerer physikalischer Traumen und nicht-genetischer angeborener Defekte wirkliche physikalische Maßnahmen notwendig. Für diese Aufgaben kann Nanotechnologie eingesetzt werden, was zwei Vorteile mit sich bringt: die Korrektur kann ohne invasive Chirurgie mit den damit verbundenen Sekundärschäden und Risiken durchgeführt werden; außerdem wird die Vorbereitungszeit vor der Behandlung signifikant reduziert, da die benötigten Werkzeuge immer an Ort und Stelle und einsatzbereit sind.'''
 
-GRO_ECO_METAMORPH
-Ökologische Metamorphose
-
 GRO_XENO_HYBRIDS
 Xenohybridisierung
 
@@ -5572,16 +5279,6 @@ PRO_MICROGRAV_MAN_DESC
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
 Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau von Fabriken, Ausrüstung und Techniken, die auf der Oberfläche des Planeten unmöglich wären. Feststoffe können mit minimalem Aufwand in Position gehalten werden. Flüssigkeiten und Gase treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet. Die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produktion und dessen Effizienz.'''
-
-PRO_CORE_MINE
-Tiefenbergbau
-
-PRO_CORE_MINE_DESC
-'''Ermöglicht eine aggressive Art des Bergbaus.
-
-Der Druck und die Temperatur in Mantel und Kern terrestrischer Planeten erzeugt eine gewaltige Masse an Kristall- und Mineralverbindungen, die nur durch Vulkanismus an die Oberfläche gelangen. Die tieferen Atmosphärenschichten und Kernmaterialien von Gasplaneten enthalten noch exotischere Materialien und das in hohen Konzentrationen. Der Zugang zu den Materialien in diesen Regionen ist schwierig und riskant, aber im Vergleich zu traditionellen Oberflächenbergbau sehr vielversprechend.
-
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
 PRO_ROBOTIC_PROD
 Automatisierung
@@ -5632,12 +5329,6 @@ PRO_SENTIENT_AUTOMATION_DESC
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
 Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fähig, sich ohne äußeren Einfluss selbst zu replizieren und in Stand zu halten; sie benötigt nur entsprechende Rohstoffe und eine Vorgabe, welches Produkt hergestellt werden soll. Unter der Kontrolle einer künstlichen Intelligenz kann das gesamte System lernen, planen, reagieren und sich autonom anpassen, und das ohne die lästige Ineffizienz, die durch die Unterbringung und Anstellung von Arbeitern entsteht.'''
-
-PRO_INTSTEL_COPRO
-Interstellare Koproduktion
-
-PRO_INTSTEL_COPRO_DESC
-Traditionelle Produktionsmethoden müssen sich aufgrund logistischer Probleme selbst versorgen und sind daher beschränkt. Später wird durch die regionale Zusammenarbeit auf Planeten ein gewisser Grad an Spezialisierung möglich; jede Fabrik stellt nur einige Teile oder ein Subsystem her, so dass das ganze System von konzentrierter Fachkompetenz profitiert. Dieses Konzept kann auf den galaktischen Größenmaßstab übertragen werden; individuelle Planeten oder ganze Systeme dienen dann als eine einzige, spezialisierte Einrichtung. Die logistischen Schwierigkeiten, die diesem Paradigma innewohnen, ähneln denen des planetaren Maßstabs; Nutzen und Nachteile sind im gleichen Maß vergrößert.
 
 PRO_NDIM_ASSMB
 N-Dimensionale Montage
@@ -5762,12 +5453,6 @@ Galaktische Erkundung
 SHP_GAL_EXPLO_DESC
 Die Entdeckung von Interstellaren Reisen mittels Sternstraßen leitet eine neue Ära der Entwicklung der Gesellschaft ein. Alte politsche Plänkeleien zwischen Splittergruppen verlieren ihre Bedeutung, wenn die gesamte Zivilisation mit dem unbegrenzten Potential der Sterne konfrontiert ist ... für Wachstum und Wohlstand, oder die totale Vernichtung.
 
-SHP_SPACE_TACTICS
-Raumtaktik
-
-SHP_SPACE_TACTICS_DESC
-Kämpfe in minimaler Schwerkraft und Vakuum benötigen spezialisierte Waffen und Verteidigungssysteme, und eine durchdachte Taktik wie man sie einsetzen kann.
-
 SHP_FRC_ENRG_COMP
 Kraft-Energie Kompression
 
@@ -5781,9 +5466,6 @@ Täuschung
 
 VICTORY_SHORT_DESC
 Bringt den Sieg!
-
-DOES_NOTHING_SHORT_DESC
-Nutzlos: Tut nichts
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Schaltet Schiffsteile frei
@@ -5806,12 +5488,6 @@ Verbessert Forschung
 INDUSTRY_SHORT_DESC
 Verbessert Industrie
 
-TRADE_SHORT_DESC
-Verbessert Handel
-
-CONSTRUCTION_SHORT_DESC
-Verbessert Infrastruktur
-
 SUPPLY_SHORT_DESC
 Verbessert Versorgung
 
@@ -5824,14 +5500,8 @@ Erhöht Truppen
 POPULATION_SHORT_DESC
 Erhöht Planetare Bevölkerung
 
-HEALTH_SHORT_DESC
-Verbessert Gesundheit
-
 STRUCTURE_SHORT_DESC
 Verbessert Struktur
-
-FLEET_RANGE_DESC
-Verbessert Flottenversorgung
 
 SHIP_REPAIR_DESC
 Repariert Schiffe
@@ -6297,7 +5967,7 @@ PRO_INDUSTRY_CENTER_II
 Erweitertes Industriezentrum
 
 PRO_INDUSTRY_CENTER_II_DESC
-'''Ein verbesserte zentralisierte Verwaltung verstreuter Industrieprozesse erhöht die Reichweite und die Größe der industriellen Produktion. Der Bonus auf [[encyclopedia INDUSTRY_TITLE]] verdoppelt den Wert, welcher durch das einfache [[buildingtype BLD_INDUSTRY_CENTER]] erzeugt wird.'''
+Ein verbesserte zentralisierte Verwaltung verstreuter Industrieprozesse erhöht die Reichweite und die Größe der industriellen Produktion. Der Bonus auf [[encyclopedia INDUSTRY_TITLE]] verdoppelt den Wert, welcher durch das einfache [[buildingtype BLD_INDUSTRY_CENTER]] erzeugt wird.
 
 PRO_INDUSTRY_CENTER_III
 Hochentwickeltes Industriezentrum

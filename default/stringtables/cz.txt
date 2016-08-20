@@ -10,25 +10,23 @@ Czech
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Procházet...
 
 CANCEL
 Zpět
 
 DONE
 Hotovo
-
-CLOSE
-Zavřít
-
-LOAD
-Nahrát
 
 SAVE
 Uložit
@@ -38,9 +36,6 @@ Otevřít
 
 OR
 nebo
-
-AND
-a
 
 YES
 Ano
@@ -62,12 +57,6 @@ Vlož nové jméno
 
 ERROR
 CHYBA
-
-TURN
-Tah
-
-CHAT_WHISPER
-šeptat
 
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
@@ -140,9 +129,6 @@ Obrovské neozbrojené plavidlo schopné bezpečně dovážet milionů občanů 
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Domácí loďstvo
-
 FN_BATTLE_FLEET
 Bitevní loďstvo
 
@@ -160,14 +146,8 @@ Server neodpovídá...
 SERVER_LOST
 Spojeni se serverem ztraceno.
 
-SERVER_GAME_END
-Server ukončil hru...
-
 PLAYER_DISCONNECTED
 Hráč č. %1% se odpojil.
-
-UNKNOWN_EMPIRE
-Neznámá říše
 
 UNABLE_TO_WRITE_CONFIG_XML
 Nemohu zapisovat do souboru config.xml
@@ -191,9 +171,6 @@ Využívá všech nastavení z jakékoli stávající config.xml souboru a ty, u
 
 OPTIONS_DB_BG_MUSIC
 Nastaví skladbu přehrávanou na pozadí.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Časový interval, v sekundách, po kterém multiplayer chat okno zmizí. Hodnota 0 znamená, že okno nikdy nezmizí.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Vykreslování plynových substancí kolem galaxie,aby galxie dostala kýžený tvar.  Na starších systémech může způsobit zpomalení.
@@ -261,9 +238,6 @@ Přepíná FPS zobrazení zapnout nebo vypnout.
 OPTIONS_DB_MAX_FPS
 Přepíná FPS limit, pokud je povolena. Omezení se přepíná s fps limit-.
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Přepíná UI zvukové efekty zapnout nebo vypnout.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Hlasitost (0 až 255), UI zvukových efektů.
 
@@ -312,12 +286,6 @@ Nastaví zdrojový soubor UI fontu.
 OPTIONS_DB_UI_FONT_BOLD
 Nastaví zdrojový soubor UI bold fontu.
 
-OPTIONS_DB_UI_FONT_ITALIC
-Nastaví zdrojový soubor UI bold fontu.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Nastaví zdrojový soubor UI bold fontu.
-
 OPTIONS_DB_UI_FONT_SIZE
 Nastaví velikost UI fontu.
 
@@ -353,16 +321,9 @@ Složka(y):
 FILE_DLG_FILE_TYPES
 Typ(y):
 
-FILE_DLG_MALFORMED_FILENAME
-Špatný název souboru!
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% existuje.
 Mám je přepsat?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-špatný název souboru.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -430,9 +391,6 @@ Odejít
 ERR_CONNECT_TIMED_OUT
 Vypršel čas pro připojení se k serveru!
 
-ERR_VERSION_MISMATCH
-Nemůžu se připojit,server používá jinou verzi hry!:
-
 
 ##
 ## Server Setup Screen
@@ -466,9 +424,6 @@ Obnovit
 
 MPLOBBY_WINDOW_TITLE
 Nastavení hry více hráčů
-
-MPLOBBY_HOST_ABORTED_GAME
-Zakládající hráč zakázal toto nastavení.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Název a barva říše musí být unikátní
@@ -592,9 +547,6 @@ Starověký
 ABOUT_WINDOW_TITLE
 O FreeOrion
 
-CREDITS
-Tvůrci
-
 VISION
 Vize
 
@@ -673,9 +625,6 @@ Hra v okně  (restartuj pro potvrzení)
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Nastav výšku a šířku okna v modu "hra v okně".
 
-OPTIONS_VIDEO_SETTINGS
-Video nastavení
-
 OPTIONS_APP_WIDTH_WINDOWED
 Šířka hry v okně
 
@@ -690,12 +639,6 @@ Zobraz FPS
 
 OPTIONS_LIMIT_FPS
 Limitování FPS
-
-OPTIONS_CHAT_HISTORY
-Historie chatu
-
-OPTIONS_CHAT_HIDE
-Mizení chatu
 
 OPTIONS_GALAXY_MAP
 Mapa galaxie
@@ -748,9 +691,6 @@ Barvy
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Pozadí
 
-OPTIONS_ANY_FILE
-Všechny soubory
-
 OPTIONS_FOLDER_SETTINGS
 Zdrojové soubory
 
@@ -789,19 +729,8 @@ Produkce
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Postraní panel
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Produkce systému
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -822,9 +751,6 @@ Spotřeba výzkumu
 TRADE_CONSUMPTION
 Spotřeba obchodu
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Výměna interního systému
-
 IMPORT_EXPORT_TOOLTIP
 Dovoz / Vývoz
 
@@ -844,15 +770,6 @@ RESOURCE_SELF_SUFFICIENT
 
 PLANET_PANEL
 Panel planety
-
-PL_ASTEROID_BELT
-Pás asteroidů
-
-PL_UNINHABITED
-Neobydlená
-
-PL_SIZE
-Velikost
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -907,14 +824,8 @@ Nikdy
 FW_FLEET_ETA_UNKNOWN
 Neznámý
 
-FW_SHIP_CLASS
-Třída lodi
-
 FW_UNKNOWN_DESIGN_NAME
 Neznámý Desing
-
-SHIP_SPEED_STAT_TITLE
-Rychlost
 
 
 ##
@@ -941,24 +852,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Nikdy
 
-TECH_WND_TECH_COMPLETED
-HOTOVO
-
-TECH_WND_TECH_QUEUED
-Ve frontě
-
-TECH_WND_TECH_INCOMPLETE
-Nekompletní
-
-TECH_WND_TYPE_THEORIES
-Teorie
-
-TECH_WND_TYPE_APPLICATIONS
-Aplikace
-
-TECH_WND_TYPE_REFINEMENTS
-Upřesnění
-
 TECH_WND_STATUS_COMPLETED
 Kompletní
 
@@ -967,12 +860,6 @@ Vyzkoumatelné
 
 TECH_WND_VIEW_TYPE
 Stromu / Seznamu
-
-TECH_WND_REQUIRES
-Potřebuje
-
-TECH_WND_UNLOCKS
-Odemkne
 
 
 ##
@@ -1065,41 +952,6 @@ Produkce
 ##
 ## Guides
 ##
-
-
-##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Bitevní okno
-
-COMBAT_BATTLE
-'''Bitva : '''
-
-COMBAT_MILITARY_SHIPS
-Vojenská loď
-
-COMBAT_CIVILIAN_SHIPS
-Civilní loď
-
-COMBAT_PLANETS
-Planeta
-
-COMBAT_REMAINING
-''' Zbývající'''
-
-COMBAT_RETREATED
-''' Ustoupil'''
-
-COMBAT_DESTROYED
-''' Zničen'''
-
-COMBAT_DEFENSELESS
-''' Bezbranný'''
-
-COMBAT_LOST
-''' Prohra!'''
 
 
 ##
@@ -1467,18 +1319,6 @@ Lodní díly
 UIT_SHIP_HULL
 Lodní trupy
 
-# Technology types
-TT_THEORY
-Teorie
-
-# Technology types
-TT_APPLICATION
-Aplikace
-
-# Technology types
-TT_REFINEMENT
-Vylepšení
-
 # Build types
 BT_NOT_BUILDING
 Žádné stavby
@@ -1490,18 +1330,6 @@ Stavby
 # Build types
 BT_SHIP
 Loď
-
-# Stockpile types
-ST_FOOD
-jídlo
-
-# Stockpile types
-ST_MINERAL
-minerály
-
-# Stockpile types
-ST_TRADE
-obchod
 
 # Ship slot types
 SL_EXTERNAL
@@ -1557,9 +1385,6 @@ Kostrukce
 
 GROWTH_CATEGORY
 Vývoj
-
-ECONOMICS_CATEGORY
-Ekonomika
 
 
 ##
@@ -1629,9 +1454,6 @@ Spojené vědomí
 LRN_TRANSCEND
 Dokonalost
 
-GRO_MEDICAL_PATH
-Lékařské patologie
-
 GRO_PLANET_ECOL
 Planetární ekologie
 
@@ -1668,9 +1490,6 @@ Transmetabolismus
 PRO_MICROGRAV_MAN
 Microgravitační výroba
 
-PRO_CORE_MINE
-Deep Core Mining
-
 PRO_ROBOTIC_PROD
 Produkce robotů
 
@@ -1685,9 +1504,6 @@ Orbitální energie
 
 PRO_SENTIENT_AUTOMATION
 AI - Automatizace
-
-PRO_INTSTEL_COPRO
-Mezihvězdná koprodukce
 
 PRO_NDIM_ASSMB
 N-rozměrná montáž
@@ -1730,9 +1546,6 @@ N-dimezionální struktury
 ## Technology application
 ##
 
-DOES_NOTHING_SHORT_DESC
-Zbytečný: Nedělá nic
-
 SHIP_PART_UNLOCK_SHORT_DESC
 Odemkne lodní díly
 
@@ -1748,17 +1561,8 @@ Zlepší výzkum
 INDUSTRY_SHORT_DESC
 Zlepší průmysl
 
-TRADE_SHORT_DESC
-Zlepší obchod
-
-CONSTRUCTION_SHORT_DESC
-Zlepší infrastrukturu
-
 POPULATION_SHORT_DESC
 Zlepší populaci planety
-
-FLEET_RANGE_DESC
-Zlepší lodní zásobování
 
 CON_ORBITAL_CON
 Orbitální stavebnictví

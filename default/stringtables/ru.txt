@@ -12,13 +12,17 @@ Russian
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Обзор...
 
 APPLY
 Применить
@@ -28,12 +32,6 @@ CANCEL
 
 DONE
 Готово
-
-CLOSE
-Закрыть
-
-LOAD
-Загрузить
 
 SAVE
 Сохранить
@@ -46,9 +44,6 @@ OPEN
 
 OR
 или
-
-AND
-и
 
 YES
 Да
@@ -80,9 +75,6 @@ NO_PLAYER
 DROP_PLAYER
 Сбросить
 
-HOST
-Хост
-
 ALL
 Все
 
@@ -97,15 +89,6 @@ ERROR
 
 RESET
 Рестарт
-
-TURN
-Ход
-
-CHAT_WHISPER
-Шепчет
-
-UP
-В начало
 
 NEXT
 >
@@ -466,9 +449,6 @@ FLD_NEBULA_1_DESC
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Внутренний флот
-
 FN_BATTLE_FLEET
 Боевой флот
 
@@ -477,9 +457,6 @@ FN_SCOUT_FLEET
 
 FN_COLONY_FLEET
 Колониальный флот
-
-FN_INVASION_FLEET
-Флот вторжения
 
 MONSTERS
 Монстры
@@ -501,14 +478,8 @@ SERVER_TIMEOUT
 SERVER_LOST
 Связь с сервером потеряна.
 
-SERVER_GAME_END
-Сервер послал сообщение "Конец игры".  Пока.
-
 PLAYER_DISCONNECTED
 Игрок %1% покинул сервер.
-
-UNKNOWN_EMPIRE
-Неизвестная империя
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Сервер получил некорректные сохраненные данные. Некоторые из них будут проигнорированы.
@@ -577,12 +548,6 @@ OPTIONS_DB_FULLSCREEN
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 '''Выберите, монитор для использования в полноэкранном режиме. Основной монитор имеет индексом 0. Необходим перезапуск, чтобы изменения вступили в силу. '''
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Временной интервал в секундах, после которого окно чата сетевой игры исчезнет, если нет активности в чате.  Значение 0 - не закрывать окно чата.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Количество сообщений хранимых в истории.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Отображение газовых облаков в качестве фона на карте галактики.  Может замедлить рендеринг на старых компьютерах.
@@ -677,9 +642,6 @@ OPTIONS_DB_LIMIT_FPS
 OPTIONS_DB_MAX_FPS
 Ограничение FPS. Включается опцией "Включить ограничение FPS".
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Включает звуки интерфейса.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Громкость (0 до 255) звуков интерфейса.
 
@@ -736,12 +698,6 @@ OPTIONS_DB_UI_FONT
 
 OPTIONS_DB_UI_FONT_BOLD
 Установить файл источник жирного шрифта интерфейса.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Установить файл источник курсивного шрифта интерфейса.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Установить файл источник жирного курсивного шрифта интерфейса.
 
 OPTIONS_DB_UI_FONT_SIZE
 Установить размер шрифта интерфейса.
@@ -983,6 +939,27 @@ OPTIONS_DB_VERBOSE_SITREP_DESC
 OPTIONS_DB_LOAD
 Загрузить одно пользовательскую игру.
 
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
+Если ВКЛ, ряды участников сражения будут масштабироваться по горизонтали пропорционально их текущего здоровья.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
+Если ВКЛ, цвета рядов участников сражения будут интерполированы плавно в соответствии с их оставшимся здоровьем (в %)
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
+Если ВКЛ, ряды участников сражений масштабируются вертикально пропорционально их МАКС здоровью.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
+Если ВКЛ, то график империй в сражении  масштабируются по отношению к самому высокому значению Здоровья во флоте.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
+Цвет уничтоженных юнитов на графическом боевом отчете
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
+Цвет урона на графическом боевом отчете
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
+Цвет здоровья юнитов на графическом боевом отчете
+
 
 ##
 ## File dialog
@@ -994,16 +971,9 @@ FILE_DLG_FILES
 FILE_DLG_FILE_TYPES
 Тип(ы):
 
-FILE_DLG_MALFORMED_FILENAME
-Неверное имя файла.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% существует.
 ПЕРЕЗАПИСАТЬ?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-неверное имя файла.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -1062,9 +1032,6 @@ INTRO_BTN_EXIT
 ERR_CONNECT_TIMED_OUT
 Таймаут соединения с сервером.
 
-ERR_VERSION_MISMATCH
-Не могу подключиться к серверу, потому что данный клиент использует различные версии следующих настроек и/или исходных файлов:
-
 
 ##
 ## Server Setup Screen
@@ -1098,9 +1065,6 @@ REFRESH_LIST_BN
 
 MPLOBBY_WINDOW_TITLE
 Установки сетевой игры
-
-MPLOBBY_HOST_ABORTED_GAME
-Ведущий игрок завершил эту игровую установку.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Необходимы уникальные цвет и название империи.
@@ -1279,9 +1243,6 @@ LICENSE
 ABOUT_WINDOW_TITLE
 О проекте FreeOrion
 
-CREDITS
-Разработчики
-
 VISION
 Технические особенности
 
@@ -1381,9 +1342,6 @@ OPTIONS_VIDEO_MODE_WINDOWED
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Установить размеры окна игры. Глубина цвета одинакова с полноэкранным режимом.
 
-OPTIONS_VIDEO_SETTINGS
-Установки видео
-
 OPTIONS_APP_WIDTH_WINDOWED
 Ширина окна
 
@@ -1413,15 +1371,6 @@ OPTIONS_MAX_FPS
 
 OPTIONS_APPLY
 Применить
-
-OPTIONS_CHAT
-Чат
-
-OPTIONS_CHAT_HISTORY
-История сообщений чата
-
-OPTIONS_CHAT_HIDE
-Чат - задержка перед скрытием
 
 OPTIONS_GALAXY_MAP
 Галактическая карта
@@ -1488,12 +1437,6 @@ OPTIONS_GALAXY_MAP_SCALE_LINE
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Слайдер увеличения галактики
-
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Порог отображения дистанции обнаружения для скрытых объектов на карте
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Слайдер порога скрытности объектов на карте галактики
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Радиусы обнаружения
@@ -1570,9 +1513,6 @@ OPTIONS_SOUND_WINDOW
 OPTIONS_SOUND_BUTTON
 Звуки кнопки
 
-OPTIONS_SOUND_FLEET
-Звуки кнопки флота
-
 OPTIONS_SOUND_ALERT
 Тревога
 
@@ -1636,9 +1576,6 @@ OPTIONS_STAT_INCREASE_COLOR
 OPTIONS_STAT_DECREASE_COLOR
 Цвет уменьшения статистики
 
-OPTIONS_INTERIOR_COLOR
-Внутренняя область
-
 OPTIONS_WINDOW_COLORS
 Окна
 
@@ -1689,9 +1626,6 @@ OPTIONS_PROGRESS_BAR_COLOR
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Фон
-
-OPTIONS_ANY_FILE
-Все файлы
 
 OPTIONS_FOLDER_SETTINGS
 Каталог установок
@@ -1825,19 +1759,8 @@ MAP_FLEET_TEXT
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Боковая панель
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Производство в системе
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -1867,9 +1790,6 @@ RESEARCH_CONSUMPTION
 TRADE_CONSUMPTION
 Потребление
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Межзвёздный обмен
-
 IMPORT_EXPORT_TOOLTIP
 Импорт / Экспорт
 
@@ -1890,18 +1810,9 @@ RESOURCE_SELF_SUFFICIENT
 PLANET_PANEL
 Панель планеты
 
-PL_ASTEROID_BELT
-Пояс астероидов
-
 # %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Астероидов
-
-PL_UNINHABITED
-Необитаемая
-
-PL_SIZE
-Размер
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -1914,18 +1825,12 @@ PL_CANCEL_COLONIZE
 PL_OUTPOST
 Основать аванпост
 
-PL_CANCEL_OUTPOST
-Отменить аванпост
-
 # %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Вторжение (+%1%)
 
 PL_CANCEL_INVADE
 Отменить вторжение
-
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Выберите корабль с поселенцами
 
 PL_NO_VISIBILITY
 '''Планету в данный момент не видно. '''
@@ -2107,9 +2012,6 @@ FW_PASSIVE
 FW_PASSIVE_DESC
 Флот не атакует и не осаживает планеты, пытаясь остаться незамеченным.
 
-FW_SHIP_CLASS
-Класс корабля
-
 FW_UNKNOWN_DESIGN_NAME
 Неизвестно
 
@@ -2141,9 +2043,6 @@ FW_GENERIC_FLEETS_AT_SYSTEM
 FW_GENERIC_FLEETS
 Флоты
 
-FW_BATTLE_FLEET
-Боевой флот
-
 # the name that is used for fleets the client's player does not control when
 # the empire is not specified.
 FW_FOREIGN_FLEET
@@ -2164,15 +2063,6 @@ FW_ROGUE_SHIP
 
 SHIP_DAMAGE_STAT_TITLE
 Урон
-
-SHIP_DAMAGE_STAT_MAIN
-Урон, который наносит корабль за ход.
-
-SHIP_SPEED_STAT_TITLE
-Скорость
-
-SHIP_SPEED_STAT_MAIN
-Максимальное расстояние, на которое можно улететь за ход.
 
 FW_FLEET_FUEL_SUMMARY
 Топливо флота, эквивалентно наименьшему запасу топлива на каком-либо корабле флота.
@@ -2300,24 +2190,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Никогда
 
-TECH_WND_TECH_COMPLETED
-ЗАВЕРШЕНО
-
-TECH_WND_TECH_QUEUED
-На очереди
-
-TECH_WND_TECH_INCOMPLETE
-Не завершено
-
-TECH_WND_TYPE_THEORIES
-Теории
-
-TECH_WND_TYPE_APPLICATIONS
-Приложения
-
-TECH_WND_TYPE_REFINEMENTS
-Усовершенствования
-
 TECH_WND_STATUS_COMPLETED
 Завершено
 
@@ -2335,12 +2207,6 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 
 TECH_WND_VIEW_TYPE
 Список / Дерево
-
-TECH_WND_REQUIRES
-Необходимы
-
-TECH_WND_UNLOCKS
-Разблокирует
 
 # %1% research points already spent on a reseach.
 # %2% total research points required to complete the research.
@@ -2418,14 +2284,8 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Никогда
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Количество
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Добавить в очередь
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-К строению
 
 PRODUCTION_QUEUE_PROMPT
 '''Дважды нажмите на любой пункт, чтобы добавить его к очереди производства. '''
@@ -2440,13 +2300,6 @@ PRODUCTION_WND_TITLE
 
 PRODUCTION_INFO_PP
 ОП
-
-PRODUCTION_QUEUE_EMPTY
-'''Очередь производства пуста.
-
-Составьте очередь производства выбрав планету на боковой панели и проекты из списка.
-
-Помните, корабли могут быть произведены только на верфях. Другие объекты могут иметь свои собственные ограничения.'''
 
 # %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
@@ -2465,9 +2318,6 @@ DESIGN_NAME_DEFAULT
 
 DESIGN_DESCRIPTION_DEFAULT
 Описание проекта
-
-DESIGN_NO_PART
-Отсутствует
 
 DESIGN_WND_STARTS
 Начало проектирования
@@ -2493,14 +2343,8 @@ DESIGN_WND_DESIGN_NAME
 DESIGN_WND_DESIGN_DESCRIPTION
 Описание
 
-DESIGN_WND_CONFIRM
-Подтвердить
-
 DESIGN_WND_CLEAR
 Очистить
-
-DESIGN_DELETE
-Удалить проект
 
 DESIGN_RENAME
 Переименовать
@@ -2616,15 +2460,6 @@ ENC_SHIP
 
 ENC_MONSTER
 Тип монстра
-
-MONSTER_TYPES
-Типы монстров
-
-MONSTER_OBJECTS
-Монстры:
-
-NO_MONSTER_OBJECTS
-Нет известных монстров
 
 ENC_FLEET
 Флот
@@ -2752,9 +2587,6 @@ ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
 ENC_LOOKUP
 Справка o %1%
 
-ENC_COMBAT_LOG
-Протокол боев
-
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
 ENC_COMBAT_LOG_DESCRIPTION_STR
@@ -2824,9 +2656,6 @@ COMBAT_SUMMARY_PARTICIPANT_EQUAL
 COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP
 Ширна рядов сейчас просто одинакова. Нажмите для более наглядного вывода!
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
-Если ВКЛ, ряды участников сражения будут масштабироваться по горизонтали пропорционально их текущего здоровья.
-
 COMBAT_SUMMARY_HEALTH_SMOOTH
 Здоровье:Ровный
 
@@ -2838,9 +2667,6 @@ COMBAT_SUMMARY_HEALTH_BAR
 
 COMBAT_SUMMARY_HEALTH_BAR_TIP
 Изменение структуры корабля отображается двумя цветными рядами
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
-Если ВКЛ, цвета рядов участников сражения будут интерполированы плавно в соответствии с их оставшимся здоровьем (в %)
 
 COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
 Ряды здоровья:Пропорционально
@@ -2854,9 +2680,6 @@ COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL_TIP
 COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP
 Ряды участников сражения сейчас равны.
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
-Если ВКЛ, ряды участников сражений масштабируются вертикально пропорционально их МАКС здоровью.
-
 COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
 Высота графов:Пропорциональная
 
@@ -2869,9 +2692,6 @@ COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL_TIP
 COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
 Графики сражаемых империй сейчас равны.
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
-Если ВКЛ, то график империй в сражении  масштабируются по отношению к самому высокому значению Здоровья во флоте.
-
 OPTIONS_COMBAT_COLORS
 Боевые цвета
 
@@ -2883,15 +2703,6 @@ OPTIONS_COMBAT_SUMMARY_WOUND_COLOR
 
 OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
 Здоровье
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
-Цвет уничтоженных юнитов на графическом боевом отчете
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
-Цвет урона на графическом боевом отчете
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
-Цвет здоровья юнитов на графическом боевом отчете
 
 COMBAT_LOG
 Лог
@@ -3163,41 +2974,6 @@ AI_LEVELS_TITLE
 
 
 ##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Окно битвы
-
-COMBAT_BATTLE
-БИТВА:
-
-COMBAT_MILITARY_SHIPS
-Военные корабли
-
-COMBAT_CIVILIAN_SHIPS
-Гражданские корабли
-
-COMBAT_PLANETS
-Планеты
-
-COMBAT_REMAINING
-''' Оставшиеся'''
-
-COMBAT_RETREATED
-''' Отступившие'''
-
-COMBAT_DESTROYED
-''' Уничтоженные'''
-
-COMBAT_DEFENSELESS
-''' Беззащитные'''
-
-COMBAT_LOST
-''' Потеряны!'''
-
-
-##
 ## Turn progress
 ##
 
@@ -3243,9 +3019,6 @@ TURN_BEGIN
 MESSAGES_PANEL_TITLE
 Сообщения
 
-MESSAGES_PANEL_INTRO
-Статусные сообщения и чат
-
 
 ##
 ## Players list
@@ -3270,9 +3043,6 @@ WAITING
 
 SORT
 Сортировка
-
-COLUMNS
-Колонки
 
 COLLAPSE_ALL
 Закрыть все
@@ -3335,9 +3105,6 @@ SITREP_PANEL_TITLE
 # %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Отчёт о событиях - Ход %1%
-
-SITREP_ERROR
-Произошло непонятное событие.
 
 FILTERS
 Фильтры
@@ -3614,12 +3381,6 @@ EFFECT_TERRAFORM
 
 EFFECT_TERRAFORM_LABEL
 Терраформирование
-
-EFFECT_STARVATION
-Начался голод %planet%.
-
-EFFECT_STARVATION_LABEL
-Голод
 
 EFFECT_NEBULA
 Астрономы сообщают, что они наблюдают новую звезду в системе %system%, сформированную из туманности.
@@ -4245,16 +4006,10 @@ VOID_SLAVE_SPECIAL
 VOID_SLAVE_SPECIAL_DESC
 Эта планета существует частично в этой вселенной, а частично в пустоте, что увеличивает ее [[encyclopedia STEALTH_TITLE]] на 80. Если эта планета принадлежит империи, бонусы от технологий и населения будут добавлены к этому бонусу.
 
-DERELICT_SPECIAL
-Покинутый
-
 DERELICT_SPECIAL2
 Покинутый
 
 DERELICT_SPECIAL3
-Покинутый
-
-DERELICT_SPECIAL_REMOVE
 Покинутый
 
 DERELICT_SPECIAL_DESC
@@ -4271,12 +4026,6 @@ NOVA_BOMB_ACTIVATOR_SPECIAL
 
 NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
 Стабильность измерений в этом регионе крайне низка, что провоцирует все близлежащие сверхновые детонировать.
-
-EXPERIMENTOR_OUTPOST_SPECIAL
-Поселение Экспериментатора
-
-EXPERIMENTOR_OUTPOST_SPECIAL_DESC
-В этой системе находится поселение Экспериментатора, которого необходимо уничтожить от греха подальше.
 
 PROBIOTIC_SPECIAL
 Биологический суп
@@ -4329,12 +4078,6 @@ CRYSTALS_SPECIAL_DESC
 ELERIUM_SPECIAL
 Абориген Элериума
 
-STARSPAWN_NEBULA_SPECIAL
-Звездное зарождение туманности
-
-STARSPAWN_NEBULA_SPECIAL_DESC
-Туманность, созданная вокруг систем, которая может сжаться, сформировав новую звезду.
-
 
 ##
 ## Enumeration values
@@ -4377,6 +4120,10 @@ OBJ_FIELD
 Поле
 
 # Star types
+INVALID_STAR_TYPE
+непонятная звезда
+
+# Star types
 STAR_BLUE
 голубая
 
@@ -4407,10 +4154,6 @@ STAR_BLACK
 # Star types
 STAR_NONE
 не звезда
-
-# Star types
-INVALID_STAR_TYPE
-непонятная звезда
 
 # Planet types
 PT_SWAMP
@@ -4765,18 +4508,6 @@ UIT_SHIP_HULL
 UIT_TECH
 Технология
 
-# Technology types
-TT_THEORY
-Теория
-
-# Technology types
-TT_APPLICATION
-Приложение
-
-# Technology types
-TT_REFINEMENT
-Усовершенствование
-
 # Build types
 BT_NOT_BUILDING
 Не строение
@@ -4788,26 +4519,6 @@ BT_BUILDING
 # Build types
 BT_SHIP
 Корабль
-
-# Stockpile types
-ST_FOOD
-еда
-
-# Stockpile types
-ST_MINERAL
-минералы
-
-# Stockpile types
-ST_TRADE
-торговля
-
-# Resource types
-RE_FOOD
-еда
-
-# Resource types
-RE_MINERALS
-минералы
 
 # Resource types
 RE_TRADE
@@ -4996,9 +4707,6 @@ DESC_EFFECTS_GROUP_SELF_SCOPE
 # %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 Эффект является активным, если источник - объект%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Эффект всегда активен
 
 # %1% index of the effect group.
 # %2% textual description of the effect group.
@@ -5742,9 +5450,6 @@ CONSTRUCTION_CATEGORY
 GROWTH_CATEGORY
 Демография
 
-ECONOMICS_CATEGORY
-Экономика
-
 DEFENSE_CATEGORY
 Оборона
 
@@ -5874,13 +5579,6 @@ LRN_TRANSCEND
 LRN_TRANSCEND_DESC
 Что есть пристанище бога?  Он заинтересован в моральности и великодушии или же во зле и тирании?  Преподносит ли бог смертным заботу и любовь, ненависть и страдание или невозмутимое равнодушие?  Осведомлен ли бог о бесконечно малых заботах физической вселенной, или же истинная божественность формы за пределами описания, а невозможность понимания смертными распространяется по всем направлениям?
 
-GRO_MEDICAL_PATH
-Медицинские патологии
-
-GRO_MEDICAL_PATH_DESC
-'''Многие болезни и травмы или их проявления имеют схожие симптомы, но лечатся совершенно по-разному.  Лечение каждого отдельного заболевания в соответствии с его спецификой намного эффективнее.
-Лечение болезней и травм требует глубокого понимание вызвавших их причин.  Изучая тонкости и многообразие различных методов лечения можно выработать наиболее подходящие для каждого отдельного случая.'''
-
 GRO_PLANET_ECOL
 Планетарная Экология
 
@@ -5937,9 +5635,6 @@ GRO_NANOTECH_MED_DESC
 
 Пока генетическая замена может исправить или отменить эффект травматических или нежелательных мутаций, скорректировать биохимический дисбаланс, излечивать сильные физические травмы и не генетические врожденные дефекты, требующие физио-корректирующих мер.  Нанотехнологии могут быть использовать для выполнения этих задач, но с двумя важными преимуществами: коррекция может быть выполнена без инвазивной хирургии и связанной с ней вторичными повреждениями и рисками, а так же значительно снизить время лечения за счет инструментов, которые всегда на месте и готовы к работе.'''
 
-GRO_ECO_METAMORPH
-Экологические метаморфозы
-
 GRO_XENO_HYBRIDS
 Ксено-Скрещивание
 
@@ -5979,16 +5674,6 @@ Mineral resource extraction from sub-planetoid-sized bodies involves challenges 
 
 Микрогравитация низкой планетарной орбиты предоставляет огромный потенциал для новейших производственных зданий, оборудования и техники, невозможной на поверхности планеты.  Твердые тела могут храниться с минимальным обеспечением.  Жидкости и газы текут свободно, сформированные только поверхностным натяжением до момента использования.  Заводское оборудование может быть оптимально расставлено в трех измерениях.  Эти условия, при правильной эксплуатации, дают серьезный прирост эффективности и продуктивности.'''
 
-PRO_CORE_MINE
-Рудники глубокой добычи
-
-PRO_CORE_MINE_DESC
-'''Увеличивает максимальную добычу на добывающе-ориентированных планетах на 5, 10, 15 и 20 для больших, средних, маленьких  и крошечных планетах соответственно.
-
-Огоромные давление и температура в мантиях планет и ядрах создают много кристаллических и минеральных формирований, которые в верхних планетарных слоях появляются только благодаря вулканической активности. Более глубокие слои планеты содержат еще больше экзотические материалов, в больших концентрациях. Доступ к этим областям является чрезвычайно трудным и опасным, но результаты на порядок превосходят традиционную горную промышленность.
-
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
-
 PRO_ROBOTIC_PROD
 Роботизированное Производство
 
@@ -6004,12 +5689,6 @@ PRO_EXOBOTS
 
 PRO_EXOBOTS_DESC
 Позволяет производить экзоботов, оптимизированных для производства и добычи на враждебных планетах.
-
-PRO_RAPID_EXO_PROD
-Скоростное производство экзоботов
-
-PRO_RAPID_EXO_PROD_DESC
-Увеличивает целевой показатель здоровья всех планет, населенных экзоботами на 5.
 
 PRO_FUSION_GEN
 Ядерный Синтез
@@ -6044,12 +5723,6 @@ PRO_SENTIENT_AUTOMATION_DESC
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
 Поскольку оборудование становится все более и более автоматизированным, оно приобретает способность к полному собственному копированию и обслуживанию без внешней поддержки, кроме обеспечения необходимым сырьем и материалами, для производства конечного продукта. Когда оборудование управляется искусственным разумом, вся система может учиться, планировать, реагировать, и адаптироваться автономно, и может делать это без громоздкой, неэффективной, традиционной схемой с наймом и предоставлением жилья рабочим.'''
-
-PRO_INTSTEL_COPRO
-Межзвёздное совместное производство
-
-PRO_INTSTEL_COPRO_DESC
-Традиционные средства производства продукции ограничены потребностью самостоятельности производства из-за транспортировки и других логистических проблем. Более позднее планетарное региональное сотрудничество разрешает некоторую степень специализации и сотрудничества, с использованием производственного оборудования нескольких частей системы, благодаря чему целая система извлекает выгоду из централизованной экспертизы и экономии за счет роста производства. Расширяя это понятие на несколько порядков, система может адаптироваться к галактическому масштабу, с отдельными планетами или целыми звездными системами, функционирующими в качестве единого специализированного средства производства. Логистические трудности, как часть такой системы, не отличаются от тех, что были ранее, и возрастают лишь до той степени, которая предполагает потенциальную пользу.
 
 PRO_NDIM_ASSMB
 N-мерная сборка
@@ -6166,12 +5839,6 @@ SHP_GAL_EXPLO
 SHP_GAL_EXPLO_DESC
 Открытие межзвездных путешествий через звездные тоннели объявляют новую эру развития общества. Старые политические дрязги между небольшими фракциями становятся незначительными, когда вся цивилизация сталкивается с безграничным потенциалом звезд ... для роста и процветания, или полного уничтожения.
 
-SHP_SPACE_TACTICS
-Космическая тактика
-
-SHP_SPACE_TACTICS_DESC
-Сражения в условиях микрогравитации и вакуума требуют специализированного оружия и оборонительных систем, а также теоретические тактики, которые мотивируют их использование.
-
 SHP_INTSTEL_LOG
 Межзвёздная логистика
 
@@ -6217,9 +5884,6 @@ SHP_DOMESTIC_MONSTER
 SHP_ENDOCRINE_SYSTEMS
 Эндокринные системы Мега-фауны
 
-SHP_HAB_MEGAFAUN
-Обитаемая Мега-Фауна
-
 SHP_CONT_SYMB
 Хитрый Симбиоз
 
@@ -6246,9 +5910,6 @@ SPY_ROOT_DECEPTION
 VICTORY_SHORT_DESC
 Победа!
 
-DOES_NOTHING_SHORT_DESC
-Бесполезно: ничего не дает
-
 SHIP_PART_UNLOCK_SHORT_DESC
 Открывает корабельный модуль
 
@@ -6267,12 +5928,6 @@ RESEARCH_SHORT_DESC
 INDUSTRY_SHORT_DESC
 Улучшает производство
 
-TRADE_SHORT_DESC
-Улучшает торговлю
-
-CONSTRUCTION_SHORT_DESC
-Улучшает Инфраструктуру
-
 SUPPLY_SHORT_DESC
 Улучшает Снабжение
 
@@ -6288,14 +5943,8 @@ METER_GROWTH_SHORT_DESC
 POPULATION_SHORT_DESC
 Увеличивает максимальное население
 
-HEALTH_SHORT_DESC
-Улучшает здоровье
-
 STRUCTURE_SHORT_DESC
 Улучшает строения
-
-FLEET_RANGE_DESC
-Улучшает снабжение флотов
 
 SHIP_REPAIR_DESC
 Ремонтирует корабли

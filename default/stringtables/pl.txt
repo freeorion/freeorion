@@ -6,27 +6,28 @@ Polski
 # Drop a line to cyber_killer at jabster.pl (email or xmpp) if this file needs urgent updating or there are errors in the translation
 # Translated by: Wojciech "Feagorn" Moch (feagorn at gmail point com)
 #
-# Translators note: this translation assumes that the player is not a complete idiot and can understand simple, game-related English acronyms eg: FPS.
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
+
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
 
 
 ##
 ## Common phrases
 ##
 
-BROWSE_BTN
-Przeglądaj...
-
 CANCEL
 Anuluj
 
 DONE
 Gotowe
-
-CLOSE
-Zamknij
-
-LOAD
-Załaduj
 
 SAVE
 Zapisz
@@ -36,9 +37,6 @@ Otwórz
 
 OR
 lub
-
-AND
-i
 
 YES
 Tak
@@ -60,9 +58,6 @@ Wprowadź nową nazwę
 
 ERROR
 BŁĄD
-
-CHAT_WHISPER
-szept
 
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
@@ -122,14 +117,8 @@ Serwer nie odpowiada.
 SERVER_LOST
 Utracono połączenie z serwerem.
 
-SERVER_GAME_END
-Serwer przesłał wiadomość o zakończeniu gry. Pa pa.
-
 PLAYER_DISCONNECTED
 Gracz %1% utracił połączenie z serwerem.
-
-UNKNOWN_EMPIRE
-Nieznane imperium
 
 
 ##
@@ -153,12 +142,6 @@ Wybiera ścieżkę dźwiękową odtwarzaną w tle.
 
 OPTIONS_DB_FULLSCREEN
 Uruchamia grę na pełnym ekranie.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Po tym czasie, w sekundach, okno rozmowy w trybie wielu graczy zniknie jeśli nic nowego nie będzie napisane. Wartość 0 oznacza, że okno nigdy nie zniknie.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Liczba wiadomości przechowywanych w oknie historii rozmowy.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rysowanie substnacji gazowych wokół systemów planetarnych w celu nadania kształtu galktyce. W starszych systemach może spowolnić rysowanie.
@@ -217,9 +200,6 @@ Włącza i wyłącza ograniczenie liczby klatek na sekundę. Wartość ogranicze
 OPTIONS_DB_MAX_FPS
 Ustala ograniczenie liczby klatek na sekundę. Ograniczenie to włączaje jest w opcji "Limit FPS".
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Włącza i wyłącza dźwięki w interfejsie użytkownika.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Głośność (od 0 do 255) z jaką odtwarzane będą dźwięki w interfejsie użytkownika.
 
@@ -276,12 +256,6 @@ Ustala plik czcionki.
 
 OPTIONS_DB_UI_FONT_BOLD
 Ustala plik pogrubionej czcionki.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Ustala plik pochylonej czcionki.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Ustala plik pogrubionej i pochylonej czcionki.
 
 OPTIONS_DB_UI_FONT_SIZE
 Ustala wielkość czcionki.
@@ -468,18 +442,10 @@ Plik(i):
 FILE_DLG_FILE_TYPES
 Typ(y):
 
-FILE_DLG_MALFORMED_FILENAME
-Nieprawidłowa nazwa pliku.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% już istnieje.
 
 Nadpisać?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-
-nie jest prawidłową nazwą pliku.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -540,9 +506,6 @@ Wyjście
 ERR_CONNECT_TIMED_OUT
 Przekroczono czas łączenia z serwerem.
 
-ERR_VERSION_MISMATCH
-Nie można połączyć się z serwerem, ponieważ klient używa innej wersji poniższych plików ustawień lub źródłowych:
-
 
 ##
 ## Server Setup Screen
@@ -576,9 +539,6 @@ Odśwież listę
 
 MPLOBBY_WINDOW_TITLE
 Ustawienia trybu wielu graczy
-
-MPLOBBY_HOST_ABORTED_GAME
-Gracz tworzący grę przerwał proces jej konfiguracji.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Wymagaj unikalnych nazw i kolorów imperiów
@@ -690,9 +650,6 @@ Licencja
 ABOUT_WINDOW_TITLE
 O FreeOrion
 
-CREDITS
-Podziękowania
-
 VISION
 Wizja
 
@@ -755,19 +712,8 @@ Projektowanie
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Panel boczny
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Produkcja w systemie
 
 INDUSTRY_CONSUMPTION
 Koncumpcja produkcji przemysłowej
@@ -777,9 +723,6 @@ Koncumpcja badań naukowych
 
 TRADE_CONSUMPTION
 Skuteczność handlu
-
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Wymiana międzysystemowa
 
 IMPORT_EXPORT_TOOLTIP
 Import / Eksport
@@ -797,15 +740,6 @@ Dostępne do eksportowania
 
 PLANET_PANEL
 Panel planety
-
-PL_ASTEROID_BELT
-Pas asteroidów
-
-PL_UNINHABITED
-Niezamieszkała
-
-PL_SIZE
-Rozmiar
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -908,11 +842,6 @@ Zmień
 
 ##
 ## Guides
-##
-
-
-##
-## Combat messages
 ##
 
 

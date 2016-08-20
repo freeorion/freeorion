@@ -7,25 +7,23 @@ Nederlands
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
+
 
 ##
 ## Common phrases
 ##
-
-BROWSE_BTN
-Bladeren...
 
 CANCEL
 Annuleren
 
 DONE
 Klaar
-
-CLOSE
-Sluiten
-
-LOAD
-Laden
 
 SAVE
 Opslaan
@@ -35,9 +33,6 @@ Openen
 
 OR
 of
-
-AND
-en
 
 YES
 Ja
@@ -56,9 +51,6 @@ Hernoemen
 
 ENTER_NEW_NAME
 Voer een nieuwe naam in
-
-CHAT_WHISPER
-fluister
 
 
 ##
@@ -99,9 +91,6 @@ De server reageert niet.
 SERVER_LOST
 De verbinding met de server is verbroken.
 
-SERVER_GAME_END
-De server zond een bericht dat het spel afgelopen is.
-
 PLAYER_DISCONNECTED
 Speler %1% heeft geen verbinding met de server meer.
 
@@ -127,12 +116,6 @@ Stel de achtergrond muziek om af te spelen in.
 
 OPTIONS_DB_FULLSCREEN
 Start het spel in schermvullende modus.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Tijdsinterval, in seconden, waarna het multiplayer chat venster verborgen zal worden als er niet aan toegevoegd wordt. Een waarde van 0 geeft aan dat het venster nooit moet verbergen.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Het aantal uitgaande berichten dat bewaard moet worden in de geschiedenis van het chat invoerveld.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Forceer de client om de server niet te starten, zelfs als u een spel op localhost beheert, een enkele speler spel speelt, etc.
@@ -160,9 +143,6 @@ Zet FPS limitering aan of uit. Limiet wordt ingesteld met max-fps optie.
 
 OPTIONS_DB_MAX_FPS
 Zet FPS limiet, indien geactiveerd. Limitering is geactiveerd met limit-fps.
-
-OPTIONS_DB_UI_SOUND_ENABLED
-Zet GebruikersInterface geluidseffecten aan of uit.
 
 OPTIONS_DB_UI_SOUND_VOLUME
 Het volume (0 tot 255) waarbij GebruikersInterface geluidseffecten afgespeeld moeten worden.
@@ -220,12 +200,6 @@ Zet GebruikersInterface lettertype ondersteuningsbestand.
 
 OPTIONS_DB_UI_FONT_BOLD
 Zet GebruikersInterface vet lettertype ondersteuningsbestand.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Zet GebruikersInterface cursief lettertype ondersteuningsbestand.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Zet GebruikersInterface vet en cursief lettertype ondersteuningsbestand.
 
 OPTIONS_DB_UI_FONT_SIZE
 Zet GebruikersInterface lettertypegrootte.
@@ -364,14 +338,8 @@ Het volume (0 tot 255) waarop de muziek afgespeeld moet worden.
 FILE_DLG_FILES
 Bestand(en):
 
-FILE_DLG_MALFORMED_FILENAME
-Ongeldige bestandsnaam.
-
 FILE_DLG_OVERWRITE_PROMPT
 %1% bestaat.\nMag het overschreven worden?
-
-FILE_DLG_INVALID_FILENAME
-"%1%"\nis een ongeldige bestandsnaam.
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 "%1%"\nis een directory.
@@ -431,9 +399,6 @@ Afsluiten
 ERR_CONNECT_TIMED_OUT
 Verbinding met server leggen duurde te lang.
 
-ERR_VERSION_MISMATCH
-Kon niet met de server verbinden, omdat deze client verschillende versies van de volgende instellingen en bestanden gebruikt:
-
 
 ##
 ## Server Setup Screen
@@ -467,9 +432,6 @@ Ververs lijst
 
 MPLOBBY_WINDOW_TITLE
 Netwerkspel Instellingen
-
-MPLOBBY_HOST_ABORTED_GAME
-De host speler heeft het instellen van dit spel gestopt.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Unieke namen en kleuren van rijken vereist
@@ -654,9 +616,6 @@ Video Modus (herstart om veranderingen te gebruiken)
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Activeert schermvullende modus, stelt schermresolutie in en stelt bits per pixel in een stap in; zet dit op "Aangepast" om de breedte, hoogte en bits per pixel handmatig in te stellen.
 
-OPTIONS_VIDEO_SETTINGS
-Video Instellingen
-
 OPTIONS_FULLSCREEN
 Schermvullend
 
@@ -665,12 +624,6 @@ FPS Weergeven
 
 OPTIONS_LIMIT_FPS
 FPS Limiet
-
-OPTIONS_CHAT_HISTORY
-Chat geschiedenis
-
-OPTIONS_CHAT_HIDE
-Chat-verberg vertraging
 
 OPTIONS_MUSIC
 Muziek
@@ -713,9 +666,6 @@ Venstergeluiden
 
 OPTIONS_SOUND_BUTTON
 Knopgeluiden
-
-OPTIONS_SOUND_FLEET
-Vloot Knop Geluiden
 
 OPTIONS_SOUND_ALERT
 Opgepast
@@ -762,9 +712,6 @@ Tekst
 OPTIONS_HIGHLIGHT_COLOR
 Selectie oplichten
 
-OPTIONS_INTERIOR_COLOR
-Interieur
-
 OPTIONS_WINDOW_COLORS
 Venster
 
@@ -807,9 +754,6 @@ Balk
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Achtergrond
 
-OPTIONS_ANY_FILE
-Alle bestanden
-
 OPTIONS_FOLDER_SETTINGS
 Ondersteuningsbestanden
 
@@ -851,19 +795,8 @@ Ontwerp
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Zijpaneel
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Systeem Productie
 
 
 ##
@@ -872,15 +805,6 @@ Systeem Productie
 
 PLANET_PANEL
 Planeet Paneel
-
-PL_ASTEROID_BELT
-Asteroïdengordel
-
-PL_UNINHABITED
-Onbewoond
-
-PL_SIZE
-Grootte
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -949,9 +873,6 @@ Nooit
 FW_FLEET_ETA_UNKNOWN
 Onbekend
 
-FW_SHIP_CLASS
-'''Schip Klasse '''
-
 FW_UNKNOWN_DESIGN_NAME
 Onbekend
 
@@ -1004,35 +925,11 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Nooit
 
-TECH_WND_TECH_COMPLETED
-VOLTOOID
-
-TECH_WND_TECH_QUEUED
-In wachtrij
-
-TECH_WND_TECH_INCOMPLETE
-Onvoltooid
-
-TECH_WND_TYPE_THEORIES
-Theorieën
-
-TECH_WND_TYPE_APPLICATIONS
-Toepassingen
-
-TECH_WND_TYPE_REFINEMENTS
-Verfijningen
-
 TECH_WND_STATUS_COMPLETED
 Voltooid
 
 TECH_WND_STATUS_RESEARCHABLE
 Onderzoekbaar
-
-TECH_WND_REQUIRES
-Vereist
-
-TECH_WND_UNLOCKS
-Opent
 
 
 ##
@@ -1088,14 +985,8 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Nooit
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Kwantiteit
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Aan Wachtrij Toevoegen
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Centreer op Bouwen
 
 
 ##
@@ -1115,9 +1006,6 @@ Aangepast scheepsontwerp
 
 DESIGN_DESCRIPTION_DEFAULT
 Ontwerp beschrijving
-
-DESIGN_NO_PART
-Geen
 
 DESIGN_WND_STARTS
 Ontwerp start
@@ -1142,9 +1030,6 @@ Ontwerp naam
 
 DESIGN_WND_DESIGN_DESCRIPTION
 Beschrijving
-
-DESIGN_WND_CONFIRM
-Bevestig nieuw ontwerp
 
 DESIGN_WND_CLEAR
 Onderelen wissen
@@ -1193,41 +1078,6 @@ Gebouw
 ##
 ## Guides
 ##
-
-
-##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Gevechtsvenster
-
-COMBAT_BATTLE
-'''GEVECHT : '''
-
-COMBAT_MILITARY_SHIPS
-Militaire Schepen
-
-COMBAT_CIVILIAN_SHIPS
-Burgerschepen
-
-COMBAT_PLANETS
-Planeten
-
-COMBAT_REMAINING
-''' Over'''
-
-COMBAT_RETREATED
-''' Teruggetrokken'''
-
-COMBAT_DESTROYED
-''' Vernietigd'''
-
-COMBAT_DEFENSELESS
-''' Onweerbaar'''
-
-COMBAT_LOST
-''' Verloren!'''
 
 
 ##
@@ -1568,18 +1418,6 @@ Gebouw
 UIT_SHIP_PART
 Scheepsonderdeel
 
-# Technology types
-TT_THEORY
-Theorie
-
-# Technology types
-TT_APPLICATION
-Toepassing
-
-# Technology types
-TT_REFINEMENT
-Verfijning
-
 # Build types
 BT_NOT_BUILDING
 geen bouw
@@ -1591,18 +1429,6 @@ gebouw
 # Build types
 BT_SHIP
 schip
-
-# Stockpile types
-ST_FOOD
-voedsel
-
-# Stockpile types
-ST_MINERAL
-mineraal
-
-# Stockpile types
-ST_TRADE
-handel
 
 # Ship slot types
 SL_EXTERNAL
@@ -1683,9 +1509,6 @@ de huidige beurt
 ## FOCS effect descriptions
 ##
 
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effect is altijd actief
-
 
 ##
 ## FOCS meter setter
@@ -1722,9 +1545,6 @@ Constructie
 
 GROWTH_CATEGORY
 Groei
-
-ECONOMICS_CATEGORY
-Economie
 
 
 ##
@@ -1803,12 +1623,6 @@ N-Dimensionale Subruimte
 LRN_NDIM_SUBSPACE_DESC
 Vroege superstring theoretici spraken over 10, 11 of 26 dimensionele universums, met alle behalve de 4 macrodimensies zo dicht "opgekrult" dat ze onzichtbaar zijn. Deze en andere dimensies kunnen nu ontwonden en geopend worden, waardoor de oppervlakte van het universum zichzelf uitstrekt en doordringt door materie naar en van een voorheen, door onze beperkte perceptie, verborgen bestaan kan schuiven, of bellen en lagen kan maken waar ervoor geen bestonden.
 
-GRO_MEDICAL_PATH
-Medische Pathologie
-
-GRO_MEDICAL_PATH_DESC
-Behandeling van ziekten en verwondingen vereist doordacht begrip van hun oorzaken.
-
 GRO_PLANET_ECOL
 Planetaire Ecologie
 
@@ -1880,9 +1694,6 @@ De Ontdekking van interstellair reizen via sterrenlanen kondigd een nieuw tijdpe
 ## Technology application
 ##
 
-DOES_NOTHING_SHORT_DESC
-Waardeloos: Doet Niets
-
 SHIP_PART_UNLOCK_SHORT_DESC
 Ontsluit scheepsonderdeel
 
@@ -1895,17 +1706,8 @@ Verbetert Onderzoek
 INDUSTRY_SHORT_DESC
 Verbetert Industrie
 
-TRADE_SHORT_DESC
-Verbetert Handel
-
-CONSTRUCTION_SHORT_DESC
-Verbetert Infrastructuur
-
 POPULATION_SHORT_DESC
 Vergroot Planeet Populatie
-
-FLEET_RANGE_DESC
-Verbetert Vloot Voorraad
 
 GRO_BIOTERROR
 Bioterreur Faciliteiten
