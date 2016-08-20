@@ -34,7 +34,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-            [[SYSTEM_MINES_SCOPE(@3@)]]
+            [[SYSTEM_MINES_SCOPE_@3@]]
             Or [
                 Not Unowned
                 And [
@@ -72,7 +72,7 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
             Or [
                 Not Unowned
                 And [
