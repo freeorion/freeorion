@@ -99,6 +99,7 @@ EG_SYSTEM_MINES
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 VisibleToEmpire empire = Source.Owner
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_ENEMY_STACK"
             priority = @2@
             effects = [
@@ -122,6 +123,7 @@ EG_SYSTEM_MINES
                 VisibleToEmpire empire = Source.Owner
                 Structure low = @1@ + 0.0001
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_UNOWNED_STACK"
             priority = @2@
             effects = [
@@ -146,6 +148,7 @@ EG_SYSTEM_MINES
                 VisibleToEmpire empire = Source.Owner
                 Structure high = @1@
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_UNOWNED_STACK"
             priority = @2@
             effects = [
@@ -169,6 +172,7 @@ EG_SYSTEM_MINES
                 Structure high = @1@
                 VisibleToEmpire empire = Source.Owner
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_ENEMY_STACK"
             priority = @2@
             effects = [
@@ -193,6 +197,7 @@ EG_SYSTEM_MINES
                 ]
                 Not VisibleToEmpire empire = Source.Owner
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_INVISIBLE_STACK"
             priority = @2@
             effects = [
@@ -209,6 +214,7 @@ EG_SYSTEM_MINES
             scope = And [
                 Fleet
                 [[SYSTEM_MINES_SCOPE_@3@]]
+                Not Unowned
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_FLEET_STACK"
@@ -230,6 +236,7 @@ EG_SYSTEM_MINES
             scope = And [
                 Ship
                 [[SYSTEM_MINES_SCOPE_@3@]]
+                Not Unowned
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = @1@
             ]
