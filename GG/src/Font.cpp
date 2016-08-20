@@ -1173,6 +1173,85 @@ void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
     throw BadGlyph(boost::io::str(boost::format(format_str) % boost::io::str(format % c)));
 }
 
+namespace DebugOutput {
+    void PrintParseResults(const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements) {
+        std::cout << "results of parse:\n";
+        for (std::size_t i = 0; i < text_elements.size(); ++i) {
+            if (boost::shared_ptr<Font::FormattingTag> tag_elem = boost::dynamic_pointer_cast<Font::FormattingTag>(text_elements[i])) {
+                std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
+                          << static_cast<const void*>(&*tag_elem->text.begin()) << ")\n    widths=";
+                for (std::size_t j = 0; j < tag_elem->widths.size(); ++j) {
+                    std::cout << tag_elem->widths[j] << " ";
+                }
+                std::cout << "\n    whitespace=" << tag_elem->whitespace << "\n    newline=" << tag_elem->newline << "\n    params=\n";
+                for (std::size_t j = 0; j < tag_elem->params.size(); ++j) {
+                    std::cout << "        \"" << tag_elem->params[j] << "\"\n";
+                }
+                std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag=" << tag_elem->close_tag << "\n";
+            } else {
+                boost::shared_ptr<Font::TextElement> elem = text_elements[i];
+                std::cout << "TextElement\n    text=\"" << elem->text << "\" (@ "
+                          << static_cast<const void*>(&*elem->text.begin()) << ")\n    widths=";
+                for (std::size_t j = 0; j < elem->widths.size(); ++j) {
+                    std::cout << elem->widths[j] << " ";
+                }
+                std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
+            }
+            std::cout << "    string_size=" << text_elements[i]->StringSize() << "\n";
+            std::cout << "\n";
+        }
+        std::cout << std::endl;
+    }
+
+    void PrintLineBreakdown(const std::string& text,
+                       const Flags<TextFormat>& format,
+                       const X box_width,
+                       const std::vector<Font::LineData>& line_data) {
+        std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
+                  << static_cast<const void*>(&*text.begin()) << ") format="
+                  << format << " box_width=" << box_width << ")" << std::endl;
+
+        std::cout << "Line breakdown:\n";
+        for (std::size_t i = 0; i < line_data.size(); ++i) {
+            std::cout << "Line " << i << ":\n    extents=";
+            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
+                std::cout << line_data[i].char_data[j].extent << " ";
+            }
+            std::cout << "\n    string indices=";
+            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
+                std::cout << line_data[i].char_data[j].string_index << " ";
+            }
+            std::cout << "\n    code point indices=";
+            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
+                std::cout << line_data[i].char_data[j].code_point_index << " ";
+            }
+            std::cout << "\n    chars on line: \"";
+            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
+                std::cout << text[Value(line_data[i].char_data[j].string_index)];
+            }
+            std::cout << "\"" << std::endl;
+            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
+                for (std::size_t k = 0; k < line_data[i].char_data[j].tags.size(); ++k) {
+                    if (boost::shared_ptr<Font::FormattingTag> tag_elem = line_data[i].char_data[j].tags[k]) {
+                        std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
+                        for (std::size_t j = 0; j < tag_elem->widths.size(); ++j) {
+                            std::cout << tag_elem->widths[j] << " ";
+                        }
+                        std::cout << "\n    whitespace=" << tag_elem->whitespace
+                                  << "\n    newline=" << tag_elem->newline << "\n    params=\n";
+                        for (std::size_t l = 0; l < tag_elem->params.size(); ++l) {
+                            std::cout << "        \"" << tag_elem->params[l] << "\"\n";
+                        }
+                        std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
+                                  << tag_elem->close_tag << std::endl;
+                    }
+                }
+            }
+            std::cout << "    justification=" << line_data[i].justification << "\n" << std::endl;
+        }
+    }
+}
+
 void Font::FillTextElements(const std::string& text,
                             bool ignore_tags,
                             std::vector<boost::shared_ptr<TextElement> >& text_elements) const
@@ -1286,32 +1365,7 @@ void Font::FillTextElements(const std::string& text,
         }
 
 #if DEBUG_DETERMINELINES
-        std::cout << "results of parse:\n";
-        for (std::size_t i = 0; i < text_elements.size(); ++i) {
-            if (boost::shared_ptr<FormattingTag> tag_elem = boost::dynamic_pointer_cast<FormattingTag>(text_elements[i])) {
-                std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
-                          << static_cast<const void*>(&*tag_elem->text.begin()) << ")\n    widths=";
-                for (std::size_t j = 0; j < tag_elem->widths.size(); ++j) {
-                    std::cout << tag_elem->widths[j] << " ";
-                }
-                std::cout << "\n    whitespace=" << tag_elem->whitespace << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                for (std::size_t j = 0; j < tag_elem->params.size(); ++j) {
-                    std::cout << "        \"" << tag_elem->params[j] << "\"\n";
-                }
-                std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag=" << tag_elem->close_tag << "\n";
-            } else {
-                boost::shared_ptr<TextElement> elem = text_elements[i];
-                std::cout << "TextElement\n    text=\"" << elem->text << "\" (@ "
-                          << static_cast<const void*>(&*elem->text.begin()) << ")\n    widths=";
-                for (std::size_t j = 0; j < elem->widths.size(); ++j) {
-                    std::cout << elem->widths[j] << " ";
-                }
-                std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
-            }
-            std::cout << "    string_size=" << text_elements[i]->StringSize() << "\n";
-            std::cout << "\n";
-        }
-        std::cout << std::endl;
+        DebugOutput::PrintParseResults(text_elements);
 #endif
     }
 }
@@ -1323,12 +1377,6 @@ Pt Font::DetermineLinesImpl(const std::string& text,
                             std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const
 {
     ValidateFormat(format);
-
-#if DEBUG_DETERMINELINES
-    std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
-              << static_cast<const void*>(&*text.begin()) << ") format="
-              << format << " box_width=" << box_width << ")" << std::endl;
-#endif
 
     std::vector<boost::shared_ptr<TextElement> > local_text_elements;
 
@@ -1529,44 +1577,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
     // end of the text, and so it cannot have any effect
 
 #if DEBUG_DETERMINELINES
-    std::cout << "Line breakdown:\n";
-    for (std::size_t i = 0; i < line_data.size(); ++i) {
-        std::cout << "Line " << i << ":\n    extents=";
-        for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-            std::cout << line_data[i].char_data[j].extent << " ";
-        }
-        std::cout << "\n    string indices=";
-        for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-            std::cout << line_data[i].char_data[j].string_index << " ";
-        }
-        std::cout << "\n    code point indices=";
-        for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-            std::cout << line_data[i].char_data[j].code_point_index << " ";
-        }
-        std::cout << "\n    chars on line: \"";
-        for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-            std::cout << text[Value(line_data[i].char_data[j].string_index)];
-        }
-        std::cout << "\"" << std::endl;
-        for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-            for (std::size_t k = 0; k < line_data[i].char_data[j].tags.size(); ++k) {
-                if (boost::shared_ptr<FormattingTag> tag_elem = line_data[i].char_data[j].tags[k]) {
-                    std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
-                    for (std::size_t j = 0; j < tag_elem->widths.size(); ++j) {
-                        std::cout << tag_elem->widths[j] << " ";
-                    }
-                    std::cout << "\n    whitespace=" << tag_elem->whitespace
-                              << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                    for (std::size_t l = 0; l < tag_elem->params.size(); ++l) {
-                        std::cout << "        \"" << tag_elem->params[l] << "\"\n";
-                    }
-                    std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
-                              << tag_elem->close_tag << std::endl;
-                }
-            }
-        }
-        std::cout << "    justification=" << line_data[i].justification << "\n" << std::endl;
-    }
+    DebugOutput::PrintLineBreakdown(text, format, box_width, line_data);
 #endif
 
     return TextExtent(text, line_data);
