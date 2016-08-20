@@ -6,12 +6,10 @@
 #include "MeterBrowseWnd.h"
 #include "ClientUI.h"
 #include "Sound.h"
-#include "ShaderProgram.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Fleet.h"
@@ -422,9 +420,6 @@ namespace {
         return retval;
     }
 
-    const double TWO_PI = 2.0*3.14159;
-    boost::shared_ptr<ShaderProgram> scanline_shader;
-
     void AddOptions(OptionsDB& db) {
         db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
     }
@@ -715,41 +710,6 @@ namespace {
     };
 }
 
-/** Renders scanlines over its area. */
-class ScanlineControl : public GG::Control {
-public:
-    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false) :
-        Control(x, y, w, h, GG::NO_WND_FLAGS),
-        m_square(square)
-    {
-        if (!scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-            std::string shader_text;
-            ReadFile(shader_path, shader_text);
-            scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
-        }
-    }
-
-    virtual void Render() {
-        if (!scanline_shader || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
-            return;
-
-        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-        scanline_shader->Use();
-        scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-
-        if (m_square) {
-            GG::FlatRectangle(  UpperLeft(),    LowerRight(), GG::CLR_WHITE, GG::CLR_WHITE, 0u);
-        } else {
-            CircleArc(          UpperLeft(),    LowerRight(), 0.0, TWO_PI, true);
-        }
-        scanline_shader->stopUse();
-    }
-private:
-    bool m_square;
-};
-
 ////////////////////////////////////////////////
 // ShipDataPanel
 ////////////////////////////////////////////////
@@ -847,8 +807,10 @@ void ShipDataPanel::SetShipIcon() {
     delete m_bombard_indicator;
     m_bombard_indicator = 0;
 
-    delete m_scanline_control;
-    m_scanline_control = 0;
+    if (m_scanline_control) {
+        delete m_scanline_control;
+        m_scanline_control = 0;
+    }
 
     TemporaryPtr<const Ship> ship = GetShip(m_ship_id);
     if (!ship)
@@ -890,7 +852,9 @@ void ShipDataPanel::SetShipIcon() {
         AttachChild(m_bombard_indicator);
     }
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
+    if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
+        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    {
         m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true);
         AttachChild(m_scanline_control);
     }
@@ -1557,8 +1521,10 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
 void FleetDataPanel::Refresh() {
     delete m_fleet_icon;
     m_fleet_icon = 0;
-    delete m_scanline_control;
-    m_scanline_control = 0;
+    if (m_scanline_control) {
+        delete m_scanline_control;
+        m_scanline_control = 0;
+    }
     delete m_gift_indicator;
     m_gift_indicator = 0;
 
@@ -1609,7 +1575,9 @@ void FleetDataPanel::Refresh() {
             AttachChild(m_gift_indicator);
         }
 
-        if (fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY) {
+        if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
+            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        {
             m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), true);
             AttachChild(m_scanline_control);
         }

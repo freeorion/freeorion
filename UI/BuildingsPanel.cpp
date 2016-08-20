@@ -4,7 +4,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
-#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -19,7 +18,6 @@
 #include "MapWnd.h"
 #include "MultiIconValueIndicator.h"
 #include "MultiMeterStatusBar.h"
-#include "ShaderProgram.h"
 
 namespace {
     /** How big we want meter icons with respect to the current UI font size.
@@ -258,7 +256,7 @@ std::map<int, bool> BuildingsPanel::s_expanded_map;
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-boost::shared_ptr<ShaderProgram> BuildingIndicator::s_scanline_shader;
+ScanlineRenderer BuildingIndicator::s_scanline_shader;
 
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
@@ -310,16 +308,14 @@ void BuildingIndicator::Render() {
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (!s_scanline_shader || empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         return;
     if (m_building_id == INVALID_OBJECT_ID)
         return;
     if (GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) >= VIS_BASIC_VISIBILITY)
         return;
 
-    float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-    s_scanline_shader->Use();
-    s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+    s_scanline_shader.StartUsing();
 
     GLfloat verts[8];
     verts[0] = Value(ul.x); verts[1] = Value(ul.y);
@@ -339,18 +335,10 @@ void BuildingIndicator::Render() {
     glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 
-    s_scanline_shader->stopUse();
+    s_scanline_shader.StopUsing();
 }
 
 void BuildingIndicator::Refresh() {
-    if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-        boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-        std::string shader_text;
-        ReadFile(shader_path, shader_text);
-        s_scanline_shader = boost::shared_ptr<ShaderProgram>(
-            ShaderProgram::shaderProgramFactory("", shader_text));
-    }
-
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     TemporaryPtr<const Building> building = GetBuilding(m_building_id);

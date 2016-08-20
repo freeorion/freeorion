@@ -2178,3 +2178,23 @@ void CUIToggleRepresenter::Render(const GG::StateButton& button) const {
     glColor(icon_clr);
     render_checked ? m_checked_icon->OrthoBlit(icon_ul, icon_lr) : m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
 }
+
+////////////////////////////////////////////////
+// ScanlineControl
+////////////////////////////////////////////////
+
+namespace {
+    ScanlineRenderer scanline_shader;
+}
+
+ScanlineControl::ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square /*= false*/) :
+    Control(x, y, w, h, GG::NO_WND_FLAGS),
+    m_square(square)
+{}
+
+void ScanlineControl::Render() {
+    if (m_square)
+        scanline_shader.RenderRectangle(UpperLeft(), LowerRight());
+    else
+        scanline_shader.RenderCircle(UpperLeft(), LowerRight());
+}
