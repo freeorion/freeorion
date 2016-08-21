@@ -456,12 +456,12 @@ void TextLinker::LocateLinks() {
 
 int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
     std::vector<Link> links = m_links;
+    GG::Pt tex_ul = TextUpperLeft();
 
     for (unsigned int i = 0; i < links.size(); ++i) {
         const Link& link = links[i];
 
         for (unsigned int j = 0; j < link.rects.size(); ++j) {
-            GG::Pt tex_ul = TextUpperLeft();
             GG::Rect link_rect = link.rects[j];
             GG::Rect r = tex_ul + link_rect;
             if (r.Contains(pt))
