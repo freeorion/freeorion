@@ -31,7 +31,8 @@
 
 
 namespace {
-    const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
+    const GG::Pt        DataPanelIconSpace()
+    { return GG::Pt(GG::X(ClientUI::Pts()*3), GG::Y(ClientUI::Pts()*2.5)); }
     GG::X               FLEET_WND_WIDTH = GG::X(360);
     GG::Y               FLEET_WND_HEIGHT = GG::Y(400);
 
@@ -58,7 +59,7 @@ namespace {
     }
 
     GG::Y ListRowHeight()
-    { return std::max(DATA_PANEL_ICON_SPACE.y, LabelHeight() + StatIconSize().y) + 2*DATA_PANEL_BORDER + PAD; }
+    { return std::max(DataPanelIconSpace().y, LabelHeight() + StatIconSize().y) + 2*DATA_PANEL_BORDER + PAD; }
 
     boost::shared_ptr<GG::Texture> SpeedIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "speed.png", true); }
@@ -757,7 +758,7 @@ void ShipDataPanel::Render() {
     GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
     if (Disabled())
         border_colour = DisabledColor(border_colour);
-    const GG::Pt text_ul = cul + GG::Pt(DATA_PANEL_ICON_SPACE.x, GG::Y0);
+    const GG::Pt text_ul = cul + GG::Pt(DataPanelIconSpace().x, GG::Y0);
     const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
 
     // render
@@ -825,31 +826,31 @@ void ShipDataPanel::SetShipIcon() {
         icon = ClientUI::ShipDesignIcon(INVALID_OBJECT_ID);  // default icon
 
     m_ship_icon = new GG::StaticGraphic(icon, DataPanelIconStyle());
-    m_ship_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+    m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     AttachChild(m_ship_icon);
 
     if (ship->OrderedScrapped()) {
         boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
         m_scrap_indicator = new GG::StaticGraphic(scrap_texture, DataPanelIconStyle());
-        m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_scrap_indicator);
     }
     if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
         boost::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
         m_colonize_indicator = new GG::StaticGraphic(colonize_texture, DataPanelIconStyle());
-        m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_colonize_indicator);
     }
     if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
         boost::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
         m_invade_indicator = new GG::StaticGraphic(invade_texture, DataPanelIconStyle());
-        m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_invade_indicator);
     }
     if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
         boost::shared_ptr<GG::Texture> bombard_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "bombarding.png", true);
         m_bombard_indicator = new GG::StaticGraphic(bombard_texture, DataPanelIconStyle());
-        m_bombard_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
         AttachChild(m_bombard_indicator);
     }
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -951,20 +952,20 @@ void ShipDataPanel::DoLayout() {
     // resize ship and scrap indicator icons, they can fit and position themselves in the space provided
     // client height should never be less than the height of the space resereved for the icon
     if (m_ship_icon)
-        m_ship_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     if (m_scrap_indicator)
-        m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_scrap_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     if (m_colonize_indicator)
-        m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_colonize_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     if (m_invade_indicator)
-        m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_invade_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     if (m_bombard_indicator)
-        m_bombard_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_bombard_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     if (m_scanline_control)
-        m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
     // position ship name text at the top to the right of icons
-    const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
+    const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
     const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
     if (m_ship_name_text)
         m_ship_name_text->SizeMove(name_ul, name_lr);
@@ -1256,7 +1257,7 @@ void FleetDataPanel::Render() {
     GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
     if (Disabled())
         border_colour = DisabledColor(border_colour);
-    const GG::Pt text_ul = cul + GG::Pt(DATA_PANEL_ICON_SPACE.x, GG::Y0);
+    const GG::Pt text_ul = cul + GG::Pt(DataPanelIconSpace().x, GG::Y0);
     const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
 
     // render
@@ -1579,7 +1580,7 @@ void FleetDataPanel::Refresh() {
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
-            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), true);
+            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true);
             AttachChild(m_scanline_control);
         }
 
@@ -1702,15 +1703,15 @@ void FleetDataPanel::UpdateAggressionToggle() {
 void FleetDataPanel::DoLayout() {
     if (m_fleet_icon) {
         // fleet icon will scale and position itself in the provided space
-        m_fleet_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_fleet_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     }
     if (m_scanline_control)
-        m_scanline_control->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_scanline_control->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
     if (m_gift_indicator)
-        m_gift_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+        m_gift_indicator->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
 
     // position fleet name and destination texts
-    const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
+    const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
     const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD - GG::X(Value(LabelHeight())),    LabelHeight());
     if (m_fleet_name_text)
         m_fleet_name_text->SizeMove(name_ul, name_lr);
