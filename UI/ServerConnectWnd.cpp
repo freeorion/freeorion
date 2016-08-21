@@ -67,7 +67,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_ok_bn = new CUIButton(UserString("OK"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
 
-    const GG::X OK_CANCEL_BUTTON_WIDTH(80);
+    const GG::X OK_CANCEL_BUTTON_WIDTH(100);
     const int CONTROL_MARGIN = 5;
 
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
