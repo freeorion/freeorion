@@ -1119,6 +1119,9 @@ COMMAND_LINE_DEFAULT
 OPTIONS_DB_HELP
 Print this help message.
 
+OPTIONS_DB_VERSION
+Print version and exit.
+
 OPTIONS_DB_SINGLEPLAYER
 Start server in single player host mode. This only allows clients on localhost to connect.
 

@@ -6,6 +6,7 @@
 #import <Cocoa/Cocoa.h>
 
 #include "../../util/OptionsDB.h"
+#include "../../util/Version.h"
 
 #include "chmain.h"
 #include <iostream>
@@ -26,6 +27,12 @@ int main(int argc, char *argv[])
     // did the player request help output?
     if (GetOptionsDB().Get<bool>("help")) {
         GetOptionsDB().GetUsage(std::cerr);
+        return 0;   // quit without actually starting game
+    }
+
+    // did the player request the version output?
+    if (GetOptionsDB().Get<bool>("version")) {
+        std::cout << "FreeOrionCH " << FreeOrionVersionString() << std::endl;
         return 0;   // quit without actually starting game
     }
 
