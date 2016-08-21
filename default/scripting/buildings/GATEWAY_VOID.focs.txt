@@ -31,12 +31,16 @@ BuildingType
                 PopulationCenter
                 InSystem id = Source.SystemID
             ]
-            activation = Source
-            effects = SetTargetPopulation value = min(Value, 0.1)
+            activation = Turn low = Source.CreationTurn + 1
+            priority = 200
+            effects = [
+                SetTargetPopulation value = min(Value, 0)
+                SetPopulation value = min(Value, 0)
+                ]
 
         EffectsGroup
             scope = InSystem id = Source.SystemID
-            activation = Source
+            activation = Turn low = Source.CreationTurn + 1
             effects = SetStealth value = Value + 1000
     ]
     icon = "icons/building/monument_to_exodus.png"

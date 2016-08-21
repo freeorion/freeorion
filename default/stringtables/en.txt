@@ -10986,7 +10986,7 @@ BLD_GATEWAY_VOID
 Gateway to the Void
 
 BLD_GATEWAY_VOID_DESC
-'''Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are reduced to [[encyclopedia OUTPOSTS_TITLE]] status, with a max population of one tenth. Furthermore, it is impossible for anyone outside a system containing this building to see into it.
+'''The ability to close off a system almost entirely can be useful for an empire on the defensive. Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are immediately reduced to [[encyclopedia OUTPOSTS_TITLE]] status. The Stealth of all objects within the system is increased by 1000, making them almost impossible to detect.
 
 A dimensional tear capable of magnifying the destructive potential of the Void Mind in a localized region.'''
 
