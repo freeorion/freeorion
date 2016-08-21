@@ -143,6 +143,16 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesyst
 find_package(ZLIB REQUIRED)
 find_package(Freetype REQUIRED)
 
+if(${Boost_VERSION} EQUAL "106100")
+    # with boost 1.61 some boost::optional internals were changed. However
+    # boost::spirit relies on some API the old implementation provided.  This
+    # define enables the usage of the old boost::optional implementation.
+    # boost upstream tracks this bug as #12349
+    add_definitions(
+        -DBOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL
+    )
+endif()
+
 include_directories(
     ${Boost_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
