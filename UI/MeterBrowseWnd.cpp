@@ -243,21 +243,12 @@ namespace DualMeter {
                 for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin();
                      info_it != info_vec.end(); ++info_it)
                 {
-                    switch (info_it->cause_type) {
-                    case ECT_TECH:
-                    case ECT_BUILDING:
-                    case ECT_FIELD:
-                    case ECT_SPECIAL:
-                    case ECT_SPECIES:
-                    case ECT_SHIP_HULL:
-                    case ECT_SHIP_PART:
-                    case ECT_INHERENT:
-                        projected += info_it->meter_change;
-                        break;
-                    case ECT_UNKNOWN_CAUSE:
-                    default:
-                        ; // Don't add unknown effects.
+                    if ((info_it->cause_type == ECT_UNKNOWN_CAUSE)
+                        || (info_it->cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
+                    {
+                        continue;
                     }
+                    projected += info_it->meter_change;
                 }
             }
         }
@@ -273,7 +264,7 @@ namespace DualMeter {
             projected = target;
         }
 
-        // Also clamp With no target
+        // Clamp when there is no target.
         if (!target_meter)
             projected = current;
 
@@ -320,7 +311,6 @@ void MeterBrowseWnd::UpdateSummary() {
 
         // unpaired meter total for breakdown summary
         breakdown_total = boost::get<0>(current_projected_target);
-        // breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     }
 
