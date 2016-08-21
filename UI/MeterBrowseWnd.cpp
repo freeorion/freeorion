@@ -35,12 +35,15 @@ namespace {
 
     const int       EDGE_PAD(3);
 
-    const GG::X     METER_BROWSE_LABEL_WIDTH(300);
-    const GG::X     METER_BROWSE_VALUE_WIDTH(50);
+    GG::X MeterBrowseLabelWidth()
+    { return GG::X(30*ClientUI::Pts()); }
+
+    GG::X MeterBrowseValueWidth()
+    { return GG::X(4*ClientUI::Pts()); }
 }
 
 MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type/* = INVALID_METER_TYPE*/) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),
     m_object_id(object_id),
@@ -81,7 +84,7 @@ namespace {
 
 void MeterBrowseWnd::Initialize() {
     m_row_height = GG::Y(ClientUI::Pts()*3/2);
-    const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+    const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
@@ -122,34 +125,34 @@ void MeterBrowseWnd::Initialize() {
 
         m_current_label = new CUILabel(UserString("TT_THIS_TURN"), GG::FORMAT_RIGHT);
         m_current_label->MoveTo(GG::Pt(GG::X0, top));
-        m_current_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        m_current_label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(m_current_label);
 
         m_current_value = new CUILabel("");
-        m_current_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        m_current_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        m_current_value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        m_current_value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(m_current_value);
         top += m_row_height;
 
         m_next_turn_label = new CUILabel(UserString("TT_NEXT_TURN"), GG::FORMAT_RIGHT);
         m_next_turn_label->MoveTo(GG::Pt(GG::X0, top));
-        m_next_turn_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        m_next_turn_label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(m_next_turn_label);
 
         m_next_turn_value = new CUILabel("");
-        m_next_turn_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        m_next_turn_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        m_next_turn_value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        m_next_turn_value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(m_next_turn_value);
         top += m_row_height;
 
         m_change_label = new CUILabel(UserString("TT_CHANGE"), GG::FORMAT_RIGHT);
         m_change_label->MoveTo(GG::Pt(GG::X0, top));
-        m_change_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        m_change_label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(m_change_label);
 
         m_change_value = new CUILabel("");
-        m_change_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        m_change_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        m_change_value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        m_change_value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(m_change_value);
         top += m_row_height;
     }
@@ -170,7 +173,7 @@ void MeterBrowseWnd::Initialize() {
 
     UpdateEffectLabelsAndValues(top);
 
-    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
+    Resize(GG::Pt(MeterBrowseLabelWidth() + MeterBrowseValueWidth(), top));
 
     m_initialized = true;
 }
@@ -379,12 +382,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
-        label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
         GG::Label* value = new CUILabel(ColouredNumber(info_it->meter_change));
-        value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
@@ -399,7 +402,7 @@ ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_
 
 void ShipDamageBrowseWnd::Initialize() {
     m_row_height = GG::Y(ClientUI::Pts()*3/2);
-    const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+    const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
     TemporaryPtr<const UniverseObject> ship = GetShip(m_object_id);
@@ -425,7 +428,7 @@ void ShipDamageBrowseWnd::Initialize() {
 
     UpdateEffectLabelsAndValues(top);
 
-    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
+    Resize(GG::Pt(MeterBrowseLabelWidth() + MeterBrowseValueWidth(), top));
 
     m_initialized = true;
 }
@@ -498,12 +501,12 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
-        label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
         GG::Label* value = new CUILabel(ColouredNumber(part_attack));
-        value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
