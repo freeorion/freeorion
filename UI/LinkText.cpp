@@ -455,7 +455,14 @@ void TextLinker::LocateLinks() {
 }
 
 int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
-    std::vector<Link> links = m_links;
+    std::vector<Link> links;
+    try {
+        links = m_links;
+    } catch (...) {
+        ErrorLogger() << "exception caught copying links in GetLinkUnderPt";
+        return -1;
+    }
+
     GG::Pt tex_ul = TextUpperLeft();
 
     for (unsigned int i = 0; i < links.size(); ++i) {
