@@ -1067,12 +1067,6 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
     }
 }
 
-std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                                                 const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
-{
-    return DetermineLinesImpl(text, format, box_width, text_elements);
-}
-
 std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
 {
     using namespace boost::xpressive;
@@ -1336,8 +1330,8 @@ std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextT
     return text_elements;
 }
 
-std::vector<Font::LineData> Font::DetermineLinesImpl(const std::string& text, Flags<TextFormat>& format, X box_width,
-                                                     const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
+std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
+                                                 const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
     ValidateFormat(format);
 

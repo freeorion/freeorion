@@ -567,9 +567,6 @@ private:
 
     typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
 
-    std::vector<LineData> DetermineLinesImpl(const std::string& text, Flags<TextFormat>& format, X box_width,
-                                             const std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
-
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);
     void              CheckFace(FT_Face font, FT_Error error);
