@@ -1,6 +1,6 @@
 Part
     name = "FT_HANGAR_0"
-    description = "FT_HANGAR_1_DESC"
+    description = "FT_HANGAR_0_DESC"
     exclusions = [ "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
@@ -26,7 +26,7 @@ Part
 
 Part
     name = "FT_HANGAR_2"
-    description = "FT_HANGAR_1_DESC"
+    description = "FT_HANGAR_2_DESC"
     exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_3" "FT_HANGAR_4" ]
     class = FighterHangar
     capacity = 2
