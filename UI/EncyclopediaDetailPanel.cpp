@@ -1712,7 +1712,7 @@ namespace {
         // species planets depopulated
         const std::map<std::string, int>&   species_planets_depoped = empire->SpeciesPlanetsDepoped();
         if (!species_planets_depoped.empty())
-            detailed_description += "\n\n" + UserString("SPECIES_SHIPS_DEPOPED");
+            detailed_description += "\n\n" + UserString("SPECIES_PLANETS_DEPOPED");
         for (std::map<std::string, int>::const_iterator it = species_planets_depoped.begin();
              it != species_planets_depoped.end(); ++it)
         {
@@ -1729,7 +1729,7 @@ namespace {
         // species planets bombed
         const std::map<std::string, int>&   species_planets_bombed = empire->SpeciesPlanetsBombed();
         if (!species_planets_bombed.empty())
-            detailed_description += "\n\n" + UserString("SPECIES_SHIPS_BOMBED");
+            detailed_description += "\n\n" + UserString("SPECIES_PLANETS_BOMBED");
         for (std::map<std::string, int>::const_iterator it = species_planets_bombed.begin();
              it != species_planets_bombed.end(); ++it)
         {
