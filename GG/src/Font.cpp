@@ -1098,14 +1098,16 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
     return retval.str();
 }
 
-Pt Font::TextExtent(const std::string& text, const std::vector<LineData>& line_data) const
+Pt Font::TextExtent(const std::vector<LineData>& line_data) const
 {
     Pt retval;
     for (std::size_t i = 0; i < line_data.size(); ++i) {
         if (retval.x < line_data[i].Width())
             retval.x = line_data[i].Width();
     }
-    retval.y = text.empty() ? Y0 : (static_cast<int>(line_data.size()) - 1) * m_lineskip + m_height;
+    bool is_empty = line_data.empty()
+        || (line_data.size() == 1 && line_data.front().Empty());
+    retval.y = is_empty ? Y0 : (static_cast<int>(line_data.size()) - 1) * m_lineskip + m_height;
     return retval;
 }
 
@@ -1348,6 +1350,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
         orig_just = ALIGN_RIGHT;
     bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
 
+    // TODO check if possible to return empty line_data for empty text;
     std::vector<Font::LineData> line_data;
     line_data.push_back(LineData());
     line_data.back().justification = orig_just;

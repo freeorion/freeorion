@@ -467,7 +467,7 @@ void PopupMenu::Render()
             std::vector<boost::shared_ptr<Font::TextElement> > text_elements
                 = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
             std::vector<Font::LineData> lines = m_font->DetermineLines(str, fmt, X0, text_elements);
-            Pt menu_sz = m_font->TextExtent(str, lines); // get dimensions of text in menu
+            Pt menu_sz = m_font->TextExtent(lines); // get dimensions of text in menu
             menu_sz.x += 2 * HORIZONTAL_MARGIN;
             if (needs_indicator)
                 menu_sz.x += CHECK_WIDTH + 2 * HORIZONTAL_MARGIN; // make room for the little arrow

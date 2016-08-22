@@ -2444,7 +2444,7 @@ namespace {
                 font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
             std::vector<GG::Font::LineData> lines = font->DetermineLines(
                 species_name_column1, format, GG::X(1 << 15), text_elements);
-            GG::Pt extent = font->TextExtent(species_name_column1, lines);
+            GG::Pt extent = font->TextExtent(lines);
             max_species_name_column1_width = std::max(extent.x, max_species_name_column1_width);
 
             // Setting the planet's species allows all of it meters to reflect
@@ -2489,12 +2489,12 @@ namespace {
                 font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
             std::vector<GG::Font::LineData> lines = font->DetermineLines(
                 species_name_column1, format, GG::X(1 << 15), text_elements);
-            GG::Pt extent = font->TextExtent(species_name_column1, lines);
+            GG::Pt extent = font->TextExtent(lines);
             while (extent.x < max_species_name_column1_width) {
                 species_name_column1 += "\t";
                 text_elements = font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
                 lines = font->DetermineLines(species_name_column1, format, GG::X(1 << 15), text_elements);
-                extent = font->TextExtent(species_name_column1, lines);
+                extent = font->TextExtent(lines);
             }
 
             if (it->first > 0) {

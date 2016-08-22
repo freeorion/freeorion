@@ -358,7 +358,7 @@ void MultiEdit::SetText(const std::string& str)
         CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
         this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
 
-        m_contents_sz = GetFont()->TextExtent(Text(), GetLineData());
+        m_contents_sz = GetFont()->TextExtent(GetLineData());
 
         AdjustScrolls();
         AdjustView();

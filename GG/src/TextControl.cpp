@@ -78,7 +78,7 @@ Pt TextControl::MinUsableSize(X width) const
     Flags<TextFormat> dummy_format(m_format);
     std::vector<Font::LineData> dummy_line_data =
         m_font->DetermineLines(m_text, dummy_format, width, m_text_elements);
-    m_cached_minusable_size = m_font->TextExtent(m_text, dummy_line_data)
+    m_cached_minusable_size = m_font->TextExtent(dummy_line_data)
         + (ClientUpperLeft() - UpperLeft()) + (LowerRight() - ClientLowerRight());
     m_cached_minusable_size_width = width;
     return m_cached_minusable_size;
@@ -190,7 +190,7 @@ void TextControl::SetText(const std::string& str)
     m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
     m_text_elements = m_font->ExpensiveParseFromTextToTextElements(m_text, m_format);
     m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
-    Pt text_sz = m_font->TextExtent(m_text, m_line_data);
+    Pt text_sz = m_font->TextExtent(m_line_data);
     m_text_ul = Pt();
     m_text_lr = text_sz;
     AdjustMinimumSize();
@@ -240,7 +240,7 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
         if (m_text_elements.empty())
             m_text_elements = m_font->ExpensiveParseFromTextToTextElements(m_text, m_format);
         m_line_data = m_font->DetermineLines(m_text, m_format, client_width, m_text_elements);
-        Pt text_sz = m_font->TextExtent(m_text, m_line_data);
+        Pt text_sz = m_font->TextExtent(m_line_data);
         m_text_ul = Pt();
         m_text_lr = text_sz;
         AdjustMinimumSize();
