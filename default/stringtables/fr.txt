@@ -9,6 +9,12 @@ Français
 # New Sitreps priorities should be added to
 # `default/customizations/common_user_customizations.txt`.
 
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
 
 ##
 ## Common phrases
@@ -189,7 +195,7 @@ Flotte Combat %1%
 # %1% name of the system this asteroid belt is created in.
 # %2% orbit number where this asteroid belt is created on.
 NEW_ASTEROIDS_NAME
-Rémanent %1% %2%
+Rémanent %2% %1%
 
 # Name for a newly created planet. When creating a new planet it is assumed this
 # planet is the first one within the system.
@@ -1111,7 +1117,13 @@ COMMAND_LINE_DEFAULT
 '''Défaut : '''
 
 OPTIONS_DB_HELP
-Affiche ce message d'aide.
+Copier ce message d'aide.
+
+OPTIONS_DB_VERSION
+Copier le numéro de version et quitter.
+
+OPTIONS_DB_SINGLEPLAYER
+Démarre le serveur en mode hébergement d'une partie solo. Seuls les clients du serveur local peuvent se connecter.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, s'il existe.
@@ -1516,7 +1528,7 @@ Un trop grand nombre de systèmes peut causer de forts ralentissements du jeu, n
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
 '''La forme de la galaxie.
 
-Les stratégies et tactiques à mettre en oeuvre seront différentes selon le type de galaxie choisi.'''
+Les stratégies et tactiques à mettre en œuvre seront différentes selon le type de galaxie choisi.'''
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
 '''L'âge de la galaxie.
@@ -1734,6 +1746,33 @@ Largeur des colonnes de la Fenêtre Objets
 OPTIONS_DB_FLEET_WND_AGGRESSION
 Comportement par défaut des Flottes
 
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
+Si activé, les barres des combattants seront adaptées horizontalement pour être proportionnelles à la santé.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
+Si activé, la couleur des barres des combattants sera interpolée précisément selon le pourcentage restant de santé.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
+Si activé, les barres des combattants seront adaptées verticalement pour être proportionnelles à la santé max.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
+Si activé, les graphiques des empires belligérants seront adaptés selon la santé max des astronefs.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
+Couleur des unités perdues dans le graphique de résumé du combat
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
+Couleur des dommages dans le graphique de résumé du combat
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
+Couleur de la santé dans le graphique de résumé du combat
+
+OPTIONS_DB_NETWORK_DISCOVERY_PORT
+Port réseau à utiliser pour la découverte du serveur.
+
+OPTIONS_DB_NETWORK_MESSAGE_PORT
+Port réseau à utiliser pour la communication client-serveur.
+
 
 ##
 ## File dialog
@@ -1858,10 +1897,10 @@ PLAYER_NAME_LABEL
 Nom du joueur
 
 HOST_GAME_BN
-Héberger une partie (sérialisation XML conseillée)
+Héberger une partie
 
 JOIN_GAME_BN
-Rejoindre une partie (Cf. Options/Autres)
+Rejoindre une partie
 
 REFRESH_LIST_BN
 Rafraîchir
@@ -1878,7 +1917,7 @@ MPLOBBY_HOST_ABORTED_GAME
 Le joueur hôte a achevé la configuration de cette partie.
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Noms et couleurs d'empire uniques requis
+Noms et couleurs uniques requis
 
 MULTIPLAYER_PLAYER_LIST_TYPES  # translated
 Type
@@ -4377,9 +4416,6 @@ Barres:Égales
 COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP
 Les largeurs des barres sont égales. Cliquez ici pour un mode plus pertinent!
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
-Si activé, les barres des combattants seront adaptées horizontalement pour être proportionnelles à la santé.
-
 COMBAT_SUMMARY_HEALTH_SMOOTH
 Santé:Précise
 
@@ -4391,9 +4427,6 @@ Santé:Barre
 
 COMBAT_SUMMARY_HEALTH_BAR_TIP
 La santé d'un astronef est représentée par une barre bicolore
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
-Si activé, la couleur des barres des combattants sera interpolée précisément selon le pourcentage restant de santé.
 
 COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
 Hauteur Barre:Proportionnelle
@@ -4407,9 +4440,6 @@ Les barres des participants au combat sont adaptées pour afficher leur santé m
 COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP
 Les barres des combattants sont égales.
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
-Si activé, les barres des combattants seront adaptées verticalement pour être proportionnelles à la santé max.
-
 COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
 Hauteur Graphique:Proportionnelle
 
@@ -4422,9 +4452,6 @@ Les graphiques des empires belligérants sont adaptés selon la plus haute sant�
 COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
 Les graphiques des empires belligérants sont égaux.
 
-OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
-Si activé, les graphiques des empires belligérants seront adaptés selon la santé max des astronefs.
-
 OPTIONS_COMBAT_COLORS
 Couleurs de Combat
 
@@ -4436,15 +4463,6 @@ Dommages
 
 OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
 Santé
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
-Couleur des unités perdues dans le graphique de résumé du combat
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
-Couleur des dommages dans le graphique de résumé du combat
-
-OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
-Couleur de la santé dans le graphique de résumé du combat
 
 COMBAT_LOG  # translated
 Log
@@ -4543,9 +4561,9 @@ Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à cro�
 MINING_FOCUS_TITLE
 Focus Extraction minière
 
+# Périmé: Le Focus Extraction Minière n'est possible que sur les planètes présentant certaines Particularités rares. Privilégier l'extraction minière procure un bonus de production significatif.
 MINING_FOCUS_TEXT
 Option pour le moment désactivée.
-#Le Focus Extraction Minière n'est possible que sur les planètes présentant des Particularités rares. Privilégier l'extraction minière procure un bonus de production significatif.
 
 TRADE_FOCUS_TITLE
 Focus Commerce
@@ -10971,7 +10989,7 @@ BLD_GATEWAY_VOID
 Portail du Vide
 
 BLD_GATEWAY_VOID_DESC
-'''Tout astronef sera détruit s'il entre dans ce système sans passer à travers le Portail durant le même tour, tandis que toutes les colonies se trouvant dans ce système retournent à l'état d'[[encyclopedia OUTPOSTS_TITLE]], avec un plafond de Population égal à 10% de sa précédente valeur. D'autre part, il est impossible pour quiconque situé à l'extérieur d'un système contenant cette structure de voir à l'intérieur de ce même système.
+'''La possibilité de verrouiller presque entièrement l'accès à un système peut s'avérer très avantageux pour un empire sur la défensive. Tout astronef entrant dans ce système sans passer à travers le Portail durant le même tour sera détruit, tandis que toutes les colonies se trouvant dans ce système sont réduites immédiatemment à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. La [[encyclopedia STEALTH_TITLE]] de tous les objets situés dans le système augmente de 1000, les rendant quasiment impossibles à détecter.
 
 Une faille dimensionnelle libérant la force destructrice de l'Esprit du Vide dans une région spécifique.'''
 
@@ -11000,10 +11018,12 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.4 par Population sur toutes les planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]] et étant réglées sur le Focus Industrie, mais diminue de 5 la Population de ces planètes.
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 1 par Population sur toutes les planètes reliées par lignes d'[[encyclopedia SUPPLY_TITLE]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].'''
+Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
+
+NB: Cette structure n'a aucun effet sur les planètes reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], mais peut s'avérer avantageuse pour les empires inaptes à mettre en place un tel dispositif.'''
 
 BLD_SOL_ACCEL
 Accélérateur Solaire
