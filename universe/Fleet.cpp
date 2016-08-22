@@ -293,7 +293,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     //                          "  next system: " << (next_system ? next_system->Name() : "(none)");
 
 
-    bool isPostBlockade = false;
+    bool is_post_blockade = false;
     if (cur_system) {
         //DebugLogger() << "Fleet::MovePath starting in system "<< SystemID();
         if (flag_blockades && next_system->ID() != m_arrival_starlane && 
@@ -304,7 +304,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                 // blockade debug logging
                 //DebugLogger() <<   "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID() <<
                 //                            ") blockaded for fleet " << this->Name();
-                isPostBlockade = true;
+                is_post_blockade = true;
             } else {
                 // blockade debug logging
                 //DebugLogger() <<   "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
@@ -465,7 +465,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                     // blockade debug logging
                     //DebugLogger() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
                     //                            ") blockaded for fleet " << this->Name();
-                    isPostBlockade = true;
+                    is_post_blockade = true;
                 } else {
                     //DebugLogger() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
                     //                            ") NOT blockaded for fleet " << this->Name();
@@ -500,14 +500,14 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
         // blockade debug logging
         //DebugLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " <<
-        //                        (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status " << isPostBlockade <<
+        //                        (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status " << is_post_blockade <<
         //                        " and ETA " << turns_taken;
 
         // add MovePathNode for current position (end of turn position and/or system location)
         MovePathNode cur_pos(cur_x, cur_y, end_turn_at_cur_position, turns_taken,
                              (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
                              (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
-                             (next_system ? next_system->ID() : INVALID_OBJECT_ID), isPostBlockade);
+                             (next_system ? next_system->ID() : INVALID_OBJECT_ID), is_post_blockade);
         retval.push_back(cur_pos);
 
 
@@ -527,13 +527,13 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         turns_taken = ETA_NEVER;
     // blockade debug logging
     //DebugLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" adding node at sysID "<<
-    //                    (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status " << isPostBlockade <<
+    //                    (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status " << is_post_blockade <<
     //                    " and ETA " << turns_taken;
 
     MovePathNode final_pos(cur_x, cur_y, true, turns_taken,
                            (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
                            (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
-                           (next_system ? next_system->ID() : INVALID_OBJECT_ID), isPostBlockade);
+                           (next_system ? next_system->ID() : INVALID_OBJECT_ID), is_post_blockade);
     retval.push_back(final_pos);
     //DebugLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" is complete";
 
@@ -894,20 +894,20 @@ void Fleet::MovementPhase() {
         }
 
         if (stopped) {
-            // fuel regeneration for ships in stationary fleet
-            if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
-                fleet->FinalDestinationID() == fleet->SystemID())
-            {
-                for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
-                     ship_it != ships.end(); ++ship_it)
-                {
-                    TemporaryPtr<Ship> ship = *ship_it;
-                    if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
-                        fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
-                        fuel_meter->BackPropagate();
-                    }
-                }
-            }
+            //// fuel regeneration for ships in stationary fleet
+            //if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
+            //    fleet->FinalDestinationID() == fleet->SystemID())
+            //{
+            //    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
+            //         ship_it != ships.end(); ++ship_it)
+            //    {
+            //        TemporaryPtr<Ship> ship = *ship_it;
+            //        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
+            //            fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
+            //            fuel_meter->BackPropagate();
+            //        }
+            //    }
+            //}
             return;
 
         } else {
