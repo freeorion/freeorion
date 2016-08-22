@@ -132,7 +132,14 @@ protected:
 
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
+
+#if BOOST_VERSION == 106100
+public:
+#endif
     ~System() {}
+#if BOOST_VERSION == 106100
+protected:
+#endif
 
     virtual System*         Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
     //@}
