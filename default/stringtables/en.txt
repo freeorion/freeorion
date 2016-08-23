@@ -4558,13 +4558,6 @@ A Homeworld focused on Growth only helps other planets of the same species.
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
-MINING_FOCUS_TITLE
-Mining Focus
-
-# Old: The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
-MINING_FOCUS_TEXT
-Mining Focus is currently disabled.
-
 TRADE_FOCUS_TITLE
 Trade Focus
 
@@ -7370,14 +7363,6 @@ FOCUS_INDUSTRY
 Industry
 
 # Focus types
-FOCUS_MINING
-Mining
-
-# Focus types
-FOCUS_HEAVY_MINING
-Heavy Mining
-
-# Focus types
 FOCUS_RESEARCH
 Research
 
@@ -7454,10 +7439,6 @@ METER_TARGET_TRADE
 Target Trade
 
 # Meter types
-METER_TARGET_MINING
-Target Mining
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Target Infrastructure
 
@@ -7524,10 +7505,6 @@ Research
 # Meter types
 METER_TRADE
 Trade
-
-# Meter types
-METER_MINING
-Mining
 
 # Meter types
 METER_CONSTRUCTION
@@ -7924,9 +7901,6 @@ DESC_VAR_TARGETRESEARCH
 DESC_VAR_TARGETTRADE
 [[METER_TARGET_TRADE]]
 
-DESC_VAR_TARGETMINING
-[[METER_TARGET_MINING]]
-
 DESC_VAR_TARGETCONSTRUCTION
 [[METER_TARGET_CONSTRUCTION]]
 
@@ -7965,9 +7939,6 @@ DESC_VAR_RESEARCH
 
 DESC_VAR_TRADE
 [[METER_TRADE]]
-
-DESC_VAR_MINING
-[[METER_MINING]]
 
 DESC_VAR_CONSTRUCTION
 [[METER_CONSTRUCTION]]
@@ -9794,9 +9765,6 @@ Unlocks Building
 RESEARCH_SHORT_DESC
 Improves Research
 
-MINING_SHORT_DESC
-Improves Mining
-
 INDUSTRY_SHORT_DESC
 Improves Industry
 
@@ -10037,12 +10005,6 @@ It is difficult to force a conscious individual to submit to the total mental co
 
 MIND_CONTROL_SHORT_DESC
 Allows Mind Control
-
-PRO_HEAVY_MINING_I
-Heavy Mining Processors
-
-PRO_HEAVY_MINING_I_DESC
-When increased minerals production is the only concern, no environmental damage considerations exist and the environment itself is conducive, partially automated bulk mining activities can be optimal. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population somewhat.
 
 PRO_SOL_ORB_GEN
 Solar Orbital Generation
@@ -10756,14 +10718,6 @@ Supreme Industrial Center
 
 PRO_INDUSTRY_CENTER_III_DESC
 Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic [[buildingtype BLD_INDUSTRY_CENTER]]s.
-
-PRO_ENVIRO_MINING
-Environmentally Conscious Mining
-
-PRO_ENVIRO_MINING_DESC
-'''Many mining methods are incompatible with highly populous planets, due to environmental damage. Careful consideration of [[tech GRO_PLANET_ECOL]] is required to permit limited mining techniques to be employed without such downsides.
-
-Halves the population penalties on planets with the Heavy Mining focus.'''
 
 
 ##
@@ -12935,30 +12889,6 @@ BAD_POPULATION_LABEL
 # %2% FIXME
 GOOD_POPULATION_LABEL
 %2% Good Population 125%%
-
-# %1% FIXME
-FOCUS_MINING_LABEL
-%1% Mining Focus
-
-# %1% FIXME
-FOCUS_HEAVY_MINING_LABEL
-%1% Heavy Mining Focus
-
-# %1% FIXME
-BAD_MINING_LABEL
-%1% Bad Mining
-
-# %1% FIXME
-GOOD_MINING_LABEL
-%1% Good Mining
-
-# %1% FIXME
-GREAT_MINING_LABEL
-%1% Great Mining
-
-# %1% FIXME
-ULTIMATE_MINING_LABEL
-%1% Ultimate Mining
 
 # %1% FIXME
 # %2% FIXME

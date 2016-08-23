@@ -33,14 +33,6 @@ Sum  Property = Fleet.TargetTrade  Condition = All
 Sum  Property = Fleet.TargetTrade  All
 Sum  Fleet.TargetTrade  Condition = All
 Sum  Fleet.TargetTrade  All
-Sum  Property = Fleet.Mining  Condition = All
-Sum  Property = Fleet.Mining  All
-Sum  Fleet.Mining  Condition = All
-Sum  Fleet.Mining  All
-Sum  Property = Fleet.TargetMining  Condition = All
-Sum  Property = Fleet.TargetMining  All
-Sum  Fleet.TargetMining  Condition = All
-Sum  Fleet.TargetMining  All
 Sum  Property = Fleet.Construction  Condition = All
 Sum  Property = Fleet.Construction  All
 Sum  Fleet.Construction  Condition = All
@@ -177,14 +169,6 @@ Sum  Property = Planet.TargetTrade  Condition = All
 Sum  Property = Planet.TargetTrade  All
 Sum  Planet.TargetTrade  Condition = All
 Sum  Planet.TargetTrade  All
-Sum  Property = Planet.Mining  Condition = All
-Sum  Property = Planet.Mining  All
-Sum  Planet.Mining  Condition = All
-Sum  Planet.Mining  All
-Sum  Property = Planet.TargetMining  Condition = All
-Sum  Property = Planet.TargetMining  All
-Sum  Planet.TargetMining  Condition = All
-Sum  Planet.TargetMining  All
 Sum  Property = Planet.Construction  Condition = All
 Sum  Property = Planet.Construction  All
 Sum  Planet.Construction  Condition = All
@@ -321,14 +305,6 @@ Sum  Property = System.TargetTrade  Condition = All
 Sum  Property = System.TargetTrade  All
 Sum  System.TargetTrade  Condition = All
 Sum  System.TargetTrade  All
-Sum  Property = System.Mining  Condition = All
-Sum  Property = System.Mining  All
-Sum  System.Mining  Condition = All
-Sum  System.Mining  All
-Sum  Property = System.TargetMining  Condition = All
-Sum  Property = System.TargetMining  All
-Sum  System.TargetMining  Condition = All
-Sum  System.TargetMining  All
 Sum  Property = System.Construction  Condition = All
 Sum  Property = System.Construction  All
 Sum  System.Construction  Condition = All
@@ -465,14 +441,6 @@ Sum  Property = TargetTrade  Condition = All
 Sum  Property = TargetTrade  All
 Sum  TargetTrade  Condition = All
 Sum  TargetTrade  All
-Sum  Property = Mining  Condition = All
-Sum  Property = Mining  All
-Sum  Mining  Condition = All
-Sum  Mining  All
-Sum  Property = TargetMining  Condition = All
-Sum  Property = TargetMining  All
-Sum  TargetMining  Condition = All
-Sum  TargetMining  All
 Sum  Property = Construction  Condition = All
 Sum  Property = Construction  All
 Sum  Construction  Condition = All
@@ -610,14 +578,6 @@ Mean  Property = Fleet.TargetTrade  Condition = All
 Mean  Property = Fleet.TargetTrade  All
 Mean  Fleet.TargetTrade  Condition = All
 Mean  Fleet.TargetTrade  All
-Mean  Property = Fleet.Mining  Condition = All
-Mean  Property = Fleet.Mining  All
-Mean  Fleet.Mining  Condition = All
-Mean  Fleet.Mining  All
-Mean  Property = Fleet.TargetMining  Condition = All
-Mean  Property = Fleet.TargetMining  All
-Mean  Fleet.TargetMining  Condition = All
-Mean  Fleet.TargetMining  All
 Mean  Property = Fleet.Construction  Condition = All
 Mean  Property = Fleet.Construction  All
 Mean  Fleet.Construction  Condition = All
@@ -754,14 +714,6 @@ Mean  Property = Planet.TargetTrade  Condition = All
 Mean  Property = Planet.TargetTrade  All
 Mean  Planet.TargetTrade  Condition = All
 Mean  Planet.TargetTrade  All
-Mean  Property = Planet.Mining  Condition = All
-Mean  Property = Planet.Mining  All
-Mean  Planet.Mining  Condition = All
-Mean  Planet.Mining  All
-Mean  Property = Planet.TargetMining  Condition = All
-Mean  Property = Planet.TargetMining  All
-Mean  Planet.TargetMining  Condition = All
-Mean  Planet.TargetMining  All
 Mean  Property = Planet.Construction  Condition = All
 Mean  Property = Planet.Construction  All
 Mean  Planet.Construction  Condition = All
@@ -898,14 +850,6 @@ Mean  Property = System.TargetTrade  Condition = All
 Mean  Property = System.TargetTrade  All
 Mean  System.TargetTrade  Condition = All
 Mean  System.TargetTrade  All
-Mean  Property = System.Mining  Condition = All
-Mean  Property = System.Mining  All
-Mean  System.Mining  Condition = All
-Mean  System.Mining  All
-Mean  Property = System.TargetMining  Condition = All
-Mean  Property = System.TargetMining  All
-Mean  System.TargetMining  Condition = All
-Mean  System.TargetMining  All
 Mean  Property = System.Construction  Condition = All
 Mean  Property = System.Construction  All
 Mean  System.Construction  Condition = All
@@ -1042,14 +986,6 @@ Mean  Property = TargetTrade  Condition = All
 Mean  Property = TargetTrade  All
 Mean  TargetTrade  Condition = All
 Mean  TargetTrade  All
-Mean  Property = Mining  Condition = All
-Mean  Property = Mining  All
-Mean  Mining  Condition = All
-Mean  Mining  All
-Mean  Property = TargetMining  Condition = All
-Mean  Property = TargetMining  All
-Mean  TargetMining  Condition = All
-Mean  TargetMining  All
 Mean  Property = Construction  Condition = All
 Mean  Property = Construction  All
 Mean  Construction  Condition = All
@@ -1187,14 +1123,6 @@ RMS  Property = Fleet.TargetTrade  Condition = All
 RMS  Property = Fleet.TargetTrade  All
 RMS  Fleet.TargetTrade  Condition = All
 RMS  Fleet.TargetTrade  All
-RMS  Property = Fleet.Mining  Condition = All
-RMS  Property = Fleet.Mining  All
-RMS  Fleet.Mining  Condition = All
-RMS  Fleet.Mining  All
-RMS  Property = Fleet.TargetMining  Condition = All
-RMS  Property = Fleet.TargetMining  All
-RMS  Fleet.TargetMining  Condition = All
-RMS  Fleet.TargetMining  All
 RMS  Property = Fleet.Construction  Condition = All
 RMS  Property = Fleet.Construction  All
 RMS  Fleet.Construction  Condition = All
@@ -1331,14 +1259,6 @@ RMS  Property = Planet.TargetTrade  Condition = All
 RMS  Property = Planet.TargetTrade  All
 RMS  Planet.TargetTrade  Condition = All
 RMS  Planet.TargetTrade  All
-RMS  Property = Planet.Mining  Condition = All
-RMS  Property = Planet.Mining  All
-RMS  Planet.Mining  Condition = All
-RMS  Planet.Mining  All
-RMS  Property = Planet.TargetMining  Condition = All
-RMS  Property = Planet.TargetMining  All
-RMS  Planet.TargetMining  Condition = All
-RMS  Planet.TargetMining  All
 RMS  Property = Planet.Construction  Condition = All
 RMS  Property = Planet.Construction  All
 RMS  Planet.Construction  Condition = All
@@ -1475,14 +1395,6 @@ RMS  Property = System.TargetTrade  Condition = All
 RMS  Property = System.TargetTrade  All
 RMS  System.TargetTrade  Condition = All
 RMS  System.TargetTrade  All
-RMS  Property = System.Mining  Condition = All
-RMS  Property = System.Mining  All
-RMS  System.Mining  Condition = All
-RMS  System.Mining  All
-RMS  Property = System.TargetMining  Condition = All
-RMS  Property = System.TargetMining  All
-RMS  System.TargetMining  Condition = All
-RMS  System.TargetMining  All
 RMS  Property = System.Construction  Condition = All
 RMS  Property = System.Construction  All
 RMS  System.Construction  Condition = All
@@ -1619,14 +1531,6 @@ RMS  Property = TargetTrade  Condition = All
 RMS  Property = TargetTrade  All
 RMS  TargetTrade  Condition = All
 RMS  TargetTrade  All
-RMS  Property = Mining  Condition = All
-RMS  Property = Mining  All
-RMS  Mining  Condition = All
-RMS  Mining  All
-RMS  Property = TargetMining  Condition = All
-RMS  Property = TargetMining  All
-RMS  TargetMining  Condition = All
-RMS  TargetMining  All
 RMS  Property = Construction  Condition = All
 RMS  Property = Construction  All
 RMS  Construction  Condition = All
@@ -1764,14 +1668,6 @@ Mode  Property = Fleet.TargetTrade  Condition = All
 Mode  Property = Fleet.TargetTrade  All
 Mode  Fleet.TargetTrade  Condition = All
 Mode  Fleet.TargetTrade  All
-Mode  Property = Fleet.Mining  Condition = All
-Mode  Property = Fleet.Mining  All
-Mode  Fleet.Mining  Condition = All
-Mode  Fleet.Mining  All
-Mode  Property = Fleet.TargetMining  Condition = All
-Mode  Property = Fleet.TargetMining  All
-Mode  Fleet.TargetMining  Condition = All
-Mode  Fleet.TargetMining  All
 Mode  Property = Fleet.Construction  Condition = All
 Mode  Property = Fleet.Construction  All
 Mode  Fleet.Construction  Condition = All
@@ -1908,14 +1804,6 @@ Mode  Property = Planet.TargetTrade  Condition = All
 Mode  Property = Planet.TargetTrade  All
 Mode  Planet.TargetTrade  Condition = All
 Mode  Planet.TargetTrade  All
-Mode  Property = Planet.Mining  Condition = All
-Mode  Property = Planet.Mining  All
-Mode  Planet.Mining  Condition = All
-Mode  Planet.Mining  All
-Mode  Property = Planet.TargetMining  Condition = All
-Mode  Property = Planet.TargetMining  All
-Mode  Planet.TargetMining  Condition = All
-Mode  Planet.TargetMining  All
 Mode  Property = Planet.Construction  Condition = All
 Mode  Property = Planet.Construction  All
 Mode  Planet.Construction  Condition = All
@@ -2052,14 +1940,6 @@ Mode  Property = System.TargetTrade  Condition = All
 Mode  Property = System.TargetTrade  All
 Mode  System.TargetTrade  Condition = All
 Mode  System.TargetTrade  All
-Mode  Property = System.Mining  Condition = All
-Mode  Property = System.Mining  All
-Mode  System.Mining  Condition = All
-Mode  System.Mining  All
-Mode  Property = System.TargetMining  Condition = All
-Mode  Property = System.TargetMining  All
-Mode  System.TargetMining  Condition = All
-Mode  System.TargetMining  All
 Mode  Property = System.Construction  Condition = All
 Mode  Property = System.Construction  All
 Mode  System.Construction  Condition = All
@@ -2196,14 +2076,6 @@ Mode  Property = TargetTrade  Condition = All
 Mode  Property = TargetTrade  All
 Mode  TargetTrade  Condition = All
 Mode  TargetTrade  All
-Mode  Property = Mining  Condition = All
-Mode  Property = Mining  All
-Mode  Mining  Condition = All
-Mode  Mining  All
-Mode  Property = TargetMining  Condition = All
-Mode  Property = TargetMining  All
-Mode  TargetMining  Condition = All
-Mode  TargetMining  All
 Mode  Property = Construction  Condition = All
 Mode  Property = Construction  All
 Mode  Construction  Condition = All
@@ -2341,14 +2213,6 @@ Max  Property = Fleet.TargetTrade  Condition = All
 Max  Property = Fleet.TargetTrade  All
 Max  Fleet.TargetTrade  Condition = All
 Max  Fleet.TargetTrade  All
-Max  Property = Fleet.Mining  Condition = All
-Max  Property = Fleet.Mining  All
-Max  Fleet.Mining  Condition = All
-Max  Fleet.Mining  All
-Max  Property = Fleet.TargetMining  Condition = All
-Max  Property = Fleet.TargetMining  All
-Max  Fleet.TargetMining  Condition = All
-Max  Fleet.TargetMining  All
 Max  Property = Fleet.Construction  Condition = All
 Max  Property = Fleet.Construction  All
 Max  Fleet.Construction  Condition = All
@@ -2485,14 +2349,6 @@ Max  Property = Planet.TargetTrade  Condition = All
 Max  Property = Planet.TargetTrade  All
 Max  Planet.TargetTrade  Condition = All
 Max  Planet.TargetTrade  All
-Max  Property = Planet.Mining  Condition = All
-Max  Property = Planet.Mining  All
-Max  Planet.Mining  Condition = All
-Max  Planet.Mining  All
-Max  Property = Planet.TargetMining  Condition = All
-Max  Property = Planet.TargetMining  All
-Max  Planet.TargetMining  Condition = All
-Max  Planet.TargetMining  All
 Max  Property = Planet.Construction  Condition = All
 Max  Property = Planet.Construction  All
 Max  Planet.Construction  Condition = All
@@ -2629,14 +2485,6 @@ Max  Property = System.TargetTrade  Condition = All
 Max  Property = System.TargetTrade  All
 Max  System.TargetTrade  Condition = All
 Max  System.TargetTrade  All
-Max  Property = System.Mining  Condition = All
-Max  Property = System.Mining  All
-Max  System.Mining  Condition = All
-Max  System.Mining  All
-Max  Property = System.TargetMining  Condition = All
-Max  Property = System.TargetMining  All
-Max  System.TargetMining  Condition = All
-Max  System.TargetMining  All
 Max  Property = System.Construction  Condition = All
 Max  Property = System.Construction  All
 Max  System.Construction  Condition = All
@@ -2773,14 +2621,6 @@ Max  Property = TargetTrade  Condition = All
 Max  Property = TargetTrade  All
 Max  TargetTrade  Condition = All
 Max  TargetTrade  All
-Max  Property = Mining  Condition = All
-Max  Property = Mining  All
-Max  Mining  Condition = All
-Max  Mining  All
-Max  Property = TargetMining  Condition = All
-Max  Property = TargetMining  All
-Max  TargetMining  Condition = All
-Max  TargetMining  All
 Max  Property = Construction  Condition = All
 Max  Property = Construction  All
 Max  Construction  Condition = All
@@ -2918,14 +2758,6 @@ Min  Property = Fleet.TargetTrade  Condition = All
 Min  Property = Fleet.TargetTrade  All
 Min  Fleet.TargetTrade  Condition = All
 Min  Fleet.TargetTrade  All
-Min  Property = Fleet.Mining  Condition = All
-Min  Property = Fleet.Mining  All
-Min  Fleet.Mining  Condition = All
-Min  Fleet.Mining  All
-Min  Property = Fleet.TargetMining  Condition = All
-Min  Property = Fleet.TargetMining  All
-Min  Fleet.TargetMining  Condition = All
-Min  Fleet.TargetMining  All
 Min  Property = Fleet.Construction  Condition = All
 Min  Property = Fleet.Construction  All
 Min  Fleet.Construction  Condition = All
@@ -3062,14 +2894,6 @@ Min  Property = Planet.TargetTrade  Condition = All
 Min  Property = Planet.TargetTrade  All
 Min  Planet.TargetTrade  Condition = All
 Min  Planet.TargetTrade  All
-Min  Property = Planet.Mining  Condition = All
-Min  Property = Planet.Mining  All
-Min  Planet.Mining  Condition = All
-Min  Planet.Mining  All
-Min  Property = Planet.TargetMining  Condition = All
-Min  Property = Planet.TargetMining  All
-Min  Planet.TargetMining  Condition = All
-Min  Planet.TargetMining  All
 Min  Property = Planet.Construction  Condition = All
 Min  Property = Planet.Construction  All
 Min  Planet.Construction  Condition = All
@@ -3206,14 +3030,6 @@ Min  Property = System.TargetTrade  Condition = All
 Min  Property = System.TargetTrade  All
 Min  System.TargetTrade  Condition = All
 Min  System.TargetTrade  All
-Min  Property = System.Mining  Condition = All
-Min  Property = System.Mining  All
-Min  System.Mining  Condition = All
-Min  System.Mining  All
-Min  Property = System.TargetMining  Condition = All
-Min  Property = System.TargetMining  All
-Min  System.TargetMining  Condition = All
-Min  System.TargetMining  All
 Min  Property = System.Construction  Condition = All
 Min  Property = System.Construction  All
 Min  System.Construction  Condition = All
@@ -3350,14 +3166,6 @@ Min  Property = TargetTrade  Condition = All
 Min  Property = TargetTrade  All
 Min  TargetTrade  Condition = All
 Min  TargetTrade  All
-Min  Property = Mining  Condition = All
-Min  Property = Mining  All
-Min  Mining  Condition = All
-Min  Mining  All
-Min  Property = TargetMining  Condition = All
-Min  Property = TargetMining  All
-Min  TargetMining  Condition = All
-Min  TargetMining  All
 Min  Property = Construction  Condition = All
 Min  Property = Construction  All
 Min  Construction  Condition = All
@@ -3495,14 +3303,6 @@ Spread  Property = Fleet.TargetTrade  Condition = All
 Spread  Property = Fleet.TargetTrade  All
 Spread  Fleet.TargetTrade  Condition = All
 Spread  Fleet.TargetTrade  All
-Spread  Property = Fleet.Mining  Condition = All
-Spread  Property = Fleet.Mining  All
-Spread  Fleet.Mining  Condition = All
-Spread  Fleet.Mining  All
-Spread  Property = Fleet.TargetMining  Condition = All
-Spread  Property = Fleet.TargetMining  All
-Spread  Fleet.TargetMining  Condition = All
-Spread  Fleet.TargetMining  All
 Spread  Property = Fleet.Construction  Condition = All
 Spread  Property = Fleet.Construction  All
 Spread  Fleet.Construction  Condition = All
@@ -3639,14 +3439,6 @@ Spread  Property = Planet.TargetTrade  Condition = All
 Spread  Property = Planet.TargetTrade  All
 Spread  Planet.TargetTrade  Condition = All
 Spread  Planet.TargetTrade  All
-Spread  Property = Planet.Mining  Condition = All
-Spread  Property = Planet.Mining  All
-Spread  Planet.Mining  Condition = All
-Spread  Planet.Mining  All
-Spread  Property = Planet.TargetMining  Condition = All
-Spread  Property = Planet.TargetMining  All
-Spread  Planet.TargetMining  Condition = All
-Spread  Planet.TargetMining  All
 Spread  Property = Planet.Construction  Condition = All
 Spread  Property = Planet.Construction  All
 Spread  Planet.Construction  Condition = All
@@ -3783,14 +3575,6 @@ Spread  Property = System.TargetTrade  Condition = All
 Spread  Property = System.TargetTrade  All
 Spread  System.TargetTrade  Condition = All
 Spread  System.TargetTrade  All
-Spread  Property = System.Mining  Condition = All
-Spread  Property = System.Mining  All
-Spread  System.Mining  Condition = All
-Spread  System.Mining  All
-Spread  Property = System.TargetMining  Condition = All
-Spread  Property = System.TargetMining  All
-Spread  System.TargetMining  Condition = All
-Spread  System.TargetMining  All
 Spread  Property = System.Construction  Condition = All
 Spread  Property = System.Construction  All
 Spread  System.Construction  Condition = All
@@ -3927,14 +3711,6 @@ Spread  Property = TargetTrade  Condition = All
 Spread  Property = TargetTrade  All
 Spread  TargetTrade  Condition = All
 Spread  TargetTrade  All
-Spread  Property = Mining  Condition = All
-Spread  Property = Mining  All
-Spread  Mining  Condition = All
-Spread  Mining  All
-Spread  Property = TargetMining  Condition = All
-Spread  Property = TargetMining  All
-Spread  TargetMining  Condition = All
-Spread  TargetMining  All
 Spread  Property = Construction  Condition = All
 Spread  Property = Construction  All
 Spread  Construction  Condition = All
@@ -4072,14 +3848,6 @@ StDev  Property = Fleet.TargetTrade  Condition = All
 StDev  Property = Fleet.TargetTrade  All
 StDev  Fleet.TargetTrade  Condition = All
 StDev  Fleet.TargetTrade  All
-StDev  Property = Fleet.Mining  Condition = All
-StDev  Property = Fleet.Mining  All
-StDev  Fleet.Mining  Condition = All
-StDev  Fleet.Mining  All
-StDev  Property = Fleet.TargetMining  Condition = All
-StDev  Property = Fleet.TargetMining  All
-StDev  Fleet.TargetMining  Condition = All
-StDev  Fleet.TargetMining  All
 StDev  Property = Fleet.Construction  Condition = All
 StDev  Property = Fleet.Construction  All
 StDev  Fleet.Construction  Condition = All
@@ -4216,14 +3984,6 @@ StDev  Property = Planet.TargetTrade  Condition = All
 StDev  Property = Planet.TargetTrade  All
 StDev  Planet.TargetTrade  Condition = All
 StDev  Planet.TargetTrade  All
-StDev  Property = Planet.Mining  Condition = All
-StDev  Property = Planet.Mining  All
-StDev  Planet.Mining  Condition = All
-StDev  Planet.Mining  All
-StDev  Property = Planet.TargetMining  Condition = All
-StDev  Property = Planet.TargetMining  All
-StDev  Planet.TargetMining  Condition = All
-StDev  Planet.TargetMining  All
 StDev  Property = Planet.Construction  Condition = All
 StDev  Property = Planet.Construction  All
 StDev  Planet.Construction  Condition = All
@@ -4360,14 +4120,6 @@ StDev  Property = System.TargetTrade  Condition = All
 StDev  Property = System.TargetTrade  All
 StDev  System.TargetTrade  Condition = All
 StDev  System.TargetTrade  All
-StDev  Property = System.Mining  Condition = All
-StDev  Property = System.Mining  All
-StDev  System.Mining  Condition = All
-StDev  System.Mining  All
-StDev  Property = System.TargetMining  Condition = All
-StDev  Property = System.TargetMining  All
-StDev  System.TargetMining  Condition = All
-StDev  System.TargetMining  All
 StDev  Property = System.Construction  Condition = All
 StDev  Property = System.Construction  All
 StDev  System.Construction  Condition = All
@@ -4504,14 +4256,6 @@ StDev  Property = TargetTrade  Condition = All
 StDev  Property = TargetTrade  All
 StDev  TargetTrade  Condition = All
 StDev  TargetTrade  All
-StDev  Property = Mining  Condition = All
-StDev  Property = Mining  All
-StDev  Mining  Condition = All
-StDev  Mining  All
-StDev  Property = TargetMining  Condition = All
-StDev  Property = TargetMining  All
-StDev  TargetMining  Condition = All
-StDev  TargetMining  All
 StDev  Property = Construction  Condition = All
 StDev  Property = Construction  All
 StDev  Construction  Condition = All
@@ -4649,14 +4393,6 @@ Product  Property = Fleet.TargetTrade  Condition = All
 Product  Property = Fleet.TargetTrade  All
 Product  Fleet.TargetTrade  Condition = All
 Product  Fleet.TargetTrade  All
-Product  Property = Fleet.Mining  Condition = All
-Product  Property = Fleet.Mining  All
-Product  Fleet.Mining  Condition = All
-Product  Fleet.Mining  All
-Product  Property = Fleet.TargetMining  Condition = All
-Product  Property = Fleet.TargetMining  All
-Product  Fleet.TargetMining  Condition = All
-Product  Fleet.TargetMining  All
 Product  Property = Fleet.Construction  Condition = All
 Product  Property = Fleet.Construction  All
 Product  Fleet.Construction  Condition = All
@@ -4793,14 +4529,6 @@ Product  Property = Planet.TargetTrade  Condition = All
 Product  Property = Planet.TargetTrade  All
 Product  Planet.TargetTrade  Condition = All
 Product  Planet.TargetTrade  All
-Product  Property = Planet.Mining  Condition = All
-Product  Property = Planet.Mining  All
-Product  Planet.Mining  Condition = All
-Product  Planet.Mining  All
-Product  Property = Planet.TargetMining  Condition = All
-Product  Property = Planet.TargetMining  All
-Product  Planet.TargetMining  Condition = All
-Product  Planet.TargetMining  All
 Product  Property = Planet.Construction  Condition = All
 Product  Property = Planet.Construction  All
 Product  Planet.Construction  Condition = All
@@ -4937,14 +4665,6 @@ Product  Property = System.TargetTrade  Condition = All
 Product  Property = System.TargetTrade  All
 Product  System.TargetTrade  Condition = All
 Product  System.TargetTrade  All
-Product  Property = System.Mining  Condition = All
-Product  Property = System.Mining  All
-Product  System.Mining  Condition = All
-Product  System.Mining  All
-Product  Property = System.TargetMining  Condition = All
-Product  Property = System.TargetMining  All
-Product  System.TargetMining  Condition = All
-Product  System.TargetMining  All
 Product  Property = System.Construction  Condition = All
 Product  Property = System.Construction  All
 Product  System.Construction  Condition = All
@@ -5081,14 +4801,6 @@ Product  Property = TargetTrade  Condition = All
 Product  Property = TargetTrade  All
 Product  TargetTrade  Condition = All
 Product  TargetTrade  All
-Product  Property = Mining  Condition = All
-Product  Property = Mining  All
-Product  Mining  Condition = All
-Product  Mining  All
-Product  Property = TargetMining  Condition = All
-Product  Property = TargetMining  All
-Product  TargetMining  Condition = All
-Product  TargetMining  All
 Product  Property = Construction  Condition = All
 Product  Property = Construction  All
 Product  Construction  Condition = All

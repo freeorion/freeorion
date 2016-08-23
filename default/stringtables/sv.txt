@@ -1298,10 +1298,6 @@ FOCUS_INDUSTRY
 industri
 
 # Focus types
-FOCUS_MINING
-gruvdrift
-
-# Focus types
 FOCUS_RESEARCH
 forskning
 
@@ -1328,10 +1324,6 @@ forskning
 # Meter types
 METER_TRADE
 handel
-
-# Meter types
-METER_MINING
-gruvdrift
 
 # Meter types
 METER_CONSTRUCTION

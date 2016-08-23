@@ -2338,13 +2338,6 @@ Focus sulla Crescita
 GROWTH_FOCUS_TEXT
 Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita concentrandosi sulla crescita, fà progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
 
-MINING_FOCUS_TITLE
-Focus Minerario
-
-# Old: The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
-MINING_FOCUS_TEXT
-Il focus minerario è al momento disabilitato.
-
 TRADE_FOCUS_TITLE
 Focus sul Commercio
 
@@ -3100,10 +3093,6 @@ FOCUS_INDUSTRY
 industry
 
 # Focus types
-FOCUS_MINING
-mining
-
-# Focus types
 FOCUS_RESEARCH
 research
 
@@ -3742,9 +3731,6 @@ Sblocca Struttura
 RESEARCH_SHORT_DESC
 Migliora Ricerca
 
-MINING_SHORT_DESC
-Migliora Estrazione Mineraria
-
 INDUSTRY_SHORT_DESC
 Migliora Industria
 
@@ -3860,12 +3846,6 @@ Dominazione Psicogena
 
 MIND_CONTROL_SHORT_DESC
 Consente il Controllo Mentale
-
-PRO_HEAVY_MINING_I
-Trasformatori Minerari Pesanti
-
-PRO_HEAVY_MINING_I_DESC
-Quando l'aumento della produzione mineraria è l'unica preoccupazione, non esistono considerazioni di danni ambientali e l'ambiente stesso è favorevole, le attività minerarie in parte automatizzate di massa possono essere ottimali. Trasformatori minerari pesanti sono costosi tuttavia e sono solo pratici da usare su mondi con focus minerario primario. allo stesso modo questi trasformatori danneggiano seriamente l'ecologia di un pianeta, riducendo alquanto la sua popolazione massima.
 
 PRO_SOL_ORB_GEN
 Produzione Orbitale Solare

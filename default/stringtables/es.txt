@@ -2186,14 +2186,6 @@ FOCUS_INDUSTRY
 Indústria
 
 # Focus types
-FOCUS_MINING
-Minería
-
-# Focus types
-FOCUS_HEAVY_MINING
-Minería Pesada
-
-# Focus types
 FOCUS_RESEARCH
 Investigación
 
@@ -2240,10 +2232,6 @@ METER_TARGET_TRADE
 Comercio Objetivo
 
 # Meter types
-METER_TARGET_MINING
-Minería Objetivo
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Construcción Objetivo
 
@@ -2282,10 +2270,6 @@ Investigación
 # Meter types
 METER_TRADE
 Comercio
-
-# Meter types
-METER_MINING
-Minería
 
 # Meter types
 METER_CONSTRUCTION
@@ -3349,9 +3333,6 @@ Desbloquea la construcción
 RESEARCH_SHORT_DESC
 Mejora la Investigación
 
-MINING_SHORT_DESC
-Mejora la Minería
-
 INDUSTRY_SHORT_DESC
 Mejora la Indústria
 
@@ -3561,12 +3542,6 @@ Tiene un 10% de probabilidad de tomar el control de cualquier nave enemiga entre
 
 MIND_CONTROL_SHORT_DESC
 Permite el Control Mental
-
-PRO_HEAVY_MINING_I
-Procesadores de Minería Pesada.
-
-PRO_HEAVY_MINING_I_DESC
-Cuando el incremento de la producción de minerales es la única preocupación, las consideraciones al daño medioambiental no existen y el medio ambiente de por si es conducente, el automatizado parcial de las actividades mineras a granel puede ser óptimo. Una capacidad significativa de proceso es requerida, sin embargo, implica la utilización de instalaciones centralizadas de tratamiento de minerales.
 
 PRO_SOL_ORB_GEN
 Generación Solar Orbital
@@ -3840,14 +3815,6 @@ Centro Industrial Supremo
 
 PRO_INDUSTRY_CENTER_III_DESC
 Experiencia adicional e instalaciones mejoradas para extender el alcance y tamaño de la producción industrial actual.
-
-PRO_ENVIRO_MINING
-Minería Consciente del Medio Ambiente.
-
-PRO_ENVIRO_MINING_DESC
-'''Muchos métodos mineros son incompatibles con planetas altamente poblados, debido al daño medioambiental.  Cuidadosas consideraciones de Ecología Planetaria son necesarias para permitir técnicas limitadas de minería para ser empleadas sin contratiempos.  La producción de minerales es menor por cada unidad de población que métodos mas extremos, aunque población adicional podría sobrepasar esto.  Adicionalmente, estas técnicas de minería limitadas son solo aplicables a mundos capaces de soportar grandes poblaciones: Excelente u óptimo para algunas razas.    Incrementa la producción de minerales en +2 por cada 10 de población en mundos enfocados a minería primaria.  Incrementa la producción de minerales en +1 por cada 10 de población en mundos enfocados en equilibrio primario y enfocados en minería secundaria.  Múltiples enfoques equilibrados son acumulativos: enfoques primarios y secundarios en minería proveen +3 a la producción de mineral por cada 10 de población.
-
-Las penalizaciones a la salud en la población en planetas con enfoque en Minería Pesada se recortan a la mitad.'''
 
 
 ##

@@ -1388,10 +1388,6 @@ FOCUS_INDUSTRY
 Průmysl
 
 # Focus types
-FOCUS_MINING
-Těžba
-
-# Focus types
 FOCUS_RESEARCH
 Výzkum
 
@@ -1418,10 +1414,6 @@ výzkum
 # Meter types
 METER_TRADE
 obchod
-
-# Meter types
-METER_MINING
-těžba
 
 # Meter types
 METER_CONSTRUCTION
@@ -1752,9 +1744,6 @@ Odemkne budovy
 
 RESEARCH_SHORT_DESC
 Zlepší výzkum
-
-MINING_SHORT_DESC
-Zlepší těžbu
 
 INDUSTRY_SHORT_DESC
 Zlepší průmysl

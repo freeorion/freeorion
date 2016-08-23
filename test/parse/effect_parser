@@ -16,9 +16,6 @@ SetTargetResearch  1.0
 SetTargetTrade  Value = 1.0
 SetTargetTrade  1.0
 SetTargetTrade  1.0
-SetTargetMining  Value = 1.0
-SetTargetMining  1.0
-SetTargetMining  1.0
 SetTargetConstruction  Value = 1.0
 SetTargetConstruction  1.0
 SetTargetConstruction  1.0

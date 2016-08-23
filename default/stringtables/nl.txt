@@ -1493,10 +1493,6 @@ FOCUS_INDUSTRY
 industrie
 
 # Focus types
-FOCUS_MINING
-mijnindustrie
-
-# Focus types
 FOCUS_RESEARCH
 onderzoek
 
@@ -1523,10 +1519,6 @@ onderzoek
 # Meter types
 METER_TRADE
 handel
-
-# Meter types
-METER_MINING
-mijnindustrie
 
 # Meter types
 METER_CONSTRUCTION
@@ -1899,9 +1891,6 @@ Ontsluit gebouw
 
 RESEARCH_SHORT_DESC
 Verbetert Onderzoek
-
-MINING_SHORT_DESC
-Verbetert Mijnbouw
 
 INDUSTRY_SHORT_DESC
 Verbetert Industrie

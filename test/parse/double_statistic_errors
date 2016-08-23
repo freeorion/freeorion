@@ -56,18 +56,6 @@ Sum Property = Fleet . TargetTrade Condition =
 Sum Fleet . TargetTrade
 Sum Fleet . TargetTrade Condition
 Sum Fleet . TargetTrade Condition =
-Sum Property = Fleet . Mining
-Sum Property = Fleet . Mining Condition
-Sum Property = Fleet . Mining Condition =
-Sum Fleet . Mining
-Sum Fleet . Mining Condition
-Sum Fleet . Mining Condition =
-Sum Property = Fleet . TargetMining
-Sum Property = Fleet . TargetMining Condition
-Sum Property = Fleet . TargetMining Condition =
-Sum Fleet . TargetMining
-Sum Fleet . TargetMining Condition
-Sum Fleet . TargetMining Condition =
 Sum Property = Fleet . Construction
 Sum Property = Fleet . Construction Condition
 Sum Property = Fleet . Construction Condition =
@@ -276,18 +264,6 @@ Sum Property = Planet . TargetTrade Condition =
 Sum Planet . TargetTrade
 Sum Planet . TargetTrade Condition
 Sum Planet . TargetTrade Condition =
-Sum Property = Planet . Mining
-Sum Property = Planet . Mining Condition
-Sum Property = Planet . Mining Condition =
-Sum Planet . Mining
-Sum Planet . Mining Condition
-Sum Planet . Mining Condition =
-Sum Property = Planet . TargetMining
-Sum Property = Planet . TargetMining Condition
-Sum Property = Planet . TargetMining Condition =
-Sum Planet . TargetMining
-Sum Planet . TargetMining Condition
-Sum Planet . TargetMining Condition =
 Sum Property = Planet . Construction
 Sum Property = Planet . Construction Condition
 Sum Property = Planet . Construction Condition =
@@ -496,18 +472,6 @@ Sum Property = System . TargetTrade Condition =
 Sum System . TargetTrade
 Sum System . TargetTrade Condition
 Sum System . TargetTrade Condition =
-Sum Property = System . Mining
-Sum Property = System . Mining Condition
-Sum Property = System . Mining Condition =
-Sum System . Mining
-Sum System . Mining Condition
-Sum System . Mining Condition =
-Sum Property = System . TargetMining
-Sum Property = System . TargetMining Condition
-Sum Property = System . TargetMining Condition =
-Sum System . TargetMining
-Sum System . TargetMining Condition
-Sum System . TargetMining Condition =
 Sum Property = System . Construction
 Sum Property = System . Construction Condition
 Sum Property = System . Construction Condition =
@@ -712,18 +676,6 @@ Sum Property = TargetTrade Condition =
 Sum TargetTrade
 Sum TargetTrade Condition
 Sum TargetTrade Condition =
-Sum Property = Mining
-Sum Property = Mining Condition
-Sum Property = Mining Condition =
-Sum Mining
-Sum Mining Condition
-Sum Mining Condition =
-Sum Property = TargetMining
-Sum Property = TargetMining Condition
-Sum Property = TargetMining Condition =
-Sum TargetMining
-Sum TargetMining Condition
-Sum TargetMining Condition =
 Sum Property = Construction
 Sum Property = Construction Condition
 Sum Property = Construction Condition =
@@ -935,18 +887,6 @@ Mean Property = Fleet . TargetTrade Condition =
 Mean Fleet . TargetTrade
 Mean Fleet . TargetTrade Condition
 Mean Fleet . TargetTrade Condition =
-Mean Property = Fleet . Mining
-Mean Property = Fleet . Mining Condition
-Mean Property = Fleet . Mining Condition =
-Mean Fleet . Mining
-Mean Fleet . Mining Condition
-Mean Fleet . Mining Condition =
-Mean Property = Fleet . TargetMining
-Mean Property = Fleet . TargetMining Condition
-Mean Property = Fleet . TargetMining Condition =
-Mean Fleet . TargetMining
-Mean Fleet . TargetMining Condition
-Mean Fleet . TargetMining Condition =
 Mean Property = Fleet . Construction
 Mean Property = Fleet . Construction Condition
 Mean Property = Fleet . Construction Condition =
@@ -1155,18 +1095,6 @@ Mean Property = Planet . TargetTrade Condition =
 Mean Planet . TargetTrade
 Mean Planet . TargetTrade Condition
 Mean Planet . TargetTrade Condition =
-Mean Property = Planet . Mining
-Mean Property = Planet . Mining Condition
-Mean Property = Planet . Mining Condition =
-Mean Planet . Mining
-Mean Planet . Mining Condition
-Mean Planet . Mining Condition =
-Mean Property = Planet . TargetMining
-Mean Property = Planet . TargetMining Condition
-Mean Property = Planet . TargetMining Condition =
-Mean Planet . TargetMining
-Mean Planet . TargetMining Condition
-Mean Planet . TargetMining Condition =
 Mean Property = Planet . Construction
 Mean Property = Planet . Construction Condition
 Mean Property = Planet . Construction Condition =
@@ -1375,18 +1303,6 @@ Mean Property = System . TargetTrade Condition =
 Mean System . TargetTrade
 Mean System . TargetTrade Condition
 Mean System . TargetTrade Condition =
-Mean Property = System . Mining
-Mean Property = System . Mining Condition
-Mean Property = System . Mining Condition =
-Mean System . Mining
-Mean System . Mining Condition
-Mean System . Mining Condition =
-Mean Property = System . TargetMining
-Mean Property = System . TargetMining Condition
-Mean Property = System . TargetMining Condition =
-Mean System . TargetMining
-Mean System . TargetMining Condition
-Mean System . TargetMining Condition =
 Mean Property = System . Construction
 Mean Property = System . Construction Condition
 Mean Property = System . Construction Condition =
@@ -1591,18 +1507,6 @@ Mean Property = TargetTrade Condition =
 Mean TargetTrade
 Mean TargetTrade Condition
 Mean TargetTrade Condition =
-Mean Property = Mining
-Mean Property = Mining Condition
-Mean Property = Mining Condition =
-Mean Mining
-Mean Mining Condition
-Mean Mining Condition =
-Mean Property = TargetMining
-Mean Property = TargetMining Condition
-Mean Property = TargetMining Condition =
-Mean TargetMining
-Mean TargetMining Condition
-Mean TargetMining Condition =
 Mean Property = Construction
 Mean Property = Construction Condition
 Mean Property = Construction Condition =
@@ -1814,18 +1718,6 @@ RMS Property = Fleet . TargetTrade Condition =
 RMS Fleet . TargetTrade
 RMS Fleet . TargetTrade Condition
 RMS Fleet . TargetTrade Condition =
-RMS Property = Fleet . Mining
-RMS Property = Fleet . Mining Condition
-RMS Property = Fleet . Mining Condition =
-RMS Fleet . Mining
-RMS Fleet . Mining Condition
-RMS Fleet . Mining Condition =
-RMS Property = Fleet . TargetMining
-RMS Property = Fleet . TargetMining Condition
-RMS Property = Fleet . TargetMining Condition =
-RMS Fleet . TargetMining
-RMS Fleet . TargetMining Condition
-RMS Fleet . TargetMining Condition =
 RMS Property = Fleet . Construction
 RMS Property = Fleet . Construction Condition
 RMS Property = Fleet . Construction Condition =
@@ -2034,18 +1926,6 @@ RMS Property = Planet . TargetTrade Condition =
 RMS Planet . TargetTrade
 RMS Planet . TargetTrade Condition
 RMS Planet . TargetTrade Condition =
-RMS Property = Planet . Mining
-RMS Property = Planet . Mining Condition
-RMS Property = Planet . Mining Condition =
-RMS Planet . Mining
-RMS Planet . Mining Condition
-RMS Planet . Mining Condition =
-RMS Property = Planet . TargetMining
-RMS Property = Planet . TargetMining Condition
-RMS Property = Planet . TargetMining Condition =
-RMS Planet . TargetMining
-RMS Planet . TargetMining Condition
-RMS Planet . TargetMining Condition =
 RMS Property = Planet . Construction
 RMS Property = Planet . Construction Condition
 RMS Property = Planet . Construction Condition =
@@ -2254,18 +2134,6 @@ RMS Property = System . TargetTrade Condition =
 RMS System . TargetTrade
 RMS System . TargetTrade Condition
 RMS System . TargetTrade Condition =
-RMS Property = System . Mining
-RMS Property = System . Mining Condition
-RMS Property = System . Mining Condition =
-RMS System . Mining
-RMS System . Mining Condition
-RMS System . Mining Condition =
-RMS Property = System . TargetMining
-RMS Property = System . TargetMining Condition
-RMS Property = System . TargetMining Condition =
-RMS System . TargetMining
-RMS System . TargetMining Condition
-RMS System . TargetMining Condition =
 RMS Property = System . Construction
 RMS Property = System . Construction Condition
 RMS Property = System . Construction Condition =
@@ -2470,18 +2338,6 @@ RMS Property = TargetTrade Condition =
 RMS TargetTrade
 RMS TargetTrade Condition
 RMS TargetTrade Condition =
-RMS Property = Mining
-RMS Property = Mining Condition
-RMS Property = Mining Condition =
-RMS Mining
-RMS Mining Condition
-RMS Mining Condition =
-RMS Property = TargetMining
-RMS Property = TargetMining Condition
-RMS Property = TargetMining Condition =
-RMS TargetMining
-RMS TargetMining Condition
-RMS TargetMining Condition =
 RMS Property = Construction
 RMS Property = Construction Condition
 RMS Property = Construction Condition =
@@ -2693,18 +2549,6 @@ Mode Property = Fleet . TargetTrade Condition =
 Mode Fleet . TargetTrade
 Mode Fleet . TargetTrade Condition
 Mode Fleet . TargetTrade Condition =
-Mode Property = Fleet . Mining
-Mode Property = Fleet . Mining Condition
-Mode Property = Fleet . Mining Condition =
-Mode Fleet . Mining
-Mode Fleet . Mining Condition
-Mode Fleet . Mining Condition =
-Mode Property = Fleet . TargetMining
-Mode Property = Fleet . TargetMining Condition
-Mode Property = Fleet . TargetMining Condition =
-Mode Fleet . TargetMining
-Mode Fleet . TargetMining Condition
-Mode Fleet . TargetMining Condition =
 Mode Property = Fleet . Construction
 Mode Property = Fleet . Construction Condition
 Mode Property = Fleet . Construction Condition =
@@ -2913,18 +2757,6 @@ Mode Property = Planet . TargetTrade Condition =
 Mode Planet . TargetTrade
 Mode Planet . TargetTrade Condition
 Mode Planet . TargetTrade Condition =
-Mode Property = Planet . Mining
-Mode Property = Planet . Mining Condition
-Mode Property = Planet . Mining Condition =
-Mode Planet . Mining
-Mode Planet . Mining Condition
-Mode Planet . Mining Condition =
-Mode Property = Planet . TargetMining
-Mode Property = Planet . TargetMining Condition
-Mode Property = Planet . TargetMining Condition =
-Mode Planet . TargetMining
-Mode Planet . TargetMining Condition
-Mode Planet . TargetMining Condition =
 Mode Property = Planet . Construction
 Mode Property = Planet . Construction Condition
 Mode Property = Planet . Construction Condition =
@@ -3133,18 +2965,6 @@ Mode Property = System . TargetTrade Condition =
 Mode System . TargetTrade
 Mode System . TargetTrade Condition
 Mode System . TargetTrade Condition =
-Mode Property = System . Mining
-Mode Property = System . Mining Condition
-Mode Property = System . Mining Condition =
-Mode System . Mining
-Mode System . Mining Condition
-Mode System . Mining Condition =
-Mode Property = System . TargetMining
-Mode Property = System . TargetMining Condition
-Mode Property = System . TargetMining Condition =
-Mode System . TargetMining
-Mode System . TargetMining Condition
-Mode System . TargetMining Condition =
 Mode Property = System . Construction
 Mode Property = System . Construction Condition
 Mode Property = System . Construction Condition =
@@ -3349,18 +3169,6 @@ Mode Property = TargetTrade Condition =
 Mode TargetTrade
 Mode TargetTrade Condition
 Mode TargetTrade Condition =
-Mode Property = Mining
-Mode Property = Mining Condition
-Mode Property = Mining Condition =
-Mode Mining
-Mode Mining Condition
-Mode Mining Condition =
-Mode Property = TargetMining
-Mode Property = TargetMining Condition
-Mode Property = TargetMining Condition =
-Mode TargetMining
-Mode TargetMining Condition
-Mode TargetMining Condition =
 Mode Property = Construction
 Mode Property = Construction Condition
 Mode Property = Construction Condition =
@@ -3572,18 +3380,6 @@ Max Property = Fleet . TargetTrade Condition =
 Max Fleet . TargetTrade
 Max Fleet . TargetTrade Condition
 Max Fleet . TargetTrade Condition =
-Max Property = Fleet . Mining
-Max Property = Fleet . Mining Condition
-Max Property = Fleet . Mining Condition =
-Max Fleet . Mining
-Max Fleet . Mining Condition
-Max Fleet . Mining Condition =
-Max Property = Fleet . TargetMining
-Max Property = Fleet . TargetMining Condition
-Max Property = Fleet . TargetMining Condition =
-Max Fleet . TargetMining
-Max Fleet . TargetMining Condition
-Max Fleet . TargetMining Condition =
 Max Property = Fleet . Construction
 Max Property = Fleet . Construction Condition
 Max Property = Fleet . Construction Condition =
@@ -3792,18 +3588,6 @@ Max Property = Planet . TargetTrade Condition =
 Max Planet . TargetTrade
 Max Planet . TargetTrade Condition
 Max Planet . TargetTrade Condition =
-Max Property = Planet . Mining
-Max Property = Planet . Mining Condition
-Max Property = Planet . Mining Condition =
-Max Planet . Mining
-Max Planet . Mining Condition
-Max Planet . Mining Condition =
-Max Property = Planet . TargetMining
-Max Property = Planet . TargetMining Condition
-Max Property = Planet . TargetMining Condition =
-Max Planet . TargetMining
-Max Planet . TargetMining Condition
-Max Planet . TargetMining Condition =
 Max Property = Planet . Construction
 Max Property = Planet . Construction Condition
 Max Property = Planet . Construction Condition =
@@ -4012,18 +3796,6 @@ Max Property = System . TargetTrade Condition =
 Max System . TargetTrade
 Max System . TargetTrade Condition
 Max System . TargetTrade Condition =
-Max Property = System . Mining
-Max Property = System . Mining Condition
-Max Property = System . Mining Condition =
-Max System . Mining
-Max System . Mining Condition
-Max System . Mining Condition =
-Max Property = System . TargetMining
-Max Property = System . TargetMining Condition
-Max Property = System . TargetMining Condition =
-Max System . TargetMining
-Max System . TargetMining Condition
-Max System . TargetMining Condition =
 Max Property = System . Construction
 Max Property = System . Construction Condition
 Max Property = System . Construction Condition =
@@ -4228,18 +4000,6 @@ Max Property = TargetTrade Condition =
 Max TargetTrade
 Max TargetTrade Condition
 Max TargetTrade Condition =
-Max Property = Mining
-Max Property = Mining Condition
-Max Property = Mining Condition =
-Max Mining
-Max Mining Condition
-Max Mining Condition =
-Max Property = TargetMining
-Max Property = TargetMining Condition
-Max Property = TargetMining Condition =
-Max TargetMining
-Max TargetMining Condition
-Max TargetMining Condition =
 Max Property = Construction
 Max Property = Construction Condition
 Max Property = Construction Condition =
@@ -4451,18 +4211,6 @@ Min Property = Fleet . TargetTrade Condition =
 Min Fleet . TargetTrade
 Min Fleet . TargetTrade Condition
 Min Fleet . TargetTrade Condition =
-Min Property = Fleet . Mining
-Min Property = Fleet . Mining Condition
-Min Property = Fleet . Mining Condition =
-Min Fleet . Mining
-Min Fleet . Mining Condition
-Min Fleet . Mining Condition =
-Min Property = Fleet . TargetMining
-Min Property = Fleet . TargetMining Condition
-Min Property = Fleet . TargetMining Condition =
-Min Fleet . TargetMining
-Min Fleet . TargetMining Condition
-Min Fleet . TargetMining Condition =
 Min Property = Fleet . Construction
 Min Property = Fleet . Construction Condition
 Min Property = Fleet . Construction Condition =
@@ -4671,18 +4419,6 @@ Min Property = Planet . TargetTrade Condition =
 Min Planet . TargetTrade
 Min Planet . TargetTrade Condition
 Min Planet . TargetTrade Condition =
-Min Property = Planet . Mining
-Min Property = Planet . Mining Condition
-Min Property = Planet . Mining Condition =
-Min Planet . Mining
-Min Planet . Mining Condition
-Min Planet . Mining Condition =
-Min Property = Planet . TargetMining
-Min Property = Planet . TargetMining Condition
-Min Property = Planet . TargetMining Condition =
-Min Planet . TargetMining
-Min Planet . TargetMining Condition
-Min Planet . TargetMining Condition =
 Min Property = Planet . Construction
 Min Property = Planet . Construction Condition
 Min Property = Planet . Construction Condition =
@@ -4891,18 +4627,6 @@ Min Property = System . TargetTrade Condition =
 Min System . TargetTrade
 Min System . TargetTrade Condition
 Min System . TargetTrade Condition =
-Min Property = System . Mining
-Min Property = System . Mining Condition
-Min Property = System . Mining Condition =
-Min System . Mining
-Min System . Mining Condition
-Min System . Mining Condition =
-Min Property = System . TargetMining
-Min Property = System . TargetMining Condition
-Min Property = System . TargetMining Condition =
-Min System . TargetMining
-Min System . TargetMining Condition
-Min System . TargetMining Condition =
 Min Property = System . Construction
 Min Property = System . Construction Condition
 Min Property = System . Construction Condition =
@@ -5107,18 +4831,6 @@ Min Property = TargetTrade Condition =
 Min TargetTrade
 Min TargetTrade Condition
 Min TargetTrade Condition =
-Min Property = Mining
-Min Property = Mining Condition
-Min Property = Mining Condition =
-Min Mining
-Min Mining Condition
-Min Mining Condition =
-Min Property = TargetMining
-Min Property = TargetMining Condition
-Min Property = TargetMining Condition =
-Min TargetMining
-Min TargetMining Condition
-Min TargetMining Condition =
 Min Property = Construction
 Min Property = Construction Condition
 Min Property = Construction Condition =
@@ -5330,18 +5042,6 @@ Spread Property = Fleet . TargetTrade Condition =
 Spread Fleet . TargetTrade
 Spread Fleet . TargetTrade Condition
 Spread Fleet . TargetTrade Condition =
-Spread Property = Fleet . Mining
-Spread Property = Fleet . Mining Condition
-Spread Property = Fleet . Mining Condition =
-Spread Fleet . Mining
-Spread Fleet . Mining Condition
-Spread Fleet . Mining Condition =
-Spread Property = Fleet . TargetMining
-Spread Property = Fleet . TargetMining Condition
-Spread Property = Fleet . TargetMining Condition =
-Spread Fleet . TargetMining
-Spread Fleet . TargetMining Condition
-Spread Fleet . TargetMining Condition =
 Spread Property = Fleet . Construction
 Spread Property = Fleet . Construction Condition
 Spread Property = Fleet . Construction Condition =
@@ -5550,18 +5250,6 @@ Spread Property = Planet . TargetTrade Condition =
 Spread Planet . TargetTrade
 Spread Planet . TargetTrade Condition
 Spread Planet . TargetTrade Condition =
-Spread Property = Planet . Mining
-Spread Property = Planet . Mining Condition
-Spread Property = Planet . Mining Condition =
-Spread Planet . Mining
-Spread Planet . Mining Condition
-Spread Planet . Mining Condition =
-Spread Property = Planet . TargetMining
-Spread Property = Planet . TargetMining Condition
-Spread Property = Planet . TargetMining Condition =
-Spread Planet . TargetMining
-Spread Planet . TargetMining Condition
-Spread Planet . TargetMining Condition =
 Spread Property = Planet . Construction
 Spread Property = Planet . Construction Condition
 Spread Property = Planet . Construction Condition =
@@ -5770,18 +5458,6 @@ Spread Property = System . TargetTrade Condition =
 Spread System . TargetTrade
 Spread System . TargetTrade Condition
 Spread System . TargetTrade Condition =
-Spread Property = System . Mining
-Spread Property = System . Mining Condition
-Spread Property = System . Mining Condition =
-Spread System . Mining
-Spread System . Mining Condition
-Spread System . Mining Condition =
-Spread Property = System . TargetMining
-Spread Property = System . TargetMining Condition
-Spread Property = System . TargetMining Condition =
-Spread System . TargetMining
-Spread System . TargetMining Condition
-Spread System . TargetMining Condition =
 Spread Property = System . Construction
 Spread Property = System . Construction Condition
 Spread Property = System . Construction Condition =
@@ -5986,18 +5662,6 @@ Spread Property = TargetTrade Condition =
 Spread TargetTrade
 Spread TargetTrade Condition
 Spread TargetTrade Condition =
-Spread Property = Mining
-Spread Property = Mining Condition
-Spread Property = Mining Condition =
-Spread Mining
-Spread Mining Condition
-Spread Mining Condition =
-Spread Property = TargetMining
-Spread Property = TargetMining Condition
-Spread Property = TargetMining Condition =
-Spread TargetMining
-Spread TargetMining Condition
-Spread TargetMining Condition =
 Spread Property = Construction
 Spread Property = Construction Condition
 Spread Property = Construction Condition =
@@ -6209,18 +5873,6 @@ StDev Property = Fleet . TargetTrade Condition =
 StDev Fleet . TargetTrade
 StDev Fleet . TargetTrade Condition
 StDev Fleet . TargetTrade Condition =
-StDev Property = Fleet . Mining
-StDev Property = Fleet . Mining Condition
-StDev Property = Fleet . Mining Condition =
-StDev Fleet . Mining
-StDev Fleet . Mining Condition
-StDev Fleet . Mining Condition =
-StDev Property = Fleet . TargetMining
-StDev Property = Fleet . TargetMining Condition
-StDev Property = Fleet . TargetMining Condition =
-StDev Fleet . TargetMining
-StDev Fleet . TargetMining Condition
-StDev Fleet . TargetMining Condition =
 StDev Property = Fleet . Construction
 StDev Property = Fleet . Construction Condition
 StDev Property = Fleet . Construction Condition =
@@ -6429,18 +6081,6 @@ StDev Property = Planet . TargetTrade Condition =
 StDev Planet . TargetTrade
 StDev Planet . TargetTrade Condition
 StDev Planet . TargetTrade Condition =
-StDev Property = Planet . Mining
-StDev Property = Planet . Mining Condition
-StDev Property = Planet . Mining Condition =
-StDev Planet . Mining
-StDev Planet . Mining Condition
-StDev Planet . Mining Condition =
-StDev Property = Planet . TargetMining
-StDev Property = Planet . TargetMining Condition
-StDev Property = Planet . TargetMining Condition =
-StDev Planet . TargetMining
-StDev Planet . TargetMining Condition
-StDev Planet . TargetMining Condition =
 StDev Property = Planet . Construction
 StDev Property = Planet . Construction Condition
 StDev Property = Planet . Construction Condition =
@@ -6649,18 +6289,6 @@ StDev Property = System . TargetTrade Condition =
 StDev System . TargetTrade
 StDev System . TargetTrade Condition
 StDev System . TargetTrade Condition =
-StDev Property = System . Mining
-StDev Property = System . Mining Condition
-StDev Property = System . Mining Condition =
-StDev System . Mining
-StDev System . Mining Condition
-StDev System . Mining Condition =
-StDev Property = System . TargetMining
-StDev Property = System . TargetMining Condition
-StDev Property = System . TargetMining Condition =
-StDev System . TargetMining
-StDev System . TargetMining Condition
-StDev System . TargetMining Condition =
 StDev Property = System . Construction
 StDev Property = System . Construction Condition
 StDev Property = System . Construction Condition =
@@ -6865,18 +6493,6 @@ StDev Property = TargetTrade Condition =
 StDev TargetTrade
 StDev TargetTrade Condition
 StDev TargetTrade Condition =
-StDev Property = Mining
-StDev Property = Mining Condition
-StDev Property = Mining Condition =
-StDev Mining
-StDev Mining Condition
-StDev Mining Condition =
-StDev Property = TargetMining
-StDev Property = TargetMining Condition
-StDev Property = TargetMining Condition =
-StDev TargetMining
-StDev TargetMining Condition
-StDev TargetMining Condition =
 StDev Property = Construction
 StDev Property = Construction Condition
 StDev Property = Construction Condition =
@@ -7088,18 +6704,6 @@ Product Property = Fleet . TargetTrade Condition =
 Product Fleet . TargetTrade
 Product Fleet . TargetTrade Condition
 Product Fleet . TargetTrade Condition =
-Product Property = Fleet . Mining
-Product Property = Fleet . Mining Condition
-Product Property = Fleet . Mining Condition =
-Product Fleet . Mining
-Product Fleet . Mining Condition
-Product Fleet . Mining Condition =
-Product Property = Fleet . TargetMining
-Product Property = Fleet . TargetMining Condition
-Product Property = Fleet . TargetMining Condition =
-Product Fleet . TargetMining
-Product Fleet . TargetMining Condition
-Product Fleet . TargetMining Condition =
 Product Property = Fleet . Construction
 Product Property = Fleet . Construction Condition
 Product Property = Fleet . Construction Condition =
@@ -7308,18 +6912,6 @@ Product Property = Planet . TargetTrade Condition =
 Product Planet . TargetTrade
 Product Planet . TargetTrade Condition
 Product Planet . TargetTrade Condition =
-Product Property = Planet . Mining
-Product Property = Planet . Mining Condition
-Product Property = Planet . Mining Condition =
-Product Planet . Mining
-Product Planet . Mining Condition
-Product Planet . Mining Condition =
-Product Property = Planet . TargetMining
-Product Property = Planet . TargetMining Condition
-Product Property = Planet . TargetMining Condition =
-Product Planet . TargetMining
-Product Planet . TargetMining Condition
-Product Planet . TargetMining Condition =
 Product Property = Planet . Construction
 Product Property = Planet . Construction Condition
 Product Property = Planet . Construction Condition =
@@ -7528,18 +7120,6 @@ Product Property = System . TargetTrade Condition =
 Product System . TargetTrade
 Product System . TargetTrade Condition
 Product System . TargetTrade Condition =
-Product Property = System . Mining
-Product Property = System . Mining Condition
-Product Property = System . Mining Condition =
-Product System . Mining
-Product System . Mining Condition
-Product System . Mining Condition =
-Product Property = System . TargetMining
-Product Property = System . TargetMining Condition
-Product Property = System . TargetMining Condition =
-Product System . TargetMining
-Product System . TargetMining Condition
-Product System . TargetMining Condition =
 Product Property = System . Construction
 Product Property = System . Construction Condition
 Product Property = System . Construction Condition =
@@ -7744,18 +7324,6 @@ Product Property = TargetTrade Condition =
 Product TargetTrade
 Product TargetTrade Condition
 Product TargetTrade Condition =
-Product Property = Mining
-Product Property = Mining Condition
-Product Property = Mining Condition =
-Product Mining
-Product Mining Condition
-Product Mining Condition =
-Product Property = TargetMining
-Product Property = TargetMining Condition
-Product Property = TargetMining Condition =
-Product TargetMining
-Product TargetMining Condition
-Product TargetMining Condition =
 Product Property = Construction
 Product Property = Construction Condition
 Product Property = Construction Condition =

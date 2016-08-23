@@ -113,12 +113,6 @@ TargetTrade Low = 1 High
 TargetTrade Low = 1 High =
 TargetTrade 1 High
 TargetTrade 1 High =
-TargetMining Low
-TargetMining Low =
-TargetMining Low = 1 High
-TargetMining Low = 1 High =
-TargetMining 1 High
-TargetMining 1 High =
 TargetConstruction Low
 TargetConstruction Low =
 TargetConstruction Low = 1 High
@@ -191,12 +185,6 @@ Trade Low = 1 High
 Trade Low = 1 High =
 Trade 1 High
 Trade 1 High =
-Mining Low
-Mining Low =
-Mining Low = 1 High
-Mining Low = 1 High =
-Mining 1 High
-Mining 1 High =
 Construction Low
 Construction Low =
 Construction Low = 1 High

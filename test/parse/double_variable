@@ -6,8 +6,6 @@ Source.Research
 Source.TargetResearch
 Source.Trade
 Source.TargetTrade
-Source.Mining
-Source.TargetMining
 Source.Construction
 Source.TargetConstruction
 Source.Population
@@ -42,8 +40,6 @@ Target.Research
 Target.TargetResearch
 Target.Trade
 Target.TargetTrade
-Target.Mining
-Target.TargetMining
 Target.Construction
 Target.TargetConstruction
 Target.Population
@@ -78,8 +74,6 @@ Source.System.Research
 Source.System.TargetResearch
 Source.System.Trade
 Source.System.TargetTrade
-Source.System.Mining
-Source.System.TargetMining
 Source.System.Construction
 Source.System.TargetConstruction
 Source.System.Population
@@ -114,8 +108,6 @@ Target.System.Research
 Target.System.TargetResearch
 Target.System.Trade
 Target.System.TargetTrade
-Target.System.Mining
-Target.System.TargetMining
 Target.System.Construction
 Target.System.TargetConstruction
 Target.System.Population
@@ -150,8 +142,6 @@ Source.Planet.Research
 Source.Planet.TargetResearch
 Source.Planet.Trade
 Source.Planet.TargetTrade
-Source.Planet.Mining
-Source.Planet.TargetMining
 Source.Planet.Construction
 Source.Planet.TargetConstruction
 Source.Planet.Population
@@ -186,8 +176,6 @@ Target.Planet.Research
 Target.Planet.TargetResearch
 Target.Planet.Trade
 Target.Planet.TargetTrade
-Target.Planet.Mining
-Target.Planet.TargetMining
 Target.Planet.Construction
 Target.Planet.TargetConstruction
 Target.Planet.Population
@@ -222,8 +210,6 @@ Source.Fleet.Research
 Source.Fleet.TargetResearch
 Source.Fleet.Trade
 Source.Fleet.TargetTrade
-Source.Fleet.Mining
-Source.Fleet.TargetMining
 Source.Fleet.Construction
 Source.Fleet.TargetConstruction
 Source.Fleet.Population
@@ -258,8 +244,6 @@ Target.Fleet.Research
 Target.Fleet.TargetResearch
 Target.Fleet.Trade
 Target.Fleet.TargetTrade
-Target.Fleet.Mining
-Target.Fleet.TargetMining
 Target.Fleet.Construction
 Target.Fleet.TargetConstruction
 Target.Fleet.Population
@@ -294,8 +278,6 @@ LocalCandidate.Research
 LocalCandidate.TargetResearch
 LocalCandidate.Trade
 LocalCandidate.TargetTrade
-LocalCandidate.Mining
-LocalCandidate.TargetMining
 LocalCandidate.Construction
 LocalCandidate.TargetConstruction
 LocalCandidate.Population
@@ -330,8 +312,6 @@ RootCandidate.Research
 RootCandidate.TargetResearch
 RootCandidate.Trade
 RootCandidate.TargetTrade
-RootCandidate.Mining
-RootCandidate.TargetMining
 RootCandidate.Construction
 RootCandidate.TargetConstruction
 RootCandidate.Population
@@ -366,8 +346,6 @@ LocalCandidate.System.Research
 LocalCandidate.System.TargetResearch
 LocalCandidate.System.Trade
 LocalCandidate.System.TargetTrade
-LocalCandidate.System.Mining
-LocalCandidate.System.TargetMining
 LocalCandidate.System.Construction
 LocalCandidate.System.TargetConstruction
 LocalCandidate.System.Population
@@ -402,8 +380,6 @@ RootCandidate.System.Research
 RootCandidate.System.TargetResearch
 RootCandidate.System.Trade
 RootCandidate.System.TargetTrade
-RootCandidate.System.Mining
-RootCandidate.System.TargetMining
 RootCandidate.System.Construction
 RootCandidate.System.TargetConstruction
 RootCandidate.System.Population
@@ -438,8 +414,6 @@ LocalCandidate.Planet.Research
 LocalCandidate.Planet.TargetResearch
 LocalCandidate.Planet.Trade
 LocalCandidate.Planet.TargetTrade
-LocalCandidate.Planet.Mining
-LocalCandidate.Planet.TargetMining
 LocalCandidate.Planet.Construction
 LocalCandidate.Planet.TargetConstruction
 LocalCandidate.Planet.Population
@@ -474,8 +448,6 @@ RootCandidate.Planet.Research
 RootCandidate.Planet.TargetResearch
 RootCandidate.Planet.Trade
 RootCandidate.Planet.TargetTrade
-RootCandidate.Planet.Mining
-RootCandidate.Planet.TargetMining
 RootCandidate.Planet.Construction
 RootCandidate.Planet.TargetConstruction
 RootCandidate.Planet.Population
@@ -510,8 +482,6 @@ LocalCandidate.Fleet.Research
 LocalCandidate.Fleet.TargetResearch
 LocalCandidate.Fleet.Trade
 LocalCandidate.Fleet.TargetTrade
-LocalCandidate.Fleet.Mining
-LocalCandidate.Fleet.TargetMining
 LocalCandidate.Fleet.Construction
 LocalCandidate.Fleet.TargetConstruction
 LocalCandidate.Fleet.Population
@@ -546,8 +516,6 @@ RootCandidate.Fleet.Research
 RootCandidate.Fleet.TargetResearch
 RootCandidate.Fleet.Trade
 RootCandidate.Fleet.TargetTrade
-RootCandidate.Fleet.Mining
-RootCandidate.Fleet.TargetMining
 RootCandidate.Fleet.Construction
 RootCandidate.Fleet.TargetConstruction
 RootCandidate.Fleet.Population

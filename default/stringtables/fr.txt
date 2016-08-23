@@ -4558,13 +4558,6 @@ Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à cro�
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
-MINING_FOCUS_TITLE
-Focus Extraction minière
-
-# Périmé: Le Focus Extraction Minière n'est possible que sur les planètes présentant certaines Particularités rares. Privilégier l'extraction minière procure un bonus de production significatif.
-MINING_FOCUS_TEXT
-Option pour le moment désactivée.
-
 TRADE_FOCUS_TITLE
 Focus Commerce
 
@@ -7370,14 +7363,6 @@ FOCUS_INDUSTRY
 Industrie
 
 # Focus types
-FOCUS_MINING
-Extraction Minière
-
-# Focus types
-FOCUS_HEAVY_MINING
-Extraction Minière Intensive
-
-# Focus types
 FOCUS_RESEARCH
 Recherche
 
@@ -7454,10 +7439,6 @@ METER_TARGET_TRADE
 Commerce Local
 
 # Meter types
-METER_TARGET_MINING
-Extraction Locale
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Infrastructure Locale
 
@@ -7524,10 +7505,6 @@ Recherche
 # Meter types
 METER_TRADE
 Commerce
-
-# Meter types
-METER_MINING
-Extraction minière
 
 # Meter types
 METER_CONSTRUCTION  # translated
@@ -7924,9 +7901,6 @@ une variable libre
 #DESC_VAR_TARGETTRADE
 #[[METER_TARGET_TRADE]]
 
-#DESC_VAR_TARGETMINING
-#[[METER_TARGET_MINING]]
-
 #DESC_VAR_TARGETCONSTRUCTION
 #[[METER_TARGET_CONSTRUCTION]]
 
@@ -7965,9 +7939,6 @@ une variable libre
 
 #DESC_VAR_TRADE
 #[[METER_TRADE]]
-
-#DESC_VAR_MINING
-#[[METER_MINING]]
 
 #DESC_VAR_CONSTRUCTION
 #[[METER_CONSTRUCTION]]
@@ -9783,9 +9754,6 @@ Débloque une structure
 RESEARCH_SHORT_DESC
 Améliore la Recherche
 
-MINING_SHORT_DESC
-Améliore l'Extraction Minière
-
 INDUSTRY_SHORT_DESC
 Améliore l'Industrie
 
@@ -10026,12 +9994,6 @@ Il est difficile de soumettre un individu conscient à un contrôle mental total
 
 MIND_CONTROL_SHORT_DESC
 Permet le Contrôle de l'Esprit
-
-PRO_HEAVY_MINING_I
-Processeur d'Extraction Intensive
-
-PRO_HEAVY_MINING_I_DESC
-Lorsque l'augmentation de production minière devient la seule priorité, plus aucune considération n'existe concernant les impacts sur l'environnement, et  si l'environnement lui-même est propice à une telle exploitation, les activités d'extraction intensive partiellement automatisées peuvent être optimisées. Les processeurs d'extraction intensive sont cependant coûteux et s'avèrent pleinement exploitables uniquement dans les mondes privilégiant l'extraction minière.
 
 PRO_SOL_ORB_GEN
 Génération Orbitale Solaire
@@ -10745,14 +10707,6 @@ Centre Industriel Suprême
 
 PRO_INDUSTRY_CENTER_III_DESC
 Des expérimentations ingénieuses conjuguées au perfectionnement des infrastructures augmentent le rendement d'une production de qualité. Le bonus pour l'[[encyclopedia INDUSTRY_TITLE]] sera le triple de celui fourni par un [[buildingtype BLD_INDUSTRY_CENTER]] de base.
-
-PRO_ENVIRO_MINING
-Extraction Minière Éco-Responsable
-
-PRO_ENVIRO_MINING_DESC
-'''De nombreuses méthodes d'extraction minière sont incompatibles avec les planètes à forte population, en raison des dommages environnementaux. Porter une attention permanente sur l'[[tech GRO_PLANET_ECOL]] est nécessaire pour permettre l'utilisation de méthodes risquées sans en subir les inconvénients.
-
-Réduit de moitié les pénalités de Population sur les planètes avec un Focus Extraction Minière Intensive.'''
 
 
 ##
@@ -12924,30 +12878,6 @@ BAD_POPULATION_LABEL
 # %2% FIXME
 GOOD_POPULATION_LABEL
 %2% Grande population 125%%
-
-# %1% FIXME
-FOCUS_MINING_LABEL
-%1% Focus Extraction
-
-# %1% FIXME
-FOCUS_HEAVY_MINING_LABEL
-%1% Focus Extraction intensive
-
-# %1% FIXME
-BAD_MINING_LABEL
-%1% Mauvais en Extraction
-
-# %1% FIXME
-GOOD_MINING_LABEL
-%1% Bon en Extraction
-
-# %1% FIXME
-GREAT_MINING_LABEL
-%1% Excellent en Extraction
-
-# %1% FIXME
-ULTIMATE_MINING_LABEL
-%1% Parfait en Extraction
 
 # %1% FIXME
 # %2% FIXME

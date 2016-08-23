@@ -1933,10 +1933,6 @@ FOCUS_INDUSTRY
 teollisuus
 
 # Focus types
-FOCUS_MINING
-kaivosteollisuus
-
-# Focus types
 FOCUS_RESEARCH
 tutkimus
 
@@ -1963,10 +1959,6 @@ Tavoite tutkimus
 # Meter types
 METER_TARGET_TRADE
 Tavoite vaihdanta
-
-# Meter types
-METER_TARGET_MINING
-Tavoite kaivosteollisuus
 
 # Meter types
 METER_TARGET_CONSTRUCTION
@@ -2007,10 +1999,6 @@ Tutkimus
 # Meter types
 METER_TRADE
 Vaihdanta
-
-# Meter types
-METER_MINING
-Kaivosteollisuus
 
 # Meter types
 METER_CONSTRUCTION
@@ -2574,9 +2562,6 @@ Avaa rakennuksen
 
 RESEARCH_SHORT_DESC
 Parantaa tutkimusta
-
-MINING_SHORT_DESC
-Parantaa kaivosteollisuutta
 
 INDUSTRY_SHORT_DESC
 Parantaa teollisuutta

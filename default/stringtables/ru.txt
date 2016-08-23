@@ -2971,13 +2971,6 @@ GROWTH_FOCUS_TITLE
 GROWTH_FOCUS_TEXT
 Рост населения достигается за счет освоения и экспорта редких материалов и веществ, что привлекает мигрантов. Доступен только в определенных ситуациях: на некоторых родных планетах, и на планетах с артефактами, способствующими росту населения. Планеты, которые ориентированы на рост населения, увеличивают максимальное население только на других планетах, соединённых с ними [[encyclopedia SUPPLY_TITLE]]. Родные планеты, ориентированные на рост населения, только помогают другим планетам, также ориентированным на рост населения. Планета с артефактами, способствующими росту населения и сфокусированные на нём, помогает только соответствующему типу населения, например, некоторые помогают только росту органических видов жизни.
 
-MINING_FOCUS_TITLE
-Цель: добыча
-
-# Old: The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
-MINING_FOCUS_TEXT
-Цель:добыча сейчас ОТКЛ.
-
 TRADE_FOCUS_TITLE
 Цель: торговля
 
@@ -4528,14 +4521,6 @@ FOCUS_INDUSTRY
 индустрия
 
 # Focus types
-FOCUS_MINING
-добыча
-
-# Focus types
-FOCUS_HEAVY_MINING
-Тяжелая добыча
-
-# Focus types
 FOCUS_RESEARCH
 исследования
 
@@ -4603,10 +4588,6 @@ METER_TARGET_TRADE
 Цель: торговля
 
 # Meter types
-METER_TARGET_MINING
-Цель: добыча
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Цель: строительство
 
@@ -4661,10 +4642,6 @@ METER_RESEARCH
 # Meter types
 METER_TRADE
 Торговля
-
-# Meter types
-METER_MINING
-Добыча
 
 # Meter types
 METER_CONSTRUCTION
@@ -6286,9 +6263,6 @@ BUILDING_UNLOCK_SHORT_DESC
 
 RESEARCH_SHORT_DESC
 Улучшает науку
-
-MINING_SHORT_DESC
-Улучшает добычу
 
 INDUSTRY_SHORT_DESC
 Улучшает производство
@@ -7992,30 +7966,6 @@ BAD_POPULATION_LABEL
 # %2% FIXME
 GOOD_POPULATION_LABEL
 %1% Большое население
-
-# %1% FIXME
-FOCUS_MINING_LABEL
-%1% Цель - добыча
-
-# %1% FIXME
-FOCUS_HEAVY_MINING_LABEL
-%1% Цель - тяжелая добыча
-
-# %1% FIXME
-BAD_MINING_LABEL
-%1% Плохая добыча
-
-# %1% FIXME
-GOOD_MINING_LABEL
-%1% Хорошая добыча
-
-# %1% FIXME
-GREAT_MINING_LABEL
-%1% Превосходная добыча
-
-# %1% FIXME
-ULTIMATE_MINING_LABEL
-%1% Беспрецедентная добыча
 
 # %1% FIXME
 # %2% FIXME

@@ -4296,14 +4296,6 @@ FOCUS_INDUSTRY
 Industrie
 
 # Focus types
-FOCUS_MINING
-Bergbau
-
-# Focus types
-FOCUS_HEAVY_MINING
-Massenbergbau
-
-# Focus types
 FOCUS_RESEARCH
 Forschung
 
@@ -4371,10 +4363,6 @@ METER_TARGET_TRADE
 Ziel Handel
 
 # Meter types
-METER_TARGET_MINING
-Ziel Bergbau
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Ziel Infrastruktur
 
@@ -4433,10 +4421,6 @@ Forschung
 # Meter types
 METER_TRADE
 Handel
-
-# Meter types
-METER_MINING
-Bergbau
 
 # Meter types
 METER_CONSTRUCTION
@@ -4704,9 +4688,6 @@ Sternenklasse
 #DESC_VAR_TARGETTRADE
 #[[METER_TARGET_TRADE]]
 
-#DESC_VAR_TARGETMINING
-#[[METER_TARGET_MINING]]
-
 #DESC_VAR_TARGETCONSTRUCTION
 #[[METER_TARGET_CONSTRUCTION]]
 
@@ -4745,9 +4726,6 @@ Sternenklasse
 
 #DESC_VAR_TRADE
 #[[METER_TRADE]]
-
-#DESC_VAR_MINING
-#[[METER_MINING]]
 
 #DESC_VAR_CONSTRUCTION
 #[[METER_CONSTRUCTION]]
@@ -5825,9 +5803,6 @@ Schaltet Gebäude frei
 RESEARCH_SHORT_DESC
 Verbessert Forschung
 
-MINING_SHORT_DESC
-Verbessert Bergbau
-
 INDUSTRY_SHORT_DESC
 Verbessert Industrie
 
@@ -5964,12 +5939,6 @@ Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bev
 
 LRN_ART_BLACK_HOLE
 Künstliches schwarzes Loch
-
-PRO_HEAVY_MINING_I
-Teilautomatisierter Massenbergbau
-
-PRO_HEAVY_MINING_I_DESC
-Wenn die Rohstoffproduktion im Vordergrund steht, keine Umweltbedenken bestehen und die Umgebung es erlaubt, kann teilautomatisierter Massenbergbau das Mittel der Wahl sein. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population somewhat.
 
 PRO_INDUSTRY_CENTER_I
 Industriezentren
@@ -6335,14 +6304,6 @@ Hochentwickeltes Industriezentrum
 
 PRO_INDUSTRY_CENTER_III_DESC
 Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Industrial Centers.
-
-PRO_ENVIRO_MINING
-Umweltbewusster Bergbau
-
-PRO_ENVIRO_MINING_DESC
-'''Viele Bergbautechniken können auf stark bevölkerten Planeten wegen des Schadens, den sie der Umwelt zufügen, nicht eingesetzt werden.  Durch die Beachtung der planetaren Ökologie und Begrenzung des Bergbaus können Schäden an der Umwelt vermieden werden.
-
-Halbiert die Bevökerungssanktionen auf Planeten mit einem Fokus auf Massenbergbau.'''
 
 
 ##
@@ -6951,30 +6912,6 @@ BAD_POPULATION_LABEL
 # %2% FIXME
 GOOD_POPULATION_LABEL
 %2% Gute Bevölkerung 125%%
-
-# %1% FIXME
-FOCUS_MINING_LABEL
-%1% Bergbau Fokus
-
-# %1% FIXME
-FOCUS_HEAVY_MINING_LABEL
-%1% Massenbergbau Fokus
-
-# %1% FIXME
-BAD_MINING_LABEL
-%1% Schlechter Bergbau
-
-# %1% FIXME
-GOOD_MINING_LABEL
-%1% Guter Bergbau
-
-# %1% FIXME
-GREAT_MINING_LABEL
-%1% Bester Bergbau
-
-# %1% FIXME
-ULTIMATE_MINING_LABEL
-%1% Top Bergbau
 
 # %1% FIXME
 # %2% FIXME
