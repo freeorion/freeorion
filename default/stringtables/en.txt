@@ -1,4 +1,4 @@
-﻿English
+English
 
 # This is the English String Table file for FreeOrion
 #
