@@ -7219,6 +7219,10 @@ OBJ_FIGHTER
 Fighter
 
 # Star types
+INVALID_STAR_TYPE
+Unknown star type
+
+# Star types
 STAR_BLUE
 Blue
 
@@ -7250,9 +7254,9 @@ Black Hole
 STAR_NONE
 No star
 
-# Star types
-INVALID_STAR_TYPE
-Unknown star type
+# Planet types
+INVALID_PLANET_TYPE
+Unknown planet type
 
 # Planet types
 PT_SWAMP
@@ -7299,6 +7303,10 @@ PT_GASGIANT
 Gas Giant
 
 # Planet sizes
+INVALID_PLANET_SIZE
+Undeterminable planet size
+
+# Planet sizes
 SZ_NOWORLD
 Nothing to see here; move along.
 
@@ -7329,6 +7337,10 @@ Asteroids
 # Planet sizes
 SZ_GASGIANT
 Gas Giant
+
+# Planet environments
+INVALID_PLANET_ENVIRONMENT
+Unknown planetary environment
 
 # Planet environments
 PE_UNINHABITABLE
@@ -7673,6 +7685,10 @@ ST_TRADE
 trade
 
 # Resource types
+INVALID_RESOURCE_TYPE
+invalid resource type
+
+# Resource types
 RE_FOOD
 food
 
@@ -7706,6 +7722,10 @@ Core Slot
 
 SL_TOOLTIP_DESC
 Empty
+
+# Ship part classes
+INVALID_SHIP_PART_CLASS
+invalid ship part class
 
 # Ship part classes
 PC_DIRECT_WEAPON
@@ -7774,6 +7794,10 @@ Trade
 # Ship part classes
 PC_PRODICTION_LOCATION
 Production
+
+# Visibility levels
+INVALID_VISIBILITY
+invalid visibility
 
 # Visibility levels
 VIS_NO_VISIBILITY
