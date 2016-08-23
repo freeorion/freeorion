@@ -60,6 +60,7 @@ public:
 
     virtual bool            Contains(int object_id) const;                                  ///< returns true if object with id \a object_id is in this System
     virtual bool            ContainedBy(int object_id) const{ return false; }               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
+    const std::vector<int>& PlanetIDsByOrbit() const { return m_orbits; }                   ///< returns planets ids in this system, indexed by orbit
 
     int                     PlanetInOrbit(int orbit) const;             ///< returns the ID of the planet in the specified \a orbit, or INVALID_OBJECT_ID if there is no planet in that orbit or it is an invalid orbit
     int                     OrbitOfPlanet(int object_id) const;         ///< returns the orbit ID in which the planet with \a object_id is located, or -1 the specified ID is not a planet in an orbit of this system
