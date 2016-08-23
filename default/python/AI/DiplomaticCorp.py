@@ -84,7 +84,7 @@ class DiplomaticCorp(object):
             fo.aggression.maniacal:
                 UserStringList("AI_FIRST_TURN_GREETING_LIST_MANIACAL"),
         }
-        greets = greet_lists.get(foAI.foAI.foAIstate.aggression, UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER"))
+        greets = greet_lists.get(foAI.foAIstate.aggression, UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER"))
         # no such entry
         if len(greets) == 1 and greets[0] == 'ERROR: %s' % key:
             greets = UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER")
