@@ -965,11 +965,6 @@ void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
     TextLinker::LClick_(pt, mod_keys);
 }
 
-void CUILinkTextMultiEdit::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    CUIMultiEdit::LDoubleClick(pt, mod_keys);
-    TextLinker::LDoubleClick_(pt, mod_keys);
-}
-
 void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     GG::MenuItem menu_contents;

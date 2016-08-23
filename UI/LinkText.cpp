@@ -109,9 +109,6 @@ const std::string& LinkText::RawText() const
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TextLinker::LClick_(pt, mod_keys); }
 
-void LinkText::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ TextLinker::LDoubleClick_(pt, mod_keys); }
-
 void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     GG::MenuItem menu_contents;
@@ -212,6 +209,7 @@ const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
 const std::string TextLinker::GRAPH_TAG("graph");
 
 TextLinker::TextLinker() :
+    m_links(),
     m_rollover_link(-1)
 {
     RegisterLinkTags();
