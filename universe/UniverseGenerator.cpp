@@ -869,7 +869,7 @@ void SetNativePopulationValues(ObjectMap& object_map) {
         // only applies to unowned planets
         if (meter && targetmax_meter && it->Unowned()) {
             double r = RandZeroToOne();
-            double factor = (0.1<r)?r:0.1;
+            double factor = (0.1 < r) ? r : 0.1;
             meter->SetCurrent(targetmax_meter->Current() * factor);
         }
     }

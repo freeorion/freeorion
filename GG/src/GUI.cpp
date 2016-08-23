@@ -497,7 +497,8 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
         if (m_double_click_time > 0 && m_double_click_wnd == click_wnd &&
             // this is second click over a window that just received an click
             // within the time limit, so it's a double-click, not a click
-            m_double_click_button == mouse_button) {
+            m_double_click_button == mouse_button)
+        {
             m_double_click_wnd = 0;
             m_double_click_start_time = -1;
             m_double_click_time = -1;

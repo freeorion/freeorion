@@ -384,7 +384,7 @@ void SitRepPanel::DoLayout() {
 }
 
 void SitRepPanel::KeyPress(GG::Key key, boost::uint32_t key_code_point,
-                            GG::Flags<GG::ModKey> mod_keys)
+                           GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_RETURN:
