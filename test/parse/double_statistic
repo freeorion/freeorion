@@ -1,14 +1,6 @@
 Number  Condition = All
 Number  All
 
-Sum  Property = Fleet.Farming  Condition = All
-Sum  Property = Fleet.Farming  All
-Sum  Fleet.Farming  Condition = All
-Sum  Fleet.Farming  All
-Sum  Property = Fleet.TargetFarming  Condition = All
-Sum  Property = Fleet.TargetFarming  All
-Sum  Fleet.TargetFarming  Condition = All
-Sum  Fleet.TargetFarming  All
 Sum  Property = Fleet.Industry  Condition = All
 Sum  Property = Fleet.Industry  All
 Sum  Fleet.Industry  Condition = All
@@ -137,14 +129,6 @@ Sum  Property = Fleet.DistanceToSource  Condition = All
 Sum  Property = Fleet.DistanceToSource  All
 Sum  Fleet.DistanceToSource  Condition = All
 Sum  Fleet.DistanceToSource  All
-Sum  Property = Planet.Farming  Condition = All
-Sum  Property = Planet.Farming  All
-Sum  Planet.Farming  Condition = All
-Sum  Planet.Farming  All
-Sum  Property = Planet.TargetFarming  Condition = All
-Sum  Property = Planet.TargetFarming  All
-Sum  Planet.TargetFarming  Condition = All
-Sum  Planet.TargetFarming  All
 Sum  Property = Planet.Industry  Condition = All
 Sum  Property = Planet.Industry  All
 Sum  Planet.Industry  Condition = All
@@ -273,14 +257,6 @@ Sum  Property = Planet.DistanceToSource  Condition = All
 Sum  Property = Planet.DistanceToSource  All
 Sum  Planet.DistanceToSource  Condition = All
 Sum  Planet.DistanceToSource  All
-Sum  Property = System.Farming  Condition = All
-Sum  Property = System.Farming  All
-Sum  System.Farming  Condition = All
-Sum  System.Farming  All
-Sum  Property = System.TargetFarming  Condition = All
-Sum  Property = System.TargetFarming  All
-Sum  System.TargetFarming  Condition = All
-Sum  System.TargetFarming  All
 Sum  Property = System.Industry  Condition = All
 Sum  Property = System.Industry  All
 Sum  System.Industry  Condition = All
@@ -409,14 +385,6 @@ Sum  Property = System.DistanceToSource  Condition = All
 Sum  Property = System.DistanceToSource  All
 Sum  System.DistanceToSource  Condition = All
 Sum  System.DistanceToSource  All
-Sum  Property = Farming  Condition = All
-Sum  Property = Farming  All
-Sum  Farming  Condition = All
-Sum  Farming  All
-Sum  Property = TargetFarming  Condition = All
-Sum  Property = TargetFarming  All
-Sum  TargetFarming  Condition = All
-Sum  TargetFarming  All
 Sum  Property = Industry  Condition = All
 Sum  Property = Industry  All
 Sum  Industry  Condition = All
@@ -546,14 +514,6 @@ Sum  Property = DistanceToSource  All
 Sum  DistanceToSource  Condition = All
 Sum  DistanceToSource  All
 
-Mean  Property = Fleet.Farming  Condition = All
-Mean  Property = Fleet.Farming  All
-Mean  Fleet.Farming  Condition = All
-Mean  Fleet.Farming  All
-Mean  Property = Fleet.TargetFarming  Condition = All
-Mean  Property = Fleet.TargetFarming  All
-Mean  Fleet.TargetFarming  Condition = All
-Mean  Fleet.TargetFarming  All
 Mean  Property = Fleet.Industry  Condition = All
 Mean  Property = Fleet.Industry  All
 Mean  Fleet.Industry  Condition = All
@@ -682,14 +642,6 @@ Mean  Property = Fleet.DistanceToSource  Condition = All
 Mean  Property = Fleet.DistanceToSource  All
 Mean  Fleet.DistanceToSource  Condition = All
 Mean  Fleet.DistanceToSource  All
-Mean  Property = Planet.Farming  Condition = All
-Mean  Property = Planet.Farming  All
-Mean  Planet.Farming  Condition = All
-Mean  Planet.Farming  All
-Mean  Property = Planet.TargetFarming  Condition = All
-Mean  Property = Planet.TargetFarming  All
-Mean  Planet.TargetFarming  Condition = All
-Mean  Planet.TargetFarming  All
 Mean  Property = Planet.Industry  Condition = All
 Mean  Property = Planet.Industry  All
 Mean  Planet.Industry  Condition = All
@@ -818,14 +770,6 @@ Mean  Property = Planet.DistanceToSource  Condition = All
 Mean  Property = Planet.DistanceToSource  All
 Mean  Planet.DistanceToSource  Condition = All
 Mean  Planet.DistanceToSource  All
-Mean  Property = System.Farming  Condition = All
-Mean  Property = System.Farming  All
-Mean  System.Farming  Condition = All
-Mean  System.Farming  All
-Mean  Property = System.TargetFarming  Condition = All
-Mean  Property = System.TargetFarming  All
-Mean  System.TargetFarming  Condition = All
-Mean  System.TargetFarming  All
 Mean  Property = System.Industry  Condition = All
 Mean  Property = System.Industry  All
 Mean  System.Industry  Condition = All
@@ -954,14 +898,6 @@ Mean  Property = System.DistanceToSource  Condition = All
 Mean  Property = System.DistanceToSource  All
 Mean  System.DistanceToSource  Condition = All
 Mean  System.DistanceToSource  All
-Mean  Property = Farming  Condition = All
-Mean  Property = Farming  All
-Mean  Farming  Condition = All
-Mean  Farming  All
-Mean  Property = TargetFarming  Condition = All
-Mean  Property = TargetFarming  All
-Mean  TargetFarming  Condition = All
-Mean  TargetFarming  All
 Mean  Property = Industry  Condition = All
 Mean  Property = Industry  All
 Mean  Industry  Condition = All
@@ -1091,14 +1027,6 @@ Mean  Property = DistanceToSource  All
 Mean  DistanceToSource  Condition = All
 Mean  DistanceToSource  All
 
-RMS  Property = Fleet.Farming  Condition = All
-RMS  Property = Fleet.Farming  All
-RMS  Fleet.Farming  Condition = All
-RMS  Fleet.Farming  All
-RMS  Property = Fleet.TargetFarming  Condition = All
-RMS  Property = Fleet.TargetFarming  All
-RMS  Fleet.TargetFarming  Condition = All
-RMS  Fleet.TargetFarming  All
 RMS  Property = Fleet.Industry  Condition = All
 RMS  Property = Fleet.Industry  All
 RMS  Fleet.Industry  Condition = All
@@ -1227,14 +1155,6 @@ RMS  Property = Fleet.DistanceToSource  Condition = All
 RMS  Property = Fleet.DistanceToSource  All
 RMS  Fleet.DistanceToSource  Condition = All
 RMS  Fleet.DistanceToSource  All
-RMS  Property = Planet.Farming  Condition = All
-RMS  Property = Planet.Farming  All
-RMS  Planet.Farming  Condition = All
-RMS  Planet.Farming  All
-RMS  Property = Planet.TargetFarming  Condition = All
-RMS  Property = Planet.TargetFarming  All
-RMS  Planet.TargetFarming  Condition = All
-RMS  Planet.TargetFarming  All
 RMS  Property = Planet.Industry  Condition = All
 RMS  Property = Planet.Industry  All
 RMS  Planet.Industry  Condition = All
@@ -1363,14 +1283,6 @@ RMS  Property = Planet.DistanceToSource  Condition = All
 RMS  Property = Planet.DistanceToSource  All
 RMS  Planet.DistanceToSource  Condition = All
 RMS  Planet.DistanceToSource  All
-RMS  Property = System.Farming  Condition = All
-RMS  Property = System.Farming  All
-RMS  System.Farming  Condition = All
-RMS  System.Farming  All
-RMS  Property = System.TargetFarming  Condition = All
-RMS  Property = System.TargetFarming  All
-RMS  System.TargetFarming  Condition = All
-RMS  System.TargetFarming  All
 RMS  Property = System.Industry  Condition = All
 RMS  Property = System.Industry  All
 RMS  System.Industry  Condition = All
@@ -1499,14 +1411,6 @@ RMS  Property = System.DistanceToSource  Condition = All
 RMS  Property = System.DistanceToSource  All
 RMS  System.DistanceToSource  Condition = All
 RMS  System.DistanceToSource  All
-RMS  Property = Farming  Condition = All
-RMS  Property = Farming  All
-RMS  Farming  Condition = All
-RMS  Farming  All
-RMS  Property = TargetFarming  Condition = All
-RMS  Property = TargetFarming  All
-RMS  TargetFarming  Condition = All
-RMS  TargetFarming  All
 RMS  Property = Industry  Condition = All
 RMS  Property = Industry  All
 RMS  Industry  Condition = All
@@ -1636,14 +1540,6 @@ RMS  Property = DistanceToSource  All
 RMS  DistanceToSource  Condition = All
 RMS  DistanceToSource  All
 
-Mode  Property = Fleet.Farming  Condition = All
-Mode  Property = Fleet.Farming  All
-Mode  Fleet.Farming  Condition = All
-Mode  Fleet.Farming  All
-Mode  Property = Fleet.TargetFarming  Condition = All
-Mode  Property = Fleet.TargetFarming  All
-Mode  Fleet.TargetFarming  Condition = All
-Mode  Fleet.TargetFarming  All
 Mode  Property = Fleet.Industry  Condition = All
 Mode  Property = Fleet.Industry  All
 Mode  Fleet.Industry  Condition = All
@@ -1772,14 +1668,6 @@ Mode  Property = Fleet.DistanceToSource  Condition = All
 Mode  Property = Fleet.DistanceToSource  All
 Mode  Fleet.DistanceToSource  Condition = All
 Mode  Fleet.DistanceToSource  All
-Mode  Property = Planet.Farming  Condition = All
-Mode  Property = Planet.Farming  All
-Mode  Planet.Farming  Condition = All
-Mode  Planet.Farming  All
-Mode  Property = Planet.TargetFarming  Condition = All
-Mode  Property = Planet.TargetFarming  All
-Mode  Planet.TargetFarming  Condition = All
-Mode  Planet.TargetFarming  All
 Mode  Property = Planet.Industry  Condition = All
 Mode  Property = Planet.Industry  All
 Mode  Planet.Industry  Condition = All
@@ -1908,14 +1796,6 @@ Mode  Property = Planet.DistanceToSource  Condition = All
 Mode  Property = Planet.DistanceToSource  All
 Mode  Planet.DistanceToSource  Condition = All
 Mode  Planet.DistanceToSource  All
-Mode  Property = System.Farming  Condition = All
-Mode  Property = System.Farming  All
-Mode  System.Farming  Condition = All
-Mode  System.Farming  All
-Mode  Property = System.TargetFarming  Condition = All
-Mode  Property = System.TargetFarming  All
-Mode  System.TargetFarming  Condition = All
-Mode  System.TargetFarming  All
 Mode  Property = System.Industry  Condition = All
 Mode  Property = System.Industry  All
 Mode  System.Industry  Condition = All
@@ -2044,14 +1924,6 @@ Mode  Property = System.DistanceToSource  Condition = All
 Mode  Property = System.DistanceToSource  All
 Mode  System.DistanceToSource  Condition = All
 Mode  System.DistanceToSource  All
-Mode  Property = Farming  Condition = All
-Mode  Property = Farming  All
-Mode  Farming  Condition = All
-Mode  Farming  All
-Mode  Property = TargetFarming  Condition = All
-Mode  Property = TargetFarming  All
-Mode  TargetFarming  Condition = All
-Mode  TargetFarming  All
 Mode  Property = Industry  Condition = All
 Mode  Property = Industry  All
 Mode  Industry  Condition = All
@@ -2181,14 +2053,6 @@ Mode  Property = DistanceToSource  All
 Mode  DistanceToSource  Condition = All
 Mode  DistanceToSource  All
 
-Max  Property = Fleet.Farming  Condition = All
-Max  Property = Fleet.Farming  All
-Max  Fleet.Farming  Condition = All
-Max  Fleet.Farming  All
-Max  Property = Fleet.TargetFarming  Condition = All
-Max  Property = Fleet.TargetFarming  All
-Max  Fleet.TargetFarming  Condition = All
-Max  Fleet.TargetFarming  All
 Max  Property = Fleet.Industry  Condition = All
 Max  Property = Fleet.Industry  All
 Max  Fleet.Industry  Condition = All
@@ -2317,14 +2181,6 @@ Max  Property = Fleet.DistanceToSource  Condition = All
 Max  Property = Fleet.DistanceToSource  All
 Max  Fleet.DistanceToSource  Condition = All
 Max  Fleet.DistanceToSource  All
-Max  Property = Planet.Farming  Condition = All
-Max  Property = Planet.Farming  All
-Max  Planet.Farming  Condition = All
-Max  Planet.Farming  All
-Max  Property = Planet.TargetFarming  Condition = All
-Max  Property = Planet.TargetFarming  All
-Max  Planet.TargetFarming  Condition = All
-Max  Planet.TargetFarming  All
 Max  Property = Planet.Industry  Condition = All
 Max  Property = Planet.Industry  All
 Max  Planet.Industry  Condition = All
@@ -2453,14 +2309,6 @@ Max  Property = Planet.DistanceToSource  Condition = All
 Max  Property = Planet.DistanceToSource  All
 Max  Planet.DistanceToSource  Condition = All
 Max  Planet.DistanceToSource  All
-Max  Property = System.Farming  Condition = All
-Max  Property = System.Farming  All
-Max  System.Farming  Condition = All
-Max  System.Farming  All
-Max  Property = System.TargetFarming  Condition = All
-Max  Property = System.TargetFarming  All
-Max  System.TargetFarming  Condition = All
-Max  System.TargetFarming  All
 Max  Property = System.Industry  Condition = All
 Max  Property = System.Industry  All
 Max  System.Industry  Condition = All
@@ -2589,14 +2437,6 @@ Max  Property = System.DistanceToSource  Condition = All
 Max  Property = System.DistanceToSource  All
 Max  System.DistanceToSource  Condition = All
 Max  System.DistanceToSource  All
-Max  Property = Farming  Condition = All
-Max  Property = Farming  All
-Max  Farming  Condition = All
-Max  Farming  All
-Max  Property = TargetFarming  Condition = All
-Max  Property = TargetFarming  All
-Max  TargetFarming  Condition = All
-Max  TargetFarming  All
 Max  Property = Industry  Condition = All
 Max  Property = Industry  All
 Max  Industry  Condition = All
@@ -2726,14 +2566,6 @@ Max  Property = DistanceToSource  All
 Max  DistanceToSource  Condition = All
 Max  DistanceToSource  All
 
-Min  Property = Fleet.Farming  Condition = All
-Min  Property = Fleet.Farming  All
-Min  Fleet.Farming  Condition = All
-Min  Fleet.Farming  All
-Min  Property = Fleet.TargetFarming  Condition = All
-Min  Property = Fleet.TargetFarming  All
-Min  Fleet.TargetFarming  Condition = All
-Min  Fleet.TargetFarming  All
 Min  Property = Fleet.Industry  Condition = All
 Min  Property = Fleet.Industry  All
 Min  Fleet.Industry  Condition = All
@@ -2862,14 +2694,6 @@ Min  Property = Fleet.DistanceToSource  Condition = All
 Min  Property = Fleet.DistanceToSource  All
 Min  Fleet.DistanceToSource  Condition = All
 Min  Fleet.DistanceToSource  All
-Min  Property = Planet.Farming  Condition = All
-Min  Property = Planet.Farming  All
-Min  Planet.Farming  Condition = All
-Min  Planet.Farming  All
-Min  Property = Planet.TargetFarming  Condition = All
-Min  Property = Planet.TargetFarming  All
-Min  Planet.TargetFarming  Condition = All
-Min  Planet.TargetFarming  All
 Min  Property = Planet.Industry  Condition = All
 Min  Property = Planet.Industry  All
 Min  Planet.Industry  Condition = All
@@ -2998,14 +2822,6 @@ Min  Property = Planet.DistanceToSource  Condition = All
 Min  Property = Planet.DistanceToSource  All
 Min  Planet.DistanceToSource  Condition = All
 Min  Planet.DistanceToSource  All
-Min  Property = System.Farming  Condition = All
-Min  Property = System.Farming  All
-Min  System.Farming  Condition = All
-Min  System.Farming  All
-Min  Property = System.TargetFarming  Condition = All
-Min  Property = System.TargetFarming  All
-Min  System.TargetFarming  Condition = All
-Min  System.TargetFarming  All
 Min  Property = System.Industry  Condition = All
 Min  Property = System.Industry  All
 Min  System.Industry  Condition = All
@@ -3134,14 +2950,6 @@ Min  Property = System.DistanceToSource  Condition = All
 Min  Property = System.DistanceToSource  All
 Min  System.DistanceToSource  Condition = All
 Min  System.DistanceToSource  All
-Min  Property = Farming  Condition = All
-Min  Property = Farming  All
-Min  Farming  Condition = All
-Min  Farming  All
-Min  Property = TargetFarming  Condition = All
-Min  Property = TargetFarming  All
-Min  TargetFarming  Condition = All
-Min  TargetFarming  All
 Min  Property = Industry  Condition = All
 Min  Property = Industry  All
 Min  Industry  Condition = All
@@ -3271,14 +3079,6 @@ Min  Property = DistanceToSource  All
 Min  DistanceToSource  Condition = All
 Min  DistanceToSource  All
 
-Spread  Property = Fleet.Farming  Condition = All
-Spread  Property = Fleet.Farming  All
-Spread  Fleet.Farming  Condition = All
-Spread  Fleet.Farming  All
-Spread  Property = Fleet.TargetFarming  Condition = All
-Spread  Property = Fleet.TargetFarming  All
-Spread  Fleet.TargetFarming  Condition = All
-Spread  Fleet.TargetFarming  All
 Spread  Property = Fleet.Industry  Condition = All
 Spread  Property = Fleet.Industry  All
 Spread  Fleet.Industry  Condition = All
@@ -3407,14 +3207,6 @@ Spread  Property = Fleet.DistanceToSource  Condition = All
 Spread  Property = Fleet.DistanceToSource  All
 Spread  Fleet.DistanceToSource  Condition = All
 Spread  Fleet.DistanceToSource  All
-Spread  Property = Planet.Farming  Condition = All
-Spread  Property = Planet.Farming  All
-Spread  Planet.Farming  Condition = All
-Spread  Planet.Farming  All
-Spread  Property = Planet.TargetFarming  Condition = All
-Spread  Property = Planet.TargetFarming  All
-Spread  Planet.TargetFarming  Condition = All
-Spread  Planet.TargetFarming  All
 Spread  Property = Planet.Industry  Condition = All
 Spread  Property = Planet.Industry  All
 Spread  Planet.Industry  Condition = All
@@ -3543,14 +3335,6 @@ Spread  Property = Planet.DistanceToSource  Condition = All
 Spread  Property = Planet.DistanceToSource  All
 Spread  Planet.DistanceToSource  Condition = All
 Spread  Planet.DistanceToSource  All
-Spread  Property = System.Farming  Condition = All
-Spread  Property = System.Farming  All
-Spread  System.Farming  Condition = All
-Spread  System.Farming  All
-Spread  Property = System.TargetFarming  Condition = All
-Spread  Property = System.TargetFarming  All
-Spread  System.TargetFarming  Condition = All
-Spread  System.TargetFarming  All
 Spread  Property = System.Industry  Condition = All
 Spread  Property = System.Industry  All
 Spread  System.Industry  Condition = All
@@ -3679,14 +3463,6 @@ Spread  Property = System.DistanceToSource  Condition = All
 Spread  Property = System.DistanceToSource  All
 Spread  System.DistanceToSource  Condition = All
 Spread  System.DistanceToSource  All
-Spread  Property = Farming  Condition = All
-Spread  Property = Farming  All
-Spread  Farming  Condition = All
-Spread  Farming  All
-Spread  Property = TargetFarming  Condition = All
-Spread  Property = TargetFarming  All
-Spread  TargetFarming  Condition = All
-Spread  TargetFarming  All
 Spread  Property = Industry  Condition = All
 Spread  Property = Industry  All
 Spread  Industry  Condition = All
@@ -3816,14 +3592,6 @@ Spread  Property = DistanceToSource  All
 Spread  DistanceToSource  Condition = All
 Spread  DistanceToSource  All
 
-StDev  Property = Fleet.Farming  Condition = All
-StDev  Property = Fleet.Farming  All
-StDev  Fleet.Farming  Condition = All
-StDev  Fleet.Farming  All
-StDev  Property = Fleet.TargetFarming  Condition = All
-StDev  Property = Fleet.TargetFarming  All
-StDev  Fleet.TargetFarming  Condition = All
-StDev  Fleet.TargetFarming  All
 StDev  Property = Fleet.Industry  Condition = All
 StDev  Property = Fleet.Industry  All
 StDev  Fleet.Industry  Condition = All
@@ -3952,14 +3720,6 @@ StDev  Property = Fleet.DistanceToSource  Condition = All
 StDev  Property = Fleet.DistanceToSource  All
 StDev  Fleet.DistanceToSource  Condition = All
 StDev  Fleet.DistanceToSource  All
-StDev  Property = Planet.Farming  Condition = All
-StDev  Property = Planet.Farming  All
-StDev  Planet.Farming  Condition = All
-StDev  Planet.Farming  All
-StDev  Property = Planet.TargetFarming  Condition = All
-StDev  Property = Planet.TargetFarming  All
-StDev  Planet.TargetFarming  Condition = All
-StDev  Planet.TargetFarming  All
 StDev  Property = Planet.Industry  Condition = All
 StDev  Property = Planet.Industry  All
 StDev  Planet.Industry  Condition = All
@@ -4088,14 +3848,6 @@ StDev  Property = Planet.DistanceToSource  Condition = All
 StDev  Property = Planet.DistanceToSource  All
 StDev  Planet.DistanceToSource  Condition = All
 StDev  Planet.DistanceToSource  All
-StDev  Property = System.Farming  Condition = All
-StDev  Property = System.Farming  All
-StDev  System.Farming  Condition = All
-StDev  System.Farming  All
-StDev  Property = System.TargetFarming  Condition = All
-StDev  Property = System.TargetFarming  All
-StDev  System.TargetFarming  Condition = All
-StDev  System.TargetFarming  All
 StDev  Property = System.Industry  Condition = All
 StDev  Property = System.Industry  All
 StDev  System.Industry  Condition = All
@@ -4224,14 +3976,6 @@ StDev  Property = System.DistanceToSource  Condition = All
 StDev  Property = System.DistanceToSource  All
 StDev  System.DistanceToSource  Condition = All
 StDev  System.DistanceToSource  All
-StDev  Property = Farming  Condition = All
-StDev  Property = Farming  All
-StDev  Farming  Condition = All
-StDev  Farming  All
-StDev  Property = TargetFarming  Condition = All
-StDev  Property = TargetFarming  All
-StDev  TargetFarming  Condition = All
-StDev  TargetFarming  All
 StDev  Property = Industry  Condition = All
 StDev  Property = Industry  All
 StDev  Industry  Condition = All
@@ -4361,14 +4105,6 @@ StDev  Property = DistanceToSource  All
 StDev  DistanceToSource  Condition = All
 StDev  DistanceToSource  All
 
-Product  Property = Fleet.Farming  Condition = All
-Product  Property = Fleet.Farming  All
-Product  Fleet.Farming  Condition = All
-Product  Fleet.Farming  All
-Product  Property = Fleet.TargetFarming  Condition = All
-Product  Property = Fleet.TargetFarming  All
-Product  Fleet.TargetFarming  Condition = All
-Product  Fleet.TargetFarming  All
 Product  Property = Fleet.Industry  Condition = All
 Product  Property = Fleet.Industry  All
 Product  Fleet.Industry  Condition = All
@@ -4497,14 +4233,6 @@ Product  Property = Fleet.DistanceToSource  Condition = All
 Product  Property = Fleet.DistanceToSource  All
 Product  Fleet.DistanceToSource  Condition = All
 Product  Fleet.DistanceToSource  All
-Product  Property = Planet.Farming  Condition = All
-Product  Property = Planet.Farming  All
-Product  Planet.Farming  Condition = All
-Product  Planet.Farming  All
-Product  Property = Planet.TargetFarming  Condition = All
-Product  Property = Planet.TargetFarming  All
-Product  Planet.TargetFarming  Condition = All
-Product  Planet.TargetFarming  All
 Product  Property = Planet.Industry  Condition = All
 Product  Property = Planet.Industry  All
 Product  Planet.Industry  Condition = All
@@ -4633,14 +4361,6 @@ Product  Property = Planet.DistanceToSource  Condition = All
 Product  Property = Planet.DistanceToSource  All
 Product  Planet.DistanceToSource  Condition = All
 Product  Planet.DistanceToSource  All
-Product  Property = System.Farming  Condition = All
-Product  Property = System.Farming  All
-Product  System.Farming  Condition = All
-Product  System.Farming  All
-Product  Property = System.TargetFarming  Condition = All
-Product  Property = System.TargetFarming  All
-Product  System.TargetFarming  Condition = All
-Product  System.TargetFarming  All
 Product  Property = System.Industry  Condition = All
 Product  Property = System.Industry  All
 Product  System.Industry  Condition = All
@@ -4769,14 +4489,6 @@ Product  Property = System.DistanceToSource  Condition = All
 Product  Property = System.DistanceToSource  All
 Product  System.DistanceToSource  Condition = All
 Product  System.DistanceToSource  All
-Product  Property = Farming  Condition = All
-Product  Property = Farming  All
-Product  Farming  Condition = All
-Product  Farming  All
-Product  Property = TargetFarming  Condition = All
-Product  Property = TargetFarming  All
-Product  TargetFarming  Condition = All
-Product  TargetFarming  All
 Product  Property = Industry  Condition = All
 Product  Property = Industry  All
 Product  Industry  Condition = All

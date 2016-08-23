@@ -1,5 +1,3 @@
-Source.Farming
-Source.TargetFarming
 Source.Industry
 Source.TargetIndustry
 Source.Research
@@ -32,8 +30,6 @@ Source.TradeStockpile
 Source.MineralStockpile
 Source.FoodStockpile
 Source.DistanceToSource
-Target.Farming
-Target.TargetFarming
 Target.Industry
 Target.TargetIndustry
 Target.Research
@@ -66,8 +62,6 @@ Target.TradeStockpile
 Target.MineralStockpile
 Target.FoodStockpile
 Target.DistanceToSource
-Source.System.Farming
-Source.System.TargetFarming
 Source.System.Industry
 Source.System.TargetIndustry
 Source.System.Research
@@ -100,8 +94,6 @@ Source.System.TradeStockpile
 Source.System.MineralStockpile
 Source.System.FoodStockpile
 Source.System.DistanceToSource
-Target.System.Farming
-Target.System.TargetFarming
 Target.System.Industry
 Target.System.TargetIndustry
 Target.System.Research
@@ -134,8 +126,6 @@ Target.System.TradeStockpile
 Target.System.MineralStockpile
 Target.System.FoodStockpile
 Target.System.DistanceToSource
-Source.Planet.Farming
-Source.Planet.TargetFarming
 Source.Planet.Industry
 Source.Planet.TargetIndustry
 Source.Planet.Research
@@ -168,8 +158,6 @@ Source.Planet.TradeStockpile
 Source.Planet.MineralStockpile
 Source.Planet.FoodStockpile
 Source.Planet.DistanceToSource
-Target.Planet.Farming
-Target.Planet.TargetFarming
 Target.Planet.Industry
 Target.Planet.TargetIndustry
 Target.Planet.Research
@@ -202,8 +190,6 @@ Target.Planet.TradeStockpile
 Target.Planet.MineralStockpile
 Target.Planet.FoodStockpile
 Target.Planet.DistanceToSource
-Source.Fleet.Farming
-Source.Fleet.TargetFarming
 Source.Fleet.Industry
 Source.Fleet.TargetIndustry
 Source.Fleet.Research
@@ -236,8 +222,6 @@ Source.Fleet.TradeStockpile
 Source.Fleet.MineralStockpile
 Source.Fleet.FoodStockpile
 Source.Fleet.DistanceToSource
-Target.Fleet.Farming
-Target.Fleet.TargetFarming
 Target.Fleet.Industry
 Target.Fleet.TargetIndustry
 Target.Fleet.Research
@@ -270,8 +254,6 @@ Target.Fleet.TradeStockpile
 Target.Fleet.MineralStockpile
 Target.Fleet.FoodStockpile
 Target.Fleet.DistanceToSource
-LocalCandidate.Farming
-LocalCandidate.TargetFarming
 LocalCandidate.Industry
 LocalCandidate.TargetIndustry
 LocalCandidate.Research
@@ -304,8 +286,6 @@ LocalCandidate.TradeStockpile
 LocalCandidate.MineralStockpile
 LocalCandidate.FoodStockpile
 LocalCandidate.DistanceToSource
-RootCandidate.Farming
-RootCandidate.TargetFarming
 RootCandidate.Industry
 RootCandidate.TargetIndustry
 RootCandidate.Research
@@ -338,8 +318,6 @@ RootCandidate.TradeStockpile
 RootCandidate.MineralStockpile
 RootCandidate.FoodStockpile
 RootCandidate.DistanceToSource
-LocalCandidate.System.Farming
-LocalCandidate.System.TargetFarming
 LocalCandidate.System.Industry
 LocalCandidate.System.TargetIndustry
 LocalCandidate.System.Research
@@ -372,8 +350,6 @@ LocalCandidate.System.TradeStockpile
 LocalCandidate.System.MineralStockpile
 LocalCandidate.System.FoodStockpile
 LocalCandidate.System.DistanceToSource
-RootCandidate.System.Farming
-RootCandidate.System.TargetFarming
 RootCandidate.System.Industry
 RootCandidate.System.TargetIndustry
 RootCandidate.System.Research
@@ -406,8 +382,6 @@ RootCandidate.System.TradeStockpile
 RootCandidate.System.MineralStockpile
 RootCandidate.System.FoodStockpile
 RootCandidate.System.DistanceToSource
-LocalCandidate.Planet.Farming
-LocalCandidate.Planet.TargetFarming
 LocalCandidate.Planet.Industry
 LocalCandidate.Planet.TargetIndustry
 LocalCandidate.Planet.Research
@@ -440,8 +414,6 @@ LocalCandidate.Planet.TradeStockpile
 LocalCandidate.Planet.MineralStockpile
 LocalCandidate.Planet.FoodStockpile
 LocalCandidate.Planet.DistanceToSource
-RootCandidate.Planet.Farming
-RootCandidate.Planet.TargetFarming
 RootCandidate.Planet.Industry
 RootCandidate.Planet.TargetIndustry
 RootCandidate.Planet.Research
@@ -474,8 +446,6 @@ RootCandidate.Planet.TradeStockpile
 RootCandidate.Planet.MineralStockpile
 RootCandidate.Planet.FoodStockpile
 RootCandidate.Planet.DistanceToSource
-LocalCandidate.Fleet.Farming
-LocalCandidate.Fleet.TargetFarming
 LocalCandidate.Fleet.Industry
 LocalCandidate.Fleet.TargetIndustry
 LocalCandidate.Fleet.Research
@@ -508,8 +478,6 @@ LocalCandidate.Fleet.TradeStockpile
 LocalCandidate.Fleet.MineralStockpile
 LocalCandidate.Fleet.FoodStockpile
 LocalCandidate.Fleet.DistanceToSource
-RootCandidate.Fleet.Farming
-RootCandidate.Fleet.TargetFarming
 RootCandidate.Fleet.Industry
 RootCandidate.Fleet.TargetIndustry
 RootCandidate.Fleet.Research

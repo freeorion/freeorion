@@ -89,12 +89,6 @@ TargetHealth Low = 1 High
 TargetHealth Low = 1 High =
 TargetHealth 1 High
 TargetHealth 1 High =
-TargetFarming Low
-TargetFarming Low =
-TargetFarming Low = 1 High
-TargetFarming Low = 1 High =
-TargetFarming 1 High
-TargetFarming 1 High =
 TargetIndustry Low
 TargetIndustry Low =
 TargetIndustry Low = 1 High
@@ -161,12 +155,6 @@ Health Low = 1 High
 Health Low = 1 High =
 Health 1 High
 Health 1 High =
-Farming Low
-Farming Low =
-Farming Low = 1 High
-Farming Low = 1 High =
-Farming 1 High
-Farming 1 High =
 Industry Low
 Industry Low =
 Industry Low = 1 High

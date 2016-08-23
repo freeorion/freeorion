@@ -2,8 +2,6 @@ SetTargetPopulation
 SetTargetPopulation Value =
 SetTargetHealth
 SetTargetHealth Value =
-SetTargetFarming
-SetTargetFarming Value =
 SetTargetIndustry
 SetTargetIndustry Value =
 SetTargetResearch
@@ -28,8 +26,6 @@ SetPopulation
 SetPopulation Value =
 SetHealth
 SetHealth Value =
-SetFarming
-SetFarming Value =
 SetIndustry
 SetIndustry Value =
 SetResearch
