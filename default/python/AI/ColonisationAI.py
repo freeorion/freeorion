@@ -10,6 +10,7 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
+import sys
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, Timer
@@ -296,7 +297,7 @@ def survey_universe():
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
-                else:
+                elif this_spec:
                     empire_has_qualifying_planet = True
                     AIstate.popCtrIDs.append(pid)
                     empire_species_systems.setdefault(sys_id, {}).setdefault('pids', []).append(pid)
@@ -321,6 +322,20 @@ def survey_universe():
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
                     if "COMPUTRONIUM_SPECIAL" in planet.specials:  # only counting it if planet is populated
                         state.set_have_computronium()
+                else:
+                    # Logic says this should not happen, but it seems to happen some time for a single turm
+                    # TODO What causes this?
+                    empire_outpost_ids.add(pid)
+                    AIstate.outpostIDs.append(pid)
+                    print
+                    print >> sys.stderr, "+ + +"
+                    print >> sys.stderr, "DEBUG: ColonisationAI.survey_universe()"
+                    print >> sys.stderr, "Found a planet we own that has pop > 0 but has no species"
+                    print >> sys.stderr, "Planet: ", universe.getPlanet(pid)
+                    print >> sys.stderr, "Species: ", spec_name, "  ", this_spec
+                    print >> sys.stderr, "Population: ", planet_population
+                    print >> sys.stderr, "+ + +"
+                    print
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
