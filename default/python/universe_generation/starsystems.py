@@ -54,16 +54,21 @@ def name_planets(system):
     """
     planet_number = 1
     # iterate over all planets in the system
-    for planet in fo.sys_get_planets(system):
+    for planet in fo.sys_get_planets_by_orbit(system):
+        if planet == fo.invalid_object():
+            continue
+        planet_type = fo.planet_get_type(planet)
+        name = fo.user_string("NEW_PLANET_NAME")
+        name = name.replace("%1%", fo.get_name(system))
         # use different naming methods for "normal" planets and asteroid belts
-        if fo.planet_get_type(planet) == fo.planetType.asteroids:
-            # get localized text from stringtable
-            name = fo.user_string("PL_ASTEROID_BELT_OF_SYSTEM")
-            # %1% parameter in the localized string is the system name
-            name = name.replace("%1%", fo.get_name(system))
+        if planet_type == fo.planetType.asteroids:
+            # get defined orbit suffix
+            name = name.replace("%2%", fo.planet_get_orbital_suffix(planet))
         else:
             # set name to system name + planet number as roman number...
-            name = fo.get_name(system) + " " + fo.roman_number(planet_number)
+            # TODO This has the potential of duplicate names
+            #   if a new planet is created in this system later
+            name = name.replace("%2%", fo.roman_number(planet_number))
             # ...and increase planet number
             planet_number += 1
         # do the actual renaming
