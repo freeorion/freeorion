@@ -2059,8 +2059,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
             continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
         }
-        int fleet_id = fleet->ID();
-        //DebugLogger() << "Fleet " << fleet_id << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
+
+        //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
         if (fleet->HasArmedShips() && fleet->Aggressive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
@@ -2080,36 +2080,6 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             }
         }
     }
-    std::set<int> systems_where_others_have_supply_sources_and_we_dont;
-    // add all systems where enemies have supply
-    for (std::map<int, std::map<int, float> >::const_iterator it = empire_system_supply_ranges.begin();
-         it != empire_system_supply_ranges.end(); ++it)
-    {
-        if (it->first == this->EmpireID() || it->first == ALL_EMPIRES)
-            continue;
-
-        const std::map<int, float>& system_supply_ranges = it->second;
-        for (std::map<int, float>::const_iterator sys_it = system_supply_ranges.begin();
-             sys_it != system_supply_ranges.end(); ++sys_it)
-        {
-            if (sys_it->second <= 0.0f)
-                continue;
-            systems_where_others_have_supply_sources_and_we_dont.insert(sys_it->first);
-        }
-    }
-    // remove systems were we have supply
-    std::map<int, std::map<int, float> >::const_iterator it = empire_system_supply_ranges.find(this->EmpireID());
-    if (it != empire_system_supply_ranges.end()) {
-        const std::map<int, float>& system_supply_ranges = it->second;
-        for (std::map<int, float>::const_iterator sys_it = system_supply_ranges.begin();
-             sys_it != system_supply_ranges.end(); ++sys_it)
-        {
-            if (sys_it->second <= 0.0f)
-                continue;
-            systems_where_others_have_supply_sources_and_we_dont.erase(sys_it->first);
-        }
-    }
-
 
     //std::stringstream ss;
     //for (std::set<int>::iterator it = systems_containing_obstructing_objects.begin();
@@ -2144,11 +2114,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             }
 
         } else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end()) {
-            // if there are no friendly ships and no enemy ships, AND
-            // system is not one where an enemy has a supply source but we don't
-            // then supply can propagate
-            if (systems_where_others_have_supply_sources_and_we_dont.find(sys_id) == systems_where_others_have_supply_sources_and_we_dont.end())
-                m_supply_unobstructed_systems.insert(sys_id);
+            m_supply_unobstructed_systems.insert(sys_id);
 
         } else if (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()) {
             // otherwise, if system contains no friendly fleets capable of
