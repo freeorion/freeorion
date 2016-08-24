@@ -1159,7 +1159,7 @@ namespace {
 
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
             if (part->Location())
-                detailed_description += str(FlexibleFormat(UserString("ENC_LOCATION_CONDITION_STR")) % part->Location()->Description());
+                detailed_description += "\n" + part->Location()->Dump();
             if (!part->Effects().empty())
                 detailed_description += "\n" + Dump(part->Effects());
         }
@@ -1219,7 +1219,7 @@ namespace {
 
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
             if (hull->Location())
-                detailed_description += str(FlexibleFormat(UserString("ENC_LOCATION_CONDITION_STR")) % hull->Location()->Description());
+                detailed_description += "\n" + hull->Location()->Dump();
             if (!hull->Effects().empty())
                 detailed_description += "\n" + Dump(hull->Effects());
         }
@@ -1360,7 +1360,7 @@ namespace {
                     detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_STR")) % building_type->Time()->Description());
             }
             if (building_type->Location())
-                detailed_description += str(FlexibleFormat(UserString("ENC_LOCATION_CONDITION_STR")) % building_type->Location()->Description());
+                detailed_description += "\n" + building_type->Location()->Dump();
             if (!building_type->Effects().empty())
                 detailed_description += "\n" + Dump(building_type->Effects());
         }
@@ -1430,11 +1430,8 @@ namespace {
         }
 
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
-            if (special->Location()) {
-                const std::string& loc_cond = UserString("ENC_LOCATION_CONDITION_STR");
-                std::string desc = special->Location()->Description();
-                detailed_description += str(FlexibleFormat(loc_cond) % desc);
-            }
+            if (special->Location())
+                detailed_description += "\n" + special->Location()->Dump();
             if (!special->Effects().empty())
                 detailed_description += "\n" + Dump(special->Effects());
         }

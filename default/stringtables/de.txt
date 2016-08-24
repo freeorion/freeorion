@@ -2839,14 +2839,6 @@ FP
 ENC_COST_AND_TURNS_STR
 %1% %2% und %3% Rnd
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Standortbedingungen</u>
-
-Ein Objekt%1%'''
-
 # Title for auto-generated production cost description in encyclopedia.
 # %1% textual representation of the production costs.
 ENC_AUTO_COST_STR

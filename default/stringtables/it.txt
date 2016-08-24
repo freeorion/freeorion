@@ -2015,14 +2015,6 @@ PR
 ENC_COST_AND_TURNS_STR
 %1% %2% e %3% Turni
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Requisito Ubicazione</u>
-
-Un oggetto%1%'''
-
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
 # %1% description.

@@ -3900,14 +3900,6 @@ RP
 ENC_COST_AND_TURNS_STR
 %1% %2% and %3% Turns
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Location Requirement</u>
-
-An object%1%'''
-
 ENC_VERB_PRODUCE_STR
 produce
 

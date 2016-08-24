@@ -2487,14 +2487,6 @@ ENC_RP
 ENC_COST_AND_TURNS_STR
 %3% ходов @ %1% %2% / ход
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Требования к месту размещения</u>
-
-Объект%1%'''
-
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
 # %1% description.

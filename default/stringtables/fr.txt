@@ -3901,14 +3901,6 @@ PR
 ENC_COST_AND_TURNS_STR
 %1% %2% & %3% tours
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Implantation</u>
-
-Un objet%1%'''
-
 ENC_VERB_PRODUCE_STR
 produire
 
