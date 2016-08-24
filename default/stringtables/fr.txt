@@ -3930,24 +3930,6 @@ ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
 Sur %1%, le coût et le temps sont de %2% %3% sur %4% tours.'''
 
-# Title for auto-generated production cost description in encyclopedia.
-# %1% textual representation of the production costs.
-ENC_AUTO_COST_STR
-'''
-
-<u>Coût</u>
-
-%1%'''
-
-# Title for auto-generated production time description in encyclopedia.
-# %1% textual representation of the production time required to build the item.
-ENC_AUTO_TIME_STR
-'''
-
-<u>Temps</u>
-
-%1%'''
-
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
 # %1% description.
