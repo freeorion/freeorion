@@ -25,15 +25,11 @@ namespace {
         db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
         db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
-        db.Add("UI.sitrep-font-size", UserStringNop("OPTIONS_DB_UI_SITREP_FONTSIZE"), 12, RangedValidator<int>(10, 48));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     GG::X GetIconSize()
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-icon-size")); }
-
-    GG::X GetFontSize()
-    { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-font-size")); }
 
     std::map<std::string, std::string> label_display_map;
     std::map<int, std::set<std::string> > snoozed_sitreps;
@@ -269,7 +265,7 @@ namespace {
             AttachChild(m_icon);
 
             m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
-                                       ClientUI::GetFont(std::max(1.0*ClientUI::Pts(), 1.0*GetOptionsDB().Get<int>("UI.sitrep-font-size"))),
+                                       ClientUI::GetFont(),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);

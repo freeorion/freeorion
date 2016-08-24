@@ -1606,9 +1606,6 @@ Toggles effect accounting tabulation when updating after gamestate changes.
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).
 
-OPTIONS_DB_UI_SITREP_FONTSIZE
-Sets the sitrep text size; default 12 (min 10, max 48).
-
 OPTIONS_DB_LOAD
 Loads the specified single-player save game.
 
