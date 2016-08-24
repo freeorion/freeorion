@@ -10383,7 +10383,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 6. Also sets the owner's Capital for the empire.
+'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 2, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 6. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
 
