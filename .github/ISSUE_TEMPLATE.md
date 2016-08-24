@@ -31,9 +31,10 @@ so, `Windows 8 Pro` instead of `Windows` or `Mac OSX Mountain Lion` instead of
 * **FreeOrion Version**:
 * **Operating System**:
 * **Graphic card used**:
-* **Fetched as**
-  * [ ] Binary release
-  * [ ] Compiled from source
+* **Fetched as** <!-- delete lines below that don't apply -->
+  * Binary release
+  * Weekly development build
+  * Compiled from source
 
 
 ### Description
