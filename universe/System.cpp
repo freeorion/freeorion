@@ -192,17 +192,22 @@ std::string System::Dump() const {
     os << UniverseObject::Dump();
     os << " star type: " << UserString(EnumToString(m_star))
        << "  last combat on turn: " << m_last_turn_battle_here
-       << "  orbits: " << m_orbits.size() << " (";
+       << "  total orbits: " << m_orbits.size();
 
-    int orbit_index = 0;
-    for (std::vector<int>::const_iterator it = m_orbits.begin();
-        it != m_orbits.end(); ++it)
-    {
-        int planet_id = *it;
-        os << "[" << orbit_index << "]" << planet_id << (it == m_orbits.end() ? "" : ", ");
-        ++orbit_index;
+    if (m_orbits.size() > 0) {
+        os << "  objects per orbit: ";
+
+        int orbit_index = 0;
+        for (std::vector<int>::const_iterator it = m_orbits.begin();
+            it != m_orbits.end();)
+        {
+            os << "[" << orbit_index << "]" << *it;
+            ++it;
+            if (it != m_orbits.end())
+                os << ", ";
+            ++orbit_index;
+        }
     }
-    os << ")";
 
     os << "  starlanes: ";
     for (std::map<int, bool>::const_iterator it = m_starlanes_wormholes.begin();
