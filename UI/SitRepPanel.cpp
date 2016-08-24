@@ -265,7 +265,7 @@ namespace {
             AttachChild(m_icon);
 
             m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
-                                       ClientUI::GetFont(ClientUI::Pts()),
+                                       ClientUI::GetFont(),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
