@@ -651,9 +651,6 @@ Il volume (da 0 a 255) per la musica durante la partita.
 OPTIONS_DB_QUICKSTART
 Avvio veloce senza mostrare il menu.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Alterna l'inclusione di testo generato automaticamente in tecnologia, edilizia o descrizioni di parti della nave.
-
 
 ##
 ## File dialog
@@ -2026,15 +2023,6 @@ ENC_LOCATION_CONDITION_STR
 
 Un oggetto%1%'''
 
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Effetti</u>
-
-%1%'''
-
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
 # %1% description.
@@ -3026,29 +3014,6 @@ producer
 
 DESC_VAR_CREATIONTURN
 turn of creation
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Oggetti interessati: Tutti gli oggetti%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Oggetti interessati: Solo l'oggetto di origine
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-L'effetto è attivo se la fonte è un oggetto%1%
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effetti del gruppo %1%:
-%2%
-'''
 
 
 ##

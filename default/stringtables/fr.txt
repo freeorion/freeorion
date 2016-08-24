@@ -1593,8 +1593,9 @@ Indique si la version d'OpenGL du système a été vérifiée. Si non, diverses 
 OPTIONS_DB_RESET_FSSIZE
 Enregistre ou réinitialise la résolution en plein écran. Si non, la valeur enregistrée est utilisée. Si oui, la valeur est réinitialisée à la résolution maximale que le système peut afficher.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Active/Désactive l'affichage de texte auto-généré dans les descriptions des technologies, des structures ou des équipements d'astronef.
+# needs update
+#OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+#Active/Désactive l'affichage de texte auto-généré dans les descriptions des technologies, des structures ou des équipements d'astronef.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Active/Désactive les journaux détaillés des éléments de l'univers et l'évaluation des effets (pour développeurs).
@@ -2599,7 +2600,7 @@ Fichiers de musiques
 OPTIONS_SOUND_FILE
 Fichiers de sons
 
-OPTIONS_AUTO_EFFECT_DESC
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Génération automatique de descriptions
 
 OPTIONS_VERBOSE_LOGGING_DESC
@@ -3907,15 +3908,6 @@ ENC_LOCATION_CONDITION_STR
 <u>Implantation</u>
 
 Un objet%1%'''
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Effets</u>
-
-%1%'''
 
 ENC_VERB_PRODUCE_STR
 produire
@@ -7836,34 +7828,6 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # %7% fifth dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1% %2% %3% %4% %5% %6% %7% ...
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Objets affectés : tout objet%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Objets affectés : l'objet source seulement
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-L'effet n'est actif que si sa source est un objet%1%
-
-# %1% textual description of the effect group.
-#DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-#'''%1%
-#'''
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effets de groupe %1% :
-%2%
-'''
 
 
 ##

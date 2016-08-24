@@ -927,9 +927,6 @@ OPTIONS_DB_CHECKED_GL_VERSION
 OPTIONS_DB_RESET_FSSIZE
 Сбрасывать сохраненное разрешение для полноэкранного режима. При включении разрешение будет устанавливаться на максимально большое, при выключении будут использоваться ранее сохраненные параметры.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Включать автоматически сгенерированные сообщения в описания технологий, зданий или модулей кораблей.
-
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Детальная запись журнала событий вселенной и эффектов.
 
@@ -1645,7 +1642,7 @@ OPTIONS_MUSIC_FILE
 OPTIONS_SOUND_FILE
 Файлы эффектов
 
-OPTIONS_AUTO_EFFECT_DESC
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Описания автоматически сгенерированных эффектов
 
 OPTIONS_VERBOSE_LOGGING_DESC
@@ -2497,15 +2494,6 @@ ENC_LOCATION_CONDITION_STR
 <u>Требования к месту размещения</u>
 
 Объект%1%'''
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Эффекты</u>
-
-%1%'''
 
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
@@ -4691,29 +4679,6 @@ DESC_VAR_FOCUS
 
 DESC_VAR_LASTTURNBATTLEHERE
 в последний раз бой была здесь
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Объекты затронуты: Любые объекты%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Объекты затронуты: Только наземные объекты
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-Эффект является активным, если источник - объект%1%
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Группы эффектов %1%:
-%2%
-'''
 
 
 ##

@@ -1123,8 +1123,8 @@ Speichert ob die OpenGL Version des Systems überprüft wurde. Wenn nicht, werde
 OPTIONS_DB_RESET_FSSIZE
 Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden soll. Wenn nicht gesetzt, wird die gespeicherte Auflösung genutzt, ansonsten wird die höchste Auflösung genutzt, welche unterstützt wird.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Entscheidet ob automatisch erzeugte Texte in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
+OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+Entscheidet ob ein Abbild der Effektgruppen in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Schaltet die ausführliche Protokollierung der Inhalte des Universums und Effektberechnung.
@@ -1906,8 +1906,8 @@ Musikdateien
 OPTIONS_SOUND_FILE
 Klangdateien
 
-OPTIONS_AUTO_EFFECT_DESC
-Automatisch generierte Effektbeschreibungen
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
+Effektgruppenbeschreibungen anzeigen
 
 OPTIONS_VERBOSE_LOGGING_DESC
 Ausführliche Protokollierung zur Fehlersuche
@@ -2846,15 +2846,6 @@ ENC_LOCATION_CONDITION_STR
 <u>Standortbedingungen</u>
 
 Ein Objekt%1%'''
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Effekte</u>
-
-%1%'''
 
 # Title for auto-generated production cost description in encyclopedia.
 # %1% textual representation of the production costs.
@@ -4596,34 +4587,6 @@ DESC_VALUE_REF_MULTIPART_VARIABLE1
 # %7% fifth dependent property referenced by the FOCS variable.
 #DESC_VALUE_REF_MULTIPART_VARIABLE6
 #%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Betroffene Objekte: Jedes Objekt%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Betroffene Objekte: nur das Quell-Objekt
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-Effekt ist aktiv, wenn die Quelle ein Objekt ist%1%
-
-# %1% textual description of the effect group.
-#DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-#'''%1%
-#'''
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effektgruppe %1%:
-%2%
-'''
 
 
 ##

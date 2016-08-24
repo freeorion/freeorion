@@ -578,9 +578,6 @@ Comienza un nuevo juego rápido, sin pasar por el menu.
 OPTIONS_DB_CHECKED_GL_VERSION
 Comprueba si la versión OpenGL del sistema ha sido revisada.  Si es falso, algunas opciones de renderizado pueden ser alteradas dependiendo de la version GL, por lo que esta opción deberia estar activada.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Alterna entre incluir o no texto autogenerado en las descripciones de tecnología, edificio o parte de nave.
-
 OPTIONS_DB_LOAD
 Carga la partida guardada de un solo jugador especificada.
 
@@ -1166,9 +1163,6 @@ Archivos de música
 OPTIONS_SOUND_FILE
 Archivos de sonido
 
-OPTIONS_AUTO_EFFECT_DESC
-Descripciones de efectos autogenerados
-
 
 ##
 ## Main map window
@@ -1608,13 +1602,6 @@ Sistema
 # %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %3% Turnos %1% %2%/T
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''<u>Efectos</u>
-
-%1%'''
 
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
@@ -2263,29 +2250,6 @@ turno de creación
 
 DESC_VAR_CURRENTTURN
 turno actual
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Objetos afectados: Cualquier objeto%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Objetos afectados: Solo objeto origen
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-El efecto esta activo si el origen es un objeto%1%
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Grupo de Efectos %1%:
-%2%
-'''
 
 
 ##

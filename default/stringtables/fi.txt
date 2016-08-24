@@ -403,9 +403,6 @@ Asettaa musiikin äänenvoimakkuden (0-255).
 OPTIONS_DB_QUICKSTART
 Aloittaa uuden nopean aloituksen pelin sivuuttaen päävalikon.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Valitsee käytetäänkö automaattisesti luotuja tekstejä tekniikoiden, rakennusten ja alusten osia kuvailtaessa.
-
 OPTIONS_DB_LOAD
 Lataa tietyn yksinpeli tallennuksen.
 
@@ -947,9 +944,6 @@ Musiikkitiedostot
 
 OPTIONS_SOUND_FILE
 Äänitiedostot
-
-OPTIONS_AUTO_EFFECT_DESC
-Automaattisesti luodut vaikutus kuvaukset
 
 
 ##
@@ -1982,29 +1976,6 @@ luontivuoro
 
 DESC_VAR_CURRENTTURN
 nykyinen vuoro
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Kohteet joihin vaikuttaa: Mikä tahansa kohde%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Kohteet joihin vaikuttaa: Vain lähde
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-Efekti on aktiivinen, jos lähde on kohde%1%
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Efekti ryhmä %1%:
-%2%
-'''
 
 
 ##

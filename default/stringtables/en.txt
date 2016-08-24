@@ -1593,8 +1593,8 @@ Stores whether the OpenGL version of this system has been checked. If false, sev
 OPTIONS_DB_RESET_FSSIZE
 Stores whether to reset the stored fullscreen resolution. If false, the stored values are used, but if true, the values are reset to the max the rendering system supports.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Toggles inclusion of auto-generated text in tech, building or ship part descriptions.
+OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+Toggles dump of effects groups in tech, building or ship part descriptions.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Toggles verbose logging of universe contents and effect evaluation.
@@ -2599,7 +2599,7 @@ Music files
 OPTIONS_SOUND_FILE
 Sound files
 
-OPTIONS_AUTO_EFFECT_DESC
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Auto-generated effect descriptions
 
 OPTIONS_VERBOSE_LOGGING_DESC
@@ -3907,15 +3907,6 @@ ENC_LOCATION_CONDITION_STR
 <u>Location Requirement</u>
 
 An object%1%'''
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Effects</u>
-
-%1%'''
 
 ENC_VERB_PRODUCE_STR
 produce
@@ -7836,34 +7827,6 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # %7% fifth dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%'s ...
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Objects affected: Any object%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Objects affected: Source object only
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-Effect is active if the source is an object%1%
-
-# %1% textual description of the effect group.
-DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-'''%1%
-'''
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effects group %1%:
-%2%
-'''
 
 
 ##
