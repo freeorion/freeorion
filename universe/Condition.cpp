@@ -2388,6 +2388,7 @@ std::string HasTag::Dump() const {
     std::string retval = DumpIndent() + "HasTag";
     if (m_name)
         retval += " name = " + m_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -4767,6 +4768,7 @@ std::string DesignHasHull::Dump() const {
     std::string retval = DumpIndent() + "DesignHasHull";
     if (m_name)
         retval += " name = " + m_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -4924,6 +4926,7 @@ std::string DesignHasPart::Dump() const {
         retval += " high = " + m_high->Dump();
     if (m_name)
         retval += " name = " + m_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -5077,6 +5080,7 @@ std::string DesignHasPartClass::Dump() const {
     if (m_high)
         retval += " high = " + m_high->Dump();
     retval += " class = " + UserString(boost::lexical_cast<std::string>(m_class));
+    retval += "\n";
     return retval;
 }
 
@@ -5210,6 +5214,7 @@ std::string PredefinedShipDesign::Dump() const {
     std::string retval = DumpIndent() + "PredefinedShipDesign";
     if (m_name)
         retval += " name = " + m_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -6228,6 +6233,7 @@ std::string OwnerHasTech::Dump() const {
     std::string retval = DumpIndent() + "OwnerHasTech";
     if (m_name)
         retval += " name = " + m_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -6333,6 +6339,7 @@ std::string OwnerHasBuildingTypeAvailable::Dump() const {
     std::string retval= DumpIndent() + "OwnerHasBuildingTypeAvailable";
     if (m_name)
         retval += " name = " + m_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -6438,6 +6445,7 @@ std::string OwnerHasShipDesignAvailable::Dump() const {
     std::string retval = DumpIndent() + "OwnerHasShipDesignAvailable";
     if (m_id)
         retval += " id = " + m_id->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -6538,7 +6546,7 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
 }
 
 std::string VisibleToEmpire::Dump() const
-{ return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump(); }
+{ return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump() + "\n"; }
 
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -8127,7 +8135,7 @@ std::string ValueTest::Dump() const {
     if (m_value_ref3)
         retval += " " + m_value_ref3->Dump();
 
-    retval += ")";
+    retval += ")\n";
     return retval;
 }
 
