@@ -1,8 +1,0 @@
-ShipDesign
-    name = "SD_ENG_SCOUT"
-    description = "SD_ENG_SCOUT_DESC"
-    hull = "SH_COMPRESSED_ENERGY"
-    parts = [
-        "DT_DETECTOR_3"
-    ]
-    model = "fighter"

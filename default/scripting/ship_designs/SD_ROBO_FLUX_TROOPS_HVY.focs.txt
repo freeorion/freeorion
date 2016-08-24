@@ -1,9 +1,0 @@
-ShipDesign
-    name = "SD_ROBO_FLUX_TROOPS_HVY"
-    description = "SD_ROBO_FLUX_TROOPS_HVY_DESC"
-    hull = "SH_SPATIAL_FLUX"
-    parts = [
-        "GT_TROOP_POD_2"
-        "GT_TROOP_POD_2"
-    ]
-    model = "scout"
