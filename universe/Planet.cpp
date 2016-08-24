@@ -485,6 +485,61 @@ float Planet::NextTurnCurrentMeterValue(MeterType type) const {
     return std::min(current_meter_value + 1.0f, max_meter_value);
 }
 
+std::string Planet::CardinalSuffix() const {
+    std::string retval = "";
+    // Planets are grouped into asteroids, and non-asteroids
+    // Asteroids receive a localized prefix
+    if (Type() == PT_ASTEROIDS)
+        retval.append(UserString("NEW_ASTEROIDS_SUFFIX") + " ");
+
+    TemporaryPtr<System> cur_system = GetSystem(SystemID());
+    if (cur_system) {
+        if (cur_system->OrbitOfPlanet(ID()) < 0) {
+            ErrorLogger() << "Planet " << Name() << "(" << ID() << ") "
+                          << "has no current orbit";
+            retval.append(RomanNumber(1));
+            return retval;
+        }
+        int num_planets_lteq = 0;  // number of planets at this orbit or smaller
+        int num_planets_total = 0;
+        bool prior_current_planet = true;
+        const std::vector<int>& sys_orbits = cur_system->PlanetIDsByOrbit();
+        for (std::vector<int>::const_iterator it = sys_orbits.begin();
+             it != sys_orbits.end(); ++it)
+        {
+            if (*it == INVALID_OBJECT_ID)
+                continue;
+
+            PlanetType other_planet_type = GetPlanet(*it)->Type();
+            if (other_planet_type == INVALID_PLANET_TYPE)
+                continue;
+
+            if (Type() != PT_ASTEROIDS) {
+                if (other_planet_type != PT_ASTEROIDS) {
+                    ++num_planets_total;
+                    if (prior_current_planet)
+                        ++num_planets_lteq;
+                }
+            } else {
+                if (other_planet_type == PT_ASTEROIDS) {
+                    ++num_planets_total;
+                    if (prior_current_planet)
+                        ++num_planets_lteq;
+                }
+            }
+
+            if (*it == ID())
+                prior_current_planet =false;
+        }
+        // For asteroids: If no other asteroids in this system, suffix does not receive a number
+        if (Type() != PT_ASTEROIDS || (Type() == PT_ASTEROIDS && num_planets_total > 1))
+            retval.append(RomanNumber(num_planets_lteq));
+    } else {
+        ErrorLogger() << "Planet " << Name() << "(" << ID() << ") not assigned to a system";
+    }
+    return retval;
+}
+
 int Planet::ContainerObjectID() const
 { return this->SystemID(); }
 

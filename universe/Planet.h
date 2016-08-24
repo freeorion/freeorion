@@ -133,6 +133,7 @@ public:
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;
 
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
+    std::string                 CardinalSuffix() const;     ///< returns a roman number representing this planets orbit in relation to other planets
     //@}
 
     /** \name Mutators */ //@{
