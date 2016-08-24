@@ -1,4 +1,5 @@
 #include "MultiMeterStatusBar.h"
+#include "MeterBrowseWnd.h"
 
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
@@ -201,23 +202,14 @@ void MultiMeterStatusBar::Update() {
         const Meter* actual_meter = obj->GetMeter(meter_types_pair.first);
         const Meter* target_max_meter = obj->GetMeter(meter_types_pair.second);
 
+        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+            *obj, meter_types_pair.first, meter_types_pair.second);
+
         if (actual_meter || target_max_meter) {
             ++num_bars;
-            if (actual_meter) {
-                m_initial_values.push_back(actual_meter->Initial());
-                if (target_max_meter)
-                    m_projected_values.push_back(obj->NextTurnCurrentMeterValue(meter_types_pair.first));
-                else
-                    m_projected_values.push_back(actual_meter->Initial());
-            } else {
-                m_initial_values.push_back(Meter::INVALID_VALUE);
-                m_projected_values.push_back(Meter::INVALID_VALUE);
-            }
-            if (target_max_meter) {
-                m_target_max_values.push_back(target_max_meter->Current());
-            } else {
-                m_target_max_values.push_back(Meter::INVALID_VALUE);
-            }
+            m_initial_values.push_back(boost::get<0>(current_projected_target));
+            m_projected_values.push_back(boost::get<1>(current_projected_target));
+            m_target_max_values.push_back(boost::get<2>(current_projected_target));
             m_bar_colours.push_back(MeterColor(meter_types_pair.first));
         }
     }

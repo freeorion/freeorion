@@ -5,7 +5,17 @@
 #include <GG/BrowseInfoWnd.h>
 
 #include "../universe/Enums.h"
+#include <boost/tuple/tuple.hpp>
 
+class UniverseObject;
+
+namespace DualMeter {
+
+    /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
+        actual_meter_type and \p target_meter_type associated with \p obj. */
+    boost::tuple<float, float, float> CurrentProjectedTarget(
+        const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type);
+}
 
 /** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
   * shows the current turn's current meter value and the predicted current meter value for next turn. */
