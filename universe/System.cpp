@@ -349,7 +349,7 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
         if (orbit == -1) {
             bool already_in_orbit = false;
             for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o) {
-                if (m_orbits[o] = obj->ID()) {
+                if (m_orbits[o] == obj->ID()) {
                     already_in_orbit = true;
                     break;
                 }
