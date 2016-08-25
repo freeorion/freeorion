@@ -110,7 +110,9 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id);
 
         // only copy orbit info for visible planets
+        size_t orbits_size = m_orbits.size();
         m_orbits.clear();
+        m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
         for (int o = 0; o < static_cast<int>(copied_system->m_orbits.size()); ++o) {
             int planet_id = copied_system->m_orbits[o];
             if (m_objects.find(planet_id) != m_objects.end())
