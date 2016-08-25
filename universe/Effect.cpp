@@ -3430,9 +3430,14 @@ void Conditional::Execute(const ScriptingContext& context) const {
 }
 
 std::string Conditional::Dump() const {
-    std::string retval = "If";
-    if (m_target_condition)
-        retval += " condition = " + m_target_condition->Dump();
+    std::string retval = DumpIndent() + "If\n";
+    ++g_indent;
+    if (m_target_condition) {
+        retval += DumpIndent() + "condition =\n";
+        ++g_indent;
+        retval += m_target_condition->Dump();
+        --g_indent;
+    }
 
     if (m_true_effects.size() == 1) {
         retval += DumpIndent() + "effects =\n";
@@ -3464,6 +3469,7 @@ std::string Conditional::Dump() const {
         --g_indent;
         retval += DumpIndent() + "]\n";
     }
+    --g_indent;
 
     return retval;
 }
