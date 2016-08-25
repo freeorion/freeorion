@@ -380,8 +380,21 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
                 }
                 // put object into desired orbit
                 m_orbits[orbit] = obj->ID();
+            } else {  // Log as an error, if no current orbit attempt to assign to a free orbit
+                ErrorLogger() << "System::Insert() Planet " << obj->ID()
+                              << " requested orbit " << orbit
+                              << " in system " << ID()
+                              << ", which is occupied by" << m_orbits[orbit];
+                const std::set<int>& free_orbits = FreeOrbits();
+                if (free_orbits.size() > 0 && OrbitOfPlanet(obj->ID()) == -1) {
+                    int new_orbit = *(free_orbits.begin());
+                    m_orbits[new_orbit] = obj->ID();
+                    DebugLogger() << "System::Insert() Planet " << obj->ID()
+                                  << " assigned to orbit " << new_orbit;
+                }
             }
         }
+        //TODO If planet not assigned to an orbit, reject insertion of planet, provide feedback to caller
     }
     // if not a planet, don't need to put into an orbit
 
