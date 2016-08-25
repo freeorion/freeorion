@@ -32,39 +32,6 @@ using boost::lexical_cast;
 extern int g_indent;
 
 namespace {
-    boost::tuple<bool, ValueRef::OpType, double>
-    SimpleMeterModification(MeterType meter, ValueRef::ValueRefBase<double>* ref) {
-        boost::tuple<bool, ValueRef::OpType, double> retval(false, ValueRef::PLUS, 0.0);
-        if (const ValueRef::Operation<double>* op = dynamic_cast<const ValueRef::Operation<double>*>(ref)) {
-            if (!op->LHS() || !op->RHS())
-                return retval;
-            if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->LHS())) {
-                if (const ValueRef::Constant<double>* constant = dynamic_cast<const ValueRef::Constant<double>*>(op->RHS())) {
-                    std::string meter_str = UserString(lexical_cast<std::string>(meter));
-                    if (!meter_str.empty())
-                        meter_str[0] = std::toupper(meter_str[0]);
-                    retval.get<0>() = var->PropertyName().size() == 1 &&
-                        ("Current" + meter_str) == var->PropertyName()[0];
-                    retval.get<1>() = op->GetOpType();
-                    retval.get<2>() = constant->Value();
-                    return retval;
-                }
-            } else if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->RHS())) {
-                if (const ValueRef::Constant<double>* constant = dynamic_cast<const ValueRef::Constant<double>*>(op->LHS())) {
-                    std::string meter_str = UserString(lexical_cast<std::string>(meter));
-                    if (!meter_str.empty())
-                        meter_str[0] = std::toupper(meter_str[0]);
-                    retval.get<0>() = var->PropertyName().size() == 1 &&
-                        ("Current" + meter_str) == var->PropertyName()[0];
-                    retval.get<1>() = op->GetOpType();
-                    retval.get<2>() = constant->Value();
-                    return retval;
-                }
-            }
-        }
-        return retval;
-    }
-
     /** creates a new fleet at a specified \a x and \a y location within the
      * Universe, and and inserts \a ship into it.  Used when a ship has been
      * moved by the MoveTo effect separately from the fleet that previously
@@ -478,34 +445,6 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     EffectBase::Execute(context, targets);
 }
 
-std::string SetMeter::Description() const {
-    bool simple;
-    ValueRef::OpType op;
-    double const_operand;
-    boost::tie(simple, op, const_operand) = SimpleMeterModification(m_meter, m_value);
-    //DebugLogger() << "SetMeter::Description " << simple << " / " << op << " / " << const_operand;
-    if (simple) {
-        char op_char = '+';
-        switch (op) {
-        case ValueRef::PLUS:            op_char = '+'; break;
-        case ValueRef::MINUS:           op_char = '-'; break;
-        case ValueRef::TIMES:           op_char = '*'; break;
-        case ValueRef::DIVIDE:          op_char = '/'; break;
-        case ValueRef::EXPONENTIATE:    op_char = '^'; break;
-        default: op_char = '?';
-        }
-        return str(FlexibleFormat(UserString("DESC_SIMPLE_SET_METER"))
-                   % UserString(lexical_cast<std::string>(m_meter))
-                   % op_char
-                   % lexical_cast<std::string>(const_operand));
-    } else {
-        //std::string temp = m_value->Description();
-        return str(FlexibleFormat(UserString("DESC_COMPLEX_SET_METER"))
-                   % UserString(lexical_cast<std::string>(m_meter))
-                   % m_value->Description());
-    }
-}
-
 std::string SetMeter::Dump() const {
     std::string retval = DumpIndent() + "Set";
     switch (m_meter) {
@@ -703,30 +642,6 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
     EffectBase::Execute(context, targets);
 }
 
-std::string SetShipPartMeter::Description() const {
-    std::string value_str;
-    if (m_value) {
-        if (ValueRef::ConstantExpr(m_value))
-            value_str = lexical_cast<std::string>(m_value->Eval());
-        else
-            value_str = m_value->Description();
-    }
-
-    std::string meter_str = UserString(lexical_cast<std::string>(m_meter));
-
-    std::string part_str;
-    if (m_part_name) {
-        part_str = m_part_name->Description();
-        if (ValueRef::ConstantExpr(m_part_name) && UserStringExists(part_str))
-            part_str = UserString(part_str);
-    }
-
-    return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-               % meter_str
-               % part_str
-               % value_str);
-}
-
 std::string SetShipPartMeter::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
@@ -813,26 +728,6 @@ void SetEmpireMeter::Execute(const TargetsCauses& targets_causes, bool stacking,
     }
 }
 
-std::string SetEmpireMeter::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-    std::string value_str =     ValueRef::ConstantExpr(m_value) ?
-                                    lexical_cast<std::string>(m_value->Eval()) :
-                                    m_value->Description();
-
-    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_METER"))
-               % empire_str
-               % UserString(m_meter)
-               % value_str);
-}
-
 std::string SetEmpireMeter::Dump() const
 { return DumpIndent() + "SetEmpireMeter meter = " + m_meter + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump(); }
 
@@ -878,26 +773,6 @@ void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
 
     double value = m_value->Eval(ScriptingContext(context, empire->ResourceStockpile(m_stockpile)));
     empire->SetResourceStockpile(m_stockpile, value);
-}
-
-std::string SetEmpireStockpile::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-    std::string value_str = ValueRef::ConstantExpr(m_value) ?
-                                lexical_cast<std::string>(m_value->Eval()) :
-                                m_value->Description();
-
-    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_STOCKPILE"))
-               % UserString(lexical_cast<std::string>(m_stockpile))
-               % value_str
-               % empire_str);
 }
 
 std::string SetEmpireStockpile::Dump() const {
@@ -946,19 +821,6 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     empire->SetCapitalID(planet->ID());
 }
 
-std::string SetEmpireCapital::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_CAPITAL")) % empire_str);
-}
-
 std::string SetEmpireCapital::Dump() const
 { return DumpIndent() + "SetEmpireCapital empire = " + m_empire_id->Dump() + "\n"; }
 
@@ -993,13 +855,6 @@ void SetPlanetType::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string SetPlanetType::Description() const {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ?
-                                UserString(lexical_cast<std::string>(m_type->Eval())) :
-                                m_type->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_PLANET_TYPE")) % value_str);
-}
-
 std::string SetPlanetType::Dump() const
 { return DumpIndent() + "SetPlanetType type = " + m_type->Dump() + "\n"; }
 
@@ -1030,13 +885,6 @@ void SetPlanetSize::Execute(const ScriptingContext& context) const {
         else if (p->Type() == PT_ASTEROIDS || p->Type() == PT_GASGIANT)
             p->SetType(PT_BARREN);
     }
-}
-
-std::string SetPlanetSize::Description() const {
-    std::string value_str = ValueRef::ConstantExpr(m_size) ?
-                                UserString(lexical_cast<std::string>(m_size->Eval())) :
-                                m_size->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_PLANET_SIZE")) % value_str);
 }
 
 std::string SetPlanetSize::Dump() const
@@ -1109,13 +957,6 @@ void SetSpecies::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string SetSpecies::Description() const {
-    std::string value_str = ValueRef::ConstantExpr(m_species_name) ?
-                                UserString(m_species_name->Eval()) :
-                                m_species_name->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_SPECIES")) % value_str);
-}
-
 std::string SetSpecies::Dump() const
 { return DumpIndent() + "SetSpecies name = " + m_species_name->Dump() + "\n"; }
 
@@ -1172,19 +1013,6 @@ void SetOwner::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string SetOwner::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % empire_str);
-}
-
 std::string SetOwner::Dump() const
 { return DumpIndent() + "SetOwner empire = " + m_empire_id->Dump() + "\n"; }
 
@@ -1229,20 +1057,6 @@ void SetSpeciesEmpireOpinion::Execute(const ScriptingContext& context) const {
     double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
     GetSpeciesManager().SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
-}
-
-std::string SetSpeciesEmpireOpinion::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % empire_str);
-    // todo: fix
 }
 
 std::string SetSpeciesEmpireOpinion::Dump() const
@@ -1293,20 +1107,6 @@ void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
     float opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
     GetSpeciesManager().SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
-}
-
-std::string SetSpeciesSpeciesOpinion::Description() const {
-    std::string empire_str;
-    //if (m_empire_id) {
-    //    if (ValueRef::ConstantExpr(m_empire_id)) {
-    //        if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-    //            empire_str = empire->Name();
-    //    } else {
-    //        empire_str = m_empire_id->Description();
-    //    }
-    //}
-    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % empire_str);
-    // todo: fix
 }
 
 std::string SetSpeciesSpeciesOpinion::Dump() const
@@ -1406,19 +1206,6 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
             continue;
         effect->Execute(local_context);
     }
-}
-
-std::string CreatePlanet::Description() const {
-    std::string type_str = ValueRef::ConstantExpr(m_type) ?
-                                UserString(lexical_cast<std::string>(m_type->Eval())) :
-                                m_type->Description();
-    std::string size_str = ValueRef::ConstantExpr(m_size) ?
-                                UserString(lexical_cast<std::string>(m_size->Eval())) :
-                                m_size->Description();
-
-    return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
-                % type_str
-                % size_str);
 }
 
 std::string CreatePlanet::Dump() const {
@@ -1529,15 +1316,6 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
             continue;
         effect->Execute(local_context);
     }
-}
-
-std::string CreateBuilding::Description() const {
-    std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ?
-                                UserString(lexical_cast<std::string>(m_building_type_name->Eval())) :
-                                m_building_type_name->Description();
-
-    return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
-                % type_str);
 }
 
 std::string CreateBuilding::Dump() const {
@@ -1709,48 +1487,6 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string CreateShip::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-
-    std::string design_str;
-    if (m_design_id) {
-        if (ValueRef::ConstantExpr(m_design_id)) {
-            if (const ShipDesign* design = GetShipDesign(m_design_id->Eval()))
-                design_str = design->Name();
-        } else {
-            design_str = m_design_id->Description();
-        }
-    } else if (m_design_name) {
-        design_str = m_design_name->Description();
-        if (ValueRef::ConstantExpr(m_design_name) && UserStringExists(design_str))
-            design_str = UserString(design_str);
-    }
-
-    std::string species_str;
-    if (m_species_name)
-        species_str = ValueRef::ConstantExpr(m_species_name) ?
-                      UserString(m_species_name->Eval()) :
-                      m_species_name->Description();
-
-    if (!empire_str.empty() && !species_str.empty()) {
-        return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
-                   % design_str
-                   % empire_str
-                   % species_str);
-    } else {
-        return str(FlexibleFormat(UserString("DESC_CREATE_SHIP_SIMPLE"))
-                   % design_str);
-    }
-}
-
 std::string CreateShip::Dump() const {
     std::string retval = DumpIndent() + "CreateShip";
     if (m_design_id)
@@ -1905,32 +1641,6 @@ void CreateField::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string CreateField::Description() const {
-    std::string size_str;
-    if (m_size) {
-        if (ValueRef::ConstantExpr(m_size)) {
-            size_str = boost::lexical_cast<std::string>(m_size->Eval());
-        } else {
-            size_str = m_size->Description();
-        }
-    }
-    std::string type_str;
-    if (m_field_type_name) {
-        type_str = m_field_type_name->Description();
-        if (ValueRef::ConstantExpr(m_field_type_name) && UserStringExists(type_str))
-            type_str = UserString(type_str);
-    }
-
-    if (!size_str.empty()) {
-        return str(FlexibleFormat(UserString("DESC_CREATE_FIELD_SIZE"))
-                   % type_str
-                   % size_str);
-    } else {
-        return str(FlexibleFormat(UserString("DESC_CREATE_FIELD"))
-                   % type_str);
-    }
-}
-
 std::string CreateField::Dump() const {
     std::string retval = DumpIndent() + "CreateField";
     if (m_field_type_name)
@@ -2053,21 +1763,6 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string CreateSystem::Description() const {
-    if (m_type) {
-        std::string type_str;
-        if (ValueRef::ConstantExpr(m_type)) {
-            type_str = boost::lexical_cast<std::string>(m_type->Eval());
-        } else {
-            type_str = m_type->Description();
-        }
-        return str(FlexibleFormat(UserString("DESC_CREATE_SYSTEM_TYPE"))
-                   % UserString(type_str));
-    } else {
-        return UserString("DESC_CREATE_SYSTEM");
-    }
-}
-
 std::string CreateSystem::Dump() const {
     std::string retval = DumpIndent() + "CreateSystem";
     if (m_type)
@@ -2121,9 +1816,6 @@ void Destroy::Execute(const ScriptingContext& context) const {
     GetUniverse().EffectDestroy(context.effect_target->ID(), source_id);
 }
 
-std::string Destroy::Description() const
-{ return UserString("DESC_DESTROY"); }
-
 std::string Destroy::Dump() const
 { return DumpIndent() + "Destroy\n"; }
 
@@ -2157,19 +1849,6 @@ void AddSpecial::Execute(const ScriptingContext& context) const {
     float capacity = (m_capacity ? m_capacity->Eval(ScriptingContext(context, initial_capacity)) : initial_capacity);
 
     context.effect_target->SetSpecialCapacity(name, capacity);
-}
-
-std::string AddSpecial::Description() const {
-    std::string name_str;
-    if (m_name) {
-        name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
-            name_str = UserString(name_str);
-    }
-
-    std::string capacity = (m_capacity ? m_capacity->Description() : "0.0");
-
-    return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % name_str % capacity);
 }
 
 std::string AddSpecial::Dump() const {
@@ -2207,16 +1886,6 @@ void RemoveSpecial::Execute(const ScriptingContext& context) const {
 
     std::string name = (m_name ? m_name->Eval(context) : "");
     context.effect_target->RemoveSpecial(name);
-}
-
-std::string RemoveSpecial::Description() const {
-    std::string name_str;
-    if (m_name) {
-        name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
-            name_str = UserString(name_str);
-    }
-    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % name_str);
 }
 
 std::string RemoveSpecial::Dump() const {
@@ -2282,11 +1951,6 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string AddStarlanes::Description() const {
-    std::string value_str = m_other_lane_endpoint_condition->Description();
-    return str(FlexibleFormat(UserString("DESC_ADD_STARLANES")) % value_str);
-}
-
 std::string AddStarlanes::Dump() const
 { return DumpIndent() + "AddStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n"; }
 
@@ -2350,11 +2014,6 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string RemoveStarlanes::Description() const {
-    std::string value_str = m_other_lane_endpoint_condition->Description();
-    return str(FlexibleFormat(UserString("DESC_REMOVE_STARLANES")) % value_str);
-}
-
 std::string RemoveStarlanes::Dump() const
 { return DumpIndent() + "RemoveStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n"; }
 
@@ -2383,13 +2042,6 @@ void SetStarType::Execute(const ScriptingContext& context) const {
         s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
     else
         ErrorLogger() << "SetStarType::Execute given a non-system target";
-}
-
-std::string SetStarType::Description() const {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ?
-                                UserString(lexical_cast<std::string>(m_type->Eval())) :
-                                m_type->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_STAR_TYPE")) % value_str);
 }
 
 std::string SetStarType::Dump() const
@@ -2690,11 +2342,6 @@ void MoveTo::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string MoveTo::Description() const {
-    std::string value_str = m_location_condition->Description();
-    return str(FlexibleFormat(UserString("DESC_MOVE_TO")) % value_str);
-}
-
 std::string MoveTo::Dump() const
 { return DumpIndent() + "MoveTo destination = " + m_location_condition->Dump() + "\n"; }
 
@@ -2826,34 +2473,6 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         field->MoveTo(new_x, new_y);
     }
     // don't move planets or buildings, as these can't exist outside of systems
-}
-
-std::string MoveInOrbit::Description() const {
-    std::string focus_str;
-    if (m_focal_point_condition)
-        focus_str = m_focal_point_condition->Description();
-
-    std::string speed_str;
-    if (m_speed)
-        speed_str = m_speed->Description();
-
-    if (!focus_str.empty())
-        return str(FlexibleFormat(UserString("DESC_MOVE_IN_ORBIT_OF_OBJECT"))
-                   % focus_str
-                   % speed_str);
-
-    std::string x_str = "0.0";
-    if (m_focus_x)
-        x_str = m_focus_x->Description();
-
-    std::string y_str = "0.0";
-    if (m_focus_y)
-        y_str = m_focus_y->Description();
-
-    return str(FlexibleFormat(UserString("DESC_MOVE_IN_ORBIT_OF_XY"))
-               % x_str
-               % y_str
-               % speed_str);
 }
 
 std::string MoveInOrbit::Dump() const {
@@ -3016,34 +2635,6 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
     // don't move planets or buildings, as these can't exist outside of systems
 }
 
-std::string MoveTowards::Description() const {
-    std::string dest_str;
-    if (m_dest_condition)
-        dest_str = m_dest_condition->Description();
-
-    std::string speed_str;
-    if (m_speed)
-        speed_str = m_speed->Description();
-
-    if (!dest_str.empty())
-        return str(FlexibleFormat(UserString("DESC_MOVE_TOWARDS_OBJECT"))
-                   % dest_str
-                   % speed_str);
-
-    std::string x_str = "0.0";
-    if (m_dest_x)
-        x_str = m_dest_x->Description();
-
-    std::string y_str = "0.0";
-    if (m_dest_y)
-        y_str = m_dest_y->Description();
-
-    return str(FlexibleFormat(UserString("DESC_MOVE_TOWARDS_XY"))
-               % x_str
-               % y_str
-               % speed_str);
-}
-
 std::string MoveTowards::Dump() const {
     if (m_dest_condition)
         return DumpIndent() + "MoveTowards destination = " + m_dest_condition->Dump() + "\n";
@@ -3132,11 +2723,6 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     target_fleet->SetRoute(route_list);
 }
 
-std::string SetDestination::Description() const {
-    std::string value_str = m_location_condition->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_DESTINATION")) % value_str);
-}
-
 std::string SetDestination::Dump() const
 { return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
 
@@ -3169,9 +2755,6 @@ void SetAggression::Execute(const ScriptingContext& context) const {
     target_fleet->SetAggressive(m_aggressive);
 }
 
-std::string SetAggression::Description() const
-{ return (m_aggressive ? UserString("DESC_SET_AGGRESSIVE") : UserString("DESC_SET_PASSIVE")); }
-
 std::string SetAggression::Dump() const
 { return DumpIndent() + (m_aggressive ? "SetAggressive" : "SetPassive") + "\n"; }
 
@@ -3193,9 +2776,6 @@ void Victory::Execute(const ScriptingContext& context) const {
     else
         ErrorLogger() << "Trying to grant victory to a missing empire!";
 }
-
-std::string Victory::Description() const
-{ return UserString("DESC_VICTORY"); }
 
 std::string Victory::Dump() const
 { return DumpIndent() + "Victory reason = \"" + m_reason_string + "\"\n"; }
@@ -3247,38 +2827,6 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
     float initial_progress = empire->ResearchProgress(tech_name);
     double value = m_research_progress->Eval(ScriptingContext(context, initial_progress));
     empire->SetTechResearchProgress(tech_name, value);
-}
-
-std::string SetEmpireTechProgress::Description() const {
-    std::string progress_str = ValueRef::ConstantExpr(m_research_progress) ?
-                               lexical_cast<std::string>(m_research_progress->Eval()) :
-                               m_research_progress->Description();
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-    std::string tech_name;
-    if (m_tech_name) {
-        if (ValueRef::ConstantExpr(m_tech_name)) {
-            tech_name = m_tech_name->Eval();
-        } else {
-            tech_name = m_tech_name->Description();
-        }
-        if (GetTech(tech_name)) {
-            std::string name_temp = tech_name;
-            tech_name = UserString(name_temp);
-        }
-    }
-
-    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_TECH_PROGRESS"))
-               % tech_name
-               % progress_str
-               % empire_str);
 }
 
 std::string SetEmpireTechProgress::Dump() const {
@@ -3336,29 +2884,6 @@ void GiveEmpireTech::Execute(const ScriptingContext& context) const {
     }
 
     empire->AddTech(tech_name);
-}
-
-std::string GiveEmpireTech::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
-                empire_str = empire->Name();
-        } else {
-            empire_str = m_empire_id->Description();
-        }
-    }
-
-    std::string tech_str;
-    if (m_tech_name) {
-        tech_str = m_tech_name->Description();
-        if (ValueRef::ConstantExpr(m_tech_name) && UserStringExists(tech_str))
-            tech_str = UserString(tech_str);
-    }
-
-    return str(FlexibleFormat(UserString("DESC_GIVE_EMPIRE_TECH"))
-                % tech_str
-                % empire_str);
 }
 
 std::string GiveEmpireTech::Dump() const {
@@ -3587,39 +3112,6 @@ void GenerateSitRepMessage::Execute(const TargetsCauses& targets_causes, bool st
     }
 }
 
-std::string GenerateSitRepMessage::Description() const {
-    std::string empire_str;
-    if (m_recipient_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_recipient_empire_id))
-            empire_id = m_recipient_empire_id->Eval();
-        if (const Empire* empire = GetEmpire(empire_id))
-            empire_str = empire->Name();
-        else
-            empire_str = m_recipient_empire_id->Description();
-    }
-
-    std::string condition_str;
-    if (m_condition)
-        condition_str = m_condition->Description();
-
-    // pick appropriate sitrep text...
-    std::string desc_template;
-    switch (m_affiliation) {
-    case AFFIL_ALLY:    desc_template = UserString("DESC_GENERATE_SITREP_ALLIES");  break;
-    case AFFIL_ENEMY:   desc_template = UserString("DESC_GENERATE_SITREP_ENEMIES"); break;
-    case AFFIL_CAN_SEE: desc_template = UserString("DESC_GENERATE_SITREP_CAN_SEE"); break;
-    case AFFIL_HUMAN:   desc_template = UserString("DESC_GENERATE_SITREP_HUMAN");   break;
-    case AFFIL_NONE:    desc_template = UserString("DESC_GENERATE_SITREP_NONE");    break;
-    case AFFIL_ANY:     desc_template = UserString("DESC_GENERATE_SITREP_ALL");     break;
-    case AFFIL_SELF:
-    default:
-        desc_template = UserString("DESC_GENERATE_SITREP");
-    }
-
-    return str(FlexibleFormat(desc_template) % empire_str % condition_str);
-}
-
 std::string GenerateSitRepMessage::Dump() const {
     std::string retval = DumpIndent();
     retval += "GenerateSitRepMessage\n";
@@ -3708,9 +3200,6 @@ void SetOverlayTexture::Execute(const TargetsCauses& targets_causes, bool stacki
     }
 }
 
-std::string SetOverlayTexture::Description() const
-{ return UserString("DESC_SET_OVERLAY_TEXTURE"); }
-
 std::string SetOverlayTexture::Dump() const {
     std::string retval = DumpIndent() + "SetOverlayTexture texture = " + m_texture;
     if (m_size)
@@ -3755,8 +3244,6 @@ void SetTexture::Execute(const TargetsCauses& targets_causes, bool stacking, Acc
         EffectBase::Execute(source_context, targets_it->second.target_set);
     }
 }
-std::string SetTexture::Description() const
-{ return UserString("DESC_SET_TEXTURE"); }
 
 std::string SetTexture::Dump() const
 { return DumpIndent() + "SetTexture texture = " + m_texture + "\n"; }
@@ -3873,37 +3360,6 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     }
 }
 
-std::string SetVisibility::Description() const {
-    std::string empire_str;
-    if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
-            empire_id = m_empire_id->Eval();
-        if (const Empire* empire = GetEmpire(empire_id))
-            empire_str = empire->Name();
-        else
-            empire_str = m_empire_id->Description();
-    }
-
-    std::string vis_str = UserString("ERROR");
-    vis_str = UserString(boost::lexical_cast<std::string>(m_vis));
-
-    // pick appropriate sitrep text...
-    std::string desc_template;
-    switch (m_affiliation) {
-    case AFFIL_ALLY:    desc_template = UserString("DESC_SET_VIS_ALLIES");  break;
-    case AFFIL_ENEMY:   desc_template = UserString("DESC_SET_VIS_ENEMIES"); break;
-    case AFFIL_NONE:    desc_template = UserString("DESC_SET_VIS_NONE");    break;
-    case AFFIL_ANY:     desc_template = UserString("DESC_SET_VIS_ALL");     break;
-    case AFFIL_SELF:
-    case AFFIL_CAN_SEE:
-    case AFFIL_HUMAN:
-    default:            desc_template = UserString("DESC_SET_VIS");
-    }
-
-    return str(FlexibleFormat(desc_template) % vis_str % empire_str);
-}
-
 std::string SetVisibility::Dump() const {
     std::string retval = DumpIndent();
     retval += "SetVisibility visibility = ";
@@ -3971,12 +3427,6 @@ void Conditional::Execute(const ScriptingContext& context) const {
                 (*it)->Execute(context);
         }
     }
-}
-
-std::string Conditional::Description() const {
-    std::stringstream retval;
-    retval << str(FlexibleFormat(UserString("DESC_CONDITIONAL")) % m_target_condition->Description()) + "\n";
-    return retval.str();
 }
 
 std::string Conditional::Dump() const {

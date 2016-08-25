@@ -1291,26 +1291,6 @@ DESC_VAR_OWNER
 
 
 ##
-## FOCS effect descriptions
-##
-
-
-##
-## FOCS meter setter
-##
-
-
-##
-## FOCS other setters
-##
-
-
-##
-## FOCS object creation
-##
-
-
-##
 ## FOCS condition descriptions
 ##
 

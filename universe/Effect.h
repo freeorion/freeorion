@@ -115,7 +115,6 @@ public:
                                 bool only_appearance_effects = false,
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
-    virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 
     virtual void        SetTopLevelContent(const std::string& content_name) = 0;
@@ -146,7 +145,6 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Description() const;
     virtual std::string Dump() const;
     MeterType GetMeterType() const { return m_meter; };
     const std::string&  AccountingLabel() const { return m_accounting_label; }
@@ -189,7 +187,6 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     const ValueRef::ValueRefBase<std::string>*  GetPartName() const { return m_part_name; }
@@ -226,7 +223,6 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -253,7 +249,6 @@ public:
     virtual ~SetEmpireStockpile();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -278,7 +273,6 @@ public:
     virtual ~SetEmpireCapital();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -301,7 +295,6 @@ public:
     virtual ~SetPlanetType();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -325,7 +318,6 @@ public:
     virtual ~SetPlanetSize();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -346,7 +338,6 @@ public:
     virtual ~SetSpecies();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -367,7 +358,6 @@ public:
     virtual ~SetOwner();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -390,7 +380,6 @@ public:
     virtual ~SetSpeciesEmpireOpinion();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -415,7 +404,6 @@ public:
     virtual ~SetSpeciesSpeciesOpinion();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -441,7 +429,6 @@ public:
     virtual ~CreatePlanet();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -466,7 +453,6 @@ public:
     virtual ~CreateBuilding();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -499,7 +485,6 @@ public:
     virtual ~CreateShip();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -534,7 +519,6 @@ public:
     virtual ~CreateField();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -568,7 +552,6 @@ public:
     virtual ~CreateSystem();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -595,7 +578,6 @@ public:
     Destroy();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
@@ -615,7 +597,6 @@ public:
     ~AddSpecial();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     const ValueRef::ValueRefBase<std::string>*  GetSpecialName() const { return m_name; }
@@ -640,7 +621,6 @@ public:
     ~RemoveSpecial();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -661,7 +641,6 @@ public:
     virtual ~AddStarlanes();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -682,7 +661,6 @@ public:
     virtual ~RemoveStarlanes();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -703,7 +681,6 @@ public:
     virtual ~SetStarType();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -726,7 +703,6 @@ public:
     virtual ~MoveTo();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -753,7 +729,6 @@ public:
     virtual ~MoveInOrbit();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -782,7 +757,6 @@ public:
     virtual ~MoveTowards();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -808,7 +782,6 @@ public:
     virtual ~SetDestination();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -827,7 +800,6 @@ public:
     explicit SetAggression(bool aggressive);
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
@@ -847,7 +819,6 @@ public:
     explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRefBase<std::string>*
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
@@ -872,7 +843,6 @@ public:
     virtual ~SetEmpireTechProgress();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -894,7 +864,6 @@ public:
     virtual ~GiveEmpireTech();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -944,7 +913,6 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     const std::string&              MessageString() const       { return m_message_string; }
@@ -988,7 +956,6 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -1016,7 +983,6 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
@@ -1039,7 +1005,6 @@ public:
     virtual ~SetVisibility();
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     Visibility                      GetVisibility() const       { return m_vis; }
@@ -1069,7 +1034,6 @@ public:
                 const std::vector<EffectBase*>& false_effects);
 
     virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
