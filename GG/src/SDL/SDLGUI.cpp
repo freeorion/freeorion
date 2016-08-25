@@ -623,24 +623,40 @@ void SDLGUI::SDLInit()
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     // Create the window with a temporary size.
     // Use the same code for the real size initialization that is used for resizing the window
     // to avoid duplicated effort.
     m_window = SDL_CreateWindow(AppName().c_str(), Value(m_initial_x), Value(m_initial_y),
-                                Value(m_app_width), Value(m_app_height), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                                Value(m_app_width), Value(m_app_height), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN);
+    if (m_window)
+        m_gl_context = SDL_GL_CreateContext(m_window);
+    GLenum glew_status = glewInit();
 
-    if (m_window == 0) {
-        std::cerr << "Video mode set failed: " << SDL_GetError() << std::endl;
+    if (!m_window || !m_gl_context || GLEW_OK != glew_status) {
+        std::string msg;
+        if (!m_window) {
+            msg = "Unable to create window.";
+            msg += "\n\nSDL reported:\n";
+            msg += SDL_GetError();
+        } else if (!m_gl_context) {
+            msg = "Unable to create accelerated OpenGL 2.0 context.";
+            msg += "\n\nSDL reported:\n";
+            msg += SDL_GetError();
+        } else {
+            msg = "Unable to load OpenGL entry points.";
+            msg += "\n\nGLEW reported:\n";
+            msg += reinterpret_cast<const char*>(glewGetErrorString(glew_status));
+        }
+
+        SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_ERROR, "OpenGL initialization error", msg.c_str(), 0);
+        std::cerr << msg << std::endl;
         Exit(1);
     }
-    m_gl_context = SDL_GL_CreateContext(m_window);
 
-    GLenum error = glewInit();
-    if(error != GLEW_OK){
-        std::cerr << "Glew initialization failed: " << error << " = " << glewGetErrorString(error) << std::endl;
-        Exit(1);
-    }
+    SDL_ShowWindow(m_window);
 
     SDL_ShowCursor(false);
 
@@ -833,6 +849,11 @@ void SDLGUI::FinalCleanup()
     if (m_gl_context){
         SDL_GL_DeleteContext(m_gl_context);
         m_gl_context = 0;
+    }
+
+    if (m_window) {
+        SDL_DestroyWindow(m_window);
+        m_window = 0;
     }
 }
 
