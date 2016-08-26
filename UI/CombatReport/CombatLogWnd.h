@@ -34,7 +34,7 @@ public:
     class CombatLogWndImpl;
 private:
     //TODO C++11 unique_ptr
-    friend CombatLogWndImpl;
+    friend class CombatLogWndImpl;
     const boost::scoped_ptr<CombatLogWndImpl> pimpl;
 
     /// The number of pixels to leave between the text and the frame.
