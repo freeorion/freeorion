@@ -165,6 +165,14 @@ public:
         the newly rendered text occupies. */
     virtual void SetText(const std::string& str);
 
+    /** Sets the text displayed in this control to \a str \p text_elements
+        pair.  This is faster than SetText without \p text_elements. May resize
+        the window.  If the control was constructed with FORMAT_NOWRAP, calls
+        to this function cause the window to be resized to whatever space the
+        newly rendered text occupies. */
+    virtual void SetText(const std::string& str,
+                         const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements);
+
     /** Returns the Font used by this TextControl to render its text. */
     const boost::shared_ptr<Font>& GetFont() const;
 

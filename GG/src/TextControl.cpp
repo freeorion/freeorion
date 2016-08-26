@@ -204,6 +204,39 @@ void TextControl::SetText(const std::string& str)
     m_cached_minusable_size_width = X0;
 }
 
+void TextControl::SetText(const std::string& str,
+                          const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements)
+{
+    if (!utf8::is_valid(str.begin(), str.end()))
+        return;
+    m_text = str;
+
+    if (!m_font)
+        return;
+
+    m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
+
+    m_text_elements = text_elements;
+    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
+         it != m_text_elements.end(); ++it)
+    {
+        (*it)->Bind(m_text);
+    }
+    m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
+    Pt text_sz = m_font->TextExtent(m_line_data);
+    m_text_ul = Pt();
+    m_text_lr = text_sz;
+    AdjustMinimumSize();
+    PurgeCache();
+    if (m_format & FORMAT_NOWRAP) {
+        Resize(text_sz);
+    } else {
+        RecomputeTextBounds();
+    }
+
+    m_cached_minusable_size_width = X0;
+}
+
 const boost::shared_ptr<Font>& TextControl::GetFont() const
 { return m_font; }
 
