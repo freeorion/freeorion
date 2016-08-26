@@ -147,6 +147,9 @@ public:
             pair.second. */
         Substring(const std::string& str_, const IterPair& pair);
 
+        /** Rebind to a different string.*/
+        void Bind(const std::string& str_);
+
         /** Returns an iterator to the beginning of the substring. */
         std::string::const_iterator begin() const;
 
@@ -206,6 +209,9 @@ public:
 
         virtual ~TextElement(); ///< Virtual dtor.
 
+        /** Rebind to a different string.*/
+        virtual void Bind(const std::string& whole_text);
+
         /** Returns the TextElementType of the element. */
         virtual TextElementType Type() const;
 
@@ -241,6 +247,9 @@ public:
         /** Ctor.  \a close indicates that the tag is a close-tag
             (e.g. "</rgba>"). */
         FormattingTag(bool close);
+
+        /** Rebind to a different string.*/
+        virtual void Bind(const std::string& whole_text);
 
         virtual TextElementType Type() const;
 

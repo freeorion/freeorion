@@ -361,6 +361,12 @@ Font::Substring::Substring(const std::string& str_, const IterPair& pair) :
     second = std::distance(str->begin(), pair.second);
 }
 
+void Font::Substring::Bind(const std::string& str_)
+{
+    assert(std::distance(str_.begin(), str_.end()) >= second);
+    str = &str_;
+}
+
 std::string::const_iterator Font::Substring::begin() const
 { return boost::next(str->begin(), first); }
 
@@ -497,6 +503,9 @@ Font::TextElement::TextElement(bool ws, bool nl) :
 Font::TextElement::~TextElement()
 {}
 
+void Font::TextElement::Bind(const std::string& whole_text)
+{ text.Bind(whole_text); }
+
 Font::TextElement::TextElementType Font::TextElement::Type() const
 { return newline ? NEWLINE : (whitespace ? WHITESPACE : TEXT); }
 
@@ -526,6 +535,17 @@ Font::FormattingTag::FormattingTag(bool close) :
     TextElement(false, false),
     close_tag(close)
 {}
+
+void Font::FormattingTag::Bind(const std::string& whole_text)
+{
+    TextElement::Bind(whole_text);
+    tag_name.Bind(whole_text);
+    for (std::vector<Substring>::iterator it = params.begin();
+         it != params.end(); ++it)
+    {
+        it->Bind(whole_text);
+    }
+}
 
 Font::FormattingTag::TextElementType Font::FormattingTag::Type() const
 { return close_tag ? CLOSE_TAG : OPEN_TAG; }
