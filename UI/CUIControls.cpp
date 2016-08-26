@@ -1334,19 +1334,19 @@ void StatisticIcon::Refresh() {
     if (!m_text)
         return;
 
-    std::string text = "";
+    GG::Font::TextAndElementsAssembler text_elements(*m_text->GetFont());
+    text_elements.AddOpenTag(ValueColor(0))
+        .AddText(DoubleToString(m_values[0], m_digits[0], m_show_signs[0]))
+        .AddCloseTag("rgba");
+    if (m_num_values > 1)
+        text_elements
+            .AddText(" (")
+            .AddOpenTag(ValueColor(1))
+            .AddText("Pi"+DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) )
+            .AddCloseTag("rgba")
+            .AddText(")");
 
-    // first value: always present
-    std::string clr_tag = GG::RgbaTag(ValueColor(0));
-    text += clr_tag + DoubleToString(m_values[0], m_digits[0], m_show_signs[0]) + "</rgba>";
-
-    // second value: may or may not be present
-    if (m_num_values > 1) {
-        clr_tag = GG::RgbaTag(ValueColor(1));
-        text += " (" + clr_tag + DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) + "</rgba>)";
-    }
-
-    m_text->SetText(text);
+    m_text->SetText(text_elements.Text(), text_elements.Elements());
 }
 
 GG::Clr StatisticIcon::ValueColor(int index) const {
