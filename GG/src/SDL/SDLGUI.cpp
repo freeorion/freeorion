@@ -376,7 +376,7 @@ namespace {
             m_status(status)
         {}
 
-        virtual const char* what() {
+        virtual const char* what() const throw() {
             switch (m_status) {
                 case GL_FRAMEBUFFER_UNSUPPORTED:
                     return "The requested framebuffer format was unsupported";
