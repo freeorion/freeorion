@@ -59,7 +59,6 @@ set(freeorion_HEADER
     ../../UI/IntroScreen.h
     ../../UI/LinkText.h
     ../../UI/MapWnd.h
-    ../../UI/MarkupBox.h
     ../../UI/MeterBrowseWnd.h
     ../../UI/MilitaryPanel.h
     ../../UI/ModeratorActionsWnd.h
@@ -129,7 +128,6 @@ set(freeorion_SOURCES
     ../../UI/IntroScreen.cpp
     ../../UI/LinkText.cpp
     ../../UI/MapWnd.cpp
-    ../../UI/MarkupBox.cpp
     ../../UI/MeterBrowseWnd.cpp
     ../../UI/MilitaryPanel.cpp
     ../../UI/ModeratorActionsWnd.cpp
