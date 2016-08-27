@@ -74,6 +74,12 @@ public:
     TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
+    /** Fast constructor.*/
+    TextControl(X x, Y y, X w, Y h, const std::string& str,
+                const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements,
+                const boost::shared_ptr<Font>& font,
+                Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
+                Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
     virtual ~TextControl();
 

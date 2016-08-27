@@ -55,6 +55,26 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     SetText(str);
 }
 
+TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
+                         const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements,
+                         const boost::shared_ptr<Font>& font,
+                         Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
+                         Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
+    Control(x, y, w, h, flags),
+    m_format(format),
+    m_text_color(color),
+    m_clip_text(false),
+    m_set_min_size(false),
+    m_code_points(0),
+    m_font(font),
+    m_render_cache(0),
+    m_cached_minusable_size_width(X0),
+    m_cached_minusable_size(Pt())
+{
+    ValidateFormat();
+    SetText(str, text_elements);
+}
+
 TextControl::~TextControl()
 {
     delete m_render_cache;
