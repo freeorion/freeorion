@@ -6827,7 +6827,7 @@ NO_INDUSTRY
 −−−	Keine [[encyclopedia INDUSTRY_TITLE]]
 
 BAD_INDUSTRY
-−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: -50%
+−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: 75%
 
 AVERAGE_INDUSTRY
 '''	Mittelmässige [[encyclopedia INDUSTRY_TITLE]]: 100%'''
@@ -6836,16 +6836,16 @@ GOOD_INDUSTRY
 +	Gute [[encyclopedia INDUSTRY_TITLE]]: 150%
 
 GREAT_INDUSTRY
-++	Große [[encyclopedia INDUSTRY_TITLE]]: 200%
+++	Hervorragende [[encyclopedia INDUSTRY_TITLE]]: 200%
 
 ULTIMATE_INDUSTRY
-+++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 400%
++++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 300%
 
 NO_RESEARCH
 −−−	Keine [[encyclopedia RESEARCH_TITLE]]
 
 BAD_RESEARCH
-−	Schlechte [[encyclopedia RESEARCH_TITLE]]: -50%
+−	Schlechte [[encyclopedia RESEARCH_TITLE]]: 75%
 
 AVERAGE_RESEARCH
 '''	Mittelmässige [[encyclopedia RESEARCH_TITLE]]: 100%'''
@@ -6854,16 +6854,16 @@ GOOD_RESEARCH
 +	Gute [[encyclopedia RESEARCH_TITLE]]: 150%
 
 GREAT_RESEARCH
-++	Große [[encyclopedia RESEARCH_TITLE]]: 200%
+++	Hervorragende [[encyclopedia RESEARCH_TITLE]]: 200%
 
 ULTIMATE_RESEARCH
-+++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%
++++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 300%
 
 NO_DEFENSE_TROOPS
 −−−	Keine Boden[[encyclopedia TROOP_TITLE]]
 
 BAD_DEFENSE_TROOPS
-−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: -50%
+−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: 50%
 
 AVERAGE_DEFENSE_TROOPS
 '''	Mittelmäßige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
@@ -6872,7 +6872,7 @@ GOOD_DEFENSE_TROOPS
 +	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.
 
 GREAT_DEFENSE_TROOPS
-++	Große Boden[[encyclopedia TROOP_TITLE]]: 200%.
+++	Hervorragende Boden[[encyclopedia TROOP_TITLE]]: 200%.
 
 ULTIMATE_DEFENSE_TROOPS
 +++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.
@@ -6884,34 +6884,34 @@ GOOD_DETECTION
 +	Gute [[encyclopedia DETECTION_RANGE_TITLE]]: +25 Bonus.
 
 GREAT_DETECTION
-++	Große [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.
+++	Hervorragende [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.
 
 ULTIMATE_DETECTION
 +++	Perfekte [[encyclopedia DETECTION_RANGE_TITLE]]: +100 Bonus.
 
 BAD_STEALTH
-−	Schlechte [[encyclopedia STEALTH_TITLE]]: −15 Malus.
+−	Schlechte [[encyclopedia STEALTH_TITLE]]: −20 Malus.
 
 AVERAGE_STEALTH
 '''	Mittelmäßige [[encyclopedia STEALTH_TITLE]].'''
 
 GOOD_STEALTH
-+	Gute [[encyclopedia STEALTH_TITLE]]: +15 Bonus.
++	Gute [[encyclopedia STEALTH_TITLE]]: +20 Bonus.
 
 GREAT_STEALTH
-++	Grosse [[encyclopedia STEALTH_TITLE]]: +40 Bonus.
+++	Hervorragende [[encyclopedia STEALTH_TITLE]]: +40 Bonus.
 
 ULTIMATE_STEALTH
 +++	Perfekte [[encyclopedia STEALTH_TITLE]]: +60 Bonus.
 
 BAD_POPULATION
-−	Arme Bevölkerung 75%
+−	Niedrige Bevölkerung 75%
 
 AVERAGE_POPULATION
-'''	Mittelmäßige Bevölkerung'''
+'''	Normale Bevölkerung'''
 
 GOOD_POPULATION
-+	Gesunde Bevölkerung 125%
++	Hohe Bevölkerung 125%
 
 
 ##
@@ -6924,19 +6924,19 @@ STANDARD_CONSTRUCTION_LABEL
 
 # %1% FIXME
 GOOD_ENVIRONMENT_LABEL
-%1% Gute Umgebung
+%1% Gute Umweltbedingungen
 
 # %1% FIXME
 ADEQUATE_ENVIRONMENT_LABEL
-%1% Passende Umgebung
+%1% Ausreichende Umweltbedingungen
 
 # %1% FIXME
 POOR_ENVIRONMENT_LABEL
-%1% Arme Umgebung
+%1% Schlechte Umweltbedingungen
 
 # %1% FIXME
 HOSTILE_ENVIRONMENT_LABEL
-%1% Feindliche Umgebung
+%1% Feindliche Umweltbedingungen
 
 HOMEWORLD_LABEL
 Heimatwelt
