@@ -1213,7 +1213,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 
     AttachChild(m_icon);
 
-    DoLayout();
+    RequirePreRender();
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
@@ -1234,7 +1234,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 
     AttachChild(m_icon);
 
-    DoLayout();
+    RequirePreRender();
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
@@ -1264,6 +1264,11 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 
     AttachChild(m_icon);
 
+    RequirePreRender();
+}
+
+void StatisticIcon::PreRender() {
+    GG::Wnd::PreRender();
     DoLayout();
 }
 
@@ -1282,9 +1287,11 @@ void StatisticIcon::SetValue(double value, int index) {
         m_values.resize(m_num_values, 0.0);
         m_show_signs.resize(m_num_values, m_show_signs[0]);
         m_digits.resize(m_num_values, m_digits[0]);
+        RequirePreRender();
     }
+    if (value != m_values[index])
+        RequirePreRender();
     m_values[index] = value;
-    DoLayout();
 }
 
 void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1293,7 +1300,7 @@ void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Wnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 void StatisticIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
