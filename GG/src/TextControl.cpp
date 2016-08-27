@@ -238,6 +238,25 @@ void TextControl::SetText(const std::string& str,
     m_cached_minusable_size_width = X0;
 }
 
+void TextControl::ChangeTemplatedText(const std::string& new_text, size_t targ_offset) {
+    m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
+    m_code_points = CPSize(utf8::distance(m_text.begin(), m_text.end()));
+
+    m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
+    Pt text_sz = m_font->TextExtent(m_line_data);
+    m_text_ul = Pt();
+    m_text_lr = text_sz;
+    AdjustMinimumSize();
+    PurgeCache();
+    if (m_format & FORMAT_NOWRAP) {
+        Resize(text_sz);
+    } else {
+        RecomputeTextBounds();
+    }
+
+    m_cached_minusable_size_width = X0;
+}
+
 const boost::shared_ptr<Font>& TextControl::GetFont() const
 { return m_font; }
 

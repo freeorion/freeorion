@@ -1598,6 +1598,68 @@ void Font::FillTemplatedText(
     }
 }
 
+void Font::ChangeTemplatedText(
+    std::string& text,
+    std::vector<boost::shared_ptr<Font::TextElement> >& text_elements,
+    const std::string& new_text,
+    size_t targ_offset) const
+{
+    if (targ_offset >= text_elements.size())
+        return;
+
+    if (new_text.empty())
+        return;
+
+    int change_of_len;
+
+    // Find the target text element.
+    size_t curr_offset = 0;
+    std::vector<boost::shared_ptr<Font::TextElement> >::iterator te_it = text_elements.begin();
+    while (te_it != text_elements.end())
+    {
+        if ((*te_it)->Type() == TextElement::TEXT) {
+            // Change the target text element
+            if (targ_offset == curr_offset) {
+                // Change text
+                size_t ii_sub_begin = (*te_it)->text.begin() - text.begin();
+                size_t sub_len = (*te_it)->text.end() - (*te_it)->text.begin();
+                text.erase(ii_sub_begin, sub_len);
+                text.insert(ii_sub_begin, new_text);
+
+                change_of_len = new_text.size() - sub_len;
+                (*te_it)->text = Substring(text,
+                                           boost::next(text.begin(), ii_sub_begin),
+                                           boost::next(text.begin(), ii_sub_begin + new_text.size()));
+                break;
+            }
+            ++curr_offset;
+        }
+        ++te_it;
+    }
+
+    if (te_it == text_elements.end())
+        return;
+
+    std::vector<boost::shared_ptr<Font::TextElement> >::iterator start_of_reflow = te_it;
+
+    if (change_of_len != 0) {
+        ++te_it;
+        // Adjust the offset of each subsequent text_element
+        while (te_it != text_elements.end())
+        {
+            size_t ii_sub_begin = (*te_it)->text.begin() - text.begin();
+            size_t ii_sub_end = (*te_it)->text.end() - text.begin();
+            (*te_it)->text = Substring(text,
+                                       boost::next(text.begin(), ii_sub_begin + change_of_len),
+                                       boost::next(text.begin(), ii_sub_end + change_of_len));
+
+            ++te_it;
+        }
+    }
+
+    FillTemplatedText(text, text_elements, start_of_reflow);
+}
+
 std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
                                                  const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {

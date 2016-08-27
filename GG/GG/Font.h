@@ -564,6 +564,17 @@ public:
                            std::vector<boost::shared_ptr<TextElement> >& text_elements,
                            std::vector<boost::shared_ptr<TextElement> >::iterator starting_from) const;
 
+    /** Change \p text_elements and \p text to replace the text at \p targ_offset with \p new_text.
+
+        This does not recompute the text_elements. It is faster than ComputeTextElements on a new
+        string. It will not find white space in the inserted text.
+
+        \p text and \p text_elements are assumed to be consistent and both will be changed. */
+    void ChangeTemplatedText(std::string& text,
+                             std::vector<boost::shared_ptr<TextElement> >& text_elements,
+                             const std::string& new_text,
+                             size_t targ_offset) const;
+
     /** DetermineLines() returns the \p line_data resulting from adding the necessary line
         breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
         the \p text into a box of width \p box_width.

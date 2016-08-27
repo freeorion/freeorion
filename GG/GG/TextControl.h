@@ -173,6 +173,12 @@ public:
     virtual void SetText(const std::string& str,
                          const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements);
 
+    /** Change \p text to replace the text at templated \p targ_offset with \p new_text.
+
+        This does not reparse the TextControl's text. It is faster than SetText on a new
+        string. It will not find white space in the inserted text. */
+    void ChangeTemplatedText(const std::string& new_text, size_t targ_offset);
+
     /** Returns the Font used by this TextControl to render its text. */
     const boost::shared_ptr<Font>& GetFont() const;
 
