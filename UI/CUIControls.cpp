@@ -1187,8 +1187,10 @@ namespace {
     const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+                             GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
+                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+    GG::Control(x, y, w, h, GG::INTERACTIVE),
     m_num_values(0),
     m_values(),
     m_digits(),
@@ -1207,8 +1209,10 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture) :
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
-                             double value, int digits, bool showsign) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+                             double value, int digits, bool showsign,
+                             GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
+                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+    GG::Control(x, y, w, h, GG::INTERACTIVE),
     m_num_values(1),
     m_values(std::vector<double>(1, value)),
     m_digits(std::vector<int>(1, digits)),
@@ -1230,8 +1234,10 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
-                             bool showsign0, bool showsign1) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+                             bool showsign0, bool showsign1,
+                             GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
+                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+    GG::Control(x, y, w, h, GG::INTERACTIVE),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)),
     m_digits(std::vector<int>(2, 2)),

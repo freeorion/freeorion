@@ -356,18 +356,28 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row {
   * is an icon image, not text.
   * The icon may have one or two numerical values.  If one, just that number is
   * displayed.  If two, the first number is displayed followed by the second in
-  * brackets "()" */
+  * brackets "()"
+
+  * Sizing StatisticIcon correctly in the constructor saves time because resizing the value string
+  * is processor intensive.
+  */
 class StatisticIcon : public GG::Control {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(const boost::shared_ptr<GG::Texture> texture);///< initialized with no value (just an icon)
+    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+                  GG::X x = GG::X0, GG::Y y = GG::Y0,
+                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
     StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
-                  double value, int digits, bool showsign);     ///< initializes with one value
+                  double value, int digits, bool showsign,
+                  GG::X x = GG::X0, GG::Y y = GG::Y0,
+                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
 
     StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
-                  bool showsign0, bool showsign1);              ///< initializes with two values
+                  bool showsign0, bool showsign1,
+                  GG::X x = GG::X0, GG::Y y = GG::Y0,
+                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
 
     /** \name Accessors */ //@{
