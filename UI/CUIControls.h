@@ -408,7 +408,6 @@ public:
 
 private:
     void            DoLayout();
-    void            Refresh();
     GG::Clr         ValueColor(int index) const;        ///< returns colour in which to draw value
 
     int                 m_num_values;

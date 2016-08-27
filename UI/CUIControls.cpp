@@ -1214,7 +1214,6 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     AttachChild(m_icon);
 
     DoLayout();
-    Refresh();
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
@@ -1230,15 +1229,12 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_text(0)
 {
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
-    m_text = new CUILabel("");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     AttachChild(m_icon);
-    AttachChild(m_text);
 
     DoLayout();
-    Refresh();
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
@@ -1256,7 +1252,6 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 {
     SetName("StatisticIcon");
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
-    m_text = new CUILabel("");
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -1268,10 +1263,8 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     AttachChild(m_icon);
-    AttachChild(m_text);
 
     DoLayout();
-    Refresh();
 }
 
 double StatisticIcon::GetValue(int index) const {
@@ -1291,7 +1284,7 @@ void StatisticIcon::SetValue(double value, int index) {
         m_digits.resize(m_num_values, m_digits[0]);
     }
     m_values[index] = value;
-    Refresh();
+    DoLayout();
 }
 
 void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1328,28 +1321,11 @@ void StatisticIcon::DoLayout() {
     m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0),
                      GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
-    if (!m_text)
+    if (m_num_values <= 0)
         return;
 
-    GG::Pt text_ul;
-    GG::Pt text_lr(Width(), Height());
-
-    if (Width() >= Value(Height())) {
-        m_text->SetTextFormat(GG::FORMAT_LEFT);
-        text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
-    } else {
-        m_text->SetTextFormat(GG::FORMAT_BOTTOM);
-        text_ul.y = GG::Y(icon_dim + STAT_ICON_PAD);
-    }
-
-    m_text->SizeMove(text_ul, text_lr);
-}
-
-void StatisticIcon::Refresh() {
-    if (!m_text)
-        return;
-
-    GG::Font::TextAndElementsAssembler text_elements(*m_text->GetFont());
+    // Precompute text elements
+    GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
     text_elements.AddOpenTag(ValueColor(0))
         .AddText(DoubleToString(m_values[0], m_digits[0], m_show_signs[0]))
         .AddCloseTag("rgba");
@@ -1361,7 +1337,30 @@ void StatisticIcon::Refresh() {
             .AddCloseTag("rgba")
             .AddText(")");
 
-    m_text->SetText(text_elements.Text(), text_elements.Elements());
+    // Calculate location and format
+    GG::Flags<GG::TextFormat> format;
+    GG::Pt text_ul;
+    GG::Pt text_lr(Width(), Height());
+
+    if (Width() >= Value(Height())) {
+        format = GG::FORMAT_LEFT;
+        text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
+    } else {
+        format = GG::FORMAT_BOTTOM;
+        text_ul.y = GG::Y(icon_dim + STAT_ICON_PAD);
+    }
+
+    if (!m_text) {
+        // Create new label in correct place.
+        m_text = new CUILabel(text_elements.Text(), text_elements.Elements(),
+                              format, GG::NO_WND_FLAGS,
+                              text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
+        AttachChild(m_text);
+    } else {
+        // Adjust text and place label.
+       m_text->SetText(text_elements.Text(), text_elements.Elements());
+       m_text->SizeMove(text_ul, text_lr);
+    }
 }
 
 GG::Clr StatisticIcon::ValueColor(int index) const {
