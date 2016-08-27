@@ -35,7 +35,13 @@ public:
     /** \name Structors */ //@{
     CUILabel(const std::string& str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
-             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
+             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
+             GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
+    CUILabel(const std::string& str,
+             const std::vector<boost::shared_ptr<GG::Font::TextElement> >& text_elements,
+             GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
+             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
+             GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
     //@}
     /** \name Mutators */ //@{
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);

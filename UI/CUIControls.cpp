@@ -52,8 +52,17 @@ namespace {
 ///////////////////////////////////////
 CUILabel::CUILabel(const std::string& str,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
-                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
-    TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
+                   GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
+    TextControl(x, y, w, h, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+{}
+
+CUILabel::CUILabel(const std::string& str,
+                   const std::vector<boost::shared_ptr<GG::Font::TextElement> >& text_elements,
+                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
+                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
+                   GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
+    TextControl(x, y, w, h, str, text_elements, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
 void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
