@@ -1015,13 +1015,15 @@ void ShipDataPanel::Init() {
     bool show_troops = !ship->IsArmed() && ship->HasTroops();
     if (!show_troops) {
         // damage stat icon
-        StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false);
+        StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false,
+                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     } else {
         // troops stat icon
-        StatisticIcon* icon = new StatisticIcon(TroopIcon(), 0, 0, false);
+        StatisticIcon* icon = new StatisticIcon(TroopIcon(), 0, 0, false,
+                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1032,7 +1034,8 @@ void ShipDataPanel::Init() {
     meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD);     meters.push_back(METER_FUEL);
     meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);    meters.push_back(METER_SPEED);
     for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-        StatisticIcon* icon = new StatisticIcon(ClientUI::MeterIcon(*it), 0, 0, false);
+        StatisticIcon* icon = new StatisticIcon(ClientUI::MeterIcon(*it), 0, 0, false,
+                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(*it, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1132,7 +1135,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         // stat icon for fleet count
-        StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false);
+        StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false,
+                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
@@ -1141,14 +1145,16 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
 
         if (fleet->HasArmedShips() || !fleet->HasTroopShips()) {
             // stat icon for fleet damage
-            icon = new StatisticIcon(DamageIcon(), 0, 0, false);
+            icon = new StatisticIcon(DamageIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
             AttachChild(icon);
         } else {
             // stat icon for fleet troops
-            icon = new StatisticIcon(TroopIcon(), 0, 0, false);
+            icon = new StatisticIcon(TroopIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
@@ -1156,7 +1162,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         }
 
         // stat icon for fleet structure
-        icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
@@ -1164,7 +1171,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         AttachChild(icon);
 
         // stat icon for fleet shields
-        icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
@@ -1172,7 +1180,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         AttachChild(icon);
 
         // stat icon for fleet fuel
-        icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_FUEL_SUMMARY"));
@@ -1180,7 +1189,8 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         AttachChild(icon);
 
         // stat icon for fleet speed
-        icon = new StatisticIcon(SpeedIcon(), 0, 0, false);
+        icon = new StatisticIcon(SpeedIcon(), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_SPEED_SUMMARY"));
@@ -2763,35 +2773,40 @@ void FleetWnd::Init(int selected_fleet_id) {
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     // stat icon for fleet count
-    StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false);
+    StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false,
+                                            GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
     m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet damage
-    icon = new StatisticIcon(DamageIcon(), 0, 0, false);
+    icon = new StatisticIcon(DamageIcon(), 0, 0, false,
+                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
     m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet structure
-    icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
+    icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
+                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
     m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet shields
-    icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
+    icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
+                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
     m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet troops
-    icon = new StatisticIcon(TroopIcon(), 0, 0, false);
+    icon = new StatisticIcon(TroopIcon(), 0, 0, false,
+                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
     m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
