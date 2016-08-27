@@ -41,9 +41,15 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     GG::Connect(m_expand_button->LeftClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
     // small meter indicators - for use when panel is collapsed
-    m_meter_stats.push_back(std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()), 0, 3, false)));
-    m_meter_stats.push_back(std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS), 0, 3, false)));
-    m_meter_stats.push_back(std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false)));
+    m_meter_stats.push_back(
+        std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()), 0, 3, false,
+                                                           GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+    m_meter_stats.push_back(
+        std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS), 0, 3, false,
+                                                          GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+    m_meter_stats.push_back(
+        std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false,
+                                                             GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
