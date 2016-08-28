@@ -5,7 +5,6 @@ BASIC_INDUSTRY
 '''        EffectsGroup
             scope = Source
             activation = And [
-                Source
                 Planet
                 TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
@@ -13,6 +12,17 @@ BASIC_INDUSTRY
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
+            scope = Source
+            activation = And [
+                Planet
+                Human
+                (GalaxyMaxAIAggression = 0)
+            ]
+            accountinglabel = "DIFFICULTY"
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetIndustry value = Value * 4
 
         EffectsGroup                    // removes residual production from a dead planet
             scope = Source

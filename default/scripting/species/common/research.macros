@@ -2,13 +2,23 @@ BASIC_RESEARCH
 '''EffectsGroup
             scope = Source
             activation = And [
-                Source
                 Planet
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
             priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
+
+        EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
+            scope = Source
+            activation = And [
+                Planet
+                Human
+                (GalaxyMaxAIAggression = 0)
+            ]
+            accountinglabel = "DIFFICULTY"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetResearch value = Value * 4
 
         EffectsGroup      // removes residual production from a dead planet
             scope = Source
