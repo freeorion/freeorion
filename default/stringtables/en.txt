@@ -5352,6 +5352,11 @@ On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Ancient Ruins Empty Excavation
 
+EFFECT_NATIVES_TECH
+On %planet%: The technology %tech% was learned from the %species%!
+EFFECT_NATIVES_TECH_LABEL
+Native Tech
+
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
 
@@ -5944,6 +5949,23 @@ The Laenfa are long and vine-like, able to attach and detach into any number of 
 
 Social Structure:
 The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
+'''
+
+SP_LEMBALALAM
+Lembala'Lam
+SP_LEMBALALAM_GAMEPLAY_DESC
+'''Egocentric, degenerated ancient reptiles that no longer reproduce.
+Prefer Desert Planets.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+Owning the Lembala grants the technologies: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]]. 
+'''
+
+SP_LEMBALALAM_DESC
+'''Description:
+The Lembala'Lam are an ancient species in the evening of its existence. They had some apparent resemblance with reptiles such as snakes or geckos, but most of their original physiognomy was lost to evolution warped by their mechanically enhanced lifestyle. Without machines they would no longer be capable of locomotion or feeding. The ability to reproduce was lost completely, but most importantly they've lost the trust in each other. The last nail in the coffin for Lembala society was the invention of an automated system that transfers the mind of a dying Lembala into the next spare clone, of which every Lembala has hundreds safely hidden. Almost all mental and material ressources of the Lembala are used to assure their artificial immortality, leaving little to no room for real developement of their civilization. 
+
+Social Structure:
+The Lembala know each other for eons, but are suspicious of each and every one of the others. Their democratic government is forever paralyzed by long accepted stalemates. Due to paranoia and their lack of altruism even the most basic cooperation is rare and short lived.
 '''
 
 SP_TAEGHIRUS
@@ -12409,6 +12431,9 @@ AVERAGE_POPULATION
 GOOD_POPULATION
 +	Good Population 125%
 
+FIXED_LOW_POPULATION
+−−	Maximum Population is fixed at 5
+
 BAD_SUPPLY
 −	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus
 
@@ -12489,6 +12514,9 @@ ENV_ENCAPSUL_LABEL
 
 SELF_SUSTAINING_LABEL
 Self-Sustaining
+
+IMMORTAL_LABEL
+Immortal and not reproducing
 
 SUBTERRANEAN_LABEL
 Subterranean Bonus
