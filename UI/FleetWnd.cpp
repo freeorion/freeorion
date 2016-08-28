@@ -84,7 +84,7 @@ namespace {
         TemporaryPtr<const System> dest_sys = GetSystem(fleet->FinalDestinationID());
         TemporaryPtr<const System> cur_sys = GetSystem(fleet->SystemID());
         bool returning_to_current_system = (dest_sys == cur_sys) && !fleet->TravelRoute().empty();
-        if (dest_sys && dest_sys != cur_sys || returning_to_current_system) {
+        if (dest_sys && (dest_sys != cur_sys || returning_to_current_system)) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
