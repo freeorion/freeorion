@@ -95,18 +95,6 @@ namespace {
                         boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
     }
 
-    /** Attempts to cast \a obj to a Fleet pointer. If that fails, attempts to
-      * cast \a obj to a Ship pointer, and then get the Fleet of the ship. If
-      * both fail then returns a null object Fleet pointer. */
-    TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
-        TemporaryPtr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
-        if (!retval) {
-            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
-                retval = GetFleet(ship->FleetID());
-        }
-        return retval;
-    }
-
     /** Used by 4-parameter ConditionBase::Eval function, and some of its
       * overrides, to scan through \a matches or \a non_matches set and apply
       * \a pred to each object, to test if it should remain in its current set

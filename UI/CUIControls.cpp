@@ -677,7 +677,6 @@ void CUIDropDownList::InitBuffer() {
 void CUIDropDownList::Render() {
     GG::Pt ul = UpperLeft();
     GG::Clr lb_color = LB()->Color();
-    GG::Clr lb_interior_color = LB()->InteriorColor();
     GG::Clr border_color = Disabled() ? DisabledColor(lb_color) : lb_color;
     GG::Clr interior_color = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
@@ -1590,6 +1589,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     CUIWnd(title, x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE, config_name),
     m_units_str(point_units_str),
     m_title_str(title),
+    m_empire_id(ALL_EMPIRES),
     m_total_points_label(0),
     m_total_points(0),
     m_total_points_P_label(0),
@@ -1601,8 +1601,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_local_points_P_label(0),
     m_local_wasted_points_label(0),
     m_local_wasted_points(0),
-    m_local_wasted_points_P_label(0),
-    m_empire_id(ALL_EMPIRES)
+    m_local_wasted_points_P_label(0)
 {}
 
 GG::Pt ProductionInfoPanel::MinUsableSize() const {

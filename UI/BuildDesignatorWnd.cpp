@@ -194,18 +194,6 @@ namespace {
         return source;
     }
 
-    std::string LocationConditionDescription(const std::string& building_name, int candidate_object_id,
-                                             int empire_id)
-    {
-        std::vector<Condition::ConditionBase*> location_conditions;
-        Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
-        location_conditions.push_back(&bld_avail_cond);
-        if (const BuildingType* building_type = GetBuildingType(building_name))
-            location_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
-        TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
-        return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
-    }
-
     std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
                                                        int empire_id, bool only_failed_conditions)
     {

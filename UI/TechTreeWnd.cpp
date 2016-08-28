@@ -1639,7 +1639,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 
 void TechTreeWnd::TechListBox::TechRow::Update() {
     const Tech* this_row_tech = ::GetTech(m_tech);
-    if (!this || !this_row_tech || this->size() < 4)
+    if (!this_row_tech || this->size() < 4)
         return;
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));

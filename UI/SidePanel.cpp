@@ -51,7 +51,6 @@ class RotatingPlanetControl;
 
 namespace {
     const int       EDGE_PAD(3);
-    const double    TWO_PI(2.0*3.1415926536);
     std::map<std::pair<int,int>,float>          colony_projections;
     std::map<std::pair<std::string,int>,float>  species_colony_projections;
 
@@ -1425,7 +1424,6 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     std::string colony_ship_species_name;
-    const ShipDesign* design = 0;
     float colony_ship_capacity = 0.0f;
     if (selected_colony_ship) {
         colony_ship_species_name = selected_colony_ship->SpeciesName();

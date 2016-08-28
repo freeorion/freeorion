@@ -187,9 +187,9 @@ namespace {
         }
 
         // See explanation at CalculateProductionPerTurnLimit() above regarding operation of these factors.
-        const float frontload_limit_factor = GetQueueFrontloadFactor();
         // any allowed topping up is limited by how much frontloading was allowed
-        const float topping_up_limit_factor = std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
+        //const float frontload_limit_factor = GetQueueFrontloadFactor();
+        //const float topping_up_limit_factor = std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
         // DebugLogger() << "SetProdQueueElementSpending frontload  factor " << frontload_limit_factor;
         // DebugLogger() << "SetProdQueueElementSpending topping up factor " << topping_up_limit_factor;
 

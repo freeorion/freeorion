@@ -6,7 +6,6 @@ namespace qi = boost::spirit::qi;
 #define DEBUG_PARSERS 0
 
 namespace {
-    qi::_1_type _1;
     qi::_val_type _val;
 }
 

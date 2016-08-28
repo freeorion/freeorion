@@ -1138,9 +1138,9 @@ namespace {
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (std::set<std::string>::const_iterator ex_it = exclusions.begin(); ex_it != exclusions.end(); ++ex_it) {
-                if (const PartType* ex_part = GetPartType(*ex_it)) {
+                if (GetPartType(*ex_it)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, *ex_it) + "  ";
-                } else if (const HullType* ex_hull = GetHullType(*ex_it)) {
+                } else if (GetHullType(*ex_it)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, *ex_it) + "  ";
                 } else {
                     // unknown exclusion...?
@@ -1198,9 +1198,9 @@ namespace {
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
             for (std::set<std::string>::const_iterator ex_it = exclusions.begin(); ex_it != exclusions.end(); ++ex_it) {
-                if (const PartType* ex_part = GetPartType(*ex_it)) {
+                if (GetPartType(*ex_it)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, *ex_it) + "  ";
-                } else if (const HullType* ex_hull = GetHullType(*ex_it)) {
+                } else if (GetHullType(*ex_it)) {
                     detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, *ex_it) + "  ";
                 } else {
                     // unknown exclusion...?
@@ -2019,68 +2019,6 @@ namespace {
             % typical_strength % (typical_strength / cost)).str();
     }
 
-    std::string GetDetailedDescription(const TemporaryPtr<Ship> ship, const ShipDesign* design, float cost) {
-        GetUniverse().UpdateMeterEstimates(ship->ID());
-
-        const std::string& species = ship->SpeciesName().empty() ? "Generic" : ship->SpeciesName();
-        std::string hull_link;
-        if (!design->Hull().empty())
-                hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
-
-        std::string parts_list;
-        const std::vector<std::string>& parts = design->Parts();
-        std::map<std::string, int> non_empty_parts_count;
-        for (std::vector<std::string>::const_iterator part_it = parts.begin();
-             part_it != parts.end(); ++part_it)
-        {
-            if (part_it->empty())
-                continue;
-            non_empty_parts_count[*part_it]++;
-        }
-        for (std::map<std::string, int>::const_iterator part_it = non_empty_parts_count.begin();
-             part_it != non_empty_parts_count.end(); ++part_it)
-        {
-            if (part_it != non_empty_parts_count.begin())
-                parts_list += ", ";
-            parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, part_it->first);
-            if (part_it->second > 1)
-                parts_list += " x" + boost::lexical_cast<std::string>(part_it->second);
-        }
-
-        //The strength of a fleet is approximately weapons * armor, or
-        //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
-        //depends on the enemy's weapons and shields, so we estimate the
-        //enemy technology from the turn.
-        float structure = ship->CurrentMeterValue(METER_MAX_STRUCTURE);
-        float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
-        float strength = std::pow(design->Attack() * structure, 0.6f);
-        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
-        float typical_shot = 3 + 27 * tech_level;
-        float typical_shield = 20 * tech_level;
-        float typical_strength = std::pow(design->AdjustedAttack(typical_shield) * structure * typical_shot / std::max(typical_shot - shield, 0.0f), 0.6f);
-        return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-                   % design->Description()
-                   % hull_link
-                   % parts_list
-                   % static_cast<int>(design->Weapons().size())
-                   % 0
-                   % 0
-                   % 0
-                   % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
-                   % ship->CurrentMeterValue(METER_MAX_SHIELD)
-                   % ship->CurrentMeterValue(METER_DETECTION)
-                   % ship->CurrentMeterValue(METER_STEALTH)
-                   % ship->CurrentMeterValue(METER_SPEED)
-                   % ship->CurrentMeterValue(METER_SPEED)
-                   % ship->CurrentMeterValue(METER_MAX_FUEL)
-                   % design->ColonyCapacity()
-                   % design->TroopCapacity()
-                   % design->Attack()
-                   % species
-                   % strength % (strength / cost)
-                   % typical_strength % (typical_strength / cost));
-    }
-
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
                                             std::string& name, boost::shared_ptr<GG::Texture>& texture,
                                             boost::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2127,7 +2065,6 @@ namespace {
         if ((selected_ship == INVALID_OBJECT_ID) && fleet_wnd) {
             std::set< int > selected_fleets = fleet_wnd->SelectedFleetIDs();
             std::set< int > selected_ships = fleet_wnd->SelectedShipIDs();
-            int selected_fleet_id = INVALID_OBJECT_ID;
             if (selected_ships.size() > 0)
                 selected_ship = *selected_ships.begin();
             else {
@@ -2171,7 +2108,6 @@ namespace {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.insert(this_ship->SpeciesName());
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
-        // detailed_description = GetDetailedDescription(temp, design, cost);
         detailed_description = GetDetailedDescriptionBase(design);
 
 

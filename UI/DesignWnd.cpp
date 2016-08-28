@@ -341,36 +341,36 @@ PartControl::PartControl(const PartType* part) :
     if (!m_part)
         return;
 
-        m_background = new GG::StaticGraphic(PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
-        m_background->Show();
-        AttachChild(m_background);
+    m_background = new GG::StaticGraphic(PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
+    m_background->Show();
+    AttachChild(m_background);
 
 
-        // position of part image centred within part control.  control is size of a slot, but the
-        // part image is smaller
-        GG::X part_left = (Width() - PART_CONTROL_WIDTH) / 2;
-        GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
+    // position of part image centred within part control.  control is size of a slot, but the
+    // part image is smaller
+    GG::X part_left = (Width() - PART_CONTROL_WIDTH) / 2;
+    GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
 
-        //DebugLogger() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
-        m_icon = new GG::StaticGraphic(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_icon->MoveTo(GG::Pt(part_left, part_top));
-        m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
-        m_icon->Show();
-        AttachChild(m_icon);
-
-
-        SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+    //DebugLogger() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
+    m_icon = new GG::StaticGraphic(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon->MoveTo(GG::Pt(part_left, part_top));
+    m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
+    m_icon->Show();
+    AttachChild(m_icon);
 
 
-        //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
-                                                     UserString(m_part->Name()),
-                                                     UserString(m_part->Description()) + "\n" + m_part->CapacityDescription())
-                                                    )
-                                 );
+    SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+
+
+    //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
+                                                 UserString(m_part->Name()),
+                                                 UserString(m_part->Description()) + "\n" + m_part->CapacityDescription())
+                                                )
+                             );
 }
 
 void PartControl::Render() {}

@@ -1386,7 +1386,6 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        bool host = server.m_networking.PlayerIsHost(player_id);
         player->SendMessage(ServerSaveGameDataRequestMessage(player_id, false));
         m_needed_reponses.insert(player_id);
     }

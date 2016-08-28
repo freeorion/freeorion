@@ -446,8 +446,7 @@ AndCondition::~AndCondition() {
 //////////////////////////////////////////////////////////////////////
 HotkeyManager* HotkeyManager::s_singleton = 0;
 
-HotkeyManager::HotkeyManager() :
-    m_hotkey_disablings_count(0)
+HotkeyManager::HotkeyManager()
 {}
 
 HotkeyManager::~HotkeyManager()

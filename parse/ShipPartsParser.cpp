@@ -49,9 +49,6 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
-
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;

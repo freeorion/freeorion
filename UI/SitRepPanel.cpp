@@ -401,7 +401,6 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size()) {
-        GG::ListBox::iterator row_to_show = m_sitreps_lb->FirstRowShown();
         DoLayout();
         Update();
         if (!m_sitreps_lb->Empty()) {

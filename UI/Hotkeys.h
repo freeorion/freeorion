@@ -279,7 +279,6 @@ private:
 
     /// A set of connected shortcuts.
     Connections             m_connections;
-    int                     m_hotkey_disablings_count;
     std::map<std::string, GG::GUI::AcceleratorSignalType*>
                             m_signals;
     std::set<boost::signals2::connection>

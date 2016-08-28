@@ -817,28 +817,6 @@ namespace {
         }
     };
 
-    // Populate lists of things that can attack and be attacked. List attackers also by empire.
-    void GetAttackersAndTargets(const CombatInfo& combat_info, std::set<int>& valid_target_object_ids,
-                                std::set<int>& valid_attacker_object_ids,
-                                std::map<int, EmpireCombatInfo>& empire_infos)
-    {
-        for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
-             it != combat_info.objects.const_end(); ++it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *it;
-            //DebugLogger() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
-            if (ObjectCanAttack(obj)) {
-                //DebugLogger() << "... can attack";
-                valid_attacker_object_ids.insert(it->ID());
-                empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
-            }
-            if (ObjectTypeCanBeAttacked(obj)) {
-                //DebugLogger() << "... can be attacked";
-                valid_target_object_ids.insert(it->ID());
-            }
-        }
-    }
-
     // Calculate monster detection strength in system
     float GetMonsterDetection(const CombatInfo& combat_info) {
         float monster_detection = 0.0;

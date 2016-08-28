@@ -31,17 +31,6 @@ namespace {
     bool PlaySounds()                   { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
     void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover")); }
 
-    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
-        static std::vector<boost::shared_ptr<GG::Texture> > normal_textures =
-            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection", "system_selection", true);
-        return normal_textures;
-    }
-    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTinyTextures() {
-        static std::vector<boost::shared_ptr<GG::Texture> > tiny_textures =
-            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection_tiny", "system_selection_tiny", false);
-        return tiny_textures;
-    }
-
     // Wrap content int an rgba tag with color color. Opacity ignored.
     std::string ColorTag(const std::string& content, GG::Clr color){
         boost::format templ("<rgba %d %d %d 255>%s</rgba>");

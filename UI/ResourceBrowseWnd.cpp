@@ -28,7 +28,6 @@ ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::s
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
 {
     const GG::Y ROW_HEIGHT(ClientUI::Pts()*4/3);
-    const GG::Y HALF_HEIGHT(GG::Y(int(ClientUI::Pts()/2)));
 
     GG::Pt top_left =  m_offset;
 

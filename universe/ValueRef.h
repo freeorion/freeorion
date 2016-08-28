@@ -1584,9 +1584,11 @@ T Operation<T>::Eval(const ScriptingContext& context) const
         }
 
         default:
-            throw std::runtime_error("ValueRef evaluated with an unknown or invalid OpType.");
             break;
     }
+
+
+    throw std::runtime_error("ValueRef evaluated with an unknown or invalid OpType.");
 }
 
 template <>

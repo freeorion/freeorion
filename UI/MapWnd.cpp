@@ -252,10 +252,6 @@ namespace {
                                                          dist_along_lane);
     }
 
-    /* Updated each frame to shift rendered posistion of dots that are drawn to
-     * show fleet move lines. */
-    double move_line_animation_shift = 0.0;   // in pixels
-
     GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->Left() : GG::X0; }
     GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->Right() : GG::X0; }
     GG::Y WndTop(const GG::Wnd* wnd) { return wnd ? wnd->Top() : GG::Y0; }
@@ -1696,7 +1692,6 @@ void MapWnd::RenderSystems() {
     // circles around system icons and fog over unexplored systems
     bool circles = GetOptionsDB().Get<bool>("UI.system-circles");
     bool fog_scanlines = false;
-    float fog_scanline_spacing = 4.0f;
     Universe& universe = GetUniverse();
 
     if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
@@ -1831,6 +1826,8 @@ void MapWnd::RenderFleetMovementLines() {
     int dot_spacing = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
     float rate = static_cast<float>(GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate"));
     int ticks = GG::GUI::GetGUI()->Ticks();
+    /* Updated each frame to shift rendered posistion of dots that are drawn to
+     * show fleet move lines. */
     float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots

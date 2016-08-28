@@ -2452,7 +2452,6 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
         return;
 
     const std::string& species_for_obj = GetSpeciesFromObject(obj);
-    const std::string& species_for_source = GetSpeciesFromObject(source);
 
     int empire_for_obj_id = obj->Owner();
     int empire_for_source_id = source->Owner();

@@ -39,7 +39,8 @@ namespace {
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
 
-                    TemporaryPtr<const System> cur_sys = GetSystem(*it);
+                TemporaryPtr<const System> cur_sys = GetSystem(*it);
+
                 if (!cur_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *it;
                     return distance;
