@@ -626,7 +626,7 @@ float Fleet::MaxFuel() const {
 }
 
 int Fleet::FinalDestinationID() const {
-    if(m_travel_route.empty()){
+    if (m_travel_route.empty()) {
         return INVALID_OBJECT_ID;
     } else {
         return m_travel_route.back();
