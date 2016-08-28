@@ -7464,7 +7464,7 @@ NO_INDUSTRY
 ---	Нет [[encyclopedia INDUSTRY_TITLE]]
 
 BAD_INDUSTRY
--	Плохая [[encyclopedia INDUSTRY_TITLE]]: -50%
+-	Плохая [[encyclopedia INDUSTRY_TITLE]]: 75%
 
 AVERAGE_INDUSTRY
 '''	Средняя [[encyclopedia INDUSTRY_TITLE]]: 100%'''
@@ -7476,13 +7476,13 @@ GREAT_INDUSTRY
 ++	Превосходная [[encyclopedia INDUSTRY_TITLE]]: 200%
 
 ULTIMATE_INDUSTRY
-+++	Беспрецедентная [[encyclopedia INDUSTRY_TITLE]]: 400%
++++	Беспрецедентная [[encyclopedia INDUSTRY_TITLE]]: 300%
 
 NO_RESEARCH
 ---	Нет [[encyclopedia RESEARCH_TITLE]]
 
 BAD_RESEARCH
--	Плохая [[encyclopedia RESEARCH_TITLE]]: -50%
+-	Плохая [[encyclopedia RESEARCH_TITLE]]: 75%
 
 AVERAGE_RESEARCH
 '''	Средняя [[encyclopedia RESEARCH_TITLE]]: 100%'''
@@ -7494,25 +7494,25 @@ GREAT_RESEARCH
 ++	Превосходная [[encyclopedia RESEARCH_TITLE]]: 200%
 
 ULTIMATE_RESEARCH
-+++	Беспрецедентная [[encyclopedia RESEARCH_TITLE]]: 400%
++++	Беспрецедентная [[encyclopedia RESEARCH_TITLE]]: 300%
 
 NO_DEFENSE_TROOPS
 ---	Беззащитные [[encyclopedia TROOP_TITLE]]
 
 BAD_DEFENSE_TROOPS
--	Плохие защитные [[encyclopedia TROOP_TITLE]]: -50%.
+-	Плохие защитные [[encyclopedia TROOP_TITLE]]: 50%
 
 AVERAGE_DEFENSE_TROOPS
-'''	Средние защитные [[encyclopedia TROOP_TITLE]]:-100%.'''
+'''	Средние защитные [[encyclopedia TROOP_TITLE]]: 100%.'''
 
 GOOD_DEFENSE_TROOPS
-+	Хорошие защитные [[encyclopedia TROOP_TITLE]]: 150%.
++	Хорошие защитные [[encyclopedia TROOP_TITLE]]: 150%
 
 GREAT_DEFENSE_TROOPS
-++	Превосходные защитные [[encyclopedia TROOP_TITLE]]: 200%.
+++	Превосходные защитные [[encyclopedia TROOP_TITLE]]: 200%
 
 ULTIMATE_DEFENSE_TROOPS
-+++	Беспрецедентные защитные [[encyclopedia TROOP_TITLE]]: 300%.
++++	Беспрецедентные защитные [[encyclopedia TROOP_TITLE]]: 300%
 
 BAD_DETECTION
 -	Плохое [[encyclopedia DETECTION_RANGE_TITLE]]: -20 малус.
@@ -7527,13 +7527,13 @@ ULTIMATE_DETECTION
 +++	Беспрецедентное обнаружение: +100 бонус.
 
 BAD_STEALTH
--	Плохая [[encyclopedia STEALTH_TITLE]]: -15 малус.
+-	Плохая [[encyclopedia STEALTH_TITLE]]: -20 малус.
 
 AVERAGE_STEALTH
 '''	Средняя [[encyclopedia STEALTH_TITLE]].'''
 
 GOOD_STEALTH
-+	Хорошая [[encyclopedia STEALTH_TITLE]]: +15 бонус.
++	Хорошая [[encyclopedia STEALTH_TITLE]]: +20 бонус.
 
 GREAT_STEALTH
 ++	Превосходная [[encyclopedia STEALTH_TITLE]]: +40 бонус.

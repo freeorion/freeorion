@@ -12293,7 +12293,7 @@ NO_INDUSTRY
 −−−	No [[encyclopedia INDUSTRY_TITLE]]
 
 BAD_INDUSTRY
-−	Bad [[encyclopedia INDUSTRY_TITLE]]: -25%
+−	Bad [[encyclopedia INDUSTRY_TITLE]]: 75%
 
 AVERAGE_INDUSTRY
 '''	Average [[encyclopedia INDUSTRY_TITLE]]: 100%'''
@@ -12311,7 +12311,7 @@ NO_RESEARCH
 −−−	No [[encyclopedia RESEARCH_TITLE]]
 
 BAD_RESEARCH
-−	Bad [[encyclopedia RESEARCH_TITLE]]: -25%
+−	Bad [[encyclopedia RESEARCH_TITLE]]: 75%
 
 AVERAGE_RESEARCH
 '''	Average [[encyclopedia RESEARCH_TITLE]]: 100%'''
@@ -12329,7 +12329,7 @@ NO_DEFENSE_TROOPS
 −−−	No Defensive Ground [[encyclopedia TROOP_TITLE]]
 
 BAD_DEFENSE_TROOPS
-−	Bad Defensive Ground [[encyclopedia TROOP_TITLE]]: -50%
+−	Bad Defensive Ground [[encyclopedia TROOP_TITLE]]: 50%
 
 AVERAGE_DEFENSE_TROOPS
 '''	Average Defensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
@@ -12347,7 +12347,7 @@ NO_OFFENSE_TROOPS
 −−−	No Offensive Ground [[encyclopedia TROOP_TITLE]]
 
 BAD_OFFENSE_TROOPS
-−	Bad Offensive Ground [[encyclopedia TROOP_TITLE]]: -50%
+−	Bad Offensive Ground [[encyclopedia TROOP_TITLE]]: 50%
 
 AVERAGE_OFFENSE_TROOPS
 '''	Average Offensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
