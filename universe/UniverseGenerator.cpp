@@ -144,7 +144,7 @@ namespace Delauney {
         // vector of x and y positions of stars
         std::vector<Delauney::DTPoint> points;
         // pointer to main list of triangles algorithm works with.
-        std::list<Delauney::DTTriangle> *triList;
+        std::list<Delauney::DTTriangle> *triangle_list;
         // list of indices in vector of points extracted from removed triangles that need to be retriangulated
         std::list<Delauney::SortValInt> pointNumList;
         double vx, vy, mag;  // vector components, magnitude
@@ -166,13 +166,13 @@ namespace Delauney {
         points.push_back(Delauney::DTPoint(2.0 * (GetUniverse().UniverseWidth() + 1.0), -1.0));
         points.push_back(Delauney::DTPoint(-1.0, 2.0 * (GetUniverse().UniverseWidth() + 1.0)));
 
-        // initialize triList.  algorithm adds and removes triangles from this list, and the resulting
+        // initialize triangle_list.  algorithm adds and removes triangles from this list, and the resulting
         // list is returned (so should be deleted externally)
-        triList = new std::list<Delauney::DTTriangle>;
+        triangle_list = new std::list<Delauney::DTTriangle>;
 
         // add last three points into the first triangle, the "covering triangle"
         theSize = static_cast<int>(points.size());
-        triList->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
+        triangle_list->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
 
         // loop through "real" points (from systems, not the last three added to make the covering triangle)
         for (n = 0; n < theSize - 3; n++) {
@@ -180,8 +180,8 @@ namespace Delauney {
 
             // check each triangle in list, to see if the new point lies in its circumcircle.  if so, delete
             // the triangle and add its vertices to a list 
-            itCur = triList->begin();
-            itEnd = triList->end();
+            itCur = triangle_list->begin();
+            itEnd = triangle_list->end();
             while (itCur != itEnd) {
                 // get current triangle
                 Delauney::DTTriangle& tri = *itCur;
@@ -231,7 +231,7 @@ namespace Delauney {
                     } // end for c
 
                     // remove current triangle from list of triangles
-                    itCur = triList->erase(itCur);
+                    itCur = triangle_list->erase(itCur);
                 } else {
                     // point not in circumcircle for this triangle
                     // to go next triangle in list
@@ -245,7 +245,7 @@ namespace Delauney {
             assert(itCur2 != itEnd2);
 
             // add triangle for last and first points and n
-            triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
+            triangle_list->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
 
             num = itCur2->num;
             ++itCur2;
@@ -253,13 +253,13 @@ namespace Delauney {
                 num2 = num;
                 num = itCur2->num;
 
-                triList->push_front(Delauney::DTTriangle(n, num2, num, points));
+                triangle_list->push_front(Delauney::DTTriangle(n, num2, num, points));
 
                 ++itCur2;
             } // end while
 
         } // end for
-        return triList;
+        return triangle_list;
     } // end function
 }
 
@@ -492,19 +492,19 @@ namespace {
 
         int curNumLanes;
 
-        int numSys = systems.size();
+        int num_systems = systems.size();
         // make sure data is consistent
-        if (static_cast<int>(laneSetArray.size()) != numSys) {
+        if (static_cast<int>(laneSetArray.size()) != num_systems) {
             ErrorLogger() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
             return;
         }
 
-        if (numSys < 3) return;  // nothing worth doing for less than three systems
+        if (num_systems < 3) return;  // nothing worth doing for less than three systems
 
         //DebugLogger() << "Culling Too Close Angularly Lanes";
 
         // loop through systems
-        for (curSys = 0; curSys < numSys; curSys++) {
+        for (curSys = 0; curSys < num_systems; curSys++) {
             // get position of current system (for use in calculated vectors)
             startX = systems[curSys]->X();
             startY = systems[curSys]->Y();
@@ -622,7 +622,7 @@ namespace {
             laneSetArray[lane1.second].erase(lane1.first);
 
             // check that removing lane hasn't disconnected systems
-            if (!ConnectedWithin(lane1.first, lane1.second, numSys, laneSetArray)) {
+            if (!ConnectedWithin(lane1.first, lane1.second, num_systems, laneSetArray)) {
                 // they aren't connected... reconnect them
                 laneSetArray[lane1.first].insert(lane1.second);
                 laneSetArray[lane1.second].insert(lane1.first);
@@ -653,19 +653,19 @@ namespace {
         std::pair<int, int> lane;
         typedef std::pair<double, std::pair<int, int> > MapInsertableTypeQQ;
 
-        int numSys = systems.size();
+        int num_systems = systems.size();
         // make sure data is consistent
-        if (static_cast<int>(laneSetArray.size()) != numSys) {
+        if (static_cast<int>(laneSetArray.size()) != num_systems) {
             return;
         }
 
-        if (numSys < 2) return;  // nothing worth doing for less than two systems (no lanes!)
+        if (num_systems < 2) return;  // nothing worth doing for less than two systems (no lanes!)
 
         // get squared max lane lenth, so as to eliminate the need to take square roots of lane lenths...
         double maxLaneLength2 = maxLaneLength*maxLaneLength;
 
         // loop through systems
-        for (curSys = 0; curSys < numSys; curSys++) {
+        for (curSys = 0; curSys < num_systems; curSys++) {
             // get position of current system (for use in calculating vector)
             startX = systems[curSys]->X();
             startY = systems[curSys]->Y();
@@ -714,7 +714,7 @@ namespace {
                 laneSetArray[lane.second].erase(lane.first);
 
                 // if removing lane has disconnected systems, reconnect them
-                if (!ConnectedWithin(lane.first, lane.second, numSys, laneSetArray)) {
+                if (!ConnectedWithin(lane.first, lane.second, num_systems, laneSetArray)) {
                     laneSetArray[lane.first].insert(lane.second);
                     laneSetArray[lane.second].insert(lane.first);
                 }
@@ -724,8 +724,8 @@ namespace {
     }
 }
 
-void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength) {
-    int numSys, s1, s2, s3; // numbers of systems, indices in vec_sys
+void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
+    int num_systems, s1, s2, s3; // numbers of systems, indices in vec_sys
     int n; // loop counter
 
     std::vector<int> triVerts;  // indices of stars that form vertices of a triangle
@@ -734,36 +734,36 @@ void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength) {
     std::vector<std::set<int> > laneSetArray;
 
     // array of set to store possible starlanes for each star, as extracted form triangulation
-    std::vector<std::set<int> > potentialLaneSetArray;
+    std::vector<std::set<int> > potential_lane_set_array;
 
     // iterators for traversing lists of starlanes
     std::set<int>::iterator laneSetIter, laneSetEnd, laneSetIter2, laneSetEnd2;
 
     // get systems
     std::vector<TemporaryPtr<System> > sys_vec = Objects().FindObjects<System>();
-    numSys = sys_vec.size();  // (actually = number of systems + 1)
+    num_systems = sys_vec.size();  // (actually = number of systems + 1)
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
-    std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
-    if (!triList ||triList->empty()) {
+    std::list<Delauney::DTTriangle>* triangle_list = Delauney::DelauneyTriangulate(sys_vec);
+    if (!triangle_list ||triangle_list->empty()) {
         ErrorLogger() << "Got no list or blank list of triangles from Triangulation.";
         return;
     }
 
     Delauney::DTTriangle tri;
     // initialize arrays...
-    potentialLaneSetArray.resize(numSys);
-    for (n = 0; n < numSys; n++) {
-        potentialLaneSetArray[n].clear();
+    potential_lane_set_array.resize(num_systems);
+    for (n = 0; n < num_systems; n++) {
+        potential_lane_set_array[n].clear();
     }
-    laneSetArray.resize(numSys);
-    for (n = 0; n < numSys; n++) {
+    laneSetArray.resize(num_systems);
+    for (n = 0; n < num_systems; n++) {
         laneSetArray[n].clear();
     }
 
     // extract triangles from list, add edges to sets of potential starlanes for each star (in array)
-    while (!triList->empty()) {
-        tri = triList->front();
+    while (!triangle_list->empty()) {
+        tri = triangle_list->front();
 
         triVerts = tri.Verts();
         s1 = triVerts[0];
@@ -774,49 +774,49 @@ void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength) {
         // only stars that actually exist.  triangle generation uses three extra points which don't
         // represent actual systems and which need to be weeded out here.
         if ((s1 >= 0) && (s2 >= 0) && (s3 >= 0)) {
-            if ((s1 < numSys) && (s2 < numSys)) {
-                potentialLaneSetArray[s1].insert(s2);
-                potentialLaneSetArray[s2].insert(s1);
+            if ((s1 < num_systems) && (s2 < num_systems)) {
+                potential_lane_set_array[s1].insert(s2);
+                potential_lane_set_array[s2].insert(s1);
             }
-            if ((s1 < numSys) && (s3 < numSys)) {
-                potentialLaneSetArray[s1].insert(s3);
-                potentialLaneSetArray[s3].insert(s1);
+            if ((s1 < num_systems) && (s3 < num_systems)) {
+                potential_lane_set_array[s1].insert(s3);
+                potential_lane_set_array[s3].insert(s1);
             }
-            if ((s2 < numSys) && (s3 < numSys)) {
-                potentialLaneSetArray[s2].insert(s3);
-                potentialLaneSetArray[s3].insert(s2);
+            if ((s2 < num_systems) && (s3 < num_systems)) {
+                potential_lane_set_array[s2].insert(s3);
+                potential_lane_set_array[s3].insert(s2);
             }
         }
 
-        triList->pop_front();
+        triangle_list->pop_front();
     }
 
     // cleanup
-    delete triList;
+    delete triangle_list;
 
     //DebugLogger() << "Extracted Potential Starlanes from Triangulation";
 
-    CullTooLongLanes(maxStarlaneLength, potentialLaneSetArray, sys_vec);
+    CullTooLongLanes(max_starlane_length, potential_lane_set_array, sys_vec);
 
-    CullAngularlyTooCloseLanes(0.98, potentialLaneSetArray, sys_vec);
+    CullAngularlyTooCloseLanes(0.98, potential_lane_set_array, sys_vec);
 
     //DebugLogger() << "Culled Agularly Too Close Lanes";
 
-    laneSetArray = potentialLaneSetArray;
+    laneSetArray = potential_lane_set_array;
 
     // attempt removing lanes, but don't do so if it would make the systems
     // the lane connects too far apart
-    for (n = 0; n < numSys; ++n) {
-        laneSetIter = potentialLaneSetArray[n].begin();
+    for (n = 0; n < num_systems; ++n) {
+        laneSetIter = potential_lane_set_array[n].begin();
 
-        while (laneSetIter != potentialLaneSetArray[n].end()) {
+        while (laneSetIter != potential_lane_set_array[n].end()) {
             s1 = *laneSetIter;
 
             // try removing lane
             laneSetArray[n].erase(s1);
             laneSetArray[s1].erase(n);
 
-            if (!ConnectedWithin(n, s1, maxJumpsBetweenSystems, laneSetArray)) {
+            if (!ConnectedWithin(n, s1, max_jumps_between_systems, laneSetArray)) {
                 // lane removal was a bad idea.  restore it
                 laneSetArray[n].insert(s1);
                 laneSetArray[s1].insert(n);
@@ -827,7 +827,7 @@ void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength) {
     }
 
     // add the starlane to the stars
-    for (n = 0; n < numSys; ++n) {
+    for (n = 0; n < num_systems; ++n) {
         const std::set<int>& lanes = laneSetArray[n];
         for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
             sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID

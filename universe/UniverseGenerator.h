@@ -74,7 +74,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
 void SetNativePopulationValues(ObjectMap& object_map);
     
 /** Creates starlanes and adds them systems already generated. */
-void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength);
+void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length);
 
 /** Sets empire homeworld
  * This includes setting ownership, capital, species,
