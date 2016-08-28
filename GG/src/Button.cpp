@@ -386,7 +386,7 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
     }
     if (format & FORMAT_BOTTOM) {      // put button at bottom, text just above
         bn_y = (h - BN_H);
-        text_ul.y = h - (BN_H * (1 + SPACING)) - (static_cast<int>(button.GetLabel()->GetLineData().size() - 1) * button.GetLabel()->GetFont()->Lineskip() + button.GetLabel()->GetFont()->Height()) + 0.5;
+        text_ul.y = h - (BN_H * (1 + SPACING)) - (std::max(0, static_cast<int>(button.GetLabel()->GetLineData().size() - 1)) * button.GetLabel()->GetFont()->Lineskip() + button.GetLabel()->GetFont()->Height()) + 0.5;
     }
 
     if (format & FORMAT_CENTER) {      // center button horizontally
