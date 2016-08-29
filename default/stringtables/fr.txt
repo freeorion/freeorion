@@ -16,15 +16,10 @@ Français
 # جامعة
 # یای مجهو
 
+
 ##
 ## Common phrases
 ##
-
-#APPNAME
-#FreeOrion
-
-BROWSE_BTN
-Parcourir...
 
 #OK
 #OK
@@ -38,12 +33,6 @@ Annuler
 DONE
 Valider
 
-CLOSE
-Fermer
-
-LOAD
-Charger
-
 SAVE
 Sauvegarder
 
@@ -55,9 +44,6 @@ Ouvrir
 
 OR
 ou
-
-AND
-et
 
 YES
 Oui
@@ -102,9 +88,6 @@ Aucun empire
 DROP_PLAYER
 Ôter
 
-HOST
-Hôte
-
 ALL
 Tout
 
@@ -131,15 +114,6 @@ ERREUR
 
 RESET
 Réinitialiser
-
-TURN
-Tour
-
-CHAT_WHISPER
-murmurer
-
-UP
-^
 
 NEXT
 >
@@ -201,12 +175,12 @@ Flotte Combat %1%
 #      If any other asteroids are in the system, the roman numeral is appended.
 # %1% name of the system this planet is created in.
 # %2% suffix for this planet
-# NEW_PLANET_NAME
-# %1% %2%
+#NEW_PLANET_NAME
+#%1% %2%
 
 # The label pre-pended to a new asteroids naming suffix
-# NEW_ASTEROIDS_SUFFIX
-# [[PT_ASTEROIDS]]
+NEW_ASTEROIDS_SUFFIX  # translated
+[[PT_ASTEROIDS]]
 
 EMPTY_SPACE
 Espace Interstellaire
@@ -1010,9 +984,6 @@ Un disque d'accrétion est une structure astrophysique (la plupart du temps un d
 ## Predefined starting fleets
 ##
 
-FN_HOME_FLEET
-Flotte Locale
-
 FN_BATTLE_FLEET
 Flotte Combat
 
@@ -1021,9 +992,6 @@ Flotte Reconnaissance
 
 FN_COLONY_FLEET
 Flotte Colonisation
-
-FN_INVASION_FLEET
-Flotte Invasion
 
 MONSTERS
 Monstres
@@ -1045,9 +1013,6 @@ Le serveur ne répond pas.
 SERVER_LOST
 La connexion au serveur a été perdue.
 
-SERVER_GAME_END
-Le serveur a envoyé un message de fin de jeu. Au revoir.
-
 PLAYER_DISCONNECTED
 Le joueur %1% n'est plus connecté au serveur.
 
@@ -1058,9 +1023,6 @@ Sauvegarde...
 # %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
 %2% octets sauvegardés vers le fichier: %1%
-
-UNKNOWN_EMPIRE
-Empire inconnu
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Le serveur a reçu des données de sauvegarde client invalides. Certaines seront peut-être ignorées.
@@ -1158,9 +1120,6 @@ Permet d'éviter certains problèmes liés à la modification dynamique de réso
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Sélectionne le moniteur à utiliser en mode plein écran. L'écran primaire doit être numéroté 0. Peut nécessiter le redémarrage du jeu pour prendre effet.
 
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Le laps de temps, en secondes, au-delà duquel la fenêtre de chat multijoueurs disparaît si rien n'y est ajouté. Une valeur de 0 indique que la fenêtre ne doit jamais disparaître.
-
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 '''Liste les colonnes à afficher dans la boîte de dialogue de sauvegarde, séparées par des virgules.
 Colonnes valides: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
@@ -1170,9 +1129,6 @@ Si UI.save-file-dialog.[name].wide-as est activé, la colonne sera toujours asse
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
 Si UI.save-file-dialog.[name].stretch est activé, la colonne permettra ce facteur d'agrandissement si visible.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Le nombre de messages à garder dans l'historique du chat.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rendu de la densité gazeuse qui donne sa forme à la galaxie. Peut ralentir l'affichage sur les machines les plus anciennes.
@@ -1279,9 +1235,6 @@ Active/désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'
 OPTIONS_DB_MAX_FPS_NO_FOCUS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque la fenêtre principale de jeu n'est pas sélectionnée, si la limitation est activée avec l'option Limitation Ni/s (hors-fenêtre).
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Active/Désactive les effets sonores de l'interface utilisateur.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Fixe le volume (de 0 à 255) des effets sonores de l'interface utilisateur.
 
@@ -1338,12 +1291,6 @@ Adresse du fichier ressource fixant la police de caractères (standard) de l'int
 
 OPTIONS_DB_UI_FONT_BOLD
 Adresse du fichier ressource fixant la police de caractères (gras) de l'interface utilisateur.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Adresse du fichier ressource fixant la police de caractères (italique) de l'interface utilisateur.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Adresse du fichier ressource fixant la police de caractères (gras & italique) de l'interface utilisateur.
 
 OPTIONS_DB_UI_FONT_SIZE
 Fixe la taille des caractères de l'interface utilisateur.
@@ -1494,12 +1441,6 @@ Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef 
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 Dans la Fenêtre Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
-
-OPTIONS_DB_CHAT_PANEL_HEIGHT
-Fixe la hauteur du panneau de discussion du joueur, en pixels
-
-OPTIONS_DB_CHAT_PANEL_WIDTH
-Fixe la largeur du panneau de discussion du joueur, en pixels
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Fixe la taille du panneau latéral de description des systèmes stellaires.
@@ -1670,9 +1611,6 @@ Active/Désactive la tabulation de la comptabilité des effets lors de l'actuali
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Définit la largeur et la hauteur des icônes du Rapport de Situation; par défaut 16 (min 12, max 64).
 
-OPTIONS_DB_UI_SITREP_FONTSIZE
-Définit la taille de texte du Rapport de Situation; par défaut 12 (min 10, max 48).
-
 OPTIONS_DB_LOAD
 Charge la partie solo sauvegardée spécifiée.
 
@@ -1789,16 +1727,9 @@ Fichier(s):
 FILE_DLG_FILE_TYPES  # translated
 Type(s):
 
-FILE_DLG_MALFORMED_FILENAME
-Nom de fichier invalide.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% existe déjà.
 D'accord pour l'écraser?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-n'est pas un nom de fichier valide.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -1881,9 +1812,6 @@ Quitter
 ERR_CONNECT_TIMED_OUT
 Délai de connexion au serveur dépassé.
 
-ERR_VERSION_MISMATCH
-'''Connexion au serveur impossible, ce client utilise une version différente des paramètres et/ou fichiers suivants: '''
-
 
 ##
 ## Server Setup Screen
@@ -1917,9 +1845,6 @@ Rafraîchir
 
 MPLOBBY_WINDOW_TITLE
 Configuration multijoueurs
-
-MPLOBBY_HOST_ABORTED_GAME
-Le joueur hôte a achevé la configuration de cette partie.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Noms et couleurs uniques requis
@@ -2110,9 +2035,6 @@ Licence
 ABOUT_WINDOW_TITLE
 À propos de FreeOrion
 
-CREDITS
-Crédits
-
 VISION  # translated
 Vision
 
@@ -2200,9 +2122,6 @@ SAVE_NUMBER_EMPIRES_TITLE  # translated
 
 SAVE_NUMBER_HUMANS_TITLE
 <u>Joueurs Humains</u>
-
-SAVE_DIALOG_REMOTE_SUGGESTIVE_ONLY
-Fichiers résidant sur un serveur multijoueur. Seules les sauvegardes dont vous avez connaissance sont listées.
 
 SAVE_DIALOG_ROW_BROWSE_TEMPLATE
 '''
@@ -2338,9 +2257,6 @@ Mode fenêtré
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Règle la hauteur et la largeur de la fenêtre en mode fenêtré. Le nombre de bits par pixel dans ce mode est celui du mode plein écran.
 
-OPTIONS_VIDEO_SETTINGS
-Options vidéo
-
 OPTIONS_APP_WIDTH_WINDOWED
 Largeur de la fenêtre
 
@@ -2385,15 +2301,6 @@ Réinitialiser le fichier langue en mémoire
 
 OPTIONS_WINDOW_RESET
 Repositionner les fenêtres
-
-OPTIONS_CHAT  # translated
-Chat
-
-OPTIONS_CHAT_HISTORY
-Historique du chat
-
-OPTIONS_CHAT_HIDE
-Délai avant disparition du chat
 
 OPTIONS_GALAXY_MAP
 Carte galactique
@@ -2466,12 +2373,6 @@ Curseur de zoom sur la carte galactique
 
 OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY
 Calque distinctif de survol de souris pour les systèmes inexplorés
-
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Carte de la galaxie montrant la plage de détection selon le seuil de furtivité
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Curseur du seuil de furtivité de la carte de la galaxie
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Cercles de détection
@@ -2557,9 +2458,6 @@ Sons des fenêtres
 OPTIONS_SOUND_BUTTON
 Sons des boutons
 
-OPTIONS_SOUND_FLEET
-Sons des boutons de flotte
-
 OPTIONS_SOUND_ALERT
 Alerte
 
@@ -2623,9 +2521,6 @@ Indicateur positif
 OPTIONS_STAT_DECREASE_COLOR
 Indicateur négatif
 
-OPTIONS_INTERIOR_COLOR
-Intérieur
-
 OPTIONS_WINDOW_COLORS
 Fenêtres
 
@@ -2685,9 +2580,6 @@ Arrière plan
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Barre
-
-OPTIONS_ANY_FILE
-Tout fichier
 
 OPTIONS_FOLDER_SETTINGS
 Fichiers de ressources
@@ -2856,19 +2748,8 @@ Nombre total d'astronefs
 
 
 ##
-## Side panel
-##
-
-SIDE_PANEL
-Panneau latéral
-
-
-##
 ## Side panel/System information
 ##
-
-SP_SYSTEM_PRODUCTION
-Système - Capacité Ressources
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -2898,9 +2779,6 @@ Consommation scientifique
 TRADE_CONSUMPTION
 Consommation commerciale
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Échanges entre systèmes
-
 IMPORT_EXPORT_TOOLTIP  # translated
 Import / Export
 
@@ -2921,18 +2799,9 @@ Aucun échange
 PLANET_PANEL
 Panneau planétaire
 
-PL_ASTEROID_BELT
-Ceinture d'Astéroïdes
-
 # %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 Astéroïdes %1%
-
-PL_UNINHABITED
-Inhabité
-
-PL_SIZE
-Taille
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -2945,18 +2814,12 @@ Annuler colonisation
 PL_OUTPOST
 Placer un avant-poste
 
-PL_CANCEL_OUTPOST
-Annuler avant-poste
-
 # %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Envahir (+%1%)
 
 PL_CANCEL_INVADE
 Annuler invasion
-
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Choisir astronef colonisateur
 
 PL_BOMBARD
 Bombarder
@@ -3184,9 +3047,6 @@ Stratégie d'attaque automatique
 FW_AUTO_DESC
 Attribue automatiquement un comportement belliqueux à toute nouvelle flotte si celle-ci est composée d'astronefs armés.
 
-FW_SHIP_CLASS
-Classe d'astronef
-
 FW_UNKNOWN_DESIGN_NAME
 Modèle inconnu
 
@@ -3222,9 +3082,6 @@ Flottes dans %1%
 # Fleet window title
 FW_GENERIC_FLEETS
 Flottes
-
-FW_BATTLE_FLEET
-Flotte de Guerre
 
 # the name that is used for fleets the client's player does not control but is
 # owned by an empire.
@@ -3263,20 +3120,11 @@ Astronef Pirate
 SHIP_DAMAGE_STAT_TITLE
 Dommages
 
-SHIP_DAMAGE_STAT_MAIN
-Dégâts infligés par l'armement de l'astronef à chaque passe de combat.
-
 SHIP_TROOPS_TITLE
 Infanterie
 
 SHIP_TROOPS_STAT
 Total des troupes d'Infanterie à bord de cet astronef.
-
-SHIP_SPEED_STAT_TITLE
-Vitesse
-
-SHIP_SPEED_STAT_MAIN
-Distance maximale parcourue par tour sur les Voies spatiales.
 
 FW_FLEET_FUEL_SUMMARY
 Quantité globale de carburant dont dispose actuellement la Flotte (égale au moins bien fourni des astronefs composant la Flotte)
@@ -3428,24 +3276,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Jamais
 
-TECH_WND_TECH_COMPLETED
-Achevé
-
-TECH_WND_TECH_QUEUED
-En attente
-
-TECH_WND_TECH_INCOMPLETE
-Incomplet
-
-TECH_WND_TYPE_THEORIES
-Théories
-
-TECH_WND_TYPE_APPLICATIONS  # translated
-Applications
-
-TECH_WND_TYPE_REFINEMENTS
-Améliorations
-
 TECH_WND_STATUS_COMPLETED
 Acquis
 
@@ -3469,12 +3299,6 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 
 TECH_WND_VIEW_TYPE
 Arbre / Liste
-
-TECH_WND_REQUIRES
-Requiert
-
-TECH_WND_UNLOCKS
-Débloque
 
 # %1% research points already spent on a reseach.
 # %2% total research points required to complete the research.
@@ -3572,17 +3396,11 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Jamais
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Quantité
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Ajouter à la file d'attente
 
 PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE
 Ajouter en tête de file d'attente
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Centrer sur construction
 
 PRODUCTION_QUEUE_PROMPT
 Double-clic sur les projets disponibles pour les ajouter à la file d'attente de Production.
@@ -3609,13 +3427,6 @@ Production %1% : File d'Attente
 # %1% number of repetions an item should be produced on after another.
 #PRODUCTION_QUEUE_REPETITIONS
 #%1%⟳
-
-PRODUCTION_QUEUE_EMPTY
-'''L'empire n'a aucun projet en cours ou en attente.
-
-Pour lancer ou mettre en file d'attente un ou des projet(s), sélectionner une planète de l'empire dans un système (panneau latéral) puis double-cliquer sur le ou les projets(s) à lancer.
-
-À noter que le lancement d'un projet n'est possible que si certaines conditions sont réunies. Par exemple, un astronef ne peut être produit que sur une planète disposant d'un chantier spatial.'''
 
 # %1% production points already spent on an item.
 # %2% total production points required to complete the item production.
@@ -3692,9 +3503,6 @@ Modèle d'astronef personnalisé
 DESIGN_DESCRIPTION_DEFAULT
 Description du modèle
 
-DESIGN_NO_PART
-Aucun
-
 DESIGN_WND_STARTS
 Amorce du Modèle
 
@@ -3722,14 +3530,8 @@ Nom
 DESIGN_WND_DESIGN_DESCRIPTION  # translated
 Description
 
-DESIGN_WND_CONFIRM
-Sauvegarder Modèle
-
 DESIGN_WND_CLEAR
 Effacer Équipements
-
-DESIGN_DELETE
-Supprimer le Modèle
 
 DESIGN_RENAME
 Renommer le Modèle
@@ -3893,9 +3695,6 @@ L'Habitabilité est définie par la distance au type d'[[encyclopedia ENVIRONMEN
 '''
 
 # types of things that can be shown in encyclopedia
-ENC_TEST  # translated
-Test
-
 ENC_GRAPH
 [Partie - Graphiques]
 
@@ -4044,15 +3843,6 @@ ENC_MONSTER
 ENC_MONSTER_TYPE
 Type de Monstres
 
-MONSTER_TYPES
-Type de Monstres
-
-MONSTER_OBJECTS
-'''Monstres : '''
-
-NO_MONSTER_OBJECTS
-Aucun monstre connu
-
 ENC_FLEET
 [Partie - Flottes]
 
@@ -4085,9 +3875,6 @@ Correspondances mot(s)
 
 ENC_SEARCH_PARTIAL_MATCHES
 Correspondances partielles mot(s)
-
-ENC_SEARCH_IN_TEXT_MATCHES
-Correspondances dans texte article
 
 ENC_SEARCH_NOTHING_FOUND
 Aucun résultat trouvé
@@ -4132,9 +3919,6 @@ ENC_EFFECTS_STR
 
 ENC_VERB_PRODUCE_STR
 produire
-
-ENC_VERB_RESEARCH_STR
-rechercher
 
 # %1% content of ENC_VERB_PRODUCE_STR.
 ENC_AUTO_TIME_COST_INVARIANT_STR
@@ -4272,9 +4056,6 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 #     encyclopedia.
 ENC_LOOKUP
 Encyclopédie, rechercher %1%
-
-ENC_COMBAT_LOG
-Journal de bataille
 
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
@@ -4955,41 +4736,6 @@ Tout combat au sein d'un système interrompt les réparations pour le tour en co
 
 
 ##
-## Combat messages
-##
-
-COMBAT_WINDOW_TITLE
-Fenêtre de Combat
-
-COMBAT_BATTLE
-'''BATAILLE : '''
-
-COMBAT_MILITARY_SHIPS
-Astronefs militaires
-
-COMBAT_CIVILIAN_SHIPS
-Astronefs civils
-
-COMBAT_PLANETS
-Planètes
-
-COMBAT_REMAINING
-''' Restant'''
-
-COMBAT_RETREATED
-''' En retraite'''
-
-COMBAT_DESTROYED
-''' Détruit'''
-
-COMBAT_DEFENSELESS
-''' Sans défense'''
-
-COMBAT_LOST
-''' Perdu!'''
-
-
-##
 ## Turn progress
 ##
 
@@ -5041,9 +4787,6 @@ Réception d'un état de tour inattendu de la part du serveur.
 MESSAGES_PANEL_TITLE  # translated
 Messages
 
-MESSAGES_PANEL_INTRO
-Statut et messages du chat
-
 
 ##
 ## Players list
@@ -5068,9 +4811,6 @@ Attend
 
 SORT
 Trier
-
-COLUMNS
-Colonnes
 
 COLLAPSE_ALL
 Replier
@@ -5286,9 +5026,6 @@ Rapport de Situation - Tour initial
 # %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Rapport de Situation - Tour %1%
-
-SITREP_ERROR
-Un évènement inconnu s'est produit.
 
 FILTERS
 Filtres
@@ -5536,12 +5273,6 @@ Un %shipdesign% ('%ship%' de %empire%) a atteint le système %system%.
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef arrivé à destination
 
-SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION
-La flotte '%fleet%' de %empire% (%rawtext%x %shipdesign) a atteint le système %system%.
-
-SITREP_OWN_SHIPS_ARRIVED_AT_DESTINATION_LABEL
-Flotte arrivée à destination
-
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %system%.
 
@@ -5686,12 +5417,6 @@ La planète %planet% a été transformée en planète artificielle.
 EFFECT_ART_PLANET_LABEL
 Trou Noir
 
-EFFECT_STARVATION
-La famine sévit sur la planète %planet%.
-
-EFFECT_STARVATION_LABEL  # translated
-Famine
-
 EFFECT_TAME_MONSTER_HATCHED
 Un %predefinedshipdesign% apprivoisé est disponible sur la planète %planet%.
 
@@ -5733,12 +5458,6 @@ Dans %system% : une nouvelle Forêt Dyson a commencé à croître et à entourer
 
 EFFECT_TREE_LABEL
 Forêt Dyson
-
-EFFECT_DERELICT_MINERALS
-Dans %system% : 20 unités de minerai ont été récupérées sur une épave abandonnée.
-
-EFFECT_DERELICT_MINERALS_LABEL
-Découverte de minerai
 
 EFFECT_DERELICT_MAP
 Dans %system% : des informations sur la région de %system% ont été découvertes sur une %special% abandonnée.
@@ -7070,17 +6789,11 @@ Métamorphose du Vide
 VOID_SLAVE_SPECIAL_DESC
 Cette planète existe en partie dans cet univers et en partie dans le Vide, ce qui accroît de 80 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_4]].
 
-DERELICT_SPECIAL
-Épave
-
 DERELICT_SPECIAL2
 Épave d'Éclaireur
 
 DERELICT_SPECIAL3
 Épave de Ravitailleur
-
-DERELICT_SPECIAL_REMOVE
-Épave
 
 DERELICT_SPECIAL_DESC
 Une épave ancestrale abandonnée par une espèce inconnue. Qui sait ce qu'elle pourrait révéler...
@@ -7111,12 +6824,6 @@ Détonateur de Bombe Nova
 
 NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
 L'intégrité dimensionnelle de cette région de l'espace, hautement instable, provoque l'explosion de toute Bombe Nova se trouvant à proximité.
-
-EXPERIMENTOR_OUTPOST_SPECIAL
-Avant-Poste Expérimentateur
-
-EXPERIMENTOR_OUTPOST_SPECIAL_DESC
-Un avant-poste des Expérimentateurs est implanté dans ce système et doit être éliminé pour assurer la sécurité de la galaxie.
 
 PROBIOTIC_SPECIAL
 Soupe Probiotique
@@ -7172,12 +6879,6 @@ Elerium Originel
 ELERIUM_SPECIAL_DESC
 Cette planète abrite de riches gisements d'Elerium pur, augmentant significativement la production ou la croissance des espèces lithiques.
 
-STARSPAWN_NEBULA_SPECIAL
-Nébuleuse Mère
-
-STARSPAWN_NEBULA_SPECIAL_DESC
-Les systèmes présentant cette Particularité se situent au cœur d'une nébuleuse susceptible, en s'effondrant sur elle-même, de donner naissance à une nouvelle étoile.
-
 
 ##
 ## Enumeration values
@@ -7224,6 +6925,10 @@ OBJ_FIGHTER
 Chasseur
 
 # Star types
+INVALID_STAR_TYPE
+Type d'étoile inconnu
+
+# Star types
 STAR_BLUE
 Bleue
 
@@ -7255,9 +6960,9 @@ Trou Noir
 STAR_NONE
 Pas d'étoile
 
-# Star types
-INVALID_STAR_TYPE
-Type d'étoile inconnu
+# Planet types
+INVALID_PLANET_TYPE
+Type de planète inconnu
 
 # Planet types
 PT_SWAMP
@@ -7304,6 +7009,10 @@ PT_GASGIANT
 Géante Gazeuse
 
 # Planet sizes
+INVALID_PLANET_SIZE
+Taille de planète indéterminable
+
+# Planet sizes
 SZ_NOWORLD
 Rien à voir ici, circulez.
 
@@ -7334,6 +7043,10 @@ Astéroïdes
 # Planet sizes
 SZ_GASGIANT
 Géante Gazeuse
+
+# Planet environments
+INVALID_PLANET_ENVIRONMENT
+Environnement planétaire inconnu
 
 # Planet environments
 PE_UNINHABITABLE
@@ -7641,18 +7354,6 @@ Coque d'astronef
 UIT_TECH
 Technologie
 
-# Technology types
-TT_THEORY
-Théorie
-
-# Technology types
-TT_APPLICATION  # translated
-Application
-
-# Technology types
-TT_REFINEMENT
-Amélioration
-
 # Build types
 BT_NOT_BUILDING
 pas de structure
@@ -7665,25 +7366,9 @@ structure
 BT_SHIP
 astronef
 
-# Stockpile types
-ST_FOOD
-nourriture
-
-# Stockpile types
-ST_MINERAL
-minéraux
-
-# Stockpile types
-ST_TRADE
-commerce
-
 # Resource types
-RE_FOOD
-nourriture
-
-# Resource types
-RE_MINERALS
-minéraux
+INVALID_RESOURCE_TYPE
+type de ressource invalide
 
 # Resource types
 RE_TRADE
@@ -7711,6 +7396,10 @@ Niche Centrale
 
 SL_TOOLTIP_DESC
 Vide
+
+# Ship part classes
+INVALID_SHIP_PART_CLASS
+Classe d'équipement d'astronef invalide
 
 # Ship part classes
 PC_DIRECT_WEAPON
@@ -7779,6 +7468,10 @@ Commerce
 # Ship part classes
 PC_PRODICTION_LOCATION  # translated
 Production
+
+# Visibility levels
+INVALID_VISIBILITY
+Visibilité invalide
 
 # Visibility levels
 VIS_NO_VISIBILITY  # translated
@@ -8133,6 +7826,17 @@ DESC_VALUE_REF_MULTIPART_VARIABLE5
 DESC_VALUE_REF_MULTIPART_VARIABLE6
 %1% %2% %3% %4% %5% %6% %7%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
+# %6% fourth dependent property referenced by the FOCS variable.
+# %7% fifth dependent property referenced by the FOCS variable.
+DESC_VALUE_REF_MULTIPART_VARIABLEMANY
+%1% %2% %3% %4% %5% %6% %7% ...
+
 
 ##
 ## FOCS effect descriptions
@@ -8148,9 +7852,6 @@ Objets affectés : l'objet source seulement
 # %1% textual description of the activation clause that enables the effect.
 DESC_EFFECTS_GROUP_ACTIVATION
 L'effet n'est actif que si sa source est un objet%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-L'effet est toujours actif
 
 # %1% textual description of the effect group.
 #DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
@@ -9080,9 +8781,6 @@ Construction
 GROWTH_CATEGORY
 Croissance
 
-ECONOMICS_CATEGORY
-Économie
-
 SHIP_HULLS_CATEGORY
 Coques Astronef
 
@@ -9227,13 +8925,6 @@ Singularité Transcendantale
 LRN_TRANSCEND_DESC
 Qu'est-ce que la divinité? Est-ce qu'un dieu se soucie de ce qui est moral et bienveillant ou bien malveillant et tyrannique? Est-ce qu'un dieu traite les mortels avec amour et attention, haine et souffrance, ou simple indifférence ? Est-ce qu'un dieu est même seulement conscient des affaires infiniment insignifiantes de l'univers physique? Peut-être que la vraie divinité se situe au-delà de toute description, l'incompréhension étant finalement réciproque...
 
-GRO_MEDICAL_PATH
-Pathologie Médicale
-
-GRO_MEDICAL_PATH_DESC
-'''De nombreux traumas et maladies, ou les signes d'un même trauma ou maladie, peuvent résulter de causes et symptômes très semblables, mais nécessiter des traitements recommandés très différents. En soignant les maux de chaque individu selon les manifestations spécifiques observées plutôt qu'en se référant à la catégorisation générale de la maladie, un bénéfice sanitaire important peut en être retiré.
-Le traitement des traumas et des maladies requiert une connaissance approfondie de leurs causes. Étudier les subtilités et intrications des diverses affections permet de développer des traitements bien plus efficaces.'''
-
 GRO_PLANET_ECOL
 Écologie Planétaire
 
@@ -9303,12 +8994,6 @@ GRO_NANOTECH_MED_DESC
 
 Tandis que la modification génétique peut réparer ou annuler les effets de mutations nuisibles ou indésirées, ou bien corriger des déséquilibres biochimiques, le traitement des traumatismes physiques majeurs et des défauts congénitaux non génétiques exige cependant des mesures correctives. Les nanotechnologies peuvent être utilisées pour accomplir ces tâches, avec deux avantages considérables: les corrections peuvent être effectuées sans chirurgie invasive, risques ou effets secondaires, et le temps de mise en place du traitement est grandement réduit, puisque les outils de correction demeurent en place et prêts à opérer.'''
 
-GRO_ECO_METAMORPH
-Métamorphose Écologique
-
-GRO_ECO_METAMORPH_DESC
-Un écosystème est la plupart du temps pensé comme un organisme gigantesque et autonome, les relations prédateurs-proies agissant comme des boucles de rétroaction positives-négatives, permettant l'introduction de nouvelles espèces soit symbiotiques soit parasitaires, au sein de populations organisées en systèmes où chaque individu agit comme une cellule. Par conséquent, chaque planète est vivante, et passe par diverses phases de "vie". En manipulant ces phases de la même manière que pour un organisme biologique, il deviendrait alors possible de modifier un environnement planétaire avec une relative facilité et efficacité.
-
 GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
@@ -9354,16 +9039,6 @@ L'extraction de ressources minières sur des planétoïdes implique de nombreux 
 
 La microgravité en orbite basse offre également de nouveaux concepts de production industrielle, d'équipement et de techniques impossibles à la surface. Les objets massifs peuvent être manipulés à l'aide d'une installation minimale. Les liquides et les gaz évoluent librement, soumis seulement à la tension de surface, à moins qu'ils ne soient manipulés d'une aute manière. Au sein des usines, les équipements sont agencés en trois dimensions d'une manière optimale. Si bien exploitées, toutes ces conditions permettent une amélioration conséquente en termes d'efficacité et de production.'''
 
-PRO_CORE_MINE
-Minéralogie Tectonique
-
-PRO_CORE_MINE_DESC
-'''Extraction minière intensive et risquée.
-
-La pression et les températures dans les manteaux et les cœurs des planètes terrestres créent de grandes quantités de cristal et de formations minérales apparaissant uniquement dans les couches de la croûte supérieure découlant du volcanisme. Les couches atmosphériques basses et les noyaux des planètes gazeuses contiennent des matériaux encore plus exotiques, et ce en grande concentration. Accéder à ces régions pour extraire ces matériaux s'avère difficile et dangereux, mais éminemment lucratif, en comparaison de l'exploitation minière traditionnelle de surface.
-
-Les minéraux exploitables sont présents dans tout le volume d'une planète, créés sous différentes conditions chimiques et thermodynamiques données, comme la sédimentation de surface en milieu aqueux, la différenciation sous haute pression, ou la métamorphose en semi-profondeur. Après création, des processus tels que la tectonique des plaques, le volcanisme et les courants de convection profonde, ont une importance égale afin de déterminer la forme et l'emplacement final des ces ressources extractibles. Comprendre ces processus et leurs effets, les causes et les indices, est essentiel pour assurer l'efficacité des opérations d'extraction minière à grande échelle.'''
-
 PRO_ROBOTIC_PROD
 Production Robotisée
 
@@ -9378,12 +9053,6 @@ PRO_EXOBOTS  # translated
 Exobots
 PRO_EXOBOTS_DESC
 Permet la construction de colonies d'[[species SP_EXOBOT]]s optimisés pour l'industrie sur les Planètes [[PE_HOSTILE]]s.
-
-PRO_RAPID_EXO_PROD
-Production Accélérée d'Exobots
-
-PRO_RAPID_EXO_PROD_DESC
-Permet de produire davantage d'Exobots.
 
 PRO_FUSION_GEN
 Génération par Fusion
@@ -9418,12 +9087,6 @@ PRO_SENTIENT_AUTOMATION_DESC
 En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son Focus, engendrant un bonus industriel dans tout l'empire.
 
 Alors que les équipements deviennent de plus en plus autonomes, ces derniers développent également la capacité de se répliquer et de se réparer sans aucune intervention externe, si ce n'est l'apport de matériaux bruts et, si exigées ou suggerées, les spécifications du produit final. Lorsqu'un esprit artificiel est aux commandes, le système entier peut apprendre, planifier, réagir et s'adapter de manière autonome, sans l'intervention généralement lente et peu efficace des ouvriers traditionnels.'''
-
-PRO_INTSTEL_COPRO
-Co-Production Interstellaire
-
-PRO_INTSTEL_COPRO_DESC
-Les méthodes traditionnelles de production sont limitées par l'impératif de l'auto-suffisance, causé par le transport ou tout autre problème de logistique. Les développements récents en matière de coopération régionale planétaire permettent l'émergence d'une nouvelle échelle de spécialisation et de coopération, chaque infrastructure produisant une ou des parties d'un sous-sytème, tandis que le système entier bénéficie d'une expertise centralisée et d'une économie d'échelle significative. En déployant ce concept de plusieurs facteurs de grandeur, il peut être adapté à une échelle galactique, chaque planète ou système stellaire remplissant alors le rôle d'une infrastructure unique spécialisée. Les difficultés logistiques inhérentes à ce paradigme restent toutefois similaires à celle des méthodes traditionnelles, et augmentent proportionnellement et conjointement à l'accroissement des bénéfices potentiels.
 
 PRO_NDIM_ASSMB
 Assemblage Multidimensionnel
@@ -9551,12 +9214,6 @@ Exploration Galactique
 SHP_GAL_EXPLO_DESC
 La découverte du voyage interstellaire par voies spatiales inaugure une nouvelle ère de développement pour la société. Les vieilles querelles politiques entre factions mineures deviennent insignifiantes lorsque la civilisation tout entière découvre les possibilités illimitées des étoiles... croissance et prospérité, mais aussi destruction totale.
 
-SHP_SPACE_TACTICS
-Tactiques Spatiales
-
-SHP_SPACE_TACTICS_DESC
-Les combats dans le vide interstellaire et en microgravité exigent des armes spécialisées et des systèmes de défense adaptés, ainsi que des tactiques théoriques optimisant leur utilisation et leur efficacité.
-
 SHP_INTSTEL_LOG
 Logistique Interstellaire
 
@@ -9657,12 +9314,6 @@ Endocrinologie Méga-Faune
 SHP_ENDOCRINE_SYSTEMS_DESC
 L'étude des systèmes endocriniens d'organismes évoluant dans l'espace permet le développement des structures internes des astronefs à caractère organique.
 
-SHP_HAB_MEGAFAUN
-Méga-Faune Habitable
-
-SHP_HAB_MEGAFAUN_DESC
-Il est en général très rare de découvrir des conditions favorables afin de vivre à l'intérieur d'un gigantesque monstre de l'espace. Cela est cependant indispensable à l'intérieur d'une coque organique, tout comme un contrôle adéquat et fonctionnelle des conditions qui y règnent. La recherche et le développement de créatures massives et habitables ouvrent de nombreuses possibilités en matière de conception d'astronef.
-
 SHP_MONOCELL_EXP
 Expansion Monocellulaire
 
@@ -9736,10 +9387,7 @@ L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possib
 ##
 
 VICTORY_SHORT_DESC
-Donne la victoire !
-
-DOES_NOTHING_SHORT_DESC
-Inutile : sans effet
+Donne la victoire!
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Débloque un équipement d'astronef
@@ -9762,12 +9410,6 @@ Améliore la Recherche
 INDUSTRY_SHORT_DESC
 Améliore l'Industrie
 
-TRADE_SHORT_DESC
-Améliore le Commerce
-
-CONSTRUCTION_SHORT_DESC
-Améliore l'Infrastructure
-
 SUPPLY_SHORT_DESC
 Améliore l'Approvisionnement
 
@@ -9783,14 +9425,8 @@ Améliore la Croissance
 POPULATION_SHORT_DESC
 Augmente la Population planétaire
 
-HEALTH_SHORT_DESC
-Améliore la Santé
-
 STRUCTURE_SHORT_DESC
 Améliore la Résistance
-
-FLEET_RANGE_DESC
-Améliore l'Approvisionnement des flottes
 
 SHIP_REPAIR_DESC
 Répare les astronefs
@@ -10752,7 +10388,7 @@ BLD_IMPERIAL_PALACE
 Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente de 1 la portée de l'[[encyclopedia SUPPLY_TITLE]], l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5, et l'[[encyclopedia TROOP_TITLE]] de 6. Son emplacement définit également la Capitale de l'empire.
+'''Augmente de 2 la portée de l'[[encyclopedia SUPPLY_TITLE]], l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5, et l'[[encyclopedia TROOP_TITLE]] de 6. Son emplacement définit également la Capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et remplit la fonction de centre de contrôle pour toutes les possessions de l'empire.'''
 
