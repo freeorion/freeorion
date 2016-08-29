@@ -34,8 +34,8 @@
 #include <GG/Control.h>
 #include <GG/Timer.h>
 
+#include <boost/shared_ptr.hpp>
 #include <set>
-
 
 namespace GG {
 
@@ -516,6 +516,12 @@ private:
     void            NormalizeRow(Row* row);                                 ///< adjusts a Row so that it has the same number of cells as other rows, and that each cell has the correct width and alignment
     iterator        FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height); ///< Returns the first row shown when the last row shown is \a bottom_row
     std::size_t     FirstColShownWhenRightIs(std::size_t right_col, X client_width); ///< Returns the index of the first column shown when the last column shown is \a right_col
+
+    struct SelectionCache;
+    /** Cache the selected, clicked and last browsed rows.*/
+    boost::shared_ptr<SelectionCache> CacheSelections();
+    /** Restore cached selected, clicked and last browsed rows.*/
+    void RestoreCachedSelections(const SelectionCache& cache);
 
     std::list<Row*> m_rows;             ///< line item data
 

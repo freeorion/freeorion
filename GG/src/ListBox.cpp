@@ -1810,19 +1810,62 @@ void ListBox::ResetAutoScrollVars()
     m_auto_scroll_timer.Stop();
 }
 
+struct ListBox::SelectionCache
+{
+    std::set<const Row*> selections;
+    const Row* caret;
+    const Row* old_sel_row;
+    const Row* old_rdown_row;
+    const Row* lclick_row;
+    const Row* rclick_row;
+    const Row* last_row_browsed;
+};
+
+// TODO: change to unique_ptr with move mechanics or more the entire definition into the cpp file.
+boost::shared_ptr<ListBox::SelectionCache> ListBox::CacheSelections()
+{
+    boost::shared_ptr<ListBox::SelectionCache> cache(new ListBox::SelectionCache());
+    cache->caret = SafeDeref(m_caret, m_rows.end());
+    for (SelectionSet::const_iterator it = m_selections.begin(); it != m_selections.end(); ++it) {
+        cache->selections.insert(**it);
+    }
+    cache->old_sel_row =      SafeDeref(m_old_sel_row, m_rows.end());
+    cache->old_rdown_row =    SafeDeref(m_old_rdown_row, m_rows.end());
+    cache->lclick_row =       SafeDeref(m_lclick_row, m_rows.end());
+    cache->rclick_row =       SafeDeref(m_rclick_row, m_rows.end());
+    cache->last_row_browsed = SafeDeref(m_last_row_browsed, m_rows.end());
+
+    m_selections.clear();
+
+    return cache;
+}
+
+void ListBox::RestoreCachedSelections(const ListBox::SelectionCache& cache)
+{
+    m_selections.clear();
+
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        Row* row = *it;
+        if (cache.caret == row)
+            m_caret = it;
+        if (cache.selections.count(row))
+            m_selections.insert(it);
+        if (cache.old_sel_row == row)
+            m_old_sel_row = it;
+        if (cache.old_rdown_row == row)
+            m_old_rdown_row = it;
+        if (cache.lclick_row == row)
+            m_lclick_row = it;
+        if (cache.rclick_row == row)
+            m_rclick_row = it;
+        if (cache.last_row_browsed == row)
+            m_last_row_browsed = it;
+    }
+}
+
 void ListBox::Resort()
 {
-    Row* caret = SafeDeref(m_caret, m_rows.end());
-    std::set<Row*> selections;
-    for (SelectionSet::const_iterator it = m_selections.begin(); it != m_selections.end(); ++it) {
-        selections.insert(**it);
-    }
-    m_selections.clear();
-    Row* old_sel_row =      SafeDeref(m_old_sel_row, m_rows.end());
-    Row* old_rdown_row =    SafeDeref(m_old_rdown_row, m_rows.end());
-    Row* lclick_row =       SafeDeref(m_lclick_row, m_rows.end());
-    Row* rclick_row =       SafeDeref(m_rclick_row, m_rows.end());
-    Row* last_row_browsed = SafeDeref(m_last_row_browsed, m_rows.end());
+    boost::shared_ptr<ListBox::SelectionCache> cached_selections = CacheSelections();
 
     std::vector<Row*> rows_vec(m_rows.size());
     std::copy(m_rows.begin(), m_rows.end(), rows_vec.begin());
@@ -1837,24 +1880,11 @@ void ListBox::Resort()
     Y y(0);
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         Row* row = *it;
-        if (caret == row)
-            m_caret = it;
-        if (selections.find(row) != selections.end())
-            m_selections.insert(it);
-        if (old_sel_row == row)
-            m_old_sel_row = it;
-        if (old_rdown_row == row)
-            m_old_rdown_row = it;
-        if (lclick_row == row)
-            m_lclick_row = it;
-        if (rclick_row == row)
-            m_rclick_row = it;
-        if (last_row_browsed == row)
-            m_last_row_browsed = it;
-
         row->MoveTo(Pt(X0, y));
         y += row->Height();
     }
+
+    RestoreCachedSelections(*cached_selections);
 
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
 }
