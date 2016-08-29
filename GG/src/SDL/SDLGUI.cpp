@@ -378,7 +378,7 @@ namespace {
 
         virtual const char* what() const throw() {
             switch (m_status) {
-                case GL_FRAMEBUFFER_UNSUPPORTED:
+                case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
                     return "The requested framebuffer format was unsupported";
                 case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
                     return "One of the framebuffer attachments is incomplete.";
@@ -428,16 +428,16 @@ namespace GG {
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_id);
 
             // attach the texture to FBO color attachment point
-            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER_EXT
                                       GL_COLOR_ATTACHMENT0_EXT,  // 2. attachment point
                                       GL_TEXTURE_2D,         // 3. tex target: GL_TEXTURE_2D
                                       m_texture,             // 4. tex ID
                                       0);                    // 5. mipmap level: 0(base)
 
             // attach the renderbuffer to depth attachment point
-            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER
+            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER_EXT
                                          GL_DEPTH_ATTACHMENT_EXT,
-                                         GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER
+                                         GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER_EXT
                                          m_depth_rbo);              // 4. rbo ID
 
             // the same render buffer has the stencil data in other bits
