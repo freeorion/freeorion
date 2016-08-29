@@ -1573,6 +1573,37 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     return true;
 }
 
+void ListBox::DefineColumnsAndAlignment(const Row& row)
+{
+    const GG::X WIDTH = ClientSize().x - SCROLL_WIDTH;
+
+    m_col_widths.resize(row.size());
+    m_col_alignments.resize(row.size());
+    GG::X total_width = GG::X0;
+    for (std::size_t i = 0; i < row.size(); ++i) {
+        // use the column width from the Row
+        total_width += row.ColWidth(i);
+
+        // use the column alignment from the Row, if it has been set;
+        // otherwise, use the one dictated by the ListBoxStyle flags
+        Alignment a = row.ColAlignment(i);
+        if (a == ALIGN_NONE)
+            a = AlignmentFromStyle(m_style);
+        m_col_alignments[i] = a;
+    }
+
+    const GG::X_d SCALE_FACTOR = 1.0 * WIDTH / total_width;
+
+    GG::X total_scaled_width = GG::X0;
+    for (std::size_t i = 0; i < row.size(); ++i) {
+        total_scaled_width += (m_col_widths[i] = row.ColWidth(i) * SCALE_FACTOR);
+    }
+    m_col_widths.back() += total_scaled_width - WIDTH;
+
+    if (!m_header_row->empty() && m_normalize_rows_on_insert)
+        NormalizeRow(m_header_row);
+}
+
 ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool signal)
 {
     // Track the originating row in case this is an intra-ListBox
@@ -1585,35 +1616,8 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
 
     // The first row inserted into an empty list box defines the number of
     // columns, and initializes the column widths and alignments.
-    if (m_rows.empty() && (m_col_widths.empty() || !m_keep_col_widths)) {
-        const GG::X WIDTH = ClientSize().x - SCROLL_WIDTH;
-
-        m_col_widths.resize(row->size());
-        m_col_alignments.resize(row->size());
-        GG::X total = GG::X0;
-        for (std::size_t i = 0; i < row->size(); ++i) {
-            // use the column width from the Row
-            total += row->ColWidth(i);
-
-            // use the column alignment from the Row, if it has been set;
-            // otherwise, use the one dictated by the ListBoxStyle flags
-            Alignment a = row->ColAlignment(i);
-            if (a == ALIGN_NONE)
-                a = AlignmentFromStyle(m_style);
-            m_col_alignments[i] = a;
-        }
-
-        const GG::X_d SCALE_FACTOR = 1.0 * WIDTH / total;
-
-        total = GG::X0;
-        for (std::size_t i = 0; i < row->size(); ++i) {
-            total += (m_col_widths[i] = row->ColWidth(i) * SCALE_FACTOR);
-        }
-        m_col_widths.back() += total - WIDTH;
-
-        if (!m_header_row->empty() && m_normalize_rows_on_insert)
-            NormalizeRow(m_header_row);
-    }
+    if (m_rows.empty() && (m_col_widths.empty() || !m_keep_col_widths))
+        DefineColumnsAndAlignment(*row);
 
     row->InstallEventFilter(this);
     if (m_normalize_rows_on_insert)
@@ -1687,37 +1691,8 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
 
     // The first row inserted into an empty list box defines the number of
     // columns, and initializes the column widths and alignments.
-    if (m_col_widths.empty() || !m_keep_col_widths) {
-        Row* row = *rows.begin();
-
-        const GG::X WIDTH = ClientSize().x - SCROLL_WIDTH;
-
-        m_col_widths.resize(row->size());
-        m_col_alignments.resize(row->size());
-        GG::X total = GG::X0;
-        for (std::size_t i = 0; i < row->size(); ++i) {
-            // use the column width from the Row
-            total += row->ColWidth(i);
-
-            // use the column alignment from the Row, if it has been set;
-            // otherwise, use the one dictated by the ListBoxStyle flags
-            Alignment a = row->ColAlignment(i);
-            if (a == ALIGN_NONE)
-                a = AlignmentFromStyle(m_style);
-            m_col_alignments[i] = a;
-        }
-
-        const GG::X_d SCALE_FACTOR = 1.0 * WIDTH / total;
-
-        total = GG::X0;
-        for (std::size_t i = 0; i < row->size(); ++i) {
-            total += (m_col_widths[i] = row->ColWidth(i) * SCALE_FACTOR);
-        }
-        m_col_widths.back() += total - WIDTH;
-
-        if (!m_header_row->empty() && m_normalize_rows_on_insert)
-            NormalizeRow(m_header_row);
-    }
+    if (m_col_widths.empty() || !m_keep_col_widths)
+        DefineColumnsAndAlignment(*(*rows.begin()));
 
     // housekeeping of rows...
     for (std::vector<Row*>::const_iterator row_it = rows.begin();

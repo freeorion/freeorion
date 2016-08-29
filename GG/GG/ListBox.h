@@ -489,6 +489,8 @@ protected:
 
     virtual bool    EventFilter(Wnd* w, const WndEvent& event);
 
+    /** Define the number of columns, the column widths and alignment from \p row.*/
+    void            DefineColumnsAndAlignment(const Row& row);
     iterator        Insert(Row* row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     void            Insert(const std::vector<Row*>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
