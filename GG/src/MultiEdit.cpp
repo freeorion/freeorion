@@ -267,7 +267,7 @@ void MultiEdit::SizeMove(const Pt& ul, const Pt& lr)
 void MultiEdit::SelectAll()
 {
     m_cursor_begin = std::pair<std::size_t, CPSize>(0, CP0);
-    m_cursor_end = std::pair<std::size_t, CPSize>(
+    m_cursor_end = GetLineData().empty() ? m_cursor_begin : std::pair<std::size_t, CPSize>(
         GetLineData().size() - 1,
         CPSize(GetLineData()[GetLineData().size() - 1].char_data.size()));
 
@@ -347,7 +347,10 @@ void MultiEdit::SetText(const std::string& str)
         }
 
         // make sure the change in text did not make the cursor position invalid
-        if (GetLineData().size() <= m_cursor_end.first) {
+        if (GetLineData().empty()) {
+            m_cursor_end.first = 0;
+            m_cursor_end.second = CP0;
+        } else if (GetLineData().size() <= m_cursor_end.first) {
             m_cursor_end.first = GetLineData().size() - 1;
             m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
         } else if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second) {
@@ -453,6 +456,10 @@ Y MultiEdit::BottomMargin() const
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 {
+
+    if (GetLineData().empty())
+        return std::pair<std::size_t, CPSize>(0, CP0);
+
     std::pair<std::size_t, CPSize> retval;
 
     size_t row = RowAt(pt.y);
@@ -469,11 +476,11 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 {
-    std::pair<std::size_t, CPSize> retval(0, CP0);
-    if (idx > Text().size())
-        return retval;
-
     const std::vector<Font::LineData>& lines = GetLineData();
+
+    std::pair<std::size_t, CPSize> retval(0, CP0);
+    if (lines.empty() || idx > Text().size())
+        return retval;
 
     retval = LinePositionOf(idx, lines);
 
@@ -539,7 +546,7 @@ X MultiEdit::RowStartX(std::size_t row) const
     else if (m_style & MULTI_CENTER)
         retval -= excess_width / 2;
 
-    if (!GetLineData()[row].Empty()) {
+    if (!GetLineData().empty() && !GetLineData()[row].Empty()) {
         X line_width = GetLineData()[row].char_data.back().extent;
         if (GetLineData()[row].justification == ALIGN_LEFT) {
             retval += (m_vscroll && m_hscroll ? RightMargin() : X0);
@@ -554,7 +561,7 @@ X MultiEdit::RowStartX(std::size_t row) const
 }
 
 X MultiEdit::CharXOffset(std::size_t row, CPSize idx) const
-{ return (0 < idx ? GetLineData()[row].char_data[Value(idx - 1)].extent : X0); }
+{ return (0 < idx && !GetLineData().empty() ? GetLineData()[row].char_data[Value(idx - 1)].extent : X0); }
 
 std::size_t MultiEdit::RowAt(Y y) const
 {
@@ -564,7 +571,7 @@ std::size_t MultiEdit::RowAt(Y y) const
     if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < 0) {
         retval = Value(y / GetFont()->Lineskip());
     } else { // FORMAT_BOTTOM
-        retval = GetLineData().size() - 1 -
+        retval = LastLineIndexOrZero() -
             Value((ClientSize().y + (m_vscroll && m_hscroll ? BottomMargin() : Y0) - y - 1) / GetFont()->Lineskip());
     }
     return retval;
@@ -572,6 +579,8 @@ std::size_t MultiEdit::RowAt(Y y) const
 
 CPSize MultiEdit::CharAt(std::size_t row, X x) const
 {
+    if (GetLineData().empty())
+        return CP0;
     // out of range of rows?
     if (row >= GetLineData().size()) {
         return CPSize(GetLineData().back().char_data.size());
@@ -615,17 +624,17 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
 }
 
 std::size_t MultiEdit::FirstVisibleRow() const
-{ return std::min(RowAt(Y0), GetLineData().size() - 1); }
+{ return std::min(RowAt(Y0), LastLineIndexOrZero()); }
 
 std::size_t MultiEdit::LastVisibleRow() const
-{ return std::min(RowAt(ClientSize().y), GetLineData().size() - 1); }
+{ return std::min(RowAt(ClientSize().y), LastLineIndexOrZero()); }
 
 std::size_t MultiEdit::FirstFullyVisibleRow() const
 {
     std::size_t retval = RowAt(Y0);
     if (m_first_row_shown % GetFont()->Lineskip())
         ++retval;
-    return std::min(retval, GetLineData().size() - 1);
+    return std::min(retval, LastLineIndexOrZero());
 }
 
 std::size_t MultiEdit::LastFullyVisibleRow() const
@@ -633,11 +642,13 @@ std::size_t MultiEdit::LastFullyVisibleRow() const
     std::size_t retval = RowAt(ClientSize().y);
     if ((m_first_row_shown + ClientSize().y + BottomMargin()) % GetFont()->Lineskip())
         --retval;
-    return std::min(retval, GetLineData().size() - 1);
+    return std::min(retval, LastLineIndexOrZero());
 }
 
 CPSize MultiEdit::FirstVisibleChar(std::size_t row) const
 {
+    if (GetLineData().empty())
+        return CP0;
     if (GetLineData()[row].Empty())
         return CharAt(row, X0);
     else
@@ -646,6 +657,8 @@ CPSize MultiEdit::FirstVisibleChar(std::size_t row) const
 
 CPSize MultiEdit::LastVisibleChar(std::size_t row) const
 {
+    if (GetLineData().empty())
+        return CP0;
     if (GetLineData()[row].Empty())
         return CharAt(row, ClientSize().x);
     else
@@ -831,7 +844,10 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
         ++m_cursor_end.first;
         m_cursor_end.second = CP0;
         // the cursor might be off the bottom if the bottom row was just chopped off to satisfy m_max_lines_history
-        if (GetLineData().size() <= m_cursor_end.first) {
+        if (GetLineData().empty()) {
+            m_cursor_end.first = 0;
+            m_cursor_end.second = CP0;
+        } else if (GetLineData().size() <= m_cursor_end.first) {
             m_cursor_end.first = GetLineData().size() - 1;
             m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
             if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
@@ -848,10 +864,15 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
         } else if (0 < m_cursor_end.second) {
             --m_cursor_end.second;
         } else if (0 < m_cursor_end.first) {
-            --m_cursor_end.first;
-            m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
-            if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
-                --m_cursor_end.second;
+            if (GetLineData().empty()) {
+                m_cursor_end.first = 0;
+                m_cursor_end.second = CP0;
+            } else {
+                --m_cursor_end.first;
+                m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+                if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()))
+                    --m_cursor_end.second;
+            }
         }
         if (!shift_down)
             m_cursor_begin = m_cursor_end;
@@ -861,11 +882,11 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
     case GGK_RIGHT: {
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = HighCursorPos();
-        } else if (m_cursor_end.second <
+        } else if (!GetLineData().empty() && m_cursor_end.second <
                     GetLineData()[m_cursor_end.first].char_data.size() -
                     (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()) ? 1 : 0)) {
             ++m_cursor_end.second;
-        } else if (m_cursor_end.first < GetLineData().size() - 1) {
+        } else if (!GetLineData().empty() && m_cursor_end.first < GetLineData().size() - 1) {
             ++m_cursor_end.first;
             m_cursor_end.second = CP0;
         }
@@ -891,7 +912,7 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
     case GGK_DOWN: {
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = HighCursorPos();
-        } else if (m_cursor_end.first < GetLineData().size() - 1) {
+        } else if (!GetLineData().empty() && m_cursor_end.first < GetLineData().size() - 1) {
             X row_start = RowStartX(m_cursor_end.first);
             X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
             ++m_cursor_end.first;
@@ -938,9 +959,14 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
             m_vscroll->ScrollPageIncr();
             SignalScroll(*m_vscroll, true);
             std::size_t rows_moved = m_vscroll->PageSize() / Value(GetFont()->Lineskip());
-            m_cursor_end.first = std::min(m_cursor_end.first + rows_moved, GetLineData().size() - 1);
-            if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
-                m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+            if (GetLineData().empty()) {
+                m_cursor_end.first = 0;
+                m_cursor_end.second = CP0;
+            } else {
+                m_cursor_end.first = std::min(m_cursor_end.first + rows_moved, LastLineIndexOrZero());
+                if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
+                    m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
+            }
             m_cursor_begin = m_cursor_end;
         }
         break;
@@ -954,7 +980,7 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
             m_cursor_end.second = --m_cursor_begin.second;
             Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
             emit_signal = true;
-        } else if (0 < m_cursor_begin.first) {
+        } else if (!GetLineData().empty() && 0 < m_cursor_begin.first) {
             m_cursor_end.first = --m_cursor_begin.first;
             m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
             if (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_begin.first, Text()))
@@ -970,7 +996,7 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
         if (MultiSelected()) {
             ClearSelected();
             emit_signal = true;
-        } else if (m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
+        } else if (!GetLineData().empty() && m_cursor_begin.second < GetLineData()[m_cursor_begin.first].char_data.size()) {
             // cursor is not at the end of its current line
             Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
             emit_signal = true;
@@ -1357,7 +1383,10 @@ void MultiEdit::AcceptPastedText(const std::string& text)
 
         // the cursor might be off the bottom if the bottom row was just
         // chopped off to satisfy m_max_lines_history
-        if (GetLineData().size() - 1 < m_cursor_begin.first) {
+        if (GetLineData().empty()) {
+            m_cursor_begin.first = 0;
+            m_cursor_begin.second = CP0;
+        } else if (GetLineData().size() - 1 < m_cursor_begin.first) {
             m_cursor_begin.first = GetLineData().size() - 1;
             m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
         }
