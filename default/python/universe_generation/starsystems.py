@@ -52,21 +52,12 @@ def name_planets(system):
     unless it's an asteroid belt, in that case name is system
     name + 'asteroid belt' (localized).
     """
-    planet_number = 1
     # iterate over all planets in the system
+    sys_name = fo.get_name(system)
     for planet in fo.sys_get_planets(system):
-        # use different naming methods for "normal" planets and asteroid belts
-        if fo.planet_get_type(planet) == fo.planetType.asteroids:
-            # get localized text from stringtable
-            name = fo.user_string("PL_ASTEROID_BELT_OF_SYSTEM")
-            # %1% parameter in the localized string is the system name
-            name = name.replace("%1%", fo.get_name(system))
-        else:
-            # set name to system name + planet number as roman number...
-            name = fo.get_name(system) + " " + fo.roman_number(planet_number)
-            # ...and increase planet number
-            planet_number += 1
-        # do the actual renaming
+        name = fo.user_string("NEW_PLANET_NAME")
+        name = name.replace("%1%", sys_name)
+        name = name.replace("%2%", fo.planet_cardinal_suffix(planet))
         fo.set_name(planet, name)
 
 

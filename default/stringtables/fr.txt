@@ -191,17 +191,22 @@ Flotte Bombardement %1%
 NEW_BATTLE_FLEET_NAME
 Flotte Combat %1%
 
-# Name for a newly created asteroid belt.
-# %1% name of the system this asteroid belt is created in.
-# %2% orbit number where this asteroid belt is created on.
-NEW_ASTEROIDS_NAME
-Rémanent %2% %1%
-
-# Name for a newly created planet. When creating a new planet it is assumed this
-# planet is the first one within the system.
+# Name for a newly created planet.
+# Suffix bears some explanation:
+#  - Planets are grouped for asteroids and non-asteroids.
+#  - Suffix is a roman numeral, with additional rules for asteroids.
+#  - The roman numeral is a rank for proximity to the center of the system,
+#      in relation to other planets in the same group.
+#  - For asteroids, the suffix starts with a localized NEW_ASTEROIDS_SUFFIX.
+#      If any other asteroids are in the system, the roman numeral is appended.
 # %1% name of the system this planet is created in.
-#NEW_PLANET_NAME
-#%1% I
+# %2% suffix for this planet
+# NEW_PLANET_NAME
+# %1% %2%
+
+# The label pre-pended to a new asteroids naming suffix
+# NEW_ASTEROIDS_SUFFIX
+# [[PT_ASTEROIDS]]
 
 EMPTY_SPACE
 Espace Interstellaire

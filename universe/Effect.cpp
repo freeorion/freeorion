@@ -1410,7 +1410,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
             name_str = UserString(name_str);
     } else {
-        name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name());
+        name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name() % planet->CardinalSuffix());
     }
     planet->Rename(name_str);
 
