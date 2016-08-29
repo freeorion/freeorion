@@ -122,17 +122,15 @@ void Edit::Render()
 
     BeginScissorClipping(Pt(client_ul.x - 1, client_ul.y), client_lr);
 
-    if (GetLineData().empty())
-        return;
-    const std::vector<Font::LineData::CharData>& char_data = GetLineData()[0].char_data;
-
     X first_char_offset = FirstCharOffset();
     Y text_y_pos(ul.y + ((lr.y - ul.y) - GetFont()->Height()) / 2.0 + 0.5);
     CPSize last_visible_char = LastVisibleChar();
     const StrSize INDEX_0 = StringIndexOf(0, m_first_char_shown, GetLineData());
     const StrSize INDEX_END = StringIndexOf(0, last_visible_char, GetLineData());
 
-    if (MultiSelected()) {
+    if (!GetLineData().empty() && MultiSelected()) {
+        const std::vector<Font::LineData::CharData>& char_data = GetLineData()[0].char_data;
+
         // if one or more chars are selected, hilite, then draw the range in
         // the selected-text color
         CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::max(CP0, std::min(m_cursor_pos.first, m_cursor_pos.second)));
@@ -293,12 +291,12 @@ CPSize Edit::CharIndexOf(X x) const
 }
 
 X Edit::FirstCharOffset() const
-{ return (m_first_char_shown ? GetLineData()[0].char_data[Value(m_first_char_shown - 1)].extent : X0); }
+{ return (!GetLineData().empty() && m_first_char_shown ? GetLineData()[0].char_data[Value(m_first_char_shown - 1)].extent : X0); }
 
 X Edit::ScreenPosOfChar(CPSize idx) const
 {
     X first_char_offset = FirstCharOffset();
-    return ClientUpperLeft().x + ((idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
+    return ClientUpperLeft().x + ((!GetLineData().empty() && idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
 }
 
 CPSize Edit::LastVisibleChar() const
@@ -337,6 +335,10 @@ bool Edit::InDoubleButtonDownMode() const
 
 std::pair<CPSize, CPSize> Edit::DoubleButtonDownCursorPos() const
 { return m_double_click_cursor_pos; }
+
+std::vector<GG::Font::LineData>::size_type Edit::LastLineIndexOrZero() const {
+    return std::max(std::vector<GG::Font::LineData>::size_type(0), GetLineData().size() - 1);
+}
 
 void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 {
@@ -449,9 +451,11 @@ void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_k
         } else if (0 < m_cursor_pos.second) {
             if (!ctrl_down) {
                 --m_cursor_pos.second;
-                X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
-                while (0 < m_cursor_pos.second && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second - 1)].extent)
-                    --m_cursor_pos.second;
+                if (!GetLineData().empty()) {
+                    X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
+                    while (0 < m_cursor_pos.second && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second - 1)].extent)
+                        --m_cursor_pos.second;
+                }
             } else {
                 m_cursor_pos.second = NextWordEdgeFrom(Text(), m_cursor_pos.second, false);
             }
@@ -469,9 +473,11 @@ void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_k
 
         } else if (m_cursor_pos.second < Length()) {
             if (!ctrl_down) {
-                X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
-                while (m_cursor_pos.second < Length() && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent)
-                    ++m_cursor_pos.second;
+                if (!GetLineData().empty()) {
+                    X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
+                    while (m_cursor_pos.second < Length() && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent)
+                        ++m_cursor_pos.second;
+                }
             } else {
                 m_cursor_pos.second = NextWordEdgeFrom(Text(), m_cursor_pos.second, true);
             }

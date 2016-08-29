@@ -179,6 +179,10 @@ protected:
     /** Returns the cursor position at the time of the most recent
         double-button-down. */
     std::pair<CPSize, CPSize> DoubleButtonDownCursorPos() const;
+
+    /** Return the index of the last LineData() or 0 if LineData is empty.
+     Allows index based Edit to handle empty line data.*/
+    std::vector<GG::Font::LineData>::size_type LastLineIndexOrZero() const;
     //@}
 
     /** \name Mutators */ ///@{

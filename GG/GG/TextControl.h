@@ -271,7 +271,7 @@ public:
 protected:
     /** \name Accessors */ ///@{
     /** Returns the line data for the text in this TextControl. */
-    const std::vector<Font::LineData>& GetLineData() const;
+    virtual const std::vector<Font::LineData>& GetLineData() const;
 
     friend class StateButtonRepresenter;
     //@}
