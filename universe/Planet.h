@@ -133,6 +133,7 @@ public:
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;
 
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
+    const std::string           OrbitalSuffix() const;              ///< Returns the ordered naming suffix for this planet
     //@}
 
     /** \name Mutators */ //@{

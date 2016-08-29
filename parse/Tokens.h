@@ -259,6 +259,7 @@
     (Orange)                                    \
     (Orbit)                                     \
     (OrderedBombardedBy)                        \
+    (OrbitalSuffix)                             \
     (OriginalType)                              \
     (OutpostsOwned)                             \
     (OwnedBy)                                   \

@@ -99,19 +99,19 @@ EFFECT_CREATE_PLANET
 '''CreatePlanet
     type = OneOf(Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra)
     planetsize = OneOf(tiny, small, medium, large)
-    name = UserString("NEW_PLANET_NAME") % Target.Name
+    name = UserString("NEW_PLANET_NAME") % Target.Name % Target.OrbitalSuffix
 '''
 
 EFFECT_CREATE_ASTEROID
 '''CreatePlanet
     type = asteroids
     planetsize = asteroids
-    name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
+    name = UserString("NEW_PLANET_NAME") % Target.Name % Target.OrbitalSuffix
 '''
 
 EFFECT_CREATE_GASGIANT
 '''CreatePlanet
     type = GasGiant
     planetsize = GasGiant
-    name = UserString("NEW_PLANET_NAME") % Target.Name
+    name = UserString("NEW_PLANET_NAME") % Target.Name % Target.OrbitalSuffix
 '''

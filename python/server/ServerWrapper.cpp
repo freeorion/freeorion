@@ -994,6 +994,20 @@ namespace {
         return py_planets;
     }
 
+    list SystemGetPlanetsByOrbit(int system_id) {
+        list py_planets;
+        TemporaryPtr<System> cur_system = GetSystem(system_id);
+        if (!cur_system) {
+            ErrorLogger() << "SystemGetPlanetsByOrbit : Couldn't get system with ID " << system_id;
+            return py_planets;
+        }
+        const std::vector<int>& orbits = cur_system->PlanetIDsByOrbit();
+        for (std::vector<int>::const_iterator it = orbits.begin();
+             it != orbits.end(); ++it)
+        { py_planets.append(*it); }
+        return py_planets;
+    }
+
     list SystemGetFleets(int system_id) {
         list py_fleets;
         TemporaryPtr<System> system = GetSystem(system_id);
@@ -1205,6 +1219,16 @@ namespace {
 
         return planet->Colonize(empire_id, species, population);
     }
+
+    object PlanetOrbitalSuffix(int planet_id) {
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        if (!planet) {
+            ErrorLogger() << "PlanetOrbitalSuffix: couldn't get planet with ID:" << planet_id;
+            return object("");
+        }
+
+        return object(planet->OrbitalSuffix());
+    }
 }
 
 namespace FreeOrionPython {
@@ -1305,6 +1329,7 @@ namespace FreeOrionPython {
         def("sys_orbit_occupied",                   SystemOrbitOccupied);
         def("sys_orbit_of_planet",                  SystemOrbitOfPlanet);
         def("sys_get_planets",                      SystemGetPlanets);
+        def("sys_get_planets_by_orbit",             SystemGetPlanetsByOrbit);
         def("sys_get_fleets",                       SystemGetFleets);
         def("sys_get_starlanes",                    SystemGetStarlanes);
         def("sys_add_starlane",                     SystemAddStarlane);
@@ -1321,5 +1346,6 @@ namespace FreeOrionPython {
         def("planet_available_foci",                PlanetAvailableFoci);
         def("planet_make_outpost",                  PlanetMakeOutpost);
         def("planet_make_colony",                   PlanetMakeColony);
+        def("planet_get_orbital_suffix",            PlanetOrbitalSuffix);
     }
 }

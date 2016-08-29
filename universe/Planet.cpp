@@ -871,3 +871,29 @@ void Planet::ClampMeters() {
     UniverseObject::GetMeter(METER_REBEL_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
 }
+
+const std::string Planet::OrbitalSuffix() const {
+    TemporaryPtr<const System> system_ptr = GetSystem(this->SystemID());
+    int orbit = system_ptr->OrbitOfPlanet(this->ID());
+    if (m_size == SZ_ASTEROIDS) {  // asteroids are named according to orbit position
+        while (!UserStringExists("NEW_ASTEROID_SUFFIX_ORBIT_" + RomanNumber(orbit + 1))) {
+            --orbit;
+            if (orbit < 0) {
+                orbit = system_ptr->NumPlanets();
+                break;
+            }
+        }
+        return UserString("NEW_ASTEROID_SUFFIX_ORBIT_" + RomanNumber(orbit + 1));
+    } else {
+        if (orbit < 0) {
+            orbit = 0;
+            const std::set<int>& system_planet_ids = system_ptr->PlanetIDs();
+            for (std::set<int>::const_iterator it = system_planet_ids.begin(); it != system_planet_ids.end(); ++it) {
+                if (TemporaryPtr<const Planet> it_planet = GetPlanet(*it))
+                    if (it_planet->Size() != SZ_ASTEROIDS)
+                        ++orbit;
+            }
+        }
+        return RomanNumber(orbit + 1);
+    }
+}

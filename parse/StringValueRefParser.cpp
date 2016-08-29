@@ -81,6 +81,7 @@ namespace { struct string_parser_rules {
                 |    tok.BuildingType_
                 |    tok.Focus_
                 |    tok.PreferredFocus_
+                |    tok.OrbitalSuffix_
                 ;
 
             constant
