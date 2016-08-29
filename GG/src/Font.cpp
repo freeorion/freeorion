@@ -1678,10 +1678,11 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
         orig_just = ALIGN_RIGHT;
     bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
 
-    // TODO check if possible to return empty line_data for empty text;
     std::vector<Font::LineData> line_data;
-    line_data.push_back(LineData());
-    line_data.back().justification = orig_just;
+    if (!text_elements.empty()) {
+        line_data.push_back(LineData());
+        line_data.back().justification = orig_just;
+    }
 
     X x = X0;
     // the position within the original string of the current TextElement
