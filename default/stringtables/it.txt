@@ -651,9 +651,6 @@ Il volume (da 0 a 255) per la musica durante la partita.
 OPTIONS_DB_QUICKSTART
 Avvio veloce senza mostrare il menu.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Alterna l'inclusione di testo generato automaticamente in tecnologia, edilizia o descrizioni di parti della nave.
-
 
 ##
 ## File dialog
@@ -2018,23 +2015,6 @@ PR
 ENC_COST_AND_TURNS_STR
 %1% %2% e %3% Turni
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Requisito Ubicazione</u>
-
-Un oggetto%1%'''
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Effetti</u>
-
-%1%'''
-
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
 # %1% description.
@@ -3026,101 +3006,6 @@ producer
 
 DESC_VAR_CREATIONTURN
 turn of creation
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Oggetti interessati: Tutti gli oggetti%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Oggetti interessati: Solo l'oggetto di origine
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-L'effetto è attivo se la fonte è un oggetto%1%
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effetti del gruppo %1%:
-%2%
-'''
-
-
-##
-## FOCS meter setter
-##
-
-# %1% name of the meter modified.
-# %2% name of the ship part where this parameter is applied to.
-# %3% textual description of the value applied to the meter.
-DESC_SET_SHIP_PART_METER
-Imposta %1% per %2% su %3%
-
-# %1% either name of the empire or a description of empire the meter will
-#     modify.
-# %2% name of the meter modified.
-# %3% textual description of the value applied to the meter.
-DESC_SET_EMPIRE_METER
-Imposta %2% of the %1% impero su %3%
-
-
-##
-## FOCS other setters
-##
-
-# %1% planet type the target planet should change to.
-DESC_SET_PLANET_TYPE
-Cambia il tipo di pianeta in %1%
-
-# %1% planet size the target planet should change to.
-DESC_SET_PLANET_SIZE
-Cambia la dimensione del pianeta in %1%
-
-# %1% name of the species which should colonize/own this object.
-DESC_SET_SPECIES
-Cambia la specie dell'oggetto in %1%
-
-# %1% name of the empire which should own this object.
-DESC_SET_OWNER
-Imposta %1% come proprietario dell'oggetto
-
-DESC_DESTROY
-Distrugge l'oggetto
-
-# %1% name of the special which should be attached to the object.
-# %2% capacity of the special, which should be attached to the object.
-DESC_ADD_SPECIAL
-Aggiunge speciale %1% all'oggetto
-
-# %1% star type the target star system should change to.
-DESC_SET_STAR_TYPE
-Cambia il tipo di stella a %1%
-
-# %1% textual description of the location this object should be moved to.
-DESC_MOVE_TO
-Muove l'oggetto nella posizione dell'oggetto %1%
-
-DESC_VICTORY
-Fa vincere la partita al possessore dell'oggetto
-
-
-##
-## FOCS object creation
-##
-
-# %1% planet type the new planet should be created with.
-# %2% planet size the new planet should be created with.
-DESC_CREATE_PLANET
-Crea un nuovo pianeta di tipo %1% e dimensione %2%
-
-# %1% building type that should be created.
-DESC_CREATE_BUILDING
-Crea una nuova struttura %1%
 
 
 ##

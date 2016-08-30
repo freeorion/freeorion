@@ -1593,8 +1593,9 @@ Indique si la version d'OpenGL du système a été vérifiée. Si non, diverses 
 OPTIONS_DB_RESET_FSSIZE
 Enregistre ou réinitialise la résolution en plein écran. Si non, la valeur enregistrée est utilisée. Si oui, la valeur est réinitialisée à la résolution maximale que le système peut afficher.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Active/Désactive l'affichage de texte auto-généré dans les descriptions des technologies, des structures ou des équipements d'astronef.
+# needs update
+#OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+#Active/Désactive l'affichage de texte auto-généré dans les descriptions des technologies, des structures ou des équipements d'astronef.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Active/Désactive les journaux détaillés des éléments de l'univers et l'évaluation des effets (pour développeurs).
@@ -2599,7 +2600,7 @@ Fichiers de musiques
 OPTIONS_SOUND_FILE
 Fichiers de sons
 
-OPTIONS_AUTO_EFFECT_DESC
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Génération automatique de descriptions
 
 OPTIONS_VERBOSE_LOGGING_DESC
@@ -3900,23 +3901,6 @@ PR
 ENC_COST_AND_TURNS_STR
 %1% %2% & %3% tours
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Implantation</u>
-
-Un objet%1%'''
-
-# Title for auto-generated effects description in encyclopedia.
-# %1% textual representation of the effects applied.
-ENC_EFFECTS_STR
-'''
-
-<u>Effets</u>
-
-%1%'''
-
 ENC_VERB_PRODUCE_STR
 produire
 
@@ -3945,24 +3929,6 @@ Dans les expressions décrivant ces variations, le terme Source correspond à la
 ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
 Sur %1%, le coût et le temps sont de %2% %3% sur %4% tours.'''
-
-# Title for auto-generated production cost description in encyclopedia.
-# %1% textual representation of the production costs.
-ENC_AUTO_COST_STR
-'''
-
-<u>Coût</u>
-
-%1%'''
-
-# Title for auto-generated production time description in encyclopedia.
-# %1% textual representation of the production time required to build the item.
-ENC_AUTO_TIME_STR
-'''
-
-<u>Temps</u>
-
-%1%'''
 
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
@@ -7836,282 +7802,6 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # %7% fifth dependent property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1% %2% %3% %4% %5% %6% %7% ...
-
-
-##
-## FOCS effect descriptions
-##
-
-# %1% textual description of the scope of this effect.
-DESC_EFFECTS_GROUP_SCOPE
-Objets affectés : tout objet%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Objets affectés : l'objet source seulement
-
-# %1% textual description of the activation clause that enables the effect.
-DESC_EFFECTS_GROUP_ACTIVATION
-L'effet n'est actif que si sa source est un objet%1%
-
-# %1% textual description of the effect group.
-#DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-#'''%1%
-#'''
-
-# %1% index of the effect group.
-# %2% textual description of the effect group.
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effets de groupe %1% :
-%2%
-'''
-
-
-##
-## FOCS meter setter
-##
-
-# %1% name of the meter modified.
-# %2% operator used to apply the value to the meter (+, -, /, *, ...).
-# %3% constant number applied to the to the meter.
-#DESC_SIMPLE_SET_METER
-#%1% %2%%3%
-
-# %1% name of the meter modified.
-# %2% textual description of the value applied to the meter.
-DESC_COMPLEX_SET_METER
-Fixe %1% à %2%
-
-# %1% name of the meter modified.
-# %2% name of the ship part where this parameter is applied to.
-# %3% textual description of the value applied to the meter.
-DESC_SET_SHIP_PART_METER
-Fixe %1% pour %2% à %3%
-
-# %1% either name of the empire or a description of empire the meter will
-#     modify.
-# %2% name of the meter modified.
-# %3% textual description of the value applied to the meter.
-DESC_SET_EMPIRE_METER
-Fixe %2% de l'empire %1% à %3%
-
-
-##
-## FOCS other setters
-##
-
-# %1% name of the stockpile resource set
-# %2% textual description of the value applied to the stockpile.
-# %3% name of the empire that owns the stockpile
-DESC_SET_EMPIRE_STOCKPILE
-Définit le stock de %1% de l'empire %3% à %2%
-
-# %1% name of the empire which should change their capital planet.
-DESC_SET_EMPIRE_CAPITAL
-Fait de l'objet la capitale de l'empire %1%
-
-# %1% planet type the target planet should change to.
-DESC_SET_PLANET_TYPE
-Change le type de la planète en %1%
-
-# %1% planet size the target planet should change to.
-DESC_SET_PLANET_SIZE
-Change la taille de la planète en %1%
-
-# %1% name of the species which should colonize/own this object.
-DESC_SET_SPECIES
-Change l'espèce de l'objet en %1%
-
-# %1% name of the empire which should own this object.
-DESC_SET_OWNER
-Rend %1% propriétaire de l'objet
-
-DESC_DESTROY
-Détruit l'objet
-
-# %1% name of the special which should be attached to the object.
-# %2% capacity of the special, which should be attached to the object.
-DESC_ADD_SPECIAL
-Donne la particularité %1% à l'objet
-
-# %1% name of the special which should be dettached to the object.
-DESC_REMOVE_SPECIAL
-Enlève la particularité %1% à l'objet
-
-# %1% textual description of starlane endpoints.
-DESC_ADD_STARLANES
-Crée des Voies spatiales entre le système cible et le système des objets%1%
-
-# %1% textual description of starlane endpoints.
-DESC_REMOVE_STARLANES
-Supprime les Voies spatiales entre le système cible et le système des objets%1%
-
-# %1% star type the target star system should change to.
-DESC_SET_STAR_TYPE
-Change le type d'étoile en %1%
-
-# %1% textual description of the location this object should be moved to.
-DESC_MOVE_TO
-Déplace l'objet à l'endroit d'un objet%1%
-
-# %1% textual description of the object, which acts as pivot point.
-# %2% textual description of the angular speed.
-DESC_MOVE_IN_ORBIT_OF_OBJECT
-Déplace l'objet en orbite autour d'un objet%1% à la vitesse de %2%
-
-# %1% textual description of the x coordinate, which acts together with y as
-#     pivot point.
-# %2% textual description of the y coordinate, which acts together with x as
-#     pivot point.
-# %3% textual description of the angular speed.
-DESC_MOVE_IN_ORBIT_OF_XY
-Déplace l'objet en orbite autour d'un objet situé à %1% et %2% à la vitesse de %3%
-
-# %1% textual description of the object, which acts as move destination.
-# %2% textual description of the linear speed in uu.
-DESC_MOVE_TOWARDS_OBJECT
-Déplace l'objet vers un objet%1% à la vitesse de %2%
-
-# %1% textual description of the x coordinate, which acts together with y as
-#     move destination.
-# %2% textual description of the y coordinate, which acts together with x as
-#     move destination.
-# %3% textual description of the linear speed in uu.
-DESC_MOVE_TOWARDS_XY
-Déplace l'objet vers un objet situé à %1% et %2% à la vitesse de %3%
-
-# %1% textual description of the fleet destination.
-DESC_SET_DESTINATION
-Définit la destination de l'objet vers un objet%1%
-
-DESC_VICTORY
-Définit le propriétaire de l'objet comme vainqueur de la partie
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP
-Génère un message de Rapport de Situation pour l'empire %1%
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP_ALLIES
-Génère un message de Rapport de Situation pour les alliés de l'empire %1%
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP_ENEMIES
-Génère un message de Rapport de Situation pour les ennemis de l'empire %1%
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP_ALL
-Génère un message de Rapport de Situation pour tous les empires
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP_NONE
-Génère un message de Rapport de Situation sans destinataires
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP_CAN_SEE
-Génère un message de Rapport de Situation pour les empires pouvant détecter un objet %2%
-
-# %1% name of the empire, which should recieve the situation report.
-# %2% textual description of the condition when the situation report should be
-#     generated.
-DESC_GENERATE_SITREP_HUMAN
-Génère un message de Rapport de Situation pour les empires contrôlés par des joueurs humains
-
-# %1% name of the technology currently researched.
-# %2% textual representation of the research progress.
-# %3% name of the empire researching the technology.
-DESC_SET_EMPIRE_TECH_PROGRESS
-Définit la progression de la recherche de la technologie %1% à %2% pour l'empire %3%
-
-# %1% name of the technology that should be given.
-# %2% name of the empire recieving the technology.
-DESC_GIVE_EMPIRE_TECH
-Donne la technologie %1% à l'empire %2%
-
-DESC_SET_OVERLAY_TEXTURE
-Modifie l'apparence de l'objet
-
-DESC_SET_TEXTURE
-Modifie l'apparence de l'objet
-
-# %1% textual representation of the visibility of an object for an empire.
-# %2% name of the empire that will percieve the object.
-DESC_SET_VIS_ALLIES
-Définit la visibilité de l'objet à %1% pour les alliés de l'empire %2%
-
-# %1% textual representation of the visibility of an object for an empire.
-# %2% name of the empire that will percieve the object.
-DESC_SET_VIS_ENEMIES
-Définit la visibilité de l'objet à %1% pour les ennemis de l'empire %2%
-
-# %1% textual representation of the visibility of an object for an empire.
-# %2% name of the empire that will percieve the object.
-DESC_SET_VIS_NONE
-Définit la visibilité de l'objet pour aucun empire
-
-# %1% textual representation of the visibility of an object for an empire.
-# %2% name of the empire that will percieve the object.
-DESC_SET_VIS_ALL
-Définit la visibilité de l'objet à %1% pour tous les empires
-
-# %1% textual representation of the visibility of an object for an empire.
-# %2% name of the empire that will percieve the object.
-DESC_SET_VIS
-Définit la visibilité de l'objet à %1% pour l'empire %2%
-
-# %1% textual description the condition required to apply effects.
-DESC_CONDITIONAL
-Applique divers effets selon si la cible est ou n'est pas un objet %1%
-
-##
-## FOCS object creation
-##
-
-# %1% planet type the new planet should be created with.
-# %2% planet size the new planet should be created with.
-DESC_CREATE_PLANET
-Crée une nouvelle planète de type %1% et de taille %2%
-
-# %1% building type that should be created.
-DESC_CREATE_BUILDING
-Crée une nouvelle structure %1%
-
-# %1% shipdesign to use as a template for the newly created ship.
-# %2% name of the empire which should own the newly created ship.
-# %3% name of the species which should crew the newly created ship.
-DESC_CREATE_SHIP
-Crée un nouveau modèle d'astronef %1% appartenant à l'empire %2% avec un équipage %3%
-
-# %1% shipdesign to use as a template for the newly created ship.
-DESC_CREATE_SHIP_SIMPLE
-Crée un nouveau modèle d'astronef %1% sans propriétaire ni espèce
-
-# %1% field type the new field should be created with.
-# %2% field size the new field should be created with.
-DESC_CREATE_FIELD_SIZE
-Crée une nouvelle région de type %1% avec un rayon de %2%
-
-# %1% field type the new field should be created with.
-DESC_CREATE_FIELD
-Crée une nouvelle région de type %1%
-
-# %1% star type the new system should be created with.
-DESC_CREATE_SYSTEM_TYPE
-Crée un nouveau système avec une étoile de type %1%
-
-DESC_CREATE_SYSTEM
-Crée un nouveau système
 
 
 ##
