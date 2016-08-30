@@ -11,6 +11,19 @@ Tech
         Item type = ShipPart name = "GT_TROOP_POD"
         Item type = ShipPart name = "SR_WEAPON_0_1"
     ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_1"
+            effects = [
+                SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 5
+                SetMaxSecondaryStat partname = "SR_WEAPON_1_1" value = Value + 1
+            ]
+
     graphic = "icons/tech/planetary_colonialism.png"
 
 Tech
