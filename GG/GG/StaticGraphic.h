@@ -76,6 +76,8 @@ public:
     Rect RenderedArea() const;
 
     const SubTexture& GetTexture() const;
+
+    const boost::filesystem::path& GetTexturePath() const;
     //@}
 
     /** \name Mutators */ ///@{

@@ -142,6 +142,15 @@ Rect StaticGraphic::RenderedArea() const
 const SubTexture& StaticGraphic::GetTexture() const
 { return m_graphic; }
 
+const boost::filesystem::path& StaticGraphic::GetTexturePath() const
+{
+    static boost::filesystem::path EMPTY_PATH;
+    const Texture* texture = m_graphic.GetTexture();
+    if (!texture)
+        return EMPTY_PATH;
+    return texture->Path();
+}
+
 void StaticGraphic::Render()
 {
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
