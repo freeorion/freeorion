@@ -27,7 +27,7 @@ BAD_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
-            description = "BAD_INDUSTRY"
+            description = "BAD_INDUSTRY_DESC"
             scope = Source
             activation = And [
                 Source
@@ -48,7 +48,7 @@ GOOD_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
-            description = "GOOD_INDUSTRY"
+            description = "GOOD_INDUSTRY_DESC"
             scope = Source
             activation = And [
                 Source
@@ -65,7 +65,7 @@ GREAT_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
-            description = "GREAT_INDUSTRY"
+            description = "GREAT_INDUSTRY_DESC"
             scope = Source
             activation = And [
                 Source
@@ -82,7 +82,7 @@ ULTIMATE_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
-            description = "ULTIMATE_INDUSTRY"
+            description = "ULTIMATE_INDUSTRY_DESC"
             scope = Source
             activation = And [
                 Source

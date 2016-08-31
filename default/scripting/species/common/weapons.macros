@@ -1,6 +1,6 @@
 BAD_WEAPONS
 '''EffectsGroup
-            description = "BAD_WEAPONS"
+            description = "BAD_WEAPONS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -51,7 +51,7 @@ BAD_WEAPONS
 
 GOOD_WEAPONS
 '''EffectsGroup
-            description = "GOOD_WEAPONS"
+            description = "GOOD_WEAPONS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -102,7 +102,7 @@ GOOD_WEAPONS
 
 GREAT_WEAPONS
 '''EffectsGroup
-            description = "GREAT_WEAPONS"
+            description = "GREAT_WEAPONS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -153,7 +153,7 @@ GREAT_WEAPONS
 
 ULTIMATE_WEAPONS
 '''EffectsGroup
-            description = "ULTIMATE_WEAPONS"
+            description = "ULTIMATE_WEAPONS_DESC"
             scope = Source
             activation = And [
                 Ship

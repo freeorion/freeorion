@@ -29,7 +29,7 @@ Species
         [[BAD_STEALTH]]
 
         EffectsGroup
-            description = "BAD_FUEL"
+            description = "BAD_FUEL_DESC"
             scope = And [
                 Ship
                 Source

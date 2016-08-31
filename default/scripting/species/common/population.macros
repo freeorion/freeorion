@@ -21,7 +21,7 @@ BAD_POPULATION
 '''     [[BASIC_POPULATION]]
     
         EffectsGroup
-            description = "BAD_POPULATION"
+            description = "BAD_POPULATION_DESC"
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
@@ -32,7 +32,7 @@ GOOD_POPULATION
 '''     [[BASIC_POPULATION]]
 
         EffectsGroup
-            description = "GOOD_POPULATION"
+            description = "GOOD_POPULATION_DESC"
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]

@@ -27,7 +27,7 @@ Species
         [[BAD_STEALTH]]
 
         EffectsGroup
-            description = "GREAT_ASTEROID_INDUSTRY"
+            description = "GREAT_ASTEROID_INDUSTRY_DESC"
             scope = And [
                 Source
                 Focus type = "FOCUS_INDUSTRY"

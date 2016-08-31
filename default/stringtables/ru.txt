@@ -7239,112 +7239,112 @@ GROWTH_SPECIAL_INDUSTRY_BOOST
 ## Species picks
 ##
 
-NO_INDUSTRY
+NO_INDUSTRY_DESC
 ---	Нет [[encyclopedia INDUSTRY_TITLE]]
 
-BAD_INDUSTRY
+BAD_INDUSTRY_DESC
 -	Плохая [[encyclopedia INDUSTRY_TITLE]]: 75%
 
-AVERAGE_INDUSTRY
+AVERAGE_INDUSTRY_DESC
 '''	Средняя [[encyclopedia INDUSTRY_TITLE]]: 100%'''
 
-GOOD_INDUSTRY
+GOOD_INDUSTRY_DESC
 +	Хорошая [[encyclopedia INDUSTRY_TITLE]]: 150%
 
-GREAT_INDUSTRY
+GREAT_INDUSTRY_DESC
 ++	Превосходная [[encyclopedia INDUSTRY_TITLE]]: 200%
 
-ULTIMATE_INDUSTRY
+ULTIMATE_INDUSTRY_DESC
 +++	Беспрецедентная [[encyclopedia INDUSTRY_TITLE]]: 300%
 
-NO_RESEARCH
+NO_RESEARCH_DESC
 ---	Нет [[encyclopedia RESEARCH_TITLE]]
 
-BAD_RESEARCH
+BAD_RESEARCH_DESC
 -	Плохая [[encyclopedia RESEARCH_TITLE]]: 75%
 
-AVERAGE_RESEARCH
+AVERAGE_RESEARCH_DESC
 '''	Средняя [[encyclopedia RESEARCH_TITLE]]: 100%'''
 
-GOOD_RESEARCH
+GOOD_RESEARCH_DESC
 +	Хорошая [[encyclopedia RESEARCH_TITLE]]: 150%
 
-GREAT_RESEARCH
+GREAT_RESEARCH_DESC
 ++	Превосходная [[encyclopedia RESEARCH_TITLE]]: 200%
 
-ULTIMATE_RESEARCH
+ULTIMATE_RESEARCH_DESC
 +++	Беспрецедентная [[encyclopedia RESEARCH_TITLE]]: 300%
 
-NO_DEFENSE_TROOPS
+NO_DEFENSE_TROOPS_DESC
 ---	Беззащитные [[encyclopedia TROOP_TITLE]]
 
-BAD_DEFENSE_TROOPS
+BAD_DEFENSE_TROOPS_DESC
 -	Плохие защитные [[encyclopedia TROOP_TITLE]]: 50%
 
-AVERAGE_DEFENSE_TROOPS
+AVERAGE_DEFENSE_TROOPS_DESC
 '''	Средние защитные [[encyclopedia TROOP_TITLE]]: 100%.'''
 
-GOOD_DEFENSE_TROOPS
+GOOD_DEFENSE_TROOPS_DESC
 +	Хорошие защитные [[encyclopedia TROOP_TITLE]]: 150%
 
-GREAT_DEFENSE_TROOPS
+GREAT_DEFENSE_TROOPS_DESC
 ++	Превосходные защитные [[encyclopedia TROOP_TITLE]]: 200%
 
-ULTIMATE_DEFENSE_TROOPS
+ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Беспрецедентные защитные [[encyclopedia TROOP_TITLE]]: 300%
 
-BAD_DETECTION
+BAD_DETECTION_DESC
 -	Плохое [[encyclopedia DETECTION_RANGE_TITLE]]: -20 малус.
 
-GOOD_DETECTION
+GOOD_DETECTION_DESC
 +	Хорошее [[encyclopedia DETECTION_RANGE_TITLE]]: +25 бонус.
 
-GREAT_DETECTION
+GREAT_DETECTION_DESC
 ++	Превосходное [[encyclopedia DETECTION_RANGE_TITLE]]: +50 бонус.
 
-ULTIMATE_DETECTION
+ULTIMATE_DETECTION_DESC
 +++	Беспрецедентное обнаружение: +100 бонус.
 
-BAD_STEALTH
+BAD_STEALTH_DESC
 -	Плохая [[encyclopedia STEALTH_TITLE]]: -20 малус.
 
-AVERAGE_STEALTH
+AVERAGE_STEALTH_DESC
 '''	Средняя [[encyclopedia STEALTH_TITLE]].'''
 
-GOOD_STEALTH
+GOOD_STEALTH_DESC
 +	Хорошая [[encyclopedia STEALTH_TITLE]]: +20 бонус.
 
-GREAT_STEALTH
+GREAT_STEALTH_DESC
 ++	Превосходная [[encyclopedia STEALTH_TITLE]]: +40 бонус.
 
-ULTIMATE_STEALTH
+ULTIMATE_STEALTH_DESC
 +++	Беспрецендентная [[encyclopedia STEALTH_TITLE]]: +60 бонус.
 
-BAD_WEAPONS
+BAD_WEAPONS_DESC
 -	Плохие Пилоты: на 25% меньше урона.
 
-GOOD_WEAPONS
+GOOD_WEAPONS_DESC
 +	Хорошие Пилоты: на 25% больше урона.
 
-GREAT_WEAPONS
+GREAT_WEAPONS_DESC
 ++	Превосходные Пилоты: на 50% больше урона.
 
-ULTIMATE_WEAPONS
+ULTIMATE_WEAPONS_DESC
 +++	Беспрецедентные Пилоты: двойной урон.
 
-BAD_POPULATION
+BAD_POPULATION_DESC
 -	 Малое население 75%
 
-AVERAGE_POPULATION
+AVERAGE_POPULATION_DESC
 '''	Среднее население'''
 
-GOOD_POPULATION
+GOOD_POPULATION_DESC
 +	 Большое население 125%
 
-BROAD_EP
+BROAD_EP_DESC
 ++	Хорошая приспособляемость, может обитать на большем количестве типов планет.
 
-NARROW_EP
+NARROW_EP_DESC
 -	Плохая приспособляемость, может обитать на меньшем количестве типов планет.
 
 

@@ -1,6 +1,6 @@
 TELEPATHIC_DETECTION
 '''     EffectsGroup
-            description = "TELEPATHIC_DETECTION"
+            description = "TELEPATHIC_DETECTION_DESC"
             scope = And [
                 PopulationCenter
                 Not VisibleToEmpire empire = Source.Owner

@@ -55,7 +55,7 @@ Species
             effects = SetStarType type = Blue
 
         EffectsGroup
-            description = "GOOD_SHIP_SHIELD"
+            description = "GOOD_SHIP_SHIELD_DESC"
             scope = And [
                 Source
                 Ship
@@ -63,7 +63,7 @@ Species
             effects = SetMaxShield value = Value + 1
 
         EffectsGroup
-            description = "GOOD_PLANETARY_DEFENSE"
+            description = "GOOD_PLANETARY_DEFENSE_DESC"
             scope = And [
                 Source
                 Planet
@@ -71,7 +71,7 @@ Species
             effects = SetMaxDefense value = Value + 5
 
         EffectsGroup
-            description = "GOOD_PLANETARY_SHIELD"
+            description = "GOOD_PLANETARY_SHIELD_DESC"
             scope = And [
                 Source
                 Planet

@@ -28,7 +28,7 @@ Species
         [[GOOD_STEALTH]]
 
         EffectsGroup
-            description = "LIGHT_SENSITIVE"
+            description = "LIGHT_SENSITIVE_DESC"
             scope = Source
             activation = AND [
                 Planet

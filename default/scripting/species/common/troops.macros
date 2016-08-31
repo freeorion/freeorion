@@ -44,7 +44,7 @@ AFTER_SPECIES_MULTIPLICATOR_TROOPS
 NO_DEFENSE_TROOPS
 '''
     EffectsGroup
-        description = "NO_DEFENSE_TROOPS"
+        description = "NO_DEFENSE_TROOPS_DESC"
         scope = Source
         activation = None
         priority = [[DEFAULT_PRIORITY]]
@@ -57,7 +57,7 @@ BAD_DEFENSE_TROOPS
 '''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "BAD_DEFENSE_TROOPS"
+            description = "BAD_DEFENSE_TROOPS_DESC"
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
@@ -76,7 +76,7 @@ GOOD_DEFENSE_TROOPS
 '''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "GOOD_DEFENSE_TROOPS"
+            description = "GOOD_DEFENSE_TROOPS_DESC"
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
@@ -89,7 +89,7 @@ GREAT_DEFENSE_TROOPS
 '''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "GREAT_DEFENSE_TROOPS"
+            description = "GREAT_DEFENSE_TROOPS_DESC"
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
@@ -102,7 +102,7 @@ ULTIMATE_DEFENSE_TROOPS
 '''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "ULTIMATE_DEFENSE_TROOPS"
+            description = "ULTIMATE_DEFENSE_TROOPS_DESC"
             scope = Source
             activation = Planet
             priority = [[DEFAULT_PRIORITY]]
@@ -125,7 +125,7 @@ PROTECTION_FOCUS_TROOPS
 
 NO_OFFENSE_TROOPS
 '''EffectsGroup
-            description = "NO_OFFENSE_TROOPS"
+            description = "NO_OFFENSE_TROOPS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -144,7 +144,7 @@ NO_OFFENSE_TROOPS
 
 BAD_OFFENSE_TROOPS
 '''EffectsGroup
-            description = "BAD_OFFENSE_TROOPS"
+            description = "BAD_OFFENSE_TROOPS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -163,7 +163,7 @@ BAD_OFFENSE_TROOPS
 
 AVERAGE_OFFENSE_TROOPS
 '''       EffectsGroup
-            description = "AVERAGE_OFFENSE_TROOPS"
+            description = "AVERAGE_OFFENSE_TROOPS_DESC"
             scope = Source
             activation = None
             effects = SetTargetResearch value = Value
@@ -171,7 +171,7 @@ AVERAGE_OFFENSE_TROOPS
 
 GOOD_OFFENSE_TROOPS
 '''EffectsGroup
-            description = "GOOD_OFFENSE_TROOPS"
+            description = "GOOD_OFFENSE_TROOPS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -190,7 +190,7 @@ GOOD_OFFENSE_TROOPS
 
 GREAT_OFFENSE_TROOPS
 '''EffectsGroup
-            description = "GREAT_OFFENSE_TROOPS"
+            description = "GREAT_OFFENSE_TROOPS_DESC"
             scope = Source
             activation = And [
                 Ship
@@ -209,7 +209,7 @@ GREAT_OFFENSE_TROOPS
 
 ULTIMATE_OFFENSE_TROOPS
 '''EffectsGroup
-            description = "ULTIMATE_OFFENSE_TROOPS"
+            description = "ULTIMATE_OFFENSE_TROOPS_DESC"
             scope = Source
             activation = And [
                 Ship

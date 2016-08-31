@@ -11977,169 +11977,169 @@ GROWTH_SPECIALS_ENTRY_LIST
 ## Species picks
 ##
 
-NO_INDUSTRY
+NO_INDUSTRY_DESC
 −−−	No [[encyclopedia INDUSTRY_TITLE]]
 
-BAD_INDUSTRY
+BAD_INDUSTRY_DESC
 −	Bad [[encyclopedia INDUSTRY_TITLE]]: 75%
 
-AVERAGE_INDUSTRY
+AVERAGE_INDUSTRY_DESC
 '''	Average [[encyclopedia INDUSTRY_TITLE]]: 100%'''
 
-GOOD_INDUSTRY
+GOOD_INDUSTRY_DESC
 +	Good [[encyclopedia INDUSTRY_TITLE]]: 150%
 
-GREAT_INDUSTRY
+GREAT_INDUSTRY_DESC
 ++	Great [[encyclopedia INDUSTRY_TITLE]]: 200%
 
-ULTIMATE_INDUSTRY
+ULTIMATE_INDUSTRY_DESC
 +++	Ultimate [[encyclopedia INDUSTRY_TITLE]]: 300%
 
-NO_RESEARCH
+NO_RESEARCH_DESC
 −−−	No [[encyclopedia RESEARCH_TITLE]]
 
-BAD_RESEARCH
+BAD_RESEARCH_DESC
 −	Bad [[encyclopedia RESEARCH_TITLE]]: 75%
 
-AVERAGE_RESEARCH
+AVERAGE_RESEARCH_DESC
 '''	Average [[encyclopedia RESEARCH_TITLE]]: 100%'''
 
-GOOD_RESEARCH
+GOOD_RESEARCH_DESC
 +	Good [[encyclopedia RESEARCH_TITLE]]: 150%
 
-GREAT_RESEARCH
+GREAT_RESEARCH_DESC
 ++	Great [[encyclopedia RESEARCH_TITLE]]: 200%
 
-ULTIMATE_RESEARCH
+ULTIMATE_RESEARCH_DESC
 +++	Ultimate [[encyclopedia RESEARCH_TITLE]]: 300%
 
-NO_DEFENSE_TROOPS
+NO_DEFENSE_TROOPS_DESC
 −−−	No Defensive Ground [[encyclopedia TROOP_TITLE]]
 
-BAD_DEFENSE_TROOPS
+BAD_DEFENSE_TROOPS_DESC
 −	Bad Defensive Ground [[encyclopedia TROOP_TITLE]]: 50%
 
-AVERAGE_DEFENSE_TROOPS
+AVERAGE_DEFENSE_TROOPS_DESC
 '''	Average Defensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
-GOOD_DEFENSE_TROOPS
+GOOD_DEFENSE_TROOPS_DESC
 +	Good Defensive Ground [[encyclopedia TROOP_TITLE]]: 150%
 
-GREAT_DEFENSE_TROOPS
+GREAT_DEFENSE_TROOPS_DESC
 ++	Great Defensive Ground [[encyclopedia TROOP_TITLE]]: 200%
 
-ULTIMATE_DEFENSE_TROOPS
+ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Ultimate Defensive Ground [[encyclopedia TROOP_TITLE]]: 300%
 
-NO_OFFENSE_TROOPS
+NO_OFFENSE_TROOPS_DESC
 −−−	No Offensive Ground [[encyclopedia TROOP_TITLE]]
 
-BAD_OFFENSE_TROOPS
+BAD_OFFENSE_TROOPS_DESC
 −	Bad Offensive Ground [[encyclopedia TROOP_TITLE]]: 50%
 
-AVERAGE_OFFENSE_TROOPS
+AVERAGE_OFFENSE_TROOPS_DESC
 '''	Average Offensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
-GOOD_OFFENSE_TROOPS
+GOOD_OFFENSE_TROOPS_DESC
 +	Good Offensive Ground [[encyclopedia TROOP_TITLE]]: 150%
 
-GREAT_OFFENSE_TROOPS
+GREAT_OFFENSE_TROOPS_DESC
 ++	Great Offensive Ground [[encyclopedia TROOP_TITLE]]: 200%
 
-ULTIMATE_OFFENSE_TROOPS
+ULTIMATE_OFFENSE_TROOPS_DESC
 +++	Ultimate Offensive Ground [[encyclopedia TROOP_TITLE]]: 300%
 
-BAD_DETECTION
+BAD_DETECTION_DESC
 −	Bad [[encyclopedia DETECTION_RANGE_TITLE]]: −20 malus
 
-GOOD_DETECTION
+GOOD_DETECTION_DESC
 +	Good [[encyclopedia DETECTION_RANGE_TITLE]]: +25 bonus
 
-GREAT_DETECTION
+GREAT_DETECTION_DESC
 ++	Great [[encyclopedia DETECTION_RANGE_TITLE]]: +50 bonus
 
-ULTIMATE_DETECTION
+ULTIMATE_DETECTION_DESC
 +++	Ultimate [[encyclopedia DETECTION_RANGE_TITLE]]: +100 bonus
 
-BAD_STEALTH
+BAD_STEALTH_DESC
 −	Bad Planetary [[encyclopedia STEALTH_TITLE]]: −20 malus
 
-AVERAGE_STEALTH
+AVERAGE_STEALTH_DESC
 '''	Average Planetary [[encyclopedia STEALTH_TITLE]]'''
 
-GOOD_STEALTH
+GOOD_STEALTH_DESC
 +	Good Planetary [[encyclopedia STEALTH_TITLE]]: +20 bonus
 
-GREAT_STEALTH
+GREAT_STEALTH_DESC
 ++	Great Planetary [[encyclopedia STEALTH_TITLE]]: +40 bonus
 
-ULTIMATE_STEALTH
+ULTIMATE_STEALTH_DESC
 +++	Ultimate Planetary [[encyclopedia STEALTH_TITLE]]: +60 bonus
 
-BAD_WEAPONS
+BAD_WEAPONS_DESC
 −	Bad Pilots: Base damage per ship weapon reduced by one level.
 
-GOOD_WEAPONS
+GOOD_WEAPONS_DESC
 +	Good Pilots: Base damage per ship weapon increased by one level.
 
-GREAT_WEAPONS
+GREAT_WEAPONS_DESC
 ++	Great Pilots: Base damage per ship weapon increased by two levels.
 
-ULTIMATE_WEAPONS
+ULTIMATE_WEAPONS_DESC
 +++	Ultimate Pilots: Base damage per ship weapon increased by three levels.
 
-BAD_POPULATION
+BAD_POPULATION_DESC
 −	Bad Population 75%
 
-AVERAGE_POPULATION
+AVERAGE_POPULATION_DESC
 '''	Average Population'''
 
-GOOD_POPULATION
+GOOD_POPULATION_DESC
 +	Good Population 125%
 
-BAD_SUPPLY
+BAD_SUPPLY_DESC
 −	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus
 
-AVERAGE_SUPPLY
+AVERAGE_SUPPLY_DESC
 '''	Average [[encyclopedia SUPPLY_TITLE]]: +1'''
 
-GREAT_SUPPLY
+GREAT_SUPPLY_DESC
 +	Great [[encyclopedia SUPPLY_TITLE]]: +2
 
-ULTIMATE_SUPPLY
+ULTIMATE_SUPPLY_DESC
 ++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3
 
-GOOD_SHIP_SHIELD
+GOOD_SHIP_SHIELD_DESC
 +	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
 
-GOOD_PLANETARY_SHIELD
+GOOD_PLANETARY_SHIELD_DESC
 +	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
 
-GOOD_PLANETARY_DEFENSE
+GOOD_PLANETARY_DEFENSE_DESC
 +	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
 
-BROAD_EP
+BROAD_EP_DESC
 ++	Broad Planet Tolerance: can tolerate more types.
 
-NARROW_EP
+NARROW_EP_DESC
 −	Narrow Planet Tolerance: flourishes on fewer types.
 
-FAST_COLONIZATION
+FAST_COLONIZATION_DESC
 +	Fast Colonization: -25% time to build colonies
 
-SLOW_COLONIZATION
+SLOW_COLONIZATION_DESC
 −	Slow Colonization: +20% time to build colonies
 
-BAD_FUEL
+BAD_FUEL_DESC
 −	Bad maximum [[encyclopedia FUEL_TITLE]]: - 1
 
-GREAT_ASTEROID_INDUSTRY
+GREAT_ASTEROID_INDUSTRY_DESC
 +	Good Asteroid Miners: + 0.2 [[encyclopedia INDUSTRY_TITLE]] per population when Industry Focused in systems with owned asteroid belts.
 
-LIGHT_SENSITIVE
+LIGHT_SENSITIVE_DESC
 −	Light Sensitive: Population is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
 
-TELEPATHIC_DETECTION
+TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets.
 
 

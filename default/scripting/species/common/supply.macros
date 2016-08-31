@@ -4,7 +4,7 @@ NO_SUPPLY
 
 BAD_SUPPLY
 '''     EffectsGroup
-            description = "BAD_SUPPLY"
+            description = "BAD_SUPPLY_DESC"
             scope = Source
             activation = Planet
             accountinglabel = "BAD_SUPPLY_LABEL"
@@ -21,7 +21,7 @@ AVERAGE_SUPPLY
 
 GREAT_SUPPLY
 '''     EffectsGroup
-            description = "GREAT_SUPPLY"
+            description = "GREAT_SUPPLY_DESC"
             scope = Source
             activation = Planet
             accountinglabel = "GREAT_SUPPLY_LABEL"
@@ -30,7 +30,7 @@ GREAT_SUPPLY
 
 ULTIMATE_SUPPLY
 '''     EffectsGroup
-            description = "ULTIMATE_SUPPLY"
+            description = "ULTIMATE_SUPPLY_DESC"
             scope = Source
             activation = Planet
             accountinglabel = "ULTIMATE_SUPPLY_LABEL"

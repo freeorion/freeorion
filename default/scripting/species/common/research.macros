@@ -20,13 +20,13 @@ BASIC_RESEARCH
 '''
 
 NO_RESEARCH
-'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH)]]'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH_DESC)]]'''
 
 BAD_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
-            description = "BAD_RESEARCH"
+            description = "BAD_RESEARCH_DESC"
             scope = Source
             activation = And [
                 Source
@@ -46,7 +46,7 @@ GOOD_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
-            description = "GOOD_RESEARCH"
+            description = "GOOD_RESEARCH_DESC"
             scope = Source
             activation = And [
                 Source
@@ -62,7 +62,7 @@ GREAT_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
-            description = "GREAT_RESEARCH"
+            description = "GREAT_RESEARCH_DESC"
             scope = Source
             activation = And [
                 Source
@@ -78,7 +78,7 @@ ULTIMATE_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
-            description = "ULTIMATE_RESEARCH"
+            description = "ULTIMATE_RESEARCH_DESC"
             scope = Source
             activation = And [
                 Source
