@@ -52,6 +52,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetDefense value = Value + 0.1*Target.MaxDefense
+    graphic = "icons/tech/defense_regeneration.png"
 
 Tech
     name = "DEF_DEFENSE_NET_REGEN_2"
@@ -68,6 +69,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetDefense value = Value + max(0.1*Target.MaxDefense, 0.25*Target.Construction)
+    graphic = "icons/tech/defense_regeneration.png"
 
 EG_DEFENSE_NET
 '''EffectsGroup

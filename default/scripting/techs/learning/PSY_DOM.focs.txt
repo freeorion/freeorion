@@ -50,5 +50,6 @@ Tech
                     empire = Source.Owner
                 SetOwner empire = Source.Owner
             ]
+    graphic = "icons/tech/psychogenic_domination.png"
 
 #include "/scripting/common/base_prod.macros"
