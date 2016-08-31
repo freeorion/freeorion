@@ -5875,9 +5875,6 @@ Bioterror Angriffsbasis
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
 
-BLD_HEAVY_MINE_PROCESSOR
-Verarbeitungsstation für Massenbergbau
-
 BLD_INDUSTRY_CENTER
 Industriezentrum
 

@@ -1575,9 +1575,6 @@ Základna bioteroristických projektů
 BLD_LIGHTHOUSE
 Mezihvězdný maják
 
-BLD_HEAVY_MINE_PROCESSOR
-Centrum těžké těžby
-
 BLD_SPACE_ELEVATOR
 Vesmírný výtah
 

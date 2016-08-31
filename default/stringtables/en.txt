@@ -10205,12 +10205,6 @@ BLD_SCANNING_FACILITY_DESC
 
 A combination of long-range scanning devices and great computing power to analyze the data allows a larger area of space to be scanned for any objects.'''
 
-BLD_HEAVY_MINE_PROCESSOR
-Heavy Mining Processor
-
-BLD_HEAVY_MINE_PROCESSOR_DESC
-Gives all colonies in the empire access to the Heavy Mining focus.
-
 BLD_INDUSTRY_CENTER
 Industrial Center
 

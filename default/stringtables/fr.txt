@@ -10206,12 +10206,6 @@ BLD_SCANNING_FACILITY_DESC
 
 La combinaison d'appareils de détection à longue portée et d'une énorme capacité de calcul permet le balayage d'un plus grande région de l'espace à la recherche de n'importe quel objet.'''
 
-BLD_HEAVY_MINE_PROCESSOR
-Extraction Minière Intensive
-
-BLD_HEAVY_MINE_PROCESSOR_DESC
-Donne à toutes les colonies de l'empire accès au Focus Extraction Minière Intensive.
-
 BLD_INDUSTRY_CENTER
 Centre Industriel
 

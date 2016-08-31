@@ -3545,12 +3545,6 @@ Faro Interestelar
 BLD_LIGHTHOUSE_DESC
 Decrementa la ocultación de todos los objetos en el mismo sistema por 45.  Este edificio puede ser construido en puestos de avanzada.
 
-BLD_HEAVY_MINE_PROCESSOR
-Procesador de Minería Pesado
-
-BLD_HEAVY_MINE_PROCESSOR_DESC
-Proporciona a todas las colonias el acceso al enfoque en Minería Pesada.
-
 BLD_INDUSTRY_CENTER
 Centro Industrial
 
