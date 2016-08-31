@@ -26,6 +26,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
+import TechsListsAI
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
 
@@ -103,6 +104,7 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(aggression, DiplomaticCorp.DiplomaticCorp)()
+    TechsListsAI.test_tech_integrity()
 
 
 @chat_on_error
@@ -126,6 +128,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(foAIstate.aggression, DiplomaticCorp.DiplomaticCorp)()
+    TechsListsAI.test_tech_integrity()
 
 
 @chat_on_error

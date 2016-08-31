@@ -4,12 +4,9 @@ various technologies to help the AI decide which technologies should be
 researched next.
 """
 
-# TODO: further consider alternative implementations for tech priorities
-# adrian_broher recommends this whole module (and related
-# decision branches within ResearchAI.py) not exist-- that this 
-# informations instead go in the FOCS techs.txt file as a priority expression 
-# for each respective tech specification, or that it be dynamically calculated 
-# by the AI scripts based purely on the info parsed from techs.txt
+from freeorion_tools import print_error
+import freeOrionAIInterface as fo  # pylint: disable=import-error
+import sys
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
@@ -32,355 +29,547 @@ def defense_techs_1():
     ]
 
 
-def defense_techs_2():
+class TechGroup(object):
+    """ Base class for Tech groups.
+
+    A TechGroup consists of some techs which need to be researched before progressing to the next TechGroup.
+    The techs are split into different categories, techs within each category are researched according to order.
+    Different TechGroup variants have different orders in which the tech groups are accessed.
     """
-    Returns a list of technologies that implement additional planetary defensive
-    measures. To use use the AI need to have built all defense technologies that
-    are provided by defense_techs_1().
+    def __init__(self):
+        self.economy_techs = []     # list of economy techs to research
+        self.weapon_techs = []      # ship weapon techs
+        self.armor_techs = []       # ship armour techs
+        self.misc_techs = []        # techs not in any other category
+        self.defense_techs = []     # planetary defense techs
+        self.hull_techs = []        # new hull types
+
+        self._ordered_list = []    # defines the research order - forced to contain all techs.
+        self._errors = []          # exceptions that occured when trying to pop from already empty lists
+
+    def _add_remaining_techs(self):
+        """Add all remaining techs in the tech group to self.__ordered_list if not already contained."""
+        all_needed_techs = set(self.economy_techs + self.weapon_techs + self.armor_techs
+                               + self.misc_techs + self.defense_techs + self.hull_techs)
+        remaining_techs = list(all_needed_techs - set(self._ordered_list))
+        self._ordered_list.extend(remaining_techs)
+
+    def get_techs(self):
+        """Get the ordered list of techs defining research order.
+
+        :rtype: list
+        :return: Research order"""
+        self._add_remaining_techs()
+        return list(self._ordered_list)
+
+    @staticmethod
+    def pop_tech(this_list):
+        """Pop and return the first element of the list.
+
+        Note that the passed list is modified within this function!
+        """
+        return this_list.pop(0)
+
+    def add_tech(self, this_list):
+        """Pop first entry in the list and add it to research orders.
+
+        Note that the passed list is modified within this function!
+        If the list is already empty, the exception is caught and stored in self.__errors.
+        Ecxeptions may be queried via get_errors()
+
+        :type this_list: list
+        """
+        try:
+            self._ordered_list.append(self.pop_tech(this_list))
+        except IndexError as e:
+            # Do not display error message as those should be shown only once per game session
+            # by the initial test_tech_integrity() call.
+            print >> sys.stderr, e
+            self._errors.append(e)
+
+    def get_errors(self):
+        """Return a list of occured exceptions.
+
+        :rtype: list[Exception]
+        """
+        retval = list(self._errors)
+        self._errors = []
+        return retval
+
+
+class TechGroup1(TechGroup):
+    def __init__(self):
+        super(TechGroup1, self).__init__()
+        self.economy_techs.extend([
+            "GRO_PLANET_ECOL",
+            "GRO_SUBTER_HAB",
+            "LRN_ALGO_ELEGANCE",
+            "LRN_ARTIF_MINDS",
+            "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
+            "PRO_ROBOTIC_PROD",
+        ])
+        self.weapon_techs.extend([
+            "SHP_WEAPON_1_2",
+            "SHP_WEAPON_1_3",
+            "SHP_WEAPON_1_4",
+        ])
+        self.defense_techs.extend([
+            "DEF_GARRISON_1",
+        ])
+        self.hull_techs.extend([
+            "SHP_MIL_ROBO_CONT",
+        ])
+        # always start with the same first 6 techs
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.defense_techs)
+
+
+class TechGroup1a(TechGroup1):
+    def __init__(self):
+        super(TechGroup1a, self).__init__()
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.hull_techs)
+
+
+class TechGroup1b(TechGroup1):
+    def __init__(self):
+        super(TechGroup1b, self).__init__()
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+
+
+class TechGroup1SparseA(TechGroup1):
+    def __init__(self):
+        super(TechGroup1SparseA, self).__init__()
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self._ordered_list.append("SHP_SPACE_FLUX_DRIVE")
+
+
+class TechGroup1SparseB(TechGroup1):
+    def __init__(self):
+        super(TechGroup1SparseB, self).__init__()
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self._ordered_list.append("PRO_FUSION_GEN")
+        self._ordered_list.append("GRO_SYMBIOTIC_BIO")
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self._ordered_list.append("PRO_ORBITAL_GEN")
+        self.add_tech(self.hull_techs)
+        self._ordered_list.extend([
+            "SHP_ZORTRIUM_PLATE",
+            "SHP_SPACE_FLUX_DRIVE",
+            ])
+
+
+class TechGroup2(TechGroup):
+    def __init__(self):
+        super(TechGroup2, self).__init__()
+        self.economy_techs.extend([
+            "GRO_SYMBIOTIC_BIO",
+            "PRO_FUSION_GEN",
+            "PRO_SENTIENT_AUTOMATION",
+            "PRO_EXOBOTS",
+            # "PRO_MICROGRAV_MAN",  # handled by fast-forwarding when we have asteroids
+            # "PRO_ORBITAL_GEN",    # handled by fast-forwarding when we have a GG
+
+        ])
+        self.armor_techs.extend([
+            "SHP_ZORTRIUM_PLATE",
+        ])
+        self.defense_techs.extend([
+            "DEF_DEFENSE_NET_1",
+            "SPY_DETECT_2",
+            "DEF_GARRISON_2",
+            "LRN_FORCE_FIELD",
+        ])
+        self.hull_techs.extend([
+            "SHP_SPACE_FLUX_DRIVE",
+            # "SHP_ASTEROID_HULLS",  # should be handled by fast-forwarding when having ASteroids
+            # "SHP_DOMESTIC_MONSTER",  # should be handled by fast-forwarding when having nest
+        ])
+        self.weapon_techs.extend([
+            "SHP_WEAPON_2_1",
+            "SHP_WEAPON_2_2",  # enables the building of laser based ships in ShipDesigner algorithm
+            "SHP_WEAPON_2_3",
+            "SHP_WEAPON_2_4",
+        ])
+
+
+class TechGroup2A(TechGroup2):
+    def __init__(self):
+        super(TechGroup2A, self).__init__()
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.economy_techs)
+
+
+class TechGroup2B(TechGroup2):
+    def __init__(self):
+        super(TechGroup2B, self).__init__()
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+
+
+class TechGroup2SparseA(TechGroup2):
+    def __init__(self):
+        super(TechGroup2SparseA, self).__init__()
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+
+
+class TechGroup2SparseB(TechGroup2):
+    def __init__(self):
+        super(TechGroup2SparseB, self).__init__()
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+
+
+class TechGroup3(TechGroup):
+    def __init__(self):
+        super(TechGroup3, self).__init__()
+        self.hull_techs.extend([
+            "SHP_ORG_HULL",
+            "SHP_ASTEROID_REFORM",
+            "SHP_HEAVY_AST_HULL",
+            "SHP_CONTGRAV_MAINT",
+        ])
+        self.economy_techs.extend([
+            "PRO_INDUSTRY_CENTER_I",
+            "PRO_SOL_ORB_GEN",
+            "GRO_GENETIC_ENG",
+            "GRO_GENETIC_MED",
+            "GRO_XENO_GENETICS",
+            "PRO_INDUSTRY_CENTER_II",
+            "LRN_QUANT_NET",
+            "GRO_XENO_HYBRIDS",
+            "CON_ORBITAL_HAB",
+            "CON_NDIM_STRC",
+            "GRO_LIFECYCLE_MAN",
+        ])
+        self.defense_techs.extend([
+            "DEF_DEFENSE_NET_2",
+            "DEF_DEFENSE_NET_REGEN_1",
+            "DEF_PLAN_BARRIER_SHLD_1",
+            "DEF_GARRISON_3",
+            "SPY_DETECT_3",
+            "DEF_DEFENSE_NET_REGEN_2",
+            "DEF_PLAN_BARRIER_SHLD_2",
+            "DEF_DEFENSE_NET_3",
+            "DEF_SYST_DEF_MINE_1",
+            "DEF_PLAN_BARRIER_SHLD_3",
+        ])
+        self.misc_techs.extend([
+            "SHP_BASIC_DAM_CONT",
+            "SHP_INTSTEL_LOG",
+            "SHP_FLEET_REPAIR",
+            "SHP_IMPROVED_ENGINE_COUPLINGS",
+            "SHP_REINFORCED_HULL",
+            "SHP_DEFLECTOR_SHIELD",
+            "CON_CONTGRAV_ARCH",
+            "CON_FRC_ENRG_STRC",
+            "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
+        ])
+        self.armor_techs.extend([
+            "SHP_DIAMOND_PLATE",
+        ])
+        self.weapon_techs.extend([
+            "SHP_WEAPON_3_1",
+            "SHP_WEAPON_3_2",
+            "SHP_WEAPON_3_3",
+            "SHP_WEAPON_3_4",
+        ])
+
+
+class TechGroup3A(TechGroup3):
+    def __init__(self):
+        super(TechGroup3A, self).__init__()
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+
+
+class TechGroup3B(TechGroup3):
+    def __init__(self):
+        super(TechGroup3B, self).__init__()
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+
+
+class TechGroup3Sparse(TechGroup3):
+    def __init__(self):
+        super(TechGroup3Sparse, self).__init__()
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.weapon_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.armor_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.defense_techs)
+        self.add_tech(self.economy_techs)
+        self.add_tech(self.misc_techs)
+        self.add_tech(self.economy_techs)
+
+
+class TechGroup4(TechGroup):
+    def __init__(self):
+        super(TechGroup4, self).__init__()
+        self.hull_techs.extend([
+            "SHP_FRC_ENRG_COMP",
+            "SHP_MASSPROP_SPEC",
+            "SHP_SCAT_AST_HULL",
+        ])
+        self.add_tech(self.hull_techs)
+        self.add_tech(self.hull_techs)
+
+
+class TechGroup5(TechGroup):
+    def __init__(self):
+        super(TechGroup5, self).__init__()
+        self._ordered_list.extend([
+            "LRN_DISTRIB_THOUGHT",
+            "DEF_GARRISON_4",
+            "DEF_PLAN_BARRIER_SHLD_4",
+            "LRN_XENOARCH",
+            "LRN_GRAVITONICS",
+            "LRN_ENCLAVE_VOID",
+            "SHP_MONOMOLEC_LATTICE",
+            "SHP_ADV_DAM_CONT",
+            "LRN_STELLAR_TOMOGRAPHY",
+            "LRN_TIME_MECH",
+            "SPY_DETECT_4",
+            "SHP_CONT_SYMB",
+            "SHP_MONOCELL_EXP",
+            "GRO_CYBORG",
+            "GRO_TERRAFORM",
+            "GRO_ENERGY_META",
+            "SHP_WEAPON_4_1",
+            "SHP_WEAPON_4_2",
+            "SHP_WEAPON_4_3",
+            "SHP_WEAPON_4_4",
+            "PRO_INDUSTRY_CENTER_III",
+            "PRO_SINGULAR_GEN",
+            "SHP_QUANT_ENRG_MAG",
+            "SHP_PLASMA_SHIELD",
+            "SHP_ENRG_BOUND_MAN",
+            "PRO_NEUTRONIUM_EXTRACTION",
+            "SHP_SOLAR_CONT",
+            "CON_CONC_CAMP",
+            "LRN_ART_BLACK_HOLE",
+            "DEF_SYST_DEF_MINE_2",
+            "DEF_SYST_DEF_MINE_3",
+            "LRN_PSY_DOM",
+            "SHP_BLACKSHIELD",
+            "DEF_PLAN_BARRIER_SHLD_5",
+            "SPY_DETECT_5",
+            "GRO_GAIA_TRANS",
+            "CON_ART_PLANET",
+        ])
+
+
+def test_tech_integrity():
+    """Check the TechGroups for integrity.
+
+    Try to get all tech lists by querying all the TechGroups.
+    Any error is displayed in chat window.
+    Also checks if all techs exist and displays error if invalid tech name encountered.
     """
-    return []
-
-
-def tech_group_1a():  # early org_hull
-    result = [
-        "GRO_PLANET_ECOL",
-        "LRN_ALGO_ELEGANCE",
-        "GRO_SUBTER_HAB",
-        "DEF_GARRISON_1",
-        "SHP_WEAPON_1_2",
-        "LRN_ARTIF_MINDS",
-        "SHP_WEAPON_1_3",
-        "SHP_WEAPON_1_4",
-        "CON_ORBITAL_CON",
+    tech_groups = [
+        TechGroup,
+        TechGroup1,
+        TechGroup1a,
+        TechGroup1b,
+        TechGroup1SparseA,
+        TechGroup1SparseB,
+        TechGroup2,
+        TechGroup2A,
+        TechGroup2B,
+        TechGroup2SparseA,
+        TechGroup2SparseB,
+        TechGroup3,
+        TechGroup3A,
+        TechGroup3B,
+        TechGroup3Sparse,
+        TechGroup4,
+        TechGroup5
     ]
-    return result
-
-
-def tech_group_1b():  # early _lrn_artif_minds and SHP_MIL_ROBO_CONT
-    result = [
-        "GRO_PLANET_ECOL",
-        "LRN_ALGO_ELEGANCE",
-        "DEF_GARRISON_1",
-        "LRN_ARTIF_MINDS",
-        "SHP_WEAPON_1_2",
-        "GRO_SUBTER_HAB",
-        "SHP_WEAPON_1_3",
-        "PRO_ROBOTIC_PROD",
-        "SHP_MIL_ROBO_CONT",
-        "CON_ORBITAL_CON",
-        "SHP_WEAPON_1_4",
-    ]
-    return result
-
-
-def tech_group_1_sparse():
-    result = [
-        "GRO_PLANET_ECOL",
-        "LRN_ALGO_ELEGANCE",
-        "GRO_SUBTER_HAB",
-        "DEF_GARRISON_1",
-        "LRN_ARTIF_MINDS",
-        "SHP_WEAPON_1_2",
-        "PRO_ROBOTIC_PROD",
-        "SHP_WEAPON_1_3",
-        "SHP_MIL_ROBO_CONT",
-        "SHP_WEAPON_1_4",
-        "SHP_SPACE_FLUX_DRIVE",
-    ]
-    return result
-
-
-def tech_group_1_sparse_b():
-    result = [
-        "GRO_PLANET_ECOL",
-        "LRN_ALGO_ELEGANCE",
-        "GRO_SUBTER_HAB",
-        "DEF_GARRISON_1",
-        "LRN_ARTIF_MINDS",
-        "SHP_WEAPON_1_2",
-        "CON_ORBITAL_CON",
-        "PRO_ROBOTIC_PROD",
-        "PRO_FUSION_GEN",
-        "PRO_ORBITAL_GEN",
-        "GRO_SYMBIOTIC_BIO",
-        "SHP_WEAPON_1_3",
-        "SHP_MIL_ROBO_CONT",
-        "SHP_WEAPON_1_4",
-        "SHP_ZORTRIUM_PLATE",
-        "SHP_SPACE_FLUX_DRIVE",
-    ]
-    return result
-
-
-def tech_group_2a():  # prioritizes growth & spy over weapons
-    result = [
-        "SHP_ZORTRIUM_PLATE",
-        "DEF_DEFENSE_NET_1",
-        "PRO_ROBOTIC_PROD",
-        "SHP_SPACE_FLUX_DRIVE",
-        "PRO_FUSION_GEN",
-        "DEF_GARRISON_2",
-        "LRN_FORCE_FIELD",
-        "GRO_SYMBIOTIC_BIO",
-        "SPY_DETECT_2",
-        "SHP_WEAPON_2_1",
-        "SHP_WEAPON_2_2",
-        "SHP_WEAPON_2_3",
-        "SHP_WEAPON_2_4",
-        "PRO_INDUSTRY_CENTER_I",
-    ]
-    return result
-
-
-def tech_group_2b():  # prioritizes weapons over growth & spy
-    result = [
-        "SHP_ZORTRIUM_PLATE",
-        "PRO_ROBOTIC_PROD",
-        "SHP_SPACE_FLUX_DRIVE",
-        "PRO_FUSION_GEN",
-        "DEF_GARRISON_2",
-        "LRN_FORCE_FIELD",
-        "DEF_DEFENSE_NET_1",
-        "SHP_WEAPON_2_1",
-        "SHP_WEAPON_2_2",
-        "SHP_WEAPON_2_3",
-        "SHP_WEAPON_2_4",
-        "GRO_SYMBIOTIC_BIO",
-        "PRO_INDUSTRY_CENTER_I",
-        "SPY_DETECT_2",
-    ]
-    return result
-
-
-def tech_group_2_sparse():  # prioritizes growth & defense over weapons
-    result = [
-        "CON_ORBITAL_CON",
-        "PRO_FUSION_GEN",
-        "SHP_ZORTRIUM_PLATE",
-        "DEF_GARRISON_2",
-        "GRO_SYMBIOTIC_BIO",
-        "LRN_FORCE_FIELD",
-        "DEF_DEFENSE_NET_1",
-        "PRO_INDUSTRY_CENTER_I",
-        "PRO_ORBITAL_GEN",
-        "PRO_MICROGRAV_MAN",
-        "SHP_ASTEROID_HULLS",
-        "SPY_DETECT_2",
-        "SHP_WEAPON_2_1",
-        "SHP_WEAPON_2_2",
-        "SHP_WEAPON_2_3",
-        "SHP_WEAPON_2_4",
-        "SHP_DOMESTIC_MONSTER",
-    ]
-    return result
-
-
-def tech_group_2_sparse_b():  # prioritizes growth & defense over weapons
-    result = [
-        "DEF_GARRISON_2",
-        "DEF_DEFENSE_NET_1",
-        "PRO_INDUSTRY_CENTER_I",
-        "SHP_WEAPON_2_1",
-        "LRN_FORCE_FIELD",
-        "SHP_WEAPON_2_2",
-        "SHP_WEAPON_2_3",
-        "SHP_WEAPON_2_4",
-        "SPY_DETECT_2",
-        "PRO_MICROGRAV_MAN",
-        "SHP_ASTEROID_HULLS",
-        "SHP_DOMESTIC_MONSTER",
-    ]
-    return result
-
-
-def tech_group_3a():  # no plasma weaps yet
-    result = [
-        "SHP_DOMESTIC_MONSTER",
-        "SHP_ORG_HULL",
-        "GRO_GENETIC_ENG",
-        "GRO_GENETIC_MED",
-        "DEF_DEFENSE_NET_2",
-        "DEF_DEFENSE_NET_REGEN_1",
-        "PRO_SENTIENT_AUTOMATION",
-        "DEF_PLAN_BARRIER_SHLD_1",
-        "PRO_EXOBOTS",
-        "GRO_XENO_GENETICS",
-        "LRN_PHYS_BRAIN",
-        "LRN_TRANSLING_THT",
-        "SHP_BASIC_DAM_CONT",
-        "DEF_GARRISON_3",
-        "PRO_INDUSTRY_CENTER_II",
-        "SHP_INTSTEL_LOG",
-        "SHP_FLEET_REPAIR",
-        "PRO_ORBITAL_GEN",
-        "PRO_SOL_ORB_GEN",
-        "GRO_NANO_CYBERNET",
-        "PRO_MICROGRAV_MAN",
-        "SHP_ASTEROID_HULLS",
-        "SHP_IMPROVED_ENGINE_COUPLINGS",
-        "SHP_ASTEROID_REFORM",
-        "SHP_HEAVY_AST_HULL",
-        "SHP_DEFLECTOR_SHIELD",
-        "LRN_QUANT_NET",
-        "SHP_CONTGRAV_MAINT",
-        "GRO_XENO_HYBRIDS",
-        "SHP_DEUTERIUM_TANK",
-        "SPY_DETECT_3",
-        "SHP_REINFORCED_HULL",
-        "SHP_DIAMOND_PLATE",
-        "DEF_DEFENSE_NET_REGEN_2",
-        "DEF_PLAN_BARRIER_SHLD_2",
-        "DEF_DEFENSE_NET_3",
-        "CON_CONTGRAV_ARCH",
-        "CON_ORBITAL_HAB",
-        "CON_FRC_ENRG_STRC",
-        "DEF_SYST_DEF_MINE_1",
-        "DEF_PLAN_BARRIER_SHLD_3",
-        "CON_NDIM_STRC",
-        "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
-        "GRO_LIFECYCLE_MAN",
-        "SHP_MULTICELL_CAST",
-        "SHP_ENDOCRINE_SYSTEMS",
-        "SHP_CONT_BIOADAPT",
-        "SPY_STEALTH_1",
-    ]
-    return result
-
-
-def tech_group_3b():  # with plasma weaps
-    result = tech_group_3a()
-    insert_idx = min(30, len(result) // 2) if "GRO_XENO_HYBRIDS" not in result else 1 + result.index("GRO_XENO_HYBRIDS")
-    result.insert(insert_idx, "SHP_WEAPON_3_4")
-    return result
-
-
-def tech_group_3_sparse():  # no plasma weaps yet
-    result = [
-        "SHP_DOMESTIC_MONSTER",
-        "SHP_ORG_HULL",
-        "GRO_GENETIC_ENG",
-        "GRO_GENETIC_MED",
-        "DEF_DEFENSE_NET_2",
-        "DEF_DEFENSE_NET_REGEN_1",
-        "PRO_SENTIENT_AUTOMATION",
-        "DEF_PLAN_BARRIER_SHLD_1",
-        "PRO_EXOBOTS",
-        "GRO_XENO_GENETICS",
-        "LRN_PHYS_BRAIN",
-        "LRN_TRANSLING_THT",
-        "SHP_BASIC_DAM_CONT",
-        "PRO_INDUSTRY_CENTER_II",
-        "SHP_INTSTEL_LOG",
-        "SHP_FLEET_REPAIR",
-        "PRO_ORBITAL_GEN",
-        "PRO_SOL_ORB_GEN",
-        "GRO_NANO_CYBERNET",
-        "PRO_MICROGRAV_MAN",
-        "SHP_ASTEROID_HULLS",
-        "SHP_IMPROVED_ENGINE_COUPLINGS",
-        "LRN_QUANT_NET",
-        "SHP_ASTEROID_REFORM",
-        "SHP_HEAVY_AST_HULL",
-        "SHP_CONTGRAV_MAINT",
-        "SHP_DEFLECTOR_SHIELD",
-        "SHP_WEAPON_3_1",
-        "SHP_WEAPON_3_2",
-        "SHP_WEAPON_3_3",
-        "SHP_WEAPON_3_4",
-        "GRO_XENO_HYBRIDS",
-        "SHP_DEUTERIUM_TANK",
-        "SPY_DETECT_3",
-        "SHP_REINFORCED_HULL",
-        "SHP_DIAMOND_PLATE",
-        "DEF_DEFENSE_NET_REGEN_2",
-        "DEF_PLAN_BARRIER_SHLD_2",
-        "DEF_DEFENSE_NET_3",
-        "CON_CONTGRAV_ARCH",
-        "CON_ORBITAL_HAB",
-        "CON_FRC_ENRG_STRC",
-        "DEF_SYST_DEF_MINE_1",
-        "DEF_GARRISON_3",
-        "DEF_PLAN_BARRIER_SHLD_3",
-        "CON_NDIM_STRC",
-        "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
-        "GRO_LIFECYCLE_MAN",
-        "SHP_MULTICELL_CAST",
-        "SHP_ENDOCRINE_SYSTEMS",
-        "SHP_CONT_BIOADAPT",
-        "SPY_STEALTH_1",
-    ]
-    return result
-
-
-def tech_group_4a():  # later plasma weaps
-    result = [
-        "SHP_WEAPON_3_1",
-        "SHP_WEAPON_3_2",
-        "SHP_WEAPON_3_3",
-        "SHP_FRC_ENRG_COMP",
-        "SHP_WEAPON_3_4",
-        "SHP_MASSPROP_SPEC",
-    ]
-    return result
-
-
-def tech_group_4b():
-    result = [
-        "SHP_FRC_ENRG_COMP",
-        "SHP_WEAPON_3_4",
-        "SHP_MASSPROP_SPEC",
-    ]
-    return result
-
-
-def tech_group_5():
-    result = [
-        "DEF_GARRISON_4",
-        "DEF_PLAN_BARRIER_SHLD_4",
-        "LRN_XENOARCH",
-        "LRN_GRAVITONICS",
-        "LRN_ENCLAVE_VOID",
-        "SHP_MONOMOLEC_LATTICE",
-        "SHP_SCAT_AST_HULL",
-        "SHP_ADV_DAM_CONT",
-        "LRN_STELLAR_TOMOGRAPHY",
-        "LRN_TIME_MECH",
-        "SPY_DETECT_4",
-        "SHP_CONT_SYMB",
-        "SHP_MONOCELL_EXP",
-        "SHP_BIOADAPTIVE_SPEC",
-        "SHP_SENT_HULL",
-        "SHP_XENTRONIUM_PLATE",
-        "GRO_CYBORG",
-        "GRO_TERRAFORM",
-        "GRO_ENERGY_META",
-        "SHP_WEAPON_4_1",
-        "SHP_WEAPON_4_2",
-        "SHP_WEAPON_4_3",
-        "LRN_DISTRIB_THOUGHT",
-        "PRO_INDUSTRY_CENTER_III",
-        "PRO_SINGULAR_GEN",
-        "SHP_QUANT_ENRG_MAG",
-        "SHP_PLASMA_SHIELD",
-        "SHP_ENRG_BOUND_MAN",
-        "PRO_NEUTRONIUM_EXTRACTION",
-        "SHP_SOLAR_CONT",
-        "CON_CONC_CAMP",
-        "LRN_ART_BLACK_HOLE",
-        "SPY_STEALTH_2",
-        "DEF_SYST_DEF_MINE_2",
-        "DEF_SYST_DEF_MINE_3",
-        "LRN_PSY_DOM",
-        "SPY_STEALTH_3",
-        "SHP_WEAPON_4_4",
-        "SHP_BLACKSHIELD",
-        "SPY_STEALTH_4",
-        "DEF_PLAN_BARRIER_SHLD_5",
-        "SPY_DETECT_5",
-        "GRO_GAIA_TRANS",
-        "CON_ART_PLANET",
-    ]
-    return result
+    print "Checking TechGroup integrity..."
+    for group in tech_groups:
+        print "Checking %s: " % group.__name__,
+        error_occured = False
+        this_group = group()
+        techs = this_group.get_techs()
+        for tech in techs:
+            if not fo.getTech(tech):
+                print_error("In %s: Tech %s seems not to exist!" % (group.__name__, tech))
+                error_occured = True
+        for err in this_group.get_errors():
+            print_error(err, location=group.__name__)
+            error_occured = True
+        if not error_occured:
+            print "Seems to be OK!"
 
 
 def sparse_galaxy_techs(index):
@@ -388,35 +577,35 @@ def sparse_galaxy_techs(index):
     result = []
     print "Choosing Research Techlist Index %d" % index
     if index == 0:
-        result = tech_group_1a()  # early org_hull
-        result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1a().get_techs()  # early org_hull
+        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3A().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 1:
-        result = tech_group_1a()  # early _lrn_artif_minds
-        result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1b().get_techs()  # early _lrn_artif_minds
+        result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3B().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 2:
-        result = tech_group_1_sparse()  # early _lrn_artif_minds
-        result += tech_group_2_sparse()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1SparseA().get_techs()  # early _lrn_artif_minds
+        result += TechGroup2SparseA().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3Sparse().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 3:
-        result = tech_group_1_sparse_b()  # early org_hull
-        result += tech_group_2_sparse_b()
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1SparseB().get_techs()  # early org_hull
+        result += TechGroup2SparseB().get_techs()
+        result += TechGroup3A().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 4:
-        result = tech_group_1_sparse_b()  # early _lrn_artif_minds
-        result += tech_group_2_sparse_b()
-        result += tech_group_3b()  # faster plasma weaps
-        result += tech_group_4b()
-        result += tech_group_5()  #
+        result = TechGroup1SparseB().get_techs()  # early _lrn_artif_minds
+        result += TechGroup2SparseB().get_techs()
+        result += TechGroup3B().get_techs()  # faster plasma weaps
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     return result
 
 
@@ -429,35 +618,35 @@ def primary_meta_techs(index=0):
 
     print "Choosing Research Techlist Index %d" % index
     if index == 0:
-        result = tech_group_1a()  # early org_hull
-        result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1a().get_techs()  # early org_hull
+        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3A().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 1:
-        result = tech_group_1a()  # early _lrn_artif_minds
-        result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1b().get_techs()  # early org_hull
+        result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3B().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 2:
-        result = tech_group_1a()  # early _lrn_artif_minds
-        result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3a()
-        result += tech_group_4a()
-        result += tech_group_5()  #
+        result = TechGroup1a().get_techs()  # early org_hull
+        result += TechGroup2B().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3A().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 3:
-        result = tech_group_1b()  # 
-        result += tech_group_2b()  # prioritizes weapons over growth & defense
-        result += tech_group_3b()  # 3a plus early plasma weaps
-        result += tech_group_4b()
-        result += tech_group_5()  #
+        result = TechGroup1b().get_techs()  # early org_hull
+        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3B().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     elif index == 4:
-        result = tech_group_1a()  # early _lrn_artif_minds
-        result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3b()  # 3a plus early plasma weaps
-        result += tech_group_4b()
-        result += tech_group_5()  #
+        result = TechGroup1a().get_techs()  # early org_hull
+        result += TechGroup2A().get_techs()  # prioritizes growth & defense over weapons
+        result += TechGroup3B().get_techs()
+        result += TechGroup4().get_techs()
+        result += TechGroup5().get_techs()  #
     return result
 
 # the following is just for reference
