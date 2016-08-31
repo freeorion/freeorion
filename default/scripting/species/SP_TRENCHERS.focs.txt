@@ -4,7 +4,7 @@ Species
     gameplay_description = "SP_TRENCHERS_GAMEPLAY_DESC"
     Native
 
-    Tags = [ "ROBOTIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" ]
+    Tags = [ "ROBOTIC" "GOOD_INDUSTRY" "NO_RESEARCH" "BAD_SUPPLY" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

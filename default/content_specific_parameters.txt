@@ -21,8 +21,7 @@ SUPERCONDUCTOR_SPECIAL
 
 ## FUNCTIONAL_CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
 ## in Census pop-up, and specifies order in which they will be displayed.
-## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.
+## This list should not include any non-species tags, since those won't be displayed in the census anyway.
 
 FUNCTIONAL_CENSUS_TAG_ORDER
 '''LITHIC

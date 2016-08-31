@@ -4,7 +4,7 @@ Species
     gameplay_description = "SP_OURBOOLS_GAMEPLAY_DESC"
     Native
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_BAD_SUPPLY" "AI_TAG_ULTIMATE_DETECTION" ]
+    tags = [ "ORGANIC" "BAD_INDUSTRY" "BAD_SUPPLY" "ULTIMATE_DETECTION" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

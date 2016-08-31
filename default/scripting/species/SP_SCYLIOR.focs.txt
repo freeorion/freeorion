@@ -7,7 +7,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "ORGANIC" "GREAT_RESEARCH" "GOOD_POPULATION" "AVERAGE_SUPPLY" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

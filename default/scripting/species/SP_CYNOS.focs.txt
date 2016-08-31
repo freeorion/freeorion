@@ -5,7 +5,7 @@ Species
     Native
     CanProduceShips
 
-    tags = [ "PHOTOTROPHIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "PHOTOTROPHIC" "NO_INDUSTRY" "AVERAGE_SUPPLY" ]
 
     foci = [
         /* [[HAS_INDUSTRY_FOCUS]]*/

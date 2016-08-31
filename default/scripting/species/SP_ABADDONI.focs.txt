@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
+    tags = [ "LITHIC" "BAD_RESEARCH" "AVERAGE_SUPPLY" "BAD_ATTACKTROOPS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

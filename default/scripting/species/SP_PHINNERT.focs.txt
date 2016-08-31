@@ -6,7 +6,7 @@ Species
 
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" "PRIMITIVE"]
+    tags = [ "ORGANIC" "NO_RESEARCH" "BAD_SUPPLY" "PRIMITIVE"]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

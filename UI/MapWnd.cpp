@@ -6024,8 +6024,7 @@ void MapWnd::RefreshPopulationIndicator() {
             const std::set<std::string>& tags = species->Tags();
             for (std::set<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
             {
-                if (tag_it->compare(0,7, "AI_TAG_") != 0)
-                    tag_counts[*tag_it] += this_pop;
+                tag_counts[*tag_it] += this_pop;
             }
         }
     }
