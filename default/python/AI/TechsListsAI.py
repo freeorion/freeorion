@@ -37,55 +37,63 @@ class TechGroup(object):
     Different TechGroup variants have different orders in which the tech groups are accessed.
     """
     def __init__(self):
-        self.economy_techs = []     # list of economy techs to research
-        self.weapon_techs = []      # ship weapon techs
-        self.armor_techs = []       # ship armour techs
-        self.misc_techs = []        # techs not in any other category
-        self.defense_techs = []     # planetary defense techs
-        self.hull_techs = []        # new hull types
+        self.economy = []     # list of economy techs to research
+        self.weapon = []      # ship weapon techs
+        self.armor = []       # ship armour techs
+        self.misc = []        # techs not in any other category
+        self.defense = []     # planetary defense techs
+        self.hull = []        # new hull types
 
-        self._ordered_list = []    # defines the research order - forced to contain all techs.
+        self._tech_queue = []    # defines the research order - forced to contain all techs.
         self._errors = []          # exceptions that occured when trying to pop from already empty lists
 
-    def _add_remaining_techs(self):
-        """Add all remaining techs in the tech group to self.__ordered_list if not already contained."""
-        all_needed_techs = set(self.economy_techs + self.weapon_techs + self.armor_techs
-                               + self.misc_techs + self.defense_techs + self.hull_techs)
-        remaining_techs = list(all_needed_techs - set(self._ordered_list))
-        self._ordered_list.extend(remaining_techs)
+    def _add_remaining(self):
+        """Add all remaining techs in the tech group to self._tech_queue if not already contained."""
+        all_needed_techs = set(self.economy + self.weapon + self.armor
+                               + self.misc + self.defense + self.hull)
+        remaining_techs = list(all_needed_techs - set(self._tech_queue))
+        self._tech_queue.extend(remaining_techs)
 
     def get_techs(self):
         """Get the ordered list of techs defining research order.
 
+        :return: Research order
         :rtype: list
-        :return: Research order"""
-        self._add_remaining_techs()
-        return list(self._ordered_list)
-
-    @staticmethod
-    def pop_tech(this_list):
-        """Pop and return the first element of the list.
-
-        Note that the passed list is modified within this function!
         """
-        return this_list.pop(0)
+        self._add_remaining()
+        return list(self._tech_queue)
 
-    def add_tech(self, this_list):
-        """Pop first entry in the list and add it to research orders.
+    def enqueue(self, *tech_lists):
+        """
+        Pop first entry in the list or take entry if it is string and add it to research orders.
 
         Note that the passed list is modified within this function!
         If the list is already empty, the exception is caught and stored in self.__errors.
-        Ecxeptions may be queried via get_errors()
+        Errors may be queried via get_errors()
 
-        :type this_list: list
+        :type tech_lists: list[list | str]
         """
-        try:
-            self._ordered_list.append(self.pop_tech(this_list))
-        except IndexError as e:
-            # Do not display error message as those should be shown only once per game session
-            # by the initial test_tech_integrity() call.
-            print >> sys.stderr, e
-            self._errors.append(e)
+
+        for this_list in tech_lists:
+            if isinstance(this_list, str):
+                tech_name = this_list
+            else:
+
+                try:
+                    tech_name = this_list.pop(0)
+                except IndexError:
+                    # Do not display error message as those should be shown only once per game session
+                    # by the initial test_tech_integrity() call.
+                    msg = "Try to enqueue tech from empty list"
+                    print >> sys.stderr, msg
+                    self._errors.append(msg)
+                    continue
+            if tech_name in self._tech_queue:
+                msg = "Tech is already in queue: %s" % tech_name
+                print >> sys.stderr, msg
+                self._errors.append(msg)
+            else:
+                self._tech_queue.append(tech_name)
 
     def get_errors(self):
         """Return a list of occured exceptions.
@@ -100,7 +108,7 @@ class TechGroup(object):
 class TechGroup1(TechGroup):
     def __init__(self):
         super(TechGroup1, self).__init__()
-        self.economy_techs.extend([
+        self.economy.extend([
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB",
             "LRN_ALGO_ELEGANCE",
@@ -108,77 +116,85 @@ class TechGroup1(TechGroup):
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "PRO_ROBOTIC_PROD",
         ])
-        self.weapon_techs.extend([
+        self.weapon.extend([
             "SHP_WEAPON_1_2",
             "SHP_WEAPON_1_3",
             "SHP_WEAPON_1_4",
         ])
-        self.defense_techs.extend([
+        self.defense.extend([
             "DEF_GARRISON_1",
         ])
-        self.hull_techs.extend([
+        self.hull.extend([
             "SHP_MIL_ROBO_CONT",
         ])
         # always start with the same first 6 techs
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.defense_techs)
+        self.enqueue(
+            self.economy,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.weapon,
+            self.defense,
+        )
 
 
 class TechGroup1a(TechGroup1):
     def __init__(self):
         super(TechGroup1a, self).__init__()
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.hull_techs)
+        self.enqueue(
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.economy,
+            self.hull
+        )
 
 
 class TechGroup1b(TechGroup1):
     def __init__(self):
         super(TechGroup1b, self).__init__()
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
+        self.enqueue(
+            self.weapon,
+            self.hull,
+            self.economy,
+            self.weapon
+        )
 
 
 class TechGroup1SparseA(TechGroup1):
     def __init__(self):
         super(TechGroup1SparseA, self).__init__()
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self._ordered_list.append("SHP_SPACE_FLUX_DRIVE")
+        self.enqueue(
+            self.economy,
+            self.economy,
+            self.hull,
+            self.weapon,
+            self.weapon,
+            "SHP_SPACE_FLUX_DRIVE"
+        )
 
 
 class TechGroup1SparseB(TechGroup1):
     def __init__(self):
         super(TechGroup1SparseB, self).__init__()
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self._ordered_list.append("PRO_FUSION_GEN")
-        self._ordered_list.append("GRO_SYMBIOTIC_BIO")
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self._ordered_list.append("PRO_ORBITAL_GEN")
-        self.add_tech(self.hull_techs)
-        self._ordered_list.extend([
+        self.enqueue(
+            self.economy,
+            self.economy,
+            "PRO_FUSION_GEN",
+            "GRO_SYMBIOTIC_BIO",
+            self.weapon,
+            self.weapon,
+            "PRO_ORBITAL_GEN",
+            self.hull,
             "SHP_ZORTRIUM_PLATE",
-            "SHP_SPACE_FLUX_DRIVE",
-            ])
+            "SHP_SPACE_FLUX_DRIVE"
+        )
 
 
 class TechGroup2(TechGroup):
     def __init__(self):
         super(TechGroup2, self).__init__()
-        self.economy_techs.extend([
+        self.economy.extend([
             "GRO_SYMBIOTIC_BIO",
             "PRO_FUSION_GEN",
             "PRO_SENTIENT_AUTOMATION",
@@ -187,21 +203,21 @@ class TechGroup2(TechGroup):
             # "PRO_ORBITAL_GEN",    # handled by fast-forwarding when we have a GG
 
         ])
-        self.armor_techs.extend([
+        self.armor.extend([
             "SHP_ZORTRIUM_PLATE",
         ])
-        self.defense_techs.extend([
+        self.defense.extend([
             "DEF_DEFENSE_NET_1",
             "SPY_DETECT_2",
             "DEF_GARRISON_2",
             "LRN_FORCE_FIELD",
         ])
-        self.hull_techs.extend([
+        self.hull.extend([
             "SHP_SPACE_FLUX_DRIVE",
             # "SHP_ASTEROID_HULLS",  # should be handled by fast-forwarding when having ASteroids
             # "SHP_DOMESTIC_MONSTER",  # should be handled by fast-forwarding when having nest
         ])
-        self.weapon_techs.extend([
+        self.weapon.extend([
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",  # enables the building of laser based ships in ShipDesigner algorithm
             "SHP_WEAPON_2_3",
@@ -212,89 +228,97 @@ class TechGroup2(TechGroup):
 class TechGroup2A(TechGroup2):
     def __init__(self):
         super(TechGroup2A, self).__init__()
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.economy_techs)
+        self.enqueue(
+            self.economy,
+            self.armor,
+            self.defense,
+            self.hull,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.economy
+        )
 
 
 class TechGroup2B(TechGroup2):
     def __init__(self):
         super(TechGroup2B, self).__init__()
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
+        self.enqueue(
+            self.armor,
+            self.hull,
+            self.economy,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.economy,
+            self.economy
+        )
 
 
 class TechGroup2SparseA(TechGroup2):
     def __init__(self):
         super(TechGroup2SparseA, self).__init__()
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
+        self.enqueue(
+            self.hull,
+            self.economy,
+            self.economy,
+            self.armor,
+            self.defense,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.weapon,
+            self.weapon
+        )
 
 
 class TechGroup2SparseB(TechGroup2):
     def __init__(self):
         super(TechGroup2SparseB, self).__init__()
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
+        self.enqueue(
+            self.hull,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.defense,
+            self.armor,
+            self.weapon,
+            self.weapon
+        )
 
 
 class TechGroup3(TechGroup):
     def __init__(self):
         super(TechGroup3, self).__init__()
-        self.hull_techs.extend([
+        self.hull.extend([
             "SHP_ORG_HULL",
             "SHP_ASTEROID_REFORM",
             "SHP_HEAVY_AST_HULL",
             "SHP_CONTGRAV_MAINT",
         ])
-        self.economy_techs.extend([
+        self.economy.extend([
             "PRO_INDUSTRY_CENTER_I",
             "PRO_SOL_ORB_GEN",
             "GRO_GENETIC_ENG",
@@ -307,7 +331,7 @@ class TechGroup3(TechGroup):
             "CON_NDIM_STRC",
             "GRO_LIFECYCLE_MAN",
         ])
-        self.defense_techs.extend([
+        self.defense.extend([
             "DEF_DEFENSE_NET_2",
             "DEF_DEFENSE_NET_REGEN_1",
             "DEF_PLAN_BARRIER_SHLD_1",
@@ -319,7 +343,7 @@ class TechGroup3(TechGroup):
             "DEF_SYST_DEF_MINE_1",
             "DEF_PLAN_BARRIER_SHLD_3",
         ])
-        self.misc_techs.extend([
+        self.misc.extend([
             "SHP_BASIC_DAM_CONT",
             "SHP_INTSTEL_LOG",
             "SHP_FLEET_REPAIR",
@@ -330,10 +354,10 @@ class TechGroup3(TechGroup):
             "CON_FRC_ENRG_STRC",
             "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
         ])
-        self.armor_techs.extend([
+        self.armor.extend([
             "SHP_DIAMOND_PLATE",
         ])
-        self.weapon_techs.extend([
+        self.weapon.extend([
             "SHP_WEAPON_3_1",
             "SHP_WEAPON_3_2",
             "SHP_WEAPON_3_3",
@@ -344,151 +368,159 @@ class TechGroup3(TechGroup):
 class TechGroup3A(TechGroup3):
     def __init__(self):
         super(TechGroup3A, self).__init__()
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
+        self.enqueue(
+            self.hull,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.hull,
+            self.hull,
+            self.misc,
+            self.economy,
+            self.hull,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.armor,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.weapon,
+            self.weapon
+        )
 
 
 class TechGroup3B(TechGroup3):
     def __init__(self):
         super(TechGroup3B, self).__init__()
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
+        self.enqueue(
+            self.hull,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.misc,
+            self.defense,
+            self.economy,
+            self.weapon,
+            self.misc,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.weapon,
+            self.hull,
+            self.hull,
+            self.misc,
+            self.economy,
+            self.hull,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.armor,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.economy
+        )
 
 
 class TechGroup3Sparse(TechGroup3):
     def __init__(self):
         super(TechGroup3Sparse, self).__init__()
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.weapon_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.armor_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.defense_techs)
-        self.add_tech(self.economy_techs)
-        self.add_tech(self.misc_techs)
-        self.add_tech(self.economy_techs)
+        self.enqueue(
+            self.hull,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.weapon,
+            self.weapon,
+            self.defense,
+            self.defense,
+            self.weapon,
+            self.misc,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.weapon,
+            self.hull,
+            self.hull,
+            self.misc,
+            self.economy,
+            self.hull,
+            self.economy,
+            self.defense,
+            self.misc,
+            self.armor,
+            self.defense,
+            self.defense,
+            self.defense,
+            self.misc,
+            self.economy,
+            self.misc,
+            self.defense,
+            self.defense,
+            self.economy,
+            self.misc,
+            self.economy
+        )
 
 
 class TechGroup4(TechGroup):
     def __init__(self):
         super(TechGroup4, self).__init__()
-        self.hull_techs.extend([
+        self.hull.extend([
             "SHP_FRC_ENRG_COMP",
             "SHP_MASSPROP_SPEC",
             "SHP_SCAT_AST_HULL",
         ])
-        self.add_tech(self.hull_techs)
-        self.add_tech(self.hull_techs)
+        self.enqueue(
+            self.hull,
+            self.hull
+        )
 
 
 class TechGroup5(TechGroup):
     def __init__(self):
         super(TechGroup5, self).__init__()
-        self._ordered_list.extend([
+        self._tech_queue.extend([
             "LRN_DISTRIB_THOUGHT",
             "DEF_GARRISON_4",
             "DEF_PLAN_BARRIER_SHLD_4",
