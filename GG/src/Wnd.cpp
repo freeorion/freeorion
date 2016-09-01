@@ -263,6 +263,9 @@ bool Wnd::NonClientChild() const
 bool Wnd::Visible() const
 { return m_visible; }
 
+bool Wnd::PreRenderRequired() const
+{ return m_needs_prerender; }
+
 const std::string& Wnd::Name() const
 { return m_name; }
 
@@ -872,7 +875,11 @@ void Wnd::SetLayoutCellMargin(unsigned int margin)
         m_layout->SetCellMargin(margin);
 }
 
-void Wnd::PreRender() {}
+void Wnd::PreRender()
+{ m_needs_prerender = false; }
+
+void Wnd::RequirePreRender()
+{ m_needs_prerender = true; }
 
 void Wnd::Render() {}
 

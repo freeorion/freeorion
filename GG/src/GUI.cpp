@@ -1558,7 +1558,9 @@ void GUI::PreRenderWindow(Wnd* wnd)
     for (std::list<Wnd*>::iterator it = wnd->m_children.begin(); it != wnd->m_children.end(); ++it) {
         PreRenderWindow(*it);
     }
-    wnd->PreRender();
+
+    if (wnd->PreRenderRequired())
+        wnd->PreRender();
 }
 
 void GUI::RenderWindow(Wnd* wnd)
