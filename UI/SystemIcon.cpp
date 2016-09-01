@@ -685,8 +685,8 @@ void SystemIcon::HideName() {
 
 void SystemIcon::PositionSystemName() {
     if (m_colored_name) {
-        GG::X name_left = ( Width()  - m_colored_name->Width()          )/2;
-        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()) )/2;
+        GG::X name_left = ( Width()  - m_colored_name->Width()           )/2;
+        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()*2))/2;
         m_colored_name->MoveTo(GG::Pt(name_left, name_top));
     }
 }
