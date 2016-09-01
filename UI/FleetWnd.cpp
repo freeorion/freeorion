@@ -1106,6 +1106,7 @@ public:
     bool                Selected() const;
     NewFleetAggression  GetNewFleetAggression() const;
 
+    virtual void        PreRender();
     virtual void        Render();
     virtual void        DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                      GG::Flags<GG::ModKey> mod_keys);
@@ -1165,6 +1166,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_stat_icons(),
     m_selected(false)
 {
+    RequirePreRender();
     SetChildClippingMode(ClipToClient);
     m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
@@ -1283,8 +1285,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-
-        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
+        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::RequirePreRender, this);
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
@@ -1296,8 +1297,6 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
             GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
         }
     }
-
-    Refresh();
 }
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target) :
@@ -1315,6 +1314,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_stat_icons(),
     m_selected(false)
 {
+    RequirePreRender();
     SetChildClippingMode(ClipToClient);
     m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
@@ -1326,8 +1326,6 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
         GG::SubTexture(FleetAggressiveMouseoverIcon()));
     AttachChild(m_aggression_toggle);
     GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
-
-    Refresh();
 }
 
 GG::Pt FleetDataPanel::ClientUpperLeft() const
@@ -1341,6 +1339,11 @@ bool FleetDataPanel::Selected() const
 
 NewFleetAggression FleetDataPanel::GetNewFleetAggression() const
 { return m_new_fleet_aggression; }
+
+void FleetDataPanel::PreRender() {
+    GG::Wnd::PreRender();
+    Refresh();
+}
 
 void FleetDataPanel::Render() {
     // main background position and colour
