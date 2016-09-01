@@ -69,7 +69,7 @@ namespace {
     const int       BAR_PAD(1);
     const GG::Y     BAR_HEIGHT(10);
 
-    const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE = 100.0;
+    const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
 }
 
 MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
@@ -109,18 +109,30 @@ void MultiMeterStatusBar::Render() {
         y += BAR_HEIGHT + BAR_PAD;
     }
 
+    // Find the largest value to be displayed to determine the scale factor
+    double largest_value = 0;
+    for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
+        if ((m_initial_values[i] != Meter::INVALID_VALUE) && (m_initial_values[i] > largest_value))
+            largest_value = m_initial_values[i];
+        if ((m_projected_values[i] != Meter::INVALID_VALUE) && (m_projected_values[i] > largest_value))
+            largest_value = m_projected_values[i];
+        if ((m_target_max_values[i] != Meter::INVALID_VALUE) && (m_target_max_values[i] > largest_value))
+            largest_value = m_target_max_values[i];
+    }
 
-    // lines for 20, 40, 60, 80
+    double num_full_increments =
+        std::ceil(largest_value / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT);
+    double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE =
+        num_full_increments * MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT;
+
+    // lines for 20, 40, 60, 80 etc.
+    int num_segments = num_full_increments * 5;
     GG::GL2DVertexBuffer bar_verts;
-    bar_verts.reserve(8);
-    bar_verts.store(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
-    bar_verts.store(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    bar_verts.store(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    bar_verts.store(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    bar_verts.reserve(num_segments - 1);
+    for (int ii_div_line = 1; ii_div_line <= (num_segments -1); ++ii_div_line) {
+        bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, TOP);
+        bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, y - BAR_PAD);
+    }
     bar_verts.activate();
 
     glColor(HALF_GREY);
