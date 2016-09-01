@@ -32,6 +32,9 @@
 #include <GG/Font.h>
 #include <GG/WndEvent.h>
 
+// TODO change boost to std when C++11 is adopted.
+#include <boost/chrono/chrono.hpp>
+
 
 namespace boost { namespace archive {
     class xml_oarchive;
@@ -240,6 +243,9 @@ public:
     void            ClearEventState();
 
     void            SetFocusWnd(Wnd* wnd);          ///< sets the input focus window to \a wnd
+    /** Suspend the GUI thread for \p us microseconds.  Singlethreaded GUI subclasses may do
+        nothing here, or may pause for \p us microseconds. */
+    virtual void    Wait(boost::chrono::microseconds us);
     virtual void    Wait(unsigned int ms);          ///< suspends the GUI thread for \a ms milliseconds.  Singlethreaded GUI subclasses may do nothing here, or may pause for \a ms milliseconds.
     void            Register(Wnd* wnd);             ///< adds \a wnd into the z-list.  Registering a null pointer or registering the same window multiple times is a no-op.
     void            RegisterModal(Wnd* wnd);        ///< adds \a wnd onto the modal windows "stack"

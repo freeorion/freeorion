@@ -33,6 +33,9 @@
 
 #include <GG/GUI.h>
 
+// TODO change boost to std when C++11 is adopted.
+#include <boost/chrono/chrono.hpp>
+
 
 namespace GG {
 
@@ -44,9 +47,9 @@ struct GG_API EventPumpState
 {
     EventPumpState(); ///< Default ctor.
 
-    unsigned int last_FPS_time;    ///< The last time an FPS calculation was done.
-    unsigned int last_frame_time;  ///< The time of the last frame rendered.
-    unsigned int most_recent_time; ///< The time recorded on the previous iteration of the event pump loop.
+    boost::chrono::high_resolution_clock::time_point last_FPS_time;    ///< The last time an FPS calculation was done.
+    boost::chrono::high_resolution_clock::time_point last_frame_time;  ///< The time of the last frame rendered.
+    boost::chrono::high_resolution_clock::time_point most_recent_time; ///< The time recorded on the previous iteration of the event pump loop.
     std::size_t  frames;           ///< The number of frames rendered since \a last_frame_time.
 };
 
