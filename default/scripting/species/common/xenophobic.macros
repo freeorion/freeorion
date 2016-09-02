@@ -49,10 +49,17 @@ XENOPHOBIC_SELF
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetPopulation value = max(Value * (0.6 + (0.4 * (0.8 ^ 
-                Count condition = And [
+            effects = SetTargetPopulation value = Value - min(
+                    max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
+                    3 * Target.SizeAsDouble  // Cap malus at the self-sustaining bonus
+                )
+'''
+
+XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
+'''
+Count condition = And [
                     PopulationCenter
-                    Not OR [ 
+                    Not OR [
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
                     ]
@@ -63,8 +70,6 @@ XENOPHOBIC_SELF
                               condition = ExploredByEmpire
                                           empire = Source.Owner
                 ]
-                ) ) ), (Value - 3 * Target.SizeAsDouble)) // Sets the pop malus dependent on the number of other species nearby up to a max of the self sustaining bonus
-
 '''
 
 // single argument should be the name of the species capitalized
