@@ -1957,15 +1957,28 @@ void MultiTurnProgressBar::Render() {
 // FPSIndicator
 //////////////////////////////////////////////////
 FPSIndicator::FPSIndicator(void) :
-    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP)
+    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP), m_enabled(false), m_displayed_FPS(0)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
     UpdateEnabled();
+    RequirePreRender();
+}
+
+void FPSIndicator::PreRender() {
+    GG::Wnd::PreRender();
+    m_displayed_FPS = static_cast<int>(GG::GUI::GetGUI()->FPS());
+    if (m_enabled) {
+        SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % m_displayed_FPS));
+    }
 }
 
 void FPSIndicator::Render() {
     if (m_enabled) {
-        SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % static_cast<int>(GG::GUI::GetGUI()->FPS())));
+        int new_FPS = static_cast<int>(GG::GUI::GetGUI()->FPS());
+        if (m_displayed_FPS != new_FPS) {
+            m_displayed_FPS = new_FPS;
+            SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % m_displayed_FPS));
+        }
         TextControl::Render();
     }
 }

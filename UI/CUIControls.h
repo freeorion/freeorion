@@ -584,9 +584,11 @@ class FPSIndicator : public GG::Label {
 public:
     FPSIndicator();
     virtual void Render();
+    virtual void PreRender();
 private:
     void UpdateEnabled();
     bool m_enabled;
+    int m_displayed_FPS;
 };
 
 /** Functions like a StaticGraphic, except can have multiple textures rendered
