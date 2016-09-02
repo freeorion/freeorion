@@ -1,9 +1,12 @@
 XENOPHOBIC_SELF
-'''     EffectsGroup
+'''
+        // Give the concentration camp tech at game start
+        EffectsGroup
             scope = Source
             activation = Turn high = 0
             effects = GiveEmpireTech name = "CON_CONC_CAMP"
 
+        // Give malus to industry, research and happiness for other species nearby
         EffectsGroup
             scope = Source
             activation = And [
@@ -40,6 +43,7 @@ XENOPHOBIC_SELF
                 )
             ]
 
+        // Give a pop malus for self-sustaining xenophobic species based on the number of nearby planets with other species
         EffectsGroup
             scope = Source
             activation = And [
@@ -74,7 +78,7 @@ Count condition = And [
 
 // single argument should be the name of the species capitalized
 XENOPHOBIC_OTHER
-'''     EffectsGroup
+'''     EffectsGroup 
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
