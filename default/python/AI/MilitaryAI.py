@@ -51,12 +51,12 @@ def cur_best_mil_ship_rating(include_designs=False):
 
 
 def try_again(mil_fleet_ids, try_reset=False, thisround=""):
+    """Clear targets and orders for all specified fleets call get_military_fleets again"""
     for fid in mil_fleet_ids:
         mission = foAI.foAIstate.get_fleet_mission(fid)
         mission.clear_fleet_orders()
         mission.clear_target()
     get_military_fleets(try_reset=try_reset, thisround=thisround)
-    return
 
 
 def get_safety_factor():
@@ -104,32 +104,19 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     global _military_allocations, totMilRating, num_milships
 
     universe = fo.getUniverse()
-    empire = fo.getEmpire()
-    empire_id = empire.empireID
-    capital_id = PlanetUtilsAI.get_capital()
-    if capital_id is None:
-        homeworld = None
-    else:
-        homeworld = universe.getPlanet(capital_id)
-    if homeworld:
-        home_system_id = homeworld.systemID
-    else:
-        home_system_id = -1
+    empire_id = fo.empireID()
+    home_system_id = PlanetUtilsAI.get_capital_sys_id()
 
-    if mil_fleets_ids is not None:
-        all_military_fleet_ids = mil_fleets_ids
-    else:
-        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+    all_military_fleet_ids = (mil_fleets_ids if mil_fleets_ids is not None
+                              else FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
+
     if try_reset and (fo.currentTurn() + empire_id) % 30 == 0 and thisround == "Main":
         try_again(all_military_fleet_ids, try_reset=False, thisround=thisround + " Reset")
 
-    num_milships = 0
-    for fid in all_military_fleet_ids:
-        num_milships += foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
+    num_milships = sum((foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids))
 
-    this_tot_mil_rating = sum(map(lambda x: foAI.foAIstate.get_rating(x).get('overall', 0), all_military_fleet_ids))
     if "Main" in thisround:
-        totMilRating = this_tot_mil_rating
+        totMilRating = sum(map(lambda x: foAI.foAIstate.get_rating(x).get('overall', 0), all_military_fleet_ids))
 
     enemy_rating = foAI.foAIstate.empire_standard_enemy_rating
 

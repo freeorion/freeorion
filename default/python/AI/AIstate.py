@@ -154,7 +154,7 @@ class AIstate(object):
         ExplorationAI.graphFlags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
-            print "Border Exploration Update (relative to %s" % (PlanetUtilsAI.sys_name_ids([exploration_center, -1])[0])
+            print "Border Exploration Update (relative to %s)" % (PlanetUtilsAI.sys_name_ids([exploration_center, -1])[0])
             print "-------------------------------------------------"
         if self.visBorderSystemIDs.keys() == [-1]:
             self.visBorderSystemIDs.clear()
@@ -206,12 +206,37 @@ class AIstate(object):
         universe = fo.getUniverse()
         sys_id_list = sorted(universe.systemIDs)  # will normally look at this, the list of all known systems
         # assess fleet and planet threats
-        print "----------------------------------------------"
-        print "System Threat Assessments"
+        threat_table = Table([
+            Text('System Threat'), Text('Vis.'), Float('Total'), Float('by Monsters'), Float('by Fleets'),
+            Float('by Planets'), Text('Threat [1, 2, 3] jumps away')
+        ])
+        defense_table = Table([
+            Text('System Defenses'), Float('Total'), Float('by Planets'), Float('by Fleets'),
+            Text('Fleet strength [1, 2, 3] jumps away')
+        ])
         for sys_id in sys_id_list:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
-            print "%-20s: %s" % (system, sys_status)
+            threat_table.add_row([
+                system,
+                "Yes" if sys_status.get('currently_visible', False) else "No",
+                sys_status.get('totalThreat', 0),
+                sys_status.get('monsterThreat', 0),
+                sys_status.get('fleetThreat', 0),
+                sys_status.get('planetThreat', 0),
+                [sys_status.get('neighborThreat', 0.0), sys_status.get('jump2_threat', 0.0),
+                 sys_status.get('jump3_threat', 0.0)]
+            ])
+            defense_table.add_row([
+                system,
+                sys_status.get('all_local_defenses', 0.0),
+                sys_status.get('mydefenses', {}).get('overall', 0.0),
+                sys_status.get('myFleetRating', 0.0),
+                [sys_status.get('my_neighbor_rating', 0.0), sys_status.get('my_jump2_rating', 0.0),
+                 sys_status.get('my_jump3_rating', 0.0)]
+            ])
+        threat_table.print_table()
+        defense_table.print_table()
 
     def assess_planet_threat(self, pid, sighting_age=0):
         sighting_age += 1  # play it safe
@@ -250,7 +275,7 @@ class AIstate(object):
         return actual_supply, near_supply
 
     def update_system_status(self):
-        print"-------\nUpdating System Threats\n---------"
+        print 10 * "=", "Updating System Threats", 10 * "="
         universe = fo.getUniverse()
         empire = fo.getEmpire()
         empire_id = fo.empireID()
@@ -411,8 +436,8 @@ class AIstate(object):
             # TODO: track visibility across turns in order to distinguish the blip of visibility in (losing) combat,
             # which FO currently treats as being for the previous turn, partially superseding the previous visibility for that turn
             if not partial_vis_turn == current_turn:  # (universe.getVisibility(sys_id, self.empire_id) >= fo.visibility.partial):
-                print "System %s currently not visible" % system
                 sys_status.setdefault('local_fleet_threats', set())
+                sys_status['currently_visible'] = False
                 # print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sys_id, sys_status.get('name', "name unknown"), partial_vis_turn, currentTurn)
                 sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 0.98 * sys_status.get('fleetThreat', 0), 2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
                 sys_status['enemy_threat'] = int(max(enemy_rating, 0.98 * sys_status.get('enemy_threat', 0), 1.1 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
@@ -420,7 +445,7 @@ class AIstate(object):
                 # sys_status['totalThreat'] = ((pattack + enemy_attack + monster_attack) ** 0.8) * ((phealth + enemy_health + monster_health)** 0.6)  # reevaluate this
                 sys_status['totalThreat'] = max(FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]), 2 * lost_fleet_rating, 0.98 * sys_status.get('totalThreat', 0))
             else:  # system considered visible #TODO: reevaluate as visibility rules change
-                print "System %s currently visible" % system
+                sys_status['currently_visible'] = True
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 2 * lost_fleet_rating - monster_rating))  # includes mobile monsters
                 if verbose:
@@ -467,8 +492,8 @@ class AIstate(object):
                 for sys2id in seta:
                     setb.update(self.systemStatus.get(sys2id, {}).get('neighbors', set()))
             jump2ring = jumps2 - neighbors - {sys_id}
-            jump3ring = jumps3 - jumps2
-            jump4ring = jumps4 - jumps3
+            jump3ring = jumps3 - jumps2 - neighbors - {sys_id}
+            jump4ring = jumps4 - jumps3  - jumps2 - neighbors - {sys_id}
             sys_status['2jump_ring'] = jump2ring
             sys_status['3jump_ring'] = jump3ring
             sys_status['4jump_ring'] = jump4ring
@@ -854,23 +879,14 @@ class AIstate(object):
         universe = fo.getUniverse()
         ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
         fleet_list = sorted(list(self.__fleetRoleByID))
-        unaccounted_fleets = set(ok_fleets) - set(fleet_list)
         ship_count = 0
-        print "----------------------------------------------------------------------------------"
-        print "In CleanFleetRoles %s" % fleet_list
-        print "-----------"
-        print "Empire-owned fleet_list : %s" % ok_fleets
-        print "-----------"
-        if unaccounted_fleets:
-            print "Fleets unaccounted for in Empire Records:", unaccounted_fleets
-        print "----------------------------------------------------------------------------------"
         min_threat_rating = {'overall': MilitaryAI.MinThreat, 'attack': MilitaryAI.MinThreat ** 0.5, 'health': MilitaryAI.MinThreat ** 0.5}
         fighters = {(0, ((0, 0),), 0.0, 5.0): [0]}  # start with a dummy entry
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
 
         fleet_table = Table([
-            Text('fleet'), Float('old rating'), Float('new rating'),
-            Text('location'), Text('destination'), Text('summary')
+            Text('Fleet'), Float('Old rating'), Float('New rating'),
+            Text('Location'), Text('Destination'), Text('Summary')
         ])
         for fleet_id in fleet_list:
             status = self.fleetStatus.setdefault(fleet_id, {})
@@ -913,7 +929,7 @@ class AIstate(object):
                         rating.get('overall', 0),
                         new_rating.get('overall', 0),
                         this_sys or 'starlane',
-                        next_sys or 'starlane',
+                        next_sys or '-',
                         rating.get('summary', None)
                     ])
 
@@ -938,7 +954,6 @@ class AIstate(object):
         self.shipCount = ship_count
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
         self.__empire_standard_fighter = std_fighter
-        print "------------------------"
         # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", ship_count
         print "Empire standard fighter summary: ", std_fighter
@@ -963,15 +978,24 @@ class AIstate(object):
 
     def split_new_fleets(self):
         """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
-
-        print "Review of current Fleet Role/Mission records:"
-        print "--------------------"
-        print "Map of Roles keyed by Fleet ID: %s" % self.get_fleet_roles_map()
-        print "--------------------"
-        print "Map of Missions keyed by ID:"
-        for item in self.get_fleet_missions_map().items():
-            print "%-5d: %s" % item
-        print "--------------------"
+        universe = fo.getUniverse()
+        mission_table = Table([Text('Fleet'), Text('Mission'), Text('Ships'), Text('Rating'), Text('Target')],
+                              table_name="Fleet Mission Review from Last Turn")
+        for fleet_id, mission in self.get_fleet_missions_map().items():
+            fleet = universe.getFleet(fleet_id)
+            if not fleet:
+                continue
+            if not mission:
+                mission_table.add_row([fleet])
+            else:
+                mission_table.add_row([
+                    fleet,
+                    mission.type or "None",
+                    len(fleet.shipIDs),
+                    self.get_rating(fleet_id).get('overall', 0),
+                    mission.target or "-"
+                ])
+        mission_table.print_table()
         # TODO: check length of fleets for losses or do in AIstat.__cleanRoles
         known_fleets = self.get_fleet_roles_map()
         self.newlySplitFleets.clear()
@@ -979,7 +1003,6 @@ class AIstate(object):
         fleets_to_split = [fleet_id for fleet_id in FleetUtilsAI.get_empire_fleet_ids() if fleet_id not in known_fleets]
 
         if fleets_to_split:
-            universe = fo.getUniverse()
             print "Splitting new fleets"
             for fleet_id in fleets_to_split:
                 fleet = universe.getFleet(fleet_id)
