@@ -287,7 +287,6 @@ void TextControl::RecomputeLineData() {
     Pt text_sz = m_font->TextExtent(m_line_data);
     m_text_ul = Pt();
     m_text_lr = text_sz;
-    AdjustMinimumSize();
     PurgeCache();
     if (m_format & FORMAT_NOWRAP) {
         Resize(text_sz);
