@@ -7,7 +7,7 @@ BASIC_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
-            priority = [[DEFAULT_PRIORITY]]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
 
         EffectsGroup      // removes residual production from a dead planet
