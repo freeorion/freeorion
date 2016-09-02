@@ -489,11 +489,11 @@ namespace {
         db.Add<std::string>("UI.sound.sidepanel-open",          UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),           (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
 
         // fonts
-        db.Add<std::string>("UI.font",          UserStringNop("OPTIONS_DB_UI_FONT"),                       (GetRootDataDir() / "default" / "DejaVuSans.ttf").string());
-        db.Add<std::string>("UI.font-bold",     UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                  (GetRootDataDir() / "default" / "DejaVuSans-Bold.ttf").string());
-        db.Add("UI.font-size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  15,                     RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font",    UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                 (GetRootDataDir() / "default" / "DejaVuSans.ttf").string());
-        db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                     RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.font",          UserStringNop("OPTIONS_DB_UI_FONT"),                       (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Regular.ttf").string());
+        db.Add<std::string>("UI.font-bold",     UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                  (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
+        db.Add("UI.font-size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  16,                     RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font",    UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                 (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Regular.ttf").string());
+        db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                     RangedValidator<int>(4, 40));
 
         // colors
         db.Add("UI.wnd-color",                  UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  StreamableColor(GG::Clr(35, 35, 35, 240)),      Validator<StreamableColor>());
