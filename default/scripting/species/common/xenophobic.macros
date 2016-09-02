@@ -31,15 +31,16 @@ XENOPHOBIC_SELF
                 SetTargetResearch value = Value * 0.9
                 SetTargetHappiness value = Value - (
                     Count condition = And [
-                    PopulationCenter
-                    WithinStarlaneJumps jumps = 5 condition = Source
-                    OwnedBy empire = Source.Owner
-                    Not OR [ 
-                        Species name = Source.Species
-                        Species name = "SP_EXOBOT"
+                        PopulationCenter
+                        OwnedBy empire = Source.Owner
+                        Not OR [ 
+                            Species name = Source.Species
+                            Species name = "SP_EXOBOT"
+                        ]
+                        Not Population high = 0
+                        Not Contains Building name = "BLD_CONC_CAMP"
+                        WithinStarlaneJumps jumps = 5 condition = Source
                     ]
-                    Not Population high = 0
-                ]
                 )
             ]
 
