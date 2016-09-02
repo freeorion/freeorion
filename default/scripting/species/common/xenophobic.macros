@@ -1,9 +1,12 @@
 XENOPHOBIC_SELF
-'''     EffectsGroup
+'''
+        // Give the concentration camp tech at game start
+        EffectsGroup
             scope = Source
             activation = Turn high = 0
             effects = GiveEmpireTech name = "CON_CONC_CAMP"
 
+        // Give malus to industry, research and happiness for other species nearby
         EffectsGroup
             scope = Source
             activation = And [
@@ -28,18 +31,20 @@ XENOPHOBIC_SELF
                 SetTargetResearch value = Value * 0.9
                 SetTargetHappiness value = Value - (
                     Count condition = And [
-                    PopulationCenter
-                    WithinStarlaneJumps jumps = 5 condition = Source
-                    OwnedBy empire = Source.Owner
-                    Not OR [ 
-                        Species name = Source.Species
-                        Species name = "SP_EXOBOT"
+                        PopulationCenter
+                        OwnedBy empire = Source.Owner
+                        Not OR [ 
+                            Species name = Source.Species
+                            Species name = "SP_EXOBOT"
+                        ]
+                        Not Population high = 0
+                        Not Contains Building name = "BLD_CONC_CAMP"
+                        WithinStarlaneJumps jumps = 5 condition = Source
                     ]
-                    Not Population high = 0
-                ]
                 )
             ]
 
+        // Give a pop malus for self-sustaining xenophobic species based on the number of nearby planets with other species
         EffectsGroup
             scope = Source
             activation = And [
@@ -49,10 +54,17 @@ XENOPHOBIC_SELF
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetPopulation value = max(Value * (0.6 + (0.4 * (0.8 ^ 
-                Count condition = And [
+            effects = SetTargetPopulation value = Value - min(
+                    max(Value, 0) * 0.4 * (1 - 0.8^[[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]]),
+                    3 * Target.SizeAsDouble  // Cap malus at the self-sustaining bonus
+                )
+'''
+
+XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
+'''
+Count condition = And [
                     PopulationCenter
-                    Not OR [ 
+                    Not OR [
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
                     ]
@@ -63,13 +75,11 @@ XENOPHOBIC_SELF
                               condition = ExploredByEmpire
                                           empire = Source.Owner
                 ]
-                ) ) ), (Value - 3 * Target.SizeAsDouble)) // Sets the pop malus dependent on the number of other species nearby up to a max of the self sustaining bonus
-
 '''
 
 // single argument should be the name of the species capitalized
 XENOPHOBIC_OTHER
-'''     EffectsGroup
+'''     EffectsGroup 
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
