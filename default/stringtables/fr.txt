@@ -5455,13 +5455,13 @@ EFFECT_STARGATE_LABEL
 Utilisation Stargate
 
 EFFECT_PLANET_DRIVE
-Dans %system% : la planète %planet% est arrivée à destination grâce à son [[encyclopedia BLD_PLANET_DRIVE]].
+Dans %system% : la planète %planet% est arrivée à destination grâce à son [[buildingtype BLD_PLANET_DRIVE]].
 
 EFFECT_PLANET_DRIVE_LABEL
 Réussite Navigation Planétaire
 
 SITREP_PLANET_DRIVE_FAILURE
-Dans %system% : en raison de l'absence d'un [[encyclopedia SPY_LIGHTHOUSE]] à proximité, le [[encyclopedia BLD_PLANET_DRIVE]] de la planète %planet% a été l'objet d'un disfonctionnement fatal lors de la phase d'arrivée, causant la destruction de la planète entière!
+Dans %system% : en raison de l'absence d'un [[buildingtype SPY_LIGHTHOUSE]] à proximité, le [[buildingtype BLD_PLANET_DRIVE]] de la planète %planet% a été l'objet d'un disfonctionnement fatal lors de la phase d'arrivée, causant la destruction de la planète entière!
 
 SITREP_PLANET_DRIVE_FAILURE_LABEL
 Échec Navigation Planétaire
