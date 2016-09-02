@@ -316,6 +316,10 @@ private:
     void RefreshCache();
     void PurgeCache();
 
+    /** Recompute line data, code points, text extent and minusable size cache when
+        m_text_elements changes.*/
+    void RecomputeLineData();
+
     std::string                 m_text;
     Flags<TextFormat>           m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
     Clr                         m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)

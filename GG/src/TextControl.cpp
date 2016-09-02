@@ -251,21 +251,8 @@ void TextControl::SetText(const std::string& str)
     if (!m_font)
         return;
 
-    m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
     m_text_elements = m_font->ExpensiveParseFromTextToTextElements(m_text, m_format);
-    m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
-    Pt text_sz = m_font->TextExtent(m_line_data);
-    m_text_ul = Pt();
-    m_text_lr = text_sz;
-    AdjustMinimumSize();
-    PurgeCache();
-    if (m_format & FORMAT_NOWRAP) {
-        Resize(text_sz);
-    } else {
-        RecomputeTextBounds();
-    }
-
-    m_cached_minusable_size_width = X0;
+    RecomputeLineData();
 }
 
 void TextControl::SetText(const std::string& str,
@@ -275,8 +262,6 @@ void TextControl::SetText(const std::string& str,
         return;
     m_text = str;
 
-    m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
-
     m_text_elements = text_elements;
     for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
          it != m_text_elements.end(); ++it)
@@ -284,26 +269,18 @@ void TextControl::SetText(const std::string& str,
         (*it)->Bind(m_text);
     }
 
-    if (!m_font)
-        return;
-
-    m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
-    Pt text_sz = m_font->TextExtent(m_line_data);
-    m_text_ul = Pt();
-    m_text_lr = text_sz;
-    AdjustMinimumSize();
-    PurgeCache();
-    if (m_format & FORMAT_NOWRAP) {
-        Resize(text_sz);
-    } else {
-        RecomputeTextBounds();
-    }
-
-    m_cached_minusable_size_width = X0;
+    RecomputeLineData();
 }
 
 void TextControl::ChangeTemplatedText(const std::string& new_text, size_t targ_offset) {
     m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
+    RecomputeLineData();
+}
+
+void TextControl::RecomputeLineData() {
+    if (!m_font)
+        return;
+
     m_code_points = CPSize(utf8::distance(m_text.begin(), m_text.end()));
 
     m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
