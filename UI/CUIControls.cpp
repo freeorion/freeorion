@@ -21,6 +21,7 @@
 #include <boost/regex.hpp>
 
 #include <limits>
+#include <iomanip>
 
 
 namespace {
@@ -1977,7 +1978,10 @@ void FPSIndicator::Render() {
         int new_FPS = static_cast<int>(GG::GUI::GetGUI()->FPS());
         if (m_displayed_FPS != new_FPS) {
             m_displayed_FPS = new_FPS;
-            SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % m_displayed_FPS));
+            // Keep the ss width uniform (2) to prevent re-layout when size changes cause ChildSizeOrMinSizeOrMaxSizeChanged()
+            std::stringstream ss;
+            ss << std::setw(2) << std::right << boost::lexical_cast<std::string>(m_displayed_FPS);
+            ChangeTemplatedText(ss.str(), 0);
         }
         TextControl::Render();
     }
