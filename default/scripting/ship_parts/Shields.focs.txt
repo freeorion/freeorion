@@ -54,6 +54,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
+    tags = "CTRL_SKIP_REDUNDANT_FILTER"
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
         [[SHIELD_STACKING]]     //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT

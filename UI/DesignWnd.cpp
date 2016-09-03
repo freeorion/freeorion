@@ -617,8 +617,10 @@ bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_
         return map_it->second;
 
     bool result = true;
-    if (check_part->Name() == "SH_MULTISPEC" || ref_part->Name() == "SH_MULTISPEC")
-        result = false;
+
+    if (check_part->Tags().count(TAG_SKIP_REDUNDANT_FILTER) > 0 ||
+        ref_part->Tags().count(TAG_SKIP_REDUNDANT_FILTER) > 0)
+    { result = false; }
 
     const Condition::ConditionBase* check_part_loc = check_part->Location();
     const Condition::ConditionBase* ref_part_loc = ref_part->Location();
