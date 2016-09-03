@@ -906,10 +906,6 @@ void SaveFileDialog::UpdatePreviewList() {
 
     m_file_list->Clear();
 
-    // Needed because there is a bug in ListBox, where the headers
-    // never resize to less wide
-    m_file_list->ResetColHeaders();
-
     // If no browsing, no reloading
     if (!m_server_previews) {
         m_file_list->LoadSaveGamePreviews(FilenameToPath(GetDirPath()), m_extension);
