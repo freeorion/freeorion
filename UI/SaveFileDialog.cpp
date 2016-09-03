@@ -386,6 +386,9 @@ public:
                                      GG::Y(SAVE_FILE_CELL_MARGIN));
     }
 
+    /** Forces the columns to column widths not defined by ListBox. Needs to be called after any
+        interaction with the ListBox base class that sets the column widths back to those defined
+        by SetColWidths().*/
     void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
         GG::Layout* layout = GetLayout();
         if (!layout)
@@ -474,21 +477,29 @@ public:
     /// @param [in] previews The preview data
     void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
-        for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it)
-            Insert(new SaveFileRow(*it, m_visible_columns, m_columns, tooltip_delay));
+        for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it) {
+            SaveFileRow* row = new SaveFileRow(*it, m_visible_columns, m_columns, tooltip_delay);
+            Insert(row);
+            row->AdjustColumns(m_visible_columns);
+        }
     }
 
     void LoadDirectories(const fs::path& path) {
         fs::directory_iterator end_it;
-        if (path.has_parent_path() && path.parent_path() != path)
-            Insert(new SaveFileRow(".."));
+        if (path.has_parent_path() && path.parent_path() != path) {
+            SaveFileRow* row = new SaveFileRow("..");
+            Insert(row);
+            row->AdjustColumns(m_visible_columns);
+        }
 
         for (fs::directory_iterator it(path); it != end_it; ++it) {
             if (fs::is_directory(it->path())) {
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
-                Insert(new SaveFileRow(utf8_dir_name));
+                SaveFileRow* row = new SaveFileRow(utf8_dir_name);
+                Insert(row);
+                row->AdjustColumns(m_visible_columns);
 
                 //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
                 //std::string path_string;
