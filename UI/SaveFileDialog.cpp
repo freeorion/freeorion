@@ -387,8 +387,10 @@ public:
     }
 
     void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
+        GG::Layout* layout = GetLayout();
+        if (!layout)
+            return;
         if (Type() != DIRECTORY) {
-            GG::Layout* layout = GetLayout();
             for (unsigned int i = 0; i < columns.size(); ++i){
                 const SaveFileColumn& column = columns[i];
                 layout->SetColumnStretch ( i, column.Stretch() );
@@ -396,7 +398,6 @@ public:
             }
         } else {
             // Give the directory label at least all the room that the other columns demand anyway
-            GG::Layout* layout = GetLayout();
             GG::X sum(0);
             for (unsigned int i = 0; i < columns.size(); ++i) {
                 const SaveFileColumn& column = columns[i];
