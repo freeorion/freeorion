@@ -52,6 +52,19 @@ namespace {
     const GG::Y         SLOT_CONTROL_HEIGHT(60);
     const int           PAD(3);
 
+    void AddOptions(OptionsDB& db) {
+        db.Add<float>("UI.ship-design.part-filters.ratio-bargain-min",
+                      UserStringNop("OPTIONS_DB_UI_DESIGN_PART_FILTER_MIN_BARGAIN"),
+                      1.0,     RangedStepValidator<float>(0.1, 1.0, 10.0));
+        db.Add<float>("UI.ship-design.part-filters.ratio-cost-max",
+                      UserStringNop("OPTIONS_DB_UI_DESIGN_PART_FILTER_MAX_COST"),
+                      1.0,     RangedStepValidator<float>(0.1, 1.0, 10.0));
+        db.Add<float>("UI.ship-design.part-filters.ratio-time-max",
+                      UserStringNop("OPTIONS_DB_UI_DESIGN_PART_FILTER_MAX_TIME"),
+                      1.0,     RangedStepValidator<float>(0.1, 1.0, 10.0));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
     boost::shared_ptr<GG::Texture>  SlotBackgroundTexture(ShipSlotType slot_type) {
         if (slot_type == SL_EXTERNAL)
@@ -434,11 +447,15 @@ protected:
                                     const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
+    void                    InitOptions();          ///< Initialize config variables from OptionsDB
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
     std::pair<bool, bool>   m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
     bool                    m_show_superfluous_parts;
 
     int                     m_previous_num_columns;
+    float                   m_ratio_bargain_min;
+    float                   m_ratio_cost_max;
+    float                   m_ratio_time_max;
 };
 
 PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
@@ -491,11 +508,20 @@ PartsListBox::PartsListBox(void) :
     m_part_classes_shown(),
     m_availabilities_shown(std::make_pair(false, false)),
     m_show_superfluous_parts(true),
-    m_previous_num_columns(-1)
+    m_previous_num_columns(-1),
+    m_ratio_bargain_min(1.0),
+    m_ratio_cost_max(1.0),
+    m_ratio_time_max(1.0)
 {
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
     SetStyle(GG::LIST_NOSEL);
+}
+
+void PartsListBox::InitOptions() {
+    m_ratio_bargain_min = GetOptionsDB().Get<float>("UI.ship-design.part-filters.ratio-bargain-min");
+    m_ratio_cost_max = GetOptionsDB().Get<float>("UI.ship-design.part-filters.ratio-cost-max");
+    m_ratio_time_max = GetOptionsDB().Get<float>("UI.ship-design.part-filters.ratio-time-max");
 }
 
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
@@ -615,43 +641,6 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
     if (redundancy_exclusion_list.empty())
         UserStringList("FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST", redundancy_exclusion_list);
 
-    static float min_bargain_ratio = -1.0;
-    static float max_cost_ratio = -1.0;
-    static float max_time_ratio = -1.0;
-
-    if (min_bargain_ratio == -1.0) {
-        min_bargain_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MIN_BARGAIN_RATIO")) {
-                float new_bargain_ratio = std::atof(UserString("FUNCTIONAL_MIN_BARGAIN_RATIO").c_str());
-                if (new_bargain_ratio > 1.0f)
-                    min_bargain_ratio = new_bargain_ratio;
-            }
-        } catch (...) {}
-    }
-
-    if (max_cost_ratio == -1.0) {
-        max_cost_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MAX_COST_RATIO")) {
-                float new_cost_ratio = std::atof(UserString("FUNCTIONAL_MAX_COST_RATIO").c_str());
-                if (new_cost_ratio > 1.0f)
-                    max_cost_ratio = new_cost_ratio;
-            }
-        } catch (...) {}
-    }
-
-    if (max_time_ratio == -1.0) {
-        max_time_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MAX_TIME_RATIO")) {
-                float new_time_ratio = std::atof(UserString("FUNCTIONAL_MAX_TIME_RATIO").c_str());
-                if (new_time_ratio > 1.0f)
-                    max_time_ratio = new_time_ratio;
-            }
-        } catch (...) {}
-    }
-
     for (std::vector<const PartType* >::iterator part_it = this_group.begin();
          part_it != this_group.end(); ++part_it)
     {
@@ -675,10 +664,13 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
             // adjusting the max cost ratio to 1.4 or higher, will allow, for example, for
             // Zortium armor to make Standard armor redundant.  Setting a min_bargain_ratio higher than one can keep
             // trivial bargains from blocking lower valued parts.
-            // TODO: move these values into default/customizations/common_user_customizations.txt  once that is supported
 
-            if ((cap_ratio > 1.0) && ((cost_ratio <= 1.0) || ((bargain_ratio >= min_bargain_ratio) && (cost_ratio <= max_cost_ratio))) &&
-                (time_ratio <= max_time_ratio) && PartALocationSubsumesPartB(checkPart, ref_part))
+            InitOptions();
+            if ((cap_ratio > 1.0) &&
+                ((cost_ratio <= 1.0) ||
+                 ((bargain_ratio >= m_ratio_bargain_min) && (cost_ratio <= m_ratio_cost_max))) &&
+                (time_ratio <= m_ratio_time_max) &&
+                PartALocationSubsumesPartB(checkPart, ref_part))
             {
                 //DebugLogger() << "Filtering " << checkPart->Name() << " because of " << ref_part->Name();
                 this_group.erase(part_it--);
