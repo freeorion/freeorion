@@ -1743,6 +1743,14 @@ Network port to use for server discovery.
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Network port to use for client-server messaging.
 
+OPTIONS_DB_UI_DESIGN_PART_FILTER_MIN_BARGAIN
+Minimum bargain ratio for filtering redundant ship parts in the design window.
+
+OPTIONS_DB_UI_DESIGN_PART_FILTER_MAX_COST
+Maximum cost ratio for filtering redundant ship parts in the design window.
+
+OPTIONS_DB_UI_DESIGN_PART_FILTER_MAX_TIME
+Maximum time ratio for filtering redundant ship parts in the design window.
 
 ##
 ## File dialog
