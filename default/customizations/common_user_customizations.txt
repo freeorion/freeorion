@@ -22,10 +22,6 @@
 ## The SH_MULTISPEC shield part is one such part; it as a strong stealth Effect, but unless excluded
 ## here the Black Shield can suppress it as redundant.
 
-FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST
-'''SH_MULTISPEC
-'''
-
 
 ## FUNCTIONAL_SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.

@@ -639,10 +639,6 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
 {
     /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
 
-    static std::list<std::string> redundancy_exclusion_list;
-    if (redundancy_exclusion_list.empty())
-        UserStringList("FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST", redundancy_exclusion_list);
-
     for (std::vector<const PartType* >::iterator part_it = this_group.begin();
          part_it != this_group.end(); ++part_it)
     {
