@@ -3955,10 +3955,10 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Coque : %2%
 Équipement : %3%
 
-[[encyclopedia DAMAGE_TITLE]] : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
-                   <encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
+Total [[encyclopedia DAMAGE_TITLE]] : %17%    [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+<encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
-         Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
+Colons à bord : %15%    [[encyclopedia TROOP_TITLE]] à bord : %16%
 
 Estimation force de combat (sans boucliers): %19$.f (%20$.2f par PP)
 Contre la plupart des armes et boucliers ennemis: %21$.f (%22$.2f par PP)
@@ -3981,10 +3981,10 @@ Coque: %2%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 Pour espèce : %18%
-             [[encyclopedia DAMAGE_TITLE]] : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
-                   <encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
+Total [[encyclopedia DAMAGE_TITLE]] : %17%    [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+<encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
-         Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
+Colons à bord : %15%    [[encyclopedia TROOP_TITLE]] à bord : %16%
 Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
 Contre les dommages %21$.1f et boucliers %22$.1f ennemis :  %23$.f   (%24$.2f par PP)
 '''
@@ -4456,10 +4456,15 @@ PHOTOTROPHIC_SPECIES_TEXT
 '''Les espèces phototropiques vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile et par la taille de leur planète - plus elles sont respectivement lumineuses ou grandes, plus le bénéfice est important. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
 
 Influence sur la population:
+
 * Étoile [[STAR_BLUE]]: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
+
 * Étoile [[STAR_WHITE]]: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
+
 * Étoile [[STAR_YELLOW]], Étoile [[STAR_ORANGE]]: (Aucune influence)
+
 * Étoile [[STAR_RED]], Étoile [[STAR_NEUTRON]]: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
+
 * [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
 
 SELF_SUSTAINING_SPECIES_TITLE
