@@ -448,7 +448,7 @@ const fs::path GetSaveDir() {
     if (options_save_dir.empty())
         options_save_dir = GetOptionsDB().GetDefault<std::string>("save-dir");
     //std::cout << "GetSaveDir dir: " << options_save_dir << " << valid UTF-8: " << utf8::is_valid(options_save_dir.begin(), options_save_dir.end()) << std::endl;
-    DebugLogger() << "GetSaveDir dir: " << options_save_dir << " << valid UTF-8: " << utf8::is_valid(options_save_dir.begin(), options_save_dir.end());
+    //DebugLogger() << "GetSaveDir dir: " << options_save_dir << " << valid UTF-8: " << utf8::is_valid(options_save_dir.begin(), options_save_dir.end());
     return FilenameToPath(options_save_dir);
 }
 
