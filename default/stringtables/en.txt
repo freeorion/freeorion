@@ -3955,7 +3955,7 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Hull: %2%
 Parts: %3%
 
-Total Attack: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+Total [[encyclopedia DAMAGE_TITLE]]: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
 [[encyclopedia STARLANE_SPEED_TITLE]]: %13%    [[encyclopedia FUEL_TITLE]] Capacity: %14%
 [[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
 Colonization Capacity: %15%    [[encyclopedia TROOP_TITLE]]: %16%
@@ -3981,7 +3981,7 @@ Parts: %3%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 For species: %18%
-Total Attack: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+Total [[encyclopedia DAMAGE_TITLE]]: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
 [[encyclopedia STARLANE_SPEED_TITLE]]: %13%    [[encyclopedia FUEL_TITLE]] Capacity: %14%
 [[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
 Colonization Capacity: %15%    [[encyclopedia TROOP_TITLE]]: %16%
@@ -4456,10 +4456,15 @@ PHOTOTROPHIC_SPECIES_TEXT
 '''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star and the planet size - the brighter or bigger, the better. Growth specials do not benefit them.
 
 Population changes:
+
 * [[STAR_BLUE]] star: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
+
 * [[STAR_WHITE]] star: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
+
 * [[STAR_YELLOW]] star, [[STAR_ORANGE]] star: (No changes)
+
 * [[STAR_RED]] star, [[STAR_NEUTRON]] star: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
+
 * [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
 
 SELF_SUSTAINING_SPECIES_TITLE
