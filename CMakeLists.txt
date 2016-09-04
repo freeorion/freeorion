@@ -18,7 +18,7 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 ########################################
 project(FreeOrion)
 
-set(FreeOrion_VERSION 0.4.5+)
+set(FreeOrion_VERSION 0.4.6+)
 
 set(MINIMUM_BOOST_VERSION 1.54.0)
 set(PYTHON_VERSION 2.7)
