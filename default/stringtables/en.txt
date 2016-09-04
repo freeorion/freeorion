@@ -1725,6 +1725,11 @@ Network port to use for server discovery.
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Network port to use for client-server messaging.
 
+OPTIONS_DB_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
+Increase the max per-turn allocation for items in the production queue
+
+OPTIONS_DB_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
+Increase the final turn production cap for items in the build queue
 
 ##
 ## File dialog
