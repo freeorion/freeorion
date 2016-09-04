@@ -43,5 +43,3 @@ content changes.  See file for details.
 **Required file and content.**
 * empire_colors.xml  -  Color options available for empires to select from. 
 **This file containing at least one GG::Clr node is required.**
-* global_settings.txt  -  Contains entries which control the game mechanics. 
-See file for details.  **This file and the entries it contains are required.**
