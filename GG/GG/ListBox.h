@@ -180,7 +180,7 @@ public:
 
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
     protected:
-        void AdjustLayout(bool adjust_for_push_back = false);
+        void AdjustLayout();
         virtual void           RClick(const Pt& pt, GG::Flags<GG::ModKey> mod);
 
         std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)

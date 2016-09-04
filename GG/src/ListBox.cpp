@@ -360,7 +360,7 @@ void ListBox::Row::SetMargin(unsigned int margin)
     AdjustLayout();
 }
 
-void ListBox::Row::AdjustLayout(bool adjust_for_push_back/* = false*/)
+void ListBox::Row::AdjustLayout()
 {
     if (m_ignore_adjust_layout)
         return;
