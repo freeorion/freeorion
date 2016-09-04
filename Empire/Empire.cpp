@@ -33,35 +33,21 @@ namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
 
-    float GetQueueFrontloadFactor() {
-        static float front_load_factor = -1.0;
-        if (front_load_factor == -1.0) {
-            front_load_factor = 0.0;
-            try {
-                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
-                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
-                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
-                        front_load_factor = new_front_factor;
-                }
-            } catch (...) {}
-        }
-        return front_load_factor;
+    void AddOptions(OptionsDB& db) {
+        db.Add<float>("production.queue.frontload-factor",
+                      UserStringNop("OPTIONS_DB_PRODUCTION_QUEUE_FRONTLOAD_FACTOR"),
+                      0.0f,     RangedStepValidator<float>(0.025f, 0.0f, 0.3f));
+        db.Add<float>("production.queue.topping-up-factor",
+                      UserStringNop("OPTIONS_DB_PRODUCTION_QUEUE_TOPPING_UP_FACTOR"),
+                      0.0f,     RangedStepValidator<float>(0.025f, 0.0f, 0.3f));
     }
+    bool temp_bool = RegisterOptions(&AddOptions);
 
-    float GetQueueToppingFactor() {
-        static float topping_up_factor = -1.0;
-        if (topping_up_factor == -1.0) {
-            topping_up_factor = 0.0;
-            try {
-                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
-                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
-                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
-                        topping_up_factor = new_front_factor;
-                }
-            } catch (...) {}
-        }
-        return topping_up_factor;
-    }
+    float GetQueueFrontloadFactor()
+    { return GetOptionsDB().Get<float>("production.queue.frontload-factor"); }
+
+    float GetQueueToppingFactor()
+    { return GetOptionsDB().Get<float>("production.queue.topping-up-factor"); }
 
 // FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt values that affect how the ProductionQueue will limit
 // allocation towards building a given item on a given turn.  The base amount of maximum allocation per turn (if the player has enough PP available) is the item's total
