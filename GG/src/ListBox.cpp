@@ -27,6 +27,7 @@
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+#include <GG/DeferredLayout.h>
 #include <GG/Scroll.h>
 #include <GG/StaticGraphic.h>
 #include <GG/StyleFactory.h>
@@ -379,7 +380,7 @@ void ListBox::Row::AdjustLayout()
     if (!nonempty_cell_found)
         return;
 
-    SetLayout(new Layout(X0, Y0, Width(), Height(), 1, m_cells.size(), m_margin, m_margin));
+    SetLayout(new DeferredLayout(X0, Y0, Width(), Height(), 1, m_cells.size(), m_margin, m_margin));
     Layout* layout = GetLayout();
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
         layout->SetMinimumColumnWidth(i, m_col_widths[i]);
