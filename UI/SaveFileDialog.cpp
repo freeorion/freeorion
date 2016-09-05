@@ -423,10 +423,8 @@ public:
     {
         m_columns = SaveFileColumn::GetColumns();
         m_visible_columns = FilterColumns();
+        ManuallyManageColProps();
         SetNumCols(m_visible_columns.size());
-        for (unsigned int i = 0; i < m_visible_columns.size(); ++i)
-        { SetColWidth(i, GG::X1); }
-        LockColWidths();
         SetColHeaders(new SaveFileRow(m_visible_columns));
         SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
         SetVScrollWheelIncrement(WHEEL_INCREMENT);
