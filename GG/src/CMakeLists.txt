@@ -37,6 +37,7 @@ add_library(GiGi
     GroupBox.cpp
     GUI.cpp
     Layout.cpp
+    DeferredLayout.cpp
     ListBox.cpp
     Menu.cpp
     MultiEdit.cpp
