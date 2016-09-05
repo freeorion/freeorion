@@ -343,6 +343,15 @@ void ListBox::Row::SetColAlignments(const std::vector<Alignment>& aligns)
     AdjustLayout();
 }
 
+void ListBox::Row::ClearColAlignments()
+{
+    if (m_col_alignments.empty())
+        return;
+
+    m_col_alignments.clear();
+    AdjustLayout();
+}
+
 void ListBox::Row::SetColWidths(const std::vector<X>& widths)
 {
     if (widths == m_col_widths)
@@ -434,6 +443,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_last_row_browsed(m_rows.end()),
     m_first_row_shown(m_rows.end()),
     m_first_col_shown(0),
+    m_num_cols(1),
     m_cell_margin(2),
     m_int_color(interior),
     m_hilite_color(CLR_SHADOW),
@@ -451,7 +461,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_auto_scrolling_right(false),
     m_auto_scroll_timer(250),
     m_normalize_rows_on_insert(true),
-    m_manage_column_widths(true),
+    m_manage_column_props(true),
     m_add_padding_at_end(true),
     m_iterator_being_erased(0)
 {
@@ -601,13 +611,13 @@ std::size_t ListBox::NumRows() const
 { return m_rows.size(); }
 
 std::size_t ListBox::NumCols() const
-{ return m_col_widths.size(); }
+{ return m_num_cols; }
 
 bool ListBox::KeepColWidths() const
 { return m_keep_col_widths; }
 
-bool ListBox::ManuallyManagingColWidths() const
-{ return !m_manage_column_widths; }
+bool ListBox::ManuallyManagingColProps() const
+{ return !m_manage_column_props; }
 
 std::size_t ListBox::SortCol() const
 { return m_sort_col; }
@@ -887,6 +897,9 @@ void ListBox::Clear()
     if (!m_keep_col_widths) { // remove column widths and alignments, if needed
         m_col_widths.clear();
         m_col_alignments.clear();
+
+        if (m_manage_column_props)
+            m_num_cols = 1;
     }
 
     AdjustScrolls(false);
@@ -1080,7 +1093,8 @@ void ListBox::SetColHeaders(Row* r)
         m_header_row = r;
         // if this column header is being added to an empty listbox, the listbox takes on some of the
         // attributes of the header, similar to the insertion of a row into an empty listbox; see Insert()
-        if (m_rows.empty() && m_col_widths.empty()) {
+        if (m_manage_column_props && m_rows.empty() && m_col_widths.empty()) {
+            m_num_cols = m_header_row->size();
             m_col_widths.resize(m_header_row->size(),
                                 (ClientSize().x - SCROLL_WIDTH) / static_cast<int>(m_header_row->size()));
             // put the remainder in the last column, so the total width == ClientSize().x - SCROLL_WIDTH
@@ -1102,6 +1116,8 @@ void ListBox::RemoveColHeaders()
 
 void ListBox::SetNumCols(std::size_t n)
 {
+    assert(n);
+    m_num_cols = n;
     if (m_col_widths.size()) {
         m_col_widths.resize(n);
         m_col_alignments.resize(n);
@@ -1127,6 +1143,9 @@ void ListBox::SetNumCols(std::size_t n)
 
 void ListBox::SetColWidth(std::size_t n, X w)
 {
+    if (m_num_cols < n + 1) {
+        m_num_cols = n + 1;
+    }
     m_col_widths[n] = w;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         (*it)->SetColWidth(n, w);
@@ -1137,6 +1156,9 @@ void ListBox::SetColWidth(std::size_t n, X w)
 void ListBox::SetSortCol(std::size_t n)
 {
     bool needs_resort = m_sort_col != n && !(m_style & LIST_NOSORT);
+    if (m_num_cols < n + 1) {
+        m_num_cols = n + 1;
+    }
     m_sort_col = n;
     if (needs_resort)
         Resort();
@@ -1151,18 +1173,18 @@ void ListBox::SetSortCmp(const boost::function<bool (const Row&, const Row&, std
 
 void ListBox::LockColWidths()
 {
-    m_manage_column_widths = true;
+    m_manage_column_props = true;
     m_keep_col_widths = true;
 }
 
 void ListBox::UnLockColWidths()
 {
-    m_manage_column_widths = true;
+    m_manage_column_props = true;
     m_keep_col_widths = false;
 }
 
-void ListBox::ManuallyManageColWidths()
-{ m_manage_column_widths = false; }
+void ListBox::ManuallyManageColProps()
+{ m_manage_column_props = false; }
 
 void ListBox::SetColAlignment(std::size_t n, Alignment align)
 {
@@ -1599,8 +1621,12 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
 void ListBox::DefineColumnsAndAlignment(const Row& row)
 {
+    if (!m_manage_column_props)
+        return;
+
     const GG::X WIDTH = ClientSize().x - SCROLL_WIDTH;
 
+    m_num_cols = row.size();
     m_col_widths.resize(row.size());
     m_col_alignments.resize(row.size());
     GG::X total_width = GG::X0;
@@ -2213,15 +2239,18 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
 
 void ListBox::NormalizeRow(Row* row)
 {
+    assert(m_num_cols);
     Row::DeferAdjustLayout defer_adjust_layout(row);
-    row->resize(m_col_widths.size());
-    if (m_manage_column_widths)
-        row->SetColWidths(m_col_widths);
-    else
-        row->ClearColWidths();
-    row->SetColAlignments(m_col_alignments);
     row->SetMargin(m_cell_margin);
-    row->Resize(Pt(std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0), row->Height()));
+    if (m_manage_column_props) {
+        row->resize(m_num_cols);
+        row->SetColWidths(m_col_widths);
+        row->SetColAlignments(m_col_alignments);
+        row->Resize(Pt(std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0), row->Height()));
+    } else {
+        row->ClearColWidths();
+        row->ClearColAlignments();
+    }
 }
 
 ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
