@@ -82,7 +82,9 @@ extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be
     LockColWidths() to prevent empty ListBoxes from taking on a new row's
     number of columns.  To create a ListBox with user-defined widths, use the
     ctor designed for that, or call SetNumCols(), set individual widths with
-    SetColWidth(), and lock the column widths with LockColWidths().
+    SetColWidth(), and lock the column widths with LockColWidths(). To create a
+    ListBox and manually control the column widths use
+    ManuallyManageColWidths() and set the number of columns with SetNumCols().
 
     <br>Note that Rows are stored by pointer.  If you want to move a Row from
     one ListBox to another, use GetRow() and Insert().
@@ -175,6 +177,7 @@ public:
         void         SetColWidth(std::size_t n, X width); ///< sets the width of the \a nth cell of this Row; not range checked
         void         SetColAlignments(const std::vector<Alignment>& aligns); ///< sets the horizontal alignment of all the Controls in this Row; not range checked
         void         SetColWidths(const std::vector<X>& widths); ///< sets all the widths of the cells of this Row; not range checked
+        void         ClearColWidths(); ///< Clear the minimum widths of the cells of this Row.
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
         //@}
 
@@ -273,6 +276,9 @@ public:
 
     /** Returns true iff column widths are fixed \see LockColWidths() */
     bool            KeepColWidths() const;
+
+    /** Return true if column width are not managed by ListBox. */
+    bool            ManuallyManagingColWidths() const;
 
     /** Returns the index of the column used to sort rows, when sorting is
         enabled.  \note The sort column is not range checked when it is set by
@@ -395,6 +401,11 @@ public:
     /** Allows the number of columns to be determined by the first row added to
         an empty ListBox */
     void            UnLockColWidths();
+
+    /** Set ListBox to stop managing column widths.  The number of columns can be set with
+        SetColWidth(), but widths of individual rows columns or the header will not be managed by
+        ListBox.*/
+    void            ManuallyManageColWidths();
 
     /** Sets the alignment of column \a n to \a align; not range-checked */
     void            SetColAlignment(std::size_t n, Alignment align);
@@ -569,6 +580,7 @@ private:
     Timer           m_auto_scroll_timer;
 
     bool            m_normalize_rows_on_insert;
+    bool            m_manage_column_widths;
 
     bool            m_add_padding_at_end;
 

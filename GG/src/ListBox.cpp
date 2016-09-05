@@ -352,6 +352,15 @@ void ListBox::Row::SetColWidths(const std::vector<X>& widths)
     AdjustLayout();
 }
 
+void ListBox::Row::ClearColWidths()
+{
+    if (m_col_widths.empty())
+        return;
+
+    m_col_widths.clear();
+    AdjustLayout();
+}
+
 void ListBox::Row::SetMargin(unsigned int margin)
 {
     if (margin == m_margin)
@@ -383,7 +392,8 @@ void ListBox::Row::AdjustLayout()
     SetLayout(new DeferredLayout(X0, Y0, Width(), Height(), 1, m_cells.size(), m_margin, m_margin));
     Layout* layout = GetLayout();
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
-        layout->SetMinimumColumnWidth(i, m_col_widths[i]);
+        if (!m_col_widths.empty())
+            layout->SetMinimumColumnWidth(i, m_col_widths[i]);
         if (m_cells[i])
             layout->Add(m_cells[i], 0, i, m_row_alignment | m_col_alignments[i]);
     }
@@ -441,6 +451,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_auto_scrolling_right(false),
     m_auto_scroll_timer(250),
     m_normalize_rows_on_insert(true),
+    m_manage_column_widths(true),
     m_add_padding_at_end(true),
     m_iterator_being_erased(0)
 {
@@ -594,6 +605,9 @@ std::size_t ListBox::NumCols() const
 
 bool ListBox::KeepColWidths() const
 { return m_keep_col_widths; }
+
+bool ListBox::ManuallyManagingColWidths() const
+{ return !m_manage_column_widths; }
 
 std::size_t ListBox::SortCol() const
 { return m_sort_col; }
@@ -1136,10 +1150,19 @@ void ListBox::SetSortCmp(const boost::function<bool (const Row&, const Row&, std
 }
 
 void ListBox::LockColWidths()
-{ m_keep_col_widths = true; }
+{
+    m_manage_column_widths = true;
+    m_keep_col_widths = true;
+}
 
 void ListBox::UnLockColWidths()
-{ m_keep_col_widths = false; }
+{
+    m_manage_column_widths = true;
+    m_keep_col_widths = false;
+}
+
+void ListBox::ManuallyManageColWidths()
+{ m_manage_column_widths = false; }
 
 void ListBox::SetColAlignment(std::size_t n, Alignment align)
 {
@@ -2192,7 +2215,10 @@ void ListBox::NormalizeRow(Row* row)
 {
     Row::DeferAdjustLayout defer_adjust_layout(row);
     row->resize(m_col_widths.size());
-    row->SetColWidths(m_col_widths);
+    if (m_manage_column_widths)
+        row->SetColWidths(m_col_widths);
+    else
+        row->ClearColWidths();
     row->SetColAlignments(m_col_alignments);
     row->SetMargin(m_cell_margin);
     row->Resize(Pt(std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0), row->Height()));
