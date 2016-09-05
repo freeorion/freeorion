@@ -2299,11 +2299,8 @@ private:
     }
 
     void            InitRowSizes() {
-        // preinitialize listbox/row column widths, because what
-        // ListBox::Insert does on default is not suitable for this case
         SetNumCols(1);
-        SetColWidth(0, GG::X0);
-        LockColWidths();
+        ManuallyManageColProps();
     }
 
     iterator    m_highlighted_row_it;
@@ -2337,11 +2334,8 @@ public:
 
         // repopulate list with ships in current fleet
 
-        // preinitialize listbox/row column widths, because what
-        // ListBox::Insert does on default is not suitable for this case
         SetNumCols(1);
-        SetColWidth(0, GG::X0);
-        LockColWidths();
+        ManuallyManageColProps();
 
         int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
         const std::set<int>& this_client_known_destroyed_objects =
