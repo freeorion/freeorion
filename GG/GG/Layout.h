@@ -242,6 +242,10 @@ protected:
     virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
     virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
     virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+
+    /** Do all the layout work*/
+    virtual void DoLayout(const Pt& ul, const Pt& lr);
+    virtual void   RedoLayout();
     //@}
 
 private:
@@ -276,7 +280,6 @@ private:
     X      TotalMinWidth() const;
     Y      TotalMinHeight() const;
     void   ValidateAlignment(Flags<Alignment>& alignment);
-    void   RedoLayout();
     void   ChildSizeOrMinSizeOrMaxSizeChanged();
 
     std::vector<std::vector<Wnd*> > m_cells;
