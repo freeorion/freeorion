@@ -205,7 +205,8 @@ ListBox::Row::Row() :
     Control(X0, Y0, DEFAULT_ROW_WIDTH, DEFAULT_ROW_HEIGHT),
     m_row_alignment(ALIGN_VCENTER),
     m_margin(2),
-    m_ignore_adjust_layout(false)
+    m_ignore_adjust_layout(false),
+    m_is_normalized(false)
 {}
 
 ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
@@ -213,7 +214,8 @@ ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
     Control(X0, Y0, w, h),
     m_row_alignment(align),
     m_margin(margin),
-    m_ignore_adjust_layout(false)
+    m_ignore_adjust_layout(false),
+    m_is_normalized(false)
 { SetDragDropDataType(drag_drop_data_type); }
 
 ListBox::Row::~Row()
@@ -253,6 +255,9 @@ X ListBox::Row::ColWidth(std::size_t n) const
 
 unsigned int ListBox::Row::Margin() const
 { return m_margin; }
+
+bool ListBox::Row::IsNormalized() const
+{ return m_is_normalized; }
 
 void ListBox::Row::Render()
 {}
@@ -396,6 +401,9 @@ void ListBox::Row::SetMargin(unsigned int margin)
     m_margin = margin;
     AdjustLayout();
 }
+
+void ListBox::Row::SetNormalized(bool normalized)
+{ m_is_normalized = normalized; }
 
 void ListBox::Row::AdjustLayout()
 {

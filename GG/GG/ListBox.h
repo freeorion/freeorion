@@ -163,6 +163,8 @@ public:
         Alignment    ColAlignment(std::size_t n) const; ///< returns the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
         X            ColWidth(std::size_t n) const;     ///< returns the width of the \a nth cell of this Row; not range checked
         unsigned int Margin() const;                    ///< returns the amount of space left between the contents of adjacent cells, in pixels
+        /** Return true if the row is normalized.  Used by ListBox to track normalization.*/
+        bool         IsNormalized() const;
         //@}
 
         /** \name Mutators */ ///@{
@@ -183,6 +185,8 @@ public:
         void         ClearColWidths(); ///< Clear the minimum widths of the cells of this Row.
         void         SetColStretches(const std::vector<double>& stretches); ///< Set all column stretches.
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
+        /** Set normalized.  Used by ListBox to track normalization.*/
+        void         SetNormalized(bool normalized);
         //@}
 
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
@@ -198,6 +202,7 @@ public:
         unsigned int           m_margin;         ///< the amount of space left between the contents of adjacent cells, in pixels
 
         bool                   m_ignore_adjust_layout;
+        bool                   m_is_normalized;
 
         friend struct DeferAdjustLayout;
     };
