@@ -85,6 +85,8 @@ extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be
     SetColWidth(), and lock the column widths with LockColWidths(). To create a
     ListBox and manually control the column widths and alignment use
     ManuallyManageColProps() and set the number of columns with SetNumCols().
+    Use DefineColWidth() and DefineColAlignments() to set widths and
+    alignments from an exemplar row.
 
     <br>Note that Rows are stored by pointer.  If you want to move a Row from
     one ListBox to another, use GetRow() and Insert().
@@ -418,6 +420,12 @@ public:
       * they are. */
     void            NormalizeRowsOnInsert(bool enable = true);
 
+    /** Sets the column widths from an exemplar \p row.*/
+    void            DefineColWidths(const Row& row);
+
+    /** Sets the column alignments from an exemplar \p row.*/
+    void            DefineColAlignments(const Row& row);
+
     /** Sets whether to add padding at the end of the scrolls when the ListBox is
      *  bigger than the client area, so that any row can be scrolled all the way to
      *  the top (true), or only use as much space as it needs. */
@@ -502,7 +510,6 @@ protected:
     virtual bool    EventFilter(Wnd* w, const WndEvent& event);
 
     /** Define the number of columns, the column widths and alignment from \p row.*/
-    void            DefineColumnsAndAlignment(const Row& row);
     iterator        Insert(Row* row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     void            Insert(const std::vector<Row*>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
