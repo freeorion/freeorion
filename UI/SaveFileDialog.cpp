@@ -445,26 +445,6 @@ public:
         SetVScrollWheelIncrement(WHEEL_INCREMENT);
     }
 
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-        const GG::Pt old_size = Size();
-        CUIListBox::SizeMove(ul, lr);
-        if (old_size != Size())
-            RefreshRowSizes();
-    }
-
-    void RefreshRowSizes() {
-        ResetColHeaders();
-        const GG::Pt row_size = ListRowSize();
-        ColHeaders().Resize(row_size);
-        dynamic_cast<SaveFileRow*>(&ColHeaders())->AdjustColumns();
-        for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
-            SaveFileRow* row = dynamic_cast<SaveFileRow*>(*it);
-            if (row)
-                row->AdjustColumns();
-            (*it)->Resize(row_size);
-        }
-    }
-
     void ResetColHeaders() {
         RemoveColHeaders();
         SetColHeaders(new SaveFileHeaderRow(m_visible_columns));
@@ -951,8 +931,6 @@ void SaveFileDialog::UpdatePreviewList() {
         }
     }
 
-    // Forces the width to recompute
-    m_file_list->RefreshRowSizes();
     // HACK: Sometimes the first row is not drawn without this
     m_file_list->BringRowIntoView(m_file_list->begin());
 
