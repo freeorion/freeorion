@@ -307,15 +307,51 @@ private:
 /** A Specialized row for the save dialog list box. */
 class SaveFileRow: public GG::ListBox::Row {
 public:
-    /// What sort of a row
-    enum RowType {
-        HEADER, PREVIEW, DIRECTORY
-    };
+    SaveFileRow() {}
 
-    /// Creates a header row
-    SaveFileRow(const std::vector<SaveFileColumn>& columns) :
-        m_type(HEADER)
-    {
+    const std::string&  Filename() const
+    { return m_filename; }
+
+    // Overrides
+    virtual void        Render() {
+        GG::FlatRectangle(ClientUpperLeft(),
+                          ClientLowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN), GG::Y0),
+                          GG::CLR_ZERO, ClientUI::WndOuterBorderColor(), 1u);
+    }
+
+    /** Excludes border from the client area. */
+    virtual GG::Pt      ClientUpperLeft() const {
+        return UpperLeft() + GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN),
+                                    GG::Y(SAVE_FILE_CELL_MARGIN));
+    }
+
+    /** Excludes border from the client area. */
+    virtual GG::Pt      ClientLowerRight() const {
+        return LowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN * 2),
+                                     GG::Y(SAVE_FILE_CELL_MARGIN));
+    }
+
+    /** Forces the columns to column widths not defined by ListBox. Needs to be called after any
+        interaction with the ListBox base class that sets the column widths back to those defined
+        by SetColWidths().*/
+    virtual void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
+        GG::Layout* layout = GetLayout();
+        if (!layout)
+            return;
+        for (unsigned int i = 0; i < columns.size(); ++i){
+            const SaveFileColumn& column = columns[i];
+            layout->SetColumnStretch ( i, column.Stretch() );
+            layout->SetMinimumColumnWidth ( i, column.FixedWidth(ClientWidth()) ); // Considers header
+        }
+    }
+
+protected:
+    std::string m_filename;
+};
+
+class SaveFileHeaderRow: public SaveFileRow {
+public:
+    SaveFileHeaderRow(const std::vector<SaveFileColumn>& columns) {
         SetMargin(ROW_MARGIN);
 
         for (std::vector<SaveFileColumn>::const_iterator it = columns.begin(); it != columns.end(); ++it)
@@ -323,10 +359,39 @@ public:
         AdjustColumns(columns);
     }
 
+    virtual void Render() { }
+};
+
+class SaveFileDirectoryRow: public SaveFileRow {
+public:
+    SaveFileDirectoryRow(const std::string& directory) {
+        m_filename = directory;
+        SetMargin(ROW_MARGIN);
+
+        push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP));
+        GetLayout()->SetColumnStretch(0, 1.0);
+    }
+
+
+    virtual void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
+        GG::Layout* layout = GetLayout();
+        if (!layout)
+            return;
+        // Give the directory label at least all the room that the other columns demand anyway
+        GG::X sum(0);
+        for (unsigned int i = 0; i < columns.size(); ++i) {
+            const SaveFileColumn& column = columns[i];
+            sum += column.FixedWidth(ClientWidth());
+        }
+        layout->SetMinimumColumnWidth (0, sum);
+    }
+};
+
+class SaveFileFileRow: public SaveFileRow {
+public:
     /// Creates a row for the given savefile
-    SaveFileRow(const FullPreview& full, const std::vector<SaveFileColumn>& visible_columns,
-                const std::vector<SaveFileColumn>& columns, int tooltip_delay) :
-        m_type(PREVIEW)
+    SaveFileFileRow(const FullPreview& full, const std::vector<SaveFileColumn>& visible_columns,
+                const std::vector<SaveFileColumn>& columns, int tooltip_delay)
     {
         SetMargin (ROW_MARGIN);
         this->m_filename = full.filename;
@@ -347,74 +412,8 @@ public:
         SetBrowseModeTime(tooltip_delay);
         SetBrowseText(browse_text.GetText());
     }
-
-    /// Creates a directory row
-    SaveFileRow(const std::string& directory) :
-        m_filename(directory),
-        m_type (DIRECTORY)
-    {
-        SetMargin(ROW_MARGIN);
-
-        push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP));
-        GetLayout()->SetColumnStretch(0, 1.0);
-    }
-
-    const std::string&  Filename() const
-    { return m_filename; }
-
-    const RowType       Type() const
-    { return m_type; }
-
-    // Overrides
-    virtual void        Render() {
-        if (m_type != HEADER) {
-            GG::FlatRectangle(ClientUpperLeft(),
-                              ClientLowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN), GG::Y0),
-                              GG::CLR_ZERO, ClientUI::WndOuterBorderColor(), 1u);
-        }
-    }
-
-    /** Excludes border from the client area. */
-    virtual GG::Pt      ClientUpperLeft() const {
-        return UpperLeft() + GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN),
-                                    GG::Y(SAVE_FILE_CELL_MARGIN));
-    }
-
-    /** Excludes border from the client area. */
-    virtual GG::Pt      ClientLowerRight() const {
-        return LowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN * 2),
-                                     GG::Y(SAVE_FILE_CELL_MARGIN));
-    }
-
-    /** Forces the columns to column widths not defined by ListBox. Needs to be called after any
-        interaction with the ListBox base class that sets the column widths back to those defined
-        by SetColWidths().*/
-    void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
-        GG::Layout* layout = GetLayout();
-        if (!layout)
-            return;
-        if (Type() != DIRECTORY) {
-            for (unsigned int i = 0; i < columns.size(); ++i){
-                const SaveFileColumn& column = columns[i];
-                layout->SetColumnStretch ( i, column.Stretch() );
-                layout->SetMinimumColumnWidth ( i, column.FixedWidth(ClientWidth()) ); // Considers header
-            }
-        } else {
-            // Give the directory label at least all the room that the other columns demand anyway
-            GG::X sum(0);
-            for (unsigned int i = 0; i < columns.size(); ++i) {
-                const SaveFileColumn& column = columns[i];
-                sum += column.FixedWidth(ClientWidth());
-            }
-            layout->SetMinimumColumnWidth (0, sum);
-        }
-    }
-
-private:
-
-    std::string m_filename;
-    RowType     m_type;
 };
+
 
 class SaveFileListBox : public CUIListBox {
 public:
@@ -425,7 +424,7 @@ public:
         m_visible_columns = FilterColumns();
         ManuallyManageColProps();
         SetNumCols(m_visible_columns.size());
-        SetColHeaders(new SaveFileRow(m_visible_columns));
+        SetColHeaders(new SaveFileHeaderRow(m_visible_columns));
         SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
         SetVScrollWheelIncrement(WHEEL_INCREMENT);
     }
@@ -452,7 +451,7 @@ public:
 
     void ResetColHeaders() {
         RemoveColHeaders();
-        SetColHeaders(new SaveFileRow(m_visible_columns));
+        SetColHeaders(new SaveFileHeaderRow(m_visible_columns));
     }
 
     GG::Pt ListRowSize() const
@@ -476,7 +475,7 @@ public:
     void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
         for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it) {
-            SaveFileRow* row = new SaveFileRow(*it, m_visible_columns, m_columns, tooltip_delay);
+            SaveFileRow* row = new SaveFileFileRow(*it, m_visible_columns, m_columns, tooltip_delay);
             Insert(row);
             row->AdjustColumns(m_visible_columns);
         }
@@ -485,7 +484,7 @@ public:
     void LoadDirectories(const fs::path& path) {
         fs::directory_iterator end_it;
         if (path.has_parent_path() && path.parent_path() != path) {
-            SaveFileRow* row = new SaveFileRow("..");
+            SaveFileRow* row = new SaveFileDirectoryRow("..");
             Insert(row);
             row->AdjustColumns(m_visible_columns);
         }
@@ -495,7 +494,7 @@ public:
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
-                SaveFileRow* row = new SaveFileRow(utf8_dir_name);
+                SaveFileRow* row = new SaveFileDirectoryRow(utf8_dir_name);
                 Insert(row);
                 row->AdjustColumns(m_visible_columns);
 
@@ -503,7 +502,7 @@ public:
                 //std::string path_string;
                 //utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
                 //DebugLogger() << "SaveFileDialog::LoadDirectories name: " << path_string << " valid UTF-8: " << IsValidUTF8(path_string);
-                //Insert(new SaveFileRow(path_string));
+                //Insert(new SaveFileDirectoryRow(path_string));
             }
         }
     }
