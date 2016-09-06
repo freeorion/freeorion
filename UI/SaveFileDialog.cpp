@@ -435,12 +435,23 @@ class SaveFileListBox : public CUIListBox {
 public:
     SaveFileListBox() :
         CUIListBox ()
-    {
+    { }
+
+    void Init() {
         m_columns = SaveFileColumn::GetColumns();
         m_visible_columns = FilterColumns(m_columns);
         ManuallyManageColProps();
+        NormalizeRowsOnInsert(false);
         SetNumCols(m_visible_columns->size());
-        SetColHeaders(new SaveFileHeaderRow(m_visible_columns));
+
+        SaveFileHeaderRow* header_row = new SaveFileHeaderRow(m_visible_columns);
+        SetColHeaders(header_row);
+        for (unsigned int i = 0; i < m_visible_columns->size(); ++i) {
+            const SaveFileColumn& column = (*m_visible_columns)[i];
+            SetColStretch(i, column.Stretch());
+            SetColWidth(i, column.FixedWidth());
+        }
+
         SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
         SetVScrollWheelIncrement(WHEEL_INCREMENT);
     }
@@ -900,6 +911,7 @@ void SaveFileDialog::UpdatePreviewList() {
     DebugLogger() << "SaveFileDialog::UpdatePreviewList";
 
     m_file_list->Clear();
+    m_file_list->Init();
 
     // If no browsing, no reloading
     if (!m_server_previews) {
