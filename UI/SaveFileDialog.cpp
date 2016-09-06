@@ -377,7 +377,7 @@ public:
         SaveFileRow(columns, directory) {
         SetMargin(ROW_MARGIN);
 
-        push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP));
+        push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP | GG::FORMAT_LEFT));
         GetLayout()->SetColumnStretch(0, 1.0);
     }
 
@@ -393,6 +393,7 @@ public:
             sum += column.FixedWidth(ClientWidth());
         }
         layout->SetMinimumColumnWidth (0, sum);
+        layout->SetColumnStretch(0, 1.0);
     }
 };
 
