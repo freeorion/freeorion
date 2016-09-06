@@ -811,10 +811,8 @@ void ListBox::PreRender()
             (*it)->Hide();
         else {
             (*it)->Show();
-            if (GG::Layout* lay = (*it)->GetLayout()) {
-                if(lay->PreRenderRequired())
-                    lay->PreRender();
-            }
+            if ((*it)->PreRenderRequired())
+                (*it)->PreRender();
         }
 
         if (it == last_visible_row)
