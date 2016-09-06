@@ -24,6 +24,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/cast.hpp>
 #include <boost/format.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <string>
 
@@ -152,10 +153,10 @@ namespace {
 /** Describes how a column should be set up in the dialog */
 class SaveFileColumn {
 public:
-    static std::vector<SaveFileColumn> GetColumns(){
-        std::vector<SaveFileColumn> columns;
+    static boost::shared_ptr<std::vector<SaveFileColumn> > GetColumns() {
+        boost::shared_ptr<std::vector<SaveFileColumn> > columns(new std::vector<SaveFileColumn>);
         for (unsigned int i = 0; i < VALID_PREVIEW_COLUMN_COUNT; ++i)
-            columns.push_back(GetColumn(VALID_PREVIEW_COLUMNS[i]));
+            columns->push_back(GetColumn(VALID_PREVIEW_COLUMNS[i]));
         return columns;
     }
 
@@ -309,6 +310,11 @@ class SaveFileRow: public GG::ListBox::Row {
 public:
     SaveFileRow() {}
 
+    SaveFileRow(const boost::shared_ptr<std::vector<SaveFileColumn> >& columns, const std::string& filename) :
+        m_filename(filename),
+        m_columns(columns)
+    {}
+
     const std::string&  Filename() const
     { return m_filename; }
 
@@ -334,12 +340,12 @@ public:
     /** Forces the columns to column widths not defined by ListBox. Needs to be called after any
         interaction with the ListBox base class that sets the column widths back to those defined
         by SetColWidths().*/
-    virtual void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
+    virtual void AdjustColumns() {
         GG::Layout* layout = GetLayout();
         if (!layout)
             return;
-        for (unsigned int i = 0; i < columns.size(); ++i){
-            const SaveFileColumn& column = columns[i];
+        for (unsigned int i = 0; i < m_columns->size(); ++i){
+            const SaveFileColumn& column = (*m_columns)[i];
             layout->SetColumnStretch ( i, column.Stretch() );
             layout->SetMinimumColumnWidth ( i, column.FixedWidth(ClientWidth()) ); // Considers header
         }
@@ -347,16 +353,19 @@ public:
 
 protected:
     std::string m_filename;
+    boost::shared_ptr<std::vector<SaveFileColumn> > m_columns;
 };
 
 class SaveFileHeaderRow: public SaveFileRow {
 public:
-    SaveFileHeaderRow(const std::vector<SaveFileColumn>& columns) {
+    SaveFileHeaderRow(const boost::shared_ptr<std::vector<SaveFileColumn> >& columns) :
+        SaveFileRow(columns, "")
+    {
         SetMargin(ROW_MARGIN);
 
-        for (std::vector<SaveFileColumn>::const_iterator it = columns.begin(); it != columns.end(); ++it)
+        for (std::vector<SaveFileColumn>::const_iterator it = m_columns->begin(); it != m_columns->end(); ++it)
         { push_back(SaveFileColumn::TitleForColumn(*it)); }
-        AdjustColumns(columns);
+        AdjustColumns();
     }
 
     virtual void Render() { }
@@ -364,8 +373,8 @@ public:
 
 class SaveFileDirectoryRow: public SaveFileRow {
 public:
-    SaveFileDirectoryRow(const std::string& directory) {
-        m_filename = directory;
+    SaveFileDirectoryRow(const boost::shared_ptr<std::vector<SaveFileColumn> >& columns, const std::string& directory) :
+        SaveFileRow(columns, directory) {
         SetMargin(ROW_MARGIN);
 
         push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP));
@@ -373,14 +382,14 @@ public:
     }
 
 
-    virtual void AdjustColumns(const std::vector<SaveFileColumn>& columns) {
+    virtual void AdjustColumns() {
         GG::Layout* layout = GetLayout();
         if (!layout)
             return;
         // Give the directory label at least all the room that the other columns demand anyway
         GG::X sum(0);
-        for (unsigned int i = 0; i < columns.size(); ++i) {
-            const SaveFileColumn& column = columns[i];
+        for (unsigned int i = 0; i < m_columns->size(); ++i) {
+            const SaveFileColumn& column = (*m_columns)[i];
             sum += column.FixedWidth(ClientWidth());
         }
         layout->SetMinimumColumnWidth (0, sum);
@@ -390,28 +399,34 @@ public:
 class SaveFileFileRow: public SaveFileRow {
 public:
     /// Creates a row for the given savefile
-    SaveFileFileRow(const FullPreview& full, const std::vector<SaveFileColumn>& visible_columns,
-                const std::vector<SaveFileColumn>& columns, int tooltip_delay)
+    SaveFileFileRow(const FullPreview& full,
+                    const boost::shared_ptr<std::vector<SaveFileColumn> >& visible_columns,
+                    const boost::shared_ptr<std::vector<SaveFileColumn> >& columns,
+                    int tooltip_delay) :
+        SaveFileRow(visible_columns, full.filename),
+        m_all_columns(columns)
     {
         SetMargin (ROW_MARGIN);
-        this->m_filename = full.filename;
 
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
-        for (std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin();
-             it != visible_columns.end(); ++it)
+        for (std::vector<SaveFileColumn>::const_iterator it = m_columns->begin();
+             it != m_columns->end(); ++it)
         {
             push_back(SaveFileColumn::CellForColumn(*it, full, ClientWidth()));
         }
-        for (std::vector<SaveFileColumn>::const_iterator it = columns.begin();
-             it != columns.end(); ++it)
+        for (std::vector<SaveFileColumn>::const_iterator it = m_all_columns->begin();
+             it != m_all_columns->end(); ++it)
         {
             browse_text.AddVariable(it->Name(), ColumnInPreview(full, it->Name(), false));
         }
-        AdjustColumns(visible_columns);
+        AdjustColumns();
         SetBrowseModeTime(tooltip_delay);
         SetBrowseText(browse_text.GetText());
     }
+
+    private:
+    boost::shared_ptr<std::vector<SaveFileColumn> > m_all_columns; ///<All possible columns
 };
 
 
@@ -421,9 +436,9 @@ public:
         CUIListBox ()
     {
         m_columns = SaveFileColumn::GetColumns();
-        m_visible_columns = FilterColumns();
+        m_visible_columns = FilterColumns(m_columns);
         ManuallyManageColProps();
-        SetNumCols(m_visible_columns.size());
+        SetNumCols(m_visible_columns->size());
         SetColHeaders(new SaveFileHeaderRow(m_visible_columns));
         SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
         SetVScrollWheelIncrement(WHEEL_INCREMENT);
@@ -440,11 +455,11 @@ public:
         ResetColHeaders();
         const GG::Pt row_size = ListRowSize();
         ColHeaders().Resize(row_size);
-        dynamic_cast<SaveFileRow*>(&ColHeaders())->AdjustColumns(m_visible_columns);
+        dynamic_cast<SaveFileRow*>(&ColHeaders())->AdjustColumns();
         for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
             SaveFileRow* row = dynamic_cast<SaveFileRow*>(*it);
             if (row)
-                row->AdjustColumns(m_visible_columns);
+                row->AdjustColumns();
             (*it)->Resize(row_size);
         }
     }
@@ -477,16 +492,16 @@ public:
         for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it) {
             SaveFileRow* row = new SaveFileFileRow(*it, m_visible_columns, m_columns, tooltip_delay);
             Insert(row);
-            row->AdjustColumns(m_visible_columns);
+            row->AdjustColumns();
         }
     }
 
     void LoadDirectories(const fs::path& path) {
         fs::directory_iterator end_it;
         if (path.has_parent_path() && path.parent_path() != path) {
-            SaveFileRow* row = new SaveFileDirectoryRow("..");
+            SaveFileRow* row = new SaveFileDirectoryRow(m_visible_columns, "..");
             Insert(row);
-            row->AdjustColumns(m_visible_columns);
+            row->AdjustColumns();
         }
 
         for (fs::directory_iterator it(path); it != end_it; ++it) {
@@ -494,9 +509,9 @@ public:
                 fs::path last_bit_of_path = it->path().filename();
                 std::string utf8_dir_name = PathString(last_bit_of_path);
                 DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
-                SaveFileRow* row = new SaveFileDirectoryRow(utf8_dir_name);
+                SaveFileRow* row = new SaveFileDirectoryRow(m_visible_columns, utf8_dir_name);
                 Insert(row);
-                row->AdjustColumns(m_visible_columns);
+                row->AdjustColumns();
 
                 //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
                 //std::string path_string;
@@ -517,21 +532,23 @@ public:
     }
 
 private:
-    std::vector<SaveFileColumn> m_columns;
-    std::vector<SaveFileColumn> m_visible_columns;
+    boost::shared_ptr<std::vector<SaveFileColumn> > m_columns;
+    boost::shared_ptr<std::vector<SaveFileColumn> > m_visible_columns;
 
-    std::vector<SaveFileColumn> FilterColumns() {
+    static boost::shared_ptr<std::vector<SaveFileColumn> > FilterColumns(
+        const boost::shared_ptr<std::vector<SaveFileColumn> >& all_cols)
+    {
         std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string> >("UI.save-file-dialog.columns");
-        std::vector<SaveFileColumn> columns;
+        boost::shared_ptr<std::vector<SaveFileColumn> > columns(new std::vector<SaveFileColumn>);
         for (std::vector<std::string>::const_iterator it = names.begin();
              it != names.end(); ++it)
         {
             bool found_col = false;
-            for (std::vector<SaveFileColumn>::const_iterator jt = m_columns.begin();
-                 jt != m_columns.end(); ++jt)
+            for (std::vector<SaveFileColumn>::const_iterator jt = all_cols->begin();
+                 jt != all_cols->end(); ++jt)
             {
                 if (jt->Name() == *it) {
-                    columns.push_back(*jt);
+                    columns->push_back(*jt);
                     found_col = true;
                     break;
                 }
@@ -539,7 +556,7 @@ private:
             if (!found_col)
                 ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << *it;
         }
-        DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns.size();
+        DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns->size();
         return columns;
     }
 
