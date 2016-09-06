@@ -219,9 +219,14 @@ ListBox::Row::Row(X w, Y h, const std::string& drag_drop_data_type,
 ListBox::Row::~Row()
 {}
 
-std::string ListBox::Row::SortKey(std::size_t column) const
+std::string ListBox::Row::SortKey(std::size_t col) const
 {
-    const TextControl* text_control = dynamic_cast<const TextControl*>(at(column));
+    if (col >= m_cells.size()) {
+        std::cout << "ListBox::Row::SortKey out of range column = " << col << " > num cols = " << m_cells.size();
+        return "";
+    }
+
+    const TextControl* text_control = dynamic_cast<const TextControl*>(at(col));
     return text_control ? text_control->Text() : "";
 }
 
