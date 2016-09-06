@@ -335,6 +335,7 @@ public:
     virtual void    StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset);
     virtual void    AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys);
     virtual void    ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
+    virtual void    PreRender();
     virtual void    Render();
 
     virtual void    SizeMove(const Pt& ul, const Pt& lr);  ///< resizes the control, then resizes the scrollbars as needed
@@ -572,6 +573,7 @@ private:
     iterator        m_rclick_row;       ///< the row most recently right-clicked
     iterator        m_last_row_browsed; ///< the last row sent out as having been browsed (used to prevent duplicate browse signals)
 
+    GG::Pt          m_first_row_offset; ///< scrolled offset of the first row.
     iterator        m_first_row_shown;  ///< index of row at top of visible area (always begin() for non-empty ListBox with LIST_NOSCROLL set)
     std::size_t     m_first_col_shown;  ///< like above, but index of column at left
     std::size_t     m_num_cols;         ///< the number of columns

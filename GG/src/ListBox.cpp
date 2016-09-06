@@ -473,6 +473,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_lclick_row(m_rows.end()),
     m_rclick_row(m_rows.end()),
     m_last_row_browsed(m_rows.end()),
+    m_first_row_offset(Pt(X0, Y0)),
     m_first_row_shown(m_rows.end()),
     m_first_col_shown(0),
     m_num_cols(1),
@@ -767,6 +768,65 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     }
 }
 
+void ListBox::PreRender()
+{
+    Wnd::PreRender();
+
+    if (m_rows.empty())
+        return;
+
+    // Use the first row to define the column properties
+    if (m_manage_column_props && (m_col_widths.empty() || !m_keep_col_widths)) {
+        DefineColWidths(*(*m_rows.begin()));
+        DefineColAlignments(*(*m_rows.begin()));
+        DefineColStretches(*(*m_rows.begin()));
+    }
+
+    // Position rows
+    Pt pt(m_first_row_offset);
+    for (iterator row_it = m_rows.begin(); row_it != m_rows.end(); ++row_it) {
+        (*row_it)->MoveTo(pt);
+        pt.y += (*row_it)->Height();
+    }
+
+    if (m_normalize_rows_on_insert) {
+        if (!m_header_row->empty() && !m_header_row->IsNormalized())
+            NormalizeRow(m_header_row);
+        for (iterator row_it = m_rows.begin(); row_it != m_rows.end(); ++row_it)
+            if (!(*row_it)->IsNormalized())
+                NormalizeRow(*row_it);
+    }
+
+    AdjustScrolls(false);
+
+    // Ensure that data in occluded cells is not rendered
+    // and the any re-layout during prerender is immediate.
+    iterator last_visible_row = LastVisibleRow();
+    bool hide = true;
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        if (it == m_first_row_shown)
+            hide = false;
+
+        if (hide)
+            (*it)->Hide();
+        else {
+            (*it)->Show();
+            if (GG::Layout* lay = (*it)->GetLayout()) {
+                if(lay->PreRenderRequired())
+                    lay->PreRender();
+            }
+        }
+
+        if (it == last_visible_row)
+            hide = true;
+    }
+
+    if (!m_header_row->empty())
+        if (GG::Layout* lay = m_header_row->GetLayout()) {
+            if(lay->PreRenderRequired())
+                lay->PreRender();
+        }
+}
 void ListBox::Render()
 {
     // draw beveled rectangle around client area
@@ -878,10 +938,13 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
     // because it was simply recreating all rows rather than only those really impacted by the change in width.
     // My initial experiments to resolve this here have failed; hence this long comment.
 
+    const GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);
     if (!m_header_row->empty())
         NormalizeRow(m_header_row);
     AdjustScrolls(true);
+    if (old_size != Size())
+        RequirePreRender();
 }
 
 void ListBox::Disable(bool b/* = true*/)
@@ -926,6 +989,7 @@ void ListBox::Clear()
     AttachChild(m_header_row);
     m_vscroll = 0;
     m_hscroll = 0;
+    m_first_row_offset = Pt(X0, Y0);
     m_first_row_shown = m_rows.end();
     m_first_col_shown = 0;
     m_selections.clear();
@@ -946,6 +1010,7 @@ void ListBox::Clear()
     if (m_iterator_being_erased)
         *m_iterator_being_erased = m_rows.end();
 
+    RequirePreRender();
     ClearedSignal();
 }
 
@@ -1180,10 +1245,8 @@ void ListBox::SetNumCols(std::size_t n)
 
     if (n <= m_sort_col)
         m_sort_col = 0;
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        NormalizeRow(*it);
-    }
-    AdjustScrolls(false);
+
+    RequirePreRender();
 }
 
 void ListBox::SetColWidth(std::size_t n, X w)
@@ -1742,21 +1805,11 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
 
     iterator retval = it;
 
-    // The first row inserted into an empty list box defines the number of
-    // columns, and initializes the column widths and alignments.
-    if (m_rows.empty() && (m_col_widths.empty() || !m_keep_col_widths)) {
-        DefineColWidths(*row);
-        DefineColAlignments(*row);
-    }
-
     row->InstallEventFilter(this);
-    if (m_normalize_rows_on_insert)
-        NormalizeRow(row);
 
     if (signal)
         BeforeInsertSignal(it);
 
-    Pt insertion_pt;
     if (m_rows.empty()) {
         m_rows.push_back(row);
         retval = m_rows.begin();
@@ -1768,24 +1821,13 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
                 ++retval;
             }
         }
-        Y y = retval == m_rows.end() ?
-            m_rows.back()->RelativeLowerRight().y : (*retval)->RelativeUpperLeft().y;
-        insertion_pt = Pt(X0, y);
         retval = m_rows.insert(retval, row);
     }
 
-    Y row_height = row->Height();
-    for (iterator it2 = boost::next(retval); it2 != m_rows.end(); ++it2) {
-        (*it2)->OffsetMove(Pt(X0, row_height));
-    }
-
     AttachChild(row);
-    row->MoveTo(insertion_pt);
 
     if (m_first_row_shown == m_rows.end())
         m_first_row_shown = m_rows.begin();
-
-    AdjustScrolls(false);
 
     if (dropped) {
         // TODO: Can these be inverted without breaking anything?  It would be
@@ -1799,6 +1841,8 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
         AfterInsertSignal(it);
 
     Connect(row->RightClickedSignal, &ListBox::HandleRowRightClicked, this);
+
+    RequirePreRender();
     return retval;
 }
 
@@ -1818,26 +1862,19 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
     // don't need to signal or handle dropping issues, so can add rows at once
     // without externally handling after each
 
-
-    // The first row inserted into an empty list box defines the number of
-    // columns, and initializes the column widths and alignments.
-    if (m_col_widths.empty() || !m_keep_col_widths) {
-        DefineColWidths(*(*m_rows.begin()));
-        DefineColAlignments(*(*m_rows.begin()));
-    }
-
     // housekeeping of rows...
     for (std::vector<Row*>::const_iterator row_it = rows.begin();
          row_it != rows.end(); ++row_it)
     {
         Row* row = *row_it;
         row->InstallEventFilter(this);
-        if (m_normalize_rows_on_insert)
-            NormalizeRow(row);
     }
 
     // add row at requested location (or default end position)
     m_rows.insert(it, rows.begin(), rows.end());
+
+    if (!(m_style & LIST_NOSORT))
+        Resort();
 
     // more housekeeping of rows...
     for (std::vector<Row*>::const_iterator row_it = rows.begin();
@@ -1847,23 +1884,10 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
         AttachChild(row);
     }
 
-    // sort?
-    if (!(m_style & LIST_NOSORT)) {
-        Resort();
-    } else {
-        // reposition rows to account for insertion
-        Y y(0);
-        for (it = m_rows.begin(); it != m_rows.end(); ++it) {
-            Row* row = *it;
-            row->MoveTo(Pt(X0, y));
-            y += row->Height();
-        }
-    }
+    RequirePreRender();
 
     if (m_first_row_shown == m_rows.end())
         m_first_row_shown = m_rows.begin();
-
-    AdjustScrolls(false);
 }
 
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
@@ -1876,10 +1900,9 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
         return 0;
     }
 
-    iterator next_it = boost::next(it);
+    RequirePreRender();
 
     Row* row = *it;
-    Y row_height = row->Height();
     if (!removing_duplicate) {
         DetachChild(row);
         row->RemoveEventFilter(this);
@@ -1912,13 +1935,6 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
     if (check_first_row_and_caret_for_end && m_caret == m_rows.end() && !m_rows.empty())
         --m_caret;
 
-    // reposition rows after erased row, to fill gap it leaves
-    for (iterator it2 = next_it; it2 != m_rows.end(); ++it2) {
-        (*it2)->OffsetMove(Pt(X0, -row_height));
-    }
-
-    AdjustScrolls(false);
-
     return row;
 }
 
@@ -1930,7 +1946,7 @@ void ListBox::RecreateScrolls()
     delete m_vscroll;
     delete m_hscroll;
     m_vscroll = m_hscroll = 0;
-    AdjustScrolls(false);
+    RequirePreRender();
 }
 
 void ListBox::ResetAutoScrollVars()
@@ -2009,12 +2025,7 @@ void ListBox::Resort()
     if (m_iterator_being_erased)
         *m_iterator_being_erased = m_rows.end();
 
-    Y y(0);
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        Row* row = *it;
-        row->MoveTo(Pt(X0, y));
-        y += row->Height();
-    }
+    RequirePreRender();
 
     RestoreCachedSelections(*cached_selections);
 
@@ -2215,11 +2226,8 @@ void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
         position = position - row_height;
     }
 
-    X initial_x = m_rows.empty() ? X0 : (*m_rows.begin())->RelativeUpperLeft().x;
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        (*it)->MoveTo(Pt(initial_x, position));
-        position += (*it)->Height();
-    }
+    m_first_row_offset.y = position;
+    RequirePreRender();
 }
 
 void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
@@ -2236,10 +2244,9 @@ void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
         }
         accum += col_width;
     }
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        (*it)->MoveTo(Pt(position, (*it)->RelativeUpperLeft().y));
-    }
-    m_header_row->MoveTo(Pt(position, m_header_row->RelativeUpperLeft().y));
+
+    m_first_row_offset.x = position;
+    RequirePreRender();
 }
 
 void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
