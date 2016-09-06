@@ -1123,21 +1123,24 @@ void ListBox::SetNumCols(std::size_t n)
 {
     assert(n);
     m_num_cols = n;
-    if (m_col_widths.size()) {
-        m_col_widths.resize(n);
-        m_col_alignments.resize(n);
-    } else {
-        m_col_widths.resize(n, ClientSize().x / static_cast<int>(n));
-        m_col_widths.back() += ClientSize().x % static_cast<int>(n);
-        Alignment alignment = ALIGN_NONE;
-        if (m_style & LIST_LEFT)
-            alignment = ALIGN_LEFT;
-        if (m_style & LIST_CENTER)
-            alignment = ALIGN_CENTER;
-        if (m_style & LIST_RIGHT)
-            alignment = ALIGN_RIGHT;
-        m_col_alignments.resize(n, alignment);
+    if (m_manage_column_props) {
+        if (m_col_widths.size()) {
+            m_col_widths.resize(n);
+            m_col_alignments.resize(n, ALIGN_NONE);
+        } else {
+            m_col_widths.resize(n, ClientSize().x / static_cast<int>(n));
+            m_col_widths.back() += ClientSize().x % static_cast<int>(n);
+            Alignment alignment = ALIGN_NONE;
+            if (m_style & LIST_LEFT)
+                alignment = ALIGN_LEFT;
+            if (m_style & LIST_CENTER)
+                alignment = ALIGN_CENTER;
+            if (m_style & LIST_RIGHT)
+                alignment = ALIGN_RIGHT;
+            m_col_alignments.resize(n, alignment);
+        }
     }
+
     if (n <= m_sort_col)
         m_sort_col = 0;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
@@ -1148,9 +1151,11 @@ void ListBox::SetNumCols(std::size_t n)
 
 void ListBox::SetColWidth(std::size_t n, X w)
 {
-    if (m_num_cols < n + 1) {
+    if (m_num_cols < n + 1)
         m_num_cols = n + 1;
-    }
+    if (m_col_widths.size() < n + 1)
+        m_col_widths.resize(n + 1);
+
     m_col_widths[n] = w;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         (*it)->SetColWidth(n, w);
@@ -1161,9 +1166,9 @@ void ListBox::SetColWidth(std::size_t n, X w)
 void ListBox::SetSortCol(std::size_t n)
 {
     bool needs_resort = m_sort_col != n && !(m_style & LIST_NOSORT);
-    if (m_num_cols < n + 1) {
+    if (m_num_cols < n + 1)
         m_num_cols = n + 1;
-    }
+
     m_sort_col = n;
     if (needs_resort)
         Resort();
@@ -1193,6 +1198,11 @@ void ListBox::ManuallyManageColProps()
 
 void ListBox::SetColAlignment(std::size_t n, Alignment align)
 {
+    if (m_num_cols < n + 1)
+        m_num_cols = n + 1;
+    if (m_col_alignments.size() < n + 1)
+        m_col_alignments.resize(n + 1);
+
     m_col_alignments[n] = align;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         (*it)->SetColAlignment(n, align);
