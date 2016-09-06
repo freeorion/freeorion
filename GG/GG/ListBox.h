@@ -85,8 +85,8 @@ extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be
     SetColWidth(), and lock the column widths with LockColWidths(). To create a
     ListBox and manually control the column widths and alignment use
     ManuallyManageColProps() and set the number of columns with SetNumCols().
-    Use DefineColWidth() and DefineColAlignments() to set widths and
-    alignments from an exemplar row.
+    Use DefineColWidths(), DefineColAlignments() and
+    DefineColStretches() to set widths and alignments from an exemplar row.
 
     <br>Note that Rows are stored by pointer.  If you want to move a Row from
     one ListBox to another, use GetRow() and Insert().
@@ -181,6 +181,7 @@ public:
         void         ClearColAlignments(); ///< Clear the horizontal alignments of the cells in this Row
         void         SetColWidths(const std::vector<X>& widths); ///< sets all the widths of the cells of this Row; not range checked
         void         ClearColWidths(); ///< Clear the minimum widths of the cells of this Row.
+        void         SetColStretches(const std::vector<double>& stretches); ///< Set all column stretches.
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
         //@}
 
@@ -193,6 +194,7 @@ public:
         Alignment              m_row_alignment;  ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
         std::vector<Alignment> m_col_alignments; ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
         std::vector<X>         m_col_widths;     ///< column widths
+        std::vector<double>    m_col_stretches;  ///< the stretch factor of each column
         unsigned int           m_margin;         ///< the amount of space left between the contents of adjacent cells, in pixels
 
         bool                   m_ignore_adjust_layout;
@@ -290,6 +292,7 @@ public:
 
     X               ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
     Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be ALIGN_LEFT, ALIGN_CENTER, or ALIGN_RIGHT; not range-checked
+    double          ColStretch(std::size_t n) const;   ///< Return the stretch factor of column \a n.
     Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a it; must be ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM; not range-checked
 
     /** Returns the set of data types allowed to be dropped over this ListBox
@@ -413,6 +416,9 @@ public:
     /** Sets the alignment of column \a n to \a align; not range-checked */
     void            SetColAlignment(std::size_t n, Alignment align);
 
+    /** Sets the stretch of column \a n to \a stretch; not range-checked */
+    void            SetColStretch(std::size_t n, double stretch);
+
     /** Sets the alignment of row \a it to \a align; not range-checked */
     void            SetRowAlignment(iterator it, Alignment align);
 
@@ -425,6 +431,9 @@ public:
 
     /** Sets the column alignments from an exemplar \p row.*/
     void            DefineColAlignments(const Row& row);
+
+    /** Sets the column alignments from an exemplar \p row.*/
+    void            DefineColStretches(const Row& row);
 
     /** Sets whether to add padding at the end of the scrolls when the ListBox is
      *  bigger than the client area, so that any row can be scrolled all the way to
@@ -564,6 +573,8 @@ private:
     std::vector<X>  m_col_widths;       ///< the width of each of the columns goes here
     std::vector<Alignment>
                     m_col_alignments;   ///< the horizontal alignment of each of the columns goes here
+    std::vector<double>
+                    m_col_stretches;    ///< the stretch factor of each column
     unsigned int    m_cell_margin;      ///< the amount of space left between each edge of the cell and its contents, in pixels
 
     Clr             m_int_color;        ///< color painted into the client area of the control

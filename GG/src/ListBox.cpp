@@ -262,6 +262,7 @@ void ListBox::Row::push_back(Control* c)
     m_cells.push_back(c);
     m_col_widths.push_back(X(5));
     m_col_alignments.push_back(ALIGN_NONE);
+    m_col_stretches.push_back(0.0);
     if (1 < m_cells.size())
         m_col_widths.back() = m_col_widths[m_cells.size() - 1];
     AdjustLayout();
@@ -282,13 +283,16 @@ void ListBox::Row::resize(std::size_t n)
     std::size_t old_size = m_cells.size();
     for (std::size_t i = n; i < old_size; ++i) {
         delete m_cells[i];
+        m_cells[i] = 0;
     }
-    m_cells.resize(n);
+    m_cells.resize(n, 0);
     m_col_widths.resize(n);
     m_col_alignments.resize(n);
+    m_col_stretches.resize(n);
     for (std::size_t i = old_size; i < n; ++i) {
         m_col_widths[i] = old_size ? m_col_widths[old_size - 1] : X(5); // assign new cells reasonable default widths
         m_col_alignments[i] = ALIGN_NONE;
+        m_col_stretches[i] = 0.0;
     }
     AdjustLayout();
 }
@@ -375,6 +379,15 @@ void ListBox::Row::ClearColWidths()
     AdjustLayout();
 }
 
+void ListBox::Row::SetColStretches(const std::vector<double>& stretches)
+{
+    if (stretches == m_col_stretches)
+        return;
+
+    m_col_stretches = stretches;
+    AdjustLayout();
+}
+
 void ListBox::Row::SetMargin(unsigned int margin)
 {
     if (margin == m_margin)
@@ -408,8 +421,14 @@ void ListBox::Row::AdjustLayout()
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
         if (!m_col_widths.empty())
             layout->SetMinimumColumnWidth(i, m_col_widths[i]);
-        if (m_cells[i])
-            layout->Add(m_cells[i], 0, i, m_row_alignment | m_col_alignments[i]);
+        if (!m_col_stretches.empty())
+            layout->SetColumnStretch(i, m_col_stretches[i]);
+        if (m_cells[i]) {
+            if (m_col_alignments.empty())
+                layout->Add(m_cells[i], 0, i, m_row_alignment);
+            else
+                layout->Add(m_cells[i], 0, i, m_row_alignment | m_col_alignments[i]);
+        }
     }
 }
 
@@ -449,6 +468,9 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_first_row_shown(m_rows.end()),
     m_first_col_shown(0),
     m_num_cols(1),
+    m_col_widths(),
+    m_col_alignments(),
+    m_col_stretches(),
     m_cell_margin(2),
     m_int_color(interior),
     m_hilite_color(CLR_SHADOW),
@@ -635,6 +657,9 @@ Alignment ListBox::ColAlignment(std::size_t n) const
 
 Alignment ListBox::RowAlignment(iterator it) const
 { return (*it)->RowAlignment(); }
+
+double ListBox::ColStretch(std::size_t n) const
+{ return m_col_stretches[n]; }
 
 const std::set<std::string>& ListBox::AllowedDropTypes() const
 { return m_allowed_drop_types; }
@@ -902,6 +927,7 @@ void ListBox::Clear()
     if (!m_keep_col_widths) { // remove column widths and alignments, if needed
         m_col_widths.clear();
         m_col_alignments.clear();
+        m_col_stretches.clear();
 
         if (m_manage_column_props)
             m_num_cols = 1;
@@ -1105,6 +1131,7 @@ void ListBox::SetColHeaders(Row* r)
             // put the remainder in the last column, so the total width == ClientSize().x - SCROLL_WIDTH
             m_col_widths.back() += (ClientSize().x - SCROLL_WIDTH) % static_cast<int>(m_header_row->size());
             m_col_alignments.resize(m_header_row->size(), AlignmentFromStyle(m_style));
+            m_col_stretches.resize(m_header_row->size(), 0.0);
         }
         NormalizeRow(m_header_row);
         m_header_row->MoveTo(Pt(X0, -m_header_row->Height()));
@@ -1127,6 +1154,7 @@ void ListBox::SetNumCols(std::size_t n)
         if (m_col_widths.size()) {
             m_col_widths.resize(n);
             m_col_alignments.resize(n, ALIGN_NONE);
+            m_col_stretches.resize(n, 0.0);
         } else {
             m_col_widths.resize(n, ClientSize().x / static_cast<int>(n));
             m_col_widths.back() += ClientSize().x % static_cast<int>(n);
@@ -1138,6 +1166,7 @@ void ListBox::SetNumCols(std::size_t n)
             if (m_style & LIST_RIGHT)
                 alignment = ALIGN_RIGHT;
             m_col_alignments.resize(n, alignment);
+            m_col_stretches.resize(n, 0.0);
         }
     }
 
@@ -1206,6 +1235,22 @@ void ListBox::SetColAlignment(std::size_t n, Alignment align)
     m_col_alignments[n] = align;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         (*it)->SetColAlignment(n, align);
+    }
+}
+
+void ListBox::SetColStretch(std::size_t n, double x)
+{
+    if (m_num_cols < n + 1)
+        m_num_cols = n + 1;
+    if (m_col_stretches.size() < n + 1)
+        m_col_stretches.resize(n + 1);
+
+    m_col_stretches[n] = x;
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        GG::Layout* layout = (*it)->GetLayout();
+        if (!layout)
+            return;
+        layout->SetColumnStretch(n, x);
     }
 }
 
@@ -1664,6 +1709,18 @@ void ListBox::DefineColAlignments(const Row& row)
         if (a == ALIGN_NONE)
             a = AlignmentFromStyle(m_style);
         m_col_alignments[i] = a;
+    }
+}
+
+void ListBox::DefineColStretches(const Row& row)
+{
+    GG::Layout* layout = GetLayout();
+    if (!layout)
+        return;
+
+    m_col_stretches.resize(row.size());
+    for (std::size_t i = 0; i < row.size(); ++i) {
+        m_col_stretches[i] = layout->ColumnStretch (i);
     }
 }
 
@@ -2262,6 +2319,7 @@ void ListBox::NormalizeRow(Row* row)
     row->resize(m_num_cols);
     row->SetColWidths(m_col_widths);
     row->SetColAlignments(m_col_alignments);
+    row->SetColStretches(m_col_stretches);
     row->Resize(Pt(ClientWidth(), row->Height()));
 }
 
