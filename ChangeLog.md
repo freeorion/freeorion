@@ -12,7 +12,6 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Various GUI improvements
  - GUI responsiveness / FPS improvements
  - Made GUI more configurable
- - New/better graphics
  - Lot of other small improvements to handling/display of things
 - Turn processing time improvements
 - AI improvements
