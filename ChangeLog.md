@@ -15,6 +15,8 @@ Notable changes to the FreeOrion project will be documented in this file.
  - Lot of other small improvements to handling/display of things
 - Turn processing time improvements
 - AI improvements
+- New specials, hulls, ship parts, giving new strategic or
+fun gameplay options
 
 
 ### Detailed Changelog
