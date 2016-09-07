@@ -35,6 +35,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 
+
 using namespace GG;
 
 namespace {
@@ -1014,7 +1015,7 @@ void Wnd::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
 void Wnd::DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
-{ this->DragDropHere(pt, drop_wnds_acceptable, mod_keys); }
+{ if (!Interactive()) ForwardEventToParent(); }
 
 void Wnd::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
