@@ -54,7 +54,7 @@ select the planet instead of just jumping to the system on the map.
 - Made ctrl-double click add entries to the top of the build queue
 - Pedia articles can now have images in them
 - New icons for auto and manual turn cycling button
-- Tweaked Sidepanel plant pole tilt angle
+- Tweaked Sidepanel planet pole tilt angle
 - Tweaked Sitrep layout
 - Reworked rotating selection indicator rendering to be smoother
 - Re-enabled sitreps for winning / losing the game
@@ -204,7 +204,7 @@ Offensive Ground Troops.
 - Made Neutronium Forge only be buildable at locations with a Basic
 Shipyard (like all other shipyard upgrade buildings)
 - Tweaked monster detection and stealth stats
-- Artificial Moons can no longer be build when a Resonant Moon is present
+- Artificial Moons can no longer be built when a Resonant Moon is present
 - Reworked various modifiers to planet population
 - Tweaked Honeycomb and World Tree special locations
 - Re-Added the Tidally Locked Rotation special with a population
