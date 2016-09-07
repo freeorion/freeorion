@@ -210,8 +210,6 @@ Shipyard (like all other shipyard upgrade buildings)
 - Re-Added the Tidally Locked Rotation special with a population
 penalty and changed the penalty of the Eccentric Orbit special to a
 Supply minus
-- Species with no offensive Ground Troops will no longer be able to
-build ships with Ground Troop pods
 - Space Monster weapon balance tweaks
 - Planetary Starlane Drive modified so it can't be built on gas giants
 - Xenoresurrection Lab building modified so that only one can be built
