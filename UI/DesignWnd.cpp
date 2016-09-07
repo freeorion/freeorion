@@ -2284,8 +2284,8 @@ public:
     virtual void    CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds);
     virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
     virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                 GG::Flags<GG::ModKey> mod_keys);
+    virtual void    DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                  GG::Flags<GG::ModKey> mod_keys);
     virtual void    DragDropLeave();
 
     virtual void    Render();
@@ -2490,16 +2490,21 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     SlotContentsAlteredSignal(0);
 }
 
-void SlotControl::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                               GG::Flags<GG::ModKey> mod_keys)
-{
-    Control::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
-    // TODO: mouseover highlight if drop acceptable
+void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                GG::Flags<GG::ModKey> mod_keys) {
+
+    if (drop_wnds_acceptable.empty())
+        return;
+
+    DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+
+    if (drop_wnds_acceptable.begin()->second && m_part_control)
+        m_part_control->Hide();
 }
 
 void SlotControl::DragDropLeave() {
     if (m_part_control)
-        m_part_control->Hide();
+        m_part_control->Show();
 }
 
 void SlotControl::Render()
