@@ -8,15 +8,19 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 ### Key Changes
 
-- Reworked supply mechanics
-- Various GUI improvements
- - GUI responsiveness / FPS improvements
+- Reworked supply mechanics (details below)
+- Reworked weapon part refinements
+- Reworked ship repair: Drydocks, Damage Control techs,
+Robotic hulls self repair (details below)
+- Substantial GUI improvements
+ - Substantial improvements to GUI responsiveness and FPS
  - Made GUI more configurable
- - Lot of other small improvements to handling/display of things
+- Many small additions/changes to GUI rendering, layout, functionality,
+customization options, and displayed information that collectively
+substantially improve usability, responsiveness, and system resource usage.
 - Turn processing time improvements
 - AI improvements
-- New specials, hulls, ship parts, giving new strategic or
-fun gameplay options
+- New specials, hulls, ship parts, giving new strategic or fun gameplay options
 
 
 ### Detailed Changelog
@@ -25,7 +29,7 @@ fun gameplay options
 #### Graphics / GUI
 
 - New default font Roboto ver. 2.001101 (2014) (with a few extra
-missing glyphs needed used in the GUI)
+missing glyphs needed / used in the GUI)
 - Fixed layout of production / research info panel
 - Reworked rendering of various GUI windows to improve performance
 - Improved functionality of pedia search box
@@ -140,14 +144,9 @@ meter tooltips
 
 - Translation updates: French, Russian
 - Removed / updated various missing, unused, or incorrect stringtable entries
-- Adjusted AI priorities for various buildings
-- Adjusted AI colonization planning
+- Various adjustments to AI priorities
 - Made AI more cautious of hidden threats after losing fleets in a
 system it can't detect into
-- Made AI adjust priorities based on costs of ship parts and hulls
-- Adjusted AI priorities for research time
-- Adjusted AI industry modifiers
-- Adjusted AI weapon upgrade calculations
 - Updated pedia descriptions of various content and UI windows,
 including adding more links
 - Reworked intro sitrep to be less immersion-breaking
@@ -172,8 +171,8 @@ approach starlane
 - Fixed / updated bioweapon sitreps
 - Added a random turn event that creates Space Krill in an empty system
 - Added new galaxy shape "Disc"
-- Added the feature to resurrect extinct species found in ancient
-ruins with the Xenoresurrection Lab
+- Added the feature to resurrect extinct species found in ancient ruins with
+the Xenoresurrection Lab (which can only be built on a planet)
 - Added the new special Temporal Anomaly
 - Reworked weapon part refinements, so that instead of multiple parts,
 techs increase the strength of parts (although getting the increase to
@@ -182,45 +181,27 @@ take effect requires being in supply range)
 - Updated premade / default ship designs, made naming consistent
 - New bombardment weapons (feature in-progress)
 - Added EMP and electric overcharge ship parts
-- Added Solar Concentrators which increase laser weapon strength
-depending on local star type
+- Added Solar Concentrators which increase laser weapon strength for
+Organic Line hulls depending on local star type
 - Split up stealth part and planetary stealth techs
-- Added Flak Cannon ship part that attacks multiple times per combat
-turn but does minimal damage per attack
 - Added more AI greeting messages, made random
 - Added Scrying Sphere buildings, which can be produced and appear
 around the map randomly during galaxy generation, and share vision
 between planets on which they are located
-- The Honeycomb special will now turn nearby planets into asteroids
-instead of destroying them
+- At start of game, the Honeycomb will now turn all planets without specials
+or inhabitants within 5 jumps into Asteroids instead of destroying them —
+without renaming them
 - Removed the special Volcanic Activity
 - Tweaked planet / asteroid naming
+- All systems except deep space, black hole and neutron star systems now
+contain at least one planet or asteroid belt
+- Added "Telepathic Detection" species trait (currently only assigned to Trith)
+which gives basic visibility of inhabitated planets nearby a colony of a
+species that has that trait.
 
 
 #### Balance
 
-- Various building / tech cost adjustments
-- Split Ground Troops species trait into Defensive Ground Troops and
-Offensive Ground Troops.
-- Made Neutronium Forge only be buildable at locations with a Basic
-Shipyard (like all other shipyard upgrade buildings)
-- Tweaked monster detection and stealth stats
-- Artificial Moons can no longer be built when a Resonant Moon is present
-- Reworked various modifiers to planet population
-- Tweaked Honeycomb and World Tree special locations
-- Re-Added the Tidally Locked Rotation special with a population
-penalty and changed the penalty of the Eccentric Orbit special to a
-Supply minus
-- Space Monster weapon balance tweaks
-- Planetary Starlane Drive modified so it can't be built on gas giants
-- Xenoresurrection Lab building modified so that only one can be built
-on a planet
-- Death Spores and Bio-Terminators now only affect organic species
-- Monsters now only bombard one planet at a time
-- Adjusted Experimentor monster weapons
-- Reworked how derelict visibility effect works - grants visibility
-directly instead of temporarily increasing ship detection range
-- Added preferred focus for most species
 - Reworked supply propagation mechanics
  - In any system, at most one empire can supply ships and exchange
 production between planets.
@@ -230,9 +211,34 @@ decays with distance from the source)
  - Armed ships prevent enemy supply from propagating in/out of a system
  - In the absence of armed ships, supply won't propagate into an enemy
 system where a supply source planet is located
-- Made producing troop pods require a production location with troops,
-and made producing troop pods consume troops from the production
-location
+- Substantially reworked ship repair
+ - Drydocks require a ship to be stationary and only repair a proportion
+of ship structure of the bigger hulls
+ - No damage control effects work on the turn a combat has taken place except
+for the Logistic Facilitator flagship, which is substantially reduced
+ - Balance pass on Robotic hull line and Damage Control techs repair rates
+- Various building / tech cost adjustments
+- Split Ground Troops species trait into Defensive Ground Troops and
+Offensive Ground Troops.
+- Made Neutronium Forge only be buildable at locations with a Basic
+Shipyard (like all other shipyard upgrade buildings)
+- Tweaked monster detection and stealth stats
+- Artificial Moons can no longer be built when a Resonant Moon special
+is present
+- Reworked various modifiers to planet population
+- Tweaked Honeycomb and World Tree special locations
+- Re-Added the Tidally Locked Rotation special with a population
+penalty and changed the penalty of the Eccentric Orbit special to a
+Supply minus
+- Space Monster weapon balance tweaks
+ - Adjusted Experimentor monster weapons
+- Planetary Starlane Drive modified so it can't be built on gas giants
+- Death Spores and Bio-Terminators now only affect organic species
+- Monsters now only bombard one planet at a time
+- Reworked how derelict visibility effect works - grants visibility
+directly instead of temporarily increasing ship detection range
+- Added preferred focus for most species
+- Made producing troop pods require a production location with troops
  - Species with no offensive Ground Troops will no longer be able to
 build ships with Ground Troop pods
 - Balanced research and production bonuses
@@ -240,8 +246,6 @@ build ships with Ground Troop pods
 - Balance pass on Robotic line and Damage Control techs
 - Balanced BioAdaptive hull to work same as Nanorobotic
 - Tweaked numbers for Logistics Facilitator
-- Prevent Krakens Nests from spawning on Asteroid belts created by the
-Honeycomb special (and similar situations)
 - Enable queue additions of energy shipyards in systems with pending
 artificial blackhole
 - Prevent Experimentor spawn location from sundering the galaxy
@@ -304,6 +308,9 @@ systems more flexible / robust
 readable-as-text header with basic info about the saved game
 - Added --version parameter to freeorion{,d} executables which outputs
 the version string to the console
+- (*nix) Moved user config and data files to conform with
+XDG Base Directory Specification
+- Reorganized content definitions into multiple files
 
 
 ## [v0.4.5] - 2015-09-08
