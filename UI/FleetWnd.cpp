@@ -1131,6 +1131,8 @@ private:
     void                SetStatIconValues();
     void                UpdateAggressionToggle();
     void                DoLayout();
+    void                Init();
+    void                ColorTextForSelect();
 
     const int           m_fleet_id;
     const int           m_system_id;
@@ -1149,6 +1151,7 @@ private:
     std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
     bool                m_selected;
+    bool                m_initialized;
 };
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
@@ -1164,139 +1167,11 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_gift_indicator(0),
     m_scanline_control(0),
     m_stat_icons(),
-    m_selected(false)
+    m_selected(false),
+    m_initialized(false)
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
-    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
-    AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
-    AttachChild(m_fleet_destination_text);
-
-    if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
-        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-        // stat icon for fleet count
-        StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false,
-                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
-        icon->InstallEventFilter(this);
-        AttachChild(icon);
-
-        if (fleet->HasArmedShips()) {
-            // stat icon for fleet damage
-            icon = new StatisticIcon(DamageIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
-            AttachChild(icon);
-        }
-        if (fleet->HasFighterShips()) {
-            // stat icon for fleet fighters
-            icon = new StatisticIcon(FightersIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_FIGHTER_SUMMARY"));
-            AttachChild(icon);
-        }
-        if (fleet->HasTroopShips()) {
-            // stat icon for fleet troops
-            icon = new StatisticIcon(TroopIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
-            AttachChild(icon);
-        }
-        if (fleet->HasColonyShips()) {
-            // stat icon for colonist capacity
-            icon = new StatisticIcon(ColonyIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_POPULATION, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
-            AttachChild(icon);
-        }
-        if (fleet->ResourceOutput(RE_INDUSTRY) > 0.0f) {
-            // stat icon for industry output
-            icon = new StatisticIcon(IndustryIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_INDUSTRY, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_INDUSTRY_SUMMARY"));
-            AttachChild(icon);
-        }
-        if (fleet->ResourceOutput(RE_RESEARCH) > 0.0f) {
-            // stat icon for research output
-            icon = new StatisticIcon(ResearchIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_RESEARCH, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_RESEARCH_SUMMARY"));
-            AttachChild(icon);
-        }
-        if (fleet->ResourceOutput(RE_TRADE) > 0.0f) {
-            // stat icon for research output
-            icon = new StatisticIcon(TradeIcon(), 0, 0, false,
-                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(METER_TRADE, icon));
-            icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString("FW_FLEET_TRADE_SUMMARY"));
-            AttachChild(icon);
-        }
-
-        // stat icon for fleet structure
-        icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
-                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
-        icon->InstallEventFilter(this);
-        AttachChild(icon);
-
-        // stat icon for fleet shields
-        icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
-                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
-        icon->InstallEventFilter(this);
-        AttachChild(icon);
-
-        // stat icon for fleet fuel
-        icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false,
-                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString("FW_FLEET_FUEL_SUMMARY"));
-        icon->InstallEventFilter(this);
-        AttachChild(icon);
-
-        // stat icon for fleet speed
-        icon = new StatisticIcon(SpeedIcon(), 0, 0, false,
-                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString("FW_FLEET_SPEED_SUMMARY"));
-        icon->InstallEventFilter(this);
-        AttachChild(icon);
-
-        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::RequirePreRender, this);
-
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
-            m_aggression_toggle = new CUIButton(
-                GG::SubTexture(FleetAggressiveIcon()),
-                GG::SubTexture(FleetPassiveIcon()),
-                GG::SubTexture(FleetAggressiveMouseoverIcon()));
-            AttachChild(m_aggression_toggle);
-            GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
-        }
-    }
 }
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target) :
@@ -1312,20 +1187,11 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_gift_indicator(0),
     m_scanline_control(0),
     m_stat_icons(),
-    m_selected(false)
+    m_selected(false),
+    m_initialized(false)
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
-    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
-    AttachChild(m_fleet_name_text);
-    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
-    AttachChild(m_fleet_destination_text);
-    m_aggression_toggle = new CUIButton(
-        GG::SubTexture(FleetAggressiveIcon()),
-        GG::SubTexture(FleetPassiveIcon()),
-        GG::SubTexture(FleetAggressiveMouseoverIcon()));
-    AttachChild(m_aggression_toggle);
-    GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
 }
 
 GG::Pt FleetDataPanel::ClientUpperLeft() const
@@ -1341,6 +1207,9 @@ NewFleetAggression FleetDataPanel::GetNewFleetAggression() const
 { return m_new_fleet_aggression; }
 
 void FleetDataPanel::PreRender() {
+    if (!m_initialized)
+        Init();
+
     GG::Wnd::PreRender();
     Refresh();
 }
@@ -1505,17 +1374,7 @@ void FleetDataPanel::Select(bool b) {
         return;
     m_selected = b;
 
-    const GG::Clr& unselected_text_color = ClientUI::TextColor();
-    const GG::Clr& selected_text_color = GG::CLR_BLACK;
-
-    GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
-
-    if (Disabled())
-        text_color_to_use = DisabledColor(text_color_to_use);
-    if (m_fleet_name_text)
-        m_fleet_name_text->SetTextColor(text_color_to_use);
-    if (m_fleet_destination_text)
-        m_fleet_destination_text->SetTextColor(text_color_to_use);
+    ColorTextForSelect();
 }
 
 void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1850,6 +1709,177 @@ void FleetDataPanel::DoLayout() {
         GG::Pt toggle_ul = GG::Pt(ClientWidth() - toggle_size.x, GG::Y0);
         m_aggression_toggle->SizeMove(toggle_ul, toggle_ul + toggle_size);
     }
+}
+
+void FleetDataPanel::Init() {
+    m_initialized = true;
+
+    SectionedScopedTimer timer("FleetDataPanel::Init", boost::chrono::microseconds(30));
+    timer.EnterSection("init");
+    m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
+    AttachChild(m_fleet_name_text);
+    m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
+    AttachChild(m_fleet_destination_text);
+
+    if (m_fleet_id == INVALID_OBJECT_ID) {
+        m_aggression_toggle = new CUIButton(
+            GG::SubTexture(FleetAggressiveIcon()),
+            GG::SubTexture(FleetPassiveIcon()),
+            GG::SubTexture(FleetAggressiveMouseoverIcon()));
+        AttachChild(m_aggression_toggle);
+        GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+
+    } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
+        timer.EnterSection("icon setup");
+        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+        // stat icon for fleet count
+        StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false,
+                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
+        icon->InstallEventFilter(this);
+        AttachChild(icon);
+
+        timer.EnterSection("armed");
+        if (fleet->HasArmedShips()) {
+            // stat icon for fleet damage
+            icon = new StatisticIcon(DamageIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
+            AttachChild(icon);
+        }
+
+        if (fleet->HasFighterShips()) {
+            // stat icon for fleet fighters
+            icon = new StatisticIcon(FightersIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_FIGHTER_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->HasTroopShips()) {
+            // stat icon for fleet troops
+            icon = new StatisticIcon(TroopIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
+            AttachChild(icon);
+        }
+
+        if (fleet->HasColonyShips()) {
+            // stat icon for colonist capacity
+            icon = new StatisticIcon(ColonyIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_POPULATION, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->ResourceOutput(RE_INDUSTRY) > 0.0f) {
+            // stat icon for industry output
+            icon = new StatisticIcon(IndustryIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_INDUSTRY, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_INDUSTRY_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->ResourceOutput(RE_RESEARCH) > 0.0f) {
+            // stat icon for research output
+            icon = new StatisticIcon(ResearchIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_RESEARCH, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_RESEARCH_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->ResourceOutput(RE_TRADE) > 0.0f) {
+            // stat icon for research output
+            icon = new StatisticIcon(TradeIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_TRADE, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_TRADE_SUMMARY"));
+            AttachChild(icon);
+        }
+
+        timer.EnterSection("structure");
+        // stat icon for fleet structure
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
+        icon->InstallEventFilter(this);
+        AttachChild(icon);
+
+        timer.EnterSection("shields");
+        // stat icon for fleet shields
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
+        icon->InstallEventFilter(this);
+        AttachChild(icon);
+
+        timer.EnterSection("fuel");
+        // stat icon for fleet fuel
+        icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(UserString("FW_FLEET_FUEL_SUMMARY"));
+        icon->InstallEventFilter(this);
+        AttachChild(icon);
+
+        timer.EnterSection("speed");
+        // stat icon for fleet speed
+        icon = new StatisticIcon(SpeedIcon(), 0, 0, false,
+                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(UserString("FW_FLEET_SPEED_SUMMARY"));
+        icon->InstallEventFilter(this);
+        AttachChild(icon);
+
+
+        timer.EnterSection("connect");
+        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::RequirePreRender, this);
+
+        timer.EnterSection("aggro");
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
+            m_aggression_toggle = new CUIButton(
+                GG::SubTexture(FleetAggressiveIcon()),
+                GG::SubTexture(FleetPassiveIcon()),
+                GG::SubTexture(FleetAggressiveMouseoverIcon()));
+            AttachChild(m_aggression_toggle);
+            GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+        }
+
+        ColorTextForSelect();
+    }
+}
+
+void FleetDataPanel::ColorTextForSelect() {
+    const GG::Clr& unselected_text_color = ClientUI::TextColor();
+    const GG::Clr& selected_text_color = GG::CLR_BLACK;
+
+    GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
+
+    if (Disabled())
+        text_color_to_use = DisabledColor(text_color_to_use);
+    if (m_fleet_name_text)
+        m_fleet_name_text->SetTextColor(text_color_to_use);
+    if (m_fleet_destination_text)
+        m_fleet_destination_text->SetTextColor(text_color_to_use);
 }
 
 namespace {
