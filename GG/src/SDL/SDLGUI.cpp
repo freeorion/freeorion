@@ -537,6 +537,7 @@ void SDLGUI::SetWindowTitle(const std::string& title)
 
 void SDLGUI::SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change)
 {
+    SDL_EnableScreenSaver();
     m_fullscreen = fullscreen;
     // Only allow fake mode change if the necessary extensions are supported
     m_fake_mode_change = fake_mode_change && FramebuffersAvailable();
