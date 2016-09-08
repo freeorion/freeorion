@@ -37,6 +37,8 @@ BuildingType
             effects = [
                 SetTargetPopulation value = min(Value, 0)
                 SetPopulation value = min(Value, 0)
+                SetMaxSupply value = 0
+                SetSupply value = 0
                 ]
 
         EffectsGroup
