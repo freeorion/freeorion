@@ -135,3 +135,21 @@ Section Uninstall
   DeleteRegKey HKLM "$${PRODUCT_DIR_REGKEY}"
   SetAutoClose true
 SectionEnd
+
+Function .onInit
+  ReadRegStr $$R0 HKLM "$${PRODUCT_UNINST_KEY}" "UninstallString"
+  StrCmp $$R0 "" fin_onInit
+
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+  "$${PRODUCT_NAME} is already installed. $$\n$$\nClick `OK` to run the \
+  uninstall dialog (recommended) $$\nor click `Cancel` to continue." \
+  IDOK uninst_onInit
+  Goto fin_onInit
+
+  uninst_onInit:
+  ClearErrors
+  Exec "$$R0"
+
+  fin_onInit:
+
+FunctionEnd
