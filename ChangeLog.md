@@ -250,7 +250,7 @@ build ships with Ground Troop pods
 artificial blackhole
 - Prevent Experimentor spawn location from sundering the galaxy
 - Balance Hyperspatial Dam
-- Made planets in systems which contains a Gateway to the Void building
+- Made planets in systems which contain a Gateway to the Void building
 not provide any supply
 
 
