@@ -130,18 +130,6 @@ public:
         time. */
     struct GG_API Row : public Control
     {
-        /** Allows multiple mutators on a Row to be called, with only one call
-            to the sometimes-expensive Row::AdjustLayout made at the end.
-            Declare a DeferAdjustLayout on the stack before calling Row
-            mutators, and at the end of scope, when the DeferAdjustLayout is
-            destructed, Row::AdjustLayout is called. */
-        struct DeferAdjustLayout
-        {
-            DeferAdjustLayout(Row* row);
-            ~DeferAdjustLayout();
-            Row* const m_row;
-        };
-
         /** the type of key used to sort rows */
         typedef std::string SortKeyType;
 
@@ -191,7 +179,6 @@ public:
 
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
     protected:
-        void AdjustLayout();
         virtual void           RClick(const Pt& pt, GG::Flags<GG::ModKey> mod);
 
         std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)

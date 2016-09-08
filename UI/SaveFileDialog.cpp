@@ -449,7 +449,7 @@ public:
         for (unsigned int i = 0; i < m_visible_columns->size(); ++i) {
             const SaveFileColumn& column = (*m_visible_columns)[i];
             SetColStretch(i, column.Stretch());
-            SetColWidth(i, column.FixedWidth());
+            SetColWidth(i, column.FixedWidth(ClientWidth()));
         }
 
         SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
