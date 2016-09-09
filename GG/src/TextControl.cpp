@@ -336,7 +336,6 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
         Pt text_sz = m_font->TextExtent(m_line_data);
         m_text_ul = Pt();
         m_text_lr = text_sz;
-        AdjustMinimumSize();
         PurgeCache();
     }
     RecomputeTextBounds();
