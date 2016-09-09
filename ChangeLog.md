@@ -12,7 +12,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Reworked weapon part refinements
 - Reworked ship repair: Drydocks, Damage Control techs,
 Robotic hulls self repair (details below)
-- Substantial GUI improvements
+- Various GUI improvements
  - Substantial improvements to GUI responsiveness and FPS
  - Made GUI more configurable
 - Many small additions/changes to GUI rendering, layout, functionality,
