@@ -243,7 +243,6 @@ directly instead of temporarily increasing ship detection range
 build ships with Ground Troop pods
 - Balanced research and production bonuses
 - Reprioritised mine effects to always occur before repair effects
-- Balance pass on Robotic line and Damage Control techs
 - Balanced BioAdaptive hull to work same as Nanorobotic
 - Tweaked numbers for Logistics Facilitator
 - Enable queue additions of energy shipyards in systems with pending
