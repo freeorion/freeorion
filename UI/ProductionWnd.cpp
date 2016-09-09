@@ -405,6 +405,7 @@ namespace {
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
+        SetChildClippingMode(ClipToClient);
         GG::Clr clr = m_in_progress
             ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
