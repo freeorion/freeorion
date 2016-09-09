@@ -545,10 +545,10 @@ public:
     void Resize(const Pt& sz);
 
     /** Sets the minimum allowable size of window \a pt. */
-    void SetMinSize(const Pt& sz);
+    virtual void SetMinSize(const Pt& sz);
 
     /** Sets the maximum allowable size of window \a pt. */
-    void SetMaxSize(const Pt& sz);
+    virtual void SetMaxSize(const Pt& sz);
 
     /** Places \a wnd in child ptr list, sets's child's \a m_parent member to
         \a this. */

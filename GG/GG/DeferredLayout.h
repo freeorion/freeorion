@@ -29,16 +29,19 @@ public:
     /** \name Mutators */ ///@{
     virtual void SizeMove(const Pt& ul, const Pt& lr);
     virtual void PreRender();
+    virtual void SetMinSize(const Pt& sz);
+    virtual void SetMaxSize(const Pt& sz);
     //@}
 
 protected:
     /** \name Mutators */ ///@{
-    virtual void   RedoLayout();
+    virtual void RedoLayout();
     //@}
 
 private:
     Pt                              m_ul_prerender;    ///< ul for PreRender
     Pt                              m_lr_prerender;    ///< lr for PreRender
+    bool                            m_stop_deferred_resize_recursion;
 };
 
 } // namespace GG

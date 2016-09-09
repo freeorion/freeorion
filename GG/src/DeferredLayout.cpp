@@ -30,11 +30,15 @@ DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t
                unsigned int border_margin/* = 0*/, unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
     Layout(x, y, w, h, rows, columns, border_margin, cell_margin),
     m_ul_prerender(Pt(x, y)),
-    m_lr_prerender(Pt(x + w, y + h))
+    m_lr_prerender(Pt(x + w, y + h)),
+    m_stop_deferred_resize_recursion(false)
 { }
 
 void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
 {
+    if (m_stop_deferred_resize_recursion)
+        return;
+
     RequirePreRender();
 
     m_ul_prerender = ul;
@@ -44,15 +48,35 @@ void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
 void DeferredLayout::PreRender()
 {
     Layout::PreRender();
-    if (m_ul_prerender == RelativeUpperLeft() && m_lr_prerender == RelativeLowerRight()) {
-        Resize(Pt( m_lr_prerender - m_ul_prerender));
-        return;
-    } else {
-        DoLayout(m_ul_prerender, m_lr_prerender);
-    }
+    ScopedAssign<bool> assignment(m_stop_deferred_resize_recursion, true);
+    DoLayout(m_ul_prerender, m_lr_prerender);
     m_ul_prerender = RelativeUpperLeft();
     m_lr_prerender = RelativeLowerRight();
 }
 
 void DeferredLayout::RedoLayout()
 { RequirePreRender(); }
+
+void DeferredLayout::SetMinSize(const Pt& sz)
+{
+    Pt old_ul_prerender = m_ul_prerender;
+    Pt old_lr_prerender = m_lr_prerender;
+
+    Layout::SetMinSize(sz);
+
+    m_ul_prerender = old_ul_prerender;
+    m_lr_prerender = old_lr_prerender;
+    CorrectPositionOfSizeMove(m_ul_prerender, m_lr_prerender);
+}
+
+void DeferredLayout::SetMaxSize(const Pt& sz)
+{
+    Pt old_ul_prerender = m_ul_prerender;
+    Pt old_lr_prerender = m_lr_prerender;
+
+    Layout::SetMaxSize(sz);
+
+    m_ul_prerender = old_ul_prerender;
+    m_lr_prerender = old_lr_prerender;
+    CorrectPositionOfSizeMove(m_ul_prerender, m_lr_prerender);
+}
