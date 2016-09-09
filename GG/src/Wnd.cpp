@@ -419,6 +419,39 @@ WndRegion Wnd::WindowRegion(const Pt& pt) const
     return (Resizable() ? WndRegion(x_pos + 3 * y_pos) : WR_NONE);
 }
 
+void Wnd::CorrectPositionOfSizeMove(Pt& ul, Pt& lr) const
+{
+    Pt min_sz = MinSize();
+    Pt max_sz = MaxSize();
+    if (m_layout) {
+        Pt layout_min_sz = m_layout->MinSize() + (Size() - ClientSize());
+        min_sz.x = std::max(min_sz.x, layout_min_sz.x);
+        min_sz.y = std::max(min_sz.y, layout_min_sz.y);
+    }
+    if (lr.x - ul.x < min_sz.x) {
+        if (ul.x != m_upperleft.x)
+            ul.x = lr.x - min_sz.x;
+        else
+            lr.x = ul.x + min_sz.x;
+    } else if (max_sz.x < lr.x - ul.x) {
+        if (lr.x != m_lowerright.x)
+            lr.x = ul.x + max_sz.x;
+        else
+            ul.x = lr.x - max_sz.x;
+    }
+    if (lr.y - ul.y < min_sz.y) {
+        if (ul.y != m_upperleft.y)
+            ul.y = lr.y - min_sz.y;
+        else
+            lr.y = ul.y + min_sz.y;
+    } else if (max_sz.y < lr.y - ul.y) {
+        if (lr.y != m_lowerright.y)
+            lr.y = ul.y + max_sz.y;
+        else
+            ul.y = lr.y - max_sz.y;
+    }
+}
+
 void Wnd::SetDragDropDataType(const std::string& data_type)
 { m_drag_drop_data_type = data_type; }
 
@@ -487,37 +520,9 @@ void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
     Pt ul = ul_, lr = lr_;
     Pt original_sz = Size();
     bool resized = (original_sz.x != (lr.x - ul.x)) || (original_sz.y != (lr.y - ul.y));
-    if (resized) {
-        Pt min_sz = MinSize();
-        Pt max_sz = MaxSize();
-        if (m_layout) {
-            Pt layout_min_sz = m_layout->MinSize() + (Size() - ClientSize());
-            min_sz.x = std::max(min_sz.x, layout_min_sz.x);
-            min_sz.y = std::max(min_sz.y, layout_min_sz.y);
-        }
-        if (lr.x - ul.x < min_sz.x) {
-            if (ul.x != m_upperleft.x)
-                ul.x = lr.x - min_sz.x;
-            else if (lr.x != m_lowerright.x)
-                lr.x = ul.x + min_sz.x;
-        } else if (max_sz.x < lr.x - ul.x) {
-            if (lr.x != m_lowerright.x)
-                lr.x = ul.x + max_sz.x;
-            else
-                ul.x = lr.x - max_sz.x;
-        }
-        if (lr.y - ul.y < min_sz.y) {
-            if (ul.y != m_upperleft.y)
-                ul.y = lr.y - min_sz.y;
-            else if (lr.y != m_lowerright.y)
-                lr.y = ul.y + min_sz.y;
-        } else if (max_sz.y < lr.y - ul.y) {
-            if (lr.y != m_lowerright.y)
-                lr.y = ul.y + max_sz.y;
-            else
-                ul.y = lr.y - max_sz.y;
-        }
-    }
+    if (resized)
+        CorrectPositionOfSizeMove(ul, lr);
+
     m_upperleft = ul;
     m_lowerright = lr;
     if (resized) {

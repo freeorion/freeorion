@@ -465,6 +465,9 @@ public:
 
     /** Returns the region under point \a pt. */
     virtual WndRegion WindowRegion(const Pt& pt) const;
+
+    /** Adjusts \p ul and \p lr to correct for minsize and maxsize.*/
+    void CorrectPositionOfSizeMove(Pt& ul, Pt& lr) const;
     //@}
 
     /** \name Mutators */ ///@{

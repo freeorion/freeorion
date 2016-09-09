@@ -32,7 +32,6 @@
 #include <cassert>
 #include <cmath>
 
-
 using namespace GG;
 
 namespace {
@@ -204,12 +203,10 @@ void Layout::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* desti
 void Layout::SizeMove(const Pt& ul, const Pt& lr)
 { DoLayout(ul, lr); }
 
-void Layout::DoLayout(const Pt ul, const Pt _lr)
+void Layout::DoLayout(Pt ul, Pt lr)
 {
     if (m_stop_resize_recursion)
         return;
-
-    Pt lr(_lr);
 
     // these hold values used to calculate m_min_usable_size
     std::vector<unsigned int> row_effective_min_usable_sizes(m_row_params.size());
@@ -347,8 +344,7 @@ void Layout::DoLayout(const Pt ul, const Pt _lr)
     if (new_min_size != MinSize()) {
         ScopedAssign<bool> assignment(m_stop_resize_recursion, true);
         SetMinSize(new_min_size);
-        lr.x = std::max(lr.x, ul.x + new_min_size.x);
-        lr.y = std::max(lr.y, ul.y + new_min_size.y);
+        CorrectPositionOfSizeMove(ul, lr);
         size_or_min_size_changed = true;
     }
     Pt original_size = Size();

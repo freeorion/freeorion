@@ -244,7 +244,7 @@ protected:
     virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** Do all the layout work*/
-    virtual void DoLayout(const Pt ul, const Pt lr);
+    virtual void DoLayout(Pt ul, Pt lr);
     virtual void RedoLayout();
     //@}
 
