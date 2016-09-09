@@ -146,7 +146,7 @@ public:
         return boost::any_cast<T>(it->second.default_value);
     }
 
-    bool IsDefaultValue(const std::string& name) const {
+    bool        IsDefaultValue(const std::string& name) const {
         std::map<std::string, Option>::const_iterator it = m_options.find(name);
         if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::IsDefaultValue<>() : Attempted to get nonexistent option \"" + name + "\".");
