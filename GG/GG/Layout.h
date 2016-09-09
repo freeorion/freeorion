@@ -280,7 +280,7 @@ private:
     X      TotalMinWidth() const;
     Y      TotalMinHeight() const;
     void   ValidateAlignment(Flags<Alignment>& alignment);
-    void   ChildSizeOrMinSizeOrMaxSizeChanged();
+    void   ChildSizeOrMinSizeChanged();
 
     std::vector<std::vector<Wnd*> > m_cells;
     unsigned int                    m_border_margin;

@@ -502,7 +502,7 @@ void Layout::DoLayout(const Pt& ul, const Pt& lr)
     m_ignore_child_resize = false;
 
     if (ContainingLayout() && size_or_min_size_changed)
-        ContainingLayout()->ChildSizeOrMinSizeOrMaxSizeChanged();
+        ContainingLayout()->ChildSizeOrMinSizeChanged();
 }
 
 void Layout::Render()
@@ -727,7 +727,7 @@ void Layout::RedoLayout()
     Resize(Size());
 }
 
-void Layout::ChildSizeOrMinSizeOrMaxSizeChanged()
+void Layout::ChildSizeOrMinSizeChanged()
 {
     if (!m_ignore_child_resize)
         RedoLayout();

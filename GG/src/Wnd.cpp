@@ -525,7 +525,7 @@ void Wnd::SizeMove(const Pt& ul_, const Pt& lr_)
         if (m_layout && size_changed)
             m_layout->Resize(ClientSize());
         if (m_containing_layout && size_changed && !dynamic_cast<Layout*>(this))
-            m_containing_layout->ChildSizeOrMinSizeOrMaxSizeChanged();
+            m_containing_layout->ChildSizeOrMinSizeChanged();
     }
 }
 
@@ -538,8 +538,9 @@ void Wnd::SetMinSize(const Pt& sz)
     m_min_size = sz;
     if (Width() < m_min_size.x || Height() < m_min_size.y)
         Resize(Pt(std::max(Width(), m_min_size.x), std::max(Height(), m_min_size.y)));
+    // The previous Resize() will call ChildSizeOrMinSizeChanged() itself if needed
     else if (m_containing_layout && min_size_changed && !dynamic_cast<Layout*>(this))
-        m_containing_layout->ChildSizeOrMinSizeOrMaxSizeChanged();
+        m_containing_layout->ChildSizeOrMinSizeChanged();
 }
 
 void Wnd::SetMaxSize(const Pt& sz)
