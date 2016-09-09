@@ -141,6 +141,7 @@ public:
 
     /** writes the XMLElement to an output stream; returns the stream */
     std::ostream& WriteElement(std::ostream& os, int indent = 0, bool whitespace = true) const;
+    std::string WriteElement(int indent = 0, bool whitespace = true) const;
 
     const_child_iterator child_begin() const; ///< const_iterator to the first child in the XMLElement
     const_child_iterator child_end() const;   ///< const_iterator to the last + 1 child in the XMLElement
@@ -273,9 +274,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** destroys the current contents of the XMLDoc, and replaces tham with the constents of the document in the input
+    /** destroys the current contents of the XMLDoc, and replaces them with the contents of the document in the input
         stream \a is; returns the stream*/
     std::istream& ReadDoc(std::istream& is);
+
+    /** destroys the current contents of the XMLDoc, and replaces them with the contents of the document in the input
+        string \a s */
+    void ReadDoc(const std::string& s);
     //@}
 
     XMLElement root_node;  ///< the single XMLElement in the document, under which all other XMLElement are children

@@ -161,6 +161,13 @@ const std::string& XMLElement::Attribute(const std::string& attrib) const
         return empty_str;
 }
 
+std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const
+{
+    std::stringstream ss;
+    WriteElement(ss, indent, whitespace);
+    return ss.str();
+}
+
 std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, bool whitespace/* = true*/) const
 {
     if (whitespace)
@@ -318,6 +325,12 @@ std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace/* = true*/) con
     os << "<?xml version=\"1.0\"?>";
     if (whitespace) os << "\n";
     return root_node.WriteElement(os, 0, whitespace);
+}
+
+void XMLDoc::ReadDoc(const std::string& s)
+{
+    std::stringstream ss(s);
+    ReadDoc(ss);
 }
 
 std::istream& XMLDoc::ReadDoc(std::istream& is)
