@@ -860,8 +860,7 @@ void ListBox::PreRender()
             (*it)->Hide();
         else {
             (*it)->Show();
-            if ((*it)->PreRenderRequired())
-                (*it)->PreRender();
+            GUI::PreRenderWindow((*it));
         }
 
         if (it == last_visible_row)
@@ -869,10 +868,7 @@ void ListBox::PreRender()
     }
 
     if (!m_header_row->empty())
-        if (GG::Layout* lay = m_header_row->GetLayout()) {
-            if(lay->PreRenderRequired())
-                lay->PreRender();
-        }
+        GUI::PreRenderWindow(m_header_row);
 }
 void ListBox::Render()
 {
@@ -1884,6 +1880,8 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
             Erase(original_dropped_position, true, false);
     }
 
+    row->Hide();
+
     if (signal)
         AfterInsertSignal(it);
 
@@ -1915,6 +1913,7 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
     {
         Row* row = *row_it;
         row->InstallEventFilter(this);
+        row->Hide();
     }
 
     // add row at requested location (or default end position)
