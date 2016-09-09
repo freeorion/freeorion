@@ -244,8 +244,8 @@ protected:
     virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** Do all the layout work*/
-    virtual void DoLayout(const Pt& ul, const Pt& lr);
-    virtual void   RedoLayout();
+    virtual void DoLayout(const Pt ul, const Pt lr);
+    virtual void RedoLayout();
     //@}
 
 private:
@@ -290,7 +290,7 @@ private:
     std::map<Wnd*, WndPosition>     m_wnd_positions;
     Pt                              m_min_usable_size;
     bool                            m_ignore_child_resize;
-    bool                            m_ignore_parent_resize;
+    bool                            m_stop_resize_recursion;
     bool                            m_render_outline;
     Clr                             m_outline_color;
 

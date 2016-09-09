@@ -86,7 +86,7 @@ Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
     m_row_params(rows),
     m_column_params(columns),
     m_ignore_child_resize(false),
-    m_ignore_parent_resize(false),
+    m_stop_resize_recursion(false),
     m_render_outline(false),
     m_outline_color(CLR_MAGENTA)
 {
@@ -204,10 +204,12 @@ void Layout::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* desti
 void Layout::SizeMove(const Pt& ul, const Pt& lr)
 { DoLayout(ul, lr); }
 
-void Layout::DoLayout(const Pt& ul, const Pt& lr)
+void Layout::DoLayout(const Pt ul, const Pt _lr)
 {
-    if (m_ignore_parent_resize)
+    if (m_stop_resize_recursion)
         return;
+
+    Pt lr(_lr);
 
     // these hold values used to calculate m_min_usable_size
     std::vector<unsigned int> row_effective_min_usable_sizes(m_row_params.size());
@@ -343,7 +345,10 @@ void Layout::DoLayout(const Pt& ul, const Pt& lr)
     bool size_or_min_size_changed = false;
     Pt new_min_size(TotalMinWidth(), TotalMinHeight());
     if (new_min_size != MinSize()) {
+        ScopedAssign<bool> assignment(m_stop_resize_recursion, true);
         SetMinSize(new_min_size);
+        lr.x = std::max(lr.x, ul.x + new_min_size.x);
+        lr.y = std::max(lr.y, ul.y + new_min_size.y);
         size_or_min_size_changed = true;
     }
     Pt original_size = Size();
@@ -355,7 +360,7 @@ void Layout::DoLayout(const Pt& ul, const Pt& lr)
     if (Wnd* parent = Parent()) {
         if (const_cast<const Wnd*>(parent)->GetLayout() == this) {
             Pt new_parent_min_size = MinSize() + parent->Size() - parent->ClientSize();
-            ScopedAssign<bool> assignment(m_ignore_parent_resize, true);
+            ScopedAssign<bool> assignment(m_stop_resize_recursion, true);
             parent->SetMinSize(Pt(new_parent_min_size.x, new_parent_min_size.y));
         }
     }
