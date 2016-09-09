@@ -3,6 +3,317 @@
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+## [v0.4.6] - 2016-09-09
+
+
+### Key Changes
+
+- Reworked supply mechanics (details below)
+- Reworked weapon part refinements
+- Reworked ship repair: Drydocks, Damage Control techs,
+Robotic hulls self repair (details below)
+- Substantial GUI improvements
+ - Substantial improvements to GUI responsiveness and FPS
+ - Made GUI more configurable
+- Many small additions/changes to GUI rendering, layout, functionality,
+customization options, and displayed information that collectively
+substantially improve usability, responsiveness, and system resource usage.
+- Turn processing time improvements
+- AI improvements
+- New specials, hulls, ship parts, giving new strategic or fun gameplay options
+
+
+### Detailed Changelog
+
+
+#### Graphics / GUI
+
+- New default font Roboto ver. 2.001101 (2014) (with a few extra
+missing glyphs needed / used in the GUI)
+- Fixed layout of production / research info panel
+- Reworked rendering of various GUI windows to improve performance
+- Improved functionality of pedia search box
+ - Get a list of results instead of jumping to the first matching entry found
+- Added mousewheel cycling through items in droplists
+- Improved window layout in response to game window resizing
+- Made queue and info windows resizable / movable
+- Increased default tooltip delay
+- Increased default sitrep icon size
+- Added a tooltip for when the in-game save button is disabled.
+- Added messages when game save is started.
+- Improved blending between empires' visibility radii colours
+- Added various hotkey commands, including mapping the map or tech view
+- Suppressed rendering of ridiculously huge visibility circles, such
+as from super testers
+- Added menu button to open freeorion.org
+- Tweaked appearance of colour picker indicator in HS square to have a
+hole/outline where the lines meet
+- Add the distance scale circle to the MapWnd right-click menu
+- Added separate option for FPS limit when the game window doesn't
+have OS input focus
+- Added 3D starfield effect on map
+- Add an entry on the right-click menu to add to top of build queue
+- When left-clicking production queue items, open the system and
+select the planet instead of just jumping to the system on the map.
+- Made ctrl-left click remove an item from build queue.
+- Made ctrl-double click add entries to the top of the build queue
+- Pedia articles can now have images in them
+- New icons for auto and manual turn cycling button
+- Tweaked Sidepanel planet pole tilt angle
+- Tweaked Sitrep layout
+- Reworked rotating selection indicator rendering to be smoother
+- Re-enabled sitreps for winning / losing the game
+ - Add an icon to the PlayerListWnd when an empire wins/loses
+- Made Pedia ship design detail page show troop stats reflecting
+racial bonus/malus
+- Clicking a sitrep planet handle will select the planet for production
+- Tweaks to rendering techs on tech screen when zooming
+- Positioned cursor at end of historical input from pressing up/down
+in messages window
+- Added current turn expected progress to research and production
+progress meters
+- Added specialized tooltip for resource icons
+- Made encyclopedia detail panel of production and research screens closable
+- Switched a few objects list columns from showing object ids to object names
+- Added nearest system column and number of specials column to objects list
+- Production and research queue items show max spendable PP or RP per turn
+- Added ship rally point tracking / setting to production queue. New
+fleets are grouped by rally point on the turn they are produced. Ship
+production items can be right clicked to set their rally point to the
+selected system.
+- Added tooltips to production selector items explaining failed
+production location conditions
+- Fixed issues navigating the directory structure in the save/load
+file dialog on Windows when accented / non-Latin characters were
+present in path names.
+- Stripped selected Wnd text of tags before passing to clipboard
+- Implemented selecting or moving cursor to next word edge when
+holding CTRL when a text GUI widget has input focus
+- Hid map screen pedia when opening the production screen
+- Tweaked tech tree layout
+- Added icons to tech tree panels showing unlocked or affected other content
+- Added button to show partially unlocked techs on tech tree, which
+are now shown by default, and are techs that have at least one prereq
+researched.
+- Allowed wide/tall windows to spam multiple monitors
+- Added option to disable effect accounting in client, which could
+speed up GUI responses to things that would normally cause an
+accounting update, such as focus changes
+- Made spin controls on Options screen wider
+- Improved layout of various UI windows / popups for variable font sizes
+- Added "Update Design" and "Add New Design" commands to Design Screen
+- Added drop position indicator for completed designs list
+- Improved format and detail of combat log, including calculations for
+each attack and attackers being revealed by attacking
+- Added right-click Cut-Copy-Paste popup menus to text entry boxes
+- Made shift-delete cut and shift-insert paste in text entry boxes
+- Expanded set of allowed hotkey combinations
+- In SidePanel confine planet rename context menu item inside planet name
+- Moved Infrastructure indicator to population panel.
+- Moved supply meter from military to resources panel.
+- Options screen widgets to set objects list column widths
+- Tweaked how panels in fleets and planets lists resize with or
+without a scrollbar present
+- Added right-click popup menu command to copy text in most GUI text
+- Fixed issues where characters font textures weren't loaded even when
+using a suitable stringtable, making it impossible to use those
+characters in game
+- Added a right-click command to dismiss sensor ghosts on the fleets
+window, which causes an empire to forget a fleet existed, removing it
+from the map.
+- Disabled sound system init when sound and music are disabled
+- Fix crash when OpenAL device does not initialize
+- Added message box at startup informing player in case of audio
+system init failiure
+- Added message box at startup informing player in case of
+insufficient OpenGL version
+- Made pressing escape close more GUI windows
+- Added tech turn and RP requirements to tech panels on tech tree
+- Modified autogenerated fleet names to better reflect fleet contents
+- Increase fleet drop target width and add an icon to it
+- Modified how client and server communicate in a single player game
+to avoid firewall popups about network access
+- Added scanlines over fleets when not currently visible
+- Added nearly-accurate estimate of meter changes on the next turn to
+meter tooltips
+- Made MultiMeterStatusBar rescale to show largest value
+- In DesignWnd add ability to drag parts away from design
+
+
+#### Content
+
+- Translation updates: French, Russian
+- Removed / updated various missing, unused, or incorrect stringtable entries
+- Various adjustments to AI priorities
+- Made AI more cautious of hidden threats after losing fleets in a
+system it can't detect into
+- Updated pedia descriptions of various content and UI windows,
+including adding more links
+- Reworked intro sitrep to be less immersion-breaking
+- Moved start-of-game unlocking sitreps to before-the-first turn to
+avoid spamming the player
+- Removed "Average X" descriptions of species, leaving these only for
+the all-average humans
+- Made collapsing nebulae create various coloured stars
+- Added a "Rough Military Strength Estimate" empire statistic
+- Added Spinal Antimatter Cannon
+- Improved cross-platform consistency of random results in universe
+generation and in-game effects
+- Added Starlane Nexus and Starlane Bore buildings that can be used to
+create starlanes
+- Reworked Spatial Distortion Generator to push ships back along their
+approach starlane
+- Added Black Hole Collapser and Subspace Rift buildings
+- Adjusted some star names
+- Added sitreps to Planetary Starlane Drive effects
+- Various new hull art and slot positions, tech icons, building icons
+- Added the Accretion Disc special
+- Fixed / updated bioweapon sitreps
+- Added a random turn event that creates Space Krill in an empty system
+- Added new galaxy shape "Disc"
+- Added the feature to resurrect extinct species found in ancient ruins with
+the Xenoresurrection Lab (which can only be built on a planet)
+- Added the new special Temporal Anomaly
+- Reworked weapon part refinements, so that instead of multiple parts,
+techs increase the strength of parts (although getting the increase to
+take effect requires being in supply range)
+- Added Energy Frigate hull, adjusted some other hulls' balance accordingly
+- Updated premade / default ship designs, made naming consistent
+- New bombardment weapons (feature in-progress)
+- Added EMP and electric overcharge ship parts
+- Added Solar Concentrators which increase laser weapon strength for
+Organic Line hulls depending on local star type
+- Split up stealth part and planetary stealth techs
+- Added more AI greeting messages, made random
+- Added Scrying Sphere buildings, which can be produced and appear
+around the map randomly during galaxy generation, and share vision
+between planets on which they are located
+- At start of game, the Honeycomb will now turn all planets without specials
+or inhabitants within 5 jumps into Asteroids instead of destroying them —
+without renaming them
+- Removed the special Volcanic Activity
+- Tweaked planet / asteroid naming
+- All systems except deep space, black hole and neutron star systems now
+contain at least one planet or asteroid belt
+- Added "Telepathic Detection" species trait (currently only assigned to Trith)
+which gives basic visibility of inhabitated planets nearby a colony of a
+species that has that trait.
+
+
+#### Balance
+
+- Reworked supply propagation mechanics
+ - In any system, at most one empire can supply ships and exchange
+production between planets.
+ - Empires' supply ranges push against eachother in neutral systems,
+with higher range supply sources blocking lower range (where range
+decays with distance from the source)
+ - Armed ships prevent enemy supply from propagating in/out of a system
+ - In the absence of armed ships, supply won't propagate into an enemy
+system where a supply source planet is located
+- Substantially reworked ship repair
+ - Drydocks require a ship to be stationary and only repair a proportion
+of ship structure of the bigger hulls
+ - No damage control effects work on the turn a combat has taken place except
+for the Logistic Facilitator flagship, which is substantially reduced
+ - Balance pass on Robotic hull line and Damage Control techs repair rates
+- Various building / tech cost adjustments
+- Split Ground Troops species trait into Defensive Ground Troops and
+Offensive Ground Troops.
+- Made Neutronium Forge only be buildable at locations with a Basic
+Shipyard (like all other shipyard upgrade buildings)
+- Tweaked monster detection and stealth stats
+- Artificial Moons can no longer be built when a Resonant Moon special
+is present
+- Reworked various modifiers to planet population
+- Tweaked Honeycomb and World Tree special locations
+- Re-Added the Tidally Locked Rotation special with a population
+penalty and changed the penalty of the Eccentric Orbit special to a
+Supply minus
+- Space Monster weapon balance tweaks
+ - Adjusted Experimentor monster weapons
+- Planetary Starlane Drive modified so it can't be built on gas giants
+- Death Spores and Bio-Terminators now only affect organic species
+- Monsters now only bombard one planet at a time
+- Reworked how derelict visibility effect works - grants visibility
+directly instead of temporarily increasing ship detection range
+- Added preferred focus for most species
+- Made producing troop pods require a production location with troops
+ - Species with no offensive Ground Troops will no longer be able to
+build ships with Ground Troop pods
+- Balanced research and production bonuses
+- Reprioritised mine effects to always occur before repair effects
+- Balanced BioAdaptive hull to work same as Nanorobotic
+- Tweaked numbers for Logistics Facilitator
+- Enable queue additions of energy shipyards in systems with pending
+artificial blackhole
+- Prevent Experimentor spawn location from sundering the galaxy
+- Balance Hyperspatial Dam
+- Made planets in systems which contain a Gateway to the Void building
+not provide any supply
+
+
+#### Bugs
+
+- Prevented dragging sitrep entries
+- Fixed depopulation of planets to work when planet has a negative population
+- Fixed rendering of object window items selected with right click
+- Fixed multiplayer galaxy setup droplists problematic scrollbars
+- Fixed protection focus effect on max troops
+- Fixed AI building neutronium extractors
+- Fixed AI problem with ship design with id 0
+- Fixed experimentor spawn location being blocked by natives
+- Fixed a segfault when resigning a game with no empire
+- Fixed Fortress special mines effects not properly working together
+with System Defense Mines techs
+- Prevented unowned planet mines from affecting unowned guard ships
+- Fixed unowned fortress mines damaging unowned monsters and made
+mines able to destroy monsters, not just damage them
+- Fixed ion storm stealth effect to not affect fields (and thereby itself)
+- Fixed issue with stealth effect of Transpatial Drive
+- Reduced credits scroll flicker
+- Fixed quirks with list scrollbars and row positioning
+- Fixed crash when manipulating fleets in Fleets window
+- Fixed issue where saves would record an extra nonexistant player,
+causing problems when loading the save
+- Fixed issue with dragging parts over another part in a design
+- Prevent a bug with high CPU load and low FPS. A font is now cached
+even if a requested glyph is not part of the font, but a 'replacement
+character' is provided
+- Fixed crash when setting hotkeys
+- Fixed a bug where calling the suitability report from the production
+window would toggle the production window pedia panel visibility. Now
+shows suitability report in production window pedia.
+- Fixed alphabetical sorting of object list columns when accented
+letters or other non-latin characters are present
+- Fixed a bug where pedia closed instead of showing an entry
+- Fixed deleting production items by pressing delete
+- Fixed crashes when clicking links in pedia
+- Fixed calculation of FPS
+- Fixed resource panel not showing expansion
+- Fixed a bug where the AI would sometimes think it can't build parts
+at a planet despite it actually being able to
+- Fixed fleet destination text being "holding at ..." when moving
+along a path that returns to the start location.
+- Fixed xenophobic self-sustaining pop malus and xenophobic frenzy
+happiness malus
+
+
+#### Technical / Internal
+
+- Made it possible to read binary or compressed XML saves regardless
+of current save output format setting
+- Made communication between clients / servers on different operating
+systems more flexible / robust
+- Reworked XML save format to have an uncompressed somewhat
+readable-as-text header with basic info about the saved game
+- Added --version parameter to freeorion{,d} executables which outputs
+the version string to the console
+- (*nix) Moved user config and data files to conform with
+XDG Base Directory Specification
+- Reorganized content definitions into multiple files
+
+
 ## [v0.4.5] - 2015-09-08
 
 
