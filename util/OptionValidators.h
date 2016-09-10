@@ -7,11 +7,12 @@
 #include <cmath>
 #include <string>
 #include <set>
+#include <list>
 
 // these are needed by the StepValidator
 namespace details {
     template <class T> inline T mod (T dividend, T divisor)
-    {  return (dividend % divisor); }
+    { return (dividend % divisor); }
 
     template <> inline float mod<float>(float dividend, float divisor)
     { return std::fmod(dividend, divisor); }
@@ -48,6 +49,22 @@ struct Validator : public ValidatorBase
 
     virtual Validator *Clone() const
     { return new Validator<T>(); }
+};
+
+std::string ListToString(const std::list<std::string>& input_list);
+std::list<std::string> StringToList(const std::string& input_string);
+
+template <>
+struct Validator<std::list<std::string> > : public ValidatorBase
+{
+    virtual boost::any Validate(const std::string& str) const
+    { return boost::any(StringToList(str)); }
+
+    virtual std::string String(const boost::any& value) const
+    { return ListToString(boost::any_cast<std::list<std::string> >(value)); }
+
+    virtual Validator *Clone() const
+    { return new Validator<std::list<std::string> >(); }
 };
 
 /** a Validator that constrains the range of valid values */
