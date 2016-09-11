@@ -1148,6 +1148,7 @@ void ListBox::BringRowIntoView(iterator it)
 
     const Row* it_row = *it;
     const Row* first_shown_row = SafeDeref(m_first_row_shown, m_rows.end());
+    RequirePreRender();
 
     if (m_first_row_shown == m_rows.end() || (first_shown_row && (it_row->Top() < first_shown_row->Top()))) {
         m_first_row_shown = it;
@@ -1170,6 +1171,7 @@ void ListBox::BringRowIntoView(iterator it)
 void ListBox::SetFirstRowShown(iterator it)
 {
     if (it != m_rows.end()) {
+        RequirePreRender();
         m_first_row_shown = it;
         if (m_vscroll) {
             Y acc(0);
@@ -2113,8 +2115,8 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
     Y total_y_extent(0);
-    if (!m_rows.empty())
-        total_y_extent = m_rows.back()->Bottom() - m_rows.front()->Top();
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it)
+        total_y_extent += (*it)->Height();
 
     bool vertical_needed =
         m_first_row_shown != m_rows.begin() ||
@@ -2144,20 +2146,25 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
+    bool vscroll_added_or_removed(false);
+
     if (m_vscroll) { // if scroll already exists...
         if (!vertical_needed) { // remove scroll
             DeleteChild(m_vscroll);
             m_vscroll = 0;
+            vscroll_added_or_removed = true;
 
         } else { // ensure vertical scroll has the right logical and physical dimensions
             X scroll_x = cl_sz.x - SCROLL_WIDTH;
             Y scroll_y(0);
             if (adjust_for_resize) {
+                vscroll_added_or_removed = true;
                 m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
                                     Pt(scroll_x + SCROLL_WIDTH,
                                        scroll_y + cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
             }
 
+            vscroll_added_or_removed = true;
             unsigned int line_size = m_vscroll_wheel_scroll_increment;
             if (line_size == 0 && !this->Empty()) {
                 const Row* row = *begin();
@@ -2172,7 +2179,9 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
             MoveChildUp(m_vscroll);
         }
     } else if (!m_vscroll && vertical_needed) { // if scroll doesn't exist but is needed
+        vscroll_added_or_removed = true;
         m_vscroll = style->NewListBoxVScroll(m_color, CLR_SHADOW);
+        m_vscroll->NonClientChild(true);
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
@@ -2233,6 +2242,14 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
         AttachChild(m_hscroll);
         Connect(m_hscroll->ScrolledSignal, &ListBox::HScrolled, this);
     }
+
+    if (vscroll_added_or_removed) {
+        RequirePreRender();
+        X row_width(std::max(ClientWidth(), X(1)));
+        for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+            (*it)->Resize(Pt(row_width, (*it)->Height()));
+        }
+    }
 }
 
 void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
@@ -2259,8 +2276,11 @@ void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
         position = position - row_height;
     }
 
+    if (position != m_first_row_offset.y)
+        RequirePreRender();
+
     m_first_row_offset.y = position;
-    RequirePreRender();
+
 }
 
 void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
