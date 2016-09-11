@@ -819,23 +819,14 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
 
 void ListBox::PreRender()
 {
-    Wnd::PreRender();
-
-    if (m_rows.empty())
-        return;
-
     // Use the first row to define the column properties
-    if (m_manage_column_props && (m_col_widths.empty() || !m_keep_col_widths)) {
+    if (!m_rows.empty()
+        && m_manage_column_props
+        && (m_col_widths.empty() || !m_keep_col_widths))
+    {
         DefineColWidths(*(*m_rows.begin()));
         DefineColAlignments(*(*m_rows.begin()));
         DefineColStretches(*(*m_rows.begin()));
-    }
-
-    // Position rows
-    Pt pt(m_first_row_offset);
-    for (iterator row_it = m_rows.begin(); row_it != m_rows.end(); ++row_it) {
-        (*row_it)->MoveTo(pt);
-        pt.y += (*row_it)->Height();
     }
 
     if (m_normalize_rows_on_insert) {
@@ -848,19 +839,22 @@ void ListBox::PreRender()
 
     AdjustScrolls(false);
 
+    // Reset require prerender after call to adjust scrolls
+    Control::PreRender();
+
     // Ensure that data in occluded cells is not rendered
-    // and the any re-layout during prerender is immediate.
+    // and that any re-layout during prerender is immediate.
     iterator last_visible_row = LastVisibleRow();
     bool hide = true;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         if (it == m_first_row_shown)
             hide = false;
 
-        if (hide)
+        if (hide) {
             (*it)->Hide();
-        else {
+        } else {
             (*it)->Show();
-            GUI::PreRenderWindow((*it));
+            GUI::PreRenderWindow(*it);
         }
 
         if (it == last_visible_row)
@@ -869,6 +863,14 @@ void ListBox::PreRender()
 
     if (!m_header_row->empty())
         GUI::PreRenderWindow(m_header_row);
+
+    // Position rows
+    Pt pt(m_first_row_offset);
+    for (iterator row_it = m_rows.begin(); row_it != m_rows.end(); ++row_it) {
+        (*row_it)->MoveTo(pt);
+        pt.y += (*row_it)->Height();
+    }
+
 }
 void ListBox::Render()
 {
