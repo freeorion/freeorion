@@ -26,18 +26,13 @@
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
-#include <GG/Layout.h>
 #include <GG/DeferredLayout.h>
 #include <GG/Scroll.h>
-#include <GG/StaticGraphic.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
-#include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>
-#include <boost/assign/list_of.hpp>
 
-#include <cmath>
 #include <numeric>
 
 
