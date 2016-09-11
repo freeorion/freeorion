@@ -949,21 +949,6 @@ void ListBox::Render()
         GUI::GetGUI()->RenderWindow(m_vscroll);
     if (m_hscroll)
         GUI::GetGUI()->RenderWindow(m_hscroll);
-
-    // ensure that data in occluded cells is not rendered
-    bool hide = true;
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        if (it == m_first_row_shown)
-            hide = false;
-
-        if (hide)
-            (*it)->Hide();
-        else
-            (*it)->Show();
-
-        if (it == last_visible_row)
-            hide = true;
-    }
 }
 
 void ListBox::SizeMove(const Pt& ul, const Pt& lr)
