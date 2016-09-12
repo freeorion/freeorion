@@ -135,6 +135,9 @@ to avoid firewall popups about network access
 meter tooltips
 - Made MultiMeterStatusBar rescale to show largest value
 - In DesignWnd add ability to drag parts away from design
+- Fixed confusing behaviour of main menu when displaying credits
+(main menu was dimmed, but still active, now requires pressing ESC or
+mouse click anywhere to stop displaying credits)
 
 
 #### Content
