@@ -104,6 +104,7 @@ INPUT                  = @FreeOrion_SOURCE_DIR@/AI \
                          @FreeOrion_SOURCE_DIR@/client \
                          @FreeOrion_SOURCE_DIR@/combat \
                          @FreeOrion_SOURCE_DIR@/doc/all_tags.dox \
+                         @FreeOrion_SOURCE_DIR@/doc/content_tags_alias.dox \
                          @FreeOrion_SOURCE_DIR@/default/python \
                          @FreeOrion_SOURCE_DIR@/Empire \
                          @FreeOrion_SOURCE_DIR@/network \

@@ -11,6 +11,9 @@ These filters are applied in various areas, such as:
 @li not showing buildings unless other criteria are met
 @li only affecting certain ships within a system.
 
+For usage of this alias, see
+@subpage content_tags_alias "content tags alias"
+
 --
 
 @section content_tags_section Documented tags
