@@ -47,8 +47,6 @@ private:
     GG::Button*         m_credits;      //!< displays credits
     GG::Button*         m_exit_game;    //!< button that exits the program
 
-    CreditsWnd*         m_credits_wnd;
-
     CUIWnd*             m_menu;
     GG::StaticGraphic*  m_splash;
     GG::StaticGraphic*  m_logo;
