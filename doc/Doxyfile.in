@@ -9,7 +9,7 @@ PROJECT_NUMBER         = "@FreeOrion_VERSION@"
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = @FreeOrion_CPP_APIDOC_OUTDIR@
-CREATE_SUBDIRS         = YES
+CREATE_SUBDIRS         = NO
 ALLOW_UNICODE_NAMES    = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -27,7 +27,7 @@ MULTILINE_CPP_IS_BRIEF = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 4
-ALIASES                =
+ALIASES                = content_tag{1}="\xrefitem content_tags \"Definition Tag\" \"Content Definition Tags\" \1"
 TCL_SUBST              =
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
@@ -103,6 +103,8 @@ WARN_LOGFILE           =
 INPUT                  = @FreeOrion_SOURCE_DIR@/AI \
                          @FreeOrion_SOURCE_DIR@/client \
                          @FreeOrion_SOURCE_DIR@/combat \
+                         @FreeOrion_SOURCE_DIR@/doc/all_tags.dox \
+                         @FreeOrion_SOURCE_DIR@/default/python \
                          @FreeOrion_SOURCE_DIR@/Empire \
                          @FreeOrion_SOURCE_DIR@/network \
                          @FreeOrion_SOURCE_DIR@/parse \

@@ -1,0 +1,18 @@
+/**
+@page content_tags Content Definition Tags
+
+@brief Content entries may have tags associated with them to help filter them
+for later effects.
+
+Tags are used to easily filter for entries, without relying on the specific
+entries names.\n
+These filters are applied in various areas, such as:
+@li displaying only certain parts in the design window
+@li not showing buildings unless other criteria are met
+@li only affecting certain ships within a system.
+
+--
+
+@section content_tags_section Documented tags
+
+**/
