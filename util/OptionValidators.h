@@ -7,7 +7,7 @@
 #include <cmath>
 #include <string>
 #include <set>
-#include <list>
+#include <vector>
 
 // these are needed by the StepValidator
 namespace details {
@@ -51,20 +51,20 @@ struct Validator : public ValidatorBase
     { return new Validator<T>(); }
 };
 
-FO_COMMON_API std::string ListToString(const std::list<std::string>& input_list);
-FO_COMMON_API std::list<std::string> StringToList(const std::string& input_string);
+FO_COMMON_API std::string ListToString(const std::vector<std::string>& input_list);
+FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_string);
 
 template <>
-struct Validator<std::list<std::string> > : public ValidatorBase
+struct Validator<std::vector<std::string> > : public ValidatorBase
 {
     virtual boost::any Validate(const std::string& str) const
     { return boost::any(StringToList(str)); }
 
     virtual std::string String(const boost::any& value) const
-    { return ListToString(boost::any_cast<std::list<std::string> >(value)); }
+    { return ListToString(boost::any_cast<std::vector<std::string> >(value)); }
 
     virtual Validator *Clone() const
-    { return new Validator<std::list<std::string> >(); }
+    { return new Validator<std::vector<std::string> >(); }
 };
 
 /** a Validator that constrains the range of valid values */

@@ -486,10 +486,10 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     }
 }
 
-std::string ListToString(const std::list<std::string>& input_list) {
+std::string ListToString(const std::vector<std::string>& input_list) {
     // list input strings in comma-separated-value format
     std::string retval;
-    for (std::list<std::string>::const_iterator it = input_list.begin(); it != input_list.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = input_list.begin(); it != input_list.end(); ++it) {
         if (it != input_list.begin())
             retval += ",";
         std::string str(*it);
@@ -499,8 +499,8 @@ std::string ListToString(const std::list<std::string>& input_list) {
     return retval;
 }
 
-std::list<std::string> StringToList(const std::string& input_string) {
-    std::list<std::string> retval;
+std::vector<std::string> StringToList(const std::string& input_string) {
+    std::vector<std::string> retval;
     boost::tokenizer<boost::escaped_list_separator<char> > tok(input_string);
     for (boost::tokenizer<boost::escaped_list_separator<char> >::iterator it = tok.begin(); it != tok.end(); ++it) {
         retval.push_back(*it);
