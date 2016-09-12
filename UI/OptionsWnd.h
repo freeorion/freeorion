@@ -31,7 +31,6 @@ protected:
     virtual GG::Rect CalculatePosition() const;
 
 private:
-
     /**SoundOptionsFeedback enables immediate player feedback when
        sound options are changed.*/
     class SoundOptionsFeedback {
