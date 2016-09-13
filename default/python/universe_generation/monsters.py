@@ -123,6 +123,7 @@ def generate_monsters(monster_freq, systems):
     universe = fo.get_universe()
 
     # Fleet plans that include ships capable of altering starlanes.
+    ## @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for fleets containing a hull design with this tag.
     fleet_can_alter_starlanes = {fp for fp in fleet_plans
                                  if any([universe.getGenericShipDesign(design).hull_type.hasTag("CAN_ALTER_STARLANES")
                                          for design in fp.ship_designs()])}
