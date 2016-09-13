@@ -35,7 +35,7 @@ BuildingType
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_NOPOP"
                     icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID
@@ -63,7 +63,7 @@ BuildingType
                 SetStructure value = Target.MaxStructure
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_COMPLETE"
                     icon = "icons/sitrep/ship-repair-complete.png"
                     parameters = [
                         tag = "ship" data = Target.ID
@@ -90,7 +90,7 @@ BuildingType
                 SetStructure value = Value + [[ORB_DRYDOCK_REPAIR_VAL(Target.MaxStructure)]]
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_PARTIAL"
                     icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID
@@ -115,7 +115,7 @@ BuildingType
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_NONE"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_NONE"
                     icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID
