@@ -5339,6 +5339,9 @@ Orbital Dock Ship Repairs
 EFFECT_DRYDOCK_SHIP_REPAIR_NONE
 On %planet%: The %building% could not start repairs on %ship%, due to low [[encyclopedia HAPPINESS_TITLE]].
 
+EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP
+On %planet%: the %building% is abandoned, there is no one left to assist in repairs of the ship %ship%.
+
 EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
 On %planet%: the %building% performed partial repairs on the %ship%.
 
