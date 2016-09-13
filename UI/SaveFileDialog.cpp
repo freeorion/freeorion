@@ -493,11 +493,14 @@ public:
     /// @param [in] previews The preview data
     void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
+
+        std::vector<Row*> rows;
         for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it) {
-            SaveFileRow* row = new SaveFileFileRow(*it, m_visible_columns, m_columns, tooltip_delay);
-            Insert(row);
-            row->AdjustColumns();
+            rows.push_back(new SaveFileFileRow(*it, m_visible_columns, m_columns, tooltip_delay));
         }
+
+        // Insert rows enmasse to avoid per insertion vector sort costs.
+        Insert(rows, false);
     }
 
     void LoadDirectories(const fs::path& path) {
