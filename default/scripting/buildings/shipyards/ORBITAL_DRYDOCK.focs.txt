@@ -32,7 +32,18 @@ BuildingType
             ]
             stackinggroup = "SHIP_REPAIR"
             priority = 75
-            effects = RemoveSpecial name = ""
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP"
+                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    icon = "icons/sitrep/ship-repair.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "building" data = Source.ID
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
         // Normal repair, completely restored
         EffectsGroup
             scope = And [
