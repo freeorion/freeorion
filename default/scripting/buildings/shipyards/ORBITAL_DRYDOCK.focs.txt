@@ -1,3 +1,11 @@
+// EffectsGroups in this definition are commented with a keyword for reference:
+// If using the stackinggroup SHIP_REPAIR, note the priority of ZERO-POP
+// ZERO-POP  :  Prevents any later priority repairs or other sitreps when
+//                planet has no population (outpost).
+// COMPLETE  :  Split from partial only for a different sitrep.
+// PARTIAL   :  Partial repair of a ship, amount of the actual repair depends on
+//                planet happiness and the ship's max structure.
+// FALLBACK  :  No repair due to planet happiness
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
@@ -15,7 +23,7 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-        // With no pop, no repair or sitrep messages
+        // ZERO-POP : With no pop, no repair or sitrep messages
         EffectsGroup
             scope = And [
                 Ship
@@ -44,7 +52,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-        // Normal repair, completely restored
+        // COMPLETE : Normal repair, completely restored
         EffectsGroup
             scope = And [
                 Ship
@@ -72,7 +80,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-        // Normal repair
+        // PARTIAL : Normal repair
         EffectsGroup
             scope = And [
                 Ship
@@ -99,7 +107,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-        // No repair
+        // FALLBACK : No repair
         EffectsGroup
             scope = And [
                 Ship
