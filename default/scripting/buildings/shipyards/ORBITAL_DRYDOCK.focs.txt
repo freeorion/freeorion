@@ -15,6 +15,24 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
+        // With no pop, no repair or sitrep messages
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy empire = Source.Owner
+                Structure high = LocalCandidate.MaxStructure - 0.001
+            ]
+            activation = And [
+                Source
+                ContainedBy And [
+                    Planet
+                    Population high = 0
+                ]
+            ]
+            stackinggroup = "SHIP_REPAIR"
+            priority = 75
+            effects = RemoveSpecial name = ""
         // Normal repair, completely restored
         EffectsGroup
             scope = And [
