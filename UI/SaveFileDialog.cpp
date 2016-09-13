@@ -344,7 +344,7 @@ public:
         GG::Layout* layout = GetLayout();
         if (!layout)
             return;
-        for (unsigned int i = 0; i < m_columns->size(); ++i){
+        for (unsigned int i = 0; i < m_columns->size(); ++i) {
             const SaveFileColumn& column = (*m_columns)[i];
             layout->SetColumnStretch ( i, column.Stretch() );
             layout->SetMinimumColumnWidth ( i, column.FixedWidth(ClientWidth()) ); // Considers header
@@ -377,23 +377,35 @@ public:
         SaveFileRow(columns, directory) {
         SetMargin(ROW_MARGIN);
 
-        push_back(new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END, GG::FORMAT_NOWRAP | GG::FORMAT_LEFT));
-        GetLayout()->SetColumnStretch(0, 1.0);
+        for (unsigned int i = 0; i < m_columns->size(); ++i) {
+            if (i==0) {
+                CUILabel* label = new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END,
+                                               GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
+                label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
+                push_back(label);
+            } else {
+                // Dummy columns
+                CUILabel* label = new CUILabel("", GG::FORMAT_NOWRAP);
+                label->Resize(GG::Pt(GG::X0, ClientUI::GetFont()->Height()));
+                push_back(label);
+            }
+        }
+
+        AdjustColumns();
     }
 
-
-    virtual void AdjustColumns() {
+    GG::X DirectoryNameSize() {
         GG::Layout* layout = GetLayout();
         if (!layout)
-            return;
+            return ClientUI::GetFont()->SpaceWidth() * 10;
+
         // Give the directory label at least all the room that the other columns demand anyway
         GG::X sum(0);
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
             const SaveFileColumn& column = (*m_columns)[i];
             sum += column.FixedWidth(ClientWidth());
         }
-        layout->SetMinimumColumnWidth (0, sum);
-        layout->SetColumnStretch(0, 1.0);
+        return sum;
     }
 };
 
