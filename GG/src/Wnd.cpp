@@ -590,6 +590,8 @@ void Wnd::DetachChild(Wnd* wnd)
         return;
     m_children.erase(it);
     wnd->SetParent(0);
+    if (wnd == m_layout)
+        m_layout = 0;
     if (Layout* this_as_layout = dynamic_cast<Layout*>(this)) {
         this_as_layout->Remove(wnd);
         wnd->m_containing_layout = 0;
@@ -855,7 +857,6 @@ Layout* Wnd::DetachLayout()
 {
     Layout* retval = m_layout;
     DetachChild(m_layout);
-    m_layout = 0;
     return retval;
 }
 
