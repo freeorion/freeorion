@@ -198,6 +198,7 @@ contain at least one planet or asteroid belt
 - Added "Telepathic Detection" species trait (currently only assigned to Trith)
 which gives basic visibility of inhabitated planets nearby a colony of a
 species that has that trait.
+- Fixed "no repair" sitreps caused by drydocks on outposts
 
 
 #### Balance
