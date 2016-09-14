@@ -5333,11 +5333,23 @@ At %planet%: depopulation is complete.
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Ethnic Cleansing
 
-SITREP_SHIP_REPAIR_DOCK
-Orbital Dock Ship Repairs
+SITREP_SHIP_REPAIR_DOCK_NONE
+Orbital Drydock Repairs - None
+
+SITREP_SHIP_REPAIR_DOCK_NOPOP
+Orbital Drydock Repairs - No population
+
+SITREP_SHIP_REPAIR_DOCK_PARTIAL
+Orbital Drydock Repairs - Partial
+
+SITREP_SHIP_REPAIR_DOCK_COMPLETE
+Orbital Drydock Repairs - Complete
 
 EFFECT_DRYDOCK_SHIP_REPAIR_NONE
 On %planet%: The %building% could not start repairs on %ship%, due to low [[encyclopedia HAPPINESS_TITLE]].
+
+EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP
+On %planet%: the %building% is abandoned, there is no one left to assist in repairs of the ship %ship%.
 
 EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
 On %planet%: the %building% performed partial repairs on the %ship%.

@@ -5333,11 +5333,23 @@ L'épuration ethnique est achevée sur la planète %planet%.
 EFFECT_CONC_CAMP_COMLETE_LABEL
 Épuration ethnique
 
-SITREP_SHIP_REPAIR_DOCK
-Réparation en Cale Sèche
+SITREP_SHIP_REPAIR_DOCK_NONE
+Réparation en Cale Sèche - Aucune
+
+SITREP_SHIP_REPAIR_DOCK_NOPOP
+Réparation en Cale Sèche - Pas de Population
+
+SITREP_SHIP_REPAIR_DOCK_PARTIAL
+Réparation en Cale Sèche - Partielle
+
+SITREP_SHIP_REPAIR_DOCK_COMPLETE
+Réparation en Cale Sèche - Achevée
 
 EFFECT_DRYDOCK_SHIP_REPAIR_NONE
-Sur %planet% : la structure %building% ne peut démarrer les réparations sur l'astronef %ship%, en raison d'un indicateur [[encyclopedia HAPPINESS_TITLE]] trop faible.
+Sur %planet% : la structure %building% ne peut pas démarrer les réparations sur l'astronef %ship%, en raison d'un indicateur [[encyclopedia HAPPINESS_TITLE]] trop faible.
+
+EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP
+Sur %planet% : la structure %building% étant abandonnée, plus aucun personnel n'est présent pour effectuer des réparations sur l'astronef %ship%.
 
 EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL
 Sur %planet% : la structure %building% a partiellement réparé l'astronef %ship%.
