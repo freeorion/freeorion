@@ -579,25 +579,9 @@ private:
     /// b) be sorted alphabetically
     /// This custom comparer achieves these goals.
     static bool DirectoryAwareCmp(const Row& row1, const Row& row2, int column_int) {
-        unsigned column = 0;
-        if (column_int >= 0) {
-            column = column_int;
-        }
-        std::string key1;
-        std::string key2;
-        // If column is other than the first one,
-        // use the first one for columns that don't have that many,
-        // since they should be directories.
-        if (row1.size() < column) {
-            key1 = row1.SortKey(column);
-        } else {
-            key1 = row1.SortKey(0);
-        }
-        if (row2.size() < column) {
-            key2 = row2.SortKey(column);
-        } else {
-            key2 = row2.SortKey(0);
-        }
+        std::string key1(row1.SortKey(0));
+        std::string key2(row2.SortKey(0));
+
         const bool row1_is_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row1);
         const bool row2_is_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row2);
         if (!row1_is_directory && !row2_is_directory) {
@@ -605,10 +589,8 @@ private:
         } else if ( row1_is_directory && row2_is_directory ) {
             // Directories always return directory name as sort key
             return key1.compare(key2) >= 0;
-        } else if ( row1_is_directory && !row2_is_directory ){
-            return false;
         } else {
-            return true;
+            return ( !row1_is_directory && row2_is_directory );
         }
     }
 };
