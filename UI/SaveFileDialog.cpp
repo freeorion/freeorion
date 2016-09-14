@@ -573,16 +573,10 @@ private:
         return columns;
     }
 
-    static bool IsDelimitedWith(const std::string& str, const std::string& begin,
-                                const std::string& end)
-    {
-        return str.find(begin) == 0 && str.find(end) == str.size() - end.size();
-    }
-
     /// We want the timestamps to be sorted in ascending order to get the latest save
     /// first, but we want the directories to
     /// a) always be first
-    /// b) be sorted alphabetically, ignoring the PATH_DELIM_BEGIN and PATH_DELIM_END they are wrapped with
+    /// b) be sorted alphabetically
     /// This custom comparer achieves these goals.
     static bool DirectoryAwareCmp(const Row& row1, const Row& row2, int column_int) {
         unsigned column = 0;
@@ -604,17 +598,13 @@ private:
         } else {
             key2 = row2.SortKey(0);
         }
-        const int total_delim_size = PATH_DELIM_BEGIN.size() + PATH_DELIM_END.size();
-        const bool row1_is_directory = IsDelimitedWith(key1, PATH_DELIM_BEGIN, PATH_DELIM_END);
-        const bool row2_is_directory = IsDelimitedWith(key2, PATH_DELIM_BEGIN, PATH_DELIM_END);
+        const bool row1_is_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row1);
+        const bool row2_is_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row2);
         if (!row1_is_directory && !row2_is_directory) {
             return key1.compare(key2) <= 0;
         } else if ( row1_is_directory && row2_is_directory ) {
-            // Clean out the delimiters
-            std::string true_key1 = key1.substr(PATH_DELIM_BEGIN.size(), key1.size() - total_delim_size );
-            std::string true_key2 = key2.substr(PATH_DELIM_BEGIN.size(), key2.size() - total_delim_size );
-            // Compare directories alphabetically ascending, while the timestamp comparisons are descending
-            return true_key1.compare(true_key2) >= 0;
+            // Directories always return directory name as sort key
+            return key1.compare(key2) >= 0;
         } else if ( row1_is_directory && !row2_is_directory ){
             return false;
         } else {
