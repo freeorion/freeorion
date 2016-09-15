@@ -320,13 +320,25 @@ public:
 
     SaveFileRow(const boost::shared_ptr<std::vector<SaveFileColumn> >& columns, const std::string& filename) :
         m_filename(filename),
-        m_columns(columns)
-    {}
+        m_columns(columns),
+        m_initialized(false)
+    {
+        SetName("SaveFileRow for \""+filename+"\"");
+        RequirePreRender();
+    }
+
+    virtual void Init()
+    { m_initialized = true;}
 
     const std::string&  Filename() const
     { return m_filename; }
 
-    // Overrides
+    virtual void PreRender() {
+        if (!m_initialized)
+            Init();
+        GG::ListBox::Row::PreRender();
+    }
+
     virtual void        Render() {
         GG::FlatRectangle(ClientUpperLeft(),
                           ClientLowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN), GG::Y0),
@@ -362,6 +374,7 @@ public:
 protected:
     std::string m_filename;
     boost::shared_ptr<std::vector<SaveFileColumn> > m_columns;
+    bool m_initialized;
 };
 
 class SaveFileHeaderRow: public SaveFileRow {
@@ -384,15 +397,18 @@ public:
     SaveFileDirectoryRow(const boost::shared_ptr<std::vector<SaveFileColumn> >& columns, const std::string& directory) :
         SaveFileRow(columns, directory) {
         SetMargin(ROW_MARGIN);
+    }
 
+    virtual void Init() {
+        SaveFileRow::Init();
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
             if (i==0) {
-                CUILabel* label = new CUILabel(PATH_DELIM_BEGIN + directory + PATH_DELIM_END,
+                CUILabel* label = new CUILabel(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
                                                GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
                 label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
                 push_back(label);
             } else {
-                // Dummy columns
+                // Dummy columns so that all rows have the same number of cols
                 CUILabel* label = new CUILabel("", GG::FORMAT_NOWRAP);
                 label->Resize(GG::Pt(GG::X0, ClientUI::GetFont()->Height()));
                 push_back(label);
@@ -400,7 +416,12 @@ public:
         }
 
         AdjustColumns();
+
+        GetLayout()->PreRender();
     }
+
+    virtual SortKeyType SortKey(std::size_t column) const
+    { return m_filename; }
 
     GG::X DirectoryNameSize() {
         GG::Layout* layout = GetLayout();
@@ -425,29 +446,39 @@ public:
                     const boost::shared_ptr<std::vector<SaveFileColumn> >& columns,
                     int tooltip_delay) :
         SaveFileRow(visible_columns, full.filename),
-        m_all_columns(columns)
+        m_all_columns(columns),
+        m_full_preview(full)
     {
         SetMargin (ROW_MARGIN);
+        SetBrowseModeTime(tooltip_delay);
+    }
 
+    virtual void Init() {
+        SaveFileRow::Init();
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
         for (std::vector<SaveFileColumn>::const_iterator it = m_columns->begin();
              it != m_columns->end(); ++it)
         {
-            push_back(SaveFileColumn::CellForColumn(*it, full, ClientWidth()));
+            GG::Control* cfc = SaveFileColumn::CellForColumn(*it, m_full_preview, ClientWidth());
+            push_back(cfc);
         }
         for (std::vector<SaveFileColumn>::const_iterator it = m_all_columns->begin();
              it != m_all_columns->end(); ++it)
         {
-            browse_text.AddVariable(it->Name(), ColumnInPreview(full, it->Name(), false));
+            browse_text.AddVariable(it->Name(), ColumnInPreview(m_full_preview, it->Name(), false));
         }
         AdjustColumns();
-        SetBrowseModeTime(tooltip_delay);
         SetBrowseText(browse_text.GetText());
+        GetLayout()->PreRender();
     }
+
+    virtual SortKeyType SortKey(std::size_t column) const
+    { return m_full_preview.preview.save_time; }
 
     private:
     boost::shared_ptr<std::vector<SaveFileColumn> > m_all_columns; ///<All possible columns
+    const FullPreview m_full_preview;
 };
 
 
@@ -516,7 +547,6 @@ public:
         if (path.has_parent_path() && path.parent_path() != path) {
             SaveFileRow* row = new SaveFileDirectoryRow(m_visible_columns, "..");
             Insert(row);
-            row->AdjustColumns();
         }
 
         for (fs::directory_iterator it(path); it != end_it; ++it) {
@@ -526,7 +556,6 @@ public:
                 DebugLogger() << "SaveFileDialog::LoadDirectories name: " << utf8_dir_name << " valid UTF-8: " << IsValidUTF8(utf8_dir_name);
                 SaveFileRow* row = new SaveFileDirectoryRow(m_visible_columns, utf8_dir_name);
                 Insert(row);
-                row->AdjustColumns();
 
                 //boost::filesystem::path::string_type path_native = last_bit_of_path.native();
                 //std::string path_string;
