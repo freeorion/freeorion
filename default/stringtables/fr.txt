@@ -4303,7 +4303,7 @@ Focus Croissance
 GROWTH_FOCUS_TEXT
 '''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
-Une planète privilégiant la Croissance augmente le plafond de Population des seules autres planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
+Une planète privilégiant la Croissance augmente la Population max des seules autres planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
 
 Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci abritent la même classification d'espèces.
 
@@ -4352,7 +4352,7 @@ INFRASTRUCTURE_TITLE  # translated
 Infrastructure
 
 INFRASTRUCTURE_TEXT
-L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque planète colonisée présente un indicateur 'Infrastructure'.
+L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque colonie présente un indicateur 'Infrastructure'.
 
 DEFENSE_TITLE
 Défense
@@ -4407,7 +4407,7 @@ Champ de Détection
 DETECTION_RANGE_TEXT
 '''L'indicateur 'Champ de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné.  Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
+Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
 
 TROOP_TITLE
 Infanterie
@@ -4878,16 +4878,16 @@ SIZE_AS_DOUBLE
 Taille numér.
 
 DISTANCE_FROM_ORIGINAL_TYPE
-Distance Planète type d'origine
+Distance Type d'origine de la Planète
 
 PLANET_TYPE
 Type Planète
 
 ORIGINAL_TYPE
-Type de Planète Originale
+Type d'origine de la Planète
 
 NEXT_TOWARDS_ORIGINAL_TYPE
-Prochain Type de Planète Originale
+Prochain vers Type d'origine de la Planète
 
 PLANET_SIZE
 Taille Planète
@@ -5626,7 +5626,9 @@ Toutes les astuces de jeu:
 
 [[BEGINNER_HINT_20]]
 
-[[BEGINNER_HINT_21]]'''
+[[BEGINNER_HINT_21]]
+
+[[BEGINNER_HINT_22]]'''
 
 RANDOM_BEGINNER_HINT
 Astuce #%rawtext%
@@ -5694,6 +5696,8 @@ BEGINNER_HINT_20
 BEGINNER_HINT_21
 21: Il est possible de définir une destination pour un astronef se trouvant encore dans la file d'attente de Production. Lorsque la Fenêtre Production est ouverte, cliquez sur le système de destination sur la carte galactique, puis effectuez un clic-droit sur l'astronef présent dans la file d'attente. Parmi la liste des options proposées, choisissez 'Rallier' suivi du nom du système sélectionné, vers lequel l'astronef se rendra automatiquement une fois sa construction terminée.
 
+BEGINNER_HINT_22
+22: Lorsqu'un système est sélectionné, le raccourci clavier ALT-C permet d'afficher un cercle d'échelle de distance pour le système en question. Selon le niveau de zoom, le diamètre du cercle correspond à la distance indiquée par la barre d'échelle située en haut à gauche de la carte galactique.
 
 ##
 ## Species
@@ -6519,7 +6523,7 @@ GAIA_SPECIAL  # translated
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforme la planète puis accroît son plafond de Population selon la taille de la planète :
+'''Terraforme la planète puis accroît sa Population max selon la taille de la planète :
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -7120,31 +7124,31 @@ Type d'indicateur invalide
 
 # Meter types
 METER_TARGET_POPULATION
-Population Locale
+Population Optimale Locale
 
 # Meter types
 METER_TARGET_HEALTH
-Santé Locale
+Santé Optimale Locale
 
 # Meter types
 METER_TARGET_INDUSTRY
-Industrie Locale
+Industrie Optimale Locale
 
 # Meter types
 METER_TARGET_RESEARCH
-Recherche Locale
+Recherche Optimale Locale
 
 # Meter types
 METER_TARGET_TRADE
-Commerce Local
+Commerce Optimal Local
 
 # Meter types
 METER_TARGET_CONSTRUCTION
-Infrastructure Locale
+Infrastructure Optimale Locale
 
 # Meter types
 METER_TARGET_HAPPINESS
-Bonheur Local
+Bonheur Optimal Local
 
 # Meter types
 METER_MAX_FUEL
@@ -8520,7 +8524,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 0.1 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
@@ -8544,7 +8548,7 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 2 sur toutes les planètes.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 2 sur toutes les planètes.
 
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et modifiée de manière convaincante. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
 
@@ -8613,7 +8617,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
@@ -8635,7 +8639,7 @@ GRO_PLANET_ECOL
 Écologie Planétaire
 
 GRO_PLANET_ECOL_DESC
-'''Accroît de 1 le plafond de Population des Planètes [[PE_GOOD]]s et [[PE_ADEQUATE]]s. Ce bonus ne s'additionne pas avec la technologie de [[tech GRO_SYMBIOTIC_BIO]].
+'''Accroît de 1 la Population max des Planètes [[PE_GOOD]]s et [[PE_ADEQUATE]]s. Ce bonus ne s'additionne pas avec la technologie [[tech GRO_SYMBIOTIC_BIO]].
 
 L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.'''
 
@@ -8655,7 +8659,7 @@ GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-Accroît le plafond de Population des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la Population max des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENETIC_MED
 Médecine Génétique
@@ -8683,7 +8687,7 @@ GRO_XENO_GENETICS
 Génétique Xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Accroît le plafond de Population des planètes, selon leur habitabilité et leur taille :
+'''Accroît la Population max des planètes, selon leur habitabilité et leur taille :
 
 • Planète [[PE_ADEQUATE]] ou [[PE_POOR]]: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
 • Planète [[PE_HOSTILE]]: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
@@ -8704,7 +8708,7 @@ GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Accroît le plafond de Population des planètes, selon leur habitabilité et leur taille :
+'''Accroît la Population max des planètes, selon leur habitabilité et leur taille :
 
 • Planète [[PE_POOR]]: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
 • Planète [[PE_HOSTILE]]: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
@@ -8729,7 +8733,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[encyclopedia FUEL_TITLE]] max de 2 sur tous les astronefs, la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes, les [[encyclopedia SHIELDS_TITLE]] max de 5 sur toutes les planètes, l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie, et l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente le [[encyclopedia FUEL_TITLE]] max de 2 sur tous les astronefs, la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes, les [[encyclopedia SHIELDS_TITLE]] max de 5 sur toutes les planètes, l'[[encyclopedia INDUSTRY_TITLE]] Optimale de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[encyclopedia RESEARCH_TITLE]] Optimale de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -8749,7 +8753,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] Optimale de 0.1 par Population sur toutes les planètes réglées sur le Focus Industrie.
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
@@ -8764,7 +8768,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] Optimale de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie.
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
@@ -8788,7 +8792,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Adaptatifs
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 sur toutes les planètes.
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] Optimale de 5 sur toutes les planètes.
 
 En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son Focus, engendrant un bonus industriel dans tout l'empire.
 
@@ -8900,15 +8904,15 @@ CON_ORBITAL_HAB
 Habitation Orbitale
 
 CON_ORBITAL_HAB_DESC
-Accroît le plafond de Population de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît le plafond de Population de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''Accroît la Population max de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
-Augmente également de 10 l'[[encyclopedia INFRASTRUCTURE_TITLE]] de la planète hôte si celle-ci est habitée.
+Augmente également de 10 l'[[encyclopedia INFRASTRUCTURE_TITLE]] Optimale de la planète hôte si celle-ci est habitée.
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -9219,7 +9223,7 @@ GRO_SUBTER_HAB
 Habitat Souterrain
 
 GRO_SUBTER_HAB_DESC
-Accroît le plafond de Population de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la Population max de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENOME_BANK
 Banque du Génome
@@ -9237,7 +9241,7 @@ GRO_TERRAFORM
 Terraformation
 
 GRO_TERRAFORM_DESC
-Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si le plafond de Population est inférieur à un.
+Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si la Population max est inférieure à un.
 
 GRO_TERRAFORM_SHORT_DESC
 Permet la terraformation
@@ -9261,7 +9265,7 @@ GRO_CYBORG  # translated
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît le plafond de Population des Planètes [[PE_HOSTILE]]s selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''Accroît la Population max des Planètes [[PE_HOSTILE]]s selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes.
 
 Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
@@ -9291,7 +9295,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -9299,7 +9303,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale des planètes réglées sur le Focus Recherche, par Population et selon le type d'étoile :
 * [[STAR_BLACK]] (x1)
 * [[STAR_NEUTRON]] (x0.75)
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.5)
@@ -10078,7 +10082,7 @@ BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 5, ainsi que l'indicateur [[encyclopedia INDUSTRY_TITLE]] de la moitié de la Population planétaire.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 5, ainsi que l'[[encyclopedia INDUSTRY_TITLE]] Optimale de la moitié de la Population planétaire.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
@@ -10086,7 +10090,7 @@ BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
 BLD_CULTURE_LIBRARY_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 5.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 5.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la population planétaire est réduite à zéro.'''
 
@@ -10237,7 +10241,7 @@ BLD_MEGALITH
 Mégalithe
 
 BLD_MEGALITH_DESC
-'''Cette structure ne peut être construite que dans la Capitale de l'empire, amplifiant sa splendeur conjointement au [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle le Mégalithe est construit peuvent atteindre leur plafond en un seul tour, tandis que l'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] augmente de 30. De plus, la portée de l'[[encyclopedia SUPPLY_TITLE]] augmente de 1 pour toutes les planètes habitées appartenant à l'empire. Les planètes habitées distantes de deux Voies spatiales ou moins verront leur [[encyclopedia TROOP_TITLE]] augmenter de 10.
+'''Cette structure ne peut être construite que dans la Capitale de l'empire, amplifiant sa splendeur conjointement au [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle le Mégalithe est construit peuvent atteindre leur optimum en un seul tour, tandis que l'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] augmente de 30. De plus, la portée de l'[[encyclopedia SUPPLY_TITLE]] augmente de 1 pour toutes les planètes habitées appartenant à l'empire. Les planètes habitées distantes de deux Voies spatiales ou moins verront leur [[encyclopedia TROOP_TITLE]] augmenter de 10.
 
 Le Mégalithe est une structure si resplendissante et massive qu'elle tutoie littéralement les étoiles, procurant une inspiration illimitée à tous les architectes de l'empire.'''
 
@@ -10261,7 +10265,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît le plafond de Population pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]], selon la taille de la planète :
+'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît la Population max pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]], selon la taille de la planète :
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -10292,7 +10296,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche.
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
@@ -10313,7 +10317,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 1 par Population sur toutes les planètes reliées par lignes d'[[encyclopedia SUPPLY_TITLE]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente l'[[encyclopedia INDUSTRY_TITLE]] Optimale de 1 par Population sur toutes les planètes reliées par lignes d'[[encyclopedia SUPPLY_TITLE]] et réglées sur le Focus Industrie, mais diminue la Population de ces planètes selon leur taille : ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
@@ -10330,7 +10334,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]], par Population et selon le type d'étoile :
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] Optimale sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]], par Population et selon le type d'étoile :
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x0.4)
 * [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x0.2) 
 * [[STAR_RED]] (x0.1)
@@ -10342,7 +10346,7 @@ BLD_CLONING_CENTER
 Centre de Clonage
 
 BLD_CLONING_CENTER_DESC
-'''Accroît le plafond de Population de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+'''Accroît la Population max de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
 
@@ -10395,7 +10399,7 @@ BLD_CONC_CAMP
 Camps de Concentration
 
 BLD_CONC_CAMP_DESC
-'''Réduit la Population d'une planète de 3 par tour, et augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 fois la population planétaire. L'indicateur [[encyclopedia HAPPINESS_TITLE]] est réduit à 0.
+'''Réduit la Population d'une planète de 3 par tour, et augmente l'[[encyclopedia INDUSTRY_TITLE]] Optimale de 5 fois la population planétaire. Le [[encyclopedia HAPPINESS_TITLE]] Optimal est réduit à 0.
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
@@ -11964,7 +11968,7 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''habitant cette planète verront leur plafond de Population augmenter selon la taille de la planète :
+'''habitant cette planète verront leur Population max augmenter selon la taille de la planète :
 • [[SZ_TINY]] (+1)
 • [[SZ_SMALL]] (+2)
 • [[SZ_MEDIUM]] (+3)
@@ -11975,7 +11979,7 @@ quel que soit l'[[encyclopedia ENVIRONMENT_TITLE]] planétaire.
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[encyclopedia SUPPLY_TITLE]] et peuplés d'espèces à'''
 
 GROWTH_SPECIAL_INDUSTRY_BOOST
-Si cette planète est réglée sur le Focus Industrie, son indicateur [[encyclopedia INDUSTRY_TITLE]] augmente de 0.2 par Population.
+Si cette planète est réglée sur le Focus Industrie, son [[encyclopedia INDUSTRY_TITLE]] Optimale augmente de 0.2 par Population.
 
 GROWTH_SPECIALS_ENTRY_LIST
 '''Les planètes présentant une Particularité de Croissance et réglées sur le Focus Croissance favorisent seulement une classification d'espèces. Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques.
