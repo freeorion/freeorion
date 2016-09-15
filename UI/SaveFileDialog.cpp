@@ -102,8 +102,9 @@ namespace {
             ClientUI::GetFont()->ExpensiveParseFromTextToTextElements(string, fmt);
         std::vector<GG::Font::LineData> lines = ClientUI::GetFont()->DetermineLines(string, fmt, width, text_elements);
         GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
-        GG::Label* text = new CUILabel(string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
-        text->Resize(GG::Pt(extent.x, extent.y));
+        GG::Label* text = new CUILabel(string, text_elements,
+                                       GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
+                                       GG::X0, GG::Y0, extent.x, extent.y);
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
         return text;
@@ -181,8 +182,9 @@ public:
         GG::Label* retval = 0;
 
         if (column.m_fixed) {
-            retval = new CUILabel(value, format_flags);
-            retval->Resize(GG::Pt(column.FixedWidth(), ClientUI::GetFont()->Height()));
+            retval = new CUILabel(value, format_flags, GG::NO_WND_FLAGS,
+                                  GG::X0, GG::Y0,
+                                  column.FixedWidth(), ClientUI::GetFont()->Height());
         } else {
             retval = CreateResizingText(value, max_width);
         }
