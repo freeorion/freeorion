@@ -5626,7 +5626,9 @@ All random game hints:
 
 [[BEGINNER_HINT_20]]
 
-[[BEGINNER_HINT_21]]'''
+[[BEGINNER_HINT_21]]
+
+[[BEGINNER_HINT_22]]'''
 
 RANDOM_BEGINNER_HINT
 Hint #%rawtext%
@@ -5694,6 +5696,8 @@ BEGINNER_HINT_20
 BEGINNER_HINT_21
 21: You can set a destination for a ship that is still in the production queue. With the production screen open: click on the target system in the galaxy map, then right click on the ship in the production queue. When a menu of choices for that ship pops up choose 'Rally to ' and it should have the name of the selected system where you want the ship to automatically go once construction completes.
 
+BEGINNER_HINT_22
+22: Selecting a system and pressing ALT-C gives a range circle for the system, zoom in or out to compare the distance by looking at the size of the distance meter.
 
 ##
 ## Species

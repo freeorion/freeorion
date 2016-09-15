@@ -223,7 +223,8 @@ EffectsGroup
                     UserString("BEGINNER_HINT_18"),
                     UserString("BEGINNER_HINT_19"),
                     UserString("BEGINNER_HINT_20"),
-                    UserString("BEGINNER_HINT_21"))
+                    UserString("BEGINNER_HINT_21"),
+                    UserString("BEGINNER_HINT_22"))
             ]
             empire = Source.Owner
     ]
