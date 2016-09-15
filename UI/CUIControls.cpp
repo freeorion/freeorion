@@ -717,7 +717,6 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 CUIListBox::CUIListBox(void):
     ListBox(ClientUI::CtrlBorderColor(), ClientUI::CtrlColor())
 {
-    RecreateScrolls();
     GG::Connect(SelChangedSignal,   &PlayListSelectSound,   -1);
     GG::Connect(DroppedSignal,      &PlayItemDropSound,     -1);
 }
