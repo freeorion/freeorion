@@ -2221,6 +2221,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
         }
     } else if (!m_hscroll && horizontal_needed) { // if scroll doesn't exist but is needed
         m_hscroll = style->NewListBoxHScroll(m_color, CLR_SHADOW);
+        m_hscroll->NonClientChild(true);
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
