@@ -3,7 +3,7 @@
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-## [v0.4.6] - 2016-09-09
+## [v0.4.6] - 2016-09-16
 
 
 ### Key Changes
