@@ -1168,15 +1168,15 @@ void ListBox::SetFirstRowShown(iterator it)
     if (it != m_rows.end()) {
         RequirePreRender();
         m_first_row_shown = it;
+
+        AdjustScrolls(false);
+
         if (m_vscroll) {
             Y acc(0);
             for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
                 acc += (*it2)->Height();
             m_vscroll->ScrollTo(Value(acc));
             SignalScroll(*m_vscroll, true);
-        } else {
-            std::size_t row_num = std::distance(m_rows.begin(), m_first_row_shown);
-            VScrolled(row_num, 0, 0, 0);
         }
     }
 }
