@@ -886,12 +886,6 @@ void ListBox::Render()
     BeginClipping();
 
     // draw selection hiliting
-
-    // Note that inside the for loop below, prev_sel is guaranteed to be valid
-    // (i.e. != m_rows.end()), since a non-empty m_selections implies a
-    // non-empty m_rows, and a non-empty m_rows implies a valid
-    // m_first_row_shown.
-    iterator prev_sel = m_first_row_shown;
     Y top(0);
     Y bottom = (*m_first_row_shown)->Height();
     for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it) {
@@ -899,21 +893,10 @@ void ListBox::Render()
         if (RowAboveOrIsRow(m_first_row_shown, curr_sel, m_rows.end()) &&
             RowAboveOrIsRow(curr_sel, last_visible_row, m_rows.end()))
         {
-            // No need to look for the current selection's top, if it is the
-            // same as the bottom of the last iteration.
-            if (boost::next(prev_sel) == curr_sel) {
-                top = bottom;
-            } else {
-                for (iterator it = prev_sel; it != curr_sel; ++it) {
-                    top += (*it)->Height();
-                }
-            }
-            bottom = top + (*curr_sel)->Height();
-            if (cl_lr.y < bottom)
-                bottom = cl_lr.y;
+            top = std::max((*curr_sel)->Top(), cl_ul.y);
+            bottom = std::min(top + (*curr_sel)->Height(), cl_lr.y);
             FlatRectangle(Pt(cl_ul.x, cl_ul.y + top), Pt(cl_lr.x, cl_ul.y + bottom),
                           hilite_color_to_use, CLR_ZERO, 0);
-            prev_sel = curr_sel;
         }
     }
 

@@ -35,6 +35,8 @@
 #include <GG/Timer.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_set.hpp>
+
 #include <set>
 
 namespace GG {
@@ -210,7 +212,12 @@ public:
         bool operator()(const iterator& lhs, const iterator& rhs) const;
     };
 
-    typedef std::set<iterator, RowPtrIteratorLess> SelectionSet;
+    struct IteratorHash : std::unary_function<iterator, std::size_t> {
+        std::size_t operator()(const iterator& it) const
+        { return boost::hash<const Row*>()(*it); }
+    };
+
+    typedef boost::unordered_set<iterator, IteratorHash> SelectionSet;
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
