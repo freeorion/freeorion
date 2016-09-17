@@ -516,7 +516,6 @@ protected:
     void            Insert(const std::vector<Row*>& rows, iterator it, bool dropped, bool signal);  ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
     Row*            Erase(iterator it, bool removing_duplicate, bool signal); ///< erases the row at index \a idx, handling it as a duplicate removal (such as for drag-and-drops within a single ListBox) if indicated
     void            BringCaretIntoView();           ///< makes sure caret is visible when scrolling occurs due to keystrokes etc.
-    void            RecreateScrolls();              ///< recreates the vertical and horizontal scrolls as needed.
     void            ResetAutoScrollVars();          ///< resets all variables related to auto-scroll to their initial values
     void            Resort();                       ///< performs a full resort of all rows, using the current sort functor.
     Row&            ColHeaders();                   ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0. non-const for derivers

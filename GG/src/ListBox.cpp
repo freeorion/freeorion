@@ -1994,14 +1994,6 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
 void ListBox::BringCaretIntoView()
 { BringRowIntoView(m_caret); }
 
-void ListBox::RecreateScrolls()
-{
-    delete m_vscroll;
-    delete m_hscroll;
-    m_vscroll = m_hscroll = 0;
-    RequirePreRender();
-}
-
 void ListBox::ResetAutoScrollVars()
 {
     m_auto_scrolling_up = false;
