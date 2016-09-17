@@ -2166,42 +2166,34 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 
     bool vscroll_added_or_removed(false);
 
-    if (m_vscroll) { // if scroll already exists...
-        if (!vertical_needed) { // remove scroll
-            DeleteChild(m_vscroll);
-            m_vscroll = 0;
-            vscroll_added_or_removed = true;
 
-        } else { // ensure vertical scroll has the right logical and physical dimensions
-            X scroll_x = cl_sz.x - SCROLL_WIDTH;
-            Y scroll_y(0);
-            if (adjust_for_resize) {
-                vscroll_added_or_removed = true;
-                m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
-                                    Pt(scroll_x + SCROLL_WIDTH,
-                                       scroll_y + cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
-            }
+    // Remove unecessary vscroll
+    if (m_vscroll && !vertical_needed) {
+        DeleteChild(m_vscroll);
+        m_vscroll = 0;
+        vscroll_added_or_removed = true;
+    }
 
-            vscroll_added_or_removed = true;
-            unsigned int line_size = m_vscroll_wheel_scroll_increment;
-            if (line_size == 0 && !this->Empty()) {
-                const Row* row = *begin();
-                line_size = Value(row->Height());
-            }
-
-            unsigned int page_size = std::abs(Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
-
-            m_vscroll->SizeScroll(0, Value(total_y_extent - 1),
-                                  line_size, std::max(line_size, page_size));
-
-            MoveChildUp(m_vscroll);
-        }
-    } else if (!m_vscroll && vertical_needed) { // if scroll doesn't exist but is needed
+    // Add necessary vscroll
+    if (!m_vscroll && vertical_needed) {
         vscroll_added_or_removed = true;
         m_vscroll = style->NewListBoxVScroll(m_color, CLR_SHADOW);
         m_vscroll->NonClientChild(true);
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+
+        AttachChild(m_vscroll);
+        Connect(m_vscroll->ScrolledSignal, &ListBox::VScrolled, this);
+    }
+
+    if (vertical_needed) {
+        if (adjust_for_resize) {
+            X scroll_x = cl_sz.x - SCROLL_WIDTH;
+            Y scroll_y(0);
+            m_vscroll->SizeMove(Pt(scroll_x, scroll_y),
+                                Pt(scroll_x + SCROLL_WIDTH,
+                                   scroll_y + cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+        }
 
         unsigned int line_size = m_vscroll_wheel_scroll_increment;
         if (line_size == 0 && !this->Empty()) {
@@ -2213,40 +2205,35 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 
         m_vscroll->SizeScroll(0, Value(total_y_extent - 1),
                               line_size, std::max(line_size, page_size));
-        AttachChild(m_vscroll);
-        Connect(m_vscroll->ScrolledSignal, &ListBox::VScrolled, this);
+
+        MoveChildUp(m_vscroll);
     }
 
-    if (m_hscroll) { // if scroll already exists...
-        if (!horizontal_needed) { // remove scroll
-            DeleteChild(m_hscroll);
-            m_hscroll = 0;
-        } else { // ensure horizontal scroll has the right logical and physical dimensions
-            X scroll_x(0);
-            Y scroll_y = cl_sz.y - SCROLL_WIDTH;
-            if (adjust_for_resize) {
-                m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
-                                    Pt(scroll_x + cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0),
-                                       scroll_y + SCROLL_WIDTH));
-            }
+    // Remove unecessary hscroll
+    if (m_hscroll && !horizontal_needed) {
+        DeleteChild(m_hscroll);
+        m_hscroll = 0;
+    }
 
-            unsigned int line_size = m_hscroll_wheel_scroll_increment;
-            if (line_size == 0 && !this->Empty()) {
-                const Row* row = *begin();
-                line_size = Value(row->Height());
-            }
-
-            unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0)));
-
-            m_hscroll->SizeScroll(0, Value(total_x_extent - 1),
-                                  line_size, std::max(line_size, page_size));
-            MoveChildUp(m_hscroll);
-        }
-    } else if (!m_hscroll && horizontal_needed) { // if scroll doesn't exist but is needed
+    // Add necessary hscroll
+    if (!m_hscroll && horizontal_needed) {
         m_hscroll = style->NewListBoxHScroll(m_color, CLR_SHADOW);
         m_hscroll->NonClientChild(true);
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
+
+        AttachChild(m_hscroll);
+        Connect(m_hscroll->ScrolledSignal, &ListBox::HScrolled, this);
+    }
+
+    if (horizontal_needed) {
+        if (adjust_for_resize) {
+            X scroll_x(0);
+            Y scroll_y = cl_sz.y - SCROLL_WIDTH;
+            m_hscroll->SizeMove(Pt(scroll_x, scroll_y),
+                                Pt(scroll_x + cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0),
+                                   scroll_y + SCROLL_WIDTH));
+        }
 
         unsigned int line_size = m_hscroll_wheel_scroll_increment;
         if (line_size == 0 && !this->Empty()) {
@@ -2258,10 +2245,10 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 
         m_hscroll->SizeScroll(0, Value(total_x_extent - 1),
                               line_size, std::max(line_size, page_size));
-        AttachChild(m_hscroll);
-        Connect(m_hscroll->ScrolledSignal, &ListBox::HScrolled, this);
+        MoveChildUp(m_hscroll);
     }
 
+    // Resize rows to fit client area.
     if (vscroll_added_or_removed) {
         RequirePreRender();
         X row_width(std::max(ClientWidth(), X(1)));
