@@ -1141,26 +1141,49 @@ void ListBox::BringRowIntoView(iterator it)
     if (it == m_rows.end())
         return;
 
-    const Row* it_row = *it;
-    const Row* first_shown_row = SafeDeref(m_first_row_shown, m_rows.end());
+    // m_first_row_shown only equals end() if the list is empty, hence 'it' is invalid.
+    if (m_first_row_shown == m_rows.end())
+        return;
+
+    // Find the y offsets of the first and last shown rows and 'it'.
+    bool first_row_found(false), last_row_found(false), it_found(false);
+
+    Y y_offset(Y0), it_y_offset(Y0), first_row_y_offset(Y0), last_row_y_offset(Y0);
+    iterator it2 = m_rows.begin();
+    while ((it2 != m_rows.end()) && (!first_row_found || !last_row_found || !it_found)) {
+        if (it2 == m_first_row_shown) {
+            first_row_y_offset = y_offset;
+            first_row_found = true;
+        }
+
+        if (it2 == it) {
+            it_y_offset = y_offset;
+            it_found = true;
+        }
+
+        if (first_row_found && !last_row_found) {
+            last_row_y_offset = y_offset;
+            if (y_offset >= ClientHeight()) {
+                last_row_found = true;
+            }
+            y_offset += (*it2)->Height();
+        }
+        ++it2;
+    }
+
+    if (!it_found)
+        return;
+
     RequirePreRender();
 
-    if (m_first_row_shown == m_rows.end() || (first_shown_row && (it_row->Top() < first_shown_row->Top()))) {
-        m_first_row_shown = it;
+    if (y_offset <= ClientHeight())
+        SetFirstRowShown(begin());
 
-    } else if (RowAboveOrIsRow(LastVisibleRow(), it, m_rows.end())) {
-        // Find the row that preceeds the target row by about ClientSize().y
-        // pixels, and make it the first row shown.
-        m_first_row_shown = FirstRowShownWhenBottomIs(it, ClientHeight());
-    }
-
-    if (m_vscroll) {
-        Y acc(0);
-        for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
-            acc += (*it2)->Height();
-        m_vscroll->ScrollTo(Value(acc));
-        SignalScroll(*m_vscroll, true);
-    }
+    // Shift the view if 'it' is outside of [first_row .. last_row]
+    if (it_y_offset < first_row_y_offset)
+        SetFirstRowShown(it);
+    else if (it_y_offset > last_row_y_offset)
+        SetFirstRowShown(FirstRowShownWhenBottomIs(it, ClientHeight()));
 }
 
 void ListBox::SetFirstRowShown(iterator it)
