@@ -1461,11 +1461,13 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
                 if (m_style & LIST_NOSEL) {
                     if (m_caret != m_rows.end())
                         delete Erase(m_caret, false, true);
-                } else {    // todo: check if erase invalidates iterators in m_selections and makes this loop problematic
-                    for (SelectionSet::iterator it = m_selections.begin(); it != m_selections.end(); ++it) {
+                } else {
+                    std::vector<iterator> prev_selections;
+                    std::copy(m_selections.begin(), m_selections.end(), prev_selections.begin());
+                    m_selections.clear();
+                    for (std::vector<iterator>::iterator it = prev_selections.begin(); it != prev_selections.end(); ++it) {
                         delete Erase(*it, false, true);
                     }
-                    m_selections.clear();
                 }
             } else {
                 // Pass delete on if we ignored it
