@@ -2978,6 +2978,11 @@ void FleetWnd::Init(int selected_fleet_id) {
     DoLayout();
 }
 
+void FleetWnd::PreRender() {
+    MapWndPopup::PreRender();
+    Refresh();
+}
+
 GG::Rect FleetWnd::CalculatePosition() const {
     GG::Pt ul(GG::X(5), GG::GUI::GetGUI()->AppHeight() - FLEET_WND_HEIGHT - 5);
     GG::Pt wh(FLEET_WND_WIDTH, FLEET_WND_HEIGHT);
@@ -3707,7 +3712,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             GetUniverse().ForgetKnownObject(ALL_EMPIRES, fleet->ID());
 
             // Force a redraw
-            this->Refresh();
+            RequirePreRender();
             ClientUI::GetClientUI()->GetMapWnd()->RemoveFleet(fleet->ID());
 
             break;
@@ -3828,7 +3833,7 @@ void FleetWnd::SystemChangedSlot() {
         return;
     }
 
-    Refresh();
+    RequirePreRender();
 }
 
 void FleetWnd::EnableOrderIssuing(bool enable/* = true*/) {
