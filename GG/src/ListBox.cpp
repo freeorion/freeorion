@@ -2388,9 +2388,7 @@ void ListBox::NormalizeRow(Row* row)
 
 ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
 {
-    if (bottom_row == m_rows.end())
-        return m_rows.begin();
-    Y available_space = client_height - (*bottom_row)->Height();
+    Y available_space = client_height;
     iterator it = bottom_row;
     while (it != m_rows.begin() && (*boost::prior(it))->Height() <= available_space) {
         available_space -= (*--it)->Height();
