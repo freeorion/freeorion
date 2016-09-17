@@ -5082,7 +5082,7 @@ SITREP_COMBAT_SYSTEM_ENEMY
 At %system%: there was %combat% with %empire%.
 
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
-Combat at System
+Combat at System - Single Empire
 
 COMBAT
 Combat
@@ -5187,7 +5187,7 @@ SITREP_GROUND_BATTLE_ENEMY
 On %planet%: there was a ground battle with %empire%.
 
 SITREP_GROUND_BATTLE_ENEMY_LABEL
-Ground Battle
+Ground Battle - Single Empire
 
 SITREP_PLANET_CAPTURED
 %planet% was captured by %empire%.
