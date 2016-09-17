@@ -1012,8 +1012,6 @@ void ListBox::Clear()
     DetachChild(m_header_row);
     DeleteChildren();
     AttachChild(m_header_row);
-    m_vscroll = 0;
-    m_hscroll = 0;
     m_first_row_offset = Pt(X0, Y0);
     m_first_row_shown = m_rows.end();
     m_first_col_shown = 0;
@@ -1030,7 +1028,10 @@ void ListBox::Clear()
             m_num_cols = 1;
     }
 
-    AdjustScrolls(false);
+    DeleteChild(m_vscroll);
+    m_vscroll = 0;
+    DeleteChild(m_hscroll);
+    m_hscroll = 0;
 
     if (m_iterator_being_erased)
         *m_iterator_being_erased = m_rows.end();
