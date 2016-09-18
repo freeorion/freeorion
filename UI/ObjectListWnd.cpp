@@ -2532,6 +2532,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 std::map<int, int>::iterator it = avail_designs.begin();
                 std::advance(it, id - MENUITEM_SET_SHIP_BASE - 1);
                 int ship_design = it->first;
+                bool needs_queue_update(false);
                 const GG::ListBox::SelectionSet sel = m_list_box->Selections();
                 for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
@@ -2542,12 +2543,15 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
                     app->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(app->EmpireID(), ship_item, 1, row->ObjectID())));
-                    cur_empire->UpdateProductionQueue();
+                    needs_queue_update = true;
                 }
+                if (needs_queue_update)
+                    cur_empire->UpdateProductionQueue();
             } else if (id > MENUITEM_SET_BUILDING_BASE && id <= bld_menuitem_id) {
                 std::map<std::string, int>::iterator it = avail_blds.begin();
                 std::advance(it, id - MENUITEM_SET_BUILDING_BASE - 1);
                 std::string bld = it->first;
+                bool needs_queue_update(false);
                 const GG::ListBox::SelectionSet sel = m_list_box->Selections();
                 for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
@@ -2562,8 +2566,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     }
                     ProductionQueue::ProductionItem bld_item(BT_BUILDING, bld);
                     app->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(app->EmpireID(), bld_item, 1, row->ObjectID())));
-                    cur_empire->UpdateProductionQueue();
+                    needs_queue_update = true;
                 }
+                if (needs_queue_update)
+                    cur_empire->UpdateProductionQueue();
             }
 
             std::set<int> sel_ids = SelectedObjectIDs();
