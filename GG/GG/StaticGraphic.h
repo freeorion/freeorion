@@ -59,11 +59,13 @@ class GG_API StaticGraphic : public Control
 public:
     /** \name Structors */ ///@{
      ///< creates a StaticGraphic from a pre-existing Texture.
-    StaticGraphic(const boost::shared_ptr<Texture>& texture,
-                  Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = NO_WND_FLAGS);
+    explicit StaticGraphic(const boost::shared_ptr<Texture>& texture,
+                           Flags<GraphicStyle> style = GRAPHIC_NONE,
+                           Flags<WndFlag> flags = NO_WND_FLAGS);
     ///< creates a StaticGraphic from a pre-existing SubTexture.
-    StaticGraphic(const SubTexture& subtexture,
-                  Flags<GraphicStyle> style = GRAPHIC_NONE, Flags<WndFlag> flags = NO_WND_FLAGS);
+    explicit StaticGraphic(const SubTexture& subtexture,
+                           Flags<GraphicStyle> style = GRAPHIC_NONE,
+                           Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
 
     /** \name Accessors */ ///@{
@@ -86,6 +88,10 @@ public:
     /** Sets the style flags, and perfroms sanity checking \see
         GraphicStyle */
     void SetStyle(Flags<GraphicStyle> style);
+
+    /** Sets the texture */
+    void SetTexture(const boost::shared_ptr<Texture>& texture);
+    void SetTexture(const SubTexture& subtexture);
     //@}
 
 private:

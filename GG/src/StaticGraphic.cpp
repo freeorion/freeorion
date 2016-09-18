@@ -165,6 +165,12 @@ void StaticGraphic::SetStyle(Flags<GraphicStyle> style)
     ValidateStyle();
 }
 
+void StaticGraphic::SetTexture(const boost::shared_ptr<Texture>& texture)
+{ SetTexture(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight())); }
+
+void StaticGraphic::SetTexture(const SubTexture& subtexture)
+{ m_graphic = subtexture; }
+
 void StaticGraphic::Init(const SubTexture& subtexture)
 {
     ValidateStyle();  // correct any disagreements in the style flags
