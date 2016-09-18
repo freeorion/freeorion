@@ -205,6 +205,8 @@ namespace {
         void            ItemBlocksizeChanged(int quant, int blocksize);
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
+        static GG::Y    DefaultHeight();
+
         mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
 
     private:
@@ -321,14 +323,23 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
+    const int MARGIN = 2;
+    const GG::X X_MARGIN = GG::X(MARGIN);
+    const GG::Y Y_MARGIN = GG::Y(MARGIN);
+
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
-            GG::ListBox::Row(w, GG::Y1, BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
+            GG::ListBox::Row(w, QueueProductionItemPanel::DefaultHeight(),
+                             BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE),
+            panel(0),
             queue_index(queue_index_),
             elem(elem)
         {
-            //std::cout << "QueueRow(" << w << ", ...)" << std::endl;
+            RequirePreRender();
+            Resize(GG::Pt(w - 2 * MARGIN, QueueProductionItemPanel::DefaultHeight()));
+        }
 
+        void Init() {
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             float total_cost(1.0f);
             int minimum_turns(1);
@@ -340,10 +351,10 @@ namespace {
             if (progress == -1.0f)
                 progress = 0.0f;
 
-            panel = new QueueProductionItemPanel(w, elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                   static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
-                                                   std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
-            Resize(panel->Size() + GG::Pt(GG::X(4), GG::Y0));
+            panel = new QueueProductionItemPanel(Width() - MARGIN - MARGIN, elem,
+                                                 elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
+                                                 static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
+                                                 std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
             push_back(panel);
 
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
@@ -352,6 +363,23 @@ namespace {
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
             GG::Connect(panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
+
+        }
+
+        virtual void PreRender() {
+            GG::ListBox::Row::PreRender();
+
+            if (!panel)
+                Init();
+
+            panel->Resize(Size() - GG::Pt((X_MARGIN + X_MARGIN), GG::Y0));
+            GG::ListBox::Row::Resize(panel->Size() + GG::Pt((X_MARGIN + X_MARGIN), GG::Y0));
+        }
+
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            if (!panel || (Size() != (lr - ul)))
+                RequirePreRender();
+            GG::ListBox::Row::SizeMove(ul, lr);
         }
 
         virtual void Disable(bool b) {
@@ -381,8 +409,6 @@ namespace {
     //////////////////////////////////////////////////
     // QueueProductionItemPanel implementation
     //////////////////////////////////////////////////
-    const int MARGIN = 2;
-
     QueueProductionItemPanel::QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build,
                                                        double turn_spending, double total_cost, int turns, int number,
                                                        int turns_completed, double partially_complete_turn) :
@@ -407,9 +433,13 @@ namespace {
         SetChildClippingMode(ClipToClient);
         RequirePreRender();
 
+        Resize(GG::Pt(w, DefaultHeight()));
+    }
+
+    GG::Y QueueProductionItemPanel::DefaultHeight() {
         const int FONT_PTS = ClientUI::Pts();
-        const GG::Y HEIGHT = GG::Y(MARGIN) + FONT_PTS + MARGIN + FONT_PTS + MARGIN + FONT_PTS + MARGIN + 6;
-        Resize(GG::Pt(w, HEIGHT));
+        const GG::Y HEIGHT = Y_MARGIN + FONT_PTS + Y_MARGIN + FONT_PTS + Y_MARGIN + FONT_PTS + Y_MARGIN + 6;
+        return HEIGHT;
     }
 
     void QueueProductionItemPanel::Init() {
