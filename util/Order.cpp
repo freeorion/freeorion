@@ -1024,23 +1024,23 @@ void ProductionQueueOrder::ExecuteImpl() const {
     Empire* empire = GetEmpire(EmpireID());
     try {
         if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP) {
-            empire->PlaceBuildInQueue(m_item, m_number, m_location, m_new_index);
+            empire->PlaceProductionOnQueue(m_item, m_number, m_location, m_new_index);
 
         } else if (m_new_blocksize != INVALID_QUANTITY) {
             DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
-            empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
+            empire->SetProductionQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
 
         } else if (m_new_quantity != INVALID_QUANTITY) {
             DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity;
-            empire->SetBuildQuantity(m_index, m_new_quantity);
+            empire->SetProductionQuantity(m_index, m_new_quantity);
 
         } else if (m_new_index != INVALID_INDEX) {
             DebugLogger() << "ProductionQueueOrder moving item in queue";
-            empire->MoveBuildWithinQueue(m_index, m_new_index);
+            empire->MoveProductionWithinQueue(m_index, m_new_index);
 
         } else if (m_rally_point_id != INVALID_OBJECT_ID) {
             DebugLogger() << "ProductionQueueOrder setting rally point to id: " << m_rally_point_id;
-            empire->SetBuildRallyPoint(m_index, m_rally_point_id);
+            empire->SetProductionRallyPoint(m_index, m_rally_point_id);
 
         } else if (m_index != INVALID_INDEX) {
             if (m_pause == PAUSE) {
@@ -1051,7 +1051,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
 
             } else /*if (m_pause == INVALID_PAUSE_RESUME)*/ {
                 DebugLogger() << "ProductionQueueOrder: removing item from index " << m_index;
-                empire->RemoveBuildFromQueue(m_index);
+                empire->RemoveProductionFromQueue(m_index);
             }
         } else {
             ErrorLogger() << "ProductionQueueOrder: Malformed";

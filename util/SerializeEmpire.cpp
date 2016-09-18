@@ -17,7 +17,8 @@ void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(name)
         & BOOST_SERIALIZATION_NVP(empire_id)
         & BOOST_SERIALIZATION_NVP(allocated_rp)
-        & BOOST_SERIALIZATION_NVP(turns_left);
+        & BOOST_SERIALIZATION_NVP(turns_left)
+        & BOOST_SERIALIZATION_NVP(paused);
 }
 
 template void ResearchQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -67,7 +68,8 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(blocksize_memory)
         & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion)
-        & BOOST_SERIALIZATION_NVP(rally_point_id);
+        & BOOST_SERIALIZATION_NVP(rally_point_id)
+        & BOOST_SERIALIZATION_NVP(paused);
 }
 
 template void ProductionQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

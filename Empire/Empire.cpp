@@ -777,58 +777,62 @@ ProductionQueue::Element::Element() :
     blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID)
+    rally_point_id(INVALID_OBJECT_ID),
+    paused(false)
 {}
 
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int ordered_,
-                                  int remaining_, int location_) :
+                                  int remaining_, int location_, bool paused_) :
     item(item_),
     empire_id(empire_id_),
     ordered(ordered_),
     blocksize(1),
     remaining(remaining_),
     location(location_),
-    allocated_pp(0.0),
-    progress(0.0),
-    progress_memory(0.0),
+    allocated_pp(0.0f),
+    progress(0.0f),
+    progress_memory(0.0f),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID)
+    rally_point_id(INVALID_OBJECT_ID),
+    paused(paused_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, std::string name, int empire_id_, int ordered_,
-                                  int remaining_, int location_) :
+                                  int remaining_, int location_, bool paused_) :
     item(build_type, name),
     empire_id(empire_id_),
     ordered(ordered_),
     blocksize(1),
     remaining(remaining_),
     location(location_),
-    allocated_pp(0.0),
-    progress(0.0),
-    progress_memory(0.0),
+    allocated_pp(0.0f),
+    progress(0.0f),
+    progress_memory(0.0f),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID)
+    rally_point_id(INVALID_OBJECT_ID),
+    paused(paused_)
 {}
 
 ProductionQueue::Element::Element(BuildType build_type, int design_id, int empire_id_, int ordered_,
-                                  int remaining_, int location_) :
+                                  int remaining_, int location_, bool paused_) :
     item(build_type, design_id),
     empire_id(empire_id_),
     ordered(ordered_),
     blocksize(1),
     remaining(remaining_),
     location(location_),
-    allocated_pp(0.0),
-    progress(0.0),
-    progress_memory(0.0),
+    allocated_pp(0.0f),
+    progress(0.0f),
+    progress_memory(0.0f),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID)
+    rally_point_id(INVALID_OBJECT_ID),
+    paused(paused_)
 {}
 
 /////////////////////
@@ -2355,20 +2359,20 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
 
 const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
-void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
+void Empire::PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
     if (!EnqueuableItem(build_type, name, location)) {
-        ErrorLogger() << "Empire::PlaceBuildInQueue() : Attempted to place non-enqueuable item in queue: build_type: "
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Attempted to place non-enqueuable item in queue: build_type: "
                       << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
-        ErrorLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Maximum queue size reached. Aborting enqueue";
         return;
     }
 
     if (!ProducibleItem(build_type, name, location)) {
-        ErrorLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue: build_type: "
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
                       << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
@@ -2380,16 +2384,16 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
         m_production_queue.insert(m_production_queue.begin() + pos, build);
 }
 
-void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
+void Empire::PlaceProductionOnQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
     // ship designs don't have a distinction between enqueuable and producible...
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
-        ErrorLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Maximum queue size reached. Aborting enqueue";
         return;
     }
 
     if (!ProducibleItem(build_type, design_id, location)) {
-        ErrorLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue: build_type: "
+        ErrorLogger() << "Empire::PlaceProductionOnQueue() : Placed a non-buildable item in queue: build_type: "
                       << boost::lexical_cast<std::string>(build_type) << "  design_id: " << design_id << "  location: " << location;
         return;
     }
@@ -2401,23 +2405,23 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
         m_production_queue.insert(m_production_queue.begin() + pos, build);
 }
 
-void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/) {
+void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/) {
     if (item.build_type == BT_BUILDING)
-        PlaceBuildInQueue(item.build_type, item.name, number, location, pos);
+        PlaceProductionOnQueue(item.build_type, item.name, number, location, pos);
     else if (item.build_type == BT_SHIP)
-        PlaceBuildInQueue(item.build_type, item.design_id, number, location, pos);
+        PlaceProductionOnQueue(item.build_type, item.design_id, number, location, pos);
     else
-        throw std::invalid_argument("Empire::PlaceBuildInQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
+        throw std::invalid_argument("Empire::PlaceProductionOnQueue was passed a ProductionQueue::ProductionItem with an invalid BuildType");
 }
 
-void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize) {
-    DebugLogger() << "Empire::SetBuildQuantityAndBlocksize() called for item "<< m_production_queue[index].item.name << "with new quant " << quantity << " and new blocksize " << blocksize;
+void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize) {
+    DebugLogger() << "Empire::SetProductionQuantityAndBlocksize() called for item "<< m_production_queue[index].item.name << "with new quant " << quantity << " and new blocksize " << blocksize;
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     if (quantity < 1)
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
     if (m_production_queue[index].item.build_type == BT_BUILDING && ((1 < quantity) || ( 1 < blocksize) ))
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to build more than one instance of a building in the same build run.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to build more than one instance of a building in the same build run.");
     int original_quantity = m_production_queue[index].remaining;
     int original_blocksize = m_production_queue[index].blocksize;
     blocksize = std::max(1, blocksize);
@@ -2428,31 +2432,31 @@ void Empire::SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize
         m_production_queue[index].progress = (m_production_queue[index].progress_memory / m_production_queue[index].blocksize_memory) * std::min( m_production_queue[index].blocksize_memory, blocksize);
 }
 
-void Empire::SetBuildRallyPoint(int index, int rally_point_id) {
+void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     m_production_queue[index].rally_point_id = rally_point_id;
 }
 
-void Empire::SetBuildQuantity(int index, int quantity) {
+void Empire::SetProductionQuantity(int index, int quantity) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     if (quantity < 1)
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
     if (m_production_queue[index].item.build_type == BT_BUILDING && 1 < quantity)
-        throw std::runtime_error("Empire::SetBuildQuantity() : Attempted to build more than one instance of a building in the same build run.");
+        throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to build more than one instance of a building in the same build run.");
     int original_quantity = m_production_queue[index].remaining;
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
 }
 
-void Empire::MoveBuildWithinQueue(int index, int new_index) {
+void Empire::MoveProductionWithinQueue(int index, int new_index) {
     if (index < new_index)
         --new_index;
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index ||
         new_index < 0 || static_cast<int>(m_production_queue.size()) <= new_index)
     {
-        DebugLogger() << "Empire::MoveBuildWithinQueue index: " << index << "  new index: "
+        DebugLogger() << "Empire::MoveProductionWithinQueue index: " << index << "  new index: "
                                << new_index << "  queue size: " << m_production_queue.size();
         ErrorLogger() << "Attempted to move a production queue item to or from an invalid index.";
         return;
@@ -2462,13 +2466,21 @@ void Empire::MoveBuildWithinQueue(int index, int new_index) {
     m_production_queue.insert(m_production_queue.begin() + new_index, build);
 }
 
-void Empire::RemoveBuildFromQueue(int index) {
+void Empire::RemoveProductionFromQueue(int index) {
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
-        DebugLogger() << "Empire::RemoveBuildFromQueue index: " << index << "  queue size: " << m_production_queue.size();
+        DebugLogger() << "Empire::RemoveProductionFromQueue index: " << index << "  queue size: " << m_production_queue.size();
         ErrorLogger() << "Attempted to delete a production queue item with an invalid index.";
         return;
     }
     m_production_queue.erase(index);
+}
+
+void Empire::PauseProduction(int index) {
+    return;
+}
+
+void Empire::ResumeProduction(int index) {
+    return;
 }
 
 void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {
