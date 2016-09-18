@@ -267,7 +267,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     m_order_issuing_enabled(true)
 {
     if (TemporaryPtr<const Building> building = GetBuilding(m_building_id))
-        GG::Connect(building->StateChangedSignal,   &BuildingIndicator::Refresh,     this);
+        GG::Connect(building->StateChangedSignal,   &BuildingIndicator::RequirePreRender,     this);
     Refresh();
 }
 
@@ -295,7 +295,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                               ClientUI::TechWndProgressBarColor(), GG::LightColor(ClientUI::ResearchableTechFillColor()));
     AttachChild(m_progress_bar);
 
-    Refresh();
+    RequirePreRender();
 }
 
 void BuildingIndicator::Render() {
@@ -336,6 +336,11 @@ void BuildingIndicator::Render() {
     glEnable(GL_TEXTURE_2D);
 
     s_scanline_shader.StopUsing();
+}
+
+void BuildingIndicator::PreRender() {
+    GG::Wnd::PreRender();
+    Refresh();
 }
 
 void BuildingIndicator::Refresh() {

@@ -68,8 +68,8 @@ public:
                       double turns_completed, double total_turns, double total_cost, double turn_spending);
 
     /** \name Mutators */ //@{
+    virtual void PreRender();
     virtual void    Render();
-    void            Refresh();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
@@ -82,6 +82,7 @@ public:
     mutable boost::signals2::signal<void (int)> RightClickedSignal;
 
 private:
+    void            Refresh();
     void            DoLayout();
 
     static ScanlineRenderer s_scanline_shader;
