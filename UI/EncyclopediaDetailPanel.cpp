@@ -535,7 +535,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_description_panel(0),
     m_icon(0),
     m_search_edit(0),
-    m_graph(0)
+    m_graph(0),
+    m_needs_refresh(false)
 {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
@@ -616,11 +617,6 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
 EncyclopediaDetailPanel::~EncyclopediaDetailPanel() {
     if (m_graph && m_graph->Parent() != this)
     delete m_graph;
-}
-
-void EncyclopediaDetailPanel::PreRender() {
-    GG::Wnd::PreRender();
-    DoLayout();
 }
 
 void EncyclopediaDetailPanel::DoLayout() {
@@ -2635,6 +2631,22 @@ namespace {
 }
 
 void EncyclopediaDetailPanel::Refresh() {
+    m_needs_refresh = true;
+    RequirePreRender();
+}
+
+void EncyclopediaDetailPanel::PreRender() {
+    CUIWnd::PreRender();
+
+    if (m_needs_refresh) {
+        m_needs_refresh = false;
+        RefreshImpl();
+    }
+
+    DoLayout();
+}
+
+void EncyclopediaDetailPanel::RefreshImpl() {
     if (m_icon) {
         DeleteChild(m_icon);
         m_icon = 0;
@@ -2740,8 +2752,6 @@ void EncyclopediaDetailPanel::Refresh() {
 
     if (!detailed_description.empty())
         m_description_box->SetText(detailed_description);
-
-    DoLayout();
 
     m_description_panel->ScrollTo(GG::Y0);
 }
