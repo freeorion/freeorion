@@ -18,38 +18,6 @@ namespace {
 
     // closing format tag
     static const std::string LINK_FORMAT_CLOSE = "</rgba>";
-
-    static bool link_tags_registered = false;
-    void RegisterLinkTags() {
-        if (link_tags_registered)
-            return;
-        link_tags_registered = true;
-
-        // need to register the tags that link text uses so GG::Font will know how to (not) render them
-        GG::Font::RegisterKnownTag(VarText::PLANET_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::SYSTEM_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::SHIP_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::FLEET_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::FIELD_ID_TAG);
-
-        GG::Font::RegisterKnownTag(VarText::COMBAT_ID_TAG);
-
-        GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::DESIGN_ID_TAG);
-        GG::Font::RegisterKnownTag(VarText::PREDEFINED_DESIGN_TAG);
-
-        GG::Font::RegisterKnownTag(VarText::TECH_TAG);
-        GG::Font::RegisterKnownTag(VarText::BUILDING_TYPE_TAG);
-        GG::Font::RegisterKnownTag(VarText::SPECIAL_TAG);
-        GG::Font::RegisterKnownTag(VarText::SHIP_HULL_TAG);
-        GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
-        GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
-        GG::Font::RegisterKnownTag(VarText::FIELD_TYPE_TAG);
-
-        GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
-        GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);
-    }
 }
 
 ///////////////////////////////////////
@@ -535,3 +503,38 @@ std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& 
 
 std::string LinkTaggedPresetText(const std::string& tag, const std::string& stringtable_entry, const std::string& display_text)
 { return "<" + tag + " " + stringtable_entry + ">" + display_text + "</" + tag + ">"; }
+
+namespace {
+    static bool link_tags_registered = false;
+}
+
+void RegisterLinkTags() {
+    if (link_tags_registered)
+        return;
+    link_tags_registered = true;
+
+    // need to register the tags that link text uses so GG::Font will know how to (not) render them
+    GG::Font::RegisterKnownTag(VarText::PLANET_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::SYSTEM_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::SHIP_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::FLEET_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::FIELD_ID_TAG);
+
+    GG::Font::RegisterKnownTag(VarText::COMBAT_ID_TAG);
+
+    GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::DESIGN_ID_TAG);
+    GG::Font::RegisterKnownTag(VarText::PREDEFINED_DESIGN_TAG);
+
+    GG::Font::RegisterKnownTag(VarText::TECH_TAG);
+    GG::Font::RegisterKnownTag(VarText::BUILDING_TYPE_TAG);
+    GG::Font::RegisterKnownTag(VarText::SPECIAL_TAG);
+    GG::Font::RegisterKnownTag(VarText::SHIP_HULL_TAG);
+    GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
+    GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
+    GG::Font::RegisterKnownTag(VarText::FIELD_TYPE_TAG);
+
+    GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
+    GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);
+}

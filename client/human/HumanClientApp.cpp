@@ -304,6 +304,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     if (inform_user_sound_failed)
         ClientUI::MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
 
+    // Register LinkText tags with GG::Font
+    RegisterLinkTags();
+
     m_fsm->initiate();
 }
 
