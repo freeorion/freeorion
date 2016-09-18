@@ -422,12 +422,11 @@ void ResearchWnd::TogglePedia()
 bool ResearchWnd::PediaVisible()
 { return m_tech_tree_wnd->PediaVisible(); }
 
-
 void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row)) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name, position)));
+            OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name, static_cast<int>(position))));
         if (Empire* empire = GetEmpire(empire_id))
             empire->UpdateResearchQueue();
     }
