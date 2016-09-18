@@ -13,6 +13,7 @@
 #include "TextBrowseWnd.h"
 
 #include <GG/GUI.h>
+#include <GG/Layout.h>
 #include <GG/DrawUtil.h>
 #include <GG/dialogs/ColorDlg.h>
 
@@ -1427,9 +1428,11 @@ namespace {
             GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
             species_name->Resize(GG::Pt(Width() - GG::X(Value(h)), h));
             push_back(species_name);
-            GG::X first_col_width(Value(h) - 10);
+            GG::X first_col_width(Value(h) - 2);
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
+            GetLayout()->SetColumnStretch(0, 0.0);
+            GetLayout()->SetColumnStretch(1, 1.0);
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
                 new IconTextBrowseWnd(ClientUI::SpeciesIcon(species->Name()),
@@ -1444,6 +1447,10 @@ namespace {
 SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     CUIDropDownList(6)
 {
+    ManuallyManageColProps();
+    NormalizeRowsOnInsert(false);
+    SetNumCols(2);
+
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
