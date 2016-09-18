@@ -21,13 +21,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** expands or collapses panel to show details or just summary info */
-    void ExpandCollapse(bool expanded);
+    virtual void PreRender();
 
-    /** updates indicators with values of associated object.  Does not do layout and resizing. */
-    void Update();
     /** updates, redoes layout, resizes indicator */
     void Refresh();
+
+    /** expands or collapses panel to show details or just summary info */
+    void ExpandCollapse(bool expanded);
 
     /** Enables, or disables if \a enable is false, issuing orders via this panel. */
     void EnableOrderIssuing(bool enable = true);
@@ -37,6 +37,10 @@ public:
 
 protected:
     /** \name Mutators */ //@{
+    /** updates indicators with values of associated object.  Does not do layout and resizing. */
+    void Update();
+    void RefreshImpl();
+
     /** resizes panel and positions widgets */
     virtual void DoLayout();
     //@}

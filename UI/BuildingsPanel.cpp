@@ -67,11 +67,11 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     if (planet) {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
-            GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
+            GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::RequirePreRender, this);
         }
     }
 
-    Refresh();
+    RequirePreRender();
 }
 
 BuildingsPanel::~BuildingsPanel() {
@@ -165,7 +165,16 @@ void BuildingsPanel::Update() {
     }
 }
 
+void BuildingsPanel::PreRender() {
+    AccordionPanel::PreRender();
+    RefreshImpl();
+}
+
 void BuildingsPanel::Refresh() {
+    RequirePreRender();
+}
+
+void BuildingsPanel::RefreshImpl() {
     Update();
     DoLayout();
 }
