@@ -320,6 +320,8 @@ void DropDownList::RenderDisplayedRow()
     if (!visible)
         current_item->Show();
     BeginClipping();
+    // The following prerender is necessary because Show() is called after the prerender phase of GG.
+    GUI::GetGUI()->PreRenderWindow(current_item);
     GUI::GetGUI()->RenderWindow(current_item);
     EndClipping();
     current_item->OffsetMove(-offset);
@@ -431,11 +433,18 @@ void DropDownList::LockColWidths()
 void DropDownList::UnLockColWidths()
 { LB()->UnLockColWidths(); }
 
+void DropDownList::ManuallyManageColProps()
+{ LB()->ManuallyManageColProps(); }
+
 void DropDownList::SetColAlignment(std::size_t n, Alignment align) 
 { LB()->SetColAlignment(n, align); }
 
+
 void DropDownList::SetRowAlignment(iterator it, Alignment align) 
 { LB()->SetRowAlignment(it, align); }
+
+void DropDownList::NormalizeRowsOnInsert(bool enable /*= true*/)
+{ LB()->NormalizeRowsOnInsert(enable); }
 
 void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {

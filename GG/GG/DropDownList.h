@@ -170,8 +170,17 @@ public:
         to an empty ListBox */
     void            UnLockColWidths();
 
+    /** Set ListBox to stop managing column widths and alignment.  The number of columns must be
+        set with SetColWidth(), but widths of individual rows columns or the header will not be
+        managed by ListBox. */
+    void            ManuallyManageColProps();
+
     void            SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
     void            SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
+
+    /** Sets whether to normalize rows when inserted (true) or leave them as
+      * they are. */
+    void            NormalizeRowsOnInsert(bool enable = true);
     //@}
 
 protected:
