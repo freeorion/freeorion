@@ -1045,9 +1045,11 @@ void ProductionQueueOrder::ExecuteImpl() const {
         } else if (m_index != INVALID_INDEX) {
             if (m_pause == PAUSE) {
                 DebugLogger() << "ProductionQueueOrder: pausing production";
+                empire->PauseProduction(m_index);
 
             } else if (m_pause == RESUME) {
                 DebugLogger() << "ProductionQueueOrder: unpausing production";
+                empire->ResumeProduction(m_index);
 
             } else /*if (m_pause == INVALID_PAUSE_RESUME)*/ {
                 DebugLogger() << "ProductionQueueOrder: removing item from index " << m_index;

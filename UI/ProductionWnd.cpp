@@ -605,12 +605,13 @@ namespace {
             QueueListBox(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE,  UserString("PRODUCTION_QUEUE_PROMPT"))
         {}
 
-        boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
-        boost::signals2::signal<void ()>                             ShowPediaSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
+        boost::signals2::signal<void ()>                            ShowPediaSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-            // mostly duplicated equivalent in QueueListBox, but with an extra command...
+            // mostly duplicated equivalent in QueueListBox, but with extra commands...
 
             GG::MenuItem menu_contents;
             menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
@@ -622,11 +623,20 @@ namespace {
             QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : 0;
             BuildType build_type = queue_row ? queue_row->m_build.item.build_type : INVALID_BUILD_TYPE;
             if (build_type == BT_SHIP) {
+                // for ships, add a set rally point command
                 if (TemporaryPtr<const System> system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                    menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,                   4, false, false));
+                    menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,               4, false, false));
                 }
             }
+
+            // pause / resume commands
+            if (queue_row && queue_row->m_build.paused) {
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("RESUME"),           7, false, false));
+            } else {
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("PAUSE"),            8, false, false));
+            }
+
             // pedia lookup
             std::string item_name = "";
             if (build_type == BT_BUILDING) {
@@ -637,12 +647,11 @@ namespace {
                 ErrorLogger() << "Invalid build type (" << build_type << ") for row item";
                 return;
             }
-
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
-
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
             menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
+
 
             GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                                 ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -673,6 +682,16 @@ namespace {
                     this->LeftClickedSignal(it, pt, modkeys);
                     break;
                 }
+
+                case 7: { // resume
+                    this->QueueItemPausedSignal(it, false);
+                    break;
+                }
+                case 8: { // pause
+                    this->QueueItemPausedSignal(it, true);
+                    break;
+                }
+
                 default:
                     break;
                 }
@@ -768,6 +787,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,        &ProductionWnd::QueueItemDoubleClickedSlot, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal,   &ProductionWnd::QueueItemRallied, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->ShowPediaSignal,            &ProductionWnd::ShowPedia, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal,      &ProductionWnd::QueueItemPaused, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
@@ -1097,6 +1117,21 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
                                           rally_point_id, false, false)));
+
+    empire->UpdateProductionQueue();
+}
+
+void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          pause, -1.0f)));
 
     empire->UpdateProductionQueue();
 }

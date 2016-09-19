@@ -120,6 +120,12 @@ namespace {
         int i = 0;
 
         for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+            it->allocated_rp = 0.0f;    // default, may be modified below
+
+            if (it->paused) {
+                continue;
+            }
+
             // get details on what is being researched...
             const Tech* tech = GetTech(it->name);
             if (!tech) {
@@ -132,7 +138,8 @@ namespace {
                 continue;
             }
             bool researchable = false;
-            if (status_it->second == TS_RESEARCHABLE) researchable = true;
+            if (status_it->second == TS_RESEARCHABLE)
+                researchable = true;
 
             if (researchable) {
                 std::map<std::string, float>::const_iterator progress_it = research_progress.find(it->name);
@@ -200,11 +207,9 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return;
-        
 
         // cache production item costs and times
-        std::map<std::pair<ProductionQueue::ProductionItem, int>,
-                 std::pair<float, int> >                           queue_item_costs_and_times;
+        std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int> > queue_item_costs_and_times;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
             ProductionQueue::Element& elem = *it;
 
@@ -249,7 +254,7 @@ namespace {
             //DebugLogger() << "group has " << group_pp_available << " PP available";
 
             // see if item is producible this turn...
-            if (!empire->ProducibleItem(queue_element.item, queue_element.location)) {
+            if (queue_element.paused || !empire->ProducibleItem(queue_element.item, queue_element.location)) {
                 // can't be produced at this location this turn.
                 queue_element.allocated_pp = 0.0f;
                 //DebugLogger() << "item can't be produced at location this turn";
@@ -2476,11 +2481,21 @@ void Empire::RemoveProductionFromQueue(int index) {
 }
 
 void Empire::PauseProduction(int index) {
-    return;
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
+        DebugLogger() << "Empire::PauseProduction index: " << index << "  queue size: " << m_production_queue.size();
+        ErrorLogger() << "Attempted pause a production queue item with an invalid index.";
+        return;
+    }
+    m_production_queue[index].paused = true;
 }
 
 void Empire::ResumeProduction(int index) {
-    return;
+    if (index < 0 || static_cast<int>(m_production_queue.size()) <= index) {
+        DebugLogger() << "Empire::ResumeProduction index: " << index << "  queue size: " << m_production_queue.size();
+        ErrorLogger() << "Attempted resume a production queue item with an invalid index.";
+        return;
+    }
+    m_production_queue[index].paused = false;
 }
 
 void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {
