@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8.12)
-
 message("-- Configuring GG Tests")
 
 find_package(GLEW REQUIRED)
