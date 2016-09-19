@@ -67,7 +67,6 @@ if (WIN32)
         -D_CRT_SECURE_NO_DEPRECATE
         -D_SCL_SECURE_NO_DEPRECATE
         -D_CRT_NONSTDC_NO_DEPRECATE
-        -DBOOST_ALL_DYN_LINK
         -DFREEORION_WIN32
         -D_WIN32_WINNT=0x0501
     )
@@ -84,7 +83,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(
         -DFREEORION_LINUX
         -DENABLE_BINRELOC
-        -DBOOST_ALL_DYN_LINK
     )
 elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     add_definitions(

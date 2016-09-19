@@ -15,10 +15,6 @@ set(freeorionca_LINK_LIBS
     ${Boost_LIBRARIES}
 )
 
-if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-endif ()
-
 set (freeorionca_HEADER
     AIClientApp.h
     ../ClientApp.h

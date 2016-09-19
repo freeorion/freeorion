@@ -22,10 +22,6 @@ set(gg_test_LINK_LIBS
     ${GLEW_LIBRARIES}
 )
 
-if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-endif ()
-
 
 macro (make_gigi_test name)
     add_executable(${name} ${ARGN} ${freeorion_UTIL_SOURCES})

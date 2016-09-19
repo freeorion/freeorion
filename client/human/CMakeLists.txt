@@ -19,10 +19,6 @@ include_directories(
     ${VORBIS_INCLUDE_DIR}
 )
 
-if(WIN32)
-    include_directories(${GLEW_INCLUDE_DIRS})
-endif()
-
 add_definitions(-DFREEORION_BUILD_HUMAN)
 
 
@@ -183,7 +179,6 @@ set(freeorion_LINK_LIBS
 )
 
 if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
     list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
 endif ()
 

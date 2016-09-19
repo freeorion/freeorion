@@ -15,10 +15,6 @@ set(freeoriond_LINK_LIBS
     ${Boost_LIBRARIES}
 )
 
-if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-endif ()
-
 set (freeoriond_HEADER
     ../network/ServerNetworking.h
     SaveLoad.h
