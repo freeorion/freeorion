@@ -97,7 +97,9 @@
 # wants explicit full paths and this trickery doesn't work too well.
 # I'm going to attempt to cut out the middleman and hope
 # everything still works.
-find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
+find_path(
+  FREETYPE_INCLUDE_DIR_ft2build
+  ft2build.h
   HINTS
     ENV FREETYPE_DIR
   PATHS
@@ -108,10 +110,14 @@ find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
-  PATH_SUFFIXES include/freetype2 include
+  PATH_SUFFIXES
+    include/freetype2
+    include
+    freetype2
 )
 
-find_path(FREETYPE_INCLUDE_DIR_freetype2
+find_path(
+  FREETYPE_INCLUDE_DIR_freetype2
   NAMES
     freetype/config/ftheader.h
     config/ftheader.h
@@ -125,7 +131,10 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
-  PATH_SUFFIXES include/freetype2 include
+  PATH_SUFFIXES
+    include/freetype2
+    include
+    freetype2
 )
 
 # set the user variables
@@ -141,26 +150,25 @@ elseif(EXISTS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype.h")
 endif()
 
 if(FREETYPE_INCLUDE_DIR_freetype2 AND FREETYPE_H)
-    file(STRINGS "${FREETYPE_H}" freetype_version_str
-         REGEX "^#[\t ]*define[\t ]+FREETYPE_(MAJOR|MINOR|PATCH)[\t ]+[0-9]+$")
+  file(STRINGS "${FREETYPE_H}" freetype_version_str
+       REGEX "^#[\t ]*define[\t ]+FREETYPE_(MAJOR|MINOR|PATCH)[\t ]+[0-9]+$")
 
-    unset(FREETYPE_VERSION_STRING)
-    unset(FREETYPE_FILE_VERSION_STRING)
-    foreach(VPART MAJOR MINOR PATCH)
-        foreach(VLINE ${freetype_version_str})
-            if(VLINE MATCHES "^#[\t ]*define[\t ]+FREETYPE_${VPART}")
-                string(REGEX REPLACE "^#[\t ]*define[\t ]+FREETYPE_${VPART}[\t ]+([0-9]+)$" "\\1"
-                       FREETYPE_VERSION_PART "${VLINE}")
-                if(FREETYPE_VERSION_STRING)
-                    set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_STRING}.${FREETYPE_VERSION_PART}")
-                else()
-                    set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_PART}")
-                endif()
+  unset(FREETYPE_VERSION_STRING)
+  unset(FREETYPE_FILE_VERSION_STRING)
+  foreach(VPART MAJOR MINOR PATCH)
+    foreach(VLINE ${freetype_version_str})
+      if(VLINE MATCHES "^#[\t ]*define[\t ]+FREETYPE_${VPART}[\t ]+([0-9]+)$")
+        set(FREETYPE_VERSION_PART "${CMAKE_MATCH_1}")
+        if(FREETYPE_VERSION_STRING)
+          set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_STRING}.${FREETYPE_VERSION_PART}")
+        else()
+          set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_PART}")
+        endif()
                 set(FREETYPE_FILE_VERSION_STRING "${FREETYPE_FILE_VERSION_STRING}${FREETYPE_VERSION_PART}")
-                unset(FREETYPE_VERSION_PART)
-            endif()
-        endforeach()
+        unset(FREETYPE_VERSION_PART)
+      endif()
     endforeach()
+  endforeach()
 endif()
 
 find_library(FREETYPE_LIBRARY
@@ -185,8 +193,18 @@ set(FREETYPE_LIBRARIES "${FREETYPE_LIBRARY}")
 # handle the QUIETLY and REQUIRED arguments and set FREETYPE_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Freetype
-                                  REQUIRED_VARS FREETYPE_LIBRARY FREETYPE_INCLUDE_DIRS
-                                  VERSION_VAR FREETYPE_VERSION_STRING)
 
-mark_as_advanced(FREETYPE_LIBRARY FREETYPE_INCLUDE_DIR_freetype2 FREETYPE_INCLUDE_DIR_ft2build)
+find_package_handle_standard_args(
+  Freetype
+  REQUIRED_VARS
+    FREETYPE_LIBRARY
+    FREETYPE_INCLUDE_DIRS
+  VERSION_VAR
+    FREETYPE_VERSION_STRING
+)
+
+mark_as_advanced(
+  FREETYPE_LIBRARY
+  FREETYPE_INCLUDE_DIR_freetype2
+  FREETYPE_INCLUDE_DIR_ft2build
+)
