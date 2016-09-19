@@ -8,10 +8,6 @@ include_directories(
 
 add_definitions(-DFREEORION_BUILD_AI)
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-endif ()
-
 set(freeorionca_LINK_LIBS
     freeorioncommon
     freeorionparse
@@ -49,6 +45,11 @@ set (freeorionca_SOURCE
 add_executable(freeorionca
     ${freeorionca_HEADER}
     ${freeorionca_SOURCE}
+)
+
+target_compile_options(
+    freeorionca PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
 )
 
 target_link_libraries(freeorionca

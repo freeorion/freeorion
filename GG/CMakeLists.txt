@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.12)
 
+if(CMAKE_VERSION VERSION_GREATER "2.8.12")
+    cmake_policy(SET CMP0044 OLD)
+endif()
+
 enable_testing()
 include(CMakeDependentOption)
 include(GNUInstallDirs)

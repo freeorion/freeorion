@@ -32,10 +32,6 @@ endif()
 add_definitions(-DFREEORION_BUILD_HUMAN)
 
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-endif ()
-
 set(freeorion_HEADER
     ../ClientApp.h
     ../ClientFSMEvents.h
@@ -200,6 +196,11 @@ endif ()
 add_executable(freeorion
     ${freeorion_HEADER}
     ${freeorion_SOURCES}
+)
+
+target_compile_options(
+    freeorion PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
 )
 
 target_link_libraries(freeorion

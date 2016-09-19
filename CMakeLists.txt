@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.12)
 
+if(CMAKE_VERSION VERSION_GREATER "2.8.12")
+    cmake_policy(SET CMP0044 OLD)
+endif()
+
 include(GNUInstallDirs)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
@@ -49,6 +53,15 @@ endif()
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+add_compile_options(
+    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
+    $<$<CXX_COMPILER_ID:gnu>:-Wall>
+    # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
+    $<$<CXX_COMPILER_ID:clang>:-Wall>
+    # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
+    $<$<CXX_COMPILER_ID:msvc>:/W4>
+)
+
 if (WIN32)
     add_definitions(
         -D_CRT_SECURE_NO_DEPRECATE
@@ -62,7 +75,6 @@ if (WIN32)
         set (CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/../")
         set (BOOST_ROOT "${CMAKE_BINARY_DIR}/../Boost")
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
         set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     endif ()
@@ -74,14 +86,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         -DENABLE_BINRELOC
         -DBOOST_ALL_DYN_LINK
     )
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     add_definitions(
         -DFREEORION_FREEBSD
         -DENABLE_BINRELOC
         -DBOOST_DATE_TIME_NO_LOCALE
     )
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
@@ -303,16 +313,13 @@ add_library(freeorioncommon
     ${freeorioncommon_SOURCE}
 )
 
-add_dependencies(freeorioncommon freeorionversion)
+target_compile_options(
+    freeorioncommon PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set_property(
-        SOURCE
-        util/SerializePathingEngine.cpp
-        PROPERTY
-        COMPILE_FLAGS -ftemplate-depth=512
-    )
-endif ()
+add_dependencies(freeorioncommon freeorionversion)
 
 target_link_libraries(freeorioncommon
     ${Boost_LIBRARIES}
@@ -324,13 +331,6 @@ set_target_properties(freeorioncommon
     PROPERTIES
     DEFINE_SYMBOL "FREEORION_BUILD_COMMON"
 )
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set_target_properties(freeorioncommon
-        PROPERTIES
-        COMPILE_FLAGS "-fvisibility=hidden"
-)
-endif ()
 
 ########################################
 # Recurse Into Sources                 #
