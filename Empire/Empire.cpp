@@ -565,7 +565,7 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject() {
 void ResearchQueue::clear() {
     m_queue.clear();
     m_projects_in_progress = 0;
-    m_total_RPs_spent = 0;
+    m_total_RPs_spent = 0.0f;
     ResearchQueueChangedSignal();
 }
 
@@ -848,7 +848,7 @@ int ProductionQueue::ProjectsInProgress() const
 
 float ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
-    float retval = 0.0;
+    float retval = 0.0f;
     for (std::map<std::set<int>, float>::const_iterator it = m_object_group_allocated_pp.begin();
          it != m_object_group_allocated_pp.end(); ++it)
     { retval += it->second; }
@@ -941,7 +941,7 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
 
         item_cost *= it->blocksize;
-        float maxPerTurn = item_cost / std::max(build_turns,1);
+        float maxPerTurn = item_cost / std::max(build_turns, 1);
         if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
             return it;
     }
