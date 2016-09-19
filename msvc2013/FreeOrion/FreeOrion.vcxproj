@@ -336,7 +336,7 @@
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="FreeOrion.rc">
+    <ResourceCompile Include="..\..\client\human\FreeOrion.rc">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IDI_ICON1=101</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">IDI_ICON1=101</PreprocessorDefinitions>
     </ResourceCompile>

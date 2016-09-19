@@ -600,7 +600,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="FreeOrion.rc">
+    <ResourceCompile Include="..\..\client\human\FreeOrion.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

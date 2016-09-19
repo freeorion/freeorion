@@ -179,7 +179,8 @@ set(freeorion_LINK_LIBS
 )
 
 if (WIN32)
-    list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
+    # Add icon resource file to freeorion.exe
+    list(APPEND freeorion_SOURCES FreeOrion.rc)
 endif ()
 
 add_executable(freeorion

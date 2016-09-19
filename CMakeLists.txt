@@ -125,13 +125,6 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
-if (WIN32)
-    # Add icon resource file to freeorion.exe
-    if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)
-        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/FreeOrion.ico\"")
-    endif ()
-endif ()
-
 ########################################
 # Build common code library            #
 ########################################
