@@ -10,10 +10,6 @@ find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
-if(WIN32)
-    find_package(GLEW REQUIRED)
-endif()
-
 include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIRS}
@@ -21,8 +17,6 @@ include_directories(
     ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
-
-    ${CMAKE_SOURCE_DIR}/PagedGeometry/include
 )
 
 if(WIN32)
