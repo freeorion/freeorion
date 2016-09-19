@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.12)
 
 find_package(Doxygen)
 # git allows shallow clones pushing only with version 1.9 or later

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.12)
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS python log REQUIRED)
 find_package(PythonLibs ${PYTHON_VERSION} REQUIRED)
