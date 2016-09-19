@@ -5082,7 +5082,7 @@ SITREP_COMBAT_SYSTEM_ENEMY
 Dans %system% : un %combat% contre %empire% a eu lieu.
 
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
-Combat dans système
+Combat dans système - un seul Empire
 
 COMBAT  # translated
 Combat
@@ -5187,7 +5187,7 @@ SITREP_GROUND_BATTLE_ENEMY
 Sur %planet% : une bataille terrestre s'est déroulée contre %empire%.
 
 SITREP_GROUND_BATTLE_ENEMY_LABEL
-Bataille au sol
+Bataille au sol - un seul Empire
 
 SITREP_PLANET_CAPTURED
 La planète %planet% a été capturée par %empire%.
