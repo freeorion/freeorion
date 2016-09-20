@@ -24,6 +24,7 @@ public:
     void            Clear();
 
     virtual void    Render();
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
