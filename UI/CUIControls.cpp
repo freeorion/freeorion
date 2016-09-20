@@ -1347,14 +1347,6 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
 }
 
-SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string>& species_names) :
-    CUIDropDownList(6)
-{
-    Resize(GG::Pt(w, h - 8));
-    SetSpecies(species_names);
-    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
-}
-
 const std::string& SpeciesSelector::CurrentSpeciesName() const {
     CUIDropDownList::iterator row_it = this->CurrentItem();
     if (row_it == this->end())
@@ -1386,28 +1378,6 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name) {
         }
     }
     ErrorLogger() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
-}
-
-void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names) {
-    const std::string& previous_selection = CurrentSpeciesName();
-    bool selection_changed = (previous_selection == "");
-
-    Clear();
-
-    for (std::vector<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); ++it) {
-        const std::string& species_name = *it;
-        if (const Species* species = GetSpecies(species_name)) {
-            CUIDropDownList::iterator it = Insert(new SpeciesRow(species, this->Width(), this->Height() - 4));
-            if (species_name == previous_selection) {
-                Select(it);
-                selection_changed = false;
-            }
-        } else {
-            ErrorLogger() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
-        }
-    }
-    if (selection_changed)
-        SelectionChanged(this->CurrentItem());
 }
 
 void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it) {
