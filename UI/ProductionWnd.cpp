@@ -17,6 +17,7 @@
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
@@ -195,7 +196,8 @@ namespace {
     //////////////////////////////////////////////////
     class QueueProductionItemPanel : public GG::Control {
     public:
-        QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost, double total_cost,
+        QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w,
+                                 const ProductionQueue::Element& build, double turn_cost, double total_cost,
                                  int turns, int number, int turns_completed, double partially_complete_turn);
 
         virtual void    PreRender();
@@ -336,7 +338,7 @@ namespace {
             elem(elem)
         {
             RequirePreRender();
-            Resize(GG::Pt(w - 2 * MARGIN, QueueProductionItemPanel::DefaultHeight()));
+            Resize(GG::Pt(w, QueueProductionItemPanel::DefaultHeight()));
         }
 
         void Init() {
@@ -351,10 +353,11 @@ namespace {
             if (progress == -1.0f)
                 progress = 0.0f;
 
-            panel = new QueueProductionItemPanel(Width() - MARGIN - MARGIN, elem,
-                                                 elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                 static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
-                                                 std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
+            panel = new QueueProductionItemPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+                                                   Width() - MARGIN - MARGIN - GG::X(2 * GetLayout()->BorderMargin()),
+                                                   elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
+                                                   static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
+                                                   std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
             push_back(panel);
 
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
@@ -372,8 +375,9 @@ namespace {
             if (!panel)
                 Init();
 
-            panel->Resize(Size() - GG::Pt((X_MARGIN + X_MARGIN), GG::Y0));
-            GG::ListBox::Row::Resize(panel->Size() + GG::Pt((X_MARGIN + X_MARGIN), GG::Y0));
+            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            panel->Resize(Size() - border);
+            GG::ListBox::Row::Resize(panel->Size() + border);
         }
 
         virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -409,10 +413,10 @@ namespace {
     //////////////////////////////////////////////////
     // QueueProductionItemPanel implementation
     //////////////////////////////////////////////////
-    QueueProductionItemPanel::QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build,
+    QueueProductionItemPanel::QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
                                                        double turn_spending, double total_cost, int turns, int number,
                                                        int turns_completed, double partially_complete_turn) :
-        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
+        GG::Control(x, y, w, GG::Y(10), GG::NO_WND_FLAGS),
         elem(build),
         m_name_text(0),
         m_location_text(0),
