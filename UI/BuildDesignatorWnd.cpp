@@ -869,7 +869,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     }
 
     if (new_first_row_it != m_buildable_items->end()) {
-        m_buildable_items->SetFirstRowShown(new_first_row_it);
+        m_buildable_items->BringRowIntoView(new_first_row_it);
     } else {
         if (!m_buildable_items->Empty())
             m_buildable_items->BringRowIntoView(--m_buildable_items->end());
