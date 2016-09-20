@@ -948,8 +948,6 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
 
     const GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);
-    if (!m_header_row->empty())
-        NormalizeRow(m_header_row);
     AdjustScrolls(true);
     if (old_size != Size())
         RequirePreRender();
@@ -1234,13 +1232,14 @@ void ListBox::SetColHeaders(Row* r)
         if (m_manage_column_props && m_rows.empty() && m_col_widths.empty()) {
             m_num_cols = m_header_row->size();
             m_col_widths.resize(m_header_row->size(),
-                                (ClientSize().x - SCROLL_WIDTH) / static_cast<int>(m_header_row->size()));
-            // put the remainder in the last column, so the total width == ClientSize().x - SCROLL_WIDTH
-            m_col_widths.back() += (ClientSize().x - SCROLL_WIDTH) % static_cast<int>(m_header_row->size());
+                                ClientWidth() / static_cast<int>(m_header_row->size()));
+            // put the remainder in the last column, so the total width == ClientWidth()
+            m_col_widths.back() += ClientWidth() % static_cast<int>(m_header_row->size());
             m_col_alignments.resize(m_header_row->size(), AlignmentFromStyle(m_style));
             m_col_stretches.resize(m_header_row->size(), 0.0);
         }
-        NormalizeRow(m_header_row);
+        if (m_normalize_rows_on_insert)
+            NormalizeRow(m_header_row);
         m_header_row->MoveTo(Pt(X0, -m_header_row->Height()));
         AttachChild(m_header_row);
     } else {
