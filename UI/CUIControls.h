@@ -145,6 +145,33 @@ public:
     virtual GG::Pt MinUsableSize(const GG::StateButton& button) const;
 };
 
+/** @brief A FreeOrion styled icon toggle button.
+ *
+ * Renders a SubTexture depending on the checked state of the CUIToggleButton.
+ * When the @a button has single texture and is unchecked, it renders the same
+ * icon recolored towards grey.  If a second SubTexture is assigned to the
+ * @a button, it will render the appropriate SubTexture.  When a mouse pointer
+ * hovers over this button, the opposing SubTexture and color are used and
+ * highlighted.
+ */
+class CUIToggleRepresenter : public GG::StateButtonRepresenter {
+public:
+    CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon, const GG::Clr& highlight_clr); ///< ctor
+    CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon, const GG::Clr& unchecked_clr,
+                         boost::shared_ptr<GG::SubTexture> checked_icon, const GG::Clr& checked_clr); ///< ctor
+
+    virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChecked(bool checked) const;
+
+private:
+    boost::shared_ptr<GG::SubTexture>   m_unchecked_icon;
+    boost::shared_ptr<GG::SubTexture>   m_checked_icon;
+    GG::Clr                             m_unchecked_color;
+    GG::Clr                             m_checked_color;
+};
+
+
 /** a FreeOrion StateButton control */
 class CUIStateButton : public GG::StateButton {
 public:
@@ -592,33 +619,6 @@ public:
 private:
     float   m_rpm;
     float   m_phase_offset;
-};
-
-/** \brief Represents a CUIToggleButton
- * 
- * Renders a SubTexture depending on the checked state of the CUIToggleButton.
- * When the \a button has single texture and is unchecked, it renders the same icon recolored towards grey.
- * If a second SubTexture is assigned to the \a button, it will render the appropriate SubTexture.
- * When a mouse pointer hovers over this button, the opposing SubTexture and color are used and highlighted
- */
-class CUIToggleRepresenter : public GG::StateButtonRepresenter {
-public:
-    /** \name Structors */ //@{
-    CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon, const GG::Clr& highlight_clr); ///< ctor
-    CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon, const GG::Clr& unchecked_clr,
-                         boost::shared_ptr<GG::SubTexture> checked_icon, const GG::Clr& checked_clr); ///< ctor
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual void                        OnChecked(bool checked) const;
-    virtual void                        Render(const GG::StateButton& button) const;
-    //@}
-
-private:
-    boost::shared_ptr<GG::SubTexture>   m_unchecked_icon;
-    boost::shared_ptr<GG::SubTexture>   m_checked_icon;
-    GG::Clr                             m_unchecked_color;
-    GG::Clr                             m_checked_color;
 };
 
 /** Renders scanlines over its area. */

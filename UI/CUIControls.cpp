@@ -466,6 +466,70 @@ GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 { return button.GetLabel()->MinUsableSize(); }
 
 
+////////////////////////////////////////////////
+// CUIToggleRepresenter
+////////////////////////////////////////////////
+CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon,
+                                           const GG::Clr& highlight_clr) :
+    m_unchecked_icon(icon),
+    m_checked_icon(icon),
+    m_unchecked_color(highlight_clr),
+    m_checked_color(highlight_clr)
+{}
+
+CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
+                                           const GG::Clr& unchecked_clr,
+                                           boost::shared_ptr<GG::SubTexture> checked_icon,
+                                           const GG::Clr& checked_clr) :
+    m_unchecked_icon(unchecked_icon),
+    m_checked_icon(checked_icon),
+    m_unchecked_color(unchecked_clr),
+    m_checked_color(checked_clr)
+{}
+
+void CUIToggleRepresenter::OnChecked(bool checked) const
+{ PlayButtonCheckSound(); }
+
+void CUIToggleRepresenter::Render(const GG::StateButton& button) const {
+    bool render_checked = button.Checked()^button.IsMouseover();  // opposite on mouseover
+
+    GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
+    GG::Clr bg_clr(ClientUI::CtrlColor());
+    GG::Clr border_clr(button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor());
+
+    const int BORDER_THICKNESS = 1;
+    const int ICON_SIZE_REDUCE = BORDER_THICKNESS * 2;
+
+    GG::Pt icon_ul = button.UpperLeft();
+    GG::Pt icon_lr = button.LowerRight();
+    GG::Pt border_ul = icon_ul;
+    GG::Pt border_lr = icon_lr;
+
+    // tone color for disabled button, or when unchecked and using a single icon with same color
+    if (button.Disabled() || (!render_checked && (m_checked_color == m_unchecked_color) && (m_checked_icon == m_unchecked_icon)))
+        icon_clr = DisabledColor(icon_clr) * 0.8f;
+
+    // highlight on mouseover
+    if (button.IsMouseover()) {
+        AdjustBrightness(border_clr, 100);
+        AdjustBrightness(icon_clr, 1.7);
+    }
+
+    // shrink icon for border
+    icon_ul.x += ICON_SIZE_REDUCE;
+    icon_ul.y += ICON_SIZE_REDUCE;
+    icon_lr.x -= ICON_SIZE_REDUCE;
+    icon_lr.y -= ICON_SIZE_REDUCE;
+
+    // render border
+    AngledCornerRectangle(border_ul, border_lr, bg_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, BORDER_THICKNESS);
+
+    // render icon
+    glColor(icon_clr);
+    render_checked ? m_checked_icon->OrthoBlit(icon_ul, icon_lr) : m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
+}
+
+
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
@@ -2078,69 +2142,6 @@ void RotatingGraphic::Render() {
 
     glPopClientAttrib();
     glPopMatrix();
-}
-
-////////////////////////////////////////////////
-// CUIToggleButton
-////////////////////////////////////////////////
-CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon,
-                                           const GG::Clr& highlight_clr) :
-    m_unchecked_icon(icon),
-    m_checked_icon(icon),
-    m_unchecked_color(highlight_clr),
-    m_checked_color(highlight_clr)
-{}
-
-CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
-                                           const GG::Clr& unchecked_clr,
-                                           boost::shared_ptr<GG::SubTexture> checked_icon,
-                                           const GG::Clr& checked_clr) :
-    m_unchecked_icon(unchecked_icon),
-    m_checked_icon(checked_icon),
-    m_unchecked_color(unchecked_clr),
-    m_checked_color(checked_clr)
-{}
-
-void CUIToggleRepresenter::OnChecked(bool checked) const
-{ PlayButtonCheckSound(); }
-
-void CUIToggleRepresenter::Render(const GG::StateButton& button) const {
-    bool render_checked = button.Checked()^button.IsMouseover();  // opposite on mouseover
-
-    GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
-    GG::Clr bg_clr(ClientUI::CtrlColor());
-    GG::Clr border_clr(button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor());
-
-    const int BORDER_THICKNESS = 1;
-    const int ICON_SIZE_REDUCE = BORDER_THICKNESS * 2;
-
-    GG::Pt icon_ul = button.UpperLeft();
-    GG::Pt icon_lr = button.LowerRight();
-    GG::Pt border_ul = icon_ul;
-    GG::Pt border_lr = icon_lr;
-
-    // tone color for disabled button, or when unchecked and using a single icon with same color
-    if (button.Disabled() || (!render_checked && (m_checked_color == m_unchecked_color) && (m_checked_icon == m_unchecked_icon)))
-        icon_clr = DisabledColor(icon_clr) * 0.8f;
-
-    // highlight on mouseover
-    if (button.IsMouseover()) {
-        AdjustBrightness(border_clr, 100);
-        AdjustBrightness(icon_clr, 1.7);
-    }
-
-    // shrink icon for border
-    icon_ul.x += ICON_SIZE_REDUCE;
-    icon_ul.y += ICON_SIZE_REDUCE;
-    icon_lr.x -= ICON_SIZE_REDUCE;
-    icon_lr.y -= ICON_SIZE_REDUCE;
-
-    // render border
-    AngledCornerRectangle(border_ul, border_lr, bg_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, BORDER_THICKNESS);
-
-    // render icon
-    glColor(icon_clr);
-    render_checked ? m_checked_icon->OrthoBlit(icon_ul, icon_lr) : m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
 }
 
 ////////////////////////////////////////////////
