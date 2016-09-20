@@ -12,6 +12,7 @@
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -240,7 +241,7 @@ namespace {
         }
 
         virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            if (ul != UpperLeft() || (lr.x - ul.x) != Width())
+            if (ul != ClientUpperLeft() || (lr.x - ul.x) != Width())
                 DoLayout(ul, lr.x - ul.x);
         }
 
@@ -339,8 +340,9 @@ namespace {
                 Init();
 
             // Resize to fit panel after text reflows
-            m_panel->Resize(Size());
-            GG::ListBox::Row::Resize(m_panel->Size());
+            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            m_panel->Resize(Size() - border);
+            GG::ListBox::Row::Resize(m_panel->Size() + border);
         }
 
         virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -350,7 +352,9 @@ namespace {
         }
 
         void            Init() {
-            m_panel = new SitRepDataPanel(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), m_sitrep);
+            m_panel = new SitRepDataPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+                                          ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+                                          ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
             GG::Connect(m_panel->RightClickedSignal, &SitRepRow::RClick, this);
         }
