@@ -2060,6 +2060,7 @@ void ListBox::Resort()
     RestoreCachedSelections(*cached_selections);
 
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
+    SetFirstRowShown(m_first_row_shown);
 }
 
 ListBox::Row& ListBox::ColHeaders()
