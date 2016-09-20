@@ -1761,9 +1761,9 @@ public:
     {
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
+        ManuallyManageColProps();
         SetNumCols(1);
-        SetColWidth(0, GG::X0);
-        LockColWidths();
+        NormalizeRowsOnInsert(false);
         SetSortCmp(CustomRowCmp());
 
         SetVScrollWheelIncrement(Value(ListRowHeight())*4);
