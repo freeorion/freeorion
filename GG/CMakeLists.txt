@@ -40,9 +40,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-option(USE_DEVIL
-       "Enables optional use of the DevIL image-loading library.  This should only be enabled if you need to load image files other than PNG, JPEG, and TIFF."
-       OFF)
 
 option(BUILD_SDL_DRIVER
        "Builds GG SDL support (the GiGiSDL library)."
@@ -79,36 +76,24 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesyst
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-set(int_have_devil 0)
 set(int_have_jpeg 0)
 set(int_have_png 0)
 set(int_have_tiff 0)
-if (USE_DEVIL)
-    find_package(DevIL REQUIRED)
+find_package(JPEG)
+find_package(PNG)
+find_package(TIFF)
 
-    if (IL_FOUND)
-        set(int_have_devil 1)
-    endif ()
-
-    include_directories(${IL_INCLUDE_DIR})
-else ()
-    find_package(JPEG)
-    find_package(PNG)
-    find_package(TIFF)
-
-    if (JPEG_FOUND)
-        include_directories(${JPEG_INCLUDE_DIR})
-        set(int_have_jpeg 1)
-    endif ()
-    if (PNG_FOUND)
-        include_directories(${PNG_INCLUDE_DIR})
-        set(int_have_png 1)
-    endif ()
-    if (TIFF_FOUND)
-        include_directories(${TIFF_INCLUDE_DIR})
-        set(int_have_tiff 1)
-    endif ()
-
+if (JPEG_FOUND)
+    include_directories(${JPEG_INCLUDE_DIR})
+    set(int_have_jpeg 1)
+endif ()
+if (PNG_FOUND)
+    include_directories(${PNG_INCLUDE_DIR})
+    set(int_have_png 1)
+endif ()
+if (TIFF_FOUND)
+    include_directories(${TIFF_INCLUDE_DIR})
+    set(int_have_tiff 1)
 endif ()
 
 find_package(OpenGL REQUIRED)
