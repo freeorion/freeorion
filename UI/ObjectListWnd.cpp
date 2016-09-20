@@ -1468,13 +1468,32 @@ public:
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
         m_panel(0),
         m_container_object_panel(container_object_panel),
-        m_contained_object_panels(contained_object_panels)
+        m_contained_object_panels(contained_object_panels),
+        m_obj_init(obj),
+        m_expanded_init(expanded),
+        m_indent_init(indent)
     {
         SetName("ObjectRow");
+        RequirePreRender();
         SetChildClippingMode(ClipToClient);
-        m_panel = new ObjectPanel(w, h, obj, expanded, !m_contained_object_panels.empty(), indent);
+    }
+
+    void Init() {
+        m_panel = new ObjectPanel(ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+                                  ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()),
+                                  m_obj_init, m_expanded_init, !m_contained_object_panels.empty(), m_indent_init);
         push_back(m_panel);
         GG::Connect(m_panel->ExpandCollapseSignal,  &ObjectRow::ExpandCollapseClicked, this);
+    }
+
+    virtual void PreRender() {
+        GG::ListBox::Row::PreRender();
+
+        if (!m_panel)
+            Init();
+
+        GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+        m_panel->Resize(Size() - border);
     }
 
     virtual GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const
@@ -1504,9 +1523,10 @@ public:
     void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
-        //std::cout << "ObjectRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-        if (!empty() && old_size != Size() && m_panel)
-            m_panel->Resize(Size());
+        if (!empty() && old_size != Size() && m_panel){
+            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            m_panel->Resize(lr - ul - border);
+        }
     }
 
     void                    ExpandCollapseClicked()
@@ -1517,6 +1537,9 @@ private:
     ObjectPanel*        m_panel;
     int                 m_container_object_panel;
     std::set<int>       m_contained_object_panels;
+    TemporaryPtr<const UniverseObject> m_obj_init;
+    bool                m_expanded_init;
+    int                 m_indent_init;
 };
 
 ////////////////////////////////////////////////
@@ -1782,7 +1805,7 @@ public:
     }
 
     GG::Pt          ListRowSize() const
-    { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
+    { return GG::Pt(ClientWidth(), ListRowHeight()); }
 
     static GG::Y    ListRowHeight()
     { return GG::Y(ClientUI::Pts() * 2); }
