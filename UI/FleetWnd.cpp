@@ -2283,7 +2283,12 @@ private:
             return;
         }
 
-
+        // Do not un-highlight a row from the selection set since rows in the selection set and the
+        // drop target use the same graphical highlight effect.
+        if (Selected(m_highlighted_row_it)) {
+            m_highlighted_row_it = end();
+            return;
+        }
 
         GG::ListBox::Row* selected_row = *m_highlighted_row_it;
         if (!selected_row) {
