@@ -324,6 +324,7 @@ public:
         m_initialized(false)
     {
         SetName("SaveFileRow for \""+filename+"\"");
+        SetChildClippingMode(ClipToClient);
         RequirePreRender();
     }
 
