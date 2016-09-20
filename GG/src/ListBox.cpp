@@ -2147,7 +2147,6 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                            (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
                             cl_sz.y < total_y_extent - SCROLL_WIDTH)));
 
-
     if (m_add_padding_at_end) {
         // This probably looks a little odd. We only want to show scrolls if they
         // are needed, that is if the data shown exceed the bounds of the client
@@ -2165,7 +2164,6 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     bool vscroll_added_or_removed(false);
-
 
     // Remove unecessary vscroll
     if (m_vscroll && !vertical_needed) {
