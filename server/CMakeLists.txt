@@ -1,8 +1,4 @@
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS iostreams python log REQUIRED)
-find_package(PythonLibs ${PYTHON_VERSION} REQUIRED)
-
 include_directories(
-    ${Boost_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_PATH}
 )
 
@@ -12,7 +8,7 @@ set(freeoriond_LINK_LIBS
     freeorioncommon
     freeorionparse
     ${PYTHON_LIBRARIES}
-    ${Boost_LIBRARIES}
+    ${Boost_PYTHON_LIBRARY}
 )
 
 set (freeoriond_HEADER

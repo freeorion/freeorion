@@ -24,9 +24,6 @@ project(FreeOrion)
 
 set(FreeOrion_VERSION 0.4.6+)
 
-set(MINIMUM_BOOST_VERSION 1.54.0)
-set(PYTHON_VERSION 2.7)
-
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
 message(STATUS "Building tests BUILD_TESTS set to ${BUILD_TESTS}")
@@ -36,8 +33,6 @@ if (BUILD_TESTS)
 else()
   message( STATUS "Not building Tests")
 endif ()
-
-find_package (Threads)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -107,7 +102,37 @@ if (NOT FO_LINK_STATIC_BOOST_LIBS)
 endif ()
 
 
-find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
+########################################
+# Dependencies                         #
+########################################
+set(MINIMUM_PYTHON_VERSION 2.7)
+set(MINIMUM_BOOST_VERSION 1.54.0)
+
+find_package(Threads)
+find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
+find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION}
+    COMPONENTS
+        chrono
+        date_time
+        filesystem
+        iostreams
+        locale
+        log
+        regex
+        serialization
+        python
+        signals
+        system
+        thread
+    REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(Freetype REQUIRED)
+
+
+########################################
+# Build common code library            #
+########################################
 
 # To run the version generation every compile we need to deferr the
 # execution to a separate target and the existing python command
@@ -125,22 +150,12 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
-########################################
-# Build common code library            #
-########################################
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
 set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
 add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
-
-########################################
-# Dependencies                         #
-########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem locale iostreams regex serialization signals system thread log REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(Freetype REQUIRED)
 
 if(${Boost_VERSION} EQUAL "106100")
     # with boost 1.61 some boost::optional internals were changed. However
@@ -313,9 +328,13 @@ target_compile_options(
 add_dependencies(freeorioncommon freeorionversion)
 
 target_link_libraries(freeorioncommon
-    ${Boost_LIBRARIES}
+    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_IOSTREAMS_LIBRARY}
+    ${Boost_SERIALIZATION_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
     ${ZLIB_LIBRARIES}
-    ${OPENGL_LIBRARIES}
 )
 
 set_target_properties(freeorioncommon
