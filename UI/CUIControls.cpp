@@ -465,32 +465,28 @@ void CUITabRepresenter::OnChecked(bool checked) const
 GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 { return button.GetLabel()->MinUsableSize(); }
 
-
-////////////////////////////////////////////////
-// CUIToggleRepresenter
-////////////////////////////////////////////////
-CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon,
-                                           const GG::Clr& highlight_clr) :
+CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> icon,
+                                                   const GG::Clr& highlight_clr) :
     m_unchecked_icon(icon),
     m_checked_icon(icon),
     m_unchecked_color(highlight_clr),
     m_checked_color(highlight_clr)
 {}
 
-CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
-                                           const GG::Clr& unchecked_clr,
-                                           boost::shared_ptr<GG::SubTexture> checked_icon,
-                                           const GG::Clr& checked_clr) :
+CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
+                                                   const GG::Clr& unchecked_clr,
+                                                   boost::shared_ptr<GG::SubTexture> checked_icon,
+                                                   const GG::Clr& checked_clr) :
     m_unchecked_icon(unchecked_icon),
     m_checked_icon(checked_icon),
     m_unchecked_color(unchecked_clr),
     m_checked_color(checked_clr)
 {}
 
-void CUIToggleRepresenter::OnChecked(bool checked) const
+void CUIIconButtonRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
 
-void CUIToggleRepresenter::Render(const GG::StateButton& button) const {
+void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
     bool render_checked = button.Checked()^button.IsMouseover();  // opposite on mouseover
 
     GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);

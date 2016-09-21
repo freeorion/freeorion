@@ -154,11 +154,15 @@ public:
  * hovers over this button, the opposing SubTexture and color are used and
  * highlighted.
  */
-class CUIToggleRepresenter : public GG::StateButtonRepresenter {
+class CUIIconButtonRepresenter : public GG::StateButtonRepresenter {
 public:
-    CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon, const GG::Clr& highlight_clr); ///< ctor
-    CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon, const GG::Clr& unchecked_clr,
-                         boost::shared_ptr<GG::SubTexture> checked_icon, const GG::Clr& checked_clr); ///< ctor
+    CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> icon,
+                             const GG::Clr& highlight_clr);
+
+    CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
+                             const GG::Clr& unchecked_clr,
+                             boost::shared_ptr<GG::SubTexture> checked_icon,
+                             const GG::Clr& checked_clr);
 
     virtual void Render(const GG::StateButton& button) const;
 
