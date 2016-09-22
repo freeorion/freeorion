@@ -1832,6 +1832,9 @@ void ListBox::DefineColStretches(const Row& row)
 
 ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool signal)
 {
+    if(!row)
+        return m_rows.end();
+
     // Track the originating row in case this is an intra-ListBox
     // drag-and-drop.
     iterator original_dropped_position = m_rows.end();
