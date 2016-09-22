@@ -1143,13 +1143,13 @@ void ListBox::BringRowIntoView(iterator it)
             it_found = true;
         }
 
-        if (first_row_found && !last_row_found) {
+        if (first_row_found && !last_row_found)
             last_row_y_offset = y_offset;
-            if (y_offset >= ClientHeight()) {
-                last_row_found = true;
-            }
-            y_offset += (*it2)->Height();
-        }
+
+        if ((y_offset - first_row_y_offset) >= ClientHeight())
+            last_row_found = true;
+
+        y_offset += (*it2)->Height();
         ++it2;
     }
 
