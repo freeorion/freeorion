@@ -306,6 +306,21 @@ namespace {
 bool ResearchQueue::InQueue(const std::string& tech_name) const
 { return find(tech_name) != end(); }
 
+bool ResearchQueue::Paused(const std::string& tech_name) const {
+    const_iterator it = find(tech_name);
+    if (it == end())
+        return false;
+    return it->paused;
+}
+
+bool ResearchQueue::Paused(int idx) const {
+    if (idx >= m_queue.size())
+        return false;
+    const_iterator it = begin();
+    std::advance(it, idx);
+    return it->paused;
+}
+
 int ResearchQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
 
@@ -2339,6 +2354,18 @@ void Empire::RemoveTechFromQueue(const std::string& name) {
     ResearchQueue::iterator it = m_research_queue.find(name);
     if (it != m_research_queue.end())
         m_research_queue.erase(it);
+}
+
+void Empire::PauseResearch(const std::string& name) {
+    ResearchQueue::iterator it = m_research_queue.find(name);
+    if (it != m_research_queue.end())
+        it->paused = true;
+}
+
+void Empire::ResumeResearch(const std::string& name){
+    ResearchQueue::iterator it = m_research_queue.find(name);
+    if (it != m_research_queue.end())
+        it->paused = false;
 }
 
 void Empire::SetTechResearchProgress(const std::string& name, float progress) {

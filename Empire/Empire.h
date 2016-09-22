@@ -83,6 +83,8 @@ struct FO_COMMON_API ResearchQueue {
 
     /** \name Accessors */ //@{
     bool                        InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.
+    bool                        Paused(const std::string& tech_name) const; ///< Returns true iff \a tech is in this queue and paused.
+    bool                        Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
     int                         ProjectsInProgress() const;                 ///< Returns the number of research projects currently (perhaps partially) funded.
     float                       TotalRPsSpent() const;                      ///< Returns the number of RPs currently spent on the projects in this queue.
     int                         EmpireID() const { return m_empire_id; }
@@ -424,6 +426,10 @@ public:
     /** Removes tech with \a name from the research queue, if it is in the
       * research queue already. */
     void        RemoveTechFromQueue(const std::string& name);
+
+    void        PauseResearch(const std::string& name);
+    void        ResumeResearch(const std::string& name);
+
     /** Sets research progress of tech with \a name to \a progress. */
     void        SetTechResearchProgress(const std::string& name, float progress);
     /** Adds the indicated build to the production queue, placing it before
