@@ -900,8 +900,10 @@ void ResearchQueueOrder::ExecuteImpl() const {
         empire->RemoveTechFromQueue(m_tech_name);
     } else if (m_pause == PAUSE) {
         DebugLogger() << "ResearchQueueOrder::ExecuteImpl: pausing tech: " << m_tech_name;
+        empire->PauseResearch(m_tech_name);
     } else if (m_pause == RESUME) {
         DebugLogger() << "ResearchQueueOrder::ExecuteImpl: unpausing tech: " << m_tech_name;
+        empire->ResumeResearch(m_tech_name);
     } else if (m_position != INVALID_INDEX) {
         DebugLogger() << "ResearchQueueOrder::ExecuteImpl: adding tech to queue: " << m_tech_name;
         empire->PlaceTechInQueue(m_tech_name, m_position);
