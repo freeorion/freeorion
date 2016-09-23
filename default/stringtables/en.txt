@@ -127,6 +127,9 @@ Last
 PAUSE
 Pause
 
+PAUSED
+Paused
+
 RESUME
 Resume
 

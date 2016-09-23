@@ -35,7 +35,7 @@ namespace {
     class QueueTechPanel : public GG::Control {
     public:
         QueueTechPanel(GG::X w, const std::string& tech_name, double allocated_rp,
-                       int turns_left, double turns_completed, int empire_id);
+                       int turns_left, double turns_completed, int empire_id, bool paused = false);
         virtual void Render();
 
     private:
@@ -50,6 +50,7 @@ namespace {
         bool                    m_in_progress;
         int                     m_total_turns;
         int                     m_empire_id;
+        bool                    m_paused;
     };
 
     //////////////////////////////////////////////////
@@ -73,7 +74,7 @@ namespace {
 
             panel = new QueueTechPanel(w, elem.name, elem.allocated_rp,
                                        elem.turns_left, progress / per_turn_cost,
-                                       elem.empire_id);
+                                       elem.empire_id, elem.paused);
             Resize(panel->Size());
             push_back(panel);
 
@@ -91,12 +92,13 @@ namespace {
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
     QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name, double turn_spending,
-                                   int turns_left, double turns_completed, int empire_id) :
+                                   int turns_left, double turns_completed, int empire_id, bool paused) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),
-        m_empire_id(empire_id)
+        m_empire_id(empire_id),
+        m_paused(paused)
     {
         const int MARGIN = 2;
 
@@ -131,7 +133,7 @@ namespace {
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new CUILabel(UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new CUILabel(m_paused ? UserString("PAUSED") : UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);

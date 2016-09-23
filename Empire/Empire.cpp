@@ -141,7 +141,7 @@ namespace {
             if (status_it->second == TS_RESEARCHABLE)
                 researchable = true;
 
-            if (researchable) {
+            if (researchable && !it->paused) {
                 std::map<std::string, float>::const_iterator progress_it = research_progress.find(it->name);
                 float progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
                 float RPs_needed = tech->ResearchCost(empire_id) - progress;
@@ -314,7 +314,7 @@ bool ResearchQueue::Paused(const std::string& tech_name) const {
 }
 
 bool ResearchQueue::Paused(int idx) const {
-    if (idx >= m_queue.size())
+    if (idx >= static_cast<int>(m_queue.size()))
         return false;
     const_iterator it = begin();
     std::advance(it, idx);
@@ -416,11 +416,11 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     //record original order & progress
     // will take advantage of fact that sets (& map keys) are by default kept in sorted order lowest to highest
     std::map<std::string, float> dp_prog = research_progress;
-    std::map< std::string, int > origQueueOrder;
+    std::map< std::string, int > orig_queue_order;
     std::map<int, float> dpsim_research_progress;
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string tname = m_queue[i].name;
-        origQueueOrder[tname] = i;
+        orig_queue_order[tname] = i;
         dpsim_research_progress[i] = dp_prog[tname];
     }
 
@@ -437,6 +437,8 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         std::string techname = m_queue[i].name;
+        if (m_queue[i].paused)
+            continue;
         const Tech* tech = GetTech(techname);
         if (!tech)
             continue;
@@ -455,7 +457,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                     these_prereqs.erase(erase_it);
                 }
             }
-            waiting_for_prereqs[ techname ] = these_prereqs;
+            waiting_for_prereqs[techname] = these_prereqs;
         }
     }
 
@@ -517,7 +519,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                         if (just_finished_it != these_prereqs.end() ) {  //should always find it
                             these_prereqs.erase( just_finished_it );
                             if (these_prereqs.empty()) { // tech now fully unlocked
-                                int this_tech_idx = origQueueOrder[u_tech_name];
+                                int this_tech_idx = orig_queue_order[u_tech_name];
                                 dp_researchable_techs.insert(this_tech_idx);
                                 waiting_for_prereqs.erase(prereq_tech_it);
                                 already_processed[ this_tech_idx ] = true;//doesn't get any allocation on current turn
@@ -542,11 +544,11 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     ResearchQueueChangedSignal();
 }
 
-void ResearchQueue::push_back(const std::string& tech_name)
-{ m_queue.push_back(Element(tech_name, m_empire_id, 0.0f, -1)); }
+void ResearchQueue::push_back(const std::string& tech_name, bool paused)
+{ m_queue.push_back(Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
 
-void ResearchQueue::insert(iterator it, const std::string& tech_name)
-{ m_queue.insert(it, Element(tech_name, m_empire_id, 0.0f, -1)); }
+void ResearchQueue::insert(iterator it, const std::string& tech_name, bool paused)
+{ m_queue.insert(it, Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
 
 void ResearchQueue::erase(iterator it) {
     assert(it != end());
@@ -2337,16 +2339,25 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/) {
         return;
 
     ResearchQueue::iterator it = m_research_queue.find(name);
+
     if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos) {
-        if (it != m_research_queue.end())
+        // default to putting at end
+        bool paused = false;
+        if (it != m_research_queue.end()) {
+            paused = it->paused;
             m_research_queue.erase(it);
-        m_research_queue.push_back(name);
+        }
+        m_research_queue.push_back(name, paused);
     } else {
+        // put at requested position
         if (it < m_research_queue.begin() + pos)
             --pos;
-        if (it != m_research_queue.end())
+        bool paused = false;
+        if (it != m_research_queue.end()) {
+            paused = it->paused;
             m_research_queue.erase(it);
-        m_research_queue.insert(m_research_queue.begin() + pos, name);
+        }
+        m_research_queue.insert(m_research_queue.begin() + pos, name, paused);
     }
 }
 

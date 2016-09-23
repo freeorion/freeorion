@@ -412,7 +412,9 @@ namespace {
         // get graphic and player-visible name text for item
         boost::shared_ptr<GG::Texture> graphic;
         std::string name_text;
-        if (build.item.build_type == BT_BUILDING) {
+        if (build.paused) {
+            name_text = UserString("PAUSED");
+        } else if (build.item.build_type == BT_BUILDING) {
             graphic = ClientUI::BuildingIcon(build.item.name);
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {

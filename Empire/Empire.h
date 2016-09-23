@@ -113,8 +113,8 @@ struct FO_COMMON_API ResearchQueue {
     void            Update(float RPs, const std::map<std::string, float>& research_progress);
 
     // STL container-like interface
-    void            push_back(const std::string& tech_name);
-    void            insert(iterator it, const std::string& tech_name);
+    void            push_back(const std::string& tech_name, bool paused = false);
+    void            insert(iterator it, const std::string& tech_name, bool paused = false);
     void            erase(iterator it);
 
     iterator        begin();
