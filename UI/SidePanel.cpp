@@ -3114,11 +3114,6 @@ void SidePanel::DoLayout() {
     lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), name_height);
     m_system_name->SizeMove(ul, lr);
 
-    // system name droplist rows
-    const GG::X row_width(m_system_name->Width() - ClientUI::ScrollWidth() - 5);
-    for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it)
-        (*it)->Resize(GG::Pt(row_width, (*it)->Height()));
-
     // star type text
     ul = GG::Pt(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, name_height + EDGE_PAD*4);
     lr = GG::Pt(ClientWidth() - 1, ul.y + m_star_type_text->Height());
