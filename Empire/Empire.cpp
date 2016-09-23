@@ -226,6 +226,11 @@ namespace {
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
             ProductionQueue::Element& queue_element = *it;
 
+            if (it->paused) {
+                queue_element.allocated_pp = 0.0f;
+                continue;
+            }
+
             // get resource sharing group and amount of resource available to build this item
             const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
             if (group.empty()) {
@@ -254,7 +259,7 @@ namespace {
             //DebugLogger() << "group has " << group_pp_available << " PP available";
 
             // see if item is producible this turn...
-            if (queue_element.paused || !empire->ProducibleItem(queue_element.item, queue_element.location)) {
+            if (!empire->ProducibleItem(queue_element.item, queue_element.location)) {
                 // can't be produced at this location this turn.
                 queue_element.allocated_pp = 0.0f;
                 //DebugLogger() << "item can't be produced at location this turn";
@@ -462,7 +467,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     }
 
     int dpturns = 0;
-    //ppStillAvailable[turn-1] gives the RP still available in this resource pool at turn "turn"
+    //pp_still_available[turn-1] gives the RP still available in this resource pool at turn "turn"
     std::vector<float> rp_still_available(DP_TURNS, RPs);  // initialize to the  full RP allocation for every turn
 
     while ((dpturns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
@@ -1134,9 +1139,9 @@ void ProductionQueue::Update() {
     dp_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
 
     //invert lookup direction of sim_queue_element_groups:
-    std::map< std::set<int>, std::vector<int>  > elementsByGroup;
+    std::map< std::set<int>, std::vector<int>  > elements_by_group;
     for (unsigned int i = 0; i < dpsim_queue.size(); ++i)
-        elementsByGroup[sim_queue_element_groups[i]].push_back(i);
+        elements_by_group[sim_queue_element_groups[i]].push_back(i);
 
 
     // cache production item costs and times
@@ -1158,23 +1163,23 @@ void ProductionQueue::Update() {
     for (std::map<std::set<int>, float>::const_iterator groups_it = available_pp.begin();
          groups_it != available_pp.end(); ++groups_it)
     {
-        unsigned int firstTurnPPAvailable = 1; //the first turn any pp in this resource group is available to the next item for this group
-        unsigned int turnJump = 0;
-        //ppStillAvailable[turn-1] gives the PP still available in this resource pool at turn "turn"
-        std::vector<float> ppStillAvailable(DP_TURNS, groups_it->second );  // initialize to the groups full PP allocation for each turn modeled
+        unsigned int first_turn_pp_available = 1; //the first turn any pp in this resource group is available to the next item for this group
+        unsigned int turn_jump = 0;
+        //pp_still_available[turn-1] gives the PP still available in this resource pool at turn "turn"
+        std::vector<float> pp_still_available(DP_TURNS, groups_it->second);  // initialize to the groups full PP allocation for each turn modeled
 
-        std::vector<int> &thisGroupsElements = elementsByGroup[ groups_it->first ];
-        std::vector<int>::const_iterator groupBegin = thisGroupsElements.begin();
-        std::vector<int>::const_iterator groupEnd = thisGroupsElements.end();
+        std::vector<int> &this_group_elements = elements_by_group[groups_it->first];
+        std::vector<int>::const_iterator group_begin = this_group_elements.begin();
+        std::vector<int>::const_iterator group_end = this_group_elements.end();
 
         // cycle through items on queue, if in this resource group then allocate production costs over time against those available to group
-        for (std::vector<int>::const_iterator el_it = groupBegin;
-             (el_it != groupEnd) && ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).total_microseconds()*1e-6 < DP_TOO_LONG_TIME);
+        for (std::vector<int>::const_iterator el_it = group_begin;
+             (el_it != group_end) && ((boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time())-dp_time_start).total_microseconds()*1e-6 < DP_TOO_LONG_TIME);
              ++el_it)
         {
-            firstTurnPPAvailable += turnJump;
-            turnJump = 0;
-            if (firstTurnPPAvailable > DP_TURNS) {
+            first_turn_pp_available += turn_jump;
+            turn_jump = 0;
+            if (first_turn_pp_available > DP_TURNS) {
                 DebugLogger()  << "ProductionQueue::Update: Projections for Resource Group halted at " 
                                << DP_TURNS << " turns; remaining items in this RG marked completing 'Never'.";
                 break; // this resource group is allocated-out for span of simulation; remaining items in group left as never completing
@@ -1182,6 +1187,10 @@ void ProductionQueue::Update() {
 
             unsigned int i = *el_it;
             ProductionQueue::Element& element = dpsim_queue[i];
+            if (element.paused)
+                continue;
+
+
             //DebugLogger()  << "     checking element " << element.item.name << " " << element.item.design_id << " at planet id " << element.location;
 
             // get cost and time from cache
@@ -1204,11 +1213,11 @@ void ProductionQueue::Update() {
             // need 2+ rather than 1+ below to avoid premature halt with edge cases
             int max_turns = std::max(std::max(build_turns+1, 1),
                 2 + static_cast<int>(additional_pp_to_complete_element /
-                                     std::max(ppStillAvailable[firstTurnPPAvailable-1], 0.01f)));
+                                     std::max(pp_still_available[first_turn_pp_available-1], 0.01f)));
             max_turns *= 2;  // double the turns for simulations, because of uncertainties around frontloading
 
-            max_turns = std::min(max_turns, int(DP_TURNS - firstTurnPPAvailable + 1));
-            //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: "<<(firstTurnPPAvailable-1);
+            max_turns = std::min(max_turns, int(DP_TURNS - first_turn_pp_available + 1));
+            //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: "<<(first_turn_pp_available-1);
 
             float allocation;
             float element_this_turn_limit;
@@ -1220,17 +1229,17 @@ void ProductionQueue::Update() {
                 // total cost remaining to complete the last item in the queue element (eg. the element has all but
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
-                //DebugLogger()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<ppStillAvailable[firstTurnPPAvailable+j-1];
+                //DebugLogger()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<pp_still_available[first_turn_pp_available+j-1];
                 element_this_turn_limit = CalculateProductionPerTurnLimit(element, item_cost, build_turns);
-                allocation = std::max(0.0f, std::min(element_this_turn_limit, ppStillAvailable[firstTurnPPAvailable+j-1]));
+                allocation = std::max(0.0f, std::min(element_this_turn_limit, pp_still_available[first_turn_pp_available+j-1]));
                 element.progress += allocation;   // add turn's allocation
                 additional_pp_to_complete_element -= allocation;
                 float item_cost_remaining = total_item_cost - element.progress;
                 //DebugLogger()  << "     allocation: " << allocation << "; new progress: "<< element.progress<< " with " << item_cost_remaining <<" remaining";
-                ppStillAvailable[firstTurnPPAvailable+j-1] -= allocation;
-                if (ppStillAvailable[firstTurnPPAvailable+j-1] <= 0 ) {
-                    ppStillAvailable[firstTurnPPAvailable+j-1] = 0;
-                    ++turnJump;
+                pp_still_available[first_turn_pp_available+j-1] -= allocation;
+                if (pp_still_available[first_turn_pp_available+j-1] <= 0 ) {
+                    pp_still_available[first_turn_pp_available+j-1] = 0;
+                    ++turn_jump;
                 }
 
                 // check if additional turn's PP allocation was enough to finish next item in element
@@ -1249,16 +1258,16 @@ void ProductionQueue::Update() {
                     // this simuation, update the original queue element with the
                     // turns required to complete the next item in the element
                     if (element.remaining +1 == m_queue[sim_queue_original_indices[i]].remaining) //had already decremented element.remaining above
-                        m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = firstTurnPPAvailable+j;
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = first_turn_pp_available+j;
                     if (!element.remaining) {
-                        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = firstTurnPPAvailable+j;    // record the (estimated) turns to complete the whole element on the original queue
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = first_turn_pp_available+j;    // record the (estimated) turns to complete the whole element on the original queue
                     }
                 }
                 if (!element.remaining) {
                     //DebugLogger()  << "     finished this element";
                     break; // this element all done
                 }
-            } //j-loop : turns relative to firstTurnPPAvailable
+            } //j-loop : turns relative to first_turn_pp_available
         } // queue element loop
     } // resource groups loop
 
