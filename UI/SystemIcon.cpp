@@ -214,13 +214,27 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         text_color = ClientUI::TextColor();
     }
 
-    GG::Control* text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
+    GG::TextControl* text = new GG::TextControl(
+        GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
     AttachChild(text);
-    Resize(GG::Pt(text->Width(), text->Height()));
+    GG::Pt text_size(text->TextLowerRight() - text->TextUpperLeft());
+    text->SizeMove(GG::Pt(GG::X0, GG::Y0), text_size);
+    SizeMove(UpperLeft(), UpperLeft() + text_size);
 }
 
 void OwnerColoredSystemName::Render()
 {}
+
+void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Control::SizeMove(ul, lr);
+
+    // Center text
+    if (!Children().empty())
+        if (GG::TextControl* text = dynamic_cast<GG::TextControl*>(*Children().begin())) {
+            text->MoveTo(GG::Pt((Width() - text->Width()) / 2, (Height() - text->Height()) / 2));
+        }
+}
 
 ////////////////////////////////////////////////
 // SystemIcon
@@ -683,8 +697,8 @@ void SystemIcon::HideName() {
 
 void SystemIcon::PositionSystemName() {
     if (m_colored_name) {
-        GG::X name_left = ( Width()  - m_colored_name->Width()           )/2;
-        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()*2))/2;
+        GG::X name_left = ( Width()  - m_colored_name->Width()                                      )/2;
+        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()*2) - m_colored_name->Height())/2;
         m_colored_name->MoveTo(GG::Pt(name_left, name_top));
     }
 }
