@@ -2696,11 +2696,9 @@ SidePanel::SidePanel(const std::string& config_name) :
     Sound::TempUISoundDisabler sound_disabler;
 
     m_system_name->DisableDropArrow();
-    m_system_name->SetStyle(GG::LIST_CENTER);
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
+    m_system_name->ManuallyManageColProps();
     m_system_name->SetNumCols(1);
-    m_system_name->SetColWidth(0, GG::X0);
-    m_system_name->LockColWidths();
     AttachChild(m_system_name);
 
     AttachChild(m_star_type_text);
