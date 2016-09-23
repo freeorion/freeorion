@@ -907,9 +907,9 @@ private:
 
     PartsListBox*   m_parts_list;
 
-    std::map<ShipPartClass, CUIButton*> m_class_buttons;
-    std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
-    CUIButton*                          m_superfluous_parts_button;
+    std::map<ShipPartClass, CUIStateButton*>    m_class_buttons;
+    std::pair<CUIStateButton*, CUIStateButton*> m_availability_buttons;
+    CUIStateButton*                             m_superfluous_parts_button;
 };
 
 DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
@@ -944,26 +944,26 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+        m_class_buttons[part_class] = new CUIStateButton(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
-        GG::Connect(m_class_buttons[part_class]->LeftClickedSignal,
+        GG::Connect(m_class_buttons[part_class]->CheckedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
-    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
-    GG::Connect(m_availability_buttons.first->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.first->CheckedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
-    GG::Connect(m_availability_buttons.second->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.second->CheckedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
-    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_superfluous_parts_button = new CUIStateButton(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
-    GG::Connect(m_superfluous_parts_button->LeftClickedSignal,
+    GG::Connect(m_superfluous_parts_button->CheckedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
 
     // default to showing nothing
@@ -1020,7 +1020,7 @@ void DesignWnd::PartPalette::DoLayout() {
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW;
     int row = -1;
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin();
+    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin();
          it != m_class_buttons.end(); ++it)
     {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
@@ -1110,7 +1110,7 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
+    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
         it->second->SetCheck();
 }
 
@@ -1125,7 +1125,7 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
+    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
         it->second->SetCheck(false);
 }
 
@@ -2082,7 +2082,7 @@ private:
     BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
     BasesListBox*   m_saved_designs_list;   // designs saved to files
     BasesListBox*   m_monsters_list;        // monster designs
-    std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
+    std::pair<CUIStateButton*, CUIStateButton*>   m_availability_buttons;
 };
 
 DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
@@ -2095,14 +2095,14 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list(0),
     m_monsters_list(0)
 {
-    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
-    GG::Connect(m_availability_buttons.first->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.first->CheckedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
-    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
-    GG::Connect(m_availability_buttons.second->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.second->CheckedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());

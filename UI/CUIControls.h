@@ -145,6 +145,15 @@ public:
     virtual GG::Pt MinUsableSize(const GG::StateButton& button) const;
 };
 
+/** @brief A FreeOrion styled label toggle button. */
+class CUILabelButtonRepresenter : public GG::StateButtonRepresenter {
+public:
+    virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChecked(bool checked) const;
+};
+
+
 /** @brief A FreeOrion styled icon toggle button.
  *
  * Renders a SubTexture depending on the checked state of the CUIToggleButton.

@@ -432,20 +432,6 @@ namespace {
         static GG::Y    ListRowHeight()
         { return GG::Y(ClientUI::Pts() * 3/2); }
     };
-
-    struct ToggleBuildTypeFunctor {
-        ToggleBuildTypeFunctor(BuildDesignatorWnd* designator_wnd, BuildType type) : m_designator_wnd(designator_wnd), m_build_type(type) {}
-        void operator()() {m_designator_wnd->ToggleType(m_build_type);}
-        BuildDesignatorWnd* const m_designator_wnd;
-        const BuildType m_build_type;
-    };
-
-    struct ToggleAvailabilityFunctor {
-        ToggleAvailabilityFunctor(BuildDesignatorWnd* designator_wnd, bool available) : m_designator_wnd(designator_wnd), m_available(available) {}
-        void operator()() {m_designator_wnd->ToggleAvailabilitly(m_available);}
-        BuildDesignatorWnd* const m_designator_wnd;
-        const bool m_available; // true: toggle whether to show available techs; false: toggle whether to show unavailable techs
-    };
 }
 
 //////////////////////////////////////////////////
@@ -522,8 +508,8 @@ private:
     /** respond to the user right-clicking a producible item in the build selector */
     void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
-    std::map<BuildType, CUIButton*>         m_build_type_buttons;
-    std::vector<CUIButton*>                 m_availability_buttons;
+    std::map<BuildType, CUIStateButton*>    m_build_type_buttons;
+    std::vector<CUIStateButton*>            m_availability_buttons;
 
     std::set<BuildType>                     m_build_types_shown;
     std::pair<bool, bool>                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
@@ -550,15 +536,15 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
     m_empire_id(ALL_EMPIRES)
 {
     // create build type toggle buttons (ship, building, all)
-    m_build_type_buttons[BT_BUILDING] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_build_type_buttons[BT_BUILDING] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = new CUIButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_build_type_buttons[BT_SHIP] = new CUIStateButton(UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_build_type_buttons[BT_SHIP]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor()));
+    m_availability_buttons.push_back(new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor()));
+    m_availability_buttons.push_back(new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>()));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items
@@ -1025,12 +1011,12 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
 
     // connect build type button clicks to update display
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->LeftClickedSignal, ToggleBuildTypeFunctor(this, BT_BUILDING));
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->LeftClickedSignal,     ToggleBuildTypeFunctor(this, BT_SHIP));
+    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
+    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->CheckedSignal,     boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
 
     // connect availability button clicks to update display
-    GG::Connect(m_build_selector->m_availability_buttons.at(0)->LeftClickedSignal, ToggleAvailabilityFunctor(this, true));    // available items
-    GG::Connect(m_build_selector->m_availability_buttons.at(1)->LeftClickedSignal, ToggleAvailabilityFunctor(this, false));   // UNavailable items
+    GG::Connect(m_build_selector->m_availability_buttons.at(0)->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));    // available items
+    GG::Connect(m_build_selector->m_availability_buttons.at(1)->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));   // UNavailable items
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);

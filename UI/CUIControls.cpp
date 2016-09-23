@@ -465,6 +465,45 @@ void CUITabRepresenter::OnChecked(bool checked) const
 GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 { return button.GetLabel()->MinUsableSize(); }
 
+void CUILabelButtonRepresenter::OnChecked(bool checked) const
+{ PlayButtonCheckSound(); }
+
+void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
+    GG::Pt ul = button.UpperLeft();
+    GG::Pt lr = button.LowerRight();
+    GG::Pt tx_ul;
+
+    GG::Clr background_clr = ClientUI::CtrlColor();
+    GG::Clr border_clr     = ClientUI::CtrlBorderColor();
+    int     border_thick   = 1;
+
+    if (button.Checked()) {
+        background_clr = ClientUI::ButtonHiliteColor();
+        border_clr     = ClientUI::ButtonHiliteBorderColor();
+        border_thick   = 2;
+    }
+
+    if (button.Disabled()) {
+        background_clr = DisabledColor(background_clr);
+        border_clr     = DisabledColor(border_clr);
+    } else {
+        if (GG::StateButton::BN_PRESSED == button.State()) {
+            AdjustBrightness(background_clr, 25);
+
+            tx_ul = GG::Pt(GG::X1, GG::Y1);
+        }
+        if (GG::StateButton::BN_ROLLOVER == button.State()) {
+            AdjustBrightness(border_clr, 100);
+        }
+    }
+
+    AngledCornerRectangle(ul, lr, background_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, border_thick);
+
+    button.GetLabel()->OffsetMove(tx_ul);
+    button.GetLabel()->Render();
+    button.GetLabel()->OffsetMove(-(tx_ul));
+}
+
 CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> icon,
                                                    const GG::Clr& highlight_clr) :
     m_unchecked_icon(icon),
