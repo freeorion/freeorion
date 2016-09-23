@@ -27,6 +27,7 @@
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Scroll.h>
+#include <GG/Layout.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -314,18 +315,32 @@ void DropDownList::RenderDisplayedRow()
         return;
 
     Row* current_item = *CurrentItem();
-    Pt offset = ClientUpperLeft() - current_item->UpperLeft();
-    bool visible = current_item->Visible();
-    current_item->OffsetMove(offset);
-    if (!visible)
+    bool sel_visible = current_item->Visible();
+    bool lb_visible = LB()->Visible();
+    if (!sel_visible) {
+        // The following is necessary because neither LB() nor the selected row may be visible and
+        // prerendered.
+        if (!lb_visible) {
+            LB()->Show();
+            GUI::GetGUI()->PreRenderWindow(LB());
+            LB()->Hide();
+        }
+
         current_item->Show();
+        const GG::Pt row_size(LB()->ClientWidth(), (*LB()->FirstRowShown())->Size().y);
+        current_item->Resize(row_size);
+        GUI::GetGUI()->PreRenderWindow(current_item);
+    }
+
+    Pt offset = ClientUpperLeft() - current_item->UpperLeft();
+    current_item->OffsetMove(offset);
+
     BeginClipping();
-    // The following prerender is necessary because Show() is called after the prerender phase of GG.
-    GUI::GetGUI()->PreRenderWindow(current_item);
     GUI::GetGUI()->RenderWindow(current_item);
     EndClipping();
+
     current_item->OffsetMove(-offset);
-    if (!visible)
+    if (!sel_visible)
         current_item->Hide();
 }
 
@@ -334,7 +349,7 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
     // adjust size to keep correct height based on row height, etc.
     GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
-    Pt drop_down_size(Width(), Height());
+    Pt drop_down_size(ClientWidth(), ClientHeight());
 
     // reset size of displayed drop list based on number of shown rows set.
     // assumes that all rows have the same height.
