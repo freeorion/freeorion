@@ -290,6 +290,19 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
 
 
 ///////////////////////////////////////////////////////////
+// NoOp                                                  //
+///////////////////////////////////////////////////////////
+NoOp::NoOp()
+{}
+
+void NoOp::Execute(const ScriptingContext& context) const
+{}
+
+std::string NoOp::Dump() const
+{ return DumpIndent() + "NoOp\n"; }
+
+
+///////////////////////////////////////////////////////////
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
 SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value) :

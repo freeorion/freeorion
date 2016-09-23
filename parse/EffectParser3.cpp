@@ -71,6 +71,10 @@ namespace {
                 =    tok.Destroy_ [ _val = new_<Effect::Destroy>() ]
                 ;
 
+            noop
+                =    tok.NoOp_ [ _val = new_<Effect::NoOp>() ]
+                ;
+
             victory
                 =    tok.Victory_
                 >    parse::label(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
@@ -120,6 +124,7 @@ namespace {
                 |   set_destination
                 |   set_aggression
                 |   destroy
+                |   noop
                 |   victory
                 |   add_special_2
                 |   add_special_1
@@ -136,6 +141,7 @@ namespace {
             set_destination.name("SetDestination");
             set_aggression.name("SetAggression");
             destroy.name("Destroy");
+            noop.name("NoOp");
             victory.name("Victory");
             add_special_1.name("AddSpecial");
             add_special_2.name("AddSpecial");
@@ -152,6 +158,7 @@ namespace {
             debug(set_destination);
             debug(set_aggression);
             debug(destroy);
+            debug(noop);
             debug(victory);
             debug(add_special_1);
             debug(add_special_2);
@@ -180,6 +187,7 @@ namespace {
         parse::effect_parser_rule           set_destination;
         parse::effect_parser_rule           set_aggression;
         parse::effect_parser_rule           destroy;
+        parse::effect_parser_rule           noop;
         parse::effect_parser_rule           victory;
         parse::effect_parser_rule           add_special_1;
         doubles_string_rule                 add_special_2;

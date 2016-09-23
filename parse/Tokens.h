@@ -241,6 +241,7 @@
     (NextYoungerStarType)                       \
     (NoDefaultCapacityEffect)                   \
     (None)                                      \
+    (NoOp)                                      \
     (NoStar)                                    \
     (NoStringtableLookup)                       \
     (Not)                                       \

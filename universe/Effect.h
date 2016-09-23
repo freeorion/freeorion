@@ -125,6 +125,23 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Does nothing when executed. Useful for triggering side-effects of effect
+  * execution without modifying the gamestate. */
+class FO_COMMON_API NoOp : public EffectBase {
+public:
+    NoOp();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Sets the meter of the given kind to \a value.  The max value of the meter
   * is set if \a max == true; otherwise the current value of the meter is set.
   * If the target of the Effect does not have the requested meter, nothing is
@@ -1063,6 +1080,12 @@ void EffectsGroup::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void EffectBase::serialize(Archive& ar, const unsigned int version)
 {}
+
+template <class Archive>
+void NoOp::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
+}
 
 template <class Archive>
 void SetMeter::serialize(Archive& ar, const unsigned int version)
