@@ -439,8 +439,8 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(representer),
     m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
-    m_checked(false),
-    m_mouseover(false)
+    m_state(BN_UNPRESSED),
+    m_checked(false)
 {
     m_color = color;
     AttachChild(m_label);
@@ -458,14 +458,14 @@ Pt StateButton::MinUsableSize() const
     return Pt();
 }
 
+StateButton::ButtonState StateButton::State() const
+{ return m_state; }
+
 const std::string& StateButton::Text() const
 { return m_label->Text(); }
 
 bool StateButton::Checked() const
 { return m_checked; }
-
-bool StateButton::IsMouseover() const
-{ return m_mouseover; }
 
 void StateButton::Render()
 {
@@ -475,6 +475,26 @@ void StateButton::Render()
 
 void StateButton::Show(bool children/* = true*/)
 { Wnd::Show(false); }
+
+void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled()) {
+        m_state = BN_PRESSED;
+    }
+}
+
+void StateButton::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_PRESSED;
+    Wnd::LDrag(pt, move, mod_keys);
+}
+
+void StateButton::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_UNPRESSED;
+}
 
 void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
@@ -486,11 +506,17 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
-void StateButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ m_mouseover = true; }
+void StateButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_ROLLOVER;
+}
 
 void StateButton::MouseLeave()
-{ m_mouseover = false; }
+{
+    if (!Disabled())
+        m_state = BN_UNPRESSED;
+}
 
 void StateButton::SizeMove(const Pt& ul, const Pt& lr)
 {

@@ -306,7 +306,7 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
+    if (!button.Disabled() && !button.Checked() && (GG::StateButton::BN_ROLLOVER == button.State())) {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
@@ -397,7 +397,7 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
+    if (!button.Disabled() && !button.Checked() && (GG::StateButton::BN_ROLLOVER == button.State())) {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
@@ -442,7 +442,7 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
 
-    if (button.Checked() || !button.Disabled() && button.IsMouseover())
+    if (button.Checked() || (!button.Disabled() && (GG::StateButton::BN_ROLLOVER == button.State())))
         AdjustBrightness(border_color_to_use, 100);
 
     const int UNCHECKED_OFFSET = 4;
@@ -487,7 +487,7 @@ void CUIIconButtonRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
 
 void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
-    bool render_checked = button.Checked()^button.IsMouseover();  // opposite on mouseover
+    bool render_checked = button.Checked()^ (GG::StateButton::BN_ROLLOVER == button.State());  // opposite on mouseover
 
     GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
     GG::Clr bg_clr(ClientUI::CtrlColor());
@@ -506,7 +506,7 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
         icon_clr = DisabledColor(icon_clr) * 0.8f;
 
     // highlight on mouseover
-    if (button.IsMouseover()) {
+    if (GG::StateButton::BN_ROLLOVER == button.State()) {
         AdjustBrightness(border_clr, 100);
         AdjustBrightness(icon_clr, 1.7);
     }

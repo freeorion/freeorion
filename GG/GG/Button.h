@@ -227,6 +227,13 @@ public:
 class GG_API StateButton : public Control
 {
 public:
+    /// the states of being for a GG::Button
+    GG_CLASS_ENUM(ButtonState,
+        BN_PRESSED,    ///< The button is being pressed by the user, and the cursor is over the button
+        BN_UNPRESSED,  ///< The button is unpressed
+        BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
+    )
+
     /** \name Signal Types */ ///@{
     /** Emitted when the StateButton is checked or unchecked; the checked or
         unchecked status is indicated by the bool parameter */
@@ -241,10 +248,12 @@ public:
     /** \name Accessors */ ///@{
     virtual Pt       MinUsableSize() const;
 
+    /** Returns button state \see ButtonState */
+    ButtonState       State() const;
+
     const std::string& Text() const;        ///< Returns the label to be used as the button label
 
     bool             Checked() const;       ///< Returns true if button is checked
-    bool             IsMouseover() const;   ///< Returns true if mouse pointer is over this button
 
     TextControl* GetLabel() const;
 
@@ -264,8 +273,11 @@ public:
 
 protected:
     /** \name Mutators */ ///@{
+    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void MouseLeave();
     //@}
 
@@ -273,8 +285,8 @@ private:
     boost::shared_ptr<StateButtonRepresenter> m_representer;
     TextControl*      m_label;       ///< Label used to display text
 
+    ButtonState       m_state;       ///< Button is always in exactly one of the ButtonState states above
     bool              m_checked;     ///< true when this button in a checked, active state
-    bool              m_mouseover;   ///< true if the pointer is currently over the control
 };
 
 
