@@ -354,11 +354,11 @@ bool Number::operator==(const ConditionBase& rhs) const {
 }
 
 std::string Number::Description(bool negated/* = false*/) const {
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+    std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
                                  : "0");
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+    std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(INT_MAX));
@@ -562,12 +562,12 @@ bool Turn::SourceInvariant() const
 std::string Turn::Description(bool negated/* = false*/) const {
     std::string low_str;
     if (m_low)
-        low_str = (ValueRef::ConstantExpr(m_low) ?
+        low_str = (m_low->ConstantExpr() ?
                    boost::lexical_cast<std::string>(m_low->Eval()) :
                    m_low->Description());
     std::string high_str;
     if (m_high)
-        high_str = (ValueRef::ConstantExpr(m_high) ?
+        high_str = (m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
                     m_high->Description());
     std::string description_str;
@@ -940,7 +940,7 @@ bool SortedNumberOf::SourceInvariant() const
           (!m_condition || m_condition->SourceInvariant())); }
 
 std::string SortedNumberOf::Description(bool negated/* = false*/) const {
-    std::string number_str = ValueRef::ConstantExpr(m_number) ? boost::lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
+    std::string number_str = m_number->ConstantExpr() ? boost::lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
 
     if (m_sorting_method == SORT_RANDOM) {
         return str(FlexibleFormat((!negated)
@@ -950,7 +950,7 @@ std::string SortedNumberOf::Description(bool negated/* = false*/) const {
                    % number_str
                    % m_condition->Description());
     } else {
-        std::string sort_key_str = ValueRef::ConstantExpr(m_sort_key) ? boost::lexical_cast<std::string>(m_sort_key->Dump()) : m_sort_key->Description();
+        std::string sort_key_str = m_sort_key->ConstantExpr() ? boost::lexical_cast<std::string>(m_sort_key->Dump()) : m_sort_key->Description();
 
         std::string description_str, temp;
         switch (m_sorting_method) {
@@ -1183,7 +1183,7 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
                              ObjectSet& matches, ObjectSet& non_matches,
                              SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = (!m_empire_id || ValueRef::ConstantExpr(m_empire_id)) ||
+    bool simple_eval_safe = (!m_empire_id || m_empire_id->ConstantExpr()) ||
                             ((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -1210,7 +1210,7 @@ std::string EmpireAffiliation::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
@@ -1511,7 +1511,7 @@ bool Homeworld::SourceInvariant() const {
 std::string Homeworld::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_names[i]) ?
+        values_str += m_names[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
@@ -1757,7 +1757,7 @@ void Type::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_type) ||
+    bool simple_eval_safe = m_type->ConstantExpr() ||
                             (m_type->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -1779,7 +1779,7 @@ bool Type::SourceInvariant() const
 { return m_type->SourceInvariant(); }
 
 std::string Type::Description(bool negated/* = false*/) const {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ?
+    std::string value_str = m_type->ConstantExpr() ?
                                 UserString(boost::lexical_cast<std::string>(m_type->Eval())) :
                                 m_type->Description();
     return str(FlexibleFormat((!negated)
@@ -1990,7 +1990,7 @@ bool Building::SourceInvariant() const {
 std::string Building::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_names[i]) ?
+        values_str += m_names[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
@@ -2185,7 +2185,7 @@ std::string HasSpecial::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     }
 
@@ -2363,7 +2363,7 @@ std::string HasTag::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     }
     return str(FlexibleFormat((!negated)
@@ -2470,11 +2470,11 @@ bool CreatedOnTurn::SourceInvariant() const
 { return ((!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant())); }
 
 std::string CreatedOnTurn::Description(bool negated/* = false*/) const {
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+    std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
                                  : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+    std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
@@ -2968,7 +2968,7 @@ void InSystem::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = !m_system_id || ValueRef::ConstantExpr(m_system_id) ||
+    bool simple_eval_safe = !m_system_id || m_system_id->ConstantExpr() ||
                             (m_system_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -2994,7 +2994,7 @@ bool InSystem::SourceInvariant() const
 std::string InSystem::Description(bool negated/* = false*/) const {
     std::string system_str;
     int system_id = INVALID_OBJECT_ID;
-    if (m_system_id && ValueRef::ConstantExpr(m_system_id))
+    if (m_system_id && m_system_id->ConstantExpr())
         system_id = m_system_id->Eval();
     if (TemporaryPtr<const System> system = GetSystem(system_id))
         system_str = system->Name();
@@ -3031,7 +3031,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
         return;
     }
 
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_system_id) ||
+    bool simple_eval_safe = m_system_id->ConstantExpr() ||
                             (m_system_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
@@ -3112,7 +3112,7 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = !m_object_id || ValueRef::ConstantExpr(m_object_id) ||
+    bool simple_eval_safe = !m_object_id || m_object_id->ConstantExpr() ||
                             (m_object_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -3138,7 +3138,7 @@ bool ObjectID::SourceInvariant() const
 std::string ObjectID::Description(bool negated/* = false*/) const {
     std::string object_str;
     int object_id = INVALID_OBJECT_ID;
-    if (m_object_id && ValueRef::ConstantExpr(m_object_id))
+    if (m_object_id && m_object_id->ConstantExpr())
         object_id = m_object_id->Eval();
     if (TemporaryPtr<const System> system = GetSystem(object_id))
         object_str = system->Name();
@@ -3162,7 +3162,7 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     if (!m_object_id)
         return;
 
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_object_id) ||
+    bool simple_eval_safe = m_object_id->ConstantExpr() ||
                             (m_object_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
@@ -3316,7 +3316,7 @@ bool PlanetType::SourceInvariant() const {
 std::string PlanetType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_types[i]) ?
+        values_str += m_types[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_types[i]->Eval())) :
                         m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
@@ -3510,7 +3510,7 @@ bool PlanetSize::SourceInvariant() const {
 std::string PlanetSize::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_sizes[i]) ?
+        values_str += m_sizes[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_sizes[i]->Eval())) :
                         m_sizes[i]->Description();
         if (2 <= m_sizes.size() && i < m_sizes.size() - 2) {
@@ -3718,7 +3718,7 @@ bool PlanetEnvironment::SourceInvariant() const {
 std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_environments[i]) ?
+        values_str += m_environments[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_environments[i]->Eval())) :
                         m_environments[i]->Description();
         if (2 <= m_environments.size() && i < m_environments.size() - 2) {
@@ -3732,7 +3732,7 @@ std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
     std::string species_str;
     if (m_species_name) {
         species_str = m_species_name->Description();
-        if (ValueRef::ConstantExpr(m_species_name) && UserStringExists(species_str))
+        if (m_species_name->ConstantExpr() && UserStringExists(species_str))
             species_str = UserString(species_str);
     }
     if (species_str.empty())
@@ -3935,7 +3935,7 @@ std::string Species::Description(bool negated/* = false*/) const {
     if (m_names.empty())
         values_str = "(" + UserString("CONDITION_ANY") +")";
     for (unsigned int i = 0; i < m_names.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_names[i]) ?
+        values_str += m_names[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
@@ -4202,7 +4202,7 @@ std::string Enqueued::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
@@ -4211,23 +4211,23 @@ std::string Enqueued::Description(bool negated/* = false*/) const {
     }
     std::string low_str = "1";
     if (m_low) {
-        low_str = ValueRef::ConstantExpr(m_low) ?
+        low_str = m_low->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_low->Eval()) :
                     m_low->Description();
     }
     std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
     if (m_high) {
-        high_str = ValueRef::ConstantExpr(m_high) ?
+        high_str = m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
                     m_high->Description();
     }
     std::string what_str;
     if (m_name) {
         what_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(what_str))
+        if (m_name->ConstantExpr() && UserStringExists(what_str))
             what_str = UserString(what_str);
     } else if (m_design_id) {
-        what_str = ValueRef::ConstantExpr(m_design_id) ?
+        what_str = m_design_id->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_design_id->Eval()) :
                     m_design_id->Description();
     }
@@ -4430,7 +4430,7 @@ bool FocusType::SourceInvariant() const {
 std::string FocusType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_names[i]) ?
+        values_str += m_names[i]->ConstantExpr() ?
             UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
             m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
@@ -4610,7 +4610,7 @@ bool StarType::SourceInvariant() const {
 std::string StarType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_types[i]) ?
+        values_str += m_types[i]->ConstantExpr() ?
                         UserString(boost::lexical_cast<std::string>(m_types[i]->Eval())) :
                         m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
@@ -4743,7 +4743,7 @@ std::string DesignHasHull::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     }
     return str(FlexibleFormat((!negated)
@@ -4882,20 +4882,20 @@ bool DesignHasPart::SourceInvariant() const
 std::string DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
     if (m_low) {
-        low_str = ValueRef::ConstantExpr(m_low) ?
+        low_str = m_low->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_low->Eval()) :
                     m_low->Description();
     }
     std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
     if (m_high) {
-        high_str = ValueRef::ConstantExpr(m_high) ?
+        high_str = m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
                     m_high->Description();
     };
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     }
     return str(FlexibleFormat((!negated)
@@ -5043,13 +5043,13 @@ bool DesignHasPartClass::SourceInvariant() const
 std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
     if (m_low) {
-        low_str = ValueRef::ConstantExpr(m_low) ?
+        low_str = m_low->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_low->Eval()) :
                     m_low->Description();
     }
     std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
     if (m_high) {
-        high_str = ValueRef::ConstantExpr(m_high) ?
+        high_str = m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
                     m_high->Description();
     }
@@ -5189,7 +5189,7 @@ std::string PredefinedShipDesign::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     }
     return str(FlexibleFormat((!negated)
@@ -5269,7 +5269,7 @@ void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
                               ObjectSet& matches, ObjectSet& non_matches,
                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_design_id) ||
+    bool simple_eval_safe = m_design_id->ConstantExpr() ||
                             (m_design_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -5293,7 +5293,7 @@ bool NumberedShipDesign::SourceInvariant() const
 { return !m_design_id || m_design_id->SourceInvariant(); }
 
 std::string NumberedShipDesign::Description(bool negated/* = false*/) const {
-    std::string id_str = ValueRef::ConstantExpr(m_design_id) ?
+    std::string id_str = m_design_id->ConstantExpr() ?
                             boost::lexical_cast<std::string>(m_design_id->Eval()) :
                             m_design_id->Description();
 
@@ -5364,7 +5364,7 @@ void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
                             SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
+    bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -5391,7 +5391,7 @@ std::string ProducedByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
@@ -5459,7 +5459,7 @@ void Chance::Eval(const ScriptingContext& parent_context,
                   ObjectSet& matches, ObjectSet& non_matches,
                   SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_chance) ||
+    bool simple_eval_safe = m_chance->ConstantExpr() ||
                             (m_chance->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -5484,7 +5484,7 @@ bool Chance::SourceInvariant() const
 
 std::string Chance::Description(bool negated/* = false*/) const {
     std::string value_str;
-    if (ValueRef::ConstantExpr(m_chance)) {
+    if (m_chance->ConstantExpr()) {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_CHANCE_PERCENTAGE")
             : UserString("DESC_CHANCE_PERCENTAGE_NOT"))
@@ -5621,11 +5621,11 @@ bool MeterValue::SourceInvariant() const
 { return (!m_low || m_low->SourceInvariant()) && (!m_high || m_high->SourceInvariant()); }
 
 std::string MeterValue::Description(bool negated/* = false*/) const {
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+    std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
                                  : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+    std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
@@ -5794,7 +5794,7 @@ std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
     std::string part_str;
     if (m_part_name) {
         part_str = m_part_name->Description();
-        if (ValueRef::ConstantExpr(m_part_name) && UserStringExists(part_str))
+        if (m_part_name->ConstantExpr() && UserStringExists(part_str))
             part_str = UserString(part_str);
     }
 
@@ -5943,18 +5943,18 @@ std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
     }
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+    std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
                                  : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+    std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
@@ -6090,10 +6090,10 @@ bool EmpireStockpileValue::SourceInvariant() const
 { return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
 
 std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
+    std::string low_str = m_low->ConstantExpr() ?
                             boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
+    std::string high_str = m_high->ConstantExpr() ?
                             boost::lexical_cast<std::string>(m_high->Eval()) :
                             m_high->Description();
     return str(FlexibleFormat((!negated)
@@ -6208,7 +6208,7 @@ std::string OwnerHasTech::Description(bool negated/* = false*/) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Description();
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     }
     return str(FlexibleFormat((!negated)
@@ -6492,7 +6492,7 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
                            ObjectSet& matches, ObjectSet& non_matches,
                            SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
+    bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -6519,7 +6519,7 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
@@ -6637,7 +6637,7 @@ bool WithinDistance::SourceInvariant() const
 { return m_distance->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string WithinDistance::Description(bool negated/* = false*/) const {
-    std::string value_str = ValueRef::ConstantExpr(m_distance) ?
+    std::string value_str = m_distance->ConstantExpr() ?
                                 boost::lexical_cast<std::string>(m_distance->Eval()) :
                                 m_distance->Description();
     return str(FlexibleFormat((!negated)
@@ -6763,7 +6763,7 @@ bool WithinStarlaneJumps::SourceInvariant() const
 { return m_jumps->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
-    std::string value_str = ValueRef::ConstantExpr(m_jumps) ? boost::lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
+    std::string value_str = m_jumps->ConstantExpr() ? boost::lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_WITHIN_STARLANE_JUMPS")
         : UserString("DESC_WITHIN_STARLANE_JUMPS_NOT"))
@@ -7317,7 +7317,7 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
                             ObjectSet& matches, ObjectSet& non_matches,
                             SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
+    bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -7344,7 +7344,7 @@ std::string ExploredByEmpire::Description(bool negated/* = false*/) const {
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
@@ -7510,7 +7510,7 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
                                    ObjectSet& matches, ObjectSet& non_matches,
                                    SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
+    bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -7537,7 +7537,7 @@ std::string FleetSupplyableByEmpire::Description(bool negated/* = false*/) const
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
@@ -7640,7 +7640,7 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
                                            ObjectSet& matches, ObjectSet& non_matches,
                                            SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
+    bool simple_eval_safe = m_empire_id->ConstantExpr() ||
                             (m_empire_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -7689,7 +7689,7 @@ std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*
     std::string empire_str;
     if (m_empire_id) {
         int empire_id = ALL_EMPIRES;
-        if (ValueRef::ConstantExpr(m_empire_id))
+        if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
         if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();

@@ -56,7 +56,6 @@ namespace ValueRef {
         RANDOM_PICK,
         SUBSTITUTION
     };
-    template <class T> bool ConstantExpr(const ValueRefBase<T>* expr);
 }
 
 #endif // _ValueRefFwd_h_

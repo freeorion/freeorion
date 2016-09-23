@@ -306,7 +306,7 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
         return 1.0f;
     } else {
-        if (ValueRef::ConstantExpr(m_production_cost))
+        if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
@@ -327,7 +327,7 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_time) {
         return 1;
     } else {
-        if (ValueRef::ConstantExpr(m_production_time))
+        if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
@@ -395,7 +395,7 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_cost) {
         return 1.0f;
     } else {
-        if (ValueRef::ConstantExpr(m_production_cost))
+        if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
@@ -416,7 +416,7 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_time) {
         return 1;
     } else {
-        if (ValueRef::ConstantExpr(m_production_time))
+        if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);

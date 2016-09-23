@@ -1188,7 +1188,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     } else {
         name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name() % planet->CardinalSuffix());
@@ -1300,7 +1300,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
 
     if (m_name) {
         std::string name_str = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
         building->Rename(name_str);
     }
@@ -1453,7 +1453,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
 
     if (m_name) {
         std::string name_str = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
         ship->Rename(name_str);
     } else if (ship->IsMonster()) {
@@ -1621,7 +1621,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     } else {
         name_str = UserString(field_type->Name());
@@ -1738,7 +1738,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     std::string name_str;
     if (m_name) {
         name_str = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+        if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     } else {
         name_str = GenerateSystemName();

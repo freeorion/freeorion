@@ -110,6 +110,7 @@ struct ValueRefBase
     virtual bool        TargetInvariant() const { return false; }
     virtual bool        SourceInvariant() const { return false; }
     virtual bool        SimpleIncrement() const { return false; }
+    virtual bool        ConstantExpr() const { return false; }
 
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
@@ -135,6 +136,7 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
     virtual bool        LocalCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
+    virtual bool        ConstantExpr() const { return true; }
 
     virtual std::string Description() const;
     virtual std::string Dump() const;
@@ -421,6 +423,8 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
     virtual bool            LocalCandidateInvariant() const;
     virtual bool            TargetInvariant() const;
     virtual bool            SourceInvariant() const;
+    virtual bool            ConstantExpr() const;
+
     virtual bool            SimpleIncrement() const;
     virtual std::string     Description() const;
     virtual std::string     Dump() const;
@@ -1657,13 +1661,27 @@ bool Operation<T>::SourceInvariant() const
 }
 
 template <class T>
+bool Operation<T>::ConstantExpr() const
+{
+    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
+        return false;
+    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (*it && !(*it)->ConstantExpr())
+            return false;
+    }
+    return true;
+}
+
+template <class T>
 bool Operation<T>::SimpleIncrement() const
 {
     if (m_op_type != PLUS && m_op_type != MINUS)
         return false;
     if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1])
         return false;
-    if (!ConstantExpr(m_operands[1]))
+    if (!(m_operands[1]->ConstantExpr()))
         return false;
     const Variable<T>* lhs = dynamic_cast<const Variable<T>*>(m_operands[0]);
     if (!lhs)
@@ -1921,26 +1939,6 @@ void Operation<T>::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
-template <class T>
-bool ConstantExpr(const ValueRefBase<T>* expr)
-{
-    assert(expr);
-    if (dynamic_cast<const Constant<T>*>(expr)) {
-        return true;
-    } else if (dynamic_cast<const Variable<T>*>(expr)) {
-        return false;
-    } else if (const Operation<T>* op = dynamic_cast<const Operation<T>*>(expr)) {
-        const std::vector<ValueRefBase<T>*>& operands = op->Operands();
-        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = operands.begin();
-             it != operands.end(); ++it)
-        {
-            if (*it && !ConstantExpr(*it))
-                return false;
-        }
-        return true;
-    }
-    return false;
-}
 } // namespace ValueRef
 
 #endif // _ValueRef_h_

@@ -1359,9 +1359,9 @@ namespace {
         }
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions")) {
             if (!building_type->ProductionCostTimeLocationInvariant()) {
-                if (building_type->Cost() && !ValueRef::ConstantExpr(building_type->Cost()))
+                if (building_type->Cost() && !building_type->Cost()->ConstantExpr())
                     detailed_description += "\n" + building_type->Cost()->Dump();
-                if (building_type->Time() && !ValueRef::ConstantExpr(building_type->Time()))
+                if (building_type->Time() && !building_type->Time()->ConstantExpr())
                     detailed_description += "\n" + building_type->Time()->Dump();
             }
             if (building_type->Location())

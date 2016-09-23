@@ -1016,12 +1016,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
                     } else if (const Effect::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(*effect_it)) {
                         const ValueRef::ValueRefBase<std::string>* part_name = set_ship_part_meter_effect->GetPartName();
-                        if (part_name && ValueRef::ConstantExpr(part_name))
+                        if (part_name && part_name->ConstantExpr())
                             parts_whose_meters_are_affected.insert(part_name->Eval());
 
                     } else if (const Effect::AddSpecial* add_special_effect = dynamic_cast<const Effect::AddSpecial*>(*effect_it)) {
                         const ValueRef::ValueRefBase<std::string>* special_name = add_special_effect->GetSpecialName();
-                        if (special_name && ValueRef::ConstantExpr(special_name))
+                        if (special_name && special_name->ConstantExpr())
                             specials_affected.insert(special_name->Eval());
                     }
                 }
