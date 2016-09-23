@@ -48,8 +48,6 @@ public:
     /** \name Structors */ //@{
     CUIButton(const std::string& str); ///< basic ctor
 
-    CUIButton(const std::string& str, GG::Clr background, GG::Clr border);
-
     CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
     //@}
 
@@ -61,7 +59,6 @@ public:
 
     /** \name Mutators */ //@{
     virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void         SetCheck(bool b = true);
     //@}
 
 protected:
@@ -70,11 +67,6 @@ protected:
     virtual void RenderRollover();
     virtual void RenderUnpressed();
     //@}
-
-private:
-    GG::Clr m_border_color;
-    int     m_border_thick;
-    bool    m_checked;     ///< true when this button in a checked, active state
 };
 
 class SettableInWindowCUIButton : public CUIButton {
