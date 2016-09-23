@@ -36,6 +36,7 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
+#include <GG/Layout.h>
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/DynamicGraphic.h>
@@ -721,15 +722,36 @@ namespace {
     public:
         SystemRow(int system_id) :
             GG::ListBox::Row(),
-            m_system_id(system_id)
+            m_system_id(system_id),
+            m_initialized(false)
         {
+            RequirePreRender();
             SetDragDropDataType("SystemRow");
-            push_back(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
+        }
+
+        virtual void Init() {
+            m_initialized = true;
+            OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
+            push_back(name);
+            GG::ListBox::Row::Resize(name->Size());
+            GetLayout()->SetChildAlignment(name, GG::ALIGN_VCENTER | GG::ALIGN_CENTER);
+            GetLayout()->PreRender();
+        }
+
+        virtual void PreRender() {
+            if (!m_initialized)
+                Init();
+            GG::ListBox::Row::PreRender();
         }
 
         int SystemID() const { return m_system_id; }
+
+        virtual SortKeyType SortKey(std::size_t column) const
+        { return GetSystem(m_system_id)->Name(); }
+
     private:
         int m_system_id;
+        bool m_initialized;
     };
 
     const std::vector<boost::shared_ptr<GG::Texture> >& GetAsteroidTextures() {
