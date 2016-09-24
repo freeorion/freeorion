@@ -116,6 +116,8 @@ class CUICheckBoxRepresenter : public GG::StateButtonRepresenter {
 public:
     virtual void Render(const GG::StateButton& button) const;
 
+    virtual void OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const;
+
     virtual void OnChecked(bool checked) const;
 };
 
@@ -124,6 +126,8 @@ class CUIRadioRepresenter : public GG::StateButtonRepresenter {
 public:
     virtual void Render(const GG::StateButton& button) const;
 
+    virtual void OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const;
+
     virtual void OnChecked(bool checked) const;
 };
 
@@ -131,6 +135,8 @@ public:
 class CUITabRepresenter : public GG::StateButtonRepresenter {
 public:
     virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const;
 
     virtual void OnChecked(bool checked) const;
 
@@ -141,6 +147,8 @@ public:
 class CUILabelButtonRepresenter : public GG::StateButtonRepresenter {
 public:
     virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const;
 
     virtual void OnChecked(bool checked) const;
 };

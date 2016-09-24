@@ -346,6 +346,12 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-tx_ul);
 }
 
+void CUICheckBoxRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+}
+
 void CUICheckBoxRepresenter::OnChecked(bool checked) const {
     if (checked)
         PlayButtonCheckSound();
@@ -396,6 +402,12 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-tx_ul);
 }
 
+void CUIRadioRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+}
+
 void CUIRadioRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
 
@@ -425,11 +437,23 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-(tx_ul));
 }
 
+void CUITabRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+}
+
 void CUITabRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
 
 GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 { return button.GetLabel()->MinUsableSize(); }
+
+void CUILabelButtonRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+}
 
 void CUILabelButtonRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
