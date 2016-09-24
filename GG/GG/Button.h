@@ -197,6 +197,9 @@ protected:
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void MouseLeave();
+
+    /** Sets button state programmatically \see ButtonState */
+    void         SetState(ButtonState next_state);
     //@}
 
 private:
@@ -223,6 +226,16 @@ public:
         \param button The StateButton instance to render.
      */
     virtual void Render(const StateButton& button) const;
+
+    /** \brief Respong to a button state change.
+
+        This method is called whenever a Button chanes its state.
+
+        \param button  The button that changed its state and is in the most
+                       recent state.
+        \param previous_state  The previous button state.
+     */
+    virtual void OnChanged(const StateButton& button, StateButton::ButtonState previous_state) const;
 
     /** \brief Respond to a state button change.
 

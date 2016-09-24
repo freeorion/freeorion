@@ -300,24 +300,16 @@ void StateButton::Show(bool children/* = true*/)
 { Wnd::Show(false); }
 
 void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
-{
-    if (!Disabled()) {
-        m_state = BN_PRESSED;
-    }
-}
+{ SetState(BN_PRESSED); }
 
 void StateButton::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
-    if (!Disabled())
-        m_state = BN_PRESSED;
+    SetState(BN_PRESSED);
     Wnd::LDrag(pt, move, mod_keys);
 }
 
 void StateButton::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
-{
-    if (!Disabled())
-        m_state = BN_UNPRESSED;
-}
+{ SetState(BN_UNPRESSED); }
 
 void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
@@ -330,15 +322,18 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 }
 
 void StateButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (!Disabled())
-        m_state = BN_ROLLOVER;
-}
+{ SetState(BN_ROLLOVER); }
 
 void StateButton::MouseLeave()
-{
-    if (!Disabled())
-        m_state = BN_UNPRESSED;
+{ SetState(BN_UNPRESSED); }
+
+void StateButton::SetState(ButtonState next_state) {
+    if (!Disabled() && next_state != m_state) {
+        ButtonState prev_state = m_state;
+        m_state = next_state;
+        if (m_representer)
+            m_representer->OnChanged(*this, prev_state);
+    }
 }
 
 void StateButton::SizeMove(const Pt& ul, const Pt& lr)
@@ -420,6 +415,9 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
     button_ul = Pt(bn_x, bn_y);
     button_lr = button_ul + Pt(BN_W, BN_H);
 }
+
+void StateButtonRepresenter::OnChanged(const StateButton& button, StateButton::ButtonState previous_state) const
+{}
 
 void StateButtonRepresenter::OnChecked(bool checked) const
 {}
