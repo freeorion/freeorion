@@ -328,11 +328,15 @@ target_compile_options(
 add_dependencies(freeorioncommon freeorionversion)
 
 target_link_libraries(freeorioncommon
+    ${Boost_CHRONO_LIBRARY}
     ${Boost_DATE_TIME_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY}
-    ${Boost_SERIALIZATION_LIBRARY}
     ${Boost_LOG_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Boost_SERIALIZATION_LIBRARY}
+    ${Boost_SIGNALS_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     ${ZLIB_LIBRARIES}
 )
