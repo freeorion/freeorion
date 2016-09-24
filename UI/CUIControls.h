@@ -265,6 +265,8 @@ public:
     explicit CUIDropDownList(size_t num_shown_elements); ///< basic ctor
     //@}
 
+    virtual GG::Pt ClientLowerRight() const;
+
     /** \name Mutators */ //@{
     virtual void    Render();
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
