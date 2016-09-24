@@ -33,7 +33,7 @@ namespace fs = boost::filesystem;
 
 namespace {
     const GG::X PAGE_WIDTH(400);
-    const GG::Y PAGE_HEIGHT(450);
+    const GG::Y PAGE_HEIGHT(520);
     const GG::X INDENTATION(20);
     const GG::X ROW_WIDTH(PAGE_WIDTH - 4 - 14 - 5);
     const GG::X COLOR_SELECTOR_WIDTH(75);
@@ -56,23 +56,35 @@ namespace {
     class RowContentsWnd : public GG::Control {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
-            Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
+            Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+            m_contents(contents)
         {
-            assert(contents);
-            if (!indentation_level) {
-                GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 1);
-                layout->Add(contents, 0, 0);
-                SetLayout(layout);
-            } else {
-                GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 2);
-                layout->SetMinimumColumnWidth(0, indentation_level * INDENTATION);
-                layout->SetColumnStretch(1, 1.0);
-                layout->Add(new PlaceholderWnd(GG::X1, GG::Y1), 0, 0);
-                layout->Add(contents, 0, 1);
-                SetLayout(layout);
+            if (!m_contents)
+                return;
+            AttachChild(m_contents);
+            m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+            DoLayout();
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            if (old_size != Size())
+                DoLayout();
+        }
+
+        void DoLayout() {
+            if (m_contents) {
+                //std::cout << "RowContentsWnd::DoLayout()" << std::endl;
+                m_contents->SizeMove(GG::Pt(), Size());
             }
         }
-        virtual void Render() {}
+
+        virtual void    Render() {
+            //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_RED, GG::CLR_PINK, 1);
+        }
+    private:
+        Wnd* m_contents;
     };
 
     struct BrowseForPathButtonFunctor {
@@ -369,6 +381,67 @@ namespace {
         font_wnd->Run();
         delete font_wnd;
     }
+
+    class OptionsListRow : public GG::ListBox::Row {
+    public:
+        OptionsListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
+            GG::ListBox::Row(w, h, ""),
+            m_contents(contents)
+        {
+            SetChildClippingMode(ClipToClient);
+            if (m_contents)
+                push_back(m_contents);
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            //std::cout << "OptionsListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            if (!empty() && old_size != Size() && m_contents)
+                m_contents->Resize(Size());
+        }
+
+        virtual void    Render() {
+            //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_BLUE, GG::CLR_YELLOW, 1);
+        }
+    private:
+        RowContentsWnd* m_contents;
+    };
+
+    class OptionsList : public CUIListBox {
+    public:
+        OptionsList() :
+            CUIListBox()
+        {
+            InitRowSizes();
+
+            SetColor(GG::CLR_ZERO);
+            SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+            SetVScrollWheelIncrement(ClientUI::Pts() * 10);
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            CUIListBox::SizeMove(ul, lr);
+            if (old_size != Size()) {
+                const GG::X row_width = ListRowWidth();
+                for (GG::ListBox::iterator it = begin(); it != end(); ++it)
+                    (*it)->Resize(GG::Pt(row_width, (*it)->Height()));
+            }
+        }
+
+    private:
+        GG::X ListRowWidth() const
+        { return Width() - RightMargin() - 5; }
+
+        void InitRowSizes() {
+            // preinitialize listbox/row column widths, because what
+            // ListBox::Insert does on default is not suitable for this case
+            SetNumCols(1);
+            SetColWidth(0, GG::X0);
+            LockColWidths();
+        }
+    };
 }
 
 OptionsWnd::OptionsWnd():
@@ -447,10 +520,10 @@ OptionsWnd::OptionsWnd():
 
     // manual reposition windows button
     GG::Button* window_reset_button = new CUIButton(UserString("OPTIONS_WINDOW_RESET"));
-    window_reset_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    GG::ListBox::Row* row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), window_reset_button, 0));
+    //window_reset_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               new RowContentsWnd(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                                                  window_reset_button, 0));
     current_page->Insert(row);
     GG::Connect(window_reset_button->LeftClickedSignal, HumanClientApp::GetApp()->RepositionWindowsSignal);
 
@@ -650,8 +723,10 @@ OptionsWnd::OptionsWnd():
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
-    DoLayout();
+    if (old_size != Size())
+        DoLayout();
 }
 
 void OptionsWnd::DoLayout() {
@@ -675,10 +750,7 @@ GG::Rect OptionsWnd::CalculatePosition() const {
 }
 
 GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
-    GG::ListBox* page = new CUIListBox();
-    page->SetColor(GG::CLR_ZERO);
-    page->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
-    page->SetVScrollWheelIncrement(ClientUI::Pts() * 10);
+    GG::ListBox* page = new OptionsList();
     m_tabs->AddWnd(page, name);
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
     return page;
