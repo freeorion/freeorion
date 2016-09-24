@@ -185,7 +185,6 @@ public:
 
     void             Reset();                 ///< Unchecks button
     void             SetCheck(bool b = true); ///< (Un)checks button
-    virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
     void             SetTextColor(Clr c); ///< Sets the color of the box label text
     //@}
 

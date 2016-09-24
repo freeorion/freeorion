@@ -348,9 +348,6 @@ void StateButton::Reset()
 void StateButton::SetCheck(bool b/* = true*/)
 { m_checked = b; }
 
-void StateButton::SetColor(Clr c)
-{ Control::SetColor(c); }
-
 void StateButton::SetTextColor(Clr c)
 { m_label->SetTextColor(c); }
 
