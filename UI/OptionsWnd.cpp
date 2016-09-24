@@ -393,6 +393,17 @@ namespace {
                 push_back(m_contents);
         }
 
+        OptionsListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
+            GG::ListBox::Row(w, h, ""),
+            m_contents(0)
+        {
+            SetChildClippingMode(ClipToClient);
+            if (contents) {
+                m_contents = new RowContentsWnd(w, h, contents, indentation);
+                push_back(m_contents);
+            }
+        }
+
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             //std::cout << "OptionsListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
             const GG::Pt old_size = Size();
@@ -522,8 +533,7 @@ OptionsWnd::OptionsWnd():
     GG::Button* window_reset_button = new CUIButton(UserString("OPTIONS_WINDOW_RESET"));
     //window_reset_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
-                                               new RowContentsWnd(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
-                                                                  window_reset_button, 0));
+                                               window_reset_button, 0);
     current_page->Insert(row);
     GG::Connect(window_reset_button->LeftClickedSignal, HumanClientApp::GetApp()->RepositionWindowsSignal);
 
