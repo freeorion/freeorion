@@ -13,6 +13,6 @@ DESCRIPTION_EFFECTSGROUP_MACRO
         description = "@1@"
         scope = Source
         activation = None
-        effects = RemoveSpecial name = ""  // This Effect is intended to effectively be a safe dummy/NOP
+        effects = NoOp
 '''
 
