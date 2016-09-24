@@ -255,7 +255,116 @@ void Button::RenderDefault()
 
 
 ////////////////////////////////////////////////
-// GG::BeveledCheckBoxRepresenter
+// GG::StateButton
+////////////////////////////////////////////////
+StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
+                         Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/) :
+    Control(X0, Y0, X1, Y1, INTERACTIVE),
+    m_representer(representer),
+    m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
+    m_state(BN_UNPRESSED),
+    m_checked(false)
+{
+    m_color = color;
+    AttachChild(m_label);
+    m_label->Hide();
+
+    if (INSTRUMENT_ALL_SIGNALS)
+        Connect(CheckedSignal, &CheckedEcho);
+}
+
+Pt StateButton::MinUsableSize() const
+{
+    if (m_representer)
+        return m_representer->MinUsableSize(*this);
+
+    return Pt();
+}
+
+StateButton::ButtonState StateButton::State() const
+{ return m_state; }
+
+const std::string& StateButton::Text() const
+{ return m_label->Text(); }
+
+bool StateButton::Checked() const
+{ return m_checked; }
+
+void StateButton::Render()
+{
+    if (m_representer)
+        m_representer->Render(*this);
+}
+
+void StateButton::Show(bool children/* = true*/)
+{ Wnd::Show(false); }
+
+void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled()) {
+        m_state = BN_PRESSED;
+    }
+}
+
+void StateButton::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_PRESSED;
+    Wnd::LDrag(pt, move, mod_keys);
+}
+
+void StateButton::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_UNPRESSED;
+}
+
+void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled()) {
+        SetCheck(!m_checked);
+        if (m_representer)
+            m_representer->OnChecked(m_checked);
+        CheckedSignal(m_checked);
+    }
+}
+
+void StateButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_ROLLOVER;
+}
+
+void StateButton::MouseLeave()
+{
+    if (!Disabled())
+        m_state = BN_UNPRESSED;
+}
+
+void StateButton::SizeMove(const Pt& ul, const Pt& lr)
+{
+    Control::SizeMove(ul, lr);
+    m_label->Resize(Size());
+}
+
+void StateButton::Reset()
+{ SetCheck(false); }
+
+void StateButton::SetCheck(bool b/* = true*/)
+{ m_checked = b; }
+
+void StateButton::SetColor(Clr c)
+{ Control::SetColor(c); }
+
+void StateButton::SetTextColor(Clr c)
+{ m_label->SetTextColor(c); }
+
+TextControl* StateButton::GetLabel() const
+{ return m_label; }
+
+
+////////////////////////////////////////////////
+// GG::StateButtonRepresenter
 ////////////////////////////////////////////////
 void StateButtonRepresenter::Render(const GG::StateButton& button) const
 {}
@@ -429,115 +538,6 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
     button.GetLabel()->Render();
     button.GetLabel()->OffsetMove(-(tx_ul));
 }
-
-
-////////////////////////////////////////////////
-// GG::StateButton
-////////////////////////////////////////////////
-StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                         Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/) :
-    Control(X0, Y0, X1, Y1, INTERACTIVE),
-    m_representer(representer),
-    m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
-    m_state(BN_UNPRESSED),
-    m_checked(false)
-{
-    m_color = color;
-    AttachChild(m_label);
-    m_label->Hide();
-
-    if (INSTRUMENT_ALL_SIGNALS)
-        Connect(CheckedSignal, &CheckedEcho);
-}
-
-Pt StateButton::MinUsableSize() const
-{
-    if (m_representer)
-        return m_representer->MinUsableSize(*this);
-
-    return Pt();
-}
-
-StateButton::ButtonState StateButton::State() const
-{ return m_state; }
-
-const std::string& StateButton::Text() const
-{ return m_label->Text(); }
-
-bool StateButton::Checked() const
-{ return m_checked; }
-
-void StateButton::Render()
-{
-    if (m_representer)
-        m_representer->Render(*this);
-}
-
-void StateButton::Show(bool children/* = true*/)
-{ Wnd::Show(false); }
-
-void StateButton::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
-{
-    if (!Disabled()) {
-        m_state = BN_PRESSED;
-    }
-}
-
-void StateButton::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
-{
-    if (!Disabled())
-        m_state = BN_PRESSED;
-    Wnd::LDrag(pt, move, mod_keys);
-}
-
-void StateButton::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
-{
-    if (!Disabled())
-        m_state = BN_UNPRESSED;
-}
-
-void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
-{
-    if (!Disabled()) {
-        SetCheck(!m_checked);
-        if (m_representer)
-            m_representer->OnChecked(m_checked);
-        CheckedSignal(m_checked);
-    }
-}
-
-void StateButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (!Disabled())
-        m_state = BN_ROLLOVER;
-}
-
-void StateButton::MouseLeave()
-{
-    if (!Disabled())
-        m_state = BN_UNPRESSED;
-}
-
-void StateButton::SizeMove(const Pt& ul, const Pt& lr)
-{
-    Control::SizeMove(ul, lr);
-    m_label->Resize(Size());
-}
-
-void StateButton::Reset()
-{ SetCheck(false); }
-
-void StateButton::SetCheck(bool b/* = true*/)
-{ m_checked = b; }
-
-void StateButton::SetColor(Clr c)
-{ Control::SetColor(c); }
-
-void StateButton::SetTextColor(Clr c)
-{ m_label->SetTextColor(c); }
-
-TextControl* StateButton::GetLabel() const
-{ return m_label; }
 
 
 ////////////////////////////////////////////////

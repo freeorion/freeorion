@@ -128,6 +128,86 @@ private:
 };
 
 
+class StateButtonRepresenter;
+
+
+/** \brief This is a basic state button control.
+
+    This class is for checkboxes and radio buttons, etc.  The button/checkbox
+    area is determined from the text height and format; the button height and
+    width will be the text height, and the the button will be positioned to
+    the left of the text and vertically the same as the text, unless the text
+    is centered, in which case the button and text will be centered, and the
+    button will appear above or below the text.  Whenever there is not room to
+    place the button and the text in the proper orientation because the entire
+    control's size is too small, the button and text are positioned in their
+    default spots (button on left, text on right, centered vertically). */
+class GG_API StateButton : public Control
+{
+public:
+    /// the states of being for a GG::Button
+    GG_CLASS_ENUM(ButtonState,
+        BN_PRESSED,    ///< The button is being pressed by the user, and the cursor is over the button
+        BN_UNPRESSED,  ///< The button is unpressed
+        BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
+    )
+
+    /** \name Signal Types */ ///@{
+    /** Emitted when the StateButton is checked or unchecked; the checked or
+        unchecked status is indicated by the bool parameter */
+    typedef boost::signals2::signal<void (bool)> CheckedSignalType;
+    //@}
+
+    /** \name Structors */ ///@{
+    StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
+                Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
+    //@}
+
+    /** \name Accessors */ ///@{
+    virtual Pt       MinUsableSize() const;
+
+    /** Returns button state \see ButtonState */
+    ButtonState       State() const;
+
+    const std::string& Text() const;        ///< Returns the label to be used as the button label
+
+    bool             Checked() const;       ///< Returns true if button is checked
+
+    TextControl* GetLabel() const;
+
+    mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
+    //@}
+
+    /** \name Mutators */ ///@{
+    virtual void     Show(bool children = true);
+    virtual void     Render();
+    virtual void     SizeMove(const Pt& ul, const Pt& lr);
+
+    void             Reset();                 ///< Unchecks button
+    void             SetCheck(bool b = true); ///< (Un)checks button
+    virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
+    void             SetTextColor(Clr c); ///< Sets the color of the box label text
+    //@}
+
+protected:
+    /** \name Mutators */ ///@{
+    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MouseLeave();
+    //@}
+
+private:
+    boost::shared_ptr<StateButtonRepresenter> m_representer;
+    TextControl*      m_label;       ///< Label used to display text
+
+    ButtonState       m_state;       ///< Button is always in exactly one of the ButtonState states above
+    bool              m_checked;     ///< true when this button in a checked, active state
+};
+
+
 /** \brief Visual representation of a state button.
 
     The StateButtonRepresenter is a stub interface to implement a visual
@@ -210,83 +290,6 @@ public:
     virtual void Render(const StateButton& button) const;
 
     virtual Pt MinUsableSize(const StateButton& button) const;
-};
-
-
-/** \brief This is a basic state button control.
-
-    This class is for checkboxes and radio buttons, etc.  The button/checkbox
-    area is determined from the text height and format; the button height and
-    width will be the text height, and the the button will be positioned to
-    the left of the text and vertically the same as the text, unless the text
-    is centered, in which case the button and text will be centered, and the
-    button will appear above or below the text.  Whenever there is not room to
-    place the button and the text in the proper orientation because the entire
-    control's size is too small, the button and text are positioned in their
-    default spots (button on left, text on right, centered vertically). */
-class GG_API StateButton : public Control
-{
-public:
-    /// the states of being for a GG::Button
-    GG_CLASS_ENUM(ButtonState,
-        BN_PRESSED,    ///< The button is being pressed by the user, and the cursor is over the button
-        BN_UNPRESSED,  ///< The button is unpressed
-        BN_ROLLOVER    ///< The button has the cursor over it, but is unpressed
-    )
-
-    /** \name Signal Types */ ///@{
-    /** Emitted when the StateButton is checked or unchecked; the checked or
-        unchecked status is indicated by the bool parameter */
-    typedef boost::signals2::signal<void (bool)> CheckedSignalType;
-    //@}
-
-    /** \name Structors */ ///@{
-    StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
-    //@}
-
-    /** \name Accessors */ ///@{
-    virtual Pt       MinUsableSize() const;
-
-    /** Returns button state \see ButtonState */
-    ButtonState       State() const;
-
-    const std::string& Text() const;        ///< Returns the label to be used as the button label
-
-    bool             Checked() const;       ///< Returns true if button is checked
-
-    TextControl* GetLabel() const;
-
-    mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
-    //@}
-
-    /** \name Mutators */ ///@{
-    virtual void     Show(bool children = true);
-    virtual void     Render();
-    virtual void     SizeMove(const Pt& ul, const Pt& lr);
-
-    void             Reset();                 ///< Unchecks button
-    void             SetCheck(bool b = true); ///< (Un)checks button
-    virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
-    void             SetTextColor(Clr c); ///< Sets the color of the box label text
-    //@}
-
-protected:
-    /** \name Mutators */ ///@{
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void MouseLeave();
-    //@}
-
-private:
-    boost::shared_ptr<StateButtonRepresenter> m_representer;
-    TextControl*      m_label;       ///< Label used to display text
-
-    ButtonState       m_state;       ///< Button is always in exactly one of the ButtonState states above
-    bool              m_checked;     ///< true when this button in a checked, active state
 };
 
 
