@@ -269,10 +269,11 @@
     (Parameters)                                \
     (Part)                                      \
     (PartCapacity)                              \
-    (PartDamage)                                \
     (PartClass)                                 \
+    (PartDamage)                                \
     (Partial)                                   \
-    (PartName)
+    (PartName)                                  \
+    (PartSecondaryStat)
 
 #define TOKEN_SEQ_9                             \
     (Parts)                                     \
