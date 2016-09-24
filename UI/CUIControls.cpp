@@ -27,6 +27,9 @@ namespace {
     void PlayButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
+    void PlayButtonRolloverSound()
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true); }
+
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
 
@@ -105,7 +108,7 @@ bool CUIButton::InWindow(const GG::Pt& pt) const {
 void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+            PlayButtonRolloverSound();
         SetState(BN_ROLLOVER);
     }
 }
@@ -223,7 +226,7 @@ bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
 void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+            PlayButtonRolloverSound();
         SetState(BN_ROLLOVER);
     }
 }
@@ -346,7 +349,7 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
 void CUICheckBoxRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
 {
     if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        PlayButtonRolloverSound();
 }
 
 void CUICheckBoxRepresenter::OnChecked(bool checked) const {
@@ -402,7 +405,7 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
 void CUIRadioRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
 {
     if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        PlayButtonRolloverSound();
 }
 
 void CUIRadioRepresenter::OnChecked(bool checked) const
@@ -641,7 +644,7 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_being_dragged && !m_mouse_here) {
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        PlayButtonRolloverSound();
         m_mouse_here = true;
     }
 }
@@ -818,7 +821,7 @@ void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        PlayButtonRolloverSound();
     m_mouse_here = true;
 }
 
