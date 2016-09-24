@@ -531,7 +531,6 @@ OptionsWnd::OptionsWnd():
 
     // manual reposition windows button
     GG::Button* window_reset_button = new CUIButton(UserString("OPTIONS_WINDOW_RESET"));
-    //window_reset_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                window_reset_button, 0);
     current_page->Insert(row);
@@ -545,10 +544,7 @@ OptionsWnd::OptionsWnd():
 
     // flush stringtable button
     GG::Button* flush_button = new CUIButton(UserString("OPTIONS_FLUSH_STRINGTABLE"));
-    flush_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, 0));
+    row = new OptionsListRow(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6, flush_button, 0);
     current_page->Insert(row);
     GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
 
@@ -564,10 +560,7 @@ OptionsWnd::OptionsWnd():
 
     // show font texture button
     GG::Button* show_font_texture_button = new CUIButton(UserString("SHOW_FONT_TEXTURES"));
-    show_font_texture_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, show_font_texture_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), show_font_texture_button, 0));
+    row = new OptionsListRow(ROW_WIDTH, show_font_texture_button ->MinUsableSize().y + LAYOUT_MARGIN + 6, show_font_texture_button , 0);
     current_page->Insert(row);
     GG::Connect(show_font_texture_button->LeftClickedSignal, &ShowFontTextureWnd);
 
@@ -768,20 +761,17 @@ GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
 
 void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level, const std::string& name) {
     assert(0 <= indentation_level);
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
-    row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, indentation_level));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, heading_text->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               heading_text, indentation_level);
     page->Insert(row);
 }
 
 GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
-    button->Resize(button->MinUsableSize());
-    row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, indentation_level));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               button, indentation_level);
     page->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
@@ -1163,11 +1153,8 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // apply button, sized to fit text
     GG::Button* apply_button = new CUIButton(UserString("OPTIONS_APPLY"));
-    apply_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    apply_button->Resize(GG::Pt(GG::X(20), apply_button->MinUsableSize().y));
-    row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, indentation_level));
+    row = new OptionsListRow(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                             apply_button, indentation_level);
     page->Insert(row);
     GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
 
