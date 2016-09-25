@@ -1714,8 +1714,6 @@ void FleetDataPanel::DoLayout() {
 void FleetDataPanel::Init() {
     m_initialized = true;
 
-    SectionedScopedTimer timer("FleetDataPanel::Init", boost::chrono::microseconds(30));
-    timer.EnterSection("init");
     m_fleet_name_text = new CUILabel("", GG::FORMAT_LEFT);
     AttachChild(m_fleet_name_text);
     m_fleet_destination_text = new CUILabel("", GG::FORMAT_RIGHT);
@@ -1730,7 +1728,6 @@ void FleetDataPanel::Init() {
         GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
 
     } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
-        timer.EnterSection("icon setup");
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         // stat icon for fleet count
@@ -1742,7 +1739,6 @@ void FleetDataPanel::Init() {
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-        timer.EnterSection("armed");
         if (fleet->HasArmedShips()) {
             // stat icon for fleet damage
             icon = new StatisticIcon(DamageIcon(), 0, 0, false,
@@ -1809,7 +1805,6 @@ void FleetDataPanel::Init() {
             AttachChild(icon);
         }
 
-        timer.EnterSection("structure");
         // stat icon for fleet structure
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
                                  GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -1819,7 +1814,6 @@ void FleetDataPanel::Init() {
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-        timer.EnterSection("shields");
         // stat icon for fleet shields
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
                                  GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -1829,7 +1823,6 @@ void FleetDataPanel::Init() {
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-        timer.EnterSection("fuel");
         // stat icon for fleet fuel
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false,
                                  GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -1839,7 +1832,6 @@ void FleetDataPanel::Init() {
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-        timer.EnterSection("speed");
         // stat icon for fleet speed
         icon = new StatisticIcon(SpeedIcon(), 0, 0, false,
                                  GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -1849,11 +1841,8 @@ void FleetDataPanel::Init() {
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-
-        timer.EnterSection("connect");
         m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::RequirePreRender, this);
 
-        timer.EnterSection("aggro");
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
             m_aggression_toggle = new CUIButton(
