@@ -1194,7 +1194,8 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
         render_state = &state;
 
     RenderText(ul, lr, text, format, line_data, *render_state,
-               0, CP0, line_data.size(), CPSize(line_data.back().char_data.size()));
+               0, CP0, line_data.size(),
+               line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()));
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
