@@ -35,8 +35,6 @@
 
 namespace GG {
 
-struct SetMarginAction;
-
 /** \brief An invisible Wnd subclass that arranges its child Wnds.
 
     A Layout consists of a grid of cells.  A cell may have at most one Wnd
@@ -292,7 +290,6 @@ private:
     Clr                             m_outline_color;
 
     friend class Wnd;
-    friend struct SetMarginAction;
 };
 
 } // namespace GG
