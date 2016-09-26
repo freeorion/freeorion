@@ -168,11 +168,11 @@ set(freeorion_LINK_LIBS
     ${OPENGL_glu_LIBRARY}
     ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
-    ${Boost_LIBRARIES}
     ${SDL2_LIBRARY}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARY}
+    ${Boost_LOCALE_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
