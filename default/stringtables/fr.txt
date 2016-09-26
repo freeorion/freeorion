@@ -124,6 +124,15 @@ BACK
 LAST
 >|
 
+PAUSE  # translated
+Pause
+
+PAUSED
+En pause
+
+RESUME
+Reprendre
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME
@@ -432,7 +441,7 @@ SD_ROBO_FLUX_TROOPS
 Transport Flux d'Infanterie
 
 SD_ROBO_FLUX_TROOPS_DESC
-Transporteur d'infanterie rapide
+Transporteur rapide d'infanterie 
 
 SD_ROBO_FLUX_TROOPS_HVY
 Transport Flux d'Infanterie Lourde
