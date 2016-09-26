@@ -536,8 +536,6 @@
 		343EC65A0F3F5B5300782AD3 /* DesignWnd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignWnd.h; sourceTree = "<group>"; };
 		343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncyclopediaDetailPanel.cpp; sourceTree = "<group>"; };
 		343EC65E0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncyclopediaDetailPanel.h; sourceTree = "<group>"; };
-		343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkupBox.cpp; sourceTree = "<group>"; };
-		343EC6600F3F5C7C00782AD3 /* MarkupBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupBox.h; sourceTree = "<group>"; };
 		343EC6610F3F5C7C00782AD3 /* QueueListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueueListBox.cpp; sourceTree = "<group>"; };
 		343EC6620F3F5C7C00782AD3 /* QueueListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueListBox.h; sourceTree = "<group>"; };
 		343EC66D0F3F600800782AD3 /* StrongTypedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrongTypedef.h; sourceTree = "<group>"; };
@@ -1735,8 +1733,6 @@
 				471D5CC70A98A3F900DA9C21 /* LinkText.h */,
 				471D5CC80A98A3F900DA9C21 /* MapWnd.cpp */,
 				471D5CC90A98A3F900DA9C21 /* MapWnd.h */,
-				343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */,
-				343EC6600F3F5C7C00782AD3 /* MarkupBox.h */,
 				8275F3E51AD31381003568FF /* MeterBrowseWnd.cpp */,
 				8275F3E61AD31381003568FF /* MeterBrowseWnd.h */,
 				8275F3E71AD31381003568FF /* MilitaryPanel.cpp */,
