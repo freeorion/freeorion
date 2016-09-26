@@ -852,7 +852,10 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
         spin = new CUISpin<int>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<int> > int_validator = boost::dynamic_pointer_cast<const Validator<int> >(validator))
         spin = new CUISpin<int>(value, 1, -1000000, 1000000, true);
-    assert(spin);
+    if (!spin) {
+        ErrorLogger() << "Unable to create IntOption spin";
+        return 0;
+    }
     spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, 0, 5);
     layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
@@ -873,7 +876,6 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
 }
 
 GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<double>* spin = 0;
@@ -886,16 +888,21 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
         spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<double> > double_validator = boost::dynamic_pointer_cast<const Validator<double> >(validator))
         spin = new CUISpin<double>(value, 1, -1000000, 1000000, true);
-    assert(spin);
-    spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
-    layout->Add(spin, 0, 0);
-    layout->Add(text_control, 0, 1);
+    if (!spin) {
+        ErrorLogger() << "Unable to create DoubleOption spin";
+        return 0;
+    }
+    spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
+
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
