@@ -1,6 +1,6 @@
 // -*- C++ -*-
-/** \file Layout.h \brief Contains the Layout class, which is used to size and
-    align GG windows. */
+/** \file DeferredLayout.h \brief Contains the DefferedLayout class, which is used to size and
+    align GG windows in the PreRender() phase. */
 
 #ifndef _GG_DeferredLayout_h_
 #define _GG_DeferredLayout_h_
@@ -20,7 +20,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor. */
     DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
-           unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
+                   unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
     //@}
 
     /** \name Accessors */ ///@{
@@ -39,9 +39,9 @@ protected:
     //@}
 
 private:
-    Pt                              m_ul_prerender;    ///< ul for PreRender
-    Pt                              m_lr_prerender;    ///< lr for PreRender
-    bool                            m_stop_deferred_resize_recursion;
+    Pt   m_ul_prerender;        ///< ul for PreRender
+    Pt   m_lr_prerender;        ///< lr for PreRender
+    bool m_stop_deferred_resize_recursion;
 };
 
 } // namespace GG
