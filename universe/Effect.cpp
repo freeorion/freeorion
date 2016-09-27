@@ -186,7 +186,7 @@ void EffectsGroup::Execute(const TargetsCauses& targets_causes, AccountingMap* a
     for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
          effect_it != m_effects.end(); ++effect_it)
     {
-        (*effect_it)->Execute(targets_causes, m_stacking_group.empty(), accounting_map,
+        (*effect_it)->Execute(targets_causes, accounting_map,
                               only_meter_effects, only_appearance_effects,
                               include_empire_meter_effects, only_generate_sitrep_effects);
     }
@@ -228,6 +228,36 @@ std::string EffectsGroup::Dump() const {
     return retval;
 }
 
+bool EffectsGroup::HasMeterEffects() const {
+    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+         effect_it != m_effects.end(); ++effect_it)
+    {
+        if ((*effect_it)->IsMeterEffect())
+            return true;
+    }
+    return false;
+}
+
+bool EffectsGroup::HasAppearanceEffects() const {
+    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+         effect_it != m_effects.end(); ++effect_it)
+    {
+        if ((*effect_it)->IsAppearanceEffect())
+            return true;
+    }
+    return false;
+}
+
+bool EffectsGroup::HasSitrepEffects() const {
+    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+         effect_it != m_effects.end(); ++effect_it)
+    {
+        if ((*effect_it)->IsSitrepEffect())
+            return true;
+    }
+    return false;
+}
+
 void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
     if (m_scope)
         m_scope->SetTopLevelContent(content_name);
@@ -258,7 +288,7 @@ std::string Dump(const std::vector<boost::shared_ptr<EffectsGroup> >& effects_gr
 EffectBase::~EffectBase()
 {}
 
-void EffectBase::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void EffectBase::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                          bool only_meter_effects, bool only_appearance_effects,
                          bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -329,7 +359,7 @@ void SetMeter::Execute(const ScriptingContext& context) const {
     m->SetCurrent(val);
 }
 
-void SetMeter::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                        bool only_meter_effects, bool only_appearance_effects,
                        bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -556,7 +586,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     meter->SetCurrent(val);
 }
 
-void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                                bool only_meter_effects, bool only_appearance_effects,
                                bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -722,7 +752,7 @@ void SetEmpireMeter::Execute(const ScriptingContext& context) const {
     meter->SetCurrent(value);
 }
 
-void SetEmpireMeter::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void SetEmpireMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                              bool only_meter_effects, bool only_appearance_effects,
                              bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -3108,7 +3138,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     }
 }
 
-void GenerateSitRepMessage::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void GenerateSitRepMessage::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                                     bool only_meter_effects, bool only_appearance_effects,
                                     bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -3196,7 +3226,7 @@ void SetOverlayTexture::Execute(const ScriptingContext& context) const {
         system->SetOverlayTexture(m_texture, size);
 }
 
-void SetOverlayTexture::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void SetOverlayTexture::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                                 bool only_meter_effects, bool only_appearance_effects,
                                 bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -3241,7 +3271,7 @@ void SetTexture::Execute(const ScriptingContext& context) const {
         planet->SetSurfaceTexture(m_texture);
 }
 
-void SetTexture::Execute(const TargetsCauses& targets_causes, bool stacking, AccountingMap* accounting_map,
+void SetTexture::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
                          bool only_meter_effects, bool only_appearance_effects,
                          bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
@@ -3442,6 +3472,104 @@ void Conditional::Execute(const ScriptingContext& context) const {
     }
 }
 
+void Conditional::Execute(const ScriptingContext& context, const TargetSet& targets) const {
+    if (targets.empty())
+        return;
+
+    // apply sub-condition to target set to pick which to act on with which of sub-effects
+    const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&targets);
+
+    Condition::ObjectSet matches = potential_target_objects;
+    Condition::ObjectSet non_matches;
+    if (m_target_condition)
+        m_target_condition->Eval(context, matches, non_matches, Condition::MATCHES);
+
+    if (!matches.empty() && !m_true_effects.empty()) {
+        Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
+        for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
+            if (*it)
+                (*it)->Execute(context, match_targets);
+        }
+    }
+    if (!non_matches.empty() && !m_false_effects.empty()) {
+        Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+        for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
+            if (*it)
+                (*it)->Execute(context, non_match_targets);
+        }
+    }
+}
+
+void Conditional::Execute(const TargetsCauses& targets_causes, AccountingMap* accounting_map,
+                          bool only_meter_effects, bool only_appearance_effects,
+                          bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
+{
+    bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
+
+    // filter true and false effects to get only those that match the bool flags
+    std::vector<EffectBase*> filtered_true_effects;
+    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
+        if (!(*it))
+            continue;
+        if (only_meter_effects && !(*it)->IsMeterEffect())
+            continue;
+        if (only_appearance_effects && !(*it)->IsAppearanceEffect())
+            continue;
+        if (only_generate_sitrep_effects && !(*it)->IsSitrepEffect())
+            continue;
+        if (!include_empire_meter_effects && (*it)->IsEmpireMeterEffect())
+            continue;
+        filtered_true_effects.push_back(*it);
+    }
+
+    std::vector<EffectBase*> filtered_false_effects;
+    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
+        if (!(*it))
+            continue;
+        if (only_meter_effects && !(*it)->IsMeterEffect())
+            continue;
+        if (only_appearance_effects && !(*it)->IsAppearanceEffect())
+            continue;
+        if (only_generate_sitrep_effects && !(*it)->IsSitrepEffect())
+            continue;
+        if (!include_empire_meter_effects && (*it)->IsEmpireMeterEffect())
+            continue;
+        filtered_false_effects.push_back(*it);
+    }
+
+
+    // apply this effect for each source causing it
+    ScriptingContext source_context;
+    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
+        targets_it != targets_causes.end(); ++targets_it)
+    {
+        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
+
+        // apply sub-condition to target set to pick which to act on with which of sub-effects
+        const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&(targets_it->second.target_set));
+        Condition::ObjectSet matches = potential_target_objects;
+        Condition::ObjectSet non_matches;
+        if (m_target_condition)
+            m_target_condition->Eval(source_context, matches, non_matches, Condition::MATCHES);
+
+        // execute filtered true and false effects to target matches and non-matches respectively
+        if (!matches.empty() && !m_true_effects.empty()) {
+            Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
+            for (std::vector<EffectBase*>::const_iterator it = filtered_true_effects.begin(); it != filtered_true_effects.end(); ++it) {
+                if (*it)
+                    (*it)->Execute(source_context, match_targets);
+            }
+        }
+        if (!non_matches.empty() && !m_false_effects.empty()) {
+            Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
+            for (std::vector<EffectBase*>::const_iterator it = filtered_false_effects.begin(); it != filtered_false_effects.end(); ++it) {
+                if (*it)
+                    (*it)->Execute(source_context, non_match_targets);
+            }
+        }
+    }
+}
+
 std::string Conditional::Dump() const {
     std::string retval = DumpIndent() + "If\n";
     ++g_indent;
@@ -3487,6 +3615,42 @@ std::string Conditional::Dump() const {
     return retval;
 }
 
+bool Conditional::IsMeterEffect() const {
+    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
+        if ((*it)->IsMeterEffect())
+            return true;
+    }
+    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
+        if ((*it)->IsMeterEffect())
+            return true;
+    }
+    return false;
+}
+
+bool Conditional::IsAppearanceEffect() const {
+    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
+        if ((*it)->IsAppearanceEffect())
+            return true;
+    }
+    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
+        if ((*it)->IsAppearanceEffect())
+            return true;
+    }
+    return false;
+}
+
+bool Conditional::IsSitrepEffect() const {
+    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
+        if ((*it)->IsSitrepEffect())
+            return true;
+    }
+    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
+        if ((*it)->IsSitrepEffect())
+            return true;
+    }
+    return false;
+}
+
 void Conditional::SetTopLevelContent(const std::string& content_name) {
     if (m_target_condition)
         m_target_condition->SetTopLevelContent(content_name);
@@ -3497,4 +3661,5 @@ void Conditional::SetTopLevelContent(const std::string& content_name) {
         if (*it)
             (*it)->SetTopLevelContent(content_name);
 }
+
 } // namespace Effect

@@ -76,6 +76,9 @@ public:
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
     int                             Priority() const            { return m_priority; }
     std::string                     Dump() const;
+    bool                            HasMeterEffects() const;
+    bool                            HasAppearanceEffects() const;
+    bool                            HasSitrepEffects() const;
 
     void                            SetTopLevelContent(const std::string& content_name);
 
@@ -109,13 +112,16 @@ public:
     virtual void        Execute(const ScriptingContext& context) const = 0;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
     virtual std::string Dump() const = 0;
+    virtual bool        IsMeterEffect() const { return false; }
+    virtual bool        IsEmpireMeterEffect() const { return false; }
+    virtual bool        IsAppearanceEffect() const { return false; }
+    virtual bool        IsSitrepEffect() const { return false; }
 
     virtual void        SetTopLevelContent(const std::string& content_name) = 0;
 
@@ -155,7 +161,6 @@ public:
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
@@ -163,6 +168,7 @@ public:
                                 bool only_generate_sitrep_effects = false) const;
 
     virtual std::string Dump() const;
+    virtual bool        IsMeterEffect() const { return true; }
     MeterType GetMeterType() const { return m_meter; };
     const std::string&  AccountingLabel() const { return m_accounting_label; }
 
@@ -197,7 +203,6 @@ public:
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
@@ -205,6 +210,7 @@ public:
                                 bool only_generate_sitrep_effects = false) const;
 
     virtual std::string Dump() const;
+    virtual bool        IsMeterEffect() const { return true; }
 
     const ValueRef::ValueRefBase<std::string>*  GetPartName() const { return m_part_name; }
     MeterType                                   GetMeterType() const { return m_meter; }
@@ -233,7 +239,6 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
@@ -241,6 +246,8 @@ public:
                                 bool only_generate_sitrep_effects = false) const;
 
     virtual std::string Dump() const;
+    virtual bool        IsMeterEffect() const { return true; }
+    virtual bool        IsEmpireMeterEffect() const { return true; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -923,13 +930,13 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
+    virtual bool        IsAppearanceEffect() const { return true; }
     virtual std::string Dump() const;
 
     const std::string&              MessageString() const       { return m_message_string; }
@@ -966,13 +973,13 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
+    virtual bool        IsAppearanceEffect() const { return true; }
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
@@ -993,13 +1000,13 @@ public:
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual void        Execute(const TargetsCauses& targets_causes,
-                                bool stacking,
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
+    virtual bool        IsAppearanceEffect() const { return true; }
     virtual std::string Dump() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
@@ -1051,7 +1058,18 @@ public:
                 const std::vector<EffectBase*>& false_effects);
 
     virtual void        Execute(const ScriptingContext& context) const;
+    virtual void        Execute(const ScriptingContext& context, const TargetSet& targets) const;   // note: executes all of the true or all of the false effects on each target, without considering any of the only_* type flags
+    virtual void        Execute(const TargetsCauses& targets_causes,
+                                AccountingMap* accounting_map = 0,
+                                bool only_meter_effects = false,
+                                bool only_appearance_effects = false,
+                                bool include_empire_meter_effects = false,
+                                bool only_generate_sitrep_effects = false) const;
+
     virtual std::string Dump() const;
+    virtual bool        IsMeterEffect() const;
+    virtual bool        IsAppearanceEffect() const;
+    virtual bool        IsSitrepEffect() const;
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 

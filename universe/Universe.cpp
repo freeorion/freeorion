@@ -2311,6 +2311,14 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
              effect_group_it != priority_group_it->second.end(); ++effect_group_it)
         {
             Effect::EffectsGroup*   effects_group        = effect_group_it->first;
+
+            if (only_meter_effects && !effects_group->HasMeterEffects())
+                continue;
+            if (only_appearance_effects && !effects_group->HasAppearanceEffects())
+                continue;
+            if (only_generate_sitrep_effects && !effects_group->HasSitrepEffects())
+                continue;
+
             Effect::TargetsCauses&  group_targets_causes = effect_group_it->second;
             std::string             stacking_group       = effects_group->StackingGroup();
             ScopedTimer update_timer(
@@ -2318,7 +2326,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 + boost::lexical_cast<std::string>(group_targets_causes.size()) + " sources"
             );
 
-            // if other EffectsGroups or sources with the same stacking group have affected some of the 
+            // if other EffectsGroups or sources with the same stacking group have affected some of the
             // targets in the scope of the current EffectsGroup, skip them
             // and add the remaining objects affected by it to executed_nonstacking_effects
             if (!stacking_group.empty()) {
