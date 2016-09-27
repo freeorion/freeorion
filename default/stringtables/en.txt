@@ -9529,7 +9529,7 @@ SHP_ADV_DAM_CONT
 Advanced Damage Control
 
 SHP_ADV_DAM_CONT_DESC
-Repairs damaged ships by 10% of [[encyclopedia STRUCTURE_TITLE]] per turn if they are stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]] and [[tech SHP_FLEET_REPAIR]].
+Repairs damaged ships by 10% of [[encyclopedia STRUCTURE_TITLE]] per turn if they are stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]] and [[tech SHP_FLEET_REPAIR]] and works even out of [[encyclopedia SUPPLY_TITLE]].
 
 SHP_ROOT_AGGRESSION
 Aggression
