@@ -820,18 +820,18 @@ namespace {
 }
 
 void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const std::string& hotkey_name) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     const Hotkey & hk = Hotkey::NamedHotkey(hotkey_name);
     std::string text = UserString(hk.GetDescription());
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     GG::Button* button = new CUIButton(hk.PrettyPrint());
 
-    layout->Add(text_control, 0, 0);
-    layout->Add(button, 0, 1);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
+                                        1, 2, 0, 5);
+    layout->Add(text_control, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
 
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6,
+                                               layout, indentation_level);
 
     GG::Connect(button->LeftClickedSignal, boost::bind(HandleSetHotkeyOption, hotkey_name, button));
     GG::Connect(button->RightClickedSignal, boost::bind(HandleResetHotkeyOption, hotkey_name, button));
