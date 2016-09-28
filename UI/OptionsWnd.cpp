@@ -827,8 +827,8 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
 
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
                                         1, 2, 0, 5);
-    layout->Add(text_control, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
-    layout->Add(button, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button,         0, 1, GG::ALIGN_VCENTER | GG::ALIGN_RIGHT);
 
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6,
                                                layout, indentation_level);
@@ -966,22 +966,27 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
                                 const std::vector<std::pair<std::string, std::string> >& filters,
                                 StringValidator string_validator, bool directory, bool relative_path)
 {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     GG::Edit* edit = new CUIEdit(GetOptionsDB().Get<std::string>(option_name));
-    edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
+    edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
     GG::Button* button = new CUIButton("...");
-    button->SetMinSize(button->MinUsableSize());
-    button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, 0, LAYOUT_MARGIN);
-    layout->Add(text_control, 0, 0, 1, 2);
-    layout->Add(edit, 1, 0, 1, 1, GG::ALIGN_VCENTER);
-    layout->Add(button, 1, 1, 1, 1, GG::ALIGN_VCENTER);
-    layout->SetMinimumColumnWidth(1, button->Width());
-    layout->SetColumnStretch(0, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + std::max(edit->MinUsableSize().y, button->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
+                                        1, 3, 0, 5);
+
+    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button,         0, 2, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(1, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(2, button->Width());
+    layout->SetColumnStretch(0, 0.5);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetColumnStretch(2, 0.0);
+
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
     page->Insert(row);
+
     edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
