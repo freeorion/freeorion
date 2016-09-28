@@ -145,7 +145,7 @@ def get_invasion_fleets():
     sorted_planets = [(pid, pscore % 10000, ptroops) for pid, pscore, ptroops in sorted_planets]
 
     invasion_table = Table([Text('Planet'), Float('Score'), Text('Species'), Float('Troops')],
-                           table_name="Potential Targets for Invasion")
+                           table_name="Potential Targets for Invasion Turn %d" % fo.currentTurn())
 
     for pid, pscore, ptroops in sorted_planets:
         planet = universe.getPlanet(pid)

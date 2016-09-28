@@ -1362,7 +1362,7 @@ def _print_empire_species_roster():
     header = [Text('species'), Sequence('Planets'), Bool('Colonizer'), Text('Shipyards')]
     header.extend(Text(v) for v in grade_tags.values())
     header.append(Sequence('Tags'))
-    species_table = Table(header, table_name="Empire species roster")
+    species_table = Table(header, table_name="Empire species roster Turn %d" % fo.currentTurn())
     for species_name, planet_ids in state.get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
         grade_symbol = lambda x: grade_map.get(get_ai_tag_grade(species_tags, x).upper(), "o")
@@ -1404,7 +1404,7 @@ def __print_candidate_table(candidates, mission):
         print >> sys.stderr, "__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission)
         return
     candidate_table = Table([col1, Text('Planet'), Text('System'), Sequence('Specials')],
-                            table_name='Potential Targets for %s' % mission)
+                            table_name='Potential Targets for %s in Turn %d' % (mission, fo.currentTurn()))
     for planet_id, score_tuple in candidates:
         if score_tuple[0] > 0.5:
             planet = universe.getPlanet(planet_id)

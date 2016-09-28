@@ -205,15 +205,18 @@ class AIstate(object):
             return
         universe = fo.getUniverse()
         sys_id_list = sorted(universe.systemIDs)  # will normally look at this, the list of all known systems
+        current_turn = fo.currentTurn()
         # assess fleet and planet threats
         threat_table = Table([
             Text('System Threat'), Text('Vis.'), Float('Total'), Float('by Monsters'), Float('by Fleets'),
-            Float('by Planets'), Text('Threat [1, 2, 3] jumps away')
-        ])
+            Float('by Planets'), Text('Threat [1, 2, 3] jumps away')],
+            table_name="System Threat Turn %d" % current_turn
+        )
         defense_table = Table([
             Text('System Defenses'), Float('Total'), Float('by Planets'), Float('by Fleets'),
-            Text('Fleet strength [1, 2, 3] jumps away')
-        ])
+            Text('Fleet strength [1, 2, 3] jumps away')],
+            table_name="System Defenses Turn %d" % current_turn
+        )
         for sys_id in sys_id_list:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
@@ -886,8 +889,9 @@ class AIstate(object):
 
         fleet_table = Table([
             Text('Fleet'), Float('Old rating'), Float('New rating'),
-            Text('Location'), Text('Destination'), Text('Summary')
-        ])
+            Text('Location'), Text('Destination'), Text('Summary')],
+            table_name="Fleet Summary Turn %d" % fo.currentTurn()
+        )
         for fleet_id in fleet_list:
             status = self.fleetStatus.setdefault(fleet_id, {})
             rating = status.get('rating', {'overall': 0, 'attack': 0, 'health': 0})
@@ -980,7 +984,7 @@ class AIstate(object):
         """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
         universe = fo.getUniverse()
         mission_table = Table([Text('Fleet'), Text('Mission'), Text('Ships'), Text('Rating'), Text('Target')],
-                              table_name="Fleet Mission Review from Last Turn")
+                              table_name="Turn %d: Fleet Mission Review from Last Turn" % fo.currentTurn())
         for fleet_id, mission in self.get_fleet_missions_map().items():
             fleet = universe.getFleet(fleet_id)
             if not fleet:

@@ -244,7 +244,7 @@ def generate_production_orders():
             Sequence('Tags'),
             Sequence('Specials'),
             Text('Owner Id'),
-        ], table_name='Buildings present at empire Capital')
+        ], table_name='Buildings present at empire Capital in Turn %d' % fo.currentTurn())
 
         for building_id in homeworld.buildingIDs:
             building = universe.getBuilding(building_id)
