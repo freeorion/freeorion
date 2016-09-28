@@ -956,7 +956,7 @@ FLD_ION_STORM
 Ion Storm
 
 FLD_ION_STORM_DESC
-Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it. All objects inside the storm receive an increase of [[encyclopedia STEALTH_TITLE]] by 40, but a decrease of [[encyclopedia DETECTION_RANGE_TITLE]] by 40.
+Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it. All objects inside the storm receive an increase to [[encyclopedia STEALTH_TITLE]] of 40, but a decrease to [[encyclopedia DETECTION_RANGE_TITLE]] of 40.
 
 FLD_MOLECULAR_CLOUD
 Molecular Cloud
