@@ -1,7 +1,7 @@
 from collections import namedtuple
 import freeOrionAIInterface as fo
 
-PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species', 'owner', 'system_id'])
+PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species_name ', 'owner', 'system_id'])
 
 
 class State(object):
@@ -41,7 +41,7 @@ class State(object):
         """
         # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
         empire_id = fo.empireID()
-        planets_with_species = (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species)
+        planets_with_species = (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species_name)
         result = {}
         for x in planets_with_species:
             result.setdefault(x.system_id, []).append(x.pid)
@@ -54,7 +54,7 @@ class State(object):
         :rtype: frozenset[int]
         """
         empire_id = fo.empireID()
-        return frozenset(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species)
+        return frozenset(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species_name)
 
     def get_planets_for_species(self, species):
         """
@@ -76,8 +76,8 @@ class State(object):
         """
         empire_id = fo.empireID()
         result = {}
-        for x in (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species):
-            result.setdefault(x.species, []).append(x.pid)
+        for x in (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species_name):
+            result.setdefault(x.species_name, []).append(x.pid)
         return result
 
     @property
