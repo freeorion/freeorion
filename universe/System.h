@@ -48,6 +48,10 @@ public:
 
     virtual int             SystemID() const                { return this->ID(); }
 
+    /** Systems are unowned unless at least one planet is owned by an empire and no other empire
+        owns any planets in the system.*/
+    int                     Owner() const;
+
     virtual const std::set<int>&    ContainedObjectIDs() const;                     ///< returns ids of objects in this system
 
     const std::set<int>&    ObjectIDs() const               { return m_objects; }
