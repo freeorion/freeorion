@@ -31,6 +31,12 @@ class State(object):
         Must be called at each turn (before first use) to update inner state.
         """
         self.__init__()
+        self.__update_planets()
+
+    def __update_planets(self):
+        """
+        Update information about planets.
+        """
         universe = fo.getUniverse()
         for pid in universe.planetIDs:
             planet = universe.getPlanet(pid)
