@@ -51,7 +51,7 @@ def cur_best_mil_ship_rating(include_designs=False):
 
 
 def try_again(mil_fleet_ids, try_reset=False, thisround=""):
-    """Clear targets and orders for all specified fleets call get_military_fleets again"""
+    """Clear targets and orders for all specified fleets then call get_military_fleets again."""
     for fid in mil_fleet_ids:
         mission = foAI.foAIstate.get_fleet_mission(fid)
         mission.clear_fleet_orders()
@@ -113,10 +113,10 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     if try_reset and (fo.currentTurn() + empire_id) % 30 == 0 and thisround == "Main":
         try_again(all_military_fleet_ids, try_reset=False, thisround=thisround + " Reset")
 
-    num_milships = sum((foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids))
+    num_milships = sum(foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids)
 
     if "Main" in thisround:
-        totMilRating = sum(map(lambda x: foAI.foAIstate.get_rating(x).get('overall', 0), all_military_fleet_ids))
+        totMilRating = sum(foAI.foAIstate.get_rating(fid).get('overall', 0) for fid in all_military_fleet_ids)
 
     enemy_rating = foAI.foAIstate.empire_standard_enemy_rating
 

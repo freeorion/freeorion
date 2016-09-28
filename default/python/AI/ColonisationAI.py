@@ -414,8 +414,8 @@ def get_colony_fleets():
     print colony_fleet_ids and "Colony Fleet IDs: %s" % colony_fleet_ids or "Available Colony Fleets: 0"
     print "Colony Fleets Without Missions: %s" % num_colony_fleets
     print
-    print "Outpost Targeted SystemIDs: ", all_outpost_targeted_system_ids
-    print "Outpost Targeted PlanetIDs: ", outpost_targeted_planet_ids
+    print "Outpost Targeted SystemIDs:", all_outpost_targeted_system_ids
+    print "Outpost Targeted PlanetIDs:", outpost_targeted_planet_ids
     print outpost_fleet_ids and "Outpost Fleet IDs: %s" % outpost_fleet_ids or "Available Outpost Fleets: 0"
     print "Outpost Fleets Without Missions: %s" % num_outpost_fleets
     print
@@ -427,7 +427,8 @@ def get_colony_fleets():
 
     colonization_timer.start('Identify colony base targets')
     # keys are sets of ints; data is doubles
-    available_pp = dict([(tuple(el.key()), el.data()) for el in empire.planetsWithAvailablePP])
+    available_pp = {tuple(el.key()): el.data() for el in empire.planetsWithAvailablePP}
+
     avail_pp_by_sys = {}
     for p_set in available_pp:
         avail_pp_by_sys.update([(sys_id, available_pp[p_set]) for sys_id in set(PlanetUtilsAI.get_systems(p_set))])
