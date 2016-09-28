@@ -167,9 +167,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
                     continue;
 
-                std::list<std::string> shipyards_list;
-                UserStringList("FUNCTIONAL_SHIPYARD_BUILDING_LIST", shipyards_list);
-                if (std::find(shipyards_list.begin(), shipyards_list.end(), building->BuildingTypeName()) != shipyards_list.end()) {
+                if (building->HasTag(TAG_SHIPYARD)) {
                     has_shipyard = true;
                     break;
                 }
