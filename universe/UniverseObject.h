@@ -60,7 +60,7 @@ public:
     virtual double              X() const;                          ///< the X-coordinate of this object
     virtual double              Y() const;                          ///< the Y-coordinate of this object
 
-    int                         Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
+    virtual int                 Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
     bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
     bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
 
