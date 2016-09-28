@@ -27,6 +27,9 @@ class State(object):
         self.__planet_info = {}  # map from planet_id to PlanetInfo
 
     def update(self):
+        """
+        Must be called at each turn (before first use) to update inner state.
+        """
         self.__init__()
         universe = fo.getUniverse()
         for pid in universe.planetIDs:
