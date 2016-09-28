@@ -58,7 +58,7 @@ class State(object):
 
     def get_inhabited_planets(self):
         """
-        Return set of empire planet ids with species.
+        Return frozenset of empire planet ids with species.
 
         :rtype: frozenset[int]
         """
@@ -67,14 +67,14 @@ class State(object):
 
     def get_empire_planets_with_species(self, species_name):
         """
-        Return list of empire planet ids with species.
+        Return tuple of empire planet ids with species.
 
         :param species_name: species name
         :type species_name: str
         :rtype: tuple[int]
         """
         if not species_name:
-            return []
+            return ()
         return tuple(self.get_empire_planets_by_species().get(species_name, []))
 
     def get_empire_planets_by_species(self):
