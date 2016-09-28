@@ -961,7 +961,7 @@ def generate_classic_research_orders():
     if True:  # just to help with cold-folding / organization
         if not tech_is_complete("LRN_DISTRIB_THOUGHT"):
             got_telepathy = False
-            for specName in state.get_species_planets():
+            for specName in state.get_empire_planets_by_species():
                 this_spec = fo.getSpecies(specName)
                 if this_spec and ("TELEPATHIC" in list(this_spec.tags)):
                     got_telepathy = True

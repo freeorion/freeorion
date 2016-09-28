@@ -42,7 +42,7 @@ class State(object):
             planet = universe.getPlanet(pid)
             self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
-    def get_empire_species_systems(self):
+    def get_empire_inhabited_planets_by_system(self):
         """
         Return dict from system id to planet ids of empire with species.
 
@@ -50,9 +50,9 @@ class State(object):
         """
         # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
         empire_id = fo.empireID()
-        planets_with_species = (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
+        empire_planets_with_species = (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
         result = {}
-        for x in planets_with_species:
+        for x in empire_planets_with_species:
             result.setdefault(x.system_id, []).append(x.pid)
         return result
 
@@ -65,19 +65,19 @@ class State(object):
         empire_id = fo.empireID()
         return frozenset(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
 
-    def get_planets_for_species(self, species):
+    def get_empire_planets_with_species(self, species_name):
         """
         Return list of empire planet ids with species.
 
-        :param species: species name
-        :type species: str
+        :param species_name: species name
+        :type species_name: str
         :rtype: tuple[int]
         """
-        if not species:
+        if not species_name:
             return []
-        return tuple(self.get_species_planets().get(species, []))
+        return tuple(self.get_empire_planets_by_species().get(species_name, []))
 
-    def get_species_planets(self):
+    def get_empire_planets_by_species(self):
         """
         Return dict for empire from species to list of planet ids.
 

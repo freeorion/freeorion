@@ -379,7 +379,7 @@ def generate_production_orders():
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
                 defense_allocation += element.allocation
         print "Queued Defenses:", [(ppstring(PlanetUtilsAI.sys_name_ids([sys_id])), num) for sys_id, num in queued_defenses.items()]
-        for sys_id, pids in state.get_empire_species_systems().items():
+        for sys_id, pids in state.get_empire_inhabited_planets_by_system().items():
             if foAI.foAIstate.systemStatus.get(sys_id, {}).get('fleetThreat', 1) > 0:
                 continue  # don't build orbital shields if enemy fleet present
             if defense_allocation > max_defense_portion * total_pp:
@@ -413,15 +413,15 @@ def generate_production_orders():
     queued_shipyard_locs = [element.locationID for element in production_queue if (element.name == "BLD_SHIPYARD_BASE")]
     system_colonies = {}
     colony_systems = {}
-    empire_species = state.get_species_planets()
-    systems_with_species = state.get_empire_species_systems()
+    empire_species = state.get_empire_planets_by_species()
+    systems_with_species = state.get_empire_inhabited_planets_by_system()
     for spec_name in ColonisationAI.empire_colonizers:
         if (len(ColonisationAI.empire_colonizers[spec_name]) == 0) and (spec_name in empire_species):  # not enough current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
-            for pid in state.get_planets_for_species(spec_name):  # SP_EXOBOT may not actually have a colony yet but be in empireColonizers
+            for pid in state.get_empire_planets_with_species(spec_name):  # SP_EXOBOT may not actually have a colony yet but be in empireColonizers
                 if pid in queued_shipyard_locs:
                     break  # won't try building more than one shipyard at once, per colonizer
             else:  # no queued shipyards, get planets with target pop >=3, and queue a shipyard on the one with biggest current pop
-                planets = map(universe.getPlanet, state.get_planets_for_species(spec_name))
+                planets = map(universe.getPlanet, state.get_empire_planets_with_species(spec_name))
                 pops = sorted([(planet.currentMeterValue(fo.meterType.population), planet.id) for planet in planets if (planet and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3.0)])
                 pids = [pid for pop, pid in pops if building_type.canBeProduced(empire.empireID, pid)]
                 if pids:
@@ -431,14 +431,14 @@ def generate_production_orders():
                     if res:
                         queued_shipyard_locs.append(build_loc)
                         break  # only start at most one new shipyard per species per turn
-        for pid in state.get_planets_for_species(spec_name):
+        for pid in state.get_empire_planets_with_species(spec_name):
             planet = universe.getPlanet(pid)
             if planet:
                 system_colonies.setdefault(planet.systemID, {}).setdefault('pids', []).append(pid)
                 colony_systems[pid] = planet.systemID
 
     acirema_systems = {}
-    for pid in state.get_planets_for_species("SP_ACIREMA"):
+    for pid in state.get_empire_planets_with_species("SP_ACIREMA"):
         acirema_systems.setdefault(universe.getPlanet(pid).systemID, []).append(pid)
         if (pid in queued_shipyard_locs) or not building_type.canBeProduced(empire.empireID, pid):
             continue  # but not 'break' because we want to build shipyards at *every* Acirema planet
@@ -925,7 +925,7 @@ def generate_production_orders():
         pop_disqualified = (c_pop <= 32) or (c_pop < 0.9*t_pop)
         built_camp = False
         this_spec = planet.speciesName
-        safety_margin_met = ((this_spec in ColonisationAI.empire_colonizers and (len(state.get_planets_for_species(this_spec)) + len(colony_ship_map.get(this_spec, [])) >= 2)) or (c_pop >= 50))
+        safety_margin_met = ((this_spec in ColonisationAI.empire_colonizers and (len(state.get_empire_planets_with_species(this_spec)) + len(colony_ship_map.get(this_spec, [])) >= 2)) or (c_pop >= 50))
         if pop_disqualified or not safety_margin_met:  # check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
             if can_build_camp:
                 if pop_disqualified:
@@ -933,7 +933,7 @@ def generate_production_orders():
                         print "Conc Camp disqualified at %s due to low pop: current %.1f target: %.1f" % (planet.name, c_pop, t_pop)
                 else:
                     if verbose_camp:
-                        print "Conc Camp disqualified at %s due to safety margin; species %s, colonizing planets %s, with %d colony ships" % (planet.name, planet.speciesName, state.get_planets_for_species(planet.speciesName), len(colony_ship_map.get(planet.speciesName, [])))
+                        print "Conc Camp disqualified at %s due to safety margin; species %s, colonizing planets %s, with %d colony ships" % (planet.name, planet.speciesName, state.get_empire_planets_with_species(planet.speciesName), len(colony_ship_map.get(planet.speciesName, [])))
             for bldg in planet.buildingIDs:
                 if universe.getBuilding(bldg).buildingTypeName == building_name:
                     res = fo.issueScrapOrder(bldg)
@@ -1031,7 +1031,7 @@ def generate_production_orders():
             
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
         print "Considering building %s, found current and queued systems %s" % (building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
-        for sys_id, pids in state.get_empire_species_systems().items():  # TODO: sort/prioritize in some fashion
+        for sys_id, pids in state.get_empire_inhabited_planets_by_system().items():  # TODO: sort/prioritize in some fashion
             local_top_pilots = dict(top_pilot_systems.get(sys_id, []))
             local_drydocks = ColonisationAI.empire_dry_docks.get(sys_id, [])
             if len(queued_locs) >= max_dock_builds:

@@ -387,10 +387,10 @@ def survey_universe():
         table_name="Empire species roster"
     )
 
-    for spec_name, planets in state.get_species_planets().items():
+    for spec_name, planet_ids in state.get_empire_planets_by_species().items():
         this_spec = fo.getSpecies(spec_name)
         species_table.add_row(
-            (spec_name, planets, spec_name in empire_colonizers,
+            (spec_name, planet_ids, spec_name in empire_colonizers,
              len(empire_ship_builders.get(spec_name, [])), list(this_spec.tags))
         )
     species_table.print_table()
@@ -501,7 +501,7 @@ def get_colony_fleets():
         if not planet:
             continue
         sys_id = planet.systemID
-        for pid2 in state.get_empire_species_systems().get(sys_id, []):
+        for pid2 in state.get_empire_inhabited_planets_by_system().get(sys_id, []):
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue
