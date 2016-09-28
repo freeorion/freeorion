@@ -61,10 +61,12 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
                          Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
                          Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
+    m_text(),
     m_format(format),
     m_text_color(color),
     m_clip_text(false),
     m_set_min_size(false),
+    m_text_elements(),
     m_code_points(0),
     m_font(font),
     m_render_cache(0),
@@ -260,6 +262,17 @@ void TextControl::SetText(const std::string& str,
 {
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
+
+    std::size_t expected_length(0);
+    for (std::vector<boost::shared_ptr<Font::TextElement> >::const_iterator it = text_elements.begin();
+         it != text_elements.end(); ++it)
+    {
+        expected_length +=(*it)->text.size();
+    }
+
+    if (expected_length > str.size())
+        return;
+
     m_text = str;
 
     m_text_elements = text_elements;

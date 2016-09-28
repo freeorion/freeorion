@@ -198,11 +198,16 @@ public:
         the newly rendered text occupies. */
     virtual void SetText(const std::string& str);
 
-    /** Sets the text displayed in this control to \a str \p text_elements
-        pair.  This is faster than SetText without \p text_elements. May resize
-        the window.  If the control was constructed with FORMAT_NOWRAP, calls
-        to this function cause the window to be resized to whatever space the
-        newly rendered text occupies. */
+    /** Sets the text displayed in this control to the \p str \p text_elements
+        pair.  This is faster than SetText without \p text_elements.
+
+        This may resize the window.  If the control was constructed with FORMAT_NOWRAP, calls to
+        this function cause the window to be resized to whatever space the newly rendered text
+        occupies.
+
+        If the \p str and \p text_elements are inconsistent and \p str is shorter than expected
+        from examining \p text_elements then it will return without changing the TextControl.
+    */
     virtual void SetText(const std::string& str,
                          const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements);
 
