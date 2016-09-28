@@ -24,14 +24,14 @@ class State(object):
         self.__have_computronium = False
         self.__best_pilot_rating = 1e-8
         self.__medium_pilot_rating = 1e-8
-        self.__planets = {}
+        self.__planet_info = {}  # map from planet_id to PlanetInfo
 
     def update(self):
         self.__init__()
         universe = fo.getUniverse()
         for pid in universe.planetIDs:
             planet = universe.getPlanet(pid)
-            self.__planets[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
+            self.__planet_info[pid] = PlanetInfo(pid, planet.speciesName, planet.owner, planet.systemID)
 
     def get_empire_species_systems(self):
         """
@@ -41,7 +41,7 @@ class State(object):
         """
         # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
         empire_id = fo.empireID()
-        planets_with_species = (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species_name)
+        planets_with_species = (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
         result = {}
         for x in planets_with_species:
             result.setdefault(x.system_id, []).append(x.pid)
@@ -54,7 +54,7 @@ class State(object):
         :rtype: frozenset[int]
         """
         empire_id = fo.empireID()
-        return frozenset(x.pid for x in self.__planets.itervalues() if x.owner == empire_id and x.species_name)
+        return frozenset(x.pid for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name)
 
     def get_planets_for_species(self, species):
         """
@@ -76,7 +76,7 @@ class State(object):
         """
         empire_id = fo.empireID()
         result = {}
-        for x in (x for x in self.__planets.itervalues() if x.owner == empire_id and x.species_name):
+        for x in (x for x in self.__planet_info.itervalues() if x.owner == empire_id and x.species_name):
             result.setdefault(x.species_name, []).append(x.pid)
         return result
 
