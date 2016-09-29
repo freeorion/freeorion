@@ -1032,7 +1032,7 @@ class ShipDesigner(object):
         pass
 
     def optimize_design(self, additional_parts=(), additional_hulls=(),
-                        loc=None, verbose=False, consider_fleet_count=False):
+                        loc=None, verbose=False, consider_fleet_count=True):
         """Try to find the optimimum designs for the shipclass for each planet and add it as gameobject.
 
         Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
