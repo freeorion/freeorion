@@ -701,17 +701,16 @@ def generate_classic_research_orders():
                 print "    Error: failed attempt to enqueued Tech: " + name
                 print "    Error: exception triggered and caught: ", traceback.format_exc()
 
-        if False:
-            print '\n\nAll techs:'
-            print '=' * 20
-            alltechs = fo.techs()
-            print_in_columns(sorted(fo.techs()), columns=3)
+        print '\n\nAll techs:'
+        print '=' * 20
+        alltechs = fo.techs()
+        print_in_columns(sorted(fo.techs()), columns=3)
 
-            print '\n\nAll unqueued techs:'
-            print '=' * 20
-            # coveredTechs = new_tech+completed_techs
-            print_in_columns([tn for tn in alltechs if tn not in tech_base], columns=3)
-            print
+        print '\n\nAll unqueued techs:'
+        print '=' * 20
+        # coveredTechs = new_tech+completed_techs
+        print_in_columns([tn for tn in alltechs if tn not in tech_base], columns=3)
+        print
 
         if fo.currentTurn() == 1:
             return
