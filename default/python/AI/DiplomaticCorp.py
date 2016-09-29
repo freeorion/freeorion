@@ -36,21 +36,30 @@ class DiplomaticCorp(object):
         if message.type == fo.diplomaticMessageType.peaceProposal:
             foAI.foAIstate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
-            suffix = "MILD" if foAI.foAIstate.aggression <= fo.aggression.typical else "HARSH"
-            possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_" + suffix + "_LIST")
+            attitude = self.evaluate_diplomatic_attitude(message.sender)
+            possible_acknowledgments = []
+            if foAI.foAIstate.aggression <= fo.aggression.typical:
+                possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
+                if attitude > 0:
+                    possible_replies = UserStringList("AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST")
+                else:
+                    possible_replies = UserStringList("AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST")
+            else:
+                possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST")
+                if attitude > 0:
+                    possible_replies = UserStringList("AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST")
+                else:
+                    possible_replies = UserStringList("AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST")
             acknowledgement = random.choice(possible_acknowledgments)
+            reply_text = random.choice(possible_replies)
             print "Acknowledging proposal with initial message (from %d choices): '%s'" % (
                 len(possible_acknowledgments), acknowledgement)
             fo.sendChatMessage(proposal_sender_player, acknowledgement)
-            attitude = self.evaluate_diplomatic_attitude(message.sender)
             if attitude > 0:
-                reply_text = random.choice(UserStringList("AI_PEACE_PROPOSAL_RESPONSES_YES_" + suffix + "_LIST"))
                 diplo_reply = fo.diplomaticMessage(message.recipient, message.sender,
                                                    fo.diplomaticMessageType.acceptProposal)
                 print "Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type)
                 fo.sendDiplomaticMessage(diplo_reply)
-            else:
-                reply_text = random.choice(UserStringList("AI_PEACE_PROPOSAL_RESPONSES_NO_" + suffix + "_LIST"))
             print "sending chat to player %d of empire %d, message body: '%s'" % (
                 proposal_sender_player, message.sender, reply_text)
             fo.sendChatMessage(proposal_sender_player, reply_text)
@@ -62,18 +71,23 @@ class DiplomaticCorp(object):
     @staticmethod
     def get_first_turn_greet_message():
         greet_lists = {
-            fo.aggression.beginner: "BEGINNER",
-            fo.aggression.turtle: "TURTLE",
-            fo.aggression.cautious: "CAUTIOUS",
-            fo.aggression.typical: "TYPICAL",
-            fo.aggression.aggressive: "AGGRESSIVE",
-            fo.aggression.maniacal: "MANIACAL",
+            fo.aggression.beginner:
+                UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER"),
+            fo.aggression.turtle:
+                UserStringList("AI_FIRST_TURN_GREETING_LIST_TURTLE"),
+            fo.aggression.cautious:
+                UserStringList("AI_FIRST_TURN_GREETING_LIST_CAUTIOUS"),
+            fo.aggression.typical:
+                UserStringList("AI_FIRST_TURN_GREETING_LIST_TYPICAL"),
+            fo.aggression.aggressive:
+                UserStringList("AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE"),
+            fo.aggression.maniacal:
+                UserStringList("AI_FIRST_TURN_GREETING_LIST_MANIACAL"),
         }
-        key = "AI_FIRST_TURN_GREETING_LIST_%s" % greet_lists[foAI.foAIstate.aggression]
-        greets = UserStringList(key)
+        greets = greet_lists.get(foAI.foAIstate.aggression, UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER"))
         # no such entry
         if len(greets) == 1 and greets[0] == 'ERROR: %s' % key:
-            greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
+            greets = UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER")
         return random.choice(greets)
 
     @chat_on_error

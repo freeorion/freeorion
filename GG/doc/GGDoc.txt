@@ -286,10 +286,7 @@
     - Boost >= 1.36 - http://www.boost.org
 
     Image loading library/libraries:
-    Either:
-    - DevIL 1.6.1 - http://openil.sourceforge.net
-
-    Or, at least one of:
+    At least one of:
     - libpng - http://www.libpng.org/pub/png/libpng.html
     - libjpeg - http://www.ijg.org
     - libtiff - http://www.libtiff.org
@@ -311,22 +308,18 @@
     You will need to first build the buildable portions of the Boost
     libraries.  See http://boost.org/more/getting_started/index.html for
     details on building Boost.  There are often pre-built binaries available
-    for download for the latest Microsoft C++ compiler.  You will also need to
-    decide whether to use DevIL, or GG's built-in image loading code (built-in
-    is the default).  The built-in image loader only supports PNG, JPEG, and
-    TIFF formats, using a modified version of Boost.GIL from Boost 1.37.
-    DevIL supports more image formats, but is less portable.  If you choose
-    not to use DevIL, you must make at least one of the PNG, JPEG, and TIFF
-    format-specific libraries available instead.
+    for download for the latest Microsoft C++ compiler.  The built-in image
+    loader only supports PNG, JPEG, and TIFF formats, using a modified version
+    of Boost.GIL from Boost 1.37.
 
     GG uses CMake to generate makefiles, MSVC and XCode projects files, etc.
     Here is the quick-and-dirty info on using CMake.  Download and install
     CMake if necessary, of course.  You run ccmake (Linux) or cmake-gui
-    (Windows or Mac OS X) to set the build options, such as whether to use
-    DevIL, whether to build static or dynamic libs, etc.  It's really
-    straightforward, and the end result of using CMake is that you get to use
-    make, Visual Studio's IDE, XCode projects, or whatever CMake-supported
-    build tool you like.  It supports just about everything.
+    (Windows or Mac OS X) to set the build options, such as whether to build
+    static or dynamic libs, etc.  It's really straightforward, and the end
+    result of using CMake is that you get to use make, Visual Studio's IDE,
+    XCode projects, or whatever CMake-supported build tool you like.  It
+    supports just about everything.
 
     \subsection howto_build_unix Unix
 
@@ -373,8 +366,7 @@
     FREETYPE_LIBRARY with the paths to the freetype2 folder, the path to the
     ft2build.h header, and the path to the FreeType link library,
     respectively.  The fields you need to fill in will contain {field
-    name}-NOTFOUND.  Note that some fields are optional, e.g. those related to
-    DevIL.
+    name}-NOTFOUND.  Note that some fields are optional.
 
     \subsection howto_build_macos Mac OS X
 

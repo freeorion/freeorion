@@ -59,7 +59,7 @@ namespace {
     std::vector<std::string>SpeciesFoci(const Species& species) {
         std::vector<std::string> retval;
         const std::vector<FocusType>& foci = species.Foci();
-        for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); f_it++ )
+        for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); ++f_it)
             retval.push_back(f_it->Name());
         return retval;
     }
@@ -165,7 +165,8 @@ namespace {
     std::vector<int>        AttackStatsP(const ShipDesign& ship_design) {
         const std::vector<std::string>& partslist = ship_design.Parts();
         std::vector<int> results;
-        for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); part_it++){
+        for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); ++part_it)
+        {
             const PartType* part = GetPartType(*part_it);
             if (part && part->Class() == PC_DIRECT_WEAPON) { // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
@@ -178,7 +179,7 @@ namespace {
     std::vector<ShipSlotType> HullSlots(const HullType& hull) {
         std::vector<ShipSlotType> retval;
         std::vector< HullType::Slot > slots = hull.Slots();
-        for (std::vector<HullType::Slot>::iterator s_it = slots.begin(); s_it != slots.end(); s_it++ )
+        for (std::vector<HullType::Slot>::iterator s_it = slots.begin(); s_it != slots.end(); ++s_it)
             retval.push_back(s_it->type);
         return retval;
     }
@@ -278,6 +279,7 @@ namespace FreeOrionPython {
             .def("getSystem",                   make_function(GetSystemP,           return_value_policy<reference_existing_object>()))
             .def("getField",                    make_function(GetFieldP,            return_value_policy<reference_existing_object>()))
             .def("getBuilding",                 make_function(GetBuildingP,         return_value_policy<reference_existing_object>()))
+            .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,    return_value_policy<reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).")
 
             .add_property("allObjectIDs",       make_function(ObjectIDs,            return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(FleetIDs,             return_value_policy<return_by_value>()))
@@ -466,6 +468,7 @@ namespace FreeOrionPython {
             .add_property("costTimeLocationInvariant",
                                                 &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
+            .add_property("hull_type",          make_function(&ShipDesign::GetHull,         return_value_policy<reference_existing_object>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
             .add_property("attackStats",        make_function(
                                                     AttackStatsFunc,
@@ -512,6 +515,7 @@ namespace FreeOrionPython {
             .def("productionTime",              &HullType::ProductionTime)
             .add_property("costTimeLocationInvariant",
                                                 &HullType::ProductionCostTimeLocationInvariant)
+            .def("hasTag",                      &HullType::HasTag)
         ;
         def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>(), "Returns the ship hull (HullType) with the indicated name (string).");
 

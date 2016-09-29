@@ -81,9 +81,46 @@ FO_COMMON_API boost::format FlexibleFormatList(
         header_fmt % *it;
     }
 
-    std::string template_str = words.size() <= 10
-        ? UserString("FORMAT_LIST_" + boost::lexical_cast<std::string>(words.size()) + "_ITEMS")
-        : UserString("FORMAT_LIST_MANY_ITEMS");
+    std::string template_str;
+
+    switch (words.size()) {
+    case 0:
+        template_str = UserString("FORMAT_LIST_0_ITEMS");
+        break;
+    case 1:
+        template_str = UserString("FORMAT_LIST_1_ITEMS");
+        break;
+    case 2:
+        template_str = UserString("FORMAT_LIST_2_ITEMS");
+        break;
+    case 3:
+        template_str = UserString("FORMAT_LIST_3_ITEMS");
+        break;
+    case 4:
+        template_str = UserString("FORMAT_LIST_4_ITEMS");
+        break;
+    case 5:
+        template_str = UserString("FORMAT_LIST_5_ITEMS");
+        break;
+    case 6:
+        template_str = UserString("FORMAT_LIST_6_ITEMS");
+        break;
+    case 7:
+        template_str = UserString("FORMAT_LIST_7_ITEMS");
+        break;
+    case 8:
+        template_str = UserString("FORMAT_LIST_8_ITEMS");
+        break;
+    case 9:
+        template_str = UserString("FORMAT_LIST_9_ITEMS");
+        break;
+    case 10:
+        template_str = UserString("FORMAT_LIST_10_ITEMS");
+        break;
+    default:
+        template_str = UserString("FORMAT_LIST_MANY_ITEMS");
+        break;
+    }
 
     boost::format fmt = FlexibleFormat(template_str) % header_fmt.str();
 

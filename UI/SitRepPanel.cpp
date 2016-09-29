@@ -25,15 +25,11 @@ namespace {
         db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
         db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
-        db.Add("UI.sitrep-font-size", UserStringNop("OPTIONS_DB_UI_SITREP_FONTSIZE"), 12, RangedValidator<int>(10, 48));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     GG::X GetIconSize()
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-icon-size")); }
-
-    GG::X GetFontSize()
-    { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-font-size")); }
 
     std::map<std::string, std::string> label_display_map;
     std::map<int, std::set<std::string> > snoozed_sitreps;
@@ -141,7 +137,7 @@ namespace {
         // only use those ordered templates actually in the current set of sitrep templates
         std::vector<std::string> ordered_templates = OrderedSitrepTemplateStrings();
         for (std::vector<std::string>::iterator it = ordered_templates.begin(); 
-             it!=ordered_templates.end(); it++) 
+             it!=ordered_templates.end(); ++it)
         {
             if ( (template_set.find(*it) != template_set.end()) && 
                  (std::find(retval.begin(), retval.end(), *it) == retval.end()) )
@@ -149,7 +145,7 @@ namespace {
         }
 
         //now add the current templates that did not have a specified order
-        for (std::set<std::string>::iterator it = template_set.begin(); it!= template_set.end(); it++)
+        for (std::set<std::string>::iterator it = template_set.begin(); it!= template_set.end(); ++it)
             if (std::find(retval.begin(), retval.end(), *it) == retval.end())
                 retval.push_back(*it);
 
@@ -269,7 +265,7 @@ namespace {
             AttachChild(m_icon);
 
             m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
-                                       ClientUI::GetFont(std::max(1.0*ClientUI::Pts(), 1.0*GetOptionsDB().Get<int>("UI.sitrep-font-size"))),
+                                       ClientUI::GetFont(),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
@@ -384,7 +380,7 @@ void SitRepPanel::DoLayout() {
 }
 
 void SitRepPanel::KeyPress(GG::Key key, boost::uint32_t key_code_point,
-                            GG::Flags<GG::ModKey> mod_keys)
+                           GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_RETURN:
@@ -405,7 +401,6 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size()) {
-        GG::ListBox::iterator row_to_show = m_sitreps_lb->FirstRowShown();
         DoLayout();
         Update();
         if (!m_sitreps_lb->Empty()) {
@@ -430,7 +425,8 @@ namespace {
             for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it)
                 sr_empires.insert(it->second);
         }
-        for (std::set<Empire*>::iterator it = sr_empires.begin(); it != sr_empires.end(); it++) {
+        for (std::set<Empire*>::iterator it = sr_empires.begin(); it != sr_empires.end(); ++it)
+        {
             for (Empire::SitRepItr sitrep_it = (*it)->SitRepBegin(); sitrep_it != (*it)->SitRepEnd(); ++sitrep_it) {
                 if (!verbose_sitrep) {
                     if (!sitrep_it->Validate())
@@ -666,7 +662,7 @@ void SitRepPanel::Update() {
          template_it != ordered_templates.end(); ++template_it)
     {
         for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
-             sitrep_it != currentTurnSitreps.end(); sitrep_it++)
+             sitrep_it != currentTurnSitreps.end(); ++sitrep_it)
         {
             if ((sitrep_it->GetLabelString().empty() ? sitrep_it->GetTemplateString() : sitrep_it->GetLabelString()) == *template_it) {
                 //DebugLogger() << "saving into orderedSitreps -  sitrep of template "<<*template_it<<" with full string "<< sitrep_it->GetText();
@@ -679,13 +675,13 @@ void SitRepPanel::Update() {
 
     // copy remaining unordered sitreps
     for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
-         sitrep_it != currentTurnSitreps.end(); sitrep_it++)
+         sitrep_it != currentTurnSitreps.end(); ++sitrep_it)
     { orderedSitreps.push_back(*sitrep_it); }
 
     // create UI rows for all sitrps
     GG::X width = m_sitreps_lb->Width() - ClientUI::ScrollWidth();
     for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin();
-         sitrep_it != orderedSitreps.end(); sitrep_it++)
+         sitrep_it != orderedSitreps.end(); ++sitrep_it)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
 
     if (m_sitreps_lb->NumRows() > first_visible_row) {

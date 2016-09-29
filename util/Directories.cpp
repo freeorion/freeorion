@@ -447,8 +447,6 @@ const fs::path GetSaveDir() {
     std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
     if (options_save_dir.empty())
         options_save_dir = GetOptionsDB().GetDefault<std::string>("save-dir");
-    //std::cout << "GetSaveDir dir: " << options_save_dir << " << valid UTF-8: " << utf8::is_valid(options_save_dir.begin(), options_save_dir.end()) << std::endl;
-    DebugLogger() << "GetSaveDir dir: " << options_save_dir << " << valid UTF-8: " << utf8::is_valid(options_save_dir.begin(), options_save_dir.end());
     return FilenameToPath(options_save_dir);
 }
 
@@ -464,12 +462,10 @@ fs::path RelativePath(const fs::path& from, const fs::path& to) {
         ++from_it;
         ++to_it;
     }
-    for (; from_it != end_from_it; ++from_it) {
-        retval /= "..";
-    }
-    for (; to_it != end_to_it; ++to_it) {
-        retval /= *to_it;
-    }
+    for (; from_it != end_from_it; ++from_it)
+    { retval /= ".."; }
+    for (; to_it != end_to_it; ++to_it)
+    { retval /= *to_it; }
     return retval;
 }
 

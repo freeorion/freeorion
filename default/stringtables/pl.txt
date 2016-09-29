@@ -1,33 +1,33 @@
 Polski
 
-#This is the Polish String Table file for FreeOrion
+# This is the Polish String Table file for FreeOrion
+#
+# Translated by: Łukasz "Cyber Killer" Korpalski http://digital.dharkness.info
+# Drop a line to cyber_killer at jabster.pl (email or xmpp) if this file needs urgent updating or there are errors in the translation
+# Translated by: Wojciech "Feagorn" Moch (feagorn at gmail point com)
+#
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#Translated by: Łukasz "Cyber Killer" Korpalski http://digital.dharkness.info
-#Drop a line to cyber_killer at jabster.pl (email or xmpp) if this file needs urgent updating or there are errors in the translation
-#Translated by: Wojciech "Feagorn" Moch (feagorn at gmail point com)
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
 
-#Translators note: this translation assumes that the player is not a complete idiot and can understand simple, game-related English acronyms eg: FPS.
 
-#################
-# Common        #
-#################
-
-#Anyone can use these for basic buttons
-
-BROWSE_BTN
-Przeglądaj...
+##
+## Common phrases
+##
 
 CANCEL
 Anuluj
 
 DONE
 Gotowe
-
-CLOSE
-Zamknij
-
-LOAD
-Załaduj
 
 SAVE
 Zapisz
@@ -37,9 +37,6 @@ Otwórz
 
 OR
 lub
-
-AND
-i
 
 YES
 Tak
@@ -62,26 +59,15 @@ Wprowadź nową nazwę
 ERROR
 BŁĄD
 
-CHAT_WHISPER
-szept
-
-# used to generate names for new fleets when they are created
+# Name for a newly created general purpose fleet.
+# %1% represents a unique number.
 NEW_FLEET_NAME
 Nowa flota %1%
 
+# Name for a newly created general purpose fleet when no uniqe number could be
+# created.
 NEW_FLEET_NAME_NO_NUMBER
 Nowa flota
-
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
-
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 NOT_APPLICABLE
 N.D.
@@ -92,26 +78,35 @@ Bombowiec
 INTERCEPTOR
 Myśliwiec przechwytujący
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
 
-############
-# Monsters #
-############
+##
+## Major errors
+##
 
-##########
-# Fields #
-##########
 
-##############################
-# Predefined Starting Fleets #
-##############################
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
-##########################
-# Status Update Messages #
-##########################
+
+##
+## Monsters
+##
+
+
+##
+## Fields
+##
+
+
+##
+## Predefined starting fleets
+##
+
+
+##
+## Status update messages
+##
 
 SERVER_WONT_START
 Nie można uruchomić serwera.
@@ -122,18 +117,13 @@ Serwer nie odpowiada.
 SERVER_LOST
 Utracono połączenie z serwerem.
 
-SERVER_GAME_END
-Serwer przesłał wiadomość o zakończeniu gry. Pa pa.
-
 PLAYER_DISCONNECTED
 Gracz %1% utracił połączenie z serwerem.
 
-UNKNOWN_EMPIRE
-Nieznane imperium
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Sposób użycia: '''
@@ -152,12 +142,6 @@ Wybiera ścieżkę dźwiękową odtwarzaną w tle.
 
 OPTIONS_DB_FULLSCREEN
 Uruchamia grę na pełnym ekranie.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Po tym czasie, w sekundach, okno rozmowy w trybie wielu graczy zniknie jeśli nic nowego nie będzie napisane. Wartość 0 oznacza, że okno nigdy nie zniknie.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Liczba wiadomości przechowywanych w oknie historii rozmowy.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Rysowanie substnacji gazowych wokół systemów planetarnych w celu nadania kształtu galktyce. W starszych systemach może spowolnić rysowanie.
@@ -216,9 +200,6 @@ Włącza i wyłącza ograniczenie liczby klatek na sekundę. Wartość ogranicze
 OPTIONS_DB_MAX_FPS
 Ustala ograniczenie liczby klatek na sekundę. Ograniczenie to włączaje jest w opcji "Limit FPS".
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Włącza i wyłącza dźwięki w interfejsie użytkownika.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Głośność (od 0 do 255) z jaką odtwarzane będą dźwięki w interfejsie użytkownika.
 
@@ -275,12 +256,6 @@ Ustala plik czcionki.
 
 OPTIONS_DB_UI_FONT_BOLD
 Ustala plik pogrubionej czcionki.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Ustala plik pochylonej czcionki.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Ustala plik pogrubionej i pochylonej czcionki.
 
 OPTIONS_DB_UI_FONT_SIZE
 Ustala wielkość czcionki.
@@ -456,9 +431,10 @@ Ustala ilość tur, które powinny minąć pomiędzy autozapisami gry.
 OPTIONS_DB_MUSIC_VOLUME
 Głośność odtwarzania muzyki (0 do 255).
 
-#################
-# File Dialog   #
-#################
+
+##
+## File dialog
+##
 
 FILE_DLG_FILES
 Plik(i):
@@ -466,18 +442,10 @@ Plik(i):
 FILE_DLG_FILE_TYPES
 Typ(y):
 
-FILE_DLG_MALFORMED_FILENAME
-Nieprawidłowa nazwa pliku.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% już istnieje.
 
 Nadpisać?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-
-nie jest prawidłową nazwą pliku.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -492,9 +460,10 @@ nie istnieje.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Urządzenie nie jest gotowe.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 Nowy
@@ -502,16 +471,13 @@ Nowy
 COLOR_DLG_OLD
 Stary
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion - Menu główne
-
-#Button names####
 
 INTRO_BTN_SINGLE_PLAYER
 Pojedynczy gracz
@@ -537,24 +503,16 @@ Twórcy
 INTRO_BTN_EXIT
 Wyjście
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Przekroczono czas łączenia z serwerem.
 
-ERR_VERSION_MISMATCH
-Nie można połączyć się z serwerem, ponieważ klient używa innej wersji poniższych plików ustawień lub źródłowych:
 
-########################
-# Server Setup Screen  #
-########################
-
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Połączenie z serwerem
-
-#Static labels####
 
 LAN_GAME_LABEL
 Gra w sieci LAN:
@@ -565,8 +523,6 @@ Gra w sieci Internet:
 PLAYER_NAME_LABEL
 Nazwa gracza
 
-#Button names####
-
 HOST_GAME_BN
 Utwórz nową grę
 
@@ -576,15 +532,13 @@ Dołącz do gry
 REFRESH_LIST_BN
 Odśwież listę
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Ustawienia trybu wielu graczy
-
-MPLOBBY_HOST_ABORTED_GAME
-Gracz tworzący grę przerwał proces jej konfiguracji.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Wymagaj unikalnych nazw i kolorów imperiów
@@ -598,18 +552,13 @@ LOAD_GAME_BN
 START_GAME_BN
 Uruchom grę
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Ustawienia galaktyki
-
-#Strings
-GSETUP_GRAPHICS_FILES
-Pliki graficzne
 
 GSETUP_EMPIRE_NAME
 Nazwa imperium
@@ -620,60 +569,80 @@ Kolor imperium
 GSETUP_NUMBER_AIS
 Liczba graczy komputerowych
 
-#Drop-down list labels and choices####
-
 GSETUP_STARS
 Liczba gwaizd
+
 GSETUP_SHAPE
 Kształt galaktyki
+
 GSETUP_AGE
 Wiek galaktyki
+
 GSETUP_STARLANE_FREQ
 Częstość szkalów gwiezdnych
+
 GSETUP_PLANET_DENSITY
 Gęstość występowania planet
+
 GSETUP_SPECIALS_FREQ
 Częstość występowania wyjątków
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spiralna dwuramienna
+
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spiralna trójramienna
+
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spiralna czteroramienna
+
+# A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Klaster
+
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Eliptyczna
+
+# A galaxy shape to select when generating a universe.
 GSETUP_RING
 Pierścieniowa
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 Brak
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Niska
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
 Średnia
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 Duża
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Młoda
+
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Dojrzała
+
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Prastara
 
-#Error messages####
 
-GSETUP_ERR_NOEXIST
-nie istnieje.
-
-###########################
-# About Dialog            #
-###########################
-
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Licencja
@@ -681,18 +650,16 @@ Licencja
 ABOUT_WINDOW_TITLE
 O FreeOrion
 
-CREDITS
-Podziękowania
-
 VISION
 Wizja
 
 FREEORION_VISION
 FreeOrion jest grą o otwartym kodzie źródłowym bazującą na grze Master of Orion. Jest to turowa gra strategiczna zbudowana w oparciu o klasyczny model '4X' zawierająca elementy rozwoju narodów podobne do znanych z gry Europa Universalis 2 oraz złożony mechanizm walki taktycznej. Przy modułowości projektu, model open-source pozwala na duży stopień personalizacji silnika gry i elementów historii przez społeczność. Ekipa FreeOriona ma na celu skonstruowanie żywego, oddychającego wszechświata w myśl modelu wielkiej kampanii.
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_SAVE
 Zapisz grę
@@ -706,13 +673,15 @@ Zrezygnuj
 GAME_MENU_SAVE_FILES
 Pliki zapisanych gier
 
-###########################
-# Save Game Dialog        #
-###########################
 
-###########################
-# Game Options            #
-###########################
+##
+## Save game dialog
+##
+
+
+##
+## Game options
+##
 
 OPTIONS_TITLE
 Opcje
@@ -720,10 +689,12 @@ Opcje
 OPTIONS_MULTIPLAYER
 Mulitplayer
 
-#################
-# Main Map      #
-#################
 
+##
+## Main map window
+##
+
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Kolejka nr %1%
 
@@ -739,284 +710,220 @@ Produkcja
 MAP_BTN_DESIGN
 Projektowanie
 
-#################
-# SidePanel     #
-#################
 
-SIDE_PANEL
-Panel boczny
-
-SP_SYSTEM_PRODUCTION
-Produkcja w systemie
+##
+## Side panel/System information
+##
 
 INDUSTRY_CONSUMPTION
 Koncumpcja produkcji przemysłowej
+
 RESEARCH_CONSUMPTION
 Koncumpcja badań naukowych
+
 TRADE_CONSUMPTION
 Skuteczność handlu
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Wymiana międzysystemowa
 IMPORT_EXPORT_TOOLTIP
 Import / Eksport
+
 RESOURCE_IMPORT
 Importowanie
+
 RESOURCE_EXPORT
 Dostępne do eksportowania
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Panel planety
-PL_ASTEROID_BELT
-Pas asteroidów
-PL_UNINHABITED
-Niezamieszkała
-PL_SIZE
-Rozmiar
+
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Kolonizuj
 
-## Resources Panel ##########
 
-## Specials Panel ##########
+##
+## Side panel/Resources panel
+##
 
-## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (niedokończone)
+##
+## Side panel/Specials panel
+##
 
-%2%'''
 
-## General Tooltips#########
+##
+## Side panel/Buildings panel
+##
+
+
+##
+## General tooltips
+##
 
 TT_CHANGE
 Zmień
 
-#################
-# Fleet Window  #
-#################
 
-# the name of the new fleet icon in the fleet listbox
-
-# the name that is used for fleets the player does not control
-
-# the name that is used for fleets that no player controls
-
-# the name that is used for ships the player does not control
-
-# the name that is used for ships that no player controls
-
-###############
-#  Moderator  #
-###############
-
-###############
-#  Diplomacy  #
-###############
-
-###############
-# TechTreeWnd #
-###############
-
-#######################
-# ProductionInfoPanel #
-#######################
-
-###############
-# ResearchWnd #
-###############
-
-####################
-# BuildSelectorWnd #
-####################
-
-#################
-# ProductionWnd #
-#################
-
-###############
-#  DesignWnd  #
-###############
-
-################
-## Statistics ##
-################
-
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
-
-# types of things that can be shown in encyclopedia
-
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
-
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
-
-# auto-generated location condition description
-
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
+##
+## Fleet window
 ##
 
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
-###########################################
-# Combat Report #
-###########################################
+##
+## Moderator
+##
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
 
-###########################################
-# ARTICLES #
-###########################################
+##
+## Diplomacy
+##
 
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-#
-# Guides
-#
+##
+## TechTreeWnd
+##
 
-####################
-# Combat Messages  #
-####################
 
-####################
-# TurnProgress     #
-####################
+##
+## Production info panel
+##
 
-########################
-# Messages Panel       #
-########################
 
-########################
-# Players List         #
-########################
+##
+## Research window
+##
 
-####################
-## Objects Window ##
-####################
 
-#####################
-## Objects Columns ##
-#####################
+##
+## Build selector window
+##
 
-####################
-## Filters Dialog ##
-####################
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
+##
+## Production window
+##
 
-#Window title####
 
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
+##
+## Design window
+##
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+##
+## Statistics
+##
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+##
+## Encyclopedia
+##
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
+##
+## Combat report
+##
 
-# UniverseObjectTypes
 
-# StarTypes
+##
+## Encyclopedia article categories and short descriptions
+##
 
-# PlanetTypes
 
-# Planet Sizes
+##
+## Encyclopedia articles
+##
 
-# PlanetEnvironments
 
-# FocusTypes
+##
+## Guides
+##
 
-# MeterTypes
 
-# EmpireAffiliationTypes
+##
+## Turn progress
+##
 
-# UnlockableItemTypes
 
-# TechTypes
+##
+## Messages panel
+##
 
-# BuildTypes
 
-# StockpileTypes
+##
+## Players list
+##
 
-# Resource Types
 
-# Ship Slot Types
+##
+## Objects window
+##
 
-# Ship Part Classes
 
-# Visibility levels
+##
+## Objects columns
+##
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
 
-# ValueRef
+##
+## Filters dialog
+##
 
-# this one is intentionally left empty
 
-# six is probably more than will be needed, but just in case ...
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
-# Effects
 
-# SetMeter
+##
+## Victory/defeat
+##
 
-# others
 
-# Object Creation
+##
+## Random beginner hints
+##
 
-# Conditions
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+##
+## Species
+##
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Specials
+##
+
+
+##
+## Enumeration values
+##
+
+
+##
+## FOCS value references, effects & condition descriptions
+##
+
+
+##
+## FOCS condition descriptions
+##
+
+
+##
+## Technology categories
+##
+
+
+##
+## Technology theories
+##
 
 LRN_PHYS_BRAIN_DESC
 Struktury w mózgu i ich funkcje są ściśle określone. Procesy myślenia i pamięci okazują się być natury zarówno elektrochemicznej jak i kwantowej. Zrozumienie tych zjawisk pozwala na zintensyfikowanie pracy mózgu i osiągnięcie nowych granic wyobraźni i twórczości.
@@ -1042,17 +949,20 @@ Mechanika czasu
 LRN_TIME_MECH_DESC
 Czym jest "teraz", "przyszłość", "przeszłość"? Paradoks bliźniąt w szczególnej teorii względności, teorii lub tunele czasoprzestrzenne sugerują wczesną formę "podróży w czasie". Bezpośrednie manipulowanie strumienia czasoprzestrzeni może być w pewnych warunkach wykorzystane i zwielokrotnione dając poczucie manipulacji strumieniem czasu. Co prawda nie można zmieniać przeszłości wszechświata który postrzegamy. Można jednak skrócić wieki lub wydłużyć chwilę na dowolną długość, będąc ograniczonym tylko przez dostęp do surowców, lub naszą cierpliwość ...
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
+##
+## Technology application
+##
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+
+##
+## Technology refinement
+##
+
+
+##
+## Buildings
+##
 
 BLD_OBSERVATORY
 Obserwatorium
@@ -1063,13 +973,15 @@ BLD_OBSERVATORY_DESC
 Dodaje +10 do współczynnika Wykrywanie na wszystkich zaprzyjaźnionych planetach znajdujących się w odległości nie większej niż 200.
 Na planecie, na której wybudowano obserwatorium współczynnik Ukrywanie zmniejsza się o 10.'''
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+##
+## Hull and ship part description templates
+##
+
+
+##
+## Ship parts
+##
 
 SR_ION_CANNON
 Działo jonowe
@@ -1131,70 +1043,60 @@ Krioniczna kapsuła kolonizacyjna.
 CO_SUSPEND_ANIM_POD_DESC
 W trakcie podróży kolonizacyjnej osadnicy utrzymywani są w stanie obniżonego metabolizmu, dzięki czemu nie ma konieczności ich żywienia, a to z kolei zwiększa liczbę osadników przenoszonych przez jeden okręt.
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
+##
+## Ship hulls
+##
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+##
+## Buildings macros
+##
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
+##
+## Tech macros
+##
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
+##
+## Growth macros
+##
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
-### Beginning of AI Aggression Level Capital Name Lists
+##
+## Species picks
+##
 
-### End of Capital Names Lists
 
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+##
+## Accounting labels
+##
 
-### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## Tags
+##
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
 
-### End of AI Diplomacy Message Lists
+##
+## AI strings
+##
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
 
-################
-## Name Lists ##
-################
+##
+## AI diplomacy strings and lists
+##
 
-# TODO: Sort these into their proper locations?
+
+##
+## Hotkey names and descriptions
+##
+
+
+##
+## Name lists
+##
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"

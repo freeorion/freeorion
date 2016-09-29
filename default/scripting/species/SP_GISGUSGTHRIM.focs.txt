@@ -5,13 +5,12 @@ Species
     Native
     CanProduceShips
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
+    tags = [ "ORGANIC" "BAD_INDUSTRY" "GOOD_RESEARCH" "AVERAGE_SUPPLY" "BAD_ATTACKTROOPS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 

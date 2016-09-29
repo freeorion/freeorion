@@ -82,7 +82,7 @@ namespace {
                         >   spawns
                         > -(parse::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
                      )
-                     [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
+                [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
                 ;
 
             start

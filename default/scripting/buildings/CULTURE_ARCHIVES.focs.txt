@@ -6,53 +6,6 @@ BuildingType
     tags = "ANTIQUATED"
     location = Described description = "NOWHERE" condition = Not All
     effectsgroups = [
-/*  // testing priority
-    // Research should see a x2 bonus, then a +5 bonus.
-    // Industry should see a +5 bonus, then a x2 bonus.
-        EffectsGroup
-            scope = Object id = Source.PlanetID
-            accountinglabel = "research_plus_5"
-            effects = SetTargetResearch value = Value + 5
-        EffectsGroup
-            scope = Object id = Source.PlanetID
-            accountinglabel = "research_times_2"
-            priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value * 2
-        EffectsGroup
-            scope = Object id = Source.PlanetID
-            accountinglabel = "industry_plus_5"
-            priority = [[DEFAULT_PRIORITY]]
-            effects = SetTargetIndustry value = Value + 5
-        EffectsGroup
-            scope = Object id = Source.PlanetID
-            accountinglabel = "industry_times_2"
-            priority = [[LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value * 2
-*/
-/*  // testing effects
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            effects = SetEmpireTechProgress
-                name = Source.OwnerTopPriorityEnqueuedTech
-                progress = Value + 10
-
-        EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                (LocalCandidate.Population <= 5)
-            ]
-            effects = SetTargetPopulation value = Value + 100
-
-        EffectsGroup
-            scope = Object id = Source.PlanetID
-            effects = SetTargetConstruction 99
-*/
-
         EffectsGroup          // These bonuses given to anyone
             scope = And [
                 Object id = Source.PlanetID
@@ -78,6 +31,7 @@ BuildingType
                 AddSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
                 GenerateSitRepMessage
                     message = "HEAD_ON_A_SPIKE_MESSAGE"
+                    label = "HEAD_ON_A_SPIKE_MESSAGE_LABEL"
                     icon = "icons/sitrep/empire_eliminated.png"
                     parameters = [
                         tag = "empire" data = Source.ProducedByEmpireID

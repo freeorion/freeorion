@@ -515,8 +515,7 @@ namespace {
 
 std::vector<float> Ship::AllWeaponsDamage(float shield_DR, bool include_fighters) const {
     std::vector<float> retval;
-    if (!this)
-        return retval;
+
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (!design)
         return retval;
@@ -526,8 +525,7 @@ std::vector<float> Ship::AllWeaponsDamage(float shield_DR, bool include_fighters
 
 std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR , bool include_fighters) const {
     std::vector<float> retval;
-    if (!this)
-        return retval;
+
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (!design)
         return retval;

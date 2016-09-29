@@ -20,8 +20,9 @@ public:
 
     /** \name Accessors */ //@{
     bool            LoadGameSelected() const;
+    virtual GG::Pt  MinUsableSize() const;
     //@}
-    
+
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render();

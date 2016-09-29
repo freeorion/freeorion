@@ -27,6 +27,7 @@ BuildingType
                 SetPopulation value = 1
                 GenerateSitRepMessage
                     message = "EFFECT_ART_PLANET"
+                    label = "EFFECT_ART_PLANET_LABEL"
                     icon = "icons/species/robotic-01.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner

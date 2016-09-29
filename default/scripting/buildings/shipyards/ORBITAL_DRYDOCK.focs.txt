@@ -1,3 +1,11 @@
+// EffectsGroups in this definition are commented with a keyword for reference:
+// If using the stackinggroup SHIP_REPAIR, note the priority of ZERO-POP
+// ZERO-POP  :  Prevents any later priority repairs or other sitreps when
+//                planet has no population (outpost).
+// COMPLETE  :  Split from partial only for a different sitrep.
+// PARTIAL   :  Partial repair of a ship, amount of the actual repair depends on
+//                planet happiness and the ship's max structure.
+// FALLBACK  :  No repair due to planet happiness
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
     description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
@@ -15,7 +23,36 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-        // Normal repair, completely restored
+        // ZERO-POP : With no pop, no repair or sitrep messages
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy empire = Source.Owner
+                Structure high = LocalCandidate.MaxStructure - 0.001
+            ]
+            activation = And [
+                Source
+                ContainedBy And [
+                    Planet
+                    Population high = 0
+                ]
+            ]
+            stackinggroup = "SHIP_REPAIR"
+            priority = 75
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_DRYDOCK_SHIP_REPAIR_NOPOP"
+                    label = "SITREP_SHIP_REPAIR_DOCK_NOPOP"
+                    icon = "icons/sitrep/ship-repair.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "building" data = Source.ID
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
+        // COMPLETE : Normal repair, completely restored
         EffectsGroup
             scope = And [
                 Ship
@@ -29,12 +66,12 @@ BuildingType
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 1
             stackinggroup = "SHIP_REPAIR"
-            priority = [[VERY_EARLY_PRIORITY]]
+            priority = 80  // not macroed to prevent unwanted changes
             effects = [
                 SetStructure value = Target.MaxStructure
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_COMPLETE"
                     icon = "icons/sitrep/ship-repair-complete.png"
                     parameters = [
                         tag = "ship" data = Target.ID
@@ -43,7 +80,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-        // Normal repair
+        // PARTIAL : Normal repair
         EffectsGroup
             scope = And [
                 Ship
@@ -56,12 +93,12 @@ BuildingType
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 1
             stackinggroup = "SHIP_REPAIR"
-            priority = [[VERY_EARLY_PRIORITY]]
+            priority = 80  // not macroed to prevent unwanted changes
             effects = [
                 SetStructure value = Value + [[ORB_DRYDOCK_REPAIR_VAL(Target.MaxStructure)]]
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_PARTIAL"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_PARTIAL"
                     icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID
@@ -70,7 +107,7 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-        // No repair
+        // FALLBACK : No repair
         EffectsGroup
             scope = And [
                 Ship
@@ -82,11 +119,11 @@ BuildingType
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 1
             stackinggroup = "SHIP_REPAIR"
-            priority = [[VERY_LATE_PRIORITY]]
+            priority = 120  // not macroed to prevent unwanted changes
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR_NONE"
-                    label = "SITREP_SHIP_REPAIR_DOCK"
+                    label = "SITREP_SHIP_REPAIR_DOCK_NONE"
                     icon = "icons/sitrep/ship-repair.png"
                     parameters = [
                         tag = "ship" data = Target.ID

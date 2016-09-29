@@ -4,13 +4,12 @@ Species
     gameplay_description = "SP_VOLP_GAMEPLAY_DESC"
     Native
 
-    tags = [ "LITHIC" "AI_TAG_GOOD_POPULATION" "AI_TAG_ULTIMATE_SUPPLY" ]
+    tags = [ "LITHIC" "GOOD_POPULATION" "ULTIMATE_SUPPLY" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 

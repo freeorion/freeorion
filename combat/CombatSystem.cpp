@@ -261,7 +261,8 @@ void CombatInfo::InitializeObjectVisibility()
             continue;
         empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
         empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(empire_id, system->ID());
-        for (std::set< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); obj_it++) {
+        for (std::set< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); ++obj_it)
+        {
             Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(empire_id, *obj_it);
             if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
                 empire_object_visibility[empire_id][*obj_it] = obj_vis;
@@ -815,28 +816,6 @@ namespace {
             return false;
         }
     };
-
-    // Populate lists of things that can attack and be attacked. List attackers also by empire.
-    void GetAttackersAndTargets(const CombatInfo& combat_info, std::set<int>& valid_target_object_ids,
-                                std::set<int>& valid_attacker_object_ids,
-                                std::map<int, EmpireCombatInfo>& empire_infos)
-    {
-        for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
-             it != combat_info.objects.const_end(); ++it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *it;
-            //DebugLogger() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
-            if (ObjectCanAttack(obj)) {
-                //DebugLogger() << "... can attack";
-                valid_attacker_object_ids.insert(it->ID());
-                empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
-            }
-            if (ObjectTypeCanBeAttacked(obj)) {
-                //DebugLogger() << "... can be attacked";
-                valid_target_object_ids.insert(it->ID());
-            }
-        }
-    }
 
     // Calculate monster detection strength in system
     float GetMonsterDetection(const CombatInfo& combat_info) {
@@ -1565,10 +1544,10 @@ namespace {
             }
 
         } else if (attack_planet) {     // treat planet defenses as direct fire weapon
-            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "DEF_DEFENSE", attack_planet->CurrentMeterValue(METER_DEFENSE)));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"), attack_planet->CurrentMeterValue(METER_DEFENSE)));
 
         } else if (attack_fighter) {    // treat fighter damage as direct fire weapon
-            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "FT_WEAPON_1", attack_fighter->Damage()));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, UserStringNop("FT_WEAPON_1"), attack_fighter->Damage()));
         }
         return weapons;
     }

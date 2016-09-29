@@ -31,17 +31,6 @@ namespace {
     bool PlaySounds()                   { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
     void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover")); }
 
-    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
-        static std::vector<boost::shared_ptr<GG::Texture> > normal_textures =
-            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection", "system_selection", true);
-        return normal_textures;
-    }
-    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTinyTextures() {
-        static std::vector<boost::shared_ptr<GG::Texture> > tiny_textures =
-            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection_tiny", "system_selection_tiny", false);
-        return tiny_textures;
-    }
-
     // Wrap content int an rgba tag with color color. Opacity ignored.
     std::string ColorTag(const std::string& content, GG::Clr color){
         boost::format templ("<rgba %d %d %d 255>%s</rgba>");
@@ -178,9 +167,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
                     continue;
 
-                std::list<std::string> shipyards_list;
-                UserStringList("FUNCTIONAL_SHIPYARD_BUILDING_LIST", shipyards_list);
-                if (std::find(shipyards_list.begin(), shipyards_list.end(), building->BuildingTypeName()) != shipyards_list.end()) {
+                if (building->HasTag(TAG_SHIPYARD)) {
                     has_shipyard = true;
                     break;
                 }
@@ -696,8 +683,8 @@ void SystemIcon::HideName() {
 
 void SystemIcon::PositionSystemName() {
     if (m_colored_name) {
-        GG::X name_left = ( Width()  - m_colored_name->Width()          )/2;
-        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()) )/2;
+        GG::X name_left = ( Width()  - m_colored_name->Width()           )/2;
+        GG::Y name_top =  ( Height() + GG::Y(EnclosingCircleDiameter()*2))/2;
         m_colored_name->MoveTo(GG::Pt(name_left, name_top));
     }
 }

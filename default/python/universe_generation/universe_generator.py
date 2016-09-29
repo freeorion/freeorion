@@ -16,6 +16,7 @@ from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import statistics
 
+
 class PyGalaxySetupData:
     """
     Class used to store and manage a copy of the galaxy setup data provided by the FreeOrion interface.
@@ -46,7 +47,6 @@ class PyGalaxySetupData:
         print "...Monster Frequency:", self.monster_frequency
         print "...Native Frequency:", self.native_frequency
         print "...Max AI Aggression:", self.max_ai_aggression
-
 
 
 def error_report():

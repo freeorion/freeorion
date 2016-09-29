@@ -31,7 +31,7 @@ def recalc_centers(ctrs, points, assignments):
         if num_here == 0:
             pass  # leave ctr unchanged if no points assigned to it last round
         else:
-            ctrs[index_ctr] = [float(sum(tally[0]))/num_here, float(sum(tally[1]))/num_here]
+            ctrs[index_ctr] = [float(sum(tally[0])) / num_here, float(sum(tally[1])) / num_here]
 
 
 # used in clustering
@@ -61,15 +61,15 @@ def cluster_stars(positions, num_star_groups):
     clusters = [[], []]
     clusters[0] = assign_clusters(all_coords, centers)  # assign clusters based on init centers
     old_c = 0
-    num_convergence_loops = 1 # if full convergence is deemed important then use a higher humber here
+    num_convergence_loops = 1  # if full convergence is deemed important then use a higher humber here
     for loop in range(num_convergence_loops):  # main loop to try getting some convergence of center assignments
         recalc_centers(centers, all_coords, clusters[old_c])  # get new centers
-        clusters[1-old_c] = assign_clusters(all_coords, centers)  # assign clusters based on new centers
+        clusters[1 - old_c] = assign_clusters(all_coords, centers)  # assign clusters based on new centers
         if clusters[0] == clusters[1]:
             break  # stop iterating if no change in cluster assignments
-        old_c = 1-old_c
+        old_c = 1 - old_c
     else:
-        if loop > 0: #if here at loop 0, then didn't try for convergence
+        if loop > 0:  # if here at loop 0, then didn't try for convergence
             print "falling through system clustering iteration loop without convergence"
     return clusters[1 - old_c]
 
@@ -146,19 +146,19 @@ def name_star_systems(system_list):
 
     # ensure at least a portion of galaxy gets individual starnames
     num_systems = len(system_list)
-    target_indiv_ratio = [options.TARGET_INDIV_RATIO_SMALL, options.TARGET_INDIV_RATIO_LARGE]\
-                         [num_systems >= options.NAMING_LARGE_GALAXY_SIZE]
+    choice = num_systems >= options.NAMING_LARGE_GALAXY_SIZE
+    target_indiv_ratio = [options.TARGET_INDIV_RATIO_SMALL, options.TARGET_INDIV_RATIO_LARGE][choice]
     # TODO improve the following calc to be more likely to hit target_indiv_ratio if more or less than
     # 50% potential_group_names used for groups
     num_individual_stars = int(max(min(num_systems * target_indiv_ratio,
-                                       len(individual_names)+int(0.5 * len(potential_group_names))),
+                                       len(individual_names) + int(0.5 * len(potential_group_names))),
                                    num_systems - 0.8 * len(stargroup_modifiers) *
-                                   (len(group_names)+int(0.5 * len(potential_group_names)))))
+                                   (len(group_names) + int(0.5 * len(potential_group_names)))))
     star_group_size = 1 + int((num_systems - num_individual_stars) /
-                              (max(1, len(group_names)+int(0.5 * len(potential_group_names)))))
+                              (max(1, len(group_names) + int(0.5 * len(potential_group_names)))))
     # make group size a bit bigger than min necessary, at least a trio
     star_group_size = max(3, star_group_size)
-    num_star_groups = 1 + int(num_systems/star_group_size)  # initial value
+    num_star_groups = 1 + int(num_systems / star_group_size)  # initial value
 
     # first cluster all systems, then remove some to be individually named (otherwise groups can have too many
     # individually named systems in their middle).  First remove any that are too small (only 1 or 2 systems).
@@ -175,7 +175,7 @@ def name_star_systems(system_list):
 
     # remove groups with only one non-deep-system
     for groupindex, group_list in star_groups.items():
-        max_can_transfer = len(potential_group_names)-len(star_groups)+len(individual_names)-len(indiv_systems)
+        max_can_transfer = len(potential_group_names) - len(star_groups) + len(individual_names) - len(indiv_systems)
         if max_can_transfer <= 0:
             break
         elif max_can_transfer <= len(group_list):
@@ -192,7 +192,7 @@ def name_star_systems(system_list):
     group_sizes.sort()
     while len(indiv_systems) < num_individual_stars and len(group_sizes) > 0:
         groupsize, groupindex = group_sizes.pop()
-        max_can_transfer = len(potential_group_names)-len(star_groups)+len(individual_names)-len(indiv_systems)
+        max_can_transfer = len(potential_group_names) - len(star_groups) + len(individual_names) - len(indiv_systems)
         if (max_can_transfer <= 0) or (groupsize > 2):
             break
         if max_can_transfer <= groupsize:
@@ -204,7 +204,7 @@ def name_star_systems(system_list):
     # remove largest (likely most compact) groups
     while len(indiv_systems) < num_individual_stars and len(group_sizes) > 0:
         groupsize, groupindex = group_sizes.pop(-1)
-        max_can_transfer = len(potential_group_names)-len(star_groups)+len(individual_names)-len(indiv_systems)
+        max_can_transfer = len(potential_group_names) - len(star_groups) + len(individual_names) - len(indiv_systems)
         if max_can_transfer <= 0:
             break
         if max_can_transfer <= groupsize:
@@ -218,17 +218,17 @@ def name_star_systems(system_list):
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names)/2, num_individual_stars+1-len(individual_names)),
+    num_for_indiv = min(max(len(potential_group_names) / 2, num_individual_stars + 1 - len(individual_names)),
                         len(potential_group_names))
     individual_names.extend(potential_group_names[:num_for_indiv])
     group_names.extend(potential_group_names[num_for_indiv:])
 
-    #print "sampling for %d indiv names from list of %d total indiv names"%(num_individual_stars, len(individual_names))
+    # print "sampling for %d indiv names from list of %d total indiv names"%(num_individual_stars, len(individual_names))
     indiv_name_sample = random.sample(individual_names, num_individual_stars)
-    #indiv_name_assignments = zip([(pos.x, pos.y) for pos in position_list[:num_individual_stars]], indiv_name_sample)
+    # indiv_name_assignments = zip([(pos.x, pos.y) for pos in position_list[:num_individual_stars]], indiv_name_sample)
     indiv_name_assignments = zip(indiv_systems, indiv_name_sample)
     star_name_map.update(indiv_name_assignments)
-    #print "sampling for %d group names from list of %d total group names"%(num_star_groups, len(group_names))
+    # print "sampling for %d group names from list of %d total group names"%(num_star_groups, len(group_names))
     if len(group_names) < num_star_groups:
         group_names.extend([names.random_name(6) for _ in range(num_star_groups - len(group_names))])
     group_name_sample = random.sample(group_names, num_star_groups)

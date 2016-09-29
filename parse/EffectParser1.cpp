@@ -67,7 +67,7 @@ namespace {
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
                 >    parse::label(Message_token)    >  tok.string [ _a = _1 ]
-                >  -(parse::label(Label_token)      >  tok.string [ _e = _1 ] )
+                >    parse::label(Label_token)      >  tok.string [ _e = _1 ]
                 >   (
                        tok.NoStringtableLookup_ [ _f = false ]
                      | eps [ _f = true ]

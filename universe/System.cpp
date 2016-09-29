@@ -110,7 +110,9 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id);
 
         // only copy orbit info for visible planets
+        size_t orbits_size = m_orbits.size();
         m_orbits.clear();
+        m_orbits.assign(orbits_size, INVALID_OBJECT_ID);
         for (int o = 0; o < static_cast<int>(copied_system->m_orbits.size()); ++o) {
             int planet_id = copied_system->m_orbits[o];
             if (m_objects.find(planet_id) != m_objects.end())
@@ -192,8 +194,24 @@ std::string System::Dump() const {
     os << UniverseObject::Dump();
     os << " star type: " << UserString(EnumToString(m_star))
        << "  last combat on turn: " << m_last_turn_battle_here
-       << "  starlanes: ";
+       << "  total orbits: " << m_orbits.size();
 
+    if (m_orbits.size() > 0) {
+        os << "  objects per orbit: ";
+
+        int orbit_index = 0;
+        for (std::vector<int>::const_iterator it = m_orbits.begin();
+            it != m_orbits.end();)
+        {
+            os << "[" << orbit_index << "]" << *it;
+            ++it;
+            if (it != m_orbits.end())
+                os << ", ";
+            ++orbit_index;
+        }
+    }
+
+    os << "  starlanes: ";
     for (std::map<int, bool>::const_iterator it = m_starlanes_wormholes.begin();
          it != m_starlanes_wormholes.end();)
     {
@@ -331,7 +349,7 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
         if (orbit == -1) {
             bool already_in_orbit = false;
             for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o) {
-                if (m_orbits[o] = obj->ID()) {
+                if (m_orbits[o] == obj->ID()) {
                     already_in_orbit = true;
                     break;
                 }
@@ -362,8 +380,21 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
                 }
                 // put object into desired orbit
                 m_orbits[orbit] = obj->ID();
+            } else {  // Log as an error, if no current orbit attempt to assign to a free orbit
+                ErrorLogger() << "System::Insert() Planet " << obj->ID()
+                              << " requested orbit " << orbit
+                              << " in system " << ID()
+                              << ", which is occupied by" << m_orbits[orbit];
+                const std::set<int>& free_orbits = FreeOrbits();
+                if (free_orbits.size() > 0 && OrbitOfPlanet(obj->ID()) == -1) {
+                    int new_orbit = *(free_orbits.begin());
+                    m_orbits[new_orbit] = obj->ID();
+                    DebugLogger() << "System::Insert() Planet " << obj->ID()
+                                  << " assigned to orbit " << new_orbit;
+                }
             }
         }
+        //TODO If planet not assigned to an orbit, reject insertion of planet, provide feedback to caller
     }
     // if not a planet, don't need to put into an orbit
 

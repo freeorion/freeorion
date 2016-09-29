@@ -6,6 +6,7 @@
 class Fleet;
 template <class T> class TemporaryPtr;
 class RotatingGraphic;
+class ScanlineControl;
 
 /** represents one or more fleets of an empire at a location on the map. */
 class FleetButton : public GG::Button {
@@ -53,6 +54,7 @@ private:
     std::vector<int>                m_fleets;   ///< the fleets represented by this button
     std::vector<RotatingGraphic*>   m_icons;
     RotatingGraphic*                m_selection_indicator;
+    ScanlineControl*                m_scanline_control;
     bool                            m_selected; ///< should this button render itself specially to show that it is selected?
 };
 

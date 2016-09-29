@@ -26,6 +26,7 @@ Hull
                 SetFuel value = Value - 99
                 GenerateSitRepMessage
                     message = "EFFECT_DAMP_CLOUD"
+                    label = "EFFECT_DAMP_CLOUD_LABEL"
                     icon = "icons/monsters/dampening-cloud.png"
                     parameters = [
                         tag = "ship" data = Target.ID

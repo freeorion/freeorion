@@ -133,6 +133,7 @@ public:
     virtual float               NextTurnCurrentMeterValue(MeterType type) const;
 
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
+    std::string                 CardinalSuffix() const;     ///< returns a roman number representing this planets orbit in relation to other planets
     //@}
 
     /** \name Mutators */ //@{
@@ -183,7 +184,14 @@ protected:
 
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
+
+#if BOOST_VERSION == 106100
+public:
+#endif
     ~Planet() {}
+#if BOOST_VERSION == 106100
+protected:
+#endif
 
     virtual Planet*         Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
     //@}

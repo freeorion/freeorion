@@ -861,22 +861,33 @@ void ChangeFocusOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 ResearchQueueOrder::ResearchQueueOrder() :
     Order(),
-    m_position(-1),
-    m_remove(false)
+    m_position(INVALID_INDEX),
+    m_remove(false),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) :
     Order(empire),
     m_tech_name(tech_name),
-    m_position(-1),
-    m_remove(true)
+    m_position(INVALID_INDEX),
+    m_remove(true),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) :
     Order(empire),
     m_tech_name(tech_name),
     m_position(position),
-    m_remove(false)
+    m_remove(false),
+    m_pause(INVALID_PAUSE_RESUME)
+{}
+
+ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy) :
+    Order(empire),
+    m_tech_name(tech_name),
+    m_position(INVALID_INDEX),
+    m_remove(false),
+    m_pause(pause ? PAUSE : RESUME)
 {}
 
 void ResearchQueueOrder::ExecuteImpl() const {
@@ -887,9 +898,18 @@ void ResearchQueueOrder::ExecuteImpl() const {
     if (m_remove) {
         DebugLogger() << "ResearchQueueOrder::ExecuteImpl: removing from queue tech: " << m_tech_name;
         empire->RemoveTechFromQueue(m_tech_name);
-    }
-    else
+    } else if (m_pause == PAUSE) {
+        DebugLogger() << "ResearchQueueOrder::ExecuteImpl: pausing tech: " << m_tech_name;
+        empire->PauseResearch(m_tech_name);
+    } else if (m_pause == RESUME) {
+        DebugLogger() << "ResearchQueueOrder::ExecuteImpl: unpausing tech: " << m_tech_name;
+        empire->ResumeResearch(m_tech_name);
+    } else if (m_position != INVALID_INDEX) {
+        DebugLogger() << "ResearchQueueOrder::ExecuteImpl: adding tech to queue: " << m_tech_name;
         empire->PlaceTechInQueue(m_tech_name, m_position);
+    } else {
+        ErrorLogger() << "ResearchQueueOrder::ExecuteImpl: Malformed";
+    }
 }
 
 ////////////////////////////////////////////////
@@ -904,10 +924,12 @@ ProductionQueueOrder::ProductionQueueOrder() :
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID)
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
-ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos) :
+ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item,
+                                           int number, int location, int pos) :
     Order(empire),
     m_item(item),
     m_number(number),
@@ -916,7 +938,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::Pr
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
     m_new_index(pos),
-    m_rally_point_id(INVALID_OBJECT_ID)
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize) :
@@ -928,7 +951,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quanti
     m_new_quantity(new_quantity),
     m_new_blocksize(new_blocksize),
     m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID)
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy) :
@@ -940,7 +964,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quanti
     m_new_quantity(new_quantity),
     m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID)
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int rally_point_id, bool dummy1, bool dummy2) :
@@ -952,7 +977,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int rally_poin
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX),
-    m_rally_point_id(rally_point_id)
+    m_rally_point_id(rally_point_id),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index) :
@@ -964,7 +990,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index)
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
     m_new_index(new_index),
-    m_rally_point_id(INVALID_OBJECT_ID)
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(INVALID_PAUSE_RESUME)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
@@ -976,7 +1003,21 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID)
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(INVALID_PAUSE_RESUME)
+{}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool pause, float dummy) :
+    Order(empire),
+    m_item(),
+    m_number(0),
+    m_location(INVALID_OBJECT_ID),
+    m_index(index),
+    m_new_quantity(INVALID_QUANTITY),
+    m_new_blocksize(INVALID_QUANTITY),
+    m_new_index(INVALID_INDEX),
+    m_rally_point_id(INVALID_OBJECT_ID),
+    m_pause(pause ? PAUSE : RESUME)
 {}
 
 void ProductionQueueOrder::ExecuteImpl() const {
@@ -985,28 +1026,39 @@ void ProductionQueueOrder::ExecuteImpl() const {
     Empire* empire = GetEmpire(EmpireID());
     try {
         if (m_item.build_type == BT_BUILDING || m_item.build_type == BT_SHIP) {
-            empire->PlaceBuildInQueue(m_item, m_number, m_location, m_new_index);
+            empire->PlaceProductionOnQueue(m_item, m_number, m_location, m_new_index);
 
         } else if (m_new_blocksize != INVALID_QUANTITY) {
             DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
-            empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
+            empire->SetProductionQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
 
         } else if (m_new_quantity != INVALID_QUANTITY) {
-            empire->SetBuildQuantity(m_index, m_new_quantity);
+            DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity;
+            empire->SetProductionQuantity(m_index, m_new_quantity);
 
         } else if (m_new_index != INVALID_INDEX) {
-            empire->MoveBuildWithinQueue(m_index, m_new_index);
+            DebugLogger() << "ProductionQueueOrder moving item in queue";
+            empire->MoveProductionWithinQueue(m_index, m_new_index);
 
         } else if (m_rally_point_id != INVALID_OBJECT_ID) {
             DebugLogger() << "ProductionQueueOrder setting rally point to id: " << m_rally_point_id;
-            empire->SetBuildRallyPoint(m_index, m_rally_point_id);
+            empire->SetProductionRallyPoint(m_index, m_rally_point_id);
 
         } else if (m_index != INVALID_INDEX) {
-            DebugLogger() << "ProductionQueueOrder removing build from index " << m_index;
-            empire->RemoveBuildFromQueue(m_index);
+            if (m_pause == PAUSE) {
+                DebugLogger() << "ProductionQueueOrder: pausing production";
+                empire->PauseProduction(m_index);
 
+            } else if (m_pause == RESUME) {
+                DebugLogger() << "ProductionQueueOrder: unpausing production";
+                empire->ResumeProduction(m_index);
+
+            } else /*if (m_pause == INVALID_PAUSE_RESUME)*/ {
+                DebugLogger() << "ProductionQueueOrder: removing item from index " << m_index;
+                empire->RemoveProductionFromQueue(m_index);
+            }
         } else {
-            ErrorLogger() << "Malformed ProductionQueueOrder.";
+            ErrorLogger() << "ProductionQueueOrder: Malformed";
         }
     } catch (const std::exception& e) {
         ErrorLogger() << "Build order execution threw exception: " << e.what();

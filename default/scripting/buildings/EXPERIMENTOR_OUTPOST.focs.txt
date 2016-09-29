@@ -95,6 +95,7 @@ BuildingType
                 CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
@@ -116,6 +117,7 @@ BuildingType
                 CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
@@ -138,6 +140,7 @@ BuildingType
                 CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
@@ -159,6 +162,7 @@ BuildingType
                 CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
@@ -181,6 +185,7 @@ BuildingType
                 CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
@@ -202,6 +207,7 @@ BuildingType
                 CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
@@ -222,6 +228,7 @@ BuildingType
                 CreateShip designname = "SM_COSMIC_DRAGON" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
+                    label = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
                         tag = "system" data = Source.SystemID

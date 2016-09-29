@@ -1205,6 +1205,16 @@ namespace {
 
         return planet->Colonize(empire_id, species, population);
     }
+
+    object PlanetCardinalSuffix(int planet_id) {
+        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        if (!planet) {
+            ErrorLogger() << "PlanetCardinalSuffix: couldn't get planet with ID:" << planet_id;
+            return object(UserString("ERROR"));
+        }
+
+        return object(planet->CardinalSuffix());
+    }
 }
 
 namespace FreeOrionPython {
@@ -1220,11 +1230,11 @@ namespace FreeOrionPython {
             .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
         class_<MonsterFleetPlanWrapper>("MonsterFleetPlan", init<const std::string&, const list&, double, int>())
-            .def("name",            &MonsterFleetPlanWrapper::Name)
-            .def("ship_designs",    &MonsterFleetPlanWrapper::ShipDesigns)
-            .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
-            .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
-            .def("location",        &MonsterFleetPlanWrapper::Location);
+            .def("name",                &MonsterFleetPlanWrapper::Name)
+            .def("ship_designs",        &MonsterFleetPlanWrapper::ShipDesigns)
+            .def("spawn_rate",          &MonsterFleetPlanWrapper::SpawnRate)
+            .def("spawn_limit",         &MonsterFleetPlanWrapper::SpawnLimit)
+            .def("location",            &MonsterFleetPlanWrapper::Location);
 
         def("get_universe",                         GetUniverse,                    return_value_policy<reference_existing_object>());
         def("get_all_empires",                      GetAllEmpires);
@@ -1321,5 +1331,6 @@ namespace FreeOrionPython {
         def("planet_available_foci",                PlanetAvailableFoci);
         def("planet_make_outpost",                  PlanetMakeOutpost);
         def("planet_make_colony",                   PlanetMakeColony);
+        def("planet_cardinal_suffix",               PlanetCardinalSuffix);
     }
 }

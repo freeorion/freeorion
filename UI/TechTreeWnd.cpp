@@ -280,7 +280,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
         GG::Clr icon_clr = ClientUI::CategoryColor(cats[i]);
         boost::shared_ptr<GG::SubTexture> icon = boost::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(cats[i]));
         m_cat_buttons[cats[i]] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                     boost::make_shared<CUIToggleRepresenter>(icon, icon_clr));
+                                                     boost::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
         m_cat_buttons[cats[i]]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString(cats[i]), ""));
         m_cat_buttons[cats[i]]->SetBrowseModeTime(tooltip_delay);
         AttachChild(m_cat_buttons[cats[i]]);
@@ -289,7 +289,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
     // and one for "ALL"
     m_all_cat_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                           boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
+                                           boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
     m_all_cat_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("ALL"), ""));
     m_all_cat_button->SetBrowseModeTime(tooltip_delay);
     m_all_cat_button->SetCheck(true);
@@ -297,28 +297,28 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
 
     // create a button for each tech status
     m_status_buttons[TS_UNRESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                              boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
+                                                              boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(false);
     AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                                 boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
+                                                                 boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(true);
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TS_RESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                            boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
+                                                            boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_RESEARCHABLE]->SetCheck(true);
     AttachChild(m_status_buttons[TS_RESEARCHABLE]);
 
     m_status_buttons[TS_COMPLETE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                        boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
+                                                        boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
     m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_COMPLETE]->SetCheck(true);
@@ -326,7 +326,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
 
     // create button to switch between tree and list views
     m_view_type_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                             boost::make_shared<CUIToggleRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
+                                             boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
                                                                                       boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
     m_view_type_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
     m_view_type_button->SetBrowseModeTime(tooltip_delay);
@@ -604,6 +604,9 @@ public:
     virtual         ~TechPanel();
 
     virtual bool    InWindow(const GG::Pt& pt) const;
+
+    /** Update layout and format only if required.*/
+    virtual void    PreRender();
     virtual void    Render();
     virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
     { ForwardEventToParent(); }
@@ -707,6 +710,56 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
     return GG::Pt(GG::X0, GG::Y0) <= p && p < GG::Pt(TechPanelWidth(), TechPanelHeight());
 }
 
+void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
+    GG::Wnd::PreRender();
+
+    const int PAD = 8;
+    GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
+    GG::Y text_top(0);
+    GG::X text_width(TechPanelWidth() - text_left);
+    GG::Y text_height(TechPanelHeight()/2);
+
+    GG::Pt ul = GG::Pt(text_left, text_top);
+    GG::Pt lr = ul + GG::Pt(text_width + PAD, TechPanelHeight());
+
+    // size of tech name text
+    int font_pts = static_cast<int>(FontSize() * m_layout_panel->Scale() + 0.5);
+
+    if (font_pts > 6) {
+        if (font_pts < 10) {
+            m_name_label->SetText(m_name_text);
+            m_cost_and_duration_label->SetText(m_cost_and_duration_text);
+        } else {
+            m_name_label->SetText("<s>" + m_name_text + "</s>");
+            m_cost_and_duration_label->SetText("<s>" + m_cost_and_duration_text + "</s>");
+        }
+
+        GG::Pt text_ul(text_left + PAD/2, text_top);
+        GG::Pt text_size(text_width + PAD, m_unlock_icons.empty() ? text_height*2 : text_height - PAD/2);
+        m_name_label->SizeMove(text_ul, text_ul + text_size);
+
+        // show cost and duration for unresearched techs
+        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
+            if (empire->TechResearched(m_tech_name))
+                m_cost_and_duration_label->Hide();
+            else {
+                GG::Pt text_ll(text_left + PAD / 2, TechPanelHeight() - font_pts - PAD);
+                text_size = GG::Pt(text_width + PAD / 2, GG::Y(font_pts));
+                m_cost_and_duration_label->SizeMove(text_ll, text_ll + text_size);
+                m_cost_and_duration_label->Show();
+            }
+
+        // ETA background and text
+        if (m_eta != -1 && font_pts > 10) {
+            GG::Pt panel_size = lr - ul;
+            GG::Pt eta_ul = ul + GG::Pt(panel_size.x * 3 / 4, panel_size.y * 3 / 4) - GG::Pt(GG::X(2), GG::Y(2));
+            GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x / 2, panel_size.y / 2) + GG::Pt(GG::X(2), GG::Y(2));
+
+            m_eta_label->SizeMove(eta_ul, eta_lr);
+        }
+    }
+}
+
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     const int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
@@ -761,29 +814,9 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         // render tech panel text; for small font sizes, remove shadow
         glEnable(GL_TEXTURE_2D);
 
-        if (font_pts < 10) {
-            m_name_label->SetText(m_name_text);
-            m_cost_and_duration_label->SetText(m_cost_and_duration_text);
-        }
-        else {
-            m_name_label->SetText("<s>" + m_name_text + "</s>");
-            m_cost_and_duration_label->SetText("<s>" + m_cost_and_duration_text + "</s>");
-        }
-
         GG::Pt text_ul(text_left + PAD/2, text_top);
         GG::Pt text_size(text_width + PAD, m_unlock_icons.empty() ? text_height*2 : text_height - PAD/2);
         m_name_label->SizeMove(text_ul, text_ul + text_size);
-
-        // show cost and duration for unresearched techs
-        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
-            if (empire->TechResearched(m_tech_name))
-                m_cost_and_duration_label->Hide();
-            else {
-                GG::Pt text_ll(text_left + PAD / 2, TechPanelHeight() - font_pts - PAD);
-                text_size = GG::Pt(text_width + PAD / 2, GG::Y(font_pts));
-                m_cost_and_duration_label->SizeMove(text_ll, text_ll + text_size);
-                m_cost_and_duration_label->Show();
-            }
 
         /// Need to render children too
         GG::GUI::GetGUI()->RenderWindow(m_name_label);
@@ -810,8 +843,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
             CircleArc(eta_ul, eta_lr, 0, 2 * PI, true);
 
             glEnable(GL_TEXTURE_2D);
-
-            m_eta_label->SizeMove(eta_ul, eta_lr);
 
             /// Need to render text too
             GG::GUI::GetGUI()->RenderWindow(m_eta_label);
@@ -976,12 +1007,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
                     } else if (const Effect::SetShipPartMeter* set_ship_part_meter_effect = dynamic_cast<const Effect::SetShipPartMeter*>(*effect_it)) {
                         const ValueRef::ValueRefBase<std::string>* part_name = set_ship_part_meter_effect->GetPartName();
-                        if (part_name && ValueRef::ConstantExpr(part_name))
+                        if (part_name && part_name->ConstantExpr())
                             parts_whose_meters_are_affected.insert(part_name->Eval());
 
                     } else if (const Effect::AddSpecial* add_special_effect = dynamic_cast<const Effect::AddSpecial*>(*effect_it)) {
                         const ValueRef::ValueRefBase<std::string>* special_name = add_special_effect->GetSpecialName();
-                        if (special_name && ValueRef::ConstantExpr(special_name))
+                        if (special_name && special_name->ConstantExpr())
                             specials_affected.insert(special_name->Eval());
                     }
                 }
@@ -1037,6 +1068,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
+
+    RequirePreRender();
 }
 
 
@@ -1210,6 +1243,9 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
         scale = MAX_SCALE;
     m_scale = scale;
     GetOptionsDB().Set<double>("UI.tech-layout-zoom-scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
+
+    for (std::map<std::string, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it)
+        it->second->RequirePreRender();
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category) {
@@ -1639,7 +1675,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 
 void TechTreeWnd::TechListBox::TechRow::Update() {
     const Tech* this_row_tech = ::GetTech(m_tech);
-    if (!this || !this_row_tech || this->size() < 4)
+    if (!this_row_tech || this->size() < 4)
         return;
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));

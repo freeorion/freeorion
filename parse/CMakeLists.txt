@@ -1,12 +1,4 @@
-cmake_minimum_required(VERSION 2.8.5)
-
 add_definitions(-DNDEBUG -DFREEORION_BUILD_PARSE)
-
-if (NOT BUILD_TESTS)
-    if (CMAKE_COMPILER_IS_GNUCXX)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -O3")
-    endif ()
-endif ()
 
 set (freeorionparse_HEADER
     CommonParams.h
@@ -84,17 +76,12 @@ add_library(freeorionparse
     ${freeorionparse_SOURCE}
 )
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set_property(
-        SOURCE
-        CommonParamsParser.cpp
-        ConditionParser1.cpp
-        EffectParser1.cpp
-        EffectParser2.cpp
-        PROPERTY
-        COMPILE_FLAGS -ftemplate-depth=512
-    )
-endif ()
+target_compile_options(
+    freeorionparse PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTS}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
+    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+)
 
 install(
     TARGETS freeorionparse

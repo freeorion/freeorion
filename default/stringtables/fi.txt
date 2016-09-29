@@ -1,30 +1,32 @@
 Suomi
 
-#This is the Finnish String Table file for FreeOrion
-#Translated by Mikko Maununen (MikkoM)
-#This translation isn`t yet complete!
+# This is the Finnish String Table file for FreeOrion
+#
+# Translators:
+# * Mikko Maununen (MikkoM)
+#
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
+
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
 
 
-#################
-# Common        #
-#################
-
-#Anyone can use these for basic buttons
-
-BROWSE_BTN
-Selaa...
+##
+## Common phrases
+##
 
 CANCEL
 Peruuta
 
 DONE
 Valmis
-
-CLOSE
-Sulje
-
-LOAD
-Lataa
 
 SAVE
 Tallenna
@@ -34,9 +36,6 @@ Avaa
 
 OR
 tai
-
-AND
-ja
 
 YES
 kyllä
@@ -62,29 +61,15 @@ VIRHE
 RESET
 Uudelleen aseta
 
-TURN
-Vuoro
-
-CHAT_WHISPER
-kuiskaa
-
-# used to generate names for new fleets when they are created
+# Name for a newly created general purpose fleet.
+# %1% represents a unique number.
 NEW_FLEET_NAME
 Uusi Laivasto %1%
 
+# Name for a newly created general purpose fleet when no uniqe number could be
+# created.
 NEW_FLEET_NAME_NO_NUMBER
 Uusi Laivasto
-
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
-
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
 
 BOMBER
 Pommittaja
@@ -98,42 +83,50 @@ Terran Imperiumi
 DEFAULT_PLAYER_NAME
 Ihmis_pelaaja
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+
+##
+## Major errors
+##
+
+
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
 SD_SCOUT
 Tiedustelija
+
 SD_SCOUT_DESC
 Pieni ja halpa aseistamaton alus tiedustelua varten.
 
 SD_COLONY_SHIP
 Kolonisaatioalus
+
 SD_COLONY_SHIP_DESC
 Valtava aseistamaton alus, joka kykenee toimittamaan miljoonia kansalaisia uusille planeetoille.
 
-############
-# Monsters #
-############
 
-##########
-# Fields #
-##########
+##
+## Monsters
+##
 
-##############################
-# Predefined Starting Fleets #
-##############################
 
-FN_HOME_FLEET
-Kotilaivasto
+##
+## Fields
+##
+
+
+##
+## Predefined starting fleets
+##
 
 FN_BATTLE_FLEET
 Taistelulaivasto
 
-##########################
-# Status Update Messages #
-##########################
+
+##
+## Status update messages
+##
 
 SERVER_WONT_START
 Palvelinta ei voitu käynnistää.
@@ -144,14 +137,8 @@ Palvelin ei vastaa.
 SERVER_LOST
 Yhteys palvelimeen katkennut.
 
-SERVER_GAME_END
-Palvelin on lähettänyt viestin. Peli ohi. Hei hei.
-
 PLAYER_DISCONNECTED
 Pelaajalla %1% ei ole enää yhteyttä palvelimeen.
-
-UNKNOWN_EMPIRE
-Tuntematon Imperiumi
 
 UNABLE_TO_WRITE_CONFIG_XML
 Config.xml tiedoston kirjoituksessa tapahtui virhe. Asetuksia ei voitu tallentaa.
@@ -165,9 +152,10 @@ Tallennuksessa tapahtui virhe.
 UNABLE_TO_READ_SAVE_FILE
 Tallennusta ladattaessa tapahtui virhe.
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Käyttö: '''
@@ -186,12 +174,6 @@ Aseta taustamusiikki.
 
 OPTIONS_DB_FULLSCREEN
 Aloita peli täydellä ruudulla.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-'''Aikaväli, sekunneissa, jonka kuluttua moninpelin chat-ikkuna katoaa, jos siihen ei lisätä mitään. Arvo 0 merkitsee, että ikkunan ei pitäisi kadota ollenkaan.  '''
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Lähetettyjen viestien määrä, joka tulisi säilyttää chatin editointilaatikon historiassa.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Renderöi kaasumaiset aineet tähtijärjestelmien ympärille antamaan galaksille selkeämmän muodon. Voi hidastaa renderöintiä vanhemmilla tietokoneilla.
@@ -258,9 +240,6 @@ FPS rajoitin päällä tai poissa. FPS-raja asetetaan "Max FPS" valinnalla.
 
 OPTIONS_DB_MAX_FPS
 Asettaa FPS-rajan. Rajoitus otetaan käyttöön "Rajoita FPS" valinnalla.
-
-OPTIONS_DB_UI_SOUND_ENABLED
-Käyttöliittymän äänet päällä tai poissa.
 
 OPTIONS_DB_UI_SOUND_VOLUME
 Äänenvoimakkuus (0-255) jolla käyttöliittymän ääniefektit tulisi toistaa.
@@ -424,15 +403,13 @@ Asettaa musiikin äänenvoimakkuden (0-255).
 OPTIONS_DB_QUICKSTART
 Aloittaa uuden nopean aloituksen pelin sivuuttaen päävalikon.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Valitsee käytetäänkö automaattisesti luotuja tekstejä tekniikoiden, rakennusten ja alusten osia kuvailtaessa.
-
 OPTIONS_DB_LOAD
 Lataa tietyn yksinpeli tallennuksen.
 
-#################
-# File Dialog   #
-#################
+
+##
+## File dialog
+##
 
 FILE_DLG_FILES
 Tiedosto(t):
@@ -440,16 +417,9 @@ Tiedosto(t):
 FILE_DLG_FILE_TYPES
 Tyyppi(t):
 
-FILE_DLG_MALFORMED_FILENAME
-Tiedostonimi ei kelpaa.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% on jo olemassa.
 hyväksytkö sen korvaamisen?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-ei kelpaa tiedostonimeksi.'''
 
 FILE_DLG_FILE_DOES_NOT_EXIST
 '''Tiedostoa "%1%"
@@ -458,9 +428,10 @@ ei ole.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Laite ei ole valmis.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 Uusi
@@ -480,16 +451,13 @@ S:
 COLOR_DLG_VALUE
 AR:
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion Päävalikko
-
-#Button names####
 
 INTRO_BTN_SINGLE_PLAYER
 Yksinpeli
@@ -515,24 +483,16 @@ Tekijät
 INTRO_BTN_EXIT
 Poistu
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Aikakatkaisu yritettäessä yhdistää palvelimeen.
 
-ERR_VERSION_MISMATCH
-'''Ei voida yhdistää palvelimeen, koska pelaaja käyttää eri versioita seuraavista asetuksista ja/tai lähdetiedostoista: '''
 
-########################
-# Server Setup Screen  #
-########################
-
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Yhdistä palvelimeen
-
-#Static labels####
 
 LAN_GAME_LABEL
 Lan peli:
@@ -543,8 +503,6 @@ Internet peli:
 PLAYER_NAME_LABEL
 Pelaajan nimi
 
-#Button names####
-
 HOST_GAME_BN
 Isännöi peli
 
@@ -554,15 +512,13 @@ Liity peliin
 REFRESH_LIST_BN
 Päivitä lista
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Moninpeliasetukset
-
-MPLOBBY_HOST_ABORTED_GAME
-Isännöivä pelaaja on lopettanut tämän pelin.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Imperiumien nimien ja värien tulee olla toisistaan poikkeavia.
@@ -591,18 +547,13 @@ Lataa peli
 START_GAME_BN
 Aloita peli
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Galaksin asetukset
-
-#Strings
-GSETUP_GRAPHICS_FILES
-Grafiikkatiedostot
 
 GSETUP_PLAYER_NAME
 Pelaajan nimi
@@ -619,60 +570,80 @@ Aloitus laji
 GSETUP_NUMBER_AIS
 Tekoälypelaajien määrä
 
-#Drop-down list labels and choices####
-
 GSETUP_STARS
 Tähdet
+
 GSETUP_SHAPE
 Galaksin muoto
+
 GSETUP_AGE
 Galaksin ikä
+
 GSETUP_STARLANE_FREQ
 Tähtilinjojen yleisyys
+
 GSETUP_PLANET_DENSITY
 Planeettatiheys
+
 GSETUP_SPECIALS_FREQ
 Erikoisuuksien yleisyys
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spiraali, 2-haar.
+
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spiraali, 3-haar.
+
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spiraali, 4-haar.
+
+# A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Ryhmä
+
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Elliptinen
+
+# A galaxy shape to select when generating a universe.
 GSETUP_RING
 Rengas
 
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 Ei ollenkaan
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Matala
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
 Keskitaso
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 Korkea
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Nuori
+
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Kypsä
+
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Ikivanha
 
-#Error messages####
 
-GSETUP_ERR_NOEXIST
-ei ole olemassa.
-
-###########################
-# About Dialog            #
-###########################
-
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Lisenssi
@@ -680,18 +651,16 @@ Lisenssi
 ABOUT_WINDOW_TITLE
 Tietoa FreeOrionista
 
-CREDITS
-Tekijät
-
 VISION
 Johtoajatus
 
 FREEORION_VISION
-'''FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, suuren kampanjan muodossa. '''
+'''FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, »suuren kampanjan» muodossa. '''
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_WINDOW_TITLE
 Valikko
@@ -708,13 +677,15 @@ Eroa
 GAME_MENU_SAVE_FILES
 Tallennetut pelitiedostot
 
-###########################
-# Save Game Dialog        #
-###########################
 
-###########################
-# Game Options            #
-###########################
+##
+## Save game dialog
+##
+
+
+##
+## Game options
+##
 
 OPTIONS_TITLE
 Asetukset
@@ -770,9 +741,6 @@ Asettaa näytön resoluution ja värin syvyyden yhdellä asetuksella.
 OPTIONS_VIDEO_MODE_WINDOWED
 Näyttötila ikkunassa (käynnistä uudelleen saadaksesi muutokset voimaan).
 
-OPTIONS_VIDEO_SETTINGS
-Grafiikka-asetukset
-
 OPTIONS_APP_WIDTH_WINDOWED
 Leveys ikkunassa
 
@@ -787,12 +755,6 @@ Näytä FPS
 
 OPTIONS_LIMIT_FPS
 Rajoita FPS
-
-OPTIONS_CHAT_HISTORY
-Chat historia
-
-OPTIONS_CHAT_HIDE
-Chat-ikkunan piilotuksen viive
 
 OPTIONS_GALAXY_MAP
 Galaksin kartta
@@ -872,9 +834,6 @@ Ikkuna-äänet
 OPTIONS_SOUND_BUTTON
 Painikeäänet
 
-OPTIONS_SOUND_FLEET
-Laivastopainikeäänet
-
 OPTIONS_SOUND_ALERT
 Hälytys
 
@@ -919,9 +878,6 @@ Valinnan korostaminen
 
 OPTIONS_DROPLIST_ARROW_COLOR
 Pudotuslistan nuoli
-
-OPTIONS_INTERIOR_COLOR
-Sisäpuoli
 
 OPTIONS_WINDOW_COLORS
 Ikkunat
@@ -971,9 +927,6 @@ Palkki
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Tausta
 
-OPTIONS_ANY_FILE
-Kaikki tiedostot
-
 OPTIONS_FOLDER_SETTINGS
 Resurssitiedostot
 
@@ -992,13 +945,12 @@ Musiikkitiedostot
 OPTIONS_SOUND_FILE
 Äänitiedostot
 
-OPTIONS_AUTO_EFFECT_DESC
-Automaattisesti luodut vaikutus kuvaukset
 
-#################
-# Main Map      #
-#################
+##
+## Main map window
+##
 
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Vuoro %1%
 
@@ -1017,74 +969,82 @@ Tuotanto
 MAP_BTN_DESIGN
 Suunnittelu
 
-#################
-# SidePanel     #
-#################
 
-SIDE_PANEL
-Sivupaneeli
+##
+## Side panel/System information
+##
 
-SP_SYSTEM_PRODUCTION
-Järjestelmän tuotanto
-
+# %1% resource type currently produced by the system.
+# %2% amount of the resource currently produced by the system.
 RESOURCE_PRODUCTION_TOOLTIP
 Järjestelmä %1%: %2%
+
+# %1% resource type currently consumed by the system.
+# %2% amount of the resource currently consumed by the system.
 RESOURCE_ALLOCATION_TOOLTIP
 Järjestelmä %1%: %2%
 
 INDUSTRY_PRODUCTION
 Teollisuus
+
 RESEARCH_PRODUCTION
 Tutkimus
+
 TRADE_PRODUCTION
 Vaihdanta
 
 INDUSTRY_CONSUMPTION
 Teollisuuden käyttö
+
 RESEARCH_CONSUMPTION
 Tutkimuskulutus
+
 TRADE_CONSUMPTION
 Kulutus
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Järjestelmän sisäinen vaihdanta
 IMPORT_EXPORT_TOOLTIP
 Tuonti / Vienti
+
 RESOURCE_IMPORT
 Tuonti
+
 RESOURCE_EXPORT
 Vapaana vientiin
+
 RESOURCE_SELF_SUFFICIENT
 Ei vientiä eikä tuontia
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Planeettapaneeli
-PL_ASTEROID_BELT
-Asteroidivyöhyke
-PL_UNINHABITED
-Asumaton
-PL_SIZE
-Koko
+
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Kolonisoi (%1% / %2%)
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Valitse kolonisaatioalus kolonisoidaksesi.
 
-## Resources Panel ##########
 
+##
+## Side panel/Resources panel
+##
+
+# %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Painotus: %1%
 
-## Specials Panel ##########
 
-## Buildings Panel##########
+##
+## Side panel/Specials panel
+##
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (keskeneräinen)
 
-%2%'''
+##
+## Side panel/Buildings panel
+##
 
 ORDER_BUIDLING_SCRAP
 Pura rakennus
@@ -1092,7 +1052,10 @@ Pura rakennus
 ORDER_CANCEL_BUIDLING_SCRAP
 Peruuta rakennuksen purku
 
-## General Tooltips#########
+
+##
+## General tooltips
+##
 
 TT_THIS_TURN
 Tämän vuoron
@@ -1103,35 +1066,43 @@ Seuraavan vuoron
 TT_CHANGE
 Muutos
 
+# %1% the meter name displayed.
+# %2% the meter value.
 TT_BREAKDOWN_SUMMARY
 '''%1%: %2% '''
 
+# %1% name of the owning empire.
+# %2% FIXME
 TT_TECH
 %1% Tekniikka <i>%2%</i>
 
+# %1% name of the planet, where the building is located.
+# %2% FIXME
 TT_BUILDING
 %1% Rakennus <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_HULL
 Alus <i>%1%</i> Runko <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_PART
 Alus <i>%1%</i> Osa <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SPECIAL
 Erikoisuus <i>%1%</i>
 
+# %1% name of the species.
+# %2% FIXME
 TT_SPECIES
 Laji <i>%1%</i>
 
 TT_UNKNOWN
 Tuntematon
-
-TT_RESOURCE_PRODUCTION
-%1% tuottaa %2%
-
-TT_RESOURCE_ALLOCATION
-%1% kuluttaa %2%
 
 SP_RENAME_PLANET
 Uudelleen nimeä planeetta
@@ -1139,13 +1110,16 @@ Uudelleen nimeä planeetta
 SP_ENTER_NEW_PLANET_NAME
 Syötä uusi nimi
 
-#################
-# Fleet Window  #
-#################
 
+##
+## Fleet window
+##
+
+# %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
 Odottaa %1% järjestelmässä
 
+# %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
 Siirtyy %1% järjestelmään
 
@@ -1158,54 +1132,46 @@ Ei tietoa
 FW_FLEET_ETA_OUT_OF_RANGE
 Kantaman ulkopuolella
 
-FW_SHIP_CLASS
-Alusluokka
-
 FW_UNKNOWN_DESIGN_NAME
 Tuntematon tyyppi
 
-# the name of the new fleet icon in the fleet listbox
+# Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
 <i>Uusi laivasto</i>
 
+# Fleet window title
+# %1% empire, which owns the fleets.
+# %2% system where those fleets hold.
 FW_EMPIRE_FLEETS_AT_SYSTEM
 '''%1% Laivastoja %2% järjestelmässä '''
 
+# Fleet window title
+# %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
 %1% laivastot
 
+# Fleet window title
 FW_NO_FLEET
 Ei laivastoa
 
+# Fleet window title
+# %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Laivastoja %1% järjestelmässä
 
+# Fleet window title
 FW_GENERIC_FLEETS
 Laivastoja
 
-FW_HOME_FLEET
-Kotilaivasto
-
-FW_BATTLE_FLEET
-Taistelulaivasto
-
-# the name that is used for fleets the player does not control
+# the name that is used for fleets the client's player does not control when
+# the empire is not specified.
 FW_FOREIGN_FLEET
 Vieraslaivasto
 
-# the name that is used for fleets that no player controls
-
-# the name that is used for ships the player does not control
+# the name that is used for ships the client's player does not control when the
+# empire is not specified.
 FW_FOREIGN_SHIP
 Vierasalus
-
-# the name that is used for ships that no player controls
-
-SHIP_SPEED_STAT_TITLE
-Nopeus
-
-SHIP_SPEED_STAT_MAIN
-Suurin mahdollinen kuljettava matka yhden vuoron aikana.
 
 FW_FLEET_FUEL_SUMMARY
 Laivaston polttoaine -  Yhtä suuri kuin laivaston alusten pienin polttoainemäärä.
@@ -1222,50 +1188,30 @@ Pura alus
 ORDER_CANCEL_SHIP_SCRAP
 Peruuta aluksen purkaminen
 
-###############
-#  Moderator  #
-###############
 
-###############
-#  Diplomacy  #
-###############
+##
+## Moderator
+##
 
-###############
-# TechTreeWnd #
-###############
+
+##
+## Diplomacy
+##
+
+
+##
+## TechTreeWnd
+##
 
 TECH_DISPLAY
 Näytä
 
-TECH_NAVIGATION
-Navigointi
-
-TECH_TOTAL_COST_STR
-%2% Vuoroa @ %1% TP / Vuoro
-
+# %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
 %1% Vuoroa
 
 TECH_TURNS_LEFT_NEVER
 Ei koskaan
-
-TECH_WND_TECH_COMPLETED
-Valmis
-
-TECH_WND_TECH_QUEUED
-Jonossa
-
-TECH_WND_TECH_INCOMPLETE
-Ei valmis
-
-TECH_WND_TYPE_THEORIES
-Teoriat
-
-TECH_WND_TYPE_APPLICATIONS
-Sovellukset
-
-TECH_WND_TYPE_REFINEMENTS
-Parannukset
 
 TECH_WND_STATUS_COMPLETED
 Valmis
@@ -1276,15 +1222,10 @@ Mahdollinen tutkia
 TECH_WND_VIEW_TYPE
 Puunäkymä / Listanäkymä
 
-TECH_WND_REQUIRES
-Vaatii
 
-TECH_WND_UNLOCKS
-Avaa
-
-#######################
-# ProductionInfoPanel #
-#######################
+##
+## Production info panel
+##
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Käytettävissä olevat pisteet
@@ -1292,9 +1233,10 @@ Käytettävissä olevat pisteet
 PRODUCTION_INFO_WASTED_PS_LABEL
 Hukatut pisteet
 
-###############
-# ResearchWnd #
-###############
+
+##
+## Research window
+##
 
 RESEARCH_WND_TITLE
 Tutkimus
@@ -1302,9 +1244,10 @@ Tutkimus
 RESEARCH_INFO_RP
 TP
 
-####################
-# BuildSelectorWnd #
-####################
+
+##
+## Build selector window
+##
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Rakennettavat kohteet
@@ -1321,30 +1264,25 @@ Saatavissa
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Ei saatavissa
 
-PRODUCTION_TOTAL_COST_STR
-%1% TUP / Vuoro @ %2% Vuoroa
-
+# %1% currently used amount of production points used per turn to build an item.
+# %2% maximum available amount of production points for this turn.
 PRODUCTION_TURN_COST_STR
 +%1% TUP
 
+# %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
 %1% Vuoroa jälj.
 
 PRODUCTION_TURNS_LEFT_NEVER
 Ei koskaan
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Määrä
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Lisää jonoon
 
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Keskitä voimavarat
 
-#################
-# ProductionWnd #
-#################
+##
+## Production window
+##
 
 PRODUCTION_WND_TITLE
 Tuotanto
@@ -1352,31 +1290,24 @@ Tuotanto
 PRODUCTION_INFO_PP
 TUP
 
+# %1% the amount of items that should be produced in a single batch.
 PRODUCTION_QUEUE_MULTIPLES
 %1%x
 
-PRODUCTION_QUEUE_EMPTY
-'''Imperiumin tuotantojono on tyhjä.
-
-Lisää projekteja jonoon valitsemalla ensin planeetta sivupaneelista ja tämän jälkeen tuplaklikkaamalla haluttua projektia.
-
-Huomaa kuitenkin että aluksia voi rakentaa ainoastaan planeetoilta, joilla on alustelakka.'''
-
+# %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 %1%
 
-###############
-#  DesignWnd  #
-###############
+
+##
+## Design window
+##
 
 DESIGN_NAME_DEFAULT
 Luotava alussuunnitelma
 
 DESIGN_DESCRIPTION_DEFAULT
 Suunnitelman kuvaus
-
-DESIGN_NO_PART
-Tyhjä
 
 DESIGN_WND_HULLS
 Tyhjät rungot
@@ -1399,24 +1330,18 @@ Suunnitelman nimi
 DESIGN_WND_DESIGN_DESCRIPTION
 Kuvaus
 
-DESIGN_WND_CONFIRM
-Vahvista uusi suunnitelma
-
 DESIGN_WND_CLEAR
 Tyhjennä osat
 
-DESIGN_DELETE
-Poista suunitelma
 
-################
-## Statistics ##
-################
+##
+## Statistics
+##
 
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
 
-# types of things that can be shown in encyclopedia
+##
+## Encyclopedia
+##
 
 ENC_SHIP_PART
 Aluksen osa
@@ -1457,35 +1382,40 @@ Planeetta
 ENC_BUILDING
 Rakennus
 
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
-
 ENC_PP
 TUP
 
 ENC_RP
 TP
 
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
+# Concise listing of costs required to produce item or research tech.
+# %1% cost to complete requested item or technology.
+# %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
+#     technology.
+# %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %3% Turns @ %1% %2% / Turn
 
-# auto-generated location condition description
-
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-
+# FIXME
+# Displays the ship design properties inside a Pedia article in detail.
+# %1% description.
+# %2% hull name.
+# %3% list of builtin parts.
+# %4% number of builtin weapon parts.
+# %5% number of builtin rocket parts.
+# %6% number of builtin fighter bays.
+# %7% number of builtin point defense weapon bays.
+# %8% amount of structure points.
+# %9% amount of shield points.
+# %10% amount of detection points.
+# %11% amount of stealth points.
+# %12% battle speed.
+# %13% starlane speed.
+# %14% fuel capacity.
+# %15% number of settlers.
+# %16% number of troops.
+# %17% total damage done by weapons.
+# %18% species that mans the ship.
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
@@ -1502,74 +1432,31 @@ Polttoainekapasiteetti: %11%
 Kolonisaatiokapasiteetti: %12%
 Häivetaso: %13%
 '''
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
+
+
+##
+## Combat report
 ##
 
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
-###########################################
-# Combat Report #
-###########################################
+##
+## Encyclopedia article categories and short descriptions
+##
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
 
-###########################################
-# ARTICLES #
-###########################################
+##
+## Encyclopedia articles
+##
 
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-#
-# Guides
-#
+##
+## Guides
+##
 
-####################
-# Combat Messages  #
-####################
 
-COMBAT_WINDOW_TITLE
-Taisteluikkuna
-
-COMBAT_BATTLE
-'''TAISTELU : '''
-
-COMBAT_SYSTEM
-%1% tähtijärjestelmä
-
-COMBAT_MILITARY_SHIPS
-'''Sotilasaluksia '''
-
-COMBAT_CIVILIAN_SHIPS
-Siviilialuksia
-
-COMBAT_PLANETS
-Planeetat
-
-COMBAT_REMAINING
-''' Jäljellä'''
-
-COMBAT_RETREATED
-''' Perääntynyt'''
-
-COMBAT_DESTROYED
-''' Tuhottu'''
-
-COMBAT_DEFENSELESS
-''' Puolustuskyvytön'''
-
-COMBAT_LOST
-''' Kadonnut!'''
-
-####################
-# TurnProgress     #
-####################
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Laivastojen liikkeet ...
@@ -1589,39 +1476,39 @@ Toteutetaan käskyjä...
 TURN_PROGRESS_PHASE_DOWNLOADING
 Ladataan uutta pelitilaa ...
 
-########################
-# Messages Panel       #
-########################
 
-########################
-# Players List         #
-########################
+##
+## Messages panel
+##
 
-####################
-## Objects Window ##
-####################
 
-#####################
-## Objects Columns ##
-#####################
+##
+## Players list
+##
 
-####################
-## Filters Dialog ##
-####################
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
+##
+## Objects window
+##
 
-#Window title####
+
+##
+## Objects columns
+##
+
+
+##
+## Filters dialog
+##
+
+
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Tilanneraportti
-
-SITREP_ERROR
-Tuntematon tapahtuma.
-
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 %ship%, uusi alus,on saatu valmiiksi %system% tähtijärjestelmässä.
@@ -1647,12 +1534,10 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% on saapunut %system% tähtijärjestelmään.
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+##
+## Victory/defeat
+##
 
 VICTORY_TECH
 %empire% imperiumi on saavuttanut teknologisen voiton.
@@ -1663,13 +1548,15 @@ VICTORY_ALL_ENEMIES_ELIMINATED
 SITREP_EMPIRE_ELIMINATED
 %empire% imperiumi on tuhottu.
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+##
+## Random beginner hints
+##
+
+
+##
+## Species
+##
 
 SP_HUMAN
 Ihmiset
@@ -1677,9 +1564,10 @@ Ihmiset
 SP_HUMAN_DESC
 Normi.
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
+
+##
+## Specials
+##
 
 ANCIENT_RUINS_SPECIAL
 Muinaisia raunioita
@@ -1696,238 +1584,347 @@ Tämän planeetan kiertorata on hyvin epäsäännöllinen. Planeetan etäisyys t
 MINERALS_SPECIAL
 Mineraalirikas
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
 
-# UniverseObjectTypes
+##
+## Enumeration values
+##
 
+# Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
 Yleinen objekti
+
+# Universe object types
 OBJ_BUILDING
 Rakennus
+
+# Universe object types
 OBJ_SHIP
 Alus
+
+# Universe object types
 OBJ_FLEET
 Laivasto
+
+# Universe object types
 OBJ_PLANET
 Planeetta
+
+# Universe object types
 OBJ_POP_CENTER
 Väestökeskus
+
+# Universe object types
 OBJ_PROD_CENTER
 Tuotantokeskus
+
+# Universe object types
 OBJ_SYSTEM
 Järjestelmä
 
-# StarTypes
-
+# Star types
 STAR_BLUE
 sininen
+
+# Star types
 STAR_WHITE
 valkoinen
+
+# Star types
 STAR_YELLOW
 keltainen
+
+# Star types
 STAR_ORANGE
 oranssi
+
+# Star types
 STAR_RED
 punainen
+
+# Star types
 STAR_NEUTRON
 neutroni
+
+# Star types
 STAR_BLACK
 musta aukko
 
-# PlanetTypes
-
+# Planet types
 PT_SWAMP
 suo
+
+# Planet types
 PT_TOXIC
 myrkyllinen
+
+# Planet types
 PT_RADIATED
 säteilytetty
+
+# Planet types
 PT_BARREN
 paljas
+
+# Planet types
 PT_DESERT
 aavikko
+
+# Planet types
 PT_TERRAN
 maankaltainen
+
+# Planet types
 PT_OCEAN
 meri
+
+# Planet types
 PT_ASTEROIDS
 asteroidivyöhyke
+
+# Planet types
 PT_GASGIANT
 kaasujättiläinen
 
-# Planet Sizes
-
+# Planet sizes
 SZ_NOWORLD
 Täällä ei ole mitään nähtävää; jatka matkaa.
+
+# Planet sizes
 SZ_TINY
 hyvin pieni
+
+# Planet sizes
 SZ_SMALL
 pieni
+
+# Planet sizes
 SZ_MEDIUM
 keskikokoinen
+
+# Planet sizes
 SZ_LARGE
 iso
+
+# Planet sizes
 SZ_HUGE
 valtava
+
+# Planet sizes
 SZ_ASTEROIDS
 asteroideja
+
+# Planet sizes
 SZ_GASGIANT
 kaasujättiläinen
 
-# PlanetEnvironments
-
+# Planet environments
 PE_UNINHABITABLE
 asuinkelvoton
+
+# Planet environments
 PE_HOSTILE
 vihamielinen
+
+# Planet environments
 PE_POOR
 huono
+
+# Planet environments
 PE_ADEQUATE
 kohtalainen
+
+# Planet environments
 PE_GOOD
 hyvä
 
-# FocusTypes
-
+# Focus types
 FOCUS_INDUSTRY
 teollisuus
-FOCUS_MINING
-kaivosteollisuus
+
+# Focus types
 FOCUS_RESEARCH
 tutkimus
+
+# Focus types
 FOCUS_TRADE
 vaihdanta
 
-# MeterTypes
-
+# Meter types
 METER_TARGET_POPULATION
 Tavoite väestö
+
+# Meter types
 METER_TARGET_HEALTH
 Tavoite terveys
+
+# Meter types
 METER_TARGET_INDUSTRY
 Tavoite teollisuus
+
+# Meter types
 METER_TARGET_RESEARCH
 Tavoite tutkimus
+
+# Meter types
 METER_TARGET_TRADE
 Tavoite vaihdanta
-METER_TARGET_MINING
-Tavoite kaivosteollisuus
+
+# Meter types
 METER_TARGET_CONSTRUCTION
 Tavoite rakentaminen
+
+# Meter types
 METER_MAX_FUEL
 Max Polttoaine
+
+# Meter types
 METER_MAX_SHIELD
 Max Suojat
+
+# Meter types
 METER_MAX_STRUCTURE
 Max Runko
+
+# Meter types
 METER_MAX_DEFENSE
 Max Puolustus
+
+# Meter types
 METER_POPULATION
 Väestö
+
+# Meter types
 METER_HEALTH
 Terveys
+
+# Meter types
 METER_INDUSTRY
 Teollisuus
+
+# Meter types
 METER_RESEARCH
 Tutkimus
+
+# Meter types
 METER_TRADE
 Vaihdanta
-METER_MINING
-Kaivosteollisuus
+
+# Meter types
 METER_CONSTRUCTION
 Rakentaminen
+
+# Meter types
 METER_FUEL
 Polttoaine
+
+# Meter types
 METER_SHIELD
 Suojat
+
+# Meter types
 METER_STRUCTURE
 Runko
+
+# Meter types
 METER_DEFENSE
 Puolustus
+
+# Meter types
 METER_SUPPLY
 Täydennys
+
+# Meter types
 METER_STEALTH
 Häivetaso
+
+# Meter types
 METER_DETECTION
 Havaitseminen
+
+# Meter types
 METER_SPEED
 Nopeus
+
+# Meter types
 METER_CAPACITY
 Kapasiteetti
 
-# EmpireAffiliationTypes
-
+# Empire affiliation types
 AFFIL_SELF
 itse
+
+# Empire affiliation types
 AFFIL_ENEMY
 vihollinen
+
+# Empire affiliation types
 AFFIL_ALLY
 liittolainen
 
-# UnlockableItemTypes
-
+# Unlockable item types
 UIT_BUILDING
 Rakennus
+
+# Unlockable item types
 UIT_SHIP_PART
 Aluksen osa
+
+# Unlockable item types
 UIT_SHIP_HULL
 Aluksen runko
+
+# Unlockable item types
 UIT_TECH
 Teknologia
 
-# TechTypes
-
-TT_THEORY
-Teoria
-TT_APPLICATION
-Sovellus
-TT_REFINEMENT
-Parannus
-
-# BuildTypes
-
+# Build types
 BT_NOT_BUILDING
 ei rakennuksia
+
+# Build types
 BT_BUILDING
 rakennus
+
+# Build types
 BT_SHIP
 alus
 
-# StockpileTypes
-
-# Resource Types
-
-# Ship Slot Types
-
+# Ship slot types
 SL_EXTERNAL
 Ulkoinen
+
+# Ship slot types
 SL_INTERNAL
 Sisäinen
 
-# Ship Part Classes
-
+# Ship part classes
 PC_SHIELD
 Suojakentät
+
+# Ship part classes
 PC_ARMOUR
 Panssari
+
+# Ship part classes
 PC_DETECTION
 Havainnointi
+
+# Ship part classes
 PC_STEALTH
 Häive
+
+# Ship part classes
 PC_FUEL
 Polttoaine
+
+# Ship part classes
 PC_COLONY
 Kolonisaatio
 
-# Visibility levels
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
-
-# ValueRef
+##
+## FOCS value references, effects & condition descriptions
+##
 
 DESC_VAR_PLANET
 planeetta
@@ -1961,8 +1958,10 @@ vaihdannan synnyttämä varanto
 
 DESC_VAR_TRADEOUTPUT
 vaihdanta
+
 DESC_VAR_INDUSTRYOUTPUT
 Teollisuus
+
 DESC_VAR_RESEARCHOUTPUT
 Tutkimus
 
@@ -1978,88 +1977,27 @@ luontivuoro
 DESC_VAR_CURRENTTURN
 nykyinen vuoro
 
-# this one is intentionally left empty
 
-# six is probably more than will be needed, but just in case ...
-
-# Effects
-
-DESC_EFFECTS_GROUP_SCOPE
-Kohteet joihin vaikuttaa: Mikä tahansa kohde%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Kohteet joihin vaikuttaa: Vain lähde
-
-DESC_EFFECTS_GROUP_ACTIVATION
-Efekti on aktiivinen, jos lähde on kohde%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Vaikutus on aina aktiivinen
-
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Efekti ryhmä %1%:
-%2%
-'''
-
-# SetMeter
-
-# others
-
-DESC_SET_EMPIRE_STOCKPILE
-Asettaa kohteen omistajan %1% varannon %2%
-
-DESC_SET_EMPIRE_CAPITAL
-Tekee kohteesta kohteen omistajan pääplaneetan
-
-DESC_SET_PLANET_TYPE
-Muutta planeetan %1%
-
-DESC_SET_PLANET_SIZE
-Muuttaa planeetan koon %1%
-
-DESC_SET_SPECIES
-Vaihtaa kohteen lajin %1%:ksi
-
-DESC_DESTROY
-Tuhoaa kohteen
-
-DESC_ADD_SPECIAL
-Liittää %1% erikoisuuden kohteeseen
-
-DESC_REMOVE_SPECIAL
-Poistaa %1% erikoisuuden kohteelta
-
-DESC_SET_STAR_TYPE
-Muuttaa tähden tyypin %1%
-
-DESC_VICTORY
-Saa kohteen omistajan voittamaan pelin
-
-# Object Creation
-
-DESC_CREATE_PLANET
-Luo uuden planeetan tyyppiä %1% ja kokoa %2%
-
-DESC_CREATE_BUILDING
-Luo uuden %1% rakennuksen
-
-DESC_CREATE_SHIP
-Luo uuden mallia %1% olevan aluksen, jonka omistaa %2% imperiumi
-
-# Conditions
+##
+## FOCS condition descriptions
+##
 
 DESC_ALL
 ''' universumissa'''
 
+# %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' joka kuuluu %1% imperiumille'''
 
+# %1% name of the empire this condition does not apply to.
 DESC_EMPIRE_AFFILIATION_SELF_NOT
 ''' joka ei kuulu %1% imperiumille'''
 
+# %1% name of the species.
 DESC_HOMEWORLD
 ''' joka on kotiplaneetta'''
 
+# %1% name of the species.
 DESC_HOMEWORLD_NOT
 ''' joka ei ole kotiplaneetta'''
 
@@ -2069,111 +2007,165 @@ DESC_CAPITAL
 DESC_CAPITAL_NOT
 ''' joka ei ole imperiumin pääplaneetta'''
 
+# %1% name of an object type.
 DESC_TYPE
 ''' joka on %1%'''
 
+# %1% name of an object type.
 DESC_TYPE_NOT
 ''' joka ei ole %1%'''
 
+# %1% name of a building type.
 DESC_BUILDING
 ''' joka sisältää %1% rakennuksen'''
 
+# %1% name of a building type.
 DESC_BUILDING_NOT
 ''' joka ei sisällä %1% rakennusta'''
 
+# %1% name of the special the object should have.
 DESC_SPECIAL
 ''' jolla on %1% erikoisuus'''
 
+# %1% name of the special the object should not have.
 DESC_SPECIAL_NOT
 ''' jolla ei ole %1% erikoisuutta'''
 
+# %1% textual description of an object contained inside another object.
 DESC_CONTAINS
 ''' joka sisältää kohteen%1%'''
 
+# %1% textual description of an object not contained inside another object.
 DESC_CONTAINS_NOT
 ''' joka ei sisällä kohdetta%1%'''
 
+# %1% planet type that should match the condition.
 DESC_PLANET_TYPE
 ''' joka on %1% planeetta'''
 
+# %1% planet type that should not match the condition.
 DESC_PLANET_TYPE_NOT
 ''' joka ei ole %1% planeetta'''
 
+# %1% planet size that should match the condition.
 DESC_PLANET_SIZE
 ''' joka on %1% planeetta'''
 
+# %1% planet size that should not match the condition.
 DESC_PLANET_SIZE_NOT
 ''' joka ei ole %1% planeetta'''
 
+# %1% textual description of the environments for the species.
+# %2% name of the species.
 DESC_PLANET_ENVIRONMENT
 ''' joka on %1% planeetta'''
 
+# %1% textual description of the environments for the species.
+# %2% name of the species.
 DESC_PLANET_ENVIRONMENT_NOT
 ''' joka ei ole %1% planeetta'''
 
+# %1% textual decription of the species.
 DESC_SPECIES
 jolla on %1% lajia
 
+# %1% textual decription of the species.
 DESC_SPECIES_NOT
 jolla ei ole %1% lajia
 
+# %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE
 jolla on fokus %1%
 
+# %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE_NOT
 jolla ei ole fokus %1%
 
+# %1% textual description of the star type.
 DESC_STAR_TYPE
 ''' joka on järjestelmässä, jossa on %1% tähti'''
 
+# %1% textual description of the star type.
 DESC_STAR_TYPE_NOT
 ''' joka ei ole järjestelmässä, jossa on %1% tähti'''
 
+# %1% textual description of the hull.
 DESC_DESIGN_HAS_HULL
 jolla on runko %1%
 
+# %1% textual description of the hull.
 DESC_DESIGN_HAS_HULL_NOT
 jolla ei ole runkoa %1%
 
+# %1% textual description of the lower limit for the number of ship parts.
+# %2% textual description of the upper limit for the number of ship parts.
+# %3% textual description of the ship part.
 DESC_DESIGN_HAS_PART
 that contains between %1% and %2% of the %3% part
 
+# %1% textual description of the lower limit for the number of ship parts.
+# %2% textual description of the upper limit for the number of ship parts.
+# %3% textual description of the ship part.
 DESC_DESIGN_HAS_PART_NOT
 that does not contain between %1% and %2% of the %3% part
 
+# %1% percentage of a successful chance.
 DESC_CHANCE_PERCENTAGE
 ''' %1%%% mahdollisuus'''
 
+# %1% percentage of a failing chance.
 DESC_CHANCE_PERCENTAGE_NOT
 ''' (100 - %1%)%% mahdollisuus'''
 
+# %1% textual description of a probability.
 DESC_CHANCE
 ''' %1% todennäköisyydellä'''
 
+# %1% textual description of a probability.
 DESC_CHANCE_NOT
 ''' 1 - %1% todennäköisyydellä'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT
 ''' jolla on nykyinen %1% välillä %2% ja %3%'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_NOT
 ''' jolla ei ole nykyinen %1% välillä %2% ja %3%'''
 
+# %1% type of stockpile resource.
+# %2% textual description of the lower limit for the stockpile value.
+# %3% textual description of the upper limit for the stockpile value.
 DESC_EMPIRE_STOCKPILE_VALUE
 ''' joka kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%'''
 
+# %1% type of stockpile resource.
+# %2% textual description of the lower limit for the stockpile value.
+# %3% textual description of the upper limit for the stockpile value.
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
 ''' joka ei kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%'''
 
+# %1% distance in universe units.
+# %2% textual description of the target object.
 DESC_WITHIN_DISTANCE
 ''' joka on %1% etäisyydellä %2% kohteista'''
 
+# %1% distance in universe units.
+# %2% textual description of the target object.
 DESC_WITHIN_DISTANCE_NOT
 ''' joka ei ole %1% etäisyydellä %2% kohteista'''
 
+# %1% number of starlane jumps.
+# %2% textual description of the target object.
 DESC_WITHIN_STARLANE_JUMPS
 ''' joka on %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%'''
 
+# %1% number of starlane jumps.
+# %2% textual description of the target object.
 DESC_WITHIN_STARLANE_JUMPS_NOT
 ''' joka ei ole %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%'''
 
@@ -2189,42 +2181,55 @@ DESC_AND_BETWEEN_OPERANDS
 DESC_OR_BETWEEN_OPERANDS
 ''' tai'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN
 ''' kun tämänhetkinen vuoro on välillä %1% ja %2%'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN_NOT
 ''' kun tämänhetkinen vuoro ei ole välillä %1% ja %2%'''
 
+# %1% FIXME
+# %2% FIXME
 DESC_NUMBER_OF
 ''' joka on yksi %1% kohteesta%2%'''
 
+# %1% FIXME
+# %2% FIXME
 DESC_NUMBER_OF_NOT
 ''' joka ei ole yksi %1% kohteesta%2%'''
 
+# %1% FIXME
 DESC_OWNER_HAS_TECH
 ''' joka kuuluu imperiumille, jolla on tekniikka %1%'''
 
+# %1% FIXME
 DESC_OWNER_HAS_TECH_NOT
 ''' joka ei kuuluu imperiumille, jolla on tekniikka %1%'''
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+
+##
+## Technology categories
+##
 
 LEARNING_CATEGORY
 Oppiminen
+
 PRODUCTION_CATEGORY
 Tuotanto
+
 CONSTRUCTION_CATEGORY
 Rakentaminen
+
 GROWTH_CATEGORY
 Kasvu
-ECONOMICS_CATEGORY
-Talous
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Technology theories
+##
 
 LRN_PHYS_BRAIN
 Aivojen rakenne
@@ -2235,12 +2240,10 @@ Keinotekoiset mielet
 LRN_EVERYTHING
 Kaiken teoria
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
 
-DOES_NOTHING_SHORT_DESC
-Hyödytön: Ei tee mitään
+##
+## Technology application
+##
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Avaa alusten osia
@@ -2254,23 +2257,11 @@ Avaa rakennuksen
 RESEARCH_SHORT_DESC
 Parantaa tutkimusta
 
-MINING_SHORT_DESC
-Parantaa kaivosteollisuutta
-
 INDUSTRY_SHORT_DESC
 Parantaa teollisuutta
 
-TRADE_SHORT_DESC
-'''Parantaa vaihdantaa '''
-
-CONSTRUCTION_SHORT_DESC
-Parantaa infrastruktuuria
-
 POPULATION_SHORT_DESC
 Kasvattaa planeetan väestöä
-
-FLEET_RANGE_DESC
-Parantaa alusten täydennysmahdollisuuksia
 
 SHP_ION_CANNON
 Ionikanuuna
@@ -2296,41 +2287,53 @@ Deuteriumtankki
 SHP_DEUTERIUM_TANK_DESC
 Avaa Deuteriumtankin, aluksen osa.
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
 
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+##
+## Technology refinement
+##
+
+
+##
+## Buildings
+##
 
 BLD_SHIPYARD_BASE
 Laivatelakka
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
 
+##
+## Hull and ship part description templates
+##
+
+# %1% hull base starlane speed.
+# %2% hull base fuel capacity.
+# %3% hull base starlane speed.
+# %4% hull base structure value.
 HULL_DESC
 '''Tähtilinjanopeus: %1%
 Polttoainekapasiteetti: %2%
 Taistelunopeus: %3%
 Kestävyys: %4%'''
 
+# %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Kapasiteetti: %1%
 
+# %1% ship part strength (other).
 PART_DESC_STRENGTH
 Vahvuus: %1%
 
+# %1% ship part damage done (direct fire weapons).
+# %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
 '''Vahinko: %1%
 Tulinopeus: %2% laukausta/vuoro
 Kantama: %3%'''
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+
+##
+## Ship parts
+##
 
 SR_ION_CANNON
 Ionikanuuna
@@ -2362,70 +2365,60 @@ Puolustusverkko
 SH_DEFENSE_GRID_DESC
 Heikko puolustus, joka ei tuo lisämassaa
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
+##
+## Ship hulls
+##
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+##
+## Buildings macros
+##
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
+##
+## Tech macros
+##
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
+##
+## Growth macros
+##
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
-### Beginning of AI Aggression Level Capital Name Lists
+##
+## Species picks
+##
 
-### End of Capital Names Lists
 
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+##
+## Accounting labels
+##
 
-### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## Tags
+##
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
 
-### End of AI Diplomacy Message Lists
+##
+## AI strings
+##
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
 
-################
-## Name Lists ##
-################
+##
+## AI diplomacy strings and lists
+##
 
-# TODO: Sort these into their proper locations?
+
+##
+## Hotkey names and descriptions
+##
+
+
+##
+## Name lists
+##
 
 #include "../global_settings.txt"
 #include "../content_specific_parameters.txt"

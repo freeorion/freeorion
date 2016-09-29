@@ -39,6 +39,7 @@ Hull
                 CreateShip designname = "SM_TREE"
                 GenerateSitRepMessage
                     message = "EFFECT_TREE"
+                    label = "EFFECT_TREE_LABEL"
                     icon = "icons/monsters/tree.png"
                     parameters = [
                         tag = "system" data = Source.SystemID

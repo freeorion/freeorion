@@ -128,7 +128,7 @@ public:
         m_graphic(graphic)
     {
         Init();
-        for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+        for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 

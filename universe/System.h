@@ -56,6 +56,7 @@ public:
     const std::set<int>&    FleetIDs() const                { return m_fleets; }
     const std::set<int>&    ShipIDs() const                 { return m_ships; }
     const std::set<int>&    FieldIDs() const                { return m_fields; }
+    const std::vector<int>& PlanetIDsByOrbit() const        { return m_orbits; }
 
     virtual bool            Contains(int object_id) const;                                  ///< returns true if object with id \a object_id is in this System
     virtual bool            ContainedBy(int object_id) const{ return false; }               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
@@ -132,7 +133,14 @@ protected:
 
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
+
+#if BOOST_VERSION == 106100
+public:
+#endif
     ~System() {}
+#if BOOST_VERSION == 106100
+protected:
+#endif
 
     virtual System*         Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
     //@}

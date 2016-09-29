@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
 message("-- Configuring GG Tests")
 
 find_package(GLEW REQUIRED)
@@ -23,10 +21,6 @@ set(gg_test_LINK_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${GLEW_LIBRARIES}
 )
-
-if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-endif ()
 
 
 macro (make_gigi_test name)

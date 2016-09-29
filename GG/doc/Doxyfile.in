@@ -568,7 +568,6 @@ EXCLUDE_SYMLINKS       = NO
 
 EXCLUDE_PATTERNS       = *stdafx* \
                          *DLL* \
-                         *vsnprintf* \
                          *cpp \
                          *c
 

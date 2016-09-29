@@ -194,6 +194,37 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     current.  Note the use of the phrase "client-area children".  This refers
     to children entirely within the client area of the window.
 
+    <h3>Frame Timing</h3>
+
+    <br>Each frame is a cycle culminating in rendering the screen.  The
+    following things happen, in order:
+      + events from the GUI and the data sources are handled
+      + PreRender() is called to update layout if required.
+      + Render() is called.
+
+    Wnd does not distinguish between events from the GUI and events from the
+    data sources.
+
+    PreRender() and Render() are only called if the window is visible.
+
+    PreRender() defers all layout changes until after all events have been
+    handled.  This improves performance by preventing event handling causing
+    multiple layout actions between calls to Render().  PreRender() allows Wnd
+    to perform any required expensive updates only once per frame.
+
+    PreRender() prevents bugs caused by early events in a frame changing the
+    layout so that later events trigger on a layout different from the layout
+    visible to the player.  This is a change from the original GG behavior.
+    Core parts of GG will continue to immediately update layout until
+    peripheral parts are updated to expect deferred updates.
+
+    The default implementation of PreRender() only clears the flag set by RequirePreRender().
+    For a class to defer its layout to the prerender phase it needs to override PreRender() and
+    implement its layout changes in PreRender().
+
+    Legacy GG did not have a prerender phase and all layout changes were immediate.  Any Wnd class
+    that does not override PreRender() will update layout immediately when executing mutating functions.
+
     <h3>Browse Info</h3>
 
     <br>Browse info is a non-interactive informational window that pops up
@@ -310,6 +341,9 @@ public:
 
     /** Returns true iff this Wnd will be rendered if it is registered. */
     bool Visible() const;
+
+    /** Returns true if this Wnd will be pre-rendered. */
+    bool PreRenderRequired() const;
 
     /** Returns the name of this Wnd.  This name is not used by GG in any way;
         it only exists for user convenience. */
@@ -582,6 +616,21 @@ public:
     /** Sets the margin that should exist between the windows in the layout.
         If no layout exists for the window, this has no effect. */
     void SetLayoutCellMargin(unsigned int margin);
+
+    /** Update Wnd prior to Render().
+
+        PreRender() is called before Render() if RequirePreRender() was called.
+        The default PreRender() resets the flag from RequirePreRender().
+        Wnd::PreRender() should be called in any overrides to reset
+        RequirePreRender().
+
+        In the GUI processing loop the PreRender() of child windows whose
+        RequirePreRender() flag is set will have been called before their
+        parent PreRender(). */
+    virtual void PreRender();
+
+    /** Require that PreRender() be called to update layout before the next Render(). */
+    virtual void RequirePreRender();
 
     /** Draws this Wnd.  Note that Wnds being dragged for a drag-and-drop
         operation are rendered twice -- once in-place as normal, once in the
@@ -902,6 +951,7 @@ private:
     std::list<Wnd*>   m_children;      ///< List of ptrs to child windows kept in order of decreasing area
     int               m_zorder;        ///< Where this window is in the z-order (root (non-child) windows only)
     bool              m_visible;
+    bool              m_needs_prerender; ///< Indicates if Wnd needs a PreRender();
     std::string       m_drag_drop_data_type; ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
     ChildClippingMode m_child_clipping_mode;
     bool              m_non_client_child;

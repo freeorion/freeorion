@@ -1,27 +1,30 @@
 Deutsch
 
-#This is the German String Table file for FreeOrion (^= en_svn6098)
+# This is the German String Table file for FreeOrion
 #
-#Übersetzer:
-# Straputsky
-# Marcel Metz [adrian_broher]
-# shivu
-# Markus Sinner [kroddn]
-# Martin Wuttke [thesilentone]
+# Translators:
+# * Straputsky
+# * Marcel Metz [adrian_broher]
+# * shivu
+# * Markus Sinner [kroddn]
+# * Martin Wuttke [thesilentone]
 #
-# Notes: to avoid potential conflict with functional keys in other files, do not make
-# any stringtable keys beginning with "FUNCTIONAL_"
-# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
+# Notes: to avoid potential conflict with functional keys in other files, do not
+# make any stringtable keys beginning with "FUNCTIONAL_".
+# New Sitreps priorities should be added to
+# `default/customizations/common_user_customizations.txt`.
 
-#################
-#    Common     #
-#################
+# semi-randomly collected characters to force font code page loading
+# 肛門オーガズム
+# åřžßąłżęЗыдШит
+# 를와ẵừổ
+# جامعة
+# یای مجهو
 
-#APPNAME
-#FreeOrion
 
-BROWSE_BTN
-Durchsuchen...
+##
+## Common phrases
+##
 
 #OK
 #OK
@@ -35,12 +38,6 @@ Abbrechen
 DONE
 Fertig
 
-CLOSE
-Schließen
-
-LOAD
-Laden
-
 SAVE
 Speichern
 
@@ -53,16 +50,13 @@ OPEN
 OR
 oder
 
-AND
-und
-
 YES
 Ja
 
 NO
 Nein
 
-# ELLIPSIS is used as a placeholder for unexpanded content in the combat log window.
+# Used as a placeholder for unexpanded content in the combat log window.
 #ELLIPSIS
 #...
 
@@ -99,9 +93,6 @@ Kein Imperium
 DROP_PLAYER
 Rauswerfen
 
-HOST
-Gastgeber
-
 ALL
 Alle
 
@@ -129,15 +120,6 @@ FEHLER
 RESET
 Zurücksetzen
 
-TURN
-Runde
-
-CHAT_WHISPER
-Flüstern
-
-UP
-Hoch
-
 NEXT
 Nächster
 
@@ -147,45 +129,63 @@ Vorheriger
 LAST
 Letzter
 
-# used to generate names for new fleets when they are created
+# Name for a newly created general purpose fleet.
+# %1% represents a unique number.
 NEW_FLEET_NAME
 Flotte %1%
 
+# Name for a newly created general purpose fleet when no uniqe number could be
+# created.
 NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
+# Name for a newly created monster-only fleet.
+# %1% represents a unique number.
 NEW_MONSTER_FLEET_NAME
 Herde %1%
 
+# Name for a newly created colony-only fleet.
+# %1% represents a unique number.
 NEW_COLONY_FLEET_NAME
 Kolonisierungsflotte %1%
 
+# Name for a newly created reconnaissance-only fleet.
+# %1% represents a unique number.
 NEW_RECON_FLEET_NAME
 Aufklärungsflotte %1%
 
+# Name for a newly created troop carrier only fleet.
+# %1% represents a unique number.
 NEW_TROOP_FLEET_NAME
 Truppenflotte %1%
 
+# Name for a newly created bomber only fleet.
+# %1% represents a unique number.
 NEW_BOMBARD_FLEET_NAME
 Bomberflotte %1%
 
+# Name for a newly created combat group group fleet. This includes battleships,
+# bombers and troop carriers.
+# %1% represents a unique number.
 NEW_BATTLE_FLEET_NAME
 Kriegsflotte %1%
 
-# new asteroids or new planet names...
-# used to generate name for effect-created planets, when no name = (string) is specified.
-# When specifying an object name for these effects, if the specified string matches a
-# stringtable key, it will be looked up and used directly. Alternatively, the
-# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
-# to specify substitutions using string gamestate references, such as Source.Name
-# these are applied to the %1% style placeholders according the order in which the
-# parameters are specified in the effect
-NEW_ASTEROIDS_NAME
-Überreste von %1% %2%
+# Name for a newly created planet.
+# Suffix bears some explanation:
+#  - Planets are grouped for asteroids and non-asteroids.
+#  - Suffix is a roman numeral, with additional rules for asteroids.
+#  - The roman numeral is a rank for proximity to the center of the system,
+#      in relation to other planets in the same group.
+#  - For asteroids, the suffix starts with a localized NEW_ASTEROIDS_SUFFIX.
+#      If any other asteroids are in the system, the roman numeral is appended.
+# %1% name of the system this planet is created in.
+# %2% suffix for this planet
+# NEW_PLANET_NAME
+# %1% %2%
 
-# assumes no previous planets present, so the created planet will be the Systemname I planet...
-#NEW_PLANET_NAME
-#%1% I
+# The label pre-pended to a new asteroids naming suffix
+# NEW_ASTEROIDS_SUFFIX
+# [[PT_ASTEROIDS]]
 
 EMPTY_SPACE
 Tiefe des Alls
@@ -235,23 +235,15 @@ Ohne Besitzer
 NOWHERE
 Kann nicht produziert werden
 
-#############################################################
-####               M A J O R   E R R O R S               ####
-#############################################################
+
+##
+## Major errors
+##
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''Initialisierung des OpenAL Audiosystems fehlgeschlagen.
 Überprüfen Sie die Fehlerprotokolle für die vollständige Fehlermeldung.
 '''
-
-##################################
-# FORMAT_LIST items are for lists of the form
-# FORMAT_LIST_HEADER FORMAT_LIST_x_ITEMS
-# i.e.
-# There are none.
-# There is only: banana
-# There are: apple and banana
-##################################
 
 #FORMAT_LIST_0_ITEMS
 #%1%
@@ -289,23 +281,26 @@ FORMAT_LIST_10_ITEMS
 #FORMAT_LIST_MANY_ITEMS
 #%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
+
+##
+## Predefined Ship Designs (located in default/scripting/ship_designs/)
+##
 
 SD_CARRIER
 Prototyp Raumträger
+
 SD_CARRIER_DESC
 Prototypentwurf, welcher Jäger in den Kampf sendet, anstatt Geschütze zu nutzen.
 
 SD_FLAK
 Prototyp Raumabwehrschiff
+
 SD_FLAK_DESC
 Prototypentwurf, welcher Flakkanonen als kostengünstige Maßnahme gegen Jäger nutzt.
 
 SD_SCOUT
 Kundschafter
+
 SD_SCOUT_DESC
 Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung. Weitere [[encyclopedia RESEARCH_TITLE]], welche die [[encyclopedia DETECTION_RANGE_TITLE]] verbessert, würde bessere Entwürfe ermöglichen. Dieses Schiff kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
@@ -332,21 +327,25 @@ Korvette (L)
 
 SD_MARK_1
 Fregatte (M1)
+
 SD_MARK1_DESC
 Einfache Fregatte mit Massenkatapult. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
 SD_MARK_2
 Fregatte (M2)
+
 SD_MARK2_DESC
 Verbesserte Fregatte mit Massenkatapult. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
 SD_MARK_3
 Fregatte (L1)
+
 SD_MARK3_DESC
 Einfache Laserfregatte. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
 SD_MARK_4
 Fregatte (L2)
+
 SD_MARK4_DESC
 Verbesserte Laserfrigatte. Kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
@@ -364,105 +363,126 @@ Kreuzer (L2)
 
 SD_GRAVITATING1
 Gravitierend I
+
 SD_GRAVITATING1_DESC
 Massives Kriegsschiff bewaffnet und gepanzert mit der neusten Technologie. Preis entsprechend.
 
 SD_COLONY_SHIP
 Siedlungsschiff
+
 SD_COLONY_SHIP_DESC
 Unbewaffnetes Schiff fähig Millionen von Bürger sicher zum Ort einer neuen Siedlung zu bringen.
 
 SD_OUTPOST_SHIP
 Außenpostenschiff
+
 SD_OUTPOST_SHIP_DESC
 Unbewaffnetes Schiff, fähig einen Außenposten auf einer unbewohnbaren Welt zu erstellen.
 
 SD_COLONY_BASE
 Siedlungsbasis
+
 SD_COLONY_BASE_DESC
 Unbewaffnetes Schiff, nur fähig eine Siedlung in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_OUTPOST_BASE
 Außenpostenbasis
+
 SD_OUTPOST_BASE_DESC
 Unbewaffnetes Schiff, nur fähig einen Außenposten in dem System zu gründen, in welchem es gebaut wurde.
 
 SD_TROOP_SHIP
 Truppentransporter
+
 SD_TROOP_SHIP_DESC
 Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit Ausrüstung, welcher zur Einnahme eines Planeten genutzt werden können.
 
 SD_DRAGON_TOOTH
 Drachenzahn
+
 SD_DRAGON_TOOTH_DESC
 Alter Schiffsentwurf mit fortgeschrittener Bewaffnung und Verteidigungssysteme.
 
-############
-# Monsters #
-############
+
+##
+## Monsters
+##
 
 SM_KRILL_1
 Kleiner Krillschwarm
+
 SM_KRILL_1_DESC
 Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_KRILL_2
 Mittlerer Krillschwarm
+
 SM_KRILL_2_DESC
 Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_KRILL_3
 Großer Krillschwarm
+
 SM_KRILL_3_DESC
 Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_KRILL_4
 Krillplage
+
 SM_KRILL_4_DESC
 Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_TREE
 Dysonwald
+
 SM_TREE_DESC
 Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.
 
 SM_FLOATER
 Schwimmer
+
 SM_FLOATER_DESC
 Gasgefüllter knollartiger Beutel, der im Weltraum umhertreibt.
 
 SM_DRAGON
 Vakuumdrache
+
 SM_DRAGON_DESC
 Schreckliches, riesiges Monster, das im Raum auf Beutezug umherschleicht.
 
 SM_DRONE
 Drohne
+
 SM_DRONE_DESC
 Als Werkzeug eines vergessenen Krieges erfüllen die Drohnen immer noch ihren ursprünglichen Zweck: gedankenlos Schiffe in Reichweite angreifen.
 
 SM_DRONE_FACTORY
 Drohnenfabrik
+
 SM_DRONE_FACTORY_DESC
 In einem lang vergessenen Krieg erbaut, um die vor ewigen Zeiten verschwundenen Erbauer zu schützen, erfüllt die Drohnenfabrik erstaunlicherweise immer noch ihre Funktion, langsam neue Drohnen zu erstellen.
 
 SM_GUARD_1
 Wache
+
 SM_GUARD_1_DESC
 Wache bewachen lässige Kleinigkeiten.
 
 SM_GUARD_2
 Wächter
+
 SM_GUARD_2_DESC
 Wächter bewachen lässiges Zeug.
 
 SM_GUARD_3
 Aufseher
+
 SM_GUARD_3_DESC
 Aufseher bewachen wichtiges Zeug.
 
 SM_KRAKEN_1
 Krakenlarve
+
 SM_KRAKEN_1_DESC
 In ihrer Larvenform ist der Kraken eine vorsichtige und harmlose Art der im Raum gebornen Fauna. Seine natürliche Beue sind Raumkrillschwärme, welche sie damit reguliert. Aber eine gut genährte Krakenlarve kann sich in eine größere und gefährlichere erwachsene Form weiterentwickeln.
 
@@ -471,66 +491,79 @@ Ein gewaltiges, mittelschweres Weltraummonster.
 
 SM_KRAKEN_3
 Großer Kraken
+
 SM_KRAKEN_3_DESC
 Ein gewaltiges, schweres Weltraummonster.
 
 SM_BLACK_KRAKEN
 Schwarzer Kraken
+
 SM_BLACK_KRAKEN_DESC
 Ein mächtiges, unnatürlich wirkendes Weltraummonster.
 
 SM_SNOWFLAKE_1
 Kleiner Schneeflocke
+
 SM_SNOWFLAKE_1_DESC
 Ein gewaltiges, leichtgewichtiges Weltraummonster.
 
 SM_SNOWFLAKE_2
 Schneeflocke
+
 SM_SNOWFLAKE_2_DESC
 Ein gewaltiges, leichtgewichtiges Weltraummonster.
 
 SM_SNOWFLAKE_3
 Großen Schneeflocke
+
 SM_SNOWFLAKE_3_DESC
 Ein gewaltiges, leichtgewichtiges Weltraummonster.
 
 SM_PSIONIC_SNOWFLAKE
 Psionische Schneeflocke
+
 SM_PSIONIC_SNOWFLAKE_DESC
 Ein Monster, welches die Kraft besitzt den Verstand von organischen Wesen zu neutralisieren.
 
 SM_JUGGERNAUT_1
 Kleiner Koloss
+
 SM_JUGGERNAUT_1_DESC
 Ein gewaltiges, schwergewichtiges Weltraummonster.
 
 SM_JUGGERNAUT_2
 Koloss
+
 SM_JUGGERNAUT_2_DESC
 Ein gewaltiges, schwergewichtiges Weltraummonster.
 
 SM_JUGGERNAUT_3
 Großer Koloss
+
 SM_JUGGERNAUT_3_DESC
 Ein gewaltiges, schwergewichtiges Weltraummonster.
 
 SM_BLOATED_JUGGERNAUT
 Aufgeblähter Koloss
+
 SM_BLOATED_JUGGERNAUT_DESC
 Ein massives, aber krankhaft aussehendes schwergewichtes Weltraummonster.
 
 SM_CLOUD
 Raumwolke
+
 SM_CLOUD_DESC
 Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_ASH
 Weltraumvulkan
+
 SM_ASH_DESC
 Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
 SM_DIM
 Dimensionswanderer
+
 SM_DIM_DESC
 Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
@@ -539,32 +572,38 @@ Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen P
 
 SM_SNAIL
 Asteroidenschnecke
+
 SM_SNAIL_DESC
 Die Gehäuse der Asteroidenschnecken ähneln aufgrund ihrer auf Mineralien basiernden Ernährung stark normalen Asteroiden, was das Aufspüren erheblich erschwert.
 
 SM_DAMPENING_CLOUD
 Dämpfende Wolke
+
 SM_DAMPENING_CLOUD_DESC
 Eine kosmische Wolke aus hochenergetischen elektrischen Partikeln, welche eine Art von Empfindung erlangt hat. Sie wird von Energiefeldern angezogen und entlädt jedes größere Energiepotenzial, was dazu führt das ganze Raumschiffflotten innerhalb von Sekunden ihres Treibstoffes beraubt werden können.
 
 SM_ACIREMA_GUARD
 Acirema Wächterschiff
+
 SM_ACIREMA_GUARD_DESC
 Ein unbemanntes bewaffnetes Schiff, welches von den Acirema zur Bewachung des Systems gebaut wurde.
 
 SM_EXP_OUTPOST
 Experiment Null
+
 SM_EXP_OUTPOST_DESC
 Ein Außenpostenschiff, welches von den Experimentors gebaut wurde um experimentelle Asurüstung zwischen Galaxien zu transportieren.
 
 SM_COSMIC_DRAGON
 Kosmischer Drache
+
 SM_COSMIC_DRAGON_DESC
 Ein furchteregendes Weltraummonster mit der Macht ganze Sternensysteme zu zerstören.
 
-##########
-# Fields #
-##########
+
+##
+## Fields
+##
 
 FLD_ION_STORM
 Ionensturm
@@ -590,12 +629,10 @@ Wolken aus Wasserstoff, die in sich zusammenfallen können um einen neuen Stern 
 #FLD_NEBULA_2_DESC
 #[[FLD_NEBULA_1_DESC]]
 
-##############################
-# Predefined Starting Fleets #
-##############################
 
-FN_HOME_FLEET
-Heimatflotte
+##
+## Predefined starting fleets
+##
 
 FN_BATTLE_FLEET
 Kriegsflotte
@@ -606,15 +643,13 @@ Kundschafterflotte
 FN_COLONY_FLEET
 Siedlungsflotte
 
-FN_INVASION_FLEET
-Invasionflotte
-
 MONSTERS
 Monster
 
-##########################
-# Status Update Messages #
-##########################
+
+##
+## Status update messages
+##
 
 RETURN_TO_INTRO
 Zum Hauptmenü zurückkehren.
@@ -628,20 +663,16 @@ Der Server antwortet nicht.
 SERVER_LOST
 Die Verbindung zum Server wurde getrennt.
 
-SERVER_GAME_END
-Der Server hat die "Spiel beendet" Nachricht gesendet. Tschö.
-
 PLAYER_DISCONNECTED
 Spieler %1% ist nicht länger mit dem Server verbunden.
 
 SERVER_SAVE_INITIATE_ACK
 Speichere...
 
+# %1% save game file path as requested by the client.
+# %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
 Speicherte %2% Bytes als Datei: %1%
-
-UNKNOWN_EMPIRE
-Unbekanntes Imperium
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Der Server hat ungültige Speicherstanddaten vom Client erhalten. Teile davon können ignoriert werden.
@@ -682,9 +713,10 @@ Kann kein Spiel ohne aktive Spieler erstellen.
 ERROR_PYTHON_AI_CRASHED
 Python KI für %1% abgestürzt.
 
-######################################
-# Command Line and OptionsDB Options #
-######################################
+
+##
+## Command-line and options database entries
+##
 
 COMMAND_LINE_USAGE
 '''Verwendung: '''
@@ -715,12 +747,6 @@ Startet das Spiel im Vollbild. Die Einstellung kann sofort übernommen werden od
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Wählt aus welcher Monitor für den Vollbildmodus genutzt werden soll. Der Primäre Monitor sollte Index 0 sein. Es kann ein Neustart der Anwendung nötig sein.
-
-OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Verzögerung in Sekunden nach der das Mehrspieler-Chatfenster ausgeblendet wird, wenn nichts geschrieben wurde. Ein Wert von 0 bedeutet, dass das Fenster niemals verschwindet.
-
-OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Die Anzahl der ausgehender Mitteilungen, welche im Verlauf des Chatfensters verbleiben.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Zeichne Gaswolken um die Systeme um der Galaxie ein Form zu geben. Kann auf alten Systemen das Zeichnen verlangsamen.
@@ -803,9 +829,6 @@ Schaltet die FPS Begrenzung an oder aus. Die Grenze wird mit der Max FPS Einstel
 OPTIONS_DB_MAX_FPS
 Setzt das FPS Limit, falls aktiviert. Aktivierung über Limit-FPS.
 
-OPTIONS_DB_UI_SOUND_ENABLED
-Entscheidet ob die UI Klangeffekte an oder aus sind.
-
 OPTIONS_DB_UI_SOUND_VOLUME
 Die Lautstärke (0 bis 255) in der Klangeffekte abgespielt werden sollen.
 
@@ -862,12 +885,6 @@ Setzt die Schriftartdatei für reguläre Oberflächenschriften.
 
 OPTIONS_DB_UI_FONT_BOLD
 Setzt die Schriftartdatei für fette Oberflächenschriften.
-
-OPTIONS_DB_UI_FONT_ITALIC
-Setzt die Schriftartdatei für kursive Oberflächenschriften.
-
-OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Setzt die Schriftartdatei für fett-kursive Oberflächenschriften.
 
 OPTIONS_DB_UI_FONT_SIZE
 Setzt die Schriftgröße für die Oberfläche.
@@ -1106,8 +1123,8 @@ Speichert ob die OpenGL Version des Systems überprüft wurde. Wenn nicht, werde
 OPTIONS_DB_RESET_FSSIZE
 Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden soll. Wenn nicht gesetzt, wird die gespeicherte Auflösung genutzt, ansonsten wird die höchste Auflösung genutzt, welche unterstützt wird.
 
-OPTIONS_DB_AUTO_EFFECT_DESC
-Entscheidet ob automatisch erzeugte Texte in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
+OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+Entscheidet ob ein Abbild der Effektgruppen in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Schaltet die ausführliche Protokollierung der Inhalte des Universums und Effektberechnung.
@@ -1130,9 +1147,10 @@ Die Weite des Fenster im Fenstermodus.
 OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED
 Die Höhe des Fenster im Fenstermodus.
 
-#################
-# File Dialog   #
-#################
+
+##
+## File dialog
+##
 
 FILE_DLG_FILES
 Datei(en):
@@ -1140,16 +1158,9 @@ Datei(en):
 FILE_DLG_FILE_TYPES
 Typ(en):
 
-FILE_DLG_MALFORMED_FILENAME
-Ungültiger Dateiname.
-
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% gibt es bereits.
 Darf überschrieben werden?'''
-
-FILE_DLG_INVALID_FILENAME
-'''"%1%"
-ist ein ungültiger Dateiname.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
@@ -1162,9 +1173,10 @@ existiert nicht.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Gerät ist nicht bereit.
 
-#################
-# Color Dialog  #
-#################
+
+##
+## Color selection dialog
+##
 
 COLOR_DLG_NEW
 Neu
@@ -1193,16 +1205,13 @@ Alt
 #COLOR_DLG_ALPHA
 #A:
 
-#################
-# Intro Screen  #
-#################
 
-#Window title####
+##
+## Intro screen
+##
 
 INTRO_WINDOW_TITLE
 FreeOrion Hauptmenü
-
-#Button names####
 
 INTRO_BTN_SINGLE_PLAYER
 Einzelspieler
@@ -1231,24 +1240,16 @@ Mitwirkende
 INTRO_BTN_EXIT
 Beenden
 
-#Error Messages####
-
 ERR_CONNECT_TIMED_OUT
 Die Verbindungszeit zum Server wurde überschritten
 
-ERR_VERSION_MISMATCH
-'''Kann keine Verbindung zum Server herstellen, da dieser Klient eine andere Version folgender Einstellungen und/oder Quelldateien verwendet: '''
 
-########################
-# Server Setup Screen  #
-########################
-
-#Window title####
+##
+## Server Setup Screen
+##
 
 SCONNECT_WINDOW_TITLE
 Verbindung zum Server
-
-#Static labels####
 
 LAN_GAME_LABEL
 Lan Spiel bei:
@@ -1259,8 +1260,6 @@ Internet Spiel bei:
 PLAYER_NAME_LABEL
 Spielername
 
-#Button names####
-
 HOST_GAME_BN
 Ein neues Spiel ausrichten (benutzen Sie die XML Serialisierung in Optionen/Sonstiges)
 
@@ -1270,15 +1269,13 @@ Einem Spiel beitreten (benutzen Sie die XML Serialisierung in Optionen/Sonstiges
 REFRESH_LIST_BN
 Liste aktualisieren
 
-########################
-# Multiplayer Lobby    #
-########################
+
+##
+## Multiplayer lobby
+##
 
 MPLOBBY_WINDOW_TITLE
 Mehrspieler Aufstellung
-
-MPLOBBY_HOST_ABORTED_GAME
-Der Gastgeber hat die Spieleerstellung abgebrochen.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Eindeutige Imperiennamen und -farben erforderlich
@@ -1310,18 +1307,13 @@ Spiel laden
 START_GAME_BN
 Spiel starten
 
-########################
-# Galaxy Setup Screen  #
-########################
 
-#Window title####
+##
+## Galaxy Setup Screen
+##
 
 GSETUP_WINDOW_TITLE
 Galaxie erzeugen
-
-#Strings
-GSETUP_GRAPHICS_FILES
-Grafikdateien
 
 GSETUP_PLAYER_NAME
 Name des Spielers
@@ -1338,93 +1330,135 @@ Startspezies
 GSETUP_NUMBER_AIS
 Anzahl der KI-Spieler
 
-#Drop-down list labels and choices####
-
 GSETUP_SEED
 Saat
+
 GSETUP_RANDOM_SEED
 Erzeuge eine zufällige Saat
-GSETUP_RANDOMIZE
-Randomisieren
+
 GSETUP_STARS
 Systeme
+
 GSETUP_SHAPE
 Galaxieform
+
 GSETUP_AGE
 Galaxiealter
+
 GSETUP_STARLANE_FREQ
 Anzahl Sternstraßen
+
 GSETUP_PLANET_DENSITY
 Planetendichte
+
 GSETUP_SPECIALS_FREQ
 Häufigkeit Besonderheiten
+
 GSETUP_MONSTER_FREQ
 Häufigkeit Monster
+
 GSETUP_NATIVE_FREQ
 Häufigkeit Eingeborene
+
 GSETUP_AI_AGGR
 Max KI Aggression
 
+# A galaxy shape to select when generating a universe.
 GSETUP_2ARM
 Spirale, 2-armig
+
+# A galaxy shape to select when generating a universe.
 GSETUP_3ARM
 Spirale, 3-armig
+
+# A galaxy shape to select when generating a universe.
 GSETUP_4ARM
 Spirale, 4-armig
+
+# A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
 Haufen
+
+# A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
 Elliptisch
+
+# A galaxy shape to select when generating a universe.
 GSETUP_DISC
 Scheibe
+
+# A galaxy shape to select when generating a universe.
 GSETUP_BOX
 Kasten
+
+# A galaxy shape to select when generating a universe.
 GSETUP_IRREGULAR
 Unregelmäßig
+
+# A galaxy shape to select when generating a universe.
 #GSETUP_RING
 #Ring
 
+# A galaxy shape to select when generating a universe.
 GSETUP_RANDOM
 Zufällig
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
 Keine
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Niedrig
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
 Mittel
+
+# Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 Hoch
 
+# A galaxy age to select when generating a universe.
 GSETUP_YOUNG
 Jung
+
+# A galaxy age to select when generating a universe.
 GSETUP_MATURE
 Erwachsen
+
+# A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
 Uralt
 
+# AI aggression level.
 GSETUP_BEGINNER
 Anfängermodus
+
+# AI aggression level.
 GSETUP_TURTLE
 Schildkröte
+
+# AI aggression level.
 GSETUP_CAUTIOUS
 Vorsichtig
+
+# AI aggression level.
 GSETUP_TYPICAL
 Typisch
+
+# AI aggression level.
 GSETUP_AGGRESSIVE
 Aggressiv
+
+# AI aggression level.
 GSETUP_MANIACAL
 Wahnsinnig
 
-#Error messages####
 
-GSETUP_ERR_NOEXIST
-existiert nicht.
-
-###########################
-# About Dialog            #
-###########################
-
-#License button text####
+##
+## About dialog
+##
 
 LICENSE
 Lizenz
@@ -1432,18 +1466,16 @@ Lizenz
 ABOUT_WINDOW_TITLE
 Über FreeOrion
 
-CREDITS
-Mitwirkende
-
 #VISION
 #Vision
 
 FREEORION_VISION
 FreeOrion ist ein runden-basierendes (TBS = Turned Based Strategy) Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
 
-###########################
-# Game Menu               #
-###########################
+
+##
+## In-game menu
+##
 
 GAME_MENU_WINDOW_TITLE
 Menü
@@ -1460,9 +1492,10 @@ Aufgeben
 GAME_MENU_SAVE_FILES
 Speicherstände
 
-###########################
-# Save Game Dialog        #
-###########################
+
+##
+## Save game dialog
+##
 
 SAVE_TIME_TITLE
 <u>Zeit</u>
@@ -1503,15 +1536,18 @@ Datei:
 SAVE_DIRECTORY
 Pfad:
 
+# %1% entered path to the save game file that should be deleted.
 SAVE_REALLY_DELETE
 Sind Sie sicher, dass sie %1% löschen möchten?
 
+# %1% entered path to the save game file that should be overwritten.
 SAVE_REALLY_OVERRIDE
 Sind Sie sicher, dass sie %1% überschreiben möchten?
 
-###########################
-# Game Options            #
-###########################
+
+##
+## Game options
+##
 
 OPTIONS_TITLE
 Einstellungen
@@ -1573,9 +1609,6 @@ Fenstermodus
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Setzt die Breite und Höhe des Fensters im Fenstermodus. Die Farbtiefe ist gleich dem Vollbildmodus.
 
-OPTIONS_VIDEO_SETTINGS
-Videoeinstellungen
-
 OPTIONS_APP_WIDTH_WINDOWED
 Fenstermodusbreite
 
@@ -1602,12 +1635,6 @@ FPS begrenzen
 
 OPTIONS_APPLY
 Anwenden
-
-OPTIONS_CHAT_HISTORY
-Chatverlauf
-
-OPTIONS_CHAT_HIDE
-Chat Ausblendungsverzögerung
 
 OPTIONS_GALAXY_MAP
 Galaxiekarte
@@ -1671,12 +1698,6 @@ Galaxie Maßstabslinie
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxiekarte Vergrösserungsregler
-
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Tarngrenzwert für die Aufklärungsreichweitenanzeige der Galaxiekarte
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Tarngrenzwertregler der Galaxiekarte
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Kreise für Aufklärungsreichweite
@@ -1750,9 +1771,6 @@ Fensterklänge
 OPTIONS_SOUND_BUTTON
 Knöpfe Klänge
 
-OPTIONS_SOUND_FLEET
-Flottenknopf Klänge
-
 OPTIONS_SOUND_ALERT
 Alarm
 
@@ -1816,9 +1834,6 @@ Steigende Werte
 OPTIONS_STAT_DECREASE_COLOR
 Sinkende Werte
 
-OPTIONS_INTERIOR_COLOR
-Inneres
-
 OPTIONS_WINDOW_COLORS
 Fenster
 
@@ -1873,9 +1888,6 @@ Hintergrund
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Leiste
 
-OPTIONS_ANY_FILE
-Alle Dateien
-
 OPTIONS_FOLDER_SETTINGS
 Ressourcendateien
 
@@ -1894,8 +1906,8 @@ Musikdateien
 OPTIONS_SOUND_FILE
 Klangdateien
 
-OPTIONS_AUTO_EFFECT_DESC
-Automatisch generierte Effektbeschreibungen
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
+Effektgruppenbeschreibungen anzeigen
 
 OPTIONS_VERBOSE_LOGGING_DESC
 Ausführliche Protokollierung zur Fehlersuche
@@ -1903,13 +1915,16 @@ Ausführliche Protokollierung zur Fehlersuche
 OPTIONS_VERBOSE_SITREP_DESC
 Statusberichte mit Fehlermeldungen
 
-#################
-# Main Map      #
-#################
 
+##
+## Main map window
+##
+
+# %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Runde %1%
 
+# %1% number of frames currently displayed per second.
 #MAP_INDICATOR_FPS
 #%1% FPS
 
@@ -1952,6 +1967,8 @@ Produktion
 MAP_PROD_WASTED_TITLE
 Ungenutzte Produktion
 
+# %1% number of production points generated.
+# %2% number of production points currently not used for production.
 MAP_PROD_WASTED_TEXT
 '''Gesamte Produktion : %1%
 Verschwendete Produkt. : %2%
@@ -1964,6 +1981,8 @@ Forschung
 MAP_RES_WASTED_TITLE
 Ungenutzte Forschung
 
+# %1% number of research points generated.
+# %2% number of research points currently not used for research.
 MAP_RES_WASTED_TEXT
 '''Gesamte Forschung : %1%
 Verschwendete Forsch. : %2%
@@ -1972,9 +1991,6 @@ Hier klicken um das Forschungsmenü zu öffnen'''
 
 MAP_POPULATION_DISTRIBUTION
 Volkszählung
-
-#MAP_POPULATION_COUNT
-#%1%: %2%
 
 CENSUS_SPECIES_HEADER
 Spezies
@@ -2000,112 +2016,148 @@ Flottenstärke
 MAP_FLEET_TEXT
 Gesamtanzahl Schiffe
 
-#################
-# SidePanel     #
-#################
 
-SIDE_PANEL
-Seitenfenster
+##
+## Side panel/System information
+##
 
-SP_SYSTEM_PRODUCTION
-System Produktion
-
+# %1% resource type currently produced by the system.
+# %2% amount of the resource currently produced by the system.
 #RESOURCE_PRODUCTION_TOOLTIP
 #System %1%: %2%
+
+# %1% resource type currently consumed by the system.
+# %2% amount of the resource currently consumed by the system.
 #RESOURCE_ALLOCATION_TOOLTIP
 #System %1%: %2%
 
 INDUSTRY_PRODUCTION
 Industrieproduktion
+
 RESEARCH_PRODUCTION
 Forschungsproduktion
+
 TRADE_PRODUCTION
 Handelsproduktion
 
 INDUSTRY_CONSUMPTION
 Industrieverbrauch
+
 RESEARCH_CONSUMPTION
 Forschungsverbrauch
+
 TRADE_CONSUMPTION
 Handelsverbrauch
 
-INTERSYSTEM_EXCHANGE_TOOLTIP
-Inter-System Austausch
 IMPORT_EXPORT_TOOLTIP
 Einfuhr / Ausfuhr
+
 RESOURCE_IMPORT
 Importieren
+
 RESOURCE_EXPORT
 Für die Ausfuhr verfügbar
+
 RESOURCE_SELF_SUFFICIENT
 Kein Einfuhr oder Ausfuhr
 
-##Planet Panel#############
+
+##
+## Side panel/Planet panel
+##
 
 PLANET_PANEL
 Planetenfenster
-PL_ASTEROID_BELT
-Asteroidengürtel
+
+# %1% name of the system this asteroid belt is created in.
 PL_ASTEROID_BELT_OF_SYSTEM
 %1% Asteroiden
-PL_UNINHABITED
-Unbewohnt
-PL_SIZE
-Größe
+
+# %1% size of the population this planet is colonized with.
+# %2% maximum population this planet can support.
 PL_COLONIZE
 Besiedeln (%1% / %2%)
+
 PL_CANCEL_COLONIZE
 Besiedlung abbrechen
+
 PL_OUTPOST
 Außenposten errichten
-PL_CANCEL_OUTPOST
-Außenposten abziehen
+
+# %1% number of ground troops that will be deployed on the planet.
 PL_INVADE
 Einmarschieren (+%1%)
+
 PL_CANCEL_INVADE
 Einmarschieren abbrechen
-PL_SELECT_COLONY_SHIP_INSTRUCTION
-Wähle Siedlungsschiff zum kolonisieren.
+
 PL_BOMBARD
 Bombardieren
+
 PL_CANCEL_BOMBARD
 Bombardierung abbrechen
+
+# %1% the planet size as text (small, medium, large, ...).
+# %2% type of the planet environment (desert, oceanic, terran, ...).
 #PL_TYPE_SIZE
 #%1% %2%
+
+# %1% the planet size as text (small, medium, large, ...).
+# %2% type of the planet environment (desert, oceanic, terran, ...).
+# %3% suitability of the planet for a concrete species (adequate, hostile, ...).
 #PL_TYPE_SIZE_ENV
 #%1% %2% (%3%)
+
 PL_NO_VISIBILITY
 Planet ist momentan nicht sichtbar.
+
 PL_BASIC_VISIBILITY
 Planet ist für Sensoren nicht abtastbar.
+
+# %1% turn number where this planet was completely visible to the querying
+#     player.
 PL_LAST_TURN_SEEN
 Zuletzt gesehen in Runde %1%.
+
+# %1% turn number where this planet was scanned by the querying player.
 PL_LAST_TURN_SCANNED
 Zuletzt abgetastet in Runde %1%.
+
 PL_NEVER_SEEN
 Planet wurde nie von Ihrem Imperium gesehen.
+
 PL_NEVER_SCANNED
 Planet wurde nie von Ihrem Imperium abgetastet.
+
 PL_NOT_IN_RANGE
 Dieser Planet ist außerhalb der Aufklärungsreichweite Ihres Imperiums.
+
+# %1% last known stealth value of the planet.
+# %2% detection strength of the empire which scanned the planet.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Neuste bekannte Tarnung (%1%) übersteigt die [[DETECTION_TITLE]] (%2%).
+
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 Neuste bekannte Tarnung ist nicht aktuell.  Tatsächliche Tarnung übersteigt die [[DETECTION_TITLE]].
 
-## Resources Panel ##########
 
+##
+## Side panel/Resources panel
+##
+
+# %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Fokus: %1%
 
-## Specials Panel ##########
 
-## Buildings Panel##########
+##
+## Side panel/Specials panel
+##
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (unvollständig)
 
-%2%'''
+##
+## Side panel/Buildings panel
+##
 
 ORDER_BUIDLING_SCRAP
 Gebäude abreißen
@@ -2113,7 +2165,10 @@ Gebäude abreißen
 ORDER_CANCEL_BUIDLING_SCRAP
 Gebäudeabriss abbrechen
 
-## General Tooltips#########
+
+##
+## General tooltips
+##
 
 TT_THIS_TURN
 Diese Runde
@@ -2124,45 +2179,53 @@ Nächste Runde
 TT_CHANGE
 Änderung
 
+# %1% the meter name displayed.
+# %2% the meter value.
 #TT_BREAKDOWN_SUMMARY
 #%1%: %2%
-
-TT_TARGETS_BREAKDOWN_SUMMARY
-%1% Änderungen: %2%
 
 TT_INHERENT
 Inhärent
 
+# %1% name of the owning empire.
+# %2% FIXME
 TT_TECH
 %1% Technologie <i>%2%</i>
 
+# %1% name of the planet, where the building is located.
+# %2% FIXME
 TT_BUILDING
 %1% Gebäude <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_HULL
 Schiff <i>%1%</i> Rumpf <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SHIP_PART
 Schiff <i>%1%</i> Teil <i>%2%</i>
 
+# %1% FIXME
+# %2% FIXME
 TT_SPECIAL
 Besonderheit <i>%2%</i>
 
+# %1% name of the species.
+# %2% FIXME
 TT_SPECIES
 Spezies <i>%2%</i>
 
+# %1% name of this fields field type.
+# %2% FIXME
 #TT_FIELD
 #<i>%2%</i>
 
 TT_UNKNOWN
 Unbekannt
 
-TT_RESOURCE_PRODUCTION
-%1% produziert %2%
-
-TT_RESOURCE_ALLOCATION
-%1% verbraucht %2%
-
+# %1% name of the species.
 #TT_SPECIES_POPULATION
 #%1% [[METER_POPULATION]]
 
@@ -2175,13 +2238,16 @@ Neuen Planetennamen eingeben
 SP_PLANET_SUITABILITY
 Planet Eignung
 
-#################
-# Fleet Window  #
-#################
 
+##
+## Fleet window
+##
+
+# %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
 Hält in System %1%
 
+# %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
 Fliegt nach %1%
 
@@ -2191,6 +2257,11 @@ Warten auf Kraftstoff
 FW_FLEET_EXPLORING_WAITING
 Warten auf ein System zum erkunden
 
+# %1% name of the destination system
+# %2% estimated turns until the fleet reach the destination system. Can also be
+#     'unknown', 'never' or 'out of range.
+# %3% estimated turns until the fleet reach the next system. Can also be
+#     'unknown', 'never' or 'out of range.
 FW_FLEET_EXPLORING_TO
 Erkunde %1%
 
@@ -2215,52 +2286,60 @@ Verbergen
 FW_PASSIVE_DESC
 Flotte wird versuchen getarnt zu bleiben; sie wird keine Blockade oder Kampf eröffnen.
 
-FW_SHIP_CLASS
-Schiffsklasse
-
 FW_UNKNOWN_DESIGN_NAME
 Unbekannter Entwurf
 
+# %1% name of the ship design that was used by this ship.
+# %2% name of the ship owning species.
 #FW_SPECIES_SHIP_DESIGN_LABEL
 #(%2%) %1%
 
-# the name of the new fleet icon in the fleet listbox
+# Displayed when creating a new fleet by dropping ships into the new fleet slot.
 FW_NEW_FLEET_LABEL
 <i>Neue Flotte</i>
 
+# Fleet window title
+# %1% empire, which owns the fleets.
+# %2% system where those fleets hold.
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Flotten in %2%
 
+# Fleet window title
+# %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
 %1% Flotten
 
+# Fleet window title
 FW_NO_FLEET
 Keine Flotte
 
+# Fleet window title
+# %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Flotte in %1%
 
+# Fleet window title
 FW_GENERIC_FLEETS
 Flotten
 
-FW_HOME_FLEET
-Heimatflotte
-
-FW_BATTLE_FLEET
-Kampfflotte
-
-# the name that is used for fleets the client's player does not control but is owned by an empire. %1% is the empire name.
+# the name that is used for fleets the client's player does not control but is
+# owned by an empire.
+# %1% empire name.
 FW_EMPIRE_FLEET
 %1% Flotte
 
-# the name that is used for ships the client's player does not control but is owned by an empire. %1% is the empire name.
+# the name that is used for ships the client's player does not control but is
+# owned by an empire.
+# %1% empire name.
 FW_EMPIRE_SHIP
 %1% Schiff
 
+# the fleet name for fleets with an unknown owning empire.
 FW_FOREIGN
 Fremd
 
-# the name that is used for fleets the client's player does not control when the empire is not specified.
+# the name that is used for fleets the client's player does not control when
+# the empire is not specified.
 FW_FOREIGN_FLEET
 Fremde Flotte
 
@@ -2268,7 +2347,8 @@ Fremde Flotte
 FW_ROGUE_FLEET
 Schurkenflotte
 
-# the name that is used for ships the client's player does not control when the empire is not specified.
+# the name that is used for ships the client's player does not control when the
+# empire is not specified.
 FW_FOREIGN_SHIP
 Fremdes Raumschiff
 
@@ -2279,17 +2359,8 @@ Schurkenraumschiff
 SHIP_DAMAGE_STAT_TITLE
 Schaden
 
-SHIP_DAMAGE_STAT_MAIN
-Gesamter Schaden, den die Waffen des Schiffes pro Kampfrunde anrichten.
-
 SHIP_TROOPS_TITLE
 Truppen
-
-SHIP_SPEED_STAT_TITLE
-Geschwindigkeit
-
-SHIP_SPEED_STAT_MAIN
-Maximale Reisedistanz entlang der Sternstraßen pro Runde.
 
 FW_FLEET_FUEL_SUMMARY
 Flottenkraftstoff - Entspricht dem Minimum an Kraftstoff der Schiffe der Flotte.
@@ -2336,9 +2407,10 @@ Erkunden
 ORDER_CANCEL_FLEET_EXPLORE
 Erkundung beenden
 
-###############
-#  Moderator  #
-###############
+
+##
+## Moderator
+##
 
 MOD_NONE
 Keine Handlung für Spielleiter
@@ -2361,9 +2433,10 @@ Sternstraße hinzufügen
 MOD_REMOVE_STARLANE
 Sternstraße entfernen
 
-###############
-#  Diplomacy  #
-###############
+
+##
+## Diplomacy
+##
 
 DIPLOMACY
 Diplomatie
@@ -2386,48 +2459,30 @@ Friedensangebot annullieren
 PEACE_ACCEPT
 Friedensangebot annehmen
 
-###############
-# TechTreeWnd #
-###############
+
+##
+## TechTreeWnd
+##
 
 TECH_DISPLAY
 Anzeige
 
-#TECH_NAVIGATION
-#Navigation
-
-TECH_TOTAL_COST_STR
-%1% FP und %2% Rnd
-
+# %1% amount of research points required to research the technology.
+# %2% number of turns required to research the technology.
 TECH_TOTAL_COST_ALT_STR
 %1% FP / %2% Rnd
 
+# %1% research points used this turn.
+# %2% research points available for this turn.
 TECH_TURN_COST_STR
 +%1% / %2% FP
 
+# %1% number of remaining turns to complete the technology research.
 TECH_TURNS_LEFT_STR
 %1% Rnd
 
 TECH_TURNS_LEFT_NEVER
 Nie
-
-TECH_WND_TECH_COMPLETED
-VOLLSTÄNDIG
-
-TECH_WND_TECH_QUEUED
-In Warteliste
-
-TECH_WND_TECH_INCOMPLETE
-Unvollständig
-
-TECH_WND_TYPE_THEORIES
-Theorien
-
-TECH_WND_TYPE_APPLICATIONS
-Anwendungen
-
-TECH_WND_TYPE_REFINEMENTS
-Verfeinerungen
 
 TECH_WND_STATUS_COMPLETED
 Bereits erforscht
@@ -2453,26 +2508,31 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 TECH_WND_VIEW_TYPE
 Baumansicht / Listenansicht
 
-TECH_WND_REQUIRES
-Benötigt
-
-TECH_WND_UNLOCKS
-Schaltet frei
-
+# %1% research points already spent on a reseach.
+# %2% total research points required to complete the research.
+# %3% research points used per turn.
+# %4% research points available per turn.
 TECH_WND_PROGRESS
 '''%1% / %2% FP
 + %3% / %4% FP/Runde'''
 
+# %1% estimated turns left until technology is researched.
 TECH_WND_ETA
 %1% Runde übrig
 
-#######################
-# ProductionInfoPanel #
-#######################
 
+##
+## Production info panel
+##
+
+# %1% type of resource (Research, Production, ...).
+# %2% name of the location where the resource is produced.
+# %3% name of the empire which owns this resource produced.
 PRODUCTION_INFO_AT_LOCATION_TITLE
 %3% %1% auf %2%
 
+# %1% type of resource (Research, Production, ...).
+# %2% name of the empire which owns this resource produced.
 #PRODUCTION_INFO_EMPIRE
 #%2% %1%
 
@@ -2482,13 +2542,15 @@ Insg. verfügbare Punkte
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
 
-###############
-# ResearchWnd #
-###############
+
+##
+## Research window
+##
 
 RESEARCH_WND_TITLE
 Forschung
 
+# %1% name of the empire which owns this research queue.
 RESEARCH_QUEUE_EMPIRE
 %1% Forschungwarteliste
 
@@ -2498,13 +2560,15 @@ FP
 RESEARCH_QUEUE_PROMPT
 Klicke doppelt oder mit Shift auf ein verfügbares Objekt um es zur Forschungswarteschlange hinzufügen.
 
-####################
-# BuildSelectorWnd #
-####################
+
+##
+## Build selector window
+##
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Herstellbare Objekte
 
+# %1% name of the location where the item is produced.
 PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION
 Herstellbare Objekte in %1%
 
@@ -2520,56 +2584,48 @@ Verfügbar
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Nicht verfüg.
 
-PRODUCTION_TOTAL_COST_STR
-%1% PP und %2% Rnd
-
+# %1% currently used amount of production points used per turn to build an item.
+# %2% maximum available amount of production points for this turn.
 #PRODUCTION_TURN_COST_STR
 #+%1% / %2% PP
 
+# %1% number of turns left to finish the production of an item.
 PRODUCTION_TURNS_LEFT_STR
 %1% Rnd
 
 PRODUCTION_TURNS_LEFT_NEVER
 Nie
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Anzahl
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Zur Liste hinzufügen
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Auf Bau zentrieren
 
 PRODUCTION_QUEUE_PROMPT
 Doppelklick auf ein verfügbares Objekt um es zur Produktionswarteschlange hinzufügen.
 
-#################
-# ProductionWnd #
-#################
+
+##
+## Production window
+##
 
 PRODUCTION_WND_TITLE
 Produktion
 
+# %1% the amount of items that should be produced in a single batch.
 #PRODUCTION_QUEUE_MULTIPLES
 #'''%1%x '''
 
+# %1% number of repetions an item should be produced on after another.
 #PRODUCTION_QUEUE_REPETITIONS
 #%1%⟳
 
-PRODUCTION_QUEUE_EMPTY
-'''Die Produktionswarteschlange des Imperiums ist leer.
-
-Um Projekte auf die Produktionswarteschlange zu setzen, muss zuerst ein Planet auf dem Seitenfenster ausgewählt sein, bevor ein Objekt auf die Liste hinzugefügt werden kann.
-
-Es ist zu beachten, dass Schiffe nur auf einen Planeten mit einer Werft gebaut werden können und dass verschiedene andere Objekte den verschiedenen anderen Einschränkungen ihres Erstellungsortes unterworfen sein können.'''
-
+# %1% location where the item is produced.
 PRODUCTION_QUEUE_ITEM_LOCATION
 An %1%
 
-###############
-#  DesignWnd  #
-###############
+
+##
+## Design window
+##
 
 SHIP_DESIGN_FILES
 Entwurfsdateien
@@ -2579,9 +2635,6 @@ Eigener Schiffsentwurf
 
 DESIGN_DESCRIPTION_DEFAULT
 Entwurfsbeschreibung
-
-DESIGN_NO_PART
-Keine
 
 DESIGN_WND_STARTS
 Entwurf beginnen mit
@@ -2610,14 +2663,8 @@ Entwurfsname
 DESIGN_WND_DESIGN_DESCRIPTION
 Beschreibung
 
-DESIGN_WND_CONFIRM
-Entwurf bestätigen
-
 DESIGN_WND_CLEAR
 Alles entfernen
-
-DESIGN_DELETE
-Entwurf löschen
 
 DESIGN_RENAME
 Entwurf umbenennen
@@ -2634,35 +2681,41 @@ Veralteter Entwurf
 DESIGN_WND_ADD
 Neuen Entwurf hinzufügen
 
-################
-## Statistics ##
-################
+
+##
+## Statistics
+##
+
 SHIP_COUNT
 Shiffszahl
 
-#############################################################
-####               E N C Y C L O P E D I A               ####
-#############################################################
 
+##
+## Encyclopedia
+##
+
+# %1% name of the species.
 #ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
 #'''%1%:	'''
 
+# %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
+#     column width.
+# %2% the planet environment for a species.
+# %3% the planet population capacity for a species.
 #ENC_SPECIES_PLANET_TYPE_SUITABILITY
 #%1%	%2% (%3%)
 
+# %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 '''%1% eignet sich zur Besiedlung durch diese Spezies.
 
 '''
 
+# %1% name of the planet.
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''%1% ist nicht geeignet zur Besiedlung durch diese Spezies. Besiedlungsversuche werden entweder scheitern oder letztendlich aussterben.
 
 '''
-
-# types of things that can be shown in encyclopedia
-ENC_TEST
-Test
 
 ENC_SHIP_PART
 Schiffsteil
@@ -2724,6 +2777,8 @@ Keine eigene Planeten bekannt
 OWNED_FLEETS
 '''Flotten in Besitz: '''
 
+# %1% link to a fleet.
+# %2% link to a system.
 OWNED_FLEET_AT_SYSTEM
 %1% an %2%
 
@@ -2738,15 +2793,6 @@ ENC_MONSTER
 
 ENC_MONSTER_TYPE
 Monstertypen
-
-MONSTER_TYPES
-Monstertypen
-
-MONSTER_OBJECTS
-'''Monster: '''
-
-NO_MONSTER_OBJECTS
-Keine Monster bekannt
 
 ENC_FLEET
 [Spiel - Flotten]
@@ -2772,9 +2818,10 @@ Verzeichnis Encyklopädie
 SEARCH_RESULTS
 Suchergebnisse
 
-# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
-# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
-# %1% may be an empty string for most general types of things that can be shown.
+# %1% specialized type description of the thing described in the encyclopedia
+#     (e.g. for a ship part it would be the ship part class).
+# %2% general type description of the thing described in the encyclopedia.
+#     (e.g. for a ship part it would be the content of 'ENC_SHIP_PART').
 #ENC_DETAIL_TYPE_STR
 #%1% %2%
 
@@ -2784,49 +2831,34 @@ Suchergebnisse
 ENC_RP
 FP
 
-# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
-# be produced or researched (e.g. specials)
-# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
-# %3% will be the minimum number of turns it takes to produce or research the thing shown
+# Concise listing of costs required to produce item or research tech.
+# %1% cost to complete requested item or technology.
+# %2% unit of costs; can be `ENC_PP` or `ENC_RP` depending on the item or
+#     technology.
+# %3% turns to complete requested item or technology.
 ENC_COST_AND_TURNS_STR
 %1% %2% und %3% Rnd
 
-# auto-generated location condition description
-ENC_LOCATION_CONDITION_STR
-'''
-
-<u>Standortbedingungen</u>
-
-Ein Objekt%1%'''
-
-# auto-generated effects description. %1% will be the auto-generated effects text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-ENC_EFFECTS_STR
-'''
-
-<u>Effekte</u>
-
-%1%'''
-
-# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-ENC_AUTO_COST_STR
-'''
-
-<u>Kosten</u>
-
-%1%'''
-
-# auto-generated production time description. %1% will be the auto-generated time text. This string should
-# provide an appropriate heading to appear before the auto-generated text.
-ENC_AUTO_TIME_STR
-'''
-
-<u>Zeit</u>
-
-%1%'''
-
+# FIXME
+# Displays the ship design properties inside a Pedia article in detail.
+# %1% description.
+# %2% hull name.
+# %3% list of builtin parts.
+# %4% number of builtin weapon parts.
+# %5% number of builtin rocket parts.
+# %6% number of builtin fighter bays.
+# %7% number of builtin point defense weapon bays.
+# %8% amount of structure points.
+# %9% amount of shield points.
+# %10% amount of detection points.
+# %11% amount of stealth points.
+# %12% battle speed.
+# %13% starlane speed.
+# %14% fuel capacity.
+# %15% number of settlers.
+# %16% number of troops.
+# %17% total damage done by weapons.
+# %18% species that mans the ship.
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
@@ -2841,13 +2873,6 @@ Besiedlungsvermögen: %15%    Truppen: %16%
 Erwartete Kampfstärke (ohne Schilde): %19$.f (%20$.2f pro PP)
 Gegenüber erwarteten gegnerischen Waffen und Schilden: %21$.f (%22$.2f pro PP)
 '''
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
-##
 
 ENC_UNLOCKED_BY
 '''<u>Durch Technologie freigeschaltet:</u>
@@ -2859,24 +2884,32 @@ ENC_UNLOCKS
 
 '''
 
+# %1% object, technology or other content that should be looked up in the
+#     encyclopedia.
 ENC_LOOKUP
 Pedia durchsuchen %1%
 
-ENC_COMBAT_LOG
-Kampflogbuch
-
+# %1% link to the system, where the combat occured.
+# %2% turn when the combat occured.
 ENC_COMBAT_LOG_DESCRIPTION_STR
 Kampf bei %1% in Runde %2%:
 
+# %1% link to the attacker in a weapon fired battle event.
+# %2% link to the target in a weapon fired event.
+# %3% amount of damage done when firing the weapon.
+# %4% the round number. (a round is phase where all units in a combat have
+#     acted).
+# %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
 %1% greift %2% an und verursacht %3% Schaden
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
 
-###########################################
-# Combat Report #
-###########################################
+
+##
+## Combat report
+##
 
 #NEUTRAL
 #Neutral
@@ -2884,9 +2917,10 @@ Unbekannt
 COMBAT_SUMMARY
 Zusammenfassung
 
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
+
+##
+## Encyclopedia article categories and short descriptions
+##
 
 CATEGORY_GUIDES
 **Leitfäden**
@@ -2921,17 +2955,20 @@ Metriken
 POPULATION_TITLE_SHORT_DESC
 Bevölkerung
 
-###########################################
-# ARTICLES #
-###########################################
+
+##
+## Encyclopedia articles
+##
 
 PEACE_TITLE
 Frieden
+
 PEACE_TEXT
 Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Parteien sich darauf einigen die Schiffe und Planeten des anderen nicht anzugreifen, nicht die [[encyclopedia SUPPLY_TITLE]]strecken zu behindern sowie die Besiedlung zu erschweren.
 
 OUTPOSTS_TITLE
 Außenposten
+
 OUTPOSTS_TEXT
 Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auch, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.
 
@@ -2952,11 +2989,13 @@ Zufriedenheit
 
 INFRASTRUCTURE_TITLE
 Infrastruktur
+
 INFRASTRUCTURE_TEXT
 Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.
 
 DEFENSE_TITLE
 Verteidigung
+
 DEFENSE_TEXT
 Der Verteidigungswert eines Planeten stellt die Feuerkraft der installierten Boden-All-Waffen da. Er ist mit dem Angriffswert eines Schiffes vergleichbar.
 
@@ -2968,6 +3007,7 @@ Tarnung
 
 DETECTION_TITLE
 Erkennung Stärke
+
 DETECTION_TEXT
 '''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[encyclopedia STEALTH_TITLE]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[encyclopedia DETECTION_RANGE_TITLE]] eines Raumschiffes oder Planeten befindet.
 
@@ -2975,6 +3015,7 @@ Imperien haben eines Erkennungsstärke Mass.'''
 
 DETECTION_RANGE_TITLE
 Erkennungsreichweite
+
 DETECTION_RANGE_TEXT
 '''Die Erkennungsreichweite sagt aus, wie weit die Sensoren reichen. Ein Imperium kann nur Objekte erkennen, deren  [[encyclopedia STEALTH_TITLE]] kleiner oder gleich der [[encyclopedia DETECTION_TITLE]] sind und innerhalb der Erkennungsreichweite eines eigenen Raumschiffes oder Planeten liegt.
 
@@ -2982,6 +3023,7 @@ Raumschiffe und Planeten haben einen Erkennungsreichweitenanzeiger. Es gibt im O
 
 TROOP_TITLE
 Truppen
+
 TROOP_TEXT
 '''Der Begriff Truppen umschreibt alle Formen militärischer Einsatzkräfte, denen es möglich ist, auf einer Planetenoberfläche zu operieren.
 
@@ -2989,21 +3031,25 @@ Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationi
 
 ORGANIC_SPECIES_TITLE
 Organischer Stoffwechsel
+
 ORGANIC_SPECIES_TEXT
 Organische Spezies meint mehr oder weniger "Leben, wie wir es kennen". Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein organischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.
 
 LITHIC_SPECIES_TITLE
 Lithischer Stoffwechsel
+
 LITHIC_SPECIES_TEXT
 Lithische Spezies sind Silizium- oder Mineral-basierend. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein lithischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.
 
 ROBOTIC_SPECIES_TITLE
 Roboter Stoffwechsel
+
 ROBOTIC_SPECIES_TEXT
 Roboterspezies sind intelligente Maschinen. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein Roboterwachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist. Roboterwachstums-Boni sind markiert mit einem kleinen roten "R" in der Ecke.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototropher Stoffwechsel
+
 PHOTOTROPHIC_SPECIES_TEXT
 '''Phototrophe Spezies leben hauptsächlich oder vollständig von Sonnelicht. Die maximalen Bevölkerungen dieser Spezies sind stark beeinflusst von der Helligkeit des Sternes im jeweiligen System - umso heller, desto besser. Es gibt keine speziellen Wachstumsboni.
 
@@ -3016,6 +3062,7 @@ Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.''
 
 TELEPATHIC_TITLE
 Telepathie
+
 TELEPATHY_TEXT
 Telepathische Spezies sind immun gegen Gedankenkontrolle und somit besser für die Erforschung der [[tech LRN_PSIONICS]] geeignet.
 
@@ -3026,6 +3073,7 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 
 FUEL_TITLE
 Treibstoff
+
 FUEL_TEXT
 Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[encyclopedia SUPPLY_TITLE]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.
 
@@ -3034,11 +3082,13 @@ Versorgung
 
 FLEET_UPKEEP_TITLE
 Flotten Unterhalt
+
 FLEET_UPKEEP_TEXT
 Die Unterhaltskosten einer Flotte sind mehr als die Summe der Kosten aller Schiffe, da die Betriebs- und Verwaltungskosten von mehreren Schiffen dazu kommen. Wenn neue Schiffe produziert werden, steigen die Kosten um 1% für jedes Schiff im Besitz des Imperiums. Die Kosten von [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] und [[shippart CO_OUTPOST_POD]] im Gegensatz steigen um 6% für jeden Planeten im Besitz des Imperiums.
 
 EVACUATION_TITLE
 Evakuierung
+
 EVACUATION_TEXT
 '''Das [[buildingtype BLD_EVACUATION]]sprojekt, wenn es gebaut wird, entfernt die Bevölkerung vom Planeten. Jede Runde wird ein Anteil entfernt. Wenn es kolonisierte Planeten derselben Spezies mit genügend freiem Platz gibt, die über die Versorgungslinien verbunden sind, wird einer zufällig ausgesucht und die Bevölkerung dorthin evakuiert. Ist kein entsprechender Planet vorhanden, wird die Bevölkerung in den Weiten des Alls verschwinden.
 Während der Evakuierung fällt die Produktion auf Null. Wenn die Kolonie leer ist, entsteht ein [[encyclopedia OUTPOSTS_TITLE]]. Er gehört demselben Imperium und kann wieder kolonisiert werden, sobald sich das [[buildingtype BLD_EVACUATION]] selbst gelöscht hat'''
@@ -3052,46 +3102,15 @@ Schaden
 MAP_WINDOW_ARTICLE_TITLE
 Kartenfenster
 
-####################
-# Combat Messages  #
-####################
 
-COMBAT_WINDOW_TITLE
-Kampffenster
+##
+## Guides
+##
 
-COMBAT_BATTLE
-'''KAMPF : '''
 
-COMBAT_SYSTEM
-Das %1% System
-
-COMBAT_MILITARY_SHIPS
-Militärschiffe
-
-COMBAT_CIVILIAN_SHIPS
-Zivilschiffe
-
-COMBAT_PLANETS
-Planeten
-
-COMBAT_REMAINING
-''' Verbleibend'''
-
-COMBAT_RETREATED
-''' Zurückgezogen'''
-
-COMBAT_DESTROYED
-''' Zerstört'''
-
-COMBAT_DEFENSELESS
-''' Wehrlos'''
-
-COMBAT_LOST
-''' Verloren!'''
-
-####################
-# TurnProgress     #
-####################
+##
+## Turn progress
+##
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Flottenbewegung
@@ -3123,6 +3142,7 @@ Erzeuge das Universum
 TURN_PROGRESS_STARTING_AIS
 Erstelle KI Clienten
 
+# %1% number of the current turn.
 TURN_BEGIN
 Beginne Runde %1%
 
@@ -3132,19 +3152,18 @@ Fehler bei der Verarbeitung einer Server-Nachricht.
 ERROR_EARLY_TURN_UPDATE
 Unerwartetes Rundenupdate vom Server.
 
-########################
-# Messages Panel       #
-########################
+
+##
+## Messages panel
+##
 
 MESSAGES_PANEL_TITLE
 Meldungen
 
-MESSAGES_PANEL_INTRO
-Status und Chat Meldungen
 
-########################
-# Players List         #
-########################
+##
+## Players list
+##
 
 PLAYERS_LIST_PANEL_TITLE
 Imperien
@@ -3158,15 +3177,13 @@ Kampf
 WAITING
 Warten
 
-####################
-## Objects Window ##
-####################
+
+##
+## Objects window
+##
 
 SORT
 Sortieren
-
-COLUMNS
-Kolonnen
 
 COLLAPSE_ALL
 Zuklappen
@@ -3174,25 +3191,18 @@ Zuklappen
 EXPAND_ALL
 Aufklappen
 
-#####################
-## Objects Columns ##
-#####################
 
-#COLUMN_SORT_NONE
-#%1%
-
-#COLUMN_SORT_ASCENDING
-#%1% △
-
-#COLUMN_SORT_DESCENDING
-#%1% ▽
+##
+## Objects columns
+##
 
 AGE
 Alter
 
-####################
-## Filters Dialog ##
-####################
+
+##
+## Filters dialog
+##
 
 VISIBLE
 Sichtbar
@@ -3245,25 +3255,21 @@ Fokus Einstellung
 CONDITION_STARTYPE
 Sternentyp
 
-#############################################################
-####                    S I T   R E P                    ####
-#############################################################
 
-#Window title####
+##
+## Situation report
+##
+## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_PANEL_TITLE
 Lagebericht - Anfangsrunde
 
+# %1% number of the current turn.
 SITREP_PANEL_TITLE_TURN
 Lagebericht - Runde %1%
 
-SITREP_ERROR
-Ein unbekanntes Ereignis ist aufgetreten.
-
 FILTERS
 Filter
-
-## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 #SITREP_WELCOME
 #[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
@@ -3273,21 +3279,25 @@ Willkommen
 
 SITREP_SHIP_BUILT
 In %system%: Es wurde die '%ship% (%shipdesign%), fertiggestellt.
+
 SITREP_SHIP_BUILT_LABEL
 Schiff fertiggestellt
 
 SITREP_SHIP_BATCH_BUILT
 In %system%: %rawtext%x %shipdesign% wurde fertiggestellt.
+
 SITREP_SHIP_BATCH_BUILT_LABEL
 Serie von Schiffen wurde fertiggestellt
 
 SITREP_BUILDING_BUILT
 Auf %planet%: %building% wurde fertiggestellt.
+
 SITREP_BUILDING_BUILT_LABEL
 Gebäude fertiggestellt
 
 SITREP_TECH_RESEARCHED
 %tech% wurde erforscht.
+
 SITREP_TECH_RESEARCHED_LABEL
 Technologie erforscht
 
@@ -3305,17 +3315,22 @@ Gebäudetyp freigeschaltet
 
 SITREP_COMBAT_SYSTEM
 In %system%: Es hat ein %combat% stattgefunden.
+
 SITREP_COMBAT_SYSTEM_LABEL
 Kampf in System
+
 SITREP_COMBAT_SYSTEM_ENEMY
 In %system%: Es hat ein %combat% mit %empire% stattgefunden.
+
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
 Kampf in System
+
 COMBAT
 Kampf
 
 SITREP_OBJECT_DESTROYED_AT_SYSTEM
 In %system%: Ein Objekt wurde zerstört.
+
 SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objekt zerstört
 
@@ -3324,120 +3339,145 @@ Eigenes Schiff zerstört
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
 %empire%: %shipdesign% '%ship%' wurde auf %system% zerstört.
+
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Schiff des Imperiums zerstört
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 Ein %shipdesign% wurde auf %system% zerstört.
+
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Fremdes Schiff zerstört
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
 Die %empire% Flotte %fleet% wurde in %system% zerstört.
+
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Imperiumsflotte wurde zerstört
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
 Die Flotte %fleet% wurde in %system% zerstört.
+
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
 Fremde Flotte zerstört
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
 Der zu %empire% gehörende Planet %planet% wurde in %system% zerstört.
+
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Imperiumsplanet wurde zerstört
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
 Der Planet %planet% wurde in %system% zerstört.
+
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
 Fremder Planet zerstört
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 Das %empire% gehörende Gebäude %building% auf dem Planeten %planet% wurde in %system% zerstört.
+
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Imperiumsgebäude zerstört
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 Das Gebäude %building% auf dem Planeten %planet% wurde in %system% zerstört.
+
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
 Fremdes Gebäude zerstört
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
 In %system%: Ein unbekanntes Objekt wurde beschädigt.
+
 SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objekt beschädigt
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 In %system%: Das %empire% %shipdesign% '%ship%' wurde beschädigt.
+
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Imperiumsschiff beschädigt
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 In %system%: Ein %shipdesign% wurde beschädigt.
+
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Fremdes Schiff beschädigt
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 Der Planet %planet% im System %system% vom Imperium %empire% ist bombardiert worden.
+
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Imperiumsplanet bombardiert
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 Der Planet %planet% von %system% ist bombardiert worden.
+
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Unbekannter Planet bombardiert
 
 SITREP_GROUND_BATTLE
 Ein Bodenangriff fand auf %planet% statt.
+
 SITREP_GROUND_BATTLE_LABEL
 Bodenangriff
+
 SITREP_GROUND_BATTLE_ENEMY
 Auf %planet%: Es hat ein Bodenkampf mit %empire% stattgefunden.
+
 SITREP_GROUND_BATTLE_ENEMY_LABEL
 Bodenkampf
 
 SITREP_PLANET_CAPTURED
 %planet% wurde von %empire% erobert.
+
 SITREP_PLANET_CAPTURED_LABEL
 Planet erobert
 
 SITREP_PLANET_DEPOPULATED
 Die Bevölkerung auf %planet% wurde komplett ausgelöscht!
+
 SITREP_PLANET_DEPOPULATED_LABEL
 Planet zerstört
 
 SITREP_PLANET_COLONIZED
 %planet% wurde durch %species% besiedelt.
+
 SITREP_PLANET_COLONIZED_LABEL
 Planet besiedelt
 
 SITREP_PLANET_OUTPOSTED
 Auf %planet% wurde ein Außenposten eingerichtet.
+
 SITREP_PLANET_OUTPOSTED_LABEL
 Planet Außenposten errichtet
 
 SITREP_NEW_COLONY_ESTABLISHED
 Auf %planet%: Es wurde eine neue %species% Kolonie errichtet.
+
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 Neue Kolonie errichtet
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 In %system%: %fleet% (%rawtext% ships) ist angekommen.
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Gemischte Flotte ist angekommen
 
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 %fleet% ist auf %system% angekommen.
+
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monster Flotte ist angekommen
 
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 %empire%: %fleet% ist auf %system% angekommen.
+
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Eigene Flotte ist angekommen
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 %empire%: %fleet% ist auf %system% angekommen.
+
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Fremde Flotte ist angekommen
 
@@ -3446,103 +3486,108 @@ EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 
 EFFECT_MONSTER_SPAWNING
 Ein %predefinedshipdesign% ist in %system% aufgetaucht!
+
 EFFECT_MONSTER_SPAWNING_LABEL
 Monster aufgetaucht
 
 EFFECT_GAIAN_TERRAFORM
 Der Gaiaplanet %planet% hat sich eigenständig terraformiert zu besseren Lebensbedingungen für seine Einwohner.
+
 EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia terraformiert
 
 EFFECT_TERRAFORM
 %planet% wurde terraformiert.
 
-EFFECT_STARVATION
-Hungersnot hat %planet% getroffen.
-EFFECT_STARVATION_LABEL
-Hungersnot
-
 EFFECT_TAME_MONSTER_HATCHED
 Ein gezähmtes %predefinedshipdesign% ist auf %planet% bereit zum Dienst.
+
 EFFECT_TAME_MONSTER_HATCHED_LABEL
 Monster ausgebrütet
 
 EFFECT_TAME_MONSTER_MATURED
 Ein gezähmtes Monster ist im %system% zu dem stärkeren %predefinedshipdesign% gereift.
+
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Monster gereift
 
 EFFECT_GATEWAY_VOID_DESTROY
 Das %buildingtype% auf %planet% zerstörte die Flotte %fleet%.
+
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
 Zerstörung durch Tor zur Leere
 
 EFFECT_TREE_LABEL
 Dysonwald
 
-EFFECT_DERELICT_MINERALS
-Zwanzig Minerale wurde in  %system% von einem herrenlosen Wrack eingesammelt.
-EFFECT_DERELICT_MINERALS_LABEL
-Wrack-Minerale
-
 EFFECT_DERELICT_MAP
 Informationen über die Gegend sind in einem verlassenes Wrack auf %system% gefunden worden.
+
 EFFECT_DERELICT_MAP_LABEL
 Karte aus einem Wrack
 
 EFFECT_DERELICT_FUEL
 Schiffe sind durch restlichen Treibstoff von verlassenen Wracks auf %system% aufgetankt worden.
+
 EFFECT_DERELICT_FUEL_LABEL
 Treibstoff aus Wrack
 
 EFFECT_BIOWEAPON
 %system% hat einiges von seiner Bevölkerung durch einen biologischen Angriff verloren!
+
 EFFECT_BIOWEAPON_LABEL
 Biowaffen-Angriff
 
 EFFECT_EVACUEES
 Evakuierte siedelten auf %planet%.
+
 EFFECT_EVACUEES_LABEL
 Evakuierung
 
 EFFECT_STARGATE
 Die Flotte %fleet% reiste durch das Sternentor ins %system% System.
+
 EFFECT_STARGATE_LABEL
 Sternentor genutzt
 
 EFFECT_PSY_DOM
 Das Schiff  %ship% der %empire% wurde psychisch kontrolliert!
+
 EFFECT_PSY_DOM_LABEL
 Psychogenetische Beherrschung
 
 EFFECT_MINES
 Die Schiffe der Flotte %fleet% von %empire%  haben  %rawtext% Punkte Strukturschaden von Minen im %system% System davongetragen.
+
 EFFECT_MINES_LABEL
 Systemminen
 
 EFFECT_MINES_SHIP_DESTROYED
 The %empire% ship %ship% has been destroyed by mines in the %system% system!
+
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Systemminem zerstörten Schiff
 
-# Translators: Important Note-- use underscores "_" not spaces in the translations for
-# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
-
+# This message value must contain no spaces. Use underlines instead.
 #CUSTOM_1
 #Custom_1
 
+# This message value must contain no spaces. Use underlines instead.
 #CUSTOM_2
 #Custom_2
 
+# This message value must contain no spaces. Use underlines instead.
 #CUSTOM_3
 #Custom_3
 
+# This message value must contain no spaces. Use underlines instead.
 #CUSTOM_4
 #Custom_4
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
+
+##
+## Victory/defeat
+##
 
 VICTORY_TECH
 Das %empire% Imperium hat den technologischen Sieg errungen.
@@ -3555,18 +3600,22 @@ Sieg
 
 SITREP_EMPIRE_ELIMINATED
 %empire% wurde ausgelöscht.
+
 SITREP_EMPIRE_ELIMINATED_LABEL
 Imperium ausgelöscht
 
-#############################################################
-####           RANDOM BEGINNER HINTS                     ####
-#############################################################
+
+##
+## Random beginner hints
+##
+
 BEGINNER_HINTS
 Zufälliger Spieltipp
 
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
+
+##
+## Species
+##
 
 HOMEWORLD
 Heimatwelt:
@@ -3739,9 +3788,10 @@ Bevorzugt ozeanische Planeten.
 #SP_SUPER_TEST
 #Super Testers
 
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
+
+##
+## Specials
+##
 
 #MODERATE_TECH_NATIVES_SPECIAL
 #Moderate Tech Natives
@@ -3781,223 +3831,375 @@ Kopf auf einem Pfahl
 MINERALS_SPECIAL
 Mineralienreichtum
 
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
 
-# UniverseObjectTypes
+##
+## Enumeration values
+##
 
+# Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
 Allgemeines Objekt
+
+# Universe object types
 OBJ_BUILDING
 Gebäude
+
+# Universe object types
 OBJ_SHIP
 Schiff
+
+# Universe object types
 OBJ_FLEET
 Flotte
+
+# Universe object types
 #OBJ_PLANET
 #Planet
+
+# Universe object types
 OBJ_POP_CENTER
 Bevölkerungszentrum
+
+# Universe object types
 OBJ_PROD_CENTER
 Produktionszentrum
+
+# Universe object types
 #OBJ_SYSTEM
 #System
+
+# Universe object types
 OBJ_FIELD
 Feld
 
-# StarTypes
-
-STAR_BLUE
-blau
-STAR_WHITE
-weiß
-STAR_YELLOW
-gelb
-#STAR_ORANGE
-#orange
-STAR_RED
-rot
-STAR_NEUTRON
-Neutronenstern
-STAR_BLACK
-schwarzes Loch
-STAR_NONE
-kein Stern
+# Star types
 INVALID_STAR_TYPE
 Unbekannte Sternenklasse
 
-# PlanetTypes
+# Star types
+STAR_BLUE
+blau
 
+# Star types
+STAR_WHITE
+weiß
+
+# Star types
+STAR_YELLOW
+gelb
+
+# Star types
+#STAR_ORANGE
+#Orange
+
+# Star types
+STAR_RED
+rot
+
+# Star types
+STAR_NEUTRON
+Neutronenstern
+
+# Star types
+STAR_BLACK
+schwarzes Loch
+
+# Star types
+STAR_NONE
+kein Stern
+
+# Planet types
 PT_SWAMP
 Sumpfig
+
+# Planet types
 PT_TOXIC
 Toxisch
+
+# Planet types
 PT_INFERNO
 Vulkanisch
+
+# Planet types
 PT_RADIATED
 Verstrahlt
+
+# Planet types
 PT_BARREN
 Unfruchtbar
+
+# Planet types
 #PT_TUNDRA
 #Tundra
+
+# Planet types
 PT_DESERT
 Wüstenhaft
+
+# Planet types
 PT_TERRAN
 Erdähnlich
+
+# Planet types
 PT_OCEAN
 Ozeanisch
+
+# Planet types
 PT_ASTEROIDS
 Asteroiden
+
+# Planet types
 PT_GASGIANT
 Gasriese
 
-# Planet Sizes
-
+# Planet sizes
 SZ_NOWORLD
 Es gibt nichts zu sehen; weitergehen.
+
+# Planet sizes
 SZ_TINY
 Winzig
+
+# Planet sizes
 SZ_SMALL
 Klein
+
+# Planet sizes
 SZ_MEDIUM
 Mittel
+
+# Planet sizes
 SZ_LARGE
 Groß
+
+# Planet sizes
 SZ_HUGE
 Gewaltig
+
+# Planet sizes
 SZ_ASTEROIDS
 Asteroiden
+
+# Planet sizes
 SZ_GASGIANT
 Gasriese
 
-# PlanetEnvironments
-
+# Planet environments
 PE_UNINHABITABLE
 Unbewohnbar
+
+# Planet environments
 PE_HOSTILE
 Feindlich
+
+# Planet environments
 PE_POOR
 Armseelig
+
+# Planet environments
 PE_ADEQUATE
 Adäquat
+
+# Planet environments
 PE_GOOD
 Gut
 
-# FocusTypes
-
+# Focus types
 INVALID_FOCUS_TYPE
 Unbekannter Fokustyp
+
+# Focus types
 FOCUS_GROWTH
 Wachstum
+
+# Focus types
 FOCUS_INDUSTRY
 Industrie
-FOCUS_MINING
-Bergbau
-FOCUS_HEAVY_MINING
-Massenbergbau
+
+# Focus types
 FOCUS_RESEARCH
 Forschung
+
+# Focus types
 FOCUS_TRADE
 Handel
+
+# Focus types
 FOCUS_LOGISTICS
 Logistik
+
+# Focus types
 FOCUS_STEALTH
 Tarnung
+
+# Focus types
 #FOCUS_BIOTERROR
 #Bioterror
+
+# Focus types
 FOCUS_STARGATE_SEND
 Stargate Sendung
+
 FOCUS_STARGATE_SEND_DESC
 Schiffe ins System durch das Stargate senden
+
+# Focus types
 FOCUS_STARGATE_RECEIVE
 Stargate Empfang
+
 FOCUS_STARGATE_RECEIVE_DESC
 Das Stargate öffnen um ankommende Schiffe von anderswo zu empfangen
+
 FOCUS_DISTORTION
 Weltraum Verzerrung
+
 FOCUS_PROTECTION
 Schutz
+
 FOCUS_PROTECTION_DESC
 Verstärkt Schilder, Verteidigungen und Truppen.
 
-# MeterTypes
-
+# Meter types
 INVALID_METER_TYPE
 Ungultige messungstyp
+
+# Meter types
 METER_TARGET_POPULATION
 Ziel Bevölkerung
+
+# Meter types
 METER_TARGET_HEALTH
 Ziel Gesundheit
+
+# Meter types
 METER_TARGET_INDUSTRY
 Ziel Industrie
+
+# Meter types
 METER_TARGET_RESEARCH
 Ziel Forschung
+
+# Meter types
 METER_TARGET_TRADE
 Ziel Handel
-METER_TARGET_MINING
-Ziel Bergbau
+
+# Meter types
 METER_TARGET_CONSTRUCTION
 Ziel Infrastruktur
+
+# Meter types
 METER_TARGET_HAPPINESS
 Ziel Zufriedenheit
+
+# Meter types
 METER_MAX_FUEL
 Max Treibstoff
+
+# Meter types
 METER_MAX_SHIELD
 Max Schild
+
+# Meter types
 METER_MAX_STRUCTURE
 Max Struktur
+
+# Meter types
 METER_MAX_DEFENSE
 Max Verteidigung
+
+# Meter types
 METER_MAX_TROOPS
 Max Truppen
+
+# Meter types
 METER_MAX_REBEL_TROOPS
 Max Rebellen Truppen
+
+# Meter types
 METER_MAX_SUPPLY
 Max Versorgung
+
+# Meter types
 METER_POPULATION
 Bevölkerung
+
+# Meter types
 METER_HEALTH
 Gesundheit
+
+# Meter types
 METER_GROWTH
 Wachstum
+
+# Meter types
 METER_INDUSTRY
 Industrie
+
+# Meter types
 METER_RESEARCH
 Forschung
+
+# Meter types
 METER_TRADE
 Handel
-METER_MINING
-Bergbau
+
+# Meter types
 METER_CONSTRUCTION
 Konstruktion
+
+# Meter types
 METER_HAPPINESS
 Gesundheit
+
+# Meter types
 METER_FUEL
 Treibstoff
+
+# Meter types
 METER_SHIELD
 Schild
+
+# Meter types
 METER_STRUCTURE
 Struktur
+
+# Meter types
 METER_DEFENSE
 Verteidigung
+
+# Meter types
 METER_TROOPS
 Truppe
+
+# Meter types
 METER_REBEL_TROOPS
 Rebellen Truppen
+
+# Meter types
 METER_SUPPLY
 Versorgung
+
+# Meter types
 METER_STEALTH
 Tarnung
+
+# Meter types
 METER_DETECTION
 Aufklärungsreichweite
+
+# Meter types
 METER_SPEED
 Geschwindigkeit
+
+# Meter types
 METER_CAPACITY
 Kapazität
+
+# Meter types
 METER_SIZE
 Größe
 
+# Meter types
 #METER_DETECTION_STRENGTH
 #[[encyclopedia DETECTION_TITLE]]
 
@@ -4007,112 +4209,125 @@ Militarismus
 ALIGN_ENVIRONMENT_MODIFICATION
 Veränderung der Umgebung
 
-# EmpireAffiliationTypes
-
+# Empire affiliation types
 AFFIL_SELF
 Eigenes
+
+# Empire affiliation types
 AFFIL_ENEMY
 Gegner
+
+# Empire affiliation types
 AFFIL_ALLY
 Verbündeter
+
+# Empire affiliation types
 AFFIL_ANY
 jeder(s)
 
-# UnlockableItemTypes
-
+# Unlockable item types
 INVALID_UNLOCKABLE_ITEM_TYPE
 Ungültiger Unverriegelbar Postentyp
+
+# Unlockable item types
 UIT_BUILDING
 Gebäude
+
+# Unlockable item types
 UIT_SHIP_PART
 Schiffsteil
+
+# Unlockable item types
 UIT_SHIP_HULL
 Schiffsrumpf
+
+# Unlockable item types
 UIT_TECH
 Technologie
 
-# TechTypes
-
-TT_THEORY
-Theorie
-TT_APPLICATION
-Anwendung
-TT_REFINEMENT
-Verbesserung
-
-# BuildTypes
-
+# Build types
 BT_NOT_BUILDING
 kein Bau
+
+# Build types
 BT_BUILDING
 baue
+
+# Build types
 BT_SHIP
 Schiff
 
-# StockpileTypes
-
-ST_FOOD
-Nahrung
-ST_MINERAL
-Mineralien
-ST_TRADE
-Handel
-
-# Resource Types
-
-RE_FOOD
-Nahrung
-RE_MINERALS
-Mineralien
+# Resource types
 RE_TRADE
 Handel
+
+# Resource types
 RE_INDUSTRY
 Industrie
+
+# Resource types
 RE_RESEARCH
 Forschung
 
-# Ship Slot Types
-
+# Ship slot types
 SL_EXTERNAL
 Externer Steckplatz
+
+# Ship slot types
 SL_INTERNAL
 Interner Steckplatz
+
+# Ship slot types
 SL_CORE
 Kernsteckplatz
+
 SL_TOOLTIP_DESC
 Leer
 
-# Ship Part Classes
-
+# Ship part classes
 PC_SHIELD
 Schilde
+
+# Ship part classes
 PC_ARMOUR
 Panzerung
+
+# Ship part classes
 PC_TROOPS
 Truppen
+
+# Ship part classes
 PC_DETECTION
 Sensoren
+
+# Ship part classes
 PC_STEALTH
 Tarnung
+
+# Ship part classes
 PC_FUEL
 Treibstoff
+
+# Ship part classes
 PC_COLONY
 Kolonisten
+
+# Ship part classes
 PC_SPEED
 Geschwindigkeit
+
+# Ship part classes
 PC_GENERAL
 Sonstiges
 
 # Visibility levels
-
 VIS_NO_VISIBILITY
 Unsichtbar
 
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
 
-# ValueRef
+##
+## FOCS value references, effects & condition descriptions
+##
 
 DESC_VAR_PLANET
 Planet
@@ -4162,9 +4377,6 @@ Sternenklasse
 #DESC_VAR_TARGETTRADE
 #[[METER_TARGET_TRADE]]
 
-#DESC_VAR_TARGETMINING
-#[[METER_TARGET_MINING]]
-
 #DESC_VAR_TARGETCONSTRUCTION
 #[[METER_TARGET_CONSTRUCTION]]
 
@@ -4203,9 +4415,6 @@ Sternenklasse
 
 #DESC_VAR_TRADE
 #[[METER_TRADE]]
-
-#DESC_VAR_MINING
-#[[METER_MINING]]
 
 #DESC_VAR_CONSTRUCTION
 #[[METER_CONSTRUCTION]]
@@ -4251,8 +4460,10 @@ Handelslager
 
 DESC_VAR_TRADEOUTPUT
 Handelsproduktion
+
 DESC_VAR_INDUSTRYOUTPUT
 Industrieproduktion
+
 DESC_VAR_RESEARCHOUTPUT
 Forschungsproduktion
 
@@ -4295,109 +4506,66 @@ Spezies
 DESC_VAR_FOCUS
 Fokus
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+#DESC_VALUE_REF_MULTIPART_VARIABLE0
+#%1%
+
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
 DESC_VALUE_REF_MULTIPART_VARIABLE1
 %1% %2%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
 #DESC_VALUE_REF_MULTIPART_VARIABLE2
 #%1%'s %2%'s %3%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
 #DESC_VALUE_REF_MULTIPART_VARIABLE3
 #%1%'s %2%'s %3%'s %4%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
 #DESC_VALUE_REF_MULTIPART_VARIABLE4
 #%1%'s %2%'s %3%'s %4%'s %5%
 
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
+# %6% fourth dependent property referenced by the FOCS variable.
 #DESC_VALUE_REF_MULTIPART_VARIABLE5
 #%1%'s %2%'s %3%'s %4%'s %5%'s %6%
 
-# six is probably more than will be needed, but just in case ...
+# FOCS variable reference description text.
+# %1% reference type of the FOCS variable.
+# %2% base property referenced by the FOCS variable.
+# %3% first dependent property referenced by the FOCS variable.
+# %4% second dependent property referenced by the FOCS variable.
+# %5% third dependent property referenced by the FOCS variable.
+# %6% fourth dependent property referenced by the FOCS variable.
+# %7% fifth dependent property referenced by the FOCS variable.
 #DESC_VALUE_REF_MULTIPART_VARIABLE6
 #%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
 
-# Effects
 
-DESC_EFFECTS_GROUP_SCOPE
-Betroffene Objekte: Jedes Objekt%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Betroffene Objekte: nur das Quell-Objekt
-
-DESC_EFFECTS_GROUP_ACTIVATION
-Effekt ist aktiv, wenn die Quelle ein Objekt ist%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effekt ist immer aktiv
-
-#DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-#'''%1%
-#'''
-
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effektgruppe %1%:
-%2%
-'''
-
-# SetMeter
-
-#DESC_SIMPLE_SET_METER
-#%1% %2%%3%
-
-DESC_COMPLEX_SET_METER
-Setze %1% auf %2%
-
-DESC_SET_SHIP_PART_METER
-Setze %1% für %2% auf %3%
-
-DESC_SET_EMPIRE_METER
-Setze %2% des %1% Imperiums auf %3%
-
-# others
-
-DESC_SET_EMPIRE_STOCKPILE
-Ändert das Lager des Objekteigentümers von %1%  auf %2%
-
-DESC_SET_EMPIRE_CAPITAL
-Macht den Planeten zum Hauptplaneten des %1% Imperiums
-
-DESC_SET_PLANET_TYPE
-Ändert die Klasse des Planeten auf %1%
-
-DESC_SET_PLANET_SIZE
-Ändert die Größe des Planeten auf %1%
-
-DESC_DESTROY
-Objekt zerstören
-
-DESC_ADD_SPECIAL
-Fügt die Besonderheit %1% dem Objekt hinzu
-
-DESC_REMOVE_SPECIAL
-Entfernt die Besonderheit %1% vom Objekt
-
-DESC_SET_STAR_TYPE
-Ändert die Sternenklasse auf %1%
-
-DESC_MOVE_TO
-Bewegt das Objekt zum Ort des Objekts %1%
-
-DESC_VICTORY
-Macht den Objekteigentümer zum Gewinner des Spiels
-
-# Object Creation
-
-DESC_CREATE_PLANET
-Erschafft einen neuen Planeten der Klasse %1% und der Größe %2%
-
-DESC_CREATE_BUILDING
-Erzeugt ein neues %1% Gebäude
-
-DESC_CREATE_SHIP
-Erzeugt ein neues Schiff mit dem Entwurf %1% durch das Imperium %2% bemannt mit %3%
-
-DESC_CREATE_SYSTEM
-Ein neues System erschaffen
-
-# Conditions
+##
+## FOCS condition descriptions
+##
 
 DESC_ALL
 ''' im Universum'''
@@ -4411,15 +4579,21 @@ DESC_ALL_NOT
 #DESC_NONE_NOT
 #[[DESC_ALL]]
 
+# %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' dass es zum %1% des Imperiums gehört'''
 
+# %1% name of the empire this condition does not apply to.
 DESC_EMPIRE_AFFILIATION_SELF_NOT
 ''' dass es nicht zum %1% des Imperiums gehört'''
 
+# %1% the affiliation the empire should have to the object.
+# %2% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION
 ''' die zu einem %1% des Imperiums %2% gehören'''
 
+# %1% the affiliation the empire should not have to the object.
+# %2% name of the empire this condition does not apply to.
 DESC_EMPIRE_AFFILIATION_NOT
 ''' die nicht zu einem %1% des Imperiums %2% gehören'''
 
@@ -4429,9 +4603,11 @@ DESC_EMPIRE_AFFILIATION_ANY
 DESC_EMPIRE_AFFILIATION_ANY_NOT
 ''' die nicht zu einem Imperium gehören'''
 
+# %1% name of the species.
 DESC_HOMEWORLD
 ''' der eine Heimatwelt der Spezies %1% ist'''
 
+# %1% name of the species.
 DESC_HOMEWORLD_NOT
 ''' der keine Heimatwelt der Spezies %1% ist'''
 
@@ -4453,111 +4629,165 @@ das ein bewaffnetes Schiff ist
 DESC_ARMED_NOT
 das kein bewaffnetes Schiff ist
 
+# %1% name of an object type.
 DESC_TYPE
 ''' dass es ein %1% ist'''
 
+# %1% name of an object type.
 DESC_TYPE_NOT
 ''' dass es kein %1% ist'''
 
+# %1% name of a building type.
 DESC_BUILDING
 ''' was ein %1%sbau ist'''
 
+# %1% name of a building type.
 DESC_BUILDING_NOT
 ''' was kein %1%sbau ist'''
 
+# %1% name of the special the object should have.
 DESC_SPECIAL
 ''' mit der Besonderheit %1%'''
 
+# %1% name of the special the object should not have.
 DESC_SPECIAL_NOT
 ''' ohne die Besonderheit %1%'''
 
+# %1% textual description of an object contained inside another object.
 DESC_CONTAINS
 ''' dass es ein Objekt,%1%, enthält'''
 
+# %1% textual description of an object not contained inside another object.
 DESC_CONTAINS_NOT
 ''' dass es kein Objekt,%1%, enthält'''
 
+# %1% planet type that should match the condition.
 DESC_PLANET_TYPE
 ''' der ein %1% Planet ist'''
 
+# %1% planet type that should not match the condition.
 DESC_PLANET_TYPE_NOT
 ''' der kein %1% Planet ist'''
 
+# %1% planet size that should match the condition.
 DESC_PLANET_SIZE
 ''' der ein %1% Planet ist'''
 
+# %1% planet size that should not match the condition.
 DESC_PLANET_SIZE_NOT
 ''' der kein %1% Planet ist'''
 
+# %1% textual description of the environments for the species.
+# %2% name of the species.
 DESC_PLANET_ENVIRONMENT
 ''' der ein %1% Planet ist'''
 
+# %1% textual description of the environments for the species.
+# %2% name of the species.
 DESC_PLANET_ENVIRONMENT_NOT
 ''' der kein %1% Planet ist'''
 
+# %1% textual description of the star type.
 DESC_STAR_TYPE
 ''' der ein System mit %1% Stern ist'''
 
+# %1% textual description of the star type.
 DESC_STAR_TYPE_NOT
 ''' der kein System mit %1% Stern ist'''
 
+# %1% textual description of the hull.
 DESC_DESIGN_HAS_HULL
 ''' mit dem Rumpf %1%'''
 
+# %1% textual description of the hull.
 DESC_DESIGN_HAS_HULL_NOT
 ''' ohne den Rumpf %1%'''
 
+# %1% textual description of the lower limit for the number of ship parts.
+# %2% textual description of the upper limit for the number of ship parts.
+# %3% textual description of the ship part.
 DESC_DESIGN_HAS_PART
 ''' mit zwischen %1% und %2% des %3% Teils'''
 
+# %1% textual description of the lower limit for the number of ship parts.
+# %2% textual description of the upper limit for the number of ship parts.
+# %3% textual description of the ship part.
 DESC_DESIGN_HAS_PART_NOT
 ''' ohne zwischen %1% und %2% des %3% Teils'''
 
+# %1% percentage of a successful chance.
 DESC_CHANCE_PERCENTAGE
 ''' mit einer %1%%% Chance'''
 
+# %1% percentage of a failing chance.
 DESC_CHANCE_PERCENTAGE_NOT
 ''' mit einer (100 - %1%)%% Chance'''
 
+# %1% textual description of a probability.
 DESC_CHANCE
 ''' mit einer Wahrscheinlichkeit von %1%'''
 
+# %1% textual description of a probability.
 DESC_CHANCE_NOT
 ''' mit einer Wahrscheinlichkeit von 1 - %1%'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT
 ''' dass es eine %1% zwischen %2% und %3% hat'''
 
+# %1% name of the meter.
+# %2% textual description of the lower limit for the meter value.
+# %3% textual description of the upper limit for the meter value.
 DESC_METER_VALUE_CURRENT_NOT
 ''' dass es keine %1% zwischen %2% und %3% hat'''
 
+# %1% type of stockpile resource.
+# %2% textual description of the lower limit for the stockpile value.
+# %3% textual description of the upper limit for the stockpile value.
 DESC_EMPIRE_STOCKPILE_VALUE
 ''' die zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% '''
 
+# %1% type of stockpile resource.
+# %2% textual description of the lower limit for the stockpile value.
+# %3% textual description of the upper limit for the stockpile value.
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
 ''' die nicht zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% '''
 
+# %1% textual description of the empire.
 DESC_VISIBLE_TO_EMPIRE
 ''' die sichtbar für das %1% Imperium sind'''
 
+# %1% textual description of the empire.
 DESC_VISIBLE_TO_EMPIRE_NOT
 ''' die nicht sichtbar für das %1% Imperium sind'''
 
+# %1% distance in universe units.
+# %2% textual description of the target object.
 DESC_WITHIN_DISTANCE
 ''' die innerhalb %1% eines beliebigen %2% Objekts sind'''
 
+# %1% distance in universe units.
+# %2% textual description of the target object.
 DESC_WITHIN_DISTANCE_NOT
 ''' die nicht innerhalb %1% eines beliebigen %2% Objekts sind'''
 
+# %1% number of starlane jumps.
+# %2% textual description of the target object.
 DESC_WITHIN_STARLANE_JUMPS
 ''' die innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen'''
 
+# %1% number of starlane jumps.
+# %2% textual description of the target object.
 DESC_WITHIN_STARLANE_JUMPS_NOT
 ''' die nicht innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen'''
 
+# %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE
 ''' erkundet durch das %1% Imperium'''
 
+# %1% textual description of the empire.
 DESC_EXPLORED_BY_EMPIRE_NOT
 ''' nicht erkundet durch das %1% Imperium'''
 
@@ -4585,27 +4815,39 @@ DESC_AND_BETWEEN_OPERANDS
 DESC_OR_BETWEEN_OPERANDS
 ''' oder'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN
 ''' wenn die aktuelle Runde zwischen %1% und %2% ist'''
 
+# %1% textual description of the lower turn limit.
+# %2% textual description of the upper turn limit.
 DESC_TURN_NOT
 ''' wenn die aktuelle Runde nicht zwischen %1% und %2% ist'''
 
+# %1% FIXME
+# %2% FIXME
 DESC_NUMBER_OF
 ''' das eins von %1% zufällig ausgewählten Objekten ist%2%'''
 
+# %1% FIXME
+# %2% FIXME
 DESC_NUMBER_OF_NOT
 ''' keines der %1% zufällig ausgewählten Objekte ist%2%'''
 
+# %1% FIXME
 DESC_CONTAINED_BY
 ''' Teil eines Objekts %1% ist'''
 
+# %1% FIXME
 DESC_CONTAINED_BY_NOT
 ''' nicht Teil eines Objekts %1% ist'''
 
+# %1% FIXME
 DESC_OWNER_HAS_TECH
 ''' die zu einem Imperium gehören, dass die Technologie %1% besitzt'''
 
+# %1% FIXME
 DESC_OWNER_HAS_TECH_NOT
 ''' die zu einem Imperium gehören, dass nicht die Technologie %1% besitzt'''
 
@@ -4621,44 +4863,56 @@ DESC_OWNER_HAS_SHIP_DESIGN
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
 ''' Schiffsentwurf ist nicht freigegeben für das Imperium'''
 
+# %1% FIXME
+# %2% FIXME
+# %3% FIXME
 DESC_NUMBER
 ''' wenn es zwischen %1% und %2% Objekte%3%'''
 
 DESC_NUMBER_NOT
 ''' wenn es nicht zwischen %1% und %2% Objekte%3%'''
 
+# %1% an object tag string.
 DESC_HAS_TAG
 ''' das ist %1%'''
 
+# %1% an object tag string.
 DESC_HAS_TAG_NOT
 ''' das ist nicht %1%'''
 
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
+
+##
+## Technology categories
+##
 
 LEARNING_CATEGORY
 Entwicklung
+
 PRODUCTION_CATEGORY
 Produktion
+
 CONSTRUCTION_CATEGORY
 Konstruktion
+
 GROWTH_CATEGORY
 Wachstum
-ECONOMICS_CATEGORY
-Wirtschaft
+
 SHIP_HULLS_CATEGORY
 Schiffsrümpfe
+
 SHIP_WEAPONS_CATEGORY
 Schiffswaffen
+
 DEFENSE_CATEGORY
 Verteidigung
+
 SPY_CATEGORY
 Nachrichtendienst
 
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
+
+##
+## Technology theories
+##
 
 THEORY_SHORT_DESC
 Theoretische Voraussetzung
@@ -4778,9 +5032,6 @@ Transzendenz
 LRN_TRANSCEND_DESC
 Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder böse und tyrannisch verhält? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter Gleichgültigkeit? Ist ein Gott sich der unendlich vielen unbedeutenden Affären des physischen Universums bewußt, oder ist eine wahre Gottheit eine Entität fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
 
-GRO_MEDICAL_PATH
-Medizinische Pathologie
-
 GRO_PLANET_ECOL
 Planetare Ökologie
 
@@ -4834,9 +5085,6 @@ GRO_NANOTECH_MED_DESC
 
 Während genetische Modifikationen die Effekte unerwünschter oder schädlicher Mutationen rückgängig machen können, sind für die Behandlung größerer physikalischer Traumen und nicht-genetischer angeborener Defekte wirkliche physikalische Maßnahmen notwendig. Für diese Aufgaben kann Nanotechnologie eingesetzt werden, was zwei Vorteile mit sich bringt: die Korrektur kann ohne invasive Chirurgie mit den damit verbundenen Sekundärschäden und Risiken durchgeführt werden; außerdem wird die Vorbereitungszeit vor der Behandlung signifikant reduziert, da die benötigten Werkzeuge immer an Ort und Stelle und einsatzbereit sind.'''
 
-GRO_ECO_METAMORPH
-Ökologische Metamorphose
-
 GRO_XENO_HYBRIDS
 Xenohybridisierung
 
@@ -4876,16 +5124,6 @@ Mineral resource extraction from sub-planetoid-sized bodies involves challenges 
 
 Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau von Fabriken, Ausrüstung und Techniken, die auf der Oberfläche des Planeten unmöglich wären. Feststoffe können mit minimalem Aufwand in Position gehalten werden. Flüssigkeiten und Gase treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet. Die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produktion und dessen Effizienz.'''
 
-PRO_CORE_MINE
-Tiefenbergbau
-
-PRO_CORE_MINE_DESC
-'''Ermöglicht eine aggressive Art des Bergbaus.
-
-Der Druck und die Temperatur in Mantel und Kern terrestrischer Planeten erzeugt eine gewaltige Masse an Kristall- und Mineralverbindungen, die nur durch Vulkanismus an die Oberfläche gelangen. Die tieferen Atmosphärenschichten und Kernmaterialien von Gasplaneten enthalten noch exotischere Materialien und das in hohen Konzentrationen. Der Zugang zu den Materialien in diesen Regionen ist schwierig und riskant, aber im Vergleich zu traditionellen Oberflächenbergbau sehr vielversprechend.
-
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
-
 PRO_ROBOTIC_PROD
 Automatisierung
 
@@ -4898,6 +5136,7 @@ Obwohl das erste grundsätzliche Design von Produkten und der Aufbau von Fabrike
 
 #PRO_EXOBOTS
 #Exobots
+
 PRO_EXOBOTS_DESC
 Allows the construction of Exobots optimized for industry on hostile planets.
 
@@ -4934,12 +5173,6 @@ PRO_SENTIENT_AUTOMATION_DESC
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
 Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fähig, sich ohne äußeren Einfluss selbst zu replizieren und in Stand zu halten; sie benötigt nur entsprechende Rohstoffe und eine Vorgabe, welches Produkt hergestellt werden soll. Unter der Kontrolle einer künstlichen Intelligenz kann das gesamte System lernen, planen, reagieren und sich autonom anpassen, und das ohne die lästige Ineffizienz, die durch die Unterbringung und Anstellung von Arbeitern entsteht.'''
-
-PRO_INTSTEL_COPRO
-Interstellare Koproduktion
-
-PRO_INTSTEL_COPRO_DESC
-Traditionelle Produktionsmethoden müssen sich aufgrund logistischer Probleme selbst versorgen und sind daher beschränkt. Später wird durch die regionale Zusammenarbeit auf Planeten ein gewisser Grad an Spezialisierung möglich; jede Fabrik stellt nur einige Teile oder ein Subsystem her, so dass das ganze System von konzentrierter Fachkompetenz profitiert. Dieses Konzept kann auf den galaktischen Größenmaßstab übertragen werden; individuelle Planeten oder ganze Systeme dienen dann als eine einzige, spezialisierte Einrichtung. Die logistischen Schwierigkeiten, die diesem Paradigma innewohnen, ähneln denen des planetaren Maßstabs; Nutzen und Nachteile sind im gleichen Maß vergrößert.
 
 PRO_NDIM_ASSMB
 N-Dimensionale Montage
@@ -5064,27 +5297,19 @@ Galaktische Erkundung
 SHP_GAL_EXPLO_DESC
 Die Entdeckung von Interstellaren Reisen mittels Sternstraßen leitet eine neue Ära der Entwicklung der Gesellschaft ein. Alte politsche Plänkeleien zwischen Splittergruppen verlieren ihre Bedeutung, wenn die gesamte Zivilisation mit dem unbegrenzten Potential der Sterne konfrontiert ist ... für Wachstum und Wohlstand, oder die totale Vernichtung.
 
-SHP_SPACE_TACTICS
-Raumtaktik
-
-SHP_SPACE_TACTICS_DESC
-Kämpfe in minimaler Schwerkraft und Vakuum benötigen spezialisierte Waffen und Verteidigungssysteme, und eine durchdachte Taktik wie man sie einsetzen kann.
-
 SHP_FRC_ENRG_COMP
 Kraft-Energie Kompression
 
 SPY_ROOT_DECEPTION
 Täuschung
 
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
+
+##
+## Technology application
+##
 
 VICTORY_SHORT_DESC
 Bringt den Sieg!
-
-DOES_NOTHING_SHORT_DESC
-Nutzlos: Tut nichts
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Schaltet Schiffsteile frei
@@ -5104,17 +5329,8 @@ Schaltet Gebäude frei
 RESEARCH_SHORT_DESC
 Verbessert Forschung
 
-MINING_SHORT_DESC
-Verbessert Bergbau
-
 INDUSTRY_SHORT_DESC
 Verbessert Industrie
-
-TRADE_SHORT_DESC
-Verbessert Handel
-
-CONSTRUCTION_SHORT_DESC
-Verbessert Infrastruktur
 
 SUPPLY_SHORT_DESC
 Verbessert Versorgung
@@ -5128,14 +5344,8 @@ Erhöht Truppen
 POPULATION_SHORT_DESC
 Erhöht Planetare Bevölkerung
 
-HEALTH_SHORT_DESC
-Verbessert Gesundheit
-
 STRUCTURE_SHORT_DESC
 Verbessert Struktur
-
-FLEET_RANGE_DESC
-Verbessert Flottenversorgung
 
 SHIP_REPAIR_DESC
 Repariert Schiffe
@@ -5243,12 +5453,6 @@ Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bev
 
 LRN_ART_BLACK_HOLE
 Künstliches schwarzes Loch
-
-PRO_HEAVY_MINING_I
-Teilautomatisierter Massenbergbau
-
-PRO_HEAVY_MINING_I_DESC
-Wenn die Rohstoffproduktion im Vordergrund steht, keine Umweltbedenken bestehen und die Umgebung es erlaubt, kann teilautomatisierter Massenbergbau das Mittel der Wahl sein. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population somewhat.
 
 PRO_INDUSTRY_CENTER_I
 Industriezentren
@@ -5393,76 +5597,91 @@ Erlaubt Grundbewaffnung und [[shippart GT_TROOP_POD]].
 
 SHP_WEAPON_1_2
 Massenkatapult 2
+
 SHP_WEAPON_1_2_DESC
 Verbessert Massenkatapulte um eine Stufe, was die Feuerkraft um 1 erhöht.
 
 SHP_WEAPON_1_3
 Massenkatapult 3
+
 SHP_WEAPON_1_3_DESC
 Verbessert Massenkatapulte um zwei Stufen, was die Feuerkraft um 2 erhöht.
 
 SHP_WEAPON_1_4
 Massenkatapult 4
+
 SHP_WEAPON_1_4_DESC
 Verbessert Massenkatapulte um drei Stufen, was die Feuerkraft um 3 erhöht.
 
 SHP_WEAPON_2_1
 Laserwaffen
+
 SHP_WEAPON_2_1_DESC
 Schaltet den Laser frei, eine leistungsfähigere Schiffswaffe als das Massenkatapult.
 
 #SHP_WEAPON_2_2
 #Laser 2
+
 SHP_WEAPON_2_2_DESC
 Verbessert Laserwaffen um eine Stufe, was die Feuerkraft um 2 erhöht.
 
 #SHP_WEAPON_2_3
 #Laser 3
+
 SHP_WEAPON_2_3_DESC
 Verbessert Laserwaffen um zwei Stufen, was die Feuerkraft um 4 erhöht.
 
 #SHP_WEAPON_2_4
 #Laser 4
+
 SHP_WEAPON_2_4_DESC
 Verbessert Laserwaffen um drei Stufen, was die Feuerkraft um 6 erhöht.
 
 SHP_WEAPON_3_1
 Plasmakanonen
+
 SHP_WEAPON_3_1_DESC
 Schaltet die Plasmakanone frei, eine leistungsfähigere Schiffswaffe als der Laser.
 
 SHP_WEAPON_3_2
 Plasmakanone 2
+
 SHP_WEAPON_3_2_DESC
 Verbessert die Plasmakanone um eine Stufe, was die Feuerkraft um 3 erhöht.
 
 SHP_WEAPON_3_3
 Plasmakanone 3
+
 SHP_WEAPON_3_3_DESC
 Verbessert die Plasmakanone um zwei Stufen, was die Feuerkraft um 6 erhöht.
 
 SHP_WEAPON_3_4
 Plasmakanone 4
+
 SHP_WEAPON_3_4_DESC
 Verbessert die Plasmakanone um drei Stufen, was die Feuerkraft um 9 erhöht.
 
 SHP_WEAPON_4_1
 Todesstrahlen
+
 SHP_WEAPON_4_1_DESC
 Schaltet den Todesstrahl frei, die ultimative Schiffswaffe.
 
 SHP_WEAPON_4_2
 Todesstrahl 2
+
 SHP_WEAPON_4_2_DESC
 Verbessert den Todesstrahl um eine Stufe, was die Feuerkraft um 5 erhöht.
 
 SHP_WEAPON_4_3
 Todesstrahl 3
+
 SHP_WEAPON_4_3_DESC
 Verbessert den Todesstrahl um zwei Stufen, was die Feuerkraft um 10 erhöht.
 
 SHP_WEAPON_4_4
 Todesstrahl 4
+
 SHP_WEAPON_4_4_DESC
 Verbessert den Todesstrahl um drei Stufen, was die Feuerkraft um 15 erhöht. Die ultimative Verbesserung der ultimativen Waffe.
 
@@ -5577,9 +5796,10 @@ Plasmaschild
 SHP_BLACKSHIELD
 Schwarzschild
 
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
+
+##
+## Technology refinement
+##
 
 BUILDING_REFINE_SHORT_DESC
 Verfeinert Gebäude
@@ -5591,7 +5811,7 @@ PRO_INDUSTRY_CENTER_II
 Erweitertes Industriezentrum
 
 PRO_INDUSTRY_CENTER_II_DESC
-'''Ein verbesserte zentralisierte Verwaltung verstreuter Industrieprozesse erhöht die Reichweite und die Größe der industriellen Produktion. Der Bonus auf [[encyclopedia INDUSTRY_TITLE]] verdoppelt den Wert, welcher durch das einfache [[buildingtype BLD_INDUSTRY_CENTER]] erzeugt wird.'''
+Ein verbesserte zentralisierte Verwaltung verstreuter Industrieprozesse erhöht die Reichweite und die Größe der industriellen Produktion. Der Bonus auf [[encyclopedia INDUSTRY_TITLE]] verdoppelt den Wert, welcher durch das einfache [[buildingtype BLD_INDUSTRY_CENTER]] erzeugt wird.
 
 PRO_INDUSTRY_CENTER_III
 Hochentwickeltes Industriezentrum
@@ -5599,17 +5819,10 @@ Hochentwickeltes Industriezentrum
 PRO_INDUSTRY_CENTER_III_DESC
 Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Industrial Centers.
 
-PRO_ENVIRO_MINING
-Umweltbewusster Bergbau
 
-PRO_ENVIRO_MINING_DESC
-'''Viele Bergbautechniken können auf stark bevölkerten Planeten wegen des Schadens, den sie der Umwelt zufügen, nicht eingesetzt werden.  Durch die Beachtung der planetaren Ökologie und Begrenzung des Bergbaus können Schäden an der Umwelt vermieden werden.
-
-Halbiert die Bevökerungssanktionen auf Planeten mit einem Fokus auf Massenbergbau.'''
-
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
+##
+## Buildings
+##
 
 BLD_EVACUATION
 Evakuierung
@@ -5661,9 +5874,6 @@ Bioterror Angriffsbasis
 
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
-
-BLD_HEAVY_MINE_PROCESSOR
-Verarbeitungsstation für Massenbergbau
 
 BLD_INDUSTRY_CENTER
 Industriezentrum
@@ -5740,51 +5950,66 @@ Siedlungsbasis
 BLD_COLONY_BASE_DESC
 Erstellt ein [[predefinedshipdesign SD_COLONY_BASE]], welches zur Besiedlung eines Planeten im gleichen System genutzt werden kann. Kann nur auf Planeten gebaut werden, die eine Bevölkerung von 3 oder mehr haben.
 
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
 
+##
+## Hull and ship part description templates
+##
+
+# %1% hull base starlane speed.
+# %2% hull base fuel capacity.
+# %3% hull base starlane speed.
+# %4% hull base structure value.
 #HULL_DESC
 #'''[[encyclopedia STARLANE_SPEED_TITLE]]: %1%
 #[[encyclopedia FUEL_TITLE]]: %2%
 #[[encyclopedia STRUCTURE_TITLE]]: %4%'''
 
+# %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
 Fassungsvermögen: %1%
 
+# %1% ship part strength (other).
 PART_DESC_STRENGTH
 Stärke: %1%
 
+# %1% ship part strength (shield).
 PART_DESC_SHIELD_STRENGTH
 Schildstärke: %1%
 
+# %1% ship part damage done (direct fire weapons).
+# %2% number of shots done per attack.
 PART_DESC_DIRECT_FIRE_STATS
 Angriffsschaden: %1%
 
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
+
+##
+## Ship parts
+##
 
 FT_WEAPON_1
 Jägerbewaffnung
 
 SR_WEAPON_1_1
 Massenkatapult
+
 SR_WEAPON_1_1_DESC
 Der Massenkatapult, die Grundbewaffnung.
 
 SR_WEAPON_2_1
 Laserwaffe
+
 SR_WEAPON_2_1_DESC
 Der Laser, eine leistungsfähigere Schiffswaffe als der Massenkatapult.
 
 SR_WEAPON_3_1
 Plasmakanonen
+
 SR_WEAPON_3_1_DESC
 Die Plasmakanone, eine leistungsfähigere Schiffswaffe als der Laser.
 
 SR_WEAPON_4_1
 Todesstrahl
+
 SR_WEAPON_4_1_DESC
 Der Todesstrahl, die ultimative Schiffswaffe.
 
@@ -5923,15 +6148,17 @@ Bodentruppen Kapsel
 GT_TROOP_POD_DESC
 Trägt eine Brigade Boden[[encyclopedia TROOP_TITLE]], samt Ausrüstung, die auf einen Planeten eingesetzt werden kann.
 
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
+
+##
+## Ship hulls
+##
 
 SH_ROBOTIC
 Robotische Hülle
 
 SH_BASIC_SMALL
 Kleiner Standardrumpf
+
 SH_BASIC_SMALL_DESC
 '''Ein kleiner interstellarer Standardrumpf. Verglichen mit anderen Standardrümpfen, kann er einen Sprung mehr ausführen.
 
@@ -5939,6 +6166,7 @@ Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Sch
 
 SH_BASIC_MEDIUM
 Mittelgroßer Standardrumpf
+
 SH_BASIC_MEDIUM_DESC
 '''Ein mittelgroßer Schiffsrumpf für interstellare Reisen.
 
@@ -5978,68 +6206,81 @@ Großer starker Körper mit furchterregenden natürlichen Waffen und starker nat
 
 SH_GUARD_MONSTER_BODY
 Wache Rumpf
+
 SH_GUARD_MONSTER_BODY_DESC
 Ein starker Rumpf für Monster der Wächterklasse.
 
 SH_KRILL_1_BODY
 Krillkörper 1
+
 SH_KRILL_1_BODY_DESC
 Krillkörper 1
 
 SH_KRILL_2_BODY
 Krillkörper 2
+
 SH_KRILL_2_BODY_DESC
 Krillkörper 2
 
 SH_KRILL_3_BODY
 Krillkörper 3
+
 SH_KRILL_3_BODY_DESC
 Krillkörper 3
 
 SH_KRILL_4_BODY
 Krillkörper 4
+
 SH_KRILL_4_BODY_DESC
 Krillkörper 4
 
 SH_DRONE_BODY
 Drohnenrumpf
+
 SH_DRONE_BODY_DESC
 Drohnenrumpf
 
 SH_IMMOBILE_FACTORY
 Drohnenfabrik
+
 SH_IMMOBILE_FACTORY_DESC
 Drohnenfabrik
 
 SH_KRAKEN_1_BODY
 Larvalkrakenkörper
+
 SH_KRAKEN_1_BODY_DESC
 Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_KRAKEN_2_BODY
 Krakenkörper
+
 SH_KRAKEN_2_BODY_DESC
 Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_KRAKEN_3_BODY
 Großer Krakenkörper
+
 SH_KRAKEN_3_BODY_DESC
 Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_BLACK_KRAKEN_BODY
 Schwarzkrakenkörper
 
-#############################################################
-####              B U I L D I N G  M A C R O S           ####
-#############################################################
 
-#############################################################
-####                 T E C H   M A C R O S               ####
-#############################################################
+##
+## Buildings macros
+##
 
-#############################################################
-####              Growth Macros                          ####
-#############################################################
+
+##
+## Tech macros
+##
+
+
+##
+## Growth macros
+##
 
 #GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 #[[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].
@@ -6050,188 +6291,211 @@ Schwarzkrakenkörper
 #GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 #[[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
 
-NO_INDUSTRY
+##
+## Species picks
+##
+
+NO_INDUSTRY_DESC
 −−−	Keine [[encyclopedia INDUSTRY_TITLE]]
 
-BAD_INDUSTRY
-−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: -50%
+BAD_INDUSTRY_DESC
+−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: 75%
 
-AVERAGE_INDUSTRY
+AVERAGE_INDUSTRY_DESC
 '''	Mittelmässige [[encyclopedia INDUSTRY_TITLE]]: 100%'''
 
-GOOD_INDUSTRY
+GOOD_INDUSTRY_DESC
 +	Gute [[encyclopedia INDUSTRY_TITLE]]: 150%
 
-GREAT_INDUSTRY
-++	Große [[encyclopedia INDUSTRY_TITLE]]: 200%
+GREAT_INDUSTRY_DESC
+++	Hervorragende [[encyclopedia INDUSTRY_TITLE]]: 200%
 
-ULTIMATE_INDUSTRY
-+++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 400%
+ULTIMATE_INDUSTRY_DESC
++++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 300%
 
-NO_RESEARCH
+NO_RESEARCH_DESC
 −−−	Keine [[encyclopedia RESEARCH_TITLE]]
 
-BAD_RESEARCH
-−	Schlechte [[encyclopedia RESEARCH_TITLE]]: -50%
+BAD_RESEARCH_DESC
+−	Schlechte [[encyclopedia RESEARCH_TITLE]]: 75%
 
-AVERAGE_RESEARCH
+AVERAGE_RESEARCH_DESC
 '''	Mittelmässige [[encyclopedia RESEARCH_TITLE]]: 100%'''
 
-GOOD_RESEARCH
+GOOD_RESEARCH_DESC
 +	Gute [[encyclopedia RESEARCH_TITLE]]: 150%
 
-GREAT_RESEARCH
-++	Große [[encyclopedia RESEARCH_TITLE]]: 200%
+GREAT_RESEARCH_DESC
+++	Hervorragende [[encyclopedia RESEARCH_TITLE]]: 200%
 
-ULTIMATE_RESEARCH
-+++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%
+ULTIMATE_RESEARCH_DESC
++++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 300%
 
-NO_DEFENSE_TROOPS
+NO_DEFENSE_TROOPS_DESC
 −−−	Keine Boden[[encyclopedia TROOP_TITLE]]
 
-BAD_DEFENSE_TROOPS
-−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: -50%
+BAD_DEFENSE_TROOPS_DESC
+−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: 50%
 
-AVERAGE_DEFENSE_TROOPS
+AVERAGE_DEFENSE_TROOPS_DESC
 '''	Mittelmäßige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
 
-GOOD_DEFENSE_TROOPS
+GOOD_DEFENSE_TROOPS_DESC
 +	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.
 
-GREAT_DEFENSE_TROOPS
-++	Große Boden[[encyclopedia TROOP_TITLE]]: 200%.
+GREAT_DEFENSE_TROOPS_DESC
+++	Hervorragende Boden[[encyclopedia TROOP_TITLE]]: 200%.
 
-ULTIMATE_DEFENSE_TROOPS
+ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.
 
-BAD_DETECTION
+BAD_DETECTION_DESC
 −	Schlechte [[encyclopedia DETECTION_RANGE_TITLE]]: −20 Malus.
 
-GOOD_DETECTION
+GOOD_DETECTION_DESC
 +	Gute [[encyclopedia DETECTION_RANGE_TITLE]]: +25 Bonus.
 
-GREAT_DETECTION
-++	Große [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.
+GREAT_DETECTION_DESC
+++	Hervorragende [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.
 
-ULTIMATE_DETECTION
+ULTIMATE_DETECTION_DESC
 +++	Perfekte [[encyclopedia DETECTION_RANGE_TITLE]]: +100 Bonus.
 
-BAD_STEALTH
-−	Schlechte [[encyclopedia STEALTH_TITLE]]: −15 Malus.
+BAD_STEALTH_DESC
+−	Schlechte [[encyclopedia STEALTH_TITLE]]: −20 Malus.
 
-AVERAGE_STEALTH
+AVERAGE_STEALTH_DESC
 '''	Mittelmäßige [[encyclopedia STEALTH_TITLE]].'''
 
-GOOD_STEALTH
-+	Gute [[encyclopedia STEALTH_TITLE]]: +15 Bonus.
+GOOD_STEALTH_DESC
++	Gute [[encyclopedia STEALTH_TITLE]]: +20 Bonus.
 
-GREAT_STEALTH
-++	Grosse [[encyclopedia STEALTH_TITLE]]: +40 Bonus.
+GREAT_STEALTH_DESC
+++	Hervorragende [[encyclopedia STEALTH_TITLE]]: +40 Bonus.
 
-ULTIMATE_STEALTH
+ULTIMATE_STEALTH_DESC
 +++	Perfekte [[encyclopedia STEALTH_TITLE]]: +60 Bonus.
 
-BAD_POPULATION
-−	Arme Bevölkerung 75%
+BAD_POPULATION_DESC
+−	Niedrige Bevölkerung 75%
 
-AVERAGE_POPULATION
-'''	Mittelmäßige Bevölkerung'''
+AVERAGE_POPULATION_DESC
+'''	Normale Bevölkerung'''
 
-GOOD_POPULATION
-+	Gesunde Bevölkerung 125%
+GOOD_POPULATION_DESC
++	Hohe Bevölkerung 125%
 
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
 
+##
+## Accounting labels
+##
+
+# %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
 %1% Mittelmäßige [[encyclopedia INFRASTRUCTURE_TITLE]]
 
+# %1% FIXME
 GOOD_ENVIRONMENT_LABEL
-%1% Gute Umgebung
+%1% Gute Umweltbedingungen
 
+# %1% FIXME
 ADEQUATE_ENVIRONMENT_LABEL
-%1% Passende Umgebung
+%1% Ausreichende Umweltbedingungen
 
+# %1% FIXME
 POOR_ENVIRONMENT_LABEL
-%1% Arme Umgebung
+%1% Schlechte Umweltbedingungen
 
+# %1% FIXME
 HOSTILE_ENVIRONMENT_LABEL
-%1% Feindliche Umgebung
+%1% Feindliche Umweltbedingungen
 
 HOMEWORLD_LABEL
 Heimatwelt
 
+# %1% FIXME
+# %2% FIXME
 BAD_POPULATION_LABEL
 %2% Schlechte Bevölkerung 75%%
 
+# %1% FIXME
+# %2% FIXME
 GOOD_POPULATION_LABEL
 %2% Gute Bevölkerung 125%%
 
-FOCUS_MINING_LABEL
-%1% Bergbau Fokus
-
-FOCUS_HEAVY_MINING_LABEL
-%1% Massenbergbau Fokus
-
-BAD_MINING_LABEL
-%1% Schlechter Bergbau
-
-GOOD_MINING_LABEL
-%1% Guter Bergbau
-
-GREAT_MINING_LABEL
-%1% Bester Bergbau
-
-ULTIMATE_MINING_LABEL
-%1% Top Bergbau
-
+# %1% FIXME
+# %2% FIXME
 FOCUS_INDUSTRY_LABEL
 %2% Industrie Fokus
 
+# %1% FIXME
+# %2% FIXME
 BAD_INDUSTRY_LABEL
 %2% Schlechte Industrie
 
+# %1% FIXME
+# %2% FIXME
 GOOD_INDUSTRY_LABEL
 %2% Gute Industrie
 
+# %1% FIXME
+# %2% FIXME
 GREAT_INDUSTRY_LABEL
 %2% Beste Industrie
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_INDUSTRY_LABEL
 %2% Top Industrie
 
+# %1% FIXME
+# %2% FIXME
 FOCUS_RESEARCH_LABEL
 %2% Forschung Fokus
 
+# %1% FIXME
+# %2% FIXME
 BAD_RESEARCH_LABEL
 %2% Schlechte Forschung
 
+# %1% FIXME
+# %2% FIXME
 GOOD_RESEARCH_LABEL
 %2% Gute Forschung
 
+# %1% FIXME
+# %2% FIXME
 GREAT_RESEARCH_LABEL
 %2% Beste Forschung
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_RESEARCH_LABEL
 %2% Top Forschung
 
+# %1% FIXME
+# %2% FIXME
 BAD_TROOPS_LABEL
 %2% Schlechte Bodentruppe
 
+# %1% FIXME
+# %2% FIXME
 AVERAGE_TROOPS_LABEL
 %2% Mittelmäßige Bodentruppe
 
+# %1% FIXME
+# %2% FIXME
 GOOD_TROOPS_LABEL
 %2% Gute Bodentruppe
 
+# %1% FIXME
+# %2% FIXME
 GREAT_TROOPS_LABEL
 %2% Beste Bodentruppe
 
+# %1% FIXME
+# %2% FIXME
 ULTIMATE_TROOPS_LABEL
 %2% Top Bodentruppe
 
@@ -6268,68 +6532,63 @@ Gute Sicht
 EXCELLENT_VISION_LABEL
 Ausgezeichnete Sicht
 
-#############################################################
-####                       T A G S                       ####
-#############################################################
+
+##
+## Tags
+##
 
 ANTIQUATED
 Veraltet
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
 
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+##
+## AI strings
+##
 
-### Beginning of AI Aggression Level Capital Name Lists
+# Newline separated list of capitol names for beginner AIs
 AI_CAPITOL_NAMES_BEGINNER
 '''Elfenbeinturm
 Nonnenkloster
 Ordenshaus
 Waisenhaus'''
 
-### End of Capital Names Lists
-
-### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
-### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 AI_SHIPDESIGN_NAME_INVALID
 Ungültiger Entwurf
 
-### End of AI Shipdesign Name Lists
 
-### AI Diplomacy Strings and Lists
-### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
-### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+##
+## AI diplomacy strings and lists
+##
 
+# Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Schön wieder etwas von Ihnen zu hören.
 Empfang der Nachricht bestätigt.
 '''
 
-# NOTE TO TRANSLATORS:
-# The following lists group the AI turn 1 greetings by AI aggression level.
-# These are functional lists that must not be translated!
-
+# Don't translate this entry.
 #AI_FIRST_TURN_GREETING_LIST_BEGINNER
 #'''AI_FIRST_TURN_GREETING_MSG101
 #AI_FIRST_TURN_GREETING_MSG102
 #AI_FIRST_TURN_GREETING_MSG103'''
 
+# Don't translate this entry.
 #AI_FIRST_TURN_GREETING_LIST_TURTLE
 #'''AI_FIRST_TURN_GREETING_MSG201
 #AI_FIRST_TURN_GREETING_MSG202'''
 
+# Don't translate this entry.
 #AI_FIRST_TURN_GREETING_LIST_CAUTIOUS
 #'''AI_FIRST_TURN_GREETING_MSG301
 #AI_FIRST_TURN_GREETING_MSG302'''
 
+# Don't translate this entry.
 #AI_FIRST_TURN_GREETING_LIST_TYPICAL
 #'''AI_FIRST_TURN_GREETING_MSG401
 #AI_FIRST_TURN_GREETING_MSG402
 #AI_FIRST_TURN_GREETING_MSG403'''
 
+# Don't translate this entry.
 #AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE
 #'''AI_FIRST_TURN_GREETING_MSG501
 #AI_FIRST_TURN_GREETING_MSG502
@@ -6338,6 +6597,7 @@ Empfang der Nachricht bestätigt.
 #AI_FIRST_TURN_GREETING_MSG505
 #AI_FIRST_TURN_GREETING_MSG506'''
 
+# Don't translate this entry.
 #AI_FIRST_TURN_GREETING_LIST_MANIACAL
 #'''AI_FIRST_TURN_GREETING_MSG601
 #AI_FIRST_TURN_GREETING_MSG602
@@ -6348,11 +6608,10 @@ Empfang der Nachricht bestätigt.
 #AI_FIRST_TURN_GREETING_MSG607
 #AI_FIRST_TURN_GREETING_MSG608'''
 
-### End of AI Diplomacy Message Lists
 
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
+##
+## Hotkey names and descriptions
+##
 
 OPTIONS_PAGE_HOTKEYS
 Tastaturkürzel
@@ -6402,10 +6661,12 @@ Derzeitiges Spiel beenden
 HOTKEY_FULLSCREEN
 Vollbild wechseln
 
-################
-## Name Lists ##
-################
 
+##
+## Name lists
+##
+
+# Newline separated list of star cluster names
 #STAR_GROUP_WORDS
 #'''Alpha
 #Beta
@@ -6432,6 +6693,7 @@ Vollbild wechseln
 #Psi
 #Omega'''
 
+# Newline separated list of star cluster suffixes
 #STAR_GROUP_CHARS
 #'''α
 #β
@@ -6458,12 +6720,14 @@ Vollbild wechseln
 #ψ
 #ω'''
 
+# Newline separated list of star cluster names
 #STAR_GROUP_NAMES
 #Centauri
 
 SHIP_NAME_OTHER
 Ewiger September
 
+# Newline separated list of developer name based ship names
 #SHIP_NAME_DEVS
 #'''Adrian Broher
 #Aquataine

@@ -91,6 +91,12 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         return 0;   // quit without actually starting game
     }
 
+    // did the player request the version output?
+    if (GetOptionsDB().Get<bool>("version")) {
+        std::cout << "FreeOrionCH " << FreeOrionVersionString() << std::endl;
+        return 0;   // quit without actually starting game
+    }
+
     // set up rendering and run game
     if (mainSetupAndRun() != 0) {
         std::cerr << "main() failed to setup or run SDL." << std::endl;
@@ -110,6 +116,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 #endif
         // add entries in options DB that have no other obvious place
         GetOptionsDB().AddFlag('h', "help",                 UserStringNop("OPTIONS_DB_HELP"),                  false);
+        GetOptionsDB().AddFlag('v', "version",              UserStringNop("OPTIONS_DB_VERSION"),               false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
         GetOptionsDB().AddFlag('f', "fullscreen",           UserStringNop("OPTIONS_DB_FULLSCREEN"),            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);

@@ -30,6 +30,13 @@ TROOPS_PER_POP = 0.2
 
 TECH_COST_MULTIPLIER = 2.0
 
+# Species modifiers (except for weapons, hangars, fighters)
+SPECIES_RESEARCH_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
+SPECIES_INDUSTRY_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
+SPECIES_POPULATION_MODIFIER = {'BAD': 0.75, 'GOOD': 1.25}
+SPECIES_SUPPLY_MODIFIER = {'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
+
+
 #
 # Specials details (some specials are instead covered in the section they most directly affect
 #
@@ -399,6 +406,22 @@ SHIP_TECHS_REQUIRING_BLACK_HOLE = (
     "SHP_SOLAR_CONT",
 )
 
+
+# Industry modifiers per population - [[EARLY_PRIORITY]]: Affected by species modifiers
+INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES = {
+    "PRO_FUSION_GEN": 1.0,
+    "GRO_ENERGY_META": 1.0,
+    "PRO_INDUSTRY_CENTER_I": 1.0,
+    "PRO_INDUSTRY_CENTER_II": 1.0,
+    "PRO_INDUSTRY_CENTER_III": 1.0,
+}
+# Industry modifiers per population - [[LATE_PRIORITY]] or later: Not affected by species modifiers
+INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES = {
+    "PRO_ROBOTIC_PROD": 0.5,
+    "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
+    PRO_SINGULAR_GEN: 5.0,
+}
+
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
 # note that BLD_SHIPYARD_BASE is not an absolute prereq for BLD_NEUTRONIUM_FORGE, but is a practical one
@@ -582,10 +605,34 @@ WEAPON_UPGRADE_DICT = {
     "SR_WEAPON_3_1": tuple(("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]),
     "SR_WEAPON_4_1": tuple(("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]),
     "SR_WEAPON_0_1": (),
-    "FT_BAY_1": (),
-    "FT_WEAPON_1": (),
-    "FT_HANGAR_1": (),
     "SR_SPINAL_ANTIMATTER": (),
+}
+
+PILOT_DAMAGE_MODIFIER_DICT = {
+    # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_1_1": -1, "SR_WEAPON_2_1": -2, "SR_WEAPON_3_1": -3, "SR_WEAPON_4_1": -5},
+    "GOOD":     {"SR_WEAPON_1_1":  1, "SR_WEAPON_2_1":  2, "SR_WEAPON_3_1":  3, "SR_WEAPON_4_1": 5},
+    "GREAT":    {"SR_WEAPON_1_1":  2, "SR_WEAPON_2_1":  4, "SR_WEAPON_3_1":  6, "SR_WEAPON_4_1": 10},
+    "ULTIMATE": {"SR_WEAPON_1_1":  3, "SR_WEAPON_2_1":  6, "SR_WEAPON_3_1":  9, "SR_WEAPON_4_1": 15, "SR_WEAPON_0_1": 1},
+}
+
+PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
+    # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
+    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
+    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
+    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
+}
+
+PILOT_ROF_MODIFIER_DICT = {
+    # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_0_1": -1},
+    "GOOD":     {"SR_WEAPON_0_1": 1},
+    "GREAT":    {"SR_WEAPON_0_1": 2},
+    "ULTIMATE": {"SR_WEAPON_0_1": 3},
 }
 
 # DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!

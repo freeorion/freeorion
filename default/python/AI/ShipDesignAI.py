@@ -80,7 +80,7 @@ INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSI
 
 # Potentially, not adding techs to AIDependencies is intended for testing purposes.
 # Therefore, chat the player only once to inform him about the issue to prevent spam.
-__raised_warnings = []
+_raised_warnings = set()
 
 # string constants for better readability of the cache
 WITH_UPKEEP = "considering fleet upkeep"
@@ -670,7 +670,6 @@ class ShipDesigner(object):
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
-        self.species = None         # name of the piloting species (string)
         self.hull = None            # hull object (not hullname!)
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
@@ -695,6 +694,10 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
+        # species modifiers
+        self.weapons_grade = ""
+        self.shields_grade = ""
+        self.troops_grade = ""
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -781,13 +784,13 @@ class ShipDesigner(object):
         self.partnames = partname_list
         self.parts = [get_part_type(part) for part in partname_list if part]
 
-    def update_species(self, speciesname):
+    def update_species(self, species):
         """Set the piloting species.
 
-        :param speciesname:
-        :type speciesname: str
+        :param species:
+        :type species: str
         """
-        self.species = speciesname
+        self.weapons_grade, self.shields_grade, self.troops_grade = foAI.foAIstate.get_piloting_grades(species)
 
     def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
@@ -831,7 +834,10 @@ class ShipDesigner(object):
             self.production_time = max(self.production_time,
                                        local_time_cache.get(part.name, part.productionTime(fo.empireID(), self.pid)))
             partclass = part.partClass
-            capacity = part.capacity if partclass not in WEAPONS else _calculate_weapon_strength(part)
+            if partclass in WEAPONS:
+                capacity = self._calculate_weapon_strength(part, ignore_species=ignore_species)
+            else:  # TODO Hangar part modifiers
+                capacity = part.capacity
             if partclass in FUEL:
                 self.fuel += capacity
             elif partclass in ENGINES:
@@ -851,10 +857,8 @@ class ShipDesigner(object):
             elif partclass in ARMOUR:
                 self.structure += capacity
             elif partclass in WEAPONS:
-                if capacity in self.attacks:
-                    self.attacks[capacity] += 1
-                else:
-                    self.attacks[capacity] = 1
+                shots = self._calculate_weapon_shots(part, ignore_species=ignore_species)
+                self.attacks[capacity] = self.attacks.get(capacity, 0) + shots
             elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
@@ -872,13 +876,10 @@ class ShipDesigner(object):
 
         self._apply_hardcoded_effects()
 
-        if self.species and not ignore_species:
-            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
-            self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
-            if self.attacks:
-                self.attacks = foAI.foAIstate.weight_attacks(self.attacks, weapons_grade)
+        if not ignore_species:
+            self.shields = foAI.foAIstate.weight_shields(self.shields, self.shields_grade)
             if self.troops:
-                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, troops_grade)
+                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, self.troops_grade)
 
     def _apply_hardcoded_effects(self):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1078,14 +1079,13 @@ class ShipDesigner(object):
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
             # The same is true for the canProduceShips trait which simply means no hull can be built.
-            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
-                relevant_grades.append("WEAPON: %s" % weapons_grade)
+                relevant_grades.append("WEAPON: %s" % self.weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                relevant_grades.append("SHIELDS: %s" % shields_grade)
+                relevant_grades.append("SHIELDS: %s" % self.shields_grade)
             if TROOPS & self.useful_part_classes:
-                relevant_grades.append("TROOPS: %s" % troops_grade)
+                relevant_grades.append("TROOPS: %s" % self.troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
 
@@ -1440,6 +1440,63 @@ class ShipDesigner(object):
         """
         return any(part.partClass in partclass for part in self.parts)
 
+    def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
+        weapon_name = weapon_part.name
+        base_damage = weapon_part.capacity
+
+        # tech modifiers
+        try:
+            upgrades = AIDependencies.WEAPON_UPGRADE_DICT[weapon_name]
+        except KeyError:
+            if weapon_name not in _raised_warnings:
+                _raised_warnings.add(weapon_name)
+                print_error(("WARNING: Encountered unknown weapon (%s): "
+                             "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
+                             "Please update AIDependencies.py and "
+                             "add the weapon with its upgrade techs to WEAPON_UPGRADE_DICT") % weapon_name,
+                            location="ShipDesignAI._calculate_weapon_strength()", trace=True)
+            return base_damage
+        total_tech_bonus = 0
+        for tech, dmg_bonus in upgrades:
+            total_tech_bonus += dmg_bonus if tech_is_complete(tech) else 0
+            # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
+
+        # species modifiers
+        if not ignore_species:
+            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(self.weapons_grade, {}).get(weapon_name, 0)
+        else:
+            species_modifier = 0
+        return base_damage + total_tech_bonus + species_modifier
+
+    def _calculate_weapon_shots(self, weapon_part, ignore_species=False):
+        weapon_name = weapon_part.name
+        base_shots = weapon_part.secondaryStat
+        if not base_shots:
+            print "WARNING: Queried weapon %s for number of shots but didn't return any." % weapon_name
+            base_shots = 1
+
+        # species modifier
+        if not ignore_species:
+            species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(self.weapons_grade, {}).get(weapon_name, 0)
+        else:
+            species_modifier = 0
+
+        # tech modifier
+        tech_modifier = 0  # none implemented yet
+        return base_shots + species_modifier + tech_modifier
+
+    def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
+        hangar_name = hangar_part.name
+        base_damage = hangar_part.secondaryStat
+        # species modifier
+        if not ignore_species:
+            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(self.weapons_grade, {}).get(hangar_name, 0)
+        else:
+            species_modifier = 0
+        # tech modifier
+        tech_modifier = 0
+        return base_damage + species_modifier + tech_modifier
+
 
 class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
@@ -1507,7 +1564,7 @@ class MilitaryShipDesigner(ShipDesigner):
         armours = [part for part in parts if part.partClass in ARMOUR]
         cap = lambda x: x.capacity
         if weapons:
-            weapon_part = max(weapons, key=_calculate_weapon_strength)
+            weapon_part = max(weapons, key=self._calculate_weapon_strength)
             weapon = weapon_part.name
             idxweapon = available_parts.index(weapon)
             cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.empireID(), self.pid))
@@ -2051,24 +2108,3 @@ def _can_build(design, empire_id, pid):
     :return: bool
     """
     return design.productionLocationForEmpire(empire_id, pid)
-
-
-def _calculate_weapon_strength(weapon):
-    weapon_name = weapon.name
-    damage = weapon.capacity
-    try:
-        upgrades = AIDependencies.WEAPON_UPGRADE_DICT[weapon_name]
-    except KeyError:
-        if weapon_name not in __raised_warnings:
-            __raised_warnings.append(weapon_name)
-            print_error(("WARNING: Encountered unknown weapon (%s): "
-                         "The AI can play on but its damage estimates may be incorrect leading to worse performance. "
-                         "Please update AIDependencies.py and "
-                         "add the weapon with its upgrade techs to WEAPON_UPGRADE_DICT") % weapon_name,
-                        location="ShipDesignAI._calculate_weapon_strength()", trace=True)
-        return damage
-    total_tech_bonus = 0
-    for tech, dmg_bonus in upgrades:
-        total_tech_bonus += dmg_bonus if tech_is_complete(tech) else 0
-        # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
-    return damage + total_tech_bonus

@@ -9,5 +9,6 @@ Tech
     prerequisites = [
         "GRO_TERRAFORM"
     ]
+    graphic = "icons/tech/trans_organic_sentience.png"
 
 #include "/scripting/common/base_prod.macros"

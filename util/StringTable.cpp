@@ -171,9 +171,9 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                         ErrorLogger() << "         from keyword "<< map_it->first << " with raw text:" << rawtext;
                         ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                         // will also trigger further error logging below
-                        ref_check_it++;
+                        ++ref_check_it;
                     } else
-                        ref_check_it++;
+                        ++ref_check_it;
                 }
                 if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
@@ -192,7 +192,7 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
                         map_it->second.replace(position, match.length(), substitution);
                         std::size_t added_chars = substitution.length() - match.length();
                         for (std::map< std::string, std::size_t >::iterator ref_check_it = cyclic_reference_check.begin(); 
-                            ref_check_it != cyclic_reference_check.end(); ref_check_it++)
+                            ref_check_it != cyclic_reference_check.end(); ++ref_check_it)
                         {
                             ref_check_it->second += added_chars;
                         }

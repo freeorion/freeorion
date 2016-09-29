@@ -27,8 +27,8 @@ namespace {
     void PlayButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
-    void PlayButtonCheckSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
+    void PlayButtonRolloverSound()
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true); }
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
@@ -85,25 +85,12 @@ namespace {
 }
 
 CUIButton::CUIButton(const std::string& str) :
-    Button(str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE),
-    m_border_color(ClientUI::CtrlBorderColor()),
-    m_border_thick(1),
-    m_checked(false)
-{ GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
-
-CUIButton::CUIButton(const std::string& str, GG::Clr background, GG::Clr border) :
-    Button(str, ClientUI::GetFont(), background, ClientUI::TextColor(), GG::INTERACTIVE),
-    m_border_color(border),
-    m_border_thick(2),
-    m_checked(false)
+    Button(str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
 
 CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed,
                      const GG::SubTexture& rollover) :
-    Button("", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE),
-    m_border_color(ClientUI::CtrlBorderColor()),
-    m_border_thick(1),
-    m_checked(false)
+    Button("", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE)
 {
     SetColor(GG::CLR_WHITE);
     SetUnpressedGraphic(unpressed);
@@ -121,13 +108,10 @@ bool CUIButton::InWindow(const GG::Pt& pt) const {
 void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+            PlayButtonRolloverSound();
         SetState(BN_ROLLOVER);
     }
 }
-
-void CUIButton::SetCheck(bool b/* = true*/)
-{ m_checked = b; }
 
 GG::Pt CUIButton::MinUsableSize() const {
     GG::Pt result = GG::Button::MinUsableSize();
@@ -143,14 +127,8 @@ GG::Pt CUIButton::MinUsableSize() const {
 void CUIButton::RenderPressed() {
     if (PressedGraphic().Empty()) {
         GG::Clr background_clr = Color();
-        GG::Clr border_clr     = m_border_color;
-        int     border_thick   = m_border_thick;
-
-        if (!m_checked) {
-            background_clr = ClientUI::CtrlColor();
-            border_clr     = ClientUI::CtrlBorderColor();
-            border_thick   = 1;
-        }
+        GG::Clr border_clr     = ClientUI::CtrlBorderColor();
+        int     border_thick   = 1;
 
         AdjustBrightness(background_clr, 25);
 
@@ -168,14 +146,8 @@ void CUIButton::RenderPressed() {
 void CUIButton::RenderRollover() {
     if (RolloverGraphic().Empty()) {
         GG::Clr background_clr = Color();
-        GG::Clr border_clr     = m_border_color;
-        int     border_thick   = m_border_thick;
-
-        if (!m_checked) {
-            background_clr = ClientUI::CtrlColor();
-            border_clr     = ClientUI::CtrlBorderColor();
-            border_thick   = 1;
-        }
+        GG::Clr border_clr     = ClientUI::CtrlBorderColor();
+        int     border_thick   = 1;
 
         if (Disabled()) {
             background_clr = DisabledColor(background_clr);
@@ -196,14 +168,8 @@ void CUIButton::RenderRollover() {
 void CUIButton::RenderUnpressed() {
     if (UnpressedGraphic().Empty()) {
         GG::Clr background_clr = Color();
-        GG::Clr border_clr     = m_border_color;
-        int     border_thick   = m_border_thick;
-
-        if (!m_checked) {
-            background_clr = ClientUI::CtrlColor();
-            border_clr     = ClientUI::CtrlBorderColor();
-            border_thick   = 1;
-        }
+        GG::Clr border_clr     = ClientUI::CtrlBorderColor();
+        int     border_thick   = 1;
 
         if (Disabled()) {
             background_clr = DisabledColor(background_clr);
@@ -260,7 +226,7 @@ bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
 void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+            PlayButtonRolloverSound();
         SetState(BN_ROLLOVER);
     }
 }
@@ -306,7 +272,7 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
+    if (!button.Disabled() && !button.Checked() && (GG::StateButton::BN_ROLLOVER == button.State())) {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
@@ -380,9 +346,15 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-tx_ul);
 }
 
+void CUICheckBoxRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        PlayButtonRolloverSound();
+}
+
 void CUICheckBoxRepresenter::OnChecked(bool checked) const {
     if (checked)
-        PlayButtonCheckSound();
+        PlayButtonClickSound();
 }
 
 void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
@@ -397,7 +369,7 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
+    if (!button.Disabled() && !button.Checked() && (GG::StateButton::BN_ROLLOVER == button.State())) {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
@@ -430,8 +402,14 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-tx_ul);
 }
 
+void CUIRadioRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        PlayButtonRolloverSound();
+}
+
 void CUIRadioRepresenter::OnChecked(bool checked) const
-{ PlayButtonCheckSound(); }
+{ PlayButtonClickSound(); }
 
 void CUITabRepresenter::Render(const GG::StateButton& button) const {
     // draw button
@@ -442,7 +420,7 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
 
-    if (button.Checked() || !button.Disabled() && button.IsMouseover())
+    if (button.Checked() || (!button.Disabled() && (GG::StateButton::BN_ROLLOVER == button.State())))
         AdjustBrightness(border_color_to_use, 100);
 
     const int UNCHECKED_OFFSET = 4;
@@ -459,11 +437,122 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-(tx_ul));
 }
 
+void CUITabRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        PlayButtonRolloverSound();
+}
+
 void CUITabRepresenter::OnChecked(bool checked) const
-{ PlayButtonCheckSound(); }
+{ PlayButtonClickSound(); }
 
 GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 { return button.GetLabel()->MinUsableSize(); }
+
+void CUILabelButtonRepresenter::OnChanged(const GG::StateButton& button, GG::StateButton::ButtonState prev_state) const
+{
+    if (GG::StateButton::BN_ROLLOVER == button.State() && GG::StateButton::BN_UNPRESSED == prev_state)
+        PlayButtonRolloverSound();
+}
+
+void CUILabelButtonRepresenter::OnChecked(bool checked) const
+{ PlayButtonClickSound(); }
+
+void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
+    GG::Pt ul = button.UpperLeft();
+    GG::Pt lr = button.LowerRight();
+    GG::Pt tx_ul;
+
+    GG::Clr background_clr = ClientUI::CtrlColor();
+    GG::Clr border_clr     = ClientUI::CtrlBorderColor();
+    int     border_thick   = 1;
+
+    if (button.Checked()) {
+        background_clr = ClientUI::ButtonHiliteColor();
+        border_clr     = ClientUI::ButtonHiliteBorderColor();
+        border_thick   = 2;
+    }
+
+    if (button.Disabled()) {
+        background_clr = DisabledColor(background_clr);
+        border_clr     = DisabledColor(border_clr);
+    } else {
+        if (GG::StateButton::BN_PRESSED == button.State()) {
+            AdjustBrightness(background_clr, 25);
+
+            tx_ul = GG::Pt(GG::X1, GG::Y1);
+        }
+        if (GG::StateButton::BN_ROLLOVER == button.State()) {
+            AdjustBrightness(border_clr, 100);
+        }
+    }
+
+    AngledCornerRectangle(ul, lr, background_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, border_thick);
+
+    button.GetLabel()->OffsetMove(tx_ul);
+    button.GetLabel()->Render();
+    button.GetLabel()->OffsetMove(-(tx_ul));
+}
+
+CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> icon,
+                                                   const GG::Clr& highlight_clr) :
+    m_unchecked_icon(icon),
+    m_checked_icon(icon),
+    m_unchecked_color(highlight_clr),
+    m_checked_color(highlight_clr)
+{}
+
+CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
+                                                   const GG::Clr& unchecked_clr,
+                                                   boost::shared_ptr<GG::SubTexture> checked_icon,
+                                                   const GG::Clr& checked_clr) :
+    m_unchecked_icon(unchecked_icon),
+    m_checked_icon(checked_icon),
+    m_unchecked_color(unchecked_clr),
+    m_checked_color(checked_clr)
+{}
+
+void CUIIconButtonRepresenter::OnChecked(bool checked) const
+{ PlayButtonClickSound(); }
+
+void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
+    bool render_checked = button.Checked()^ (GG::StateButton::BN_ROLLOVER == button.State());  // opposite on mouseover
+
+    GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
+    GG::Clr bg_clr(ClientUI::CtrlColor());
+    GG::Clr border_clr(button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor());
+
+    const int BORDER_THICKNESS = 1;
+    const int ICON_SIZE_REDUCE = BORDER_THICKNESS * 2;
+
+    GG::Pt icon_ul = button.UpperLeft();
+    GG::Pt icon_lr = button.LowerRight();
+    GG::Pt border_ul = icon_ul;
+    GG::Pt border_lr = icon_lr;
+
+    // tone color for disabled button, or when unchecked and using a single icon with same color
+    if (button.Disabled() || (!render_checked && (m_checked_color == m_unchecked_color) && (m_checked_icon == m_unchecked_icon)))
+        icon_clr = DisabledColor(icon_clr) * 0.8f;
+
+    // highlight on mouseover
+    if (GG::StateButton::BN_ROLLOVER == button.State()) {
+        AdjustBrightness(border_clr, 100);
+        AdjustBrightness(icon_clr, 1.7);
+    }
+
+    // shrink icon for border
+    icon_ul.x += ICON_SIZE_REDUCE;
+    icon_ul.y += ICON_SIZE_REDUCE;
+    icon_lr.x -= ICON_SIZE_REDUCE;
+    icon_lr.y -= ICON_SIZE_REDUCE;
+
+    // render border
+    AngledCornerRectangle(border_ul, border_lr, bg_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, BORDER_THICKNESS);
+
+    // render icon
+    glColor(icon_clr);
+    render_checked ? m_checked_icon->OrthoBlit(icon_ul, icon_lr) : m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
+}
 
 
 ///////////////////////////////////////
@@ -555,7 +644,7 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_being_dragged && !m_mouse_here) {
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        PlayButtonRolloverSound();
         m_mouse_here = true;
     }
 }
@@ -677,7 +766,6 @@ void CUIDropDownList::InitBuffer() {
 void CUIDropDownList::Render() {
     GG::Pt ul = UpperLeft();
     GG::Clr lb_color = LB()->Color();
-    GG::Clr lb_interior_color = LB()->InteriorColor();
     GG::Clr border_color = Disabled() ? DisabledColor(lb_color) : lb_color;
     GG::Clr interior_color = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
@@ -733,7 +821,7 @@ void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        PlayButtonRolloverSound();
     m_mouse_here = true;
 }
 
@@ -963,11 +1051,6 @@ void CUILinkTextMultiEdit::Render() {
 void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     CUIMultiEdit::LClick(pt, mod_keys);
     TextLinker::LClick_(pt, mod_keys);
-}
-
-void CUILinkTextMultiEdit::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    CUIMultiEdit::LDoubleClick(pt, mod_keys);
-    TextLinker::LDoubleClick_(pt, mod_keys);
 }
 
 void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -1353,14 +1436,6 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
 }
 
-SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string>& species_names) :
-    CUIDropDownList(6)
-{
-    Resize(GG::Pt(w, h - 8));
-    SetSpecies(species_names);
-    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
-}
-
 const std::string& SpeciesSelector::CurrentSpeciesName() const {
     CUIDropDownList::iterator row_it = this->CurrentItem();
     if (row_it == this->end())
@@ -1392,28 +1467,6 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name) {
         }
     }
     ErrorLogger() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
-}
-
-void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names) {
-    const std::string& previous_selection = CurrentSpeciesName();
-    bool selection_changed = (previous_selection == "");
-
-    Clear();
-
-    for (std::vector<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); ++it) {
-        const std::string& species_name = *it;
-        if (const Species* species = GetSpecies(species_name)) {
-            CUIDropDownList::iterator it = Insert(new SpeciesRow(species, this->Width(), this->Height() - 4));
-            if (species_name == previous_selection) {
-                Select(it);
-                selection_changed = false;
-            }
-        } else {
-            ErrorLogger() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
-        }
-    }
-    if (selection_changed)
-        SelectionChanged(this->CurrentItem());
 }
 
 void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it) {
@@ -1595,6 +1648,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     CUIWnd(title, x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE, config_name),
     m_units_str(point_units_str),
     m_title_str(title),
+    m_empire_id(ALL_EMPIRES),
     m_total_points_label(0),
     m_total_points(0),
     m_total_points_P_label(0),
@@ -1606,8 +1660,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_local_points_P_label(0),
     m_local_wasted_points_label(0),
     m_local_wasted_points(0),
-    m_local_wasted_points_P_label(0),
-    m_empire_id(ALL_EMPIRES)
+    m_local_wasted_points_P_label(0)
 {}
 
 GG::Pt ProductionInfoPanel::MinUsableSize() const {
@@ -2117,64 +2170,21 @@ void RotatingGraphic::Render() {
 }
 
 ////////////////////////////////////////////////
-// CUIToggleButton
+// ScanlineControl
 ////////////////////////////////////////////////
-CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> icon,
-                                           const GG::Clr& highlight_clr) :
-    m_unchecked_icon(icon),
-    m_checked_icon(icon),
-    m_unchecked_color(highlight_clr),
-    m_checked_color(highlight_clr)
+
+namespace {
+    ScanlineRenderer scanline_shader;
+}
+
+ScanlineControl::ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square /*= false*/) :
+    Control(x, y, w, h, GG::NO_WND_FLAGS),
+    m_square(square)
 {}
 
-CUIToggleRepresenter::CUIToggleRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
-                                           const GG::Clr& unchecked_clr,
-                                           boost::shared_ptr<GG::SubTexture> checked_icon,
-                                           const GG::Clr& checked_clr) :
-    m_unchecked_icon(unchecked_icon),
-    m_checked_icon(checked_icon),
-    m_unchecked_color(unchecked_clr),
-    m_checked_color(checked_clr)
-{}
-
-void CUIToggleRepresenter::OnChecked(bool checked) const
-{ PlayButtonCheckSound(); }
-
-void CUIToggleRepresenter::Render(const GG::StateButton& button) const {
-    bool render_checked = button.Checked()^button.IsMouseover();  // opposite on mouseover
-
-    GG::Clr icon_clr((render_checked && !button.Disabled()) ? m_checked_color : m_unchecked_color);
-    GG::Clr bg_clr(ClientUI::CtrlColor());
-    GG::Clr border_clr(button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor());
-
-    const int BORDER_THICKNESS = 1;
-    const int ICON_SIZE_REDUCE = BORDER_THICKNESS * 2;
-
-    GG::Pt icon_ul = button.UpperLeft();
-    GG::Pt icon_lr = button.LowerRight();
-    GG::Pt border_ul = icon_ul;
-    GG::Pt border_lr = icon_lr;
-
-    // tone color for disabled button, or when unchecked and using a single icon with same color
-    if (button.Disabled() || (!render_checked && (m_checked_color == m_unchecked_color) && (m_checked_icon == m_unchecked_icon)))
-        icon_clr = DisabledColor(icon_clr) * 0.8f;
-
-    // highlight on mouseover
-    if (button.IsMouseover()) {
-        AdjustBrightness(border_clr, 100);
-        AdjustBrightness(icon_clr, 1.7);
-    }
-
-    // shrink icon for border
-    icon_ul.x += ICON_SIZE_REDUCE;
-    icon_ul.y += ICON_SIZE_REDUCE;
-    icon_lr.x -= ICON_SIZE_REDUCE;
-    icon_lr.y -= ICON_SIZE_REDUCE;
-
-    // render border
-    AngledCornerRectangle(border_ul, border_lr, bg_clr, border_clr, CUIBUTTON_ANGLE_OFFSET, BORDER_THICKNESS);
-
-    // render icon
-    glColor(icon_clr);
-    render_checked ? m_checked_icon->OrthoBlit(icon_ul, icon_lr) : m_unchecked_icon->OrthoBlit(icon_ul, icon_lr);
+void ScanlineControl::Render() {
+    if (m_square)
+        scanline_shader.RenderRectangle(UpperLeft(), LowerRight());
+    else
+        scanline_shader.RenderCircle(UpperLeft(), LowerRight());
 }

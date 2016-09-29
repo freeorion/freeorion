@@ -35,7 +35,7 @@ namespace {
     class QueueTechPanel : public GG::Control {
     public:
         QueueTechPanel(GG::X w, const std::string& tech_name, double allocated_rp,
-                       int turns_left, double turns_completed, int empire_id);
+                       int turns_left, double turns_completed, int empire_id, bool paused = false);
         virtual void Render();
 
     private:
@@ -50,6 +50,7 @@ namespace {
         bool                    m_in_progress;
         int                     m_total_turns;
         int                     m_empire_id;
+        bool                    m_paused;
     };
 
     //////////////////////////////////////////////////
@@ -58,43 +59,46 @@ namespace {
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
             GG::ListBox::Row(),
-            tech_name(queue_element.name)
+            panel(0),
+            elem(queue_element)
         {
             const Empire* empire = GetEmpire(queue_element.empire_id);
 
-            const Tech* tech = GetTech(tech_name);
-            double per_turn_cost = tech ? tech->PerTurnCost(queue_element.empire_id) : 1;
+            const Tech* tech = GetTech(elem.name);
+            double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id) : 1;
             double progress = 0.0;
-            if (empire && empire->TechResearched(tech_name))
-                progress = tech ? tech->ResearchCost(queue_element.empire_id) : 0.0;
+            if (empire && empire->TechResearched(elem.name))
+                progress = tech ? tech->ResearchCost(elem.empire_id) : 0.0;
             else if (empire)
-                progress = empire->ResearchProgress(tech_name);
+                progress = empire->ResearchProgress(elem.name);
 
-            GG::Control* panel = new QueueTechPanel(w, tech_name, queue_element.allocated_rp,
-                                                    queue_element.turns_left, progress / per_turn_cost,
-                                                    queue_element.empire_id);
+            panel = new QueueTechPanel(w, elem.name, elem.allocated_rp,
+                                       elem.turns_left, progress / per_turn_cost,
+                                       elem.empire_id, elem.paused);
             Resize(panel->Size());
             push_back(panel);
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(TechPanelRowBrowseWnd(queue_element.name, queue_element.empire_id));
+            SetBrowseInfoWnd(TechPanelRowBrowseWnd(elem.name, elem.empire_id));
         }
 
-        std::string tech_name;
+        QueueTechPanel*                 panel;
+        const ResearchQueue::Element    elem;
     };
 
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
     QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name, double turn_spending,
-                                   int turns_left, double turns_completed, int empire_id) :
+                                   int turns_left, double turns_completed, int empire_id, bool paused) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),
-        m_empire_id(empire_id)
+        m_empire_id(empire_id),
+        m_paused(paused)
     {
         const int MARGIN = 2;
 
@@ -129,7 +133,7 @@ namespace {
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new CUILabel(UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new CUILabel(m_paused ? UserString("PAUSED") : UserString(m_tech_name), GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
@@ -204,8 +208,8 @@ public:
         QueueListBox(drop_type_str, prompt_str)
     {}
 
-    boost::signals2::signal<void (GG::ListBox::iterator, int)>   QueueItemRalliedToSignal;
-    boost::signals2::signal<void ()>                             ShowPediaSignal;
+    boost::signals2::signal<void ()>                            ShowPediaSignal;
+    boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 
 protected:
     void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -218,16 +222,25 @@ protected:
 
         GG::ListBox::Row* row = *it;
         QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : 0;
+        if (!queue_row)
+            return;
+
+        // pause / resume commands
+        if (queue_row->elem.paused) {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("RESUME"),           7, false, false));
+        } else {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("PAUSE"),            8, false, false));
+        }
 
         // pedia lookup
-        std::string tech_name = queue_row->tech_name;
-        if (tech_name == "") {
+        if (queue_row->elem.name.empty()) {
             ErrorLogger() << "Empty tech name referenced during right click";
             return;
         }
 
-        if (UserStringExists(tech_name))
-            tech_name = UserString(tech_name);
+        std::string tech_name;
+        if (UserStringExists(queue_row->elem.name))
+            tech_name = UserString(queue_row->elem.name);
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 4, false, false));
@@ -256,6 +269,17 @@ protected:
                 ShowPediaSignal();
                 break;
             }
+
+
+            case 7: { // resume
+                this->QueueItemPausedSignal(it, false);
+                break;
+            }
+            case 8: { // pause
+                this->QueueItemPausedSignal(it, true);
+                break;
+            }
+
             default:
                 break;
             }
@@ -341,6 +365,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ResearchWnd::QueueItemClickedSlot,         this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ResearchWnd::QueueItemDoubleClickedSlot,   this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->ShowPediaSignal,        &ResearchWnd::ShowPedia,                    this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal,  &ResearchWnd::QueueItemPaused,              this);
     GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal,                 &ResearchWnd::AddTechsToQueueSlot,          this);
 
     AttachChild(m_research_info_panel);
@@ -422,12 +447,11 @@ void ResearchWnd::TogglePedia()
 bool ResearchWnd::PediaVisible()
 { return m_tech_tree_wnd->PediaVisible(); }
 
-
 void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row)) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name, position)));
+            OrderPtr(new ResearchQueueOrder(empire_id, queue_row->elem.name, static_cast<int>(position))));
         if (Empire* empire = GetEmpire(empire_id))
             empire->UpdateResearchQueue();
     }
@@ -549,25 +573,41 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
-        orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name)));
+        orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->elem.name)));
     if (Empire* empire = GetEmpire(empire_id))
         empire->UpdateResearchQueue();
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
-        QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
-        if (!queue_row)
-            return;
-        ShowTech(queue_row->tech_name);
-    }
+    if (!m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
+        return;
+
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
+        ShowTech(queue_row->elem.name);
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
         DeleteQueueItem(it);
-    }
 }
+
+void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
+    if (!m_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    // todo: reject action if shown queue is not this client's empire's queue
+
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new ResearchQueueOrder(client_empire_id, queue_row->elem.name, pause, -1.0f)));
+
+    empire->UpdateResearchQueue();
+}
+
 
 void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;

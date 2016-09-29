@@ -132,7 +132,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         DebugLogger() << "Universe::serialize : updating empires' latest known object destruction states";
         // update known destroyed objects state in each empire's latest known objects
         for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin();
-             it != m_empire_latest_known_objects.end(); it++)
+             it != m_empire_latest_known_objects.end(); ++it)
         {
             std::map< int, std::set< int > >::iterator destroyed_ids_it =
                 m_empire_known_destroyed_object_ids.find(it->first);

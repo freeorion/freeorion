@@ -1,4 +1,5 @@
 #include "MultiMeterStatusBar.h"
+#include "MeterBrowseWnd.h"
 
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
@@ -68,7 +69,7 @@ namespace {
     const int       BAR_PAD(1);
     const GG::Y     BAR_HEIGHT(10);
 
-    const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE = 100.0;
+    const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
 }
 
 MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
@@ -108,18 +109,30 @@ void MultiMeterStatusBar::Render() {
         y += BAR_HEIGHT + BAR_PAD;
     }
 
+    // Find the largest value to be displayed to determine the scale factor
+    double largest_value = 0;
+    for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
+        if ((m_initial_values[i] != Meter::INVALID_VALUE) && (m_initial_values[i] > largest_value))
+            largest_value = m_initial_values[i];
+        if ((m_projected_values[i] != Meter::INVALID_VALUE) && (m_projected_values[i] > largest_value))
+            largest_value = m_projected_values[i];
+        if ((m_target_max_values[i] != Meter::INVALID_VALUE) && (m_target_max_values[i] > largest_value))
+            largest_value = m_target_max_values[i];
+    }
 
-    // lines for 20, 40, 60, 80
+    double num_full_increments =
+        std::ceil(largest_value / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT);
+    double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE =
+        num_full_increments * MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT;
+
+    // lines for 20, 40, 60, 80 etc.
+    int num_segments = num_full_increments * 5;
     GG::GL2DVertexBuffer bar_verts;
-    bar_verts.reserve(8);
-    bar_verts.store(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
-    bar_verts.store(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    bar_verts.store(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    bar_verts.store(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
-    bar_verts.store(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    bar_verts.reserve(num_segments - 1);
+    for (int ii_div_line = 1; ii_div_line <= (num_segments -1); ++ii_div_line) {
+        bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, TOP);
+        bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, y - BAR_PAD);
+    }
     bar_verts.activate();
 
     glColor(HALF_GREY);
@@ -201,23 +214,14 @@ void MultiMeterStatusBar::Update() {
         const Meter* actual_meter = obj->GetMeter(meter_types_pair.first);
         const Meter* target_max_meter = obj->GetMeter(meter_types_pair.second);
 
+        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+            *obj, meter_types_pair.first, meter_types_pair.second);
+
         if (actual_meter || target_max_meter) {
             ++num_bars;
-            if (actual_meter) {
-                m_initial_values.push_back(actual_meter->Initial());
-                if (target_max_meter)
-                    m_projected_values.push_back(obj->NextTurnCurrentMeterValue(meter_types_pair.first));
-                else
-                    m_projected_values.push_back(actual_meter->Initial());
-            } else {
-                m_initial_values.push_back(Meter::INVALID_VALUE);
-                m_projected_values.push_back(Meter::INVALID_VALUE);
-            }
-            if (target_max_meter) {
-                m_target_max_values.push_back(target_max_meter->Current());
-            } else {
-                m_target_max_values.push_back(Meter::INVALID_VALUE);
-            }
+            m_initial_values.push_back(boost::get<0>(current_projected_target));
+            m_projected_values.push_back(boost::get<1>(current_projected_target));
+            m_target_max_values.push_back(boost::get<2>(current_projected_target));
             m_bar_colours.push_back(MeterColor(meter_types_pair.first));
         }
     }

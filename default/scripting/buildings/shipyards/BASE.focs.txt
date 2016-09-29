@@ -3,7 +3,7 @@ BuildingType
     description = "BLD_SHIPYARD_BASE_DESC"
     buildcost = 10
     buildtime = 4
-    tags = "ORBITAL"
+    tags = [ "ORBITAL" "CTRL_SHIPYARD" ]
     location = And [
         Planet
         TargetPopulation low = 1

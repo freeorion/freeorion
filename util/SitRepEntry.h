@@ -13,8 +13,6 @@ class FO_COMMON_API SitRepEntry : public VarText {
 public:
     /** \name Structors */ //@{
     SitRepEntry();  ///< default ctor
-    explicit SitRepEntry(const std::string& template_string, const std::string& icon = "");
-    SitRepEntry(const std::string& template_string, int turn, const std::string& icon = "");
     SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup);
     //@}
 

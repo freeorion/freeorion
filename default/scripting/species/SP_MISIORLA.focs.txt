@@ -5,13 +5,12 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_ULTIMATE_WEAPONS" "AI_TAG_BAD_SUPPLY" "AI_TAG_BAD_DETECTION" "AI_TAG_BAD_STEALTH" "CTRL_EXTINCT" ]
+    tags = [ "ORGANIC" "BAD_INDUSTRY" "BAD_RESEARCH" "BAD_POPULATION" "ULTIMATE_WEAPONS" "BAD_SUPPLY" "BAD_DETECTION" "BAD_STEALTH" "CTRL_EXTINCT" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 
@@ -30,7 +29,7 @@ Species
         [[BAD_STEALTH]]
 
         EffectsGroup
-            description = "BAD_FUEL"
+            description = "BAD_FUEL_DESC"
             scope = And [
                 Ship
                 Source

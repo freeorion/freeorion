@@ -18,6 +18,7 @@ MONSTER_NEST
                 CreateShip designname = "SM_@1@_1" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_HATCHED"
+                    label = "EFFECT_TAME_MONSTER_HATCHED_LABEL"
                     icon = "icons/monsters/@2@-1.png"
                     parameters = [
                         tag = "planet" data = Source.ID

@@ -72,8 +72,8 @@ namespace {
         // List the columns to show, separated by colons.
         // Valid: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq
         // These settings are not visible in the options panel; the defaults should be good for regular users.
-        db.Add<std::string>("UI.save-file-dialog.columns", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS"),
-                            "time,turn,player,empire,file");
+        db.Add<std::vector<std::string> >("UI.save-file-dialog.columns", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS"),
+                                          StringToList("time,turn,player,empire,file"));
         db.Add<std::string>("UI.save-file-dialog.time." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
                             "YYYY-MM-DD");
         db.Add<std::string>("UI.save-file-dialog.turn." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
@@ -314,7 +314,7 @@ public:
         SetMargin (ROW_MARGIN);
         this->m_filename = full.filename;
 
-        VarText browse_text("SAVE_DIALOG_ROW_BROWSE_TEMPLATE");
+        VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
         for (std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin();
              it != visible_columns.end(); ++it)
@@ -495,10 +495,8 @@ private:
     std::vector<SaveFileColumn> m_visible_columns;
 
     std::vector<SaveFileColumn> FilterColumns() {
-        std::string names_string = GetOptionsDB().Get<std::string>("UI.save-file-dialog.columns");
-        std::vector<std::string> names;
-        std::vector< SaveFileColumn > columns;
-        boost::split(names, names_string,boost::is_any_of(","));
+        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string> >("UI.save-file-dialog.columns");
+        std::vector<SaveFileColumn> columns;
         for (std::vector<std::string>::const_iterator it = names.begin();
              it != names.end(); ++it)
         {

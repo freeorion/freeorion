@@ -127,7 +127,8 @@ void ResearchQueueOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_tech_name)
         & BOOST_SERIALIZATION_NVP(m_position)
-        & BOOST_SERIALIZATION_NVP(m_remove);
+        & BOOST_SERIALIZATION_NVP(m_remove)
+        & BOOST_SERIALIZATION_NVP(m_pause);
 }
 
 template <class Archive>
@@ -141,7 +142,8 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_new_quantity)
         & BOOST_SERIALIZATION_NVP(m_new_blocksize)
         & BOOST_SERIALIZATION_NVP(m_new_index)
-        & BOOST_SERIALIZATION_NVP(m_rally_point_id);
+        & BOOST_SERIALIZATION_NVP(m_rally_point_id)
+        & BOOST_SERIALIZATION_NVP(m_pause);
 }
 
 template <class Archive>

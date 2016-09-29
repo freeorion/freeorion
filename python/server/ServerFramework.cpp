@@ -96,7 +96,6 @@ bool PythonServer::InitModules() {
 
 bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     dict py_player_setup_data;
-    bool success;
 
     // the universe generator module should contain an "error_report" function,
     // so set the ErrorReport member function to use it

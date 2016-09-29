@@ -1,6 +1,6 @@
 BAD_STEALTH
 '''EffectsGroup
-            description = "BAD_STEALTH"
+            description = "BAD_STEALTH_DESC"
             scope = Or [
                 Source
                 And [
@@ -15,7 +15,7 @@ BAD_STEALTH
 
 GOOD_STEALTH
 '''EffectsGroup
-            description = "GOOD_STEALTH"
+            description = "GOOD_STEALTH_DESC"
             scope = Or [
                 Source
                 And [
@@ -30,7 +30,7 @@ GOOD_STEALTH
 
 GREAT_STEALTH
 '''EffectsGroup
-            description = "GREAT_STEALTH"
+            description = "GREAT_STEALTH_DESC"
             scope = Or [
                 Source
                 And [
@@ -45,7 +45,7 @@ GREAT_STEALTH
 
 ULTIMATE_STEALTH
 '''EffectsGroup
-            description = "ULTIMATE_STEALTH"
+            description = "ULTIMATE_STEALTH_DESC"
             scope = Or [
                 Source
                 And [

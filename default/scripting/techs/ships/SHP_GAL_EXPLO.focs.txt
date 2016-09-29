@@ -73,6 +73,7 @@ Tech
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_POP_THRESHOLD"
+                    label = "SITREP_POP_THRESHOLD_LABEL"
                     icon = "icons/sitrep/colony_growth.png"
                     parameters = [
                         tag = "planet" data = Target.ID

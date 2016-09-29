@@ -11,6 +11,9 @@
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
 
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
+
 class FleetWnd;
 class MapWndPopup;
 class DesignWnd;
@@ -156,7 +159,6 @@ public:
     void            ReselectLastFleet();                                    //!< re-selects the most recent selected fleet, if a valid one exists
 
     void            RemoveFleet(int fleet_id); //!< removes specified fleet.
-    void            SetFleetMovementLine(const FleetButton* fleet_button);  //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
     void            SetFleetMovementLine(int fleet_id);                     //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
     /* creates specially-coloured projected fleet movement line for specified
@@ -224,9 +226,33 @@ private:
     bool            PanX(GG::X x = GG::X(50));
     bool            PanY(GG::Y y = GG::Y(50));
 
-    void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
+    /** Mark all fleet buttons for a refresh. */
+    void            RefreshFleetButtons();
+    /**  Removes old / existing and create new fleet buttons. Only called once per render interval.*/
+    void            DeferredRefreshFleetButtons();
+
+    /** Use the vectors of fleet ids from \p fleets_map to create fleet buttons in \p
+        type_fleet_buttons and record the fleet buttons in \p m_fleet_buttons.*/
+    template <typename K>
+    void            CreateFleetButtonsOfType(
+        boost::unordered_map<K, boost::unordered_set<FleetButton*> >& type_fleet_buttons,
+        const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
+        const FleetButton::SizeType& fleet_button_size);
+
+    /** Delete all fleet buttons.*/
+    void            DeleteFleetButtons();
+
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
-    void            FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);
+
+    /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
+    void            AddFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    /** Disconnect all \p fleets StateChangedSignal from RefreshFleetButtons. */
+    void            RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    /** Handle FleetsInsertedSignal by connecting signals and refreshing fleet buttons. */
+    void            FleetsInsertedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    /** Handle FleetsRemovedSignal by disconnecting signals and refreshing fleet buttons. */
+    void            FleetsRemovedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets);
+
 
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
     std::pair<double, double>   MovingFleetMapPositionOnLane(TemporaryPtr<const Fleet> fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
@@ -391,7 +417,7 @@ private:
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
-    std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
+    boost::unordered_map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
     std::map<int, FieldIcon*>   m_field_icons;      //!< field icons in the main map, indexed by field id
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
     ResearchWnd*                m_research_wnd;     //!< research screen
@@ -404,13 +430,13 @@ private:
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
-    std::map<int, std::set<FleetButton*> >          m_stationary_fleet_buttons;             //!< icons representing fleets at a system that are not departing, indexed by system
-    std::map<int, std::set<FleetButton*> >          m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
-    std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
-    std::map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
+    boost::unordered_map<int, boost::unordered_set<FleetButton*> >          m_stationary_fleet_buttons;             //!< icons representing fleets at a system that are not departing, indexed by system
+    boost::unordered_map<int, boost::unordered_set<FleetButton*> >          m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
+    boost::unordered_map<std::pair<double, double>,  boost::unordered_set<FleetButton*> > m_moving_fleet_buttons;   //!< icons representing fleets not at a system
+    boost::unordered_map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    std::map<int, boost::signals2::connection>               m_fleet_state_change_signals;
-    std::map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
+    boost::unordered_map<int, boost::signals2::connection>               m_fleet_state_change_signals;
+    boost::unordered_map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
 
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
@@ -445,7 +471,7 @@ private:
     GG::GL3DVertexBuffer                m_starfield_verts;
     GG::GLRGBAColorBuffer               m_starfield_colours;
 
-    boost::shared_ptr<ShaderProgram>    m_scanline_shader;
+    ScanlineRenderer                    m_scanline_shader;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
@@ -473,6 +499,9 @@ private:
     GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level
 
     std::set<int>               m_fleets_exploring;
+
+    /// indicates that refresh fleet button work should be done before rendering.
+    bool                        m_deferred_refresh_fleet_buttons;
 
     friend struct IntroMenu;
     friend struct WaitingForGameStart;

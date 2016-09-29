@@ -5,13 +5,12 @@ Species
     Native
     CanProduceShips
 
-    tags = [ "SELF_SUSTAINING" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_GOOD_SHIELDS" "AI_TAG_GREAT_SUPPLY" ]
+    tags = [ "SELF_SUSTAINING" "GREAT_INDUSTRY" "GOOD_RESEARCH" "GOOD_SHIELDS" "GREAT_SUPPLY" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 
@@ -56,7 +55,7 @@ Species
             effects = SetStarType type = Blue
 
         EffectsGroup
-            description = "GOOD_SHIP_SHIELD"
+            description = "GOOD_SHIP_SHIELD_DESC"
             scope = And [
                 Source
                 Ship
@@ -64,7 +63,7 @@ Species
             effects = SetMaxShield value = Value + 1
 
         EffectsGroup
-            description = "GOOD_PLANETARY_DEFENSE"
+            description = "GOOD_PLANETARY_DEFENSE_DESC"
             scope = And [
                 Source
                 Planet
@@ -72,7 +71,7 @@ Species
             effects = SetMaxDefense value = Value + 5
 
         EffectsGroup
-            description = "GOOD_PLANETARY_SHIELD"
+            description = "GOOD_PLANETARY_SHIELD_DESC"
             scope = And [
                 Source
                 Planet

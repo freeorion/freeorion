@@ -26,6 +26,7 @@ Special
                 AddSpecial name = "DERELICT_SPECIAL3"
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_FUEL"
+                    label = "EFFECT_DERELICT_FUEL_LABEL"
                     icon = "icons/meter/fuel.png"
                     parameters = [
                         tag = "system" data = Source.ID

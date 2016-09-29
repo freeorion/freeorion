@@ -4,9 +4,7 @@
 #include "MapWnd.h"
 #include "Sound.h"
 #include "CUIDrawUtil.h"
-#include "ShaderProgram.h"
 #include "CUIControls.h"
-#include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -57,87 +55,12 @@ namespace {
             return "";
     }
 
-    /* returns corner vertex x and y components of a quad centred at (0, 0) of side length 2 that is rotated
-       so the "top" or "up" face is perpendicular to and facing in the direction of \a direction_vector */
-    std::vector<float> VectorAlignedQuadVertices(const GG::Pt& direction_vector, int texture_height, int texture_width) {
-        // get unit vectors parallel and perpendicular to direction vector
-        int x = Value(direction_vector.x), y = Value(direction_vector.y);
-        int mag2 = x*x + y*y;
-
-        // first unit vector parallel to direction_vector
-        float U1X = static_cast<float>(x), U1Y = static_cast<float>(y);
-        if (mag2 > 1) {
-            float mag = std::sqrt(static_cast<float>(mag2));
-            U1X /= mag;
-            U1Y /= mag;
-        } else if (mag2 == 0) {
-            // default to straight up for zero vector
-            U1X =  0.0;
-            U1Y = -1.0;
-        } // else don't need to rescale if vector length already is 1
-
-        // second unit vector perpendicular to first
-        float U2X = -U1Y, U2Y = U1X;
-
-        // multiply unit vectors by (half) texture size to get properly-scaled side vectors
-        float V1X = U1X * texture_height / 2.0;
-        float V1Y = U1Y * texture_height / 2.0;
-        float V2X = U2X * texture_width / 2.0;
-        float V2Y = U2Y * texture_width / 2.0;
-
-        // get components of corner points by adding unit vectors
-        std::vector<float> retval;
-        retval.push_back( V1X - V2X);   retval.push_back( V1Y - V2Y);
-        retval.push_back( V1X + V2X);   retval.push_back( V1Y + V2Y);
-        retval.push_back(-V1X - V2X);   retval.push_back(-V1Y - V2Y);
-        retval.push_back(-V1X + V2X);   retval.push_back(-V1Y + V2Y);
-
-        return retval;
-    }
-
-    /* renders quad with passed vertices and texture */
-    void RenderTexturedQuad(const std::vector<float>& vertsXY, const boost::shared_ptr<GG::Texture>& texture) {
-        if (!texture || vertsXY.size() < 8)
-            return;
-
-        glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
-
-        float tex_coord_x = static_cast<float>(Value(1.0 * texture->DefaultWidth() / texture->Width()));
-        float tex_coord_y = static_cast<float>(Value(1.0 * texture->DefaultHeight() / texture->Height()));
-
-        GG::GL2DVertexBuffer verts;
-        verts.reserve(4);
-        GG::GLTexCoordBuffer coords;
-        coords.reserve(4);
-
-        coords.store(0.0f, 0.0f);
-        verts.store(vertsXY[0], vertsXY[1]);
-        coords.store(tex_coord_x, 0.0f);
-        verts.store(vertsXY[2], vertsXY[3]);
-        coords.store(0.0f, tex_coord_y);
-        verts.store(vertsXY[4], vertsXY[5]);
-        coords.store(tex_coord_x, tex_coord_y);
-        verts.store(vertsXY[6], vertsXY[7]);
-
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        verts.activate();
-        coords.activate();
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
-
-        glPopClientAttrib();
-    }
-
     void AddOptions(OptionsDB& db) {
         db.Add("UI.fleet-selection-indicator-size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const float TWO_PI = 2.0*3.14159f;
-    boost::shared_ptr<ShaderProgram> scanline_shader;
 }
 
 ///////////////////////////
@@ -148,6 +71,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     m_fleets(),
     m_icons(),
     m_selection_indicator(0),
+    m_scanline_control(0),
     m_selected(false)
 { Init(fleet_IDs, size_type); }
 
@@ -156,6 +80,7 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
     m_fleets(),
     m_icons(),
     m_selection_indicator(0),
+    m_scanline_control(0),
     m_selected(false)
 {
     std::vector<int> fleet_IDs;
@@ -166,17 +91,15 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
 FleetButton::~FleetButton() {
     DetachChild(m_selection_indicator);
     delete m_selection_indicator;
+
+    if (m_scanline_control) {
+        DetachChild(m_scanline_control);
+        delete m_scanline_control;
+    }
 }
 
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     //std::cout << "FleetButton::Init" << std::endl;
-
-    if (!scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-        boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-        std::string shader_text;
-        ReadFile(shader_path, shader_text);
-        scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("", shader_text));
-    }
 
     // get fleets
     std::vector<TemporaryPtr<const Fleet> > fleets;
@@ -314,6 +237,25 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
 
     LayoutIcons();
+
+    // Scanlines for not currently-visible objects?
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        return;
+
+    bool at_least_one_fleet_visible = false;
+    for (std::vector<int>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it) {
+        if (GetUniverse().GetObjectVisibilityByEmpire(*it, empire_id) >= VIS_BASIC_VISIBILITY) {
+            at_least_one_fleet_visible = true;
+            break;
+        }
+    }
+
+    // Create scanline renderer control
+    m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, Width(), Height());
+
+    if (!at_least_one_fleet_visible)
+        AttachChild(m_scanline_control);
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
@@ -389,34 +331,13 @@ void FleetButton::SetSelected(bool selected) {
 }
 
 void FleetButton::RenderUnpressed() {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    const float midX = Value(ul.x + lr.x)/2.0f;
-    const float midY = Value(ul.y + lr.y)/2.0f;
+    // GG::Pt ul = UpperLeft(), lr = LowerRight();
+    // const float midX = Value(ul.x + lr.x)/2.0f;
+    // const float midY = Value(ul.y + lr.y)/2.0f;
 
     //// debug
     //GG::FlatRectangle(ul, lr, GG::CLR_ZERO, GG::CLR_RED, 2);
     //// end debug
-
-    // Scanlines for not currently-visible objects?
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (!scanline_shader || empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
-        return;
-
-    bool at_least_one_fleet_visible = false;
-    for (std::vector<int>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it) {
-        if (GetUniverse().GetObjectVisibilityByEmpire(*it, empire_id) >= VIS_BASIC_VISIBILITY) {
-            at_least_one_fleet_visible = true;
-            break;
-        }
-    }
-    if (at_least_one_fleet_visible)
-        return;
-
-    float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-    scanline_shader->Use();
-    scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-    CircleArc(ul, lr, 0.0, TWO_PI, true);
-    scanline_shader->stopUse();
 }
 
 void FleetButton::RenderPressed() {

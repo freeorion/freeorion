@@ -1385,7 +1385,7 @@ void Universe::UpdateMeterEstimates()
 void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
     if (object_id == INVALID_OBJECT_ID) {
         std::vector<int> all_objects_vec = m_objects.FindExistingObjectIDs();
-        for (std::vector< int >::iterator id_it = all_objects_vec.begin(); id_it != all_objects_vec.end(); id_it++)
+        for (std::vector< int >::iterator id_it = all_objects_vec.begin(); id_it != all_objects_vec.end(); ++id_it)
             m_effect_accounting_map[*id_it].clear();
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects
@@ -2311,6 +2311,14 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
              effect_group_it != priority_group_it->second.end(); ++effect_group_it)
         {
             Effect::EffectsGroup*   effects_group        = effect_group_it->first;
+
+            if (only_meter_effects && !effects_group->HasMeterEffects())
+                continue;
+            if (only_appearance_effects && !effects_group->HasAppearanceEffects())
+                continue;
+            if (only_generate_sitrep_effects && !effects_group->HasSitrepEffects())
+                continue;
+
             Effect::TargetsCauses&  group_targets_causes = effect_group_it->second;
             std::string             stacking_group       = effects_group->StackingGroup();
             ScopedTimer update_timer(
@@ -2318,7 +2326,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 + boost::lexical_cast<std::string>(group_targets_causes.size()) + " sources"
             );
 
-            // if other EffectsGroups or sources with the same stacking group have affected some of the 
+            // if other EffectsGroups or sources with the same stacking group have affected some of the
             // targets in the scope of the current EffectsGroup, skip them
             // and add the remaining objects affected by it to executed_nonstacking_effects
             if (!stacking_group.empty()) {
@@ -2452,7 +2460,6 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
         return;
 
     const std::string& species_for_obj = GetSpeciesFromObject(obj);
-    const std::string& species_for_source = GetSpeciesFromObject(source);
 
     int empire_for_obj_id = obj->Owner();
     int empire_for_source_id = source->Owner();

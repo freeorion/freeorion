@@ -14,6 +14,8 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/range/algorithm_ext/erase.hpp>
+#include <boost/tokenizer.hpp>
 
 namespace {
     std::vector<OptionsDBFn>& OptionsRegistry() {
@@ -483,3 +485,26 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         }
     }
 }
+
+std::string ListToString(const std::vector<std::string>& input_list) {
+    // list input strings in comma-separated-value format
+    std::string retval;
+    for (std::vector<std::string>::const_iterator it = input_list.begin(); it != input_list.end(); ++it) {
+        if (it != input_list.begin())
+            retval += ",";
+        std::string str(*it);
+        boost::remove_erase_if(str, boost::is_any_of("<&>'\",[]|\a\b\f\n\r\t\b"));  // remove XML protected characters and a few other semi-randomly chosen characters to avoid corrupting enclosing XML document structure
+        retval += str;
+    }
+    return retval;
+}
+
+std::vector<std::string> StringToList(const std::string& input_string) {
+    std::vector<std::string> retval;
+    boost::tokenizer<boost::escaped_list_separator<char> > tok(input_string);
+    for (boost::tokenizer<boost::escaped_list_separator<char> >::iterator it = tok.begin(); it != tok.end(); ++it) {
+        retval.push_back(*it);
+    }
+    return retval;
+}
+

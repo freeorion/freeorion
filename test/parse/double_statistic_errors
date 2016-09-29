@@ -6,20 +6,8 @@ Sum Property
 Sum Property =
 Sum Property = Fleet
 Sum Property = Fleet .
-Sum Property = Fleet . Farming
-Sum Property = Fleet . Farming Condition
-Sum Property = Fleet . Farming Condition =
 Sum Fleet
 Sum Fleet .
-Sum Fleet . Farming
-Sum Fleet . Farming Condition
-Sum Fleet . Farming Condition =
-Sum Property = Fleet . TargetFarming
-Sum Property = Fleet . TargetFarming Condition
-Sum Property = Fleet . TargetFarming Condition =
-Sum Fleet . TargetFarming
-Sum Fleet . TargetFarming Condition
-Sum Fleet . TargetFarming Condition =
 Sum Property = Fleet . Industry
 Sum Property = Fleet . Industry Condition
 Sum Property = Fleet . Industry Condition =
@@ -56,18 +44,6 @@ Sum Property = Fleet . TargetTrade Condition =
 Sum Fleet . TargetTrade
 Sum Fleet . TargetTrade Condition
 Sum Fleet . TargetTrade Condition =
-Sum Property = Fleet . Mining
-Sum Property = Fleet . Mining Condition
-Sum Property = Fleet . Mining Condition =
-Sum Fleet . Mining
-Sum Fleet . Mining Condition
-Sum Fleet . Mining Condition =
-Sum Property = Fleet . TargetMining
-Sum Property = Fleet . TargetMining Condition
-Sum Property = Fleet . TargetMining Condition =
-Sum Fleet . TargetMining
-Sum Fleet . TargetMining Condition
-Sum Fleet . TargetMining Condition =
 Sum Property = Fleet . Construction
 Sum Property = Fleet . Construction Condition
 Sum Property = Fleet . Construction Condition =
@@ -226,20 +202,8 @@ Sum Fleet . DistanceToSource Condition
 Sum Fleet . DistanceToSource Condition =
 Sum Property = Planet
 Sum Property = Planet .
-Sum Property = Planet . Farming
-Sum Property = Planet . Farming Condition
-Sum Property = Planet . Farming Condition =
 Sum Planet
 Sum Planet .
-Sum Planet . Farming
-Sum Planet . Farming Condition
-Sum Planet . Farming Condition =
-Sum Property = Planet . TargetFarming
-Sum Property = Planet . TargetFarming Condition
-Sum Property = Planet . TargetFarming Condition =
-Sum Planet . TargetFarming
-Sum Planet . TargetFarming Condition
-Sum Planet . TargetFarming Condition =
 Sum Property = Planet . Industry
 Sum Property = Planet . Industry Condition
 Sum Property = Planet . Industry Condition =
@@ -276,18 +240,6 @@ Sum Property = Planet . TargetTrade Condition =
 Sum Planet . TargetTrade
 Sum Planet . TargetTrade Condition
 Sum Planet . TargetTrade Condition =
-Sum Property = Planet . Mining
-Sum Property = Planet . Mining Condition
-Sum Property = Planet . Mining Condition =
-Sum Planet . Mining
-Sum Planet . Mining Condition
-Sum Planet . Mining Condition =
-Sum Property = Planet . TargetMining
-Sum Property = Planet . TargetMining Condition
-Sum Property = Planet . TargetMining Condition =
-Sum Planet . TargetMining
-Sum Planet . TargetMining Condition
-Sum Planet . TargetMining Condition =
 Sum Property = Planet . Construction
 Sum Property = Planet . Construction Condition
 Sum Property = Planet . Construction Condition =
@@ -446,20 +398,8 @@ Sum Planet . DistanceToSource Condition
 Sum Planet . DistanceToSource Condition =
 Sum Property = System
 Sum Property = System .
-Sum Property = System . Farming
-Sum Property = System . Farming Condition
-Sum Property = System . Farming Condition =
 Sum System
 Sum System .
-Sum System . Farming
-Sum System . Farming Condition
-Sum System . Farming Condition =
-Sum Property = System . TargetFarming
-Sum Property = System . TargetFarming Condition
-Sum Property = System . TargetFarming Condition =
-Sum System . TargetFarming
-Sum System . TargetFarming Condition
-Sum System . TargetFarming Condition =
 Sum Property = System . Industry
 Sum Property = System . Industry Condition
 Sum Property = System . Industry Condition =
@@ -496,18 +436,6 @@ Sum Property = System . TargetTrade Condition =
 Sum System . TargetTrade
 Sum System . TargetTrade Condition
 Sum System . TargetTrade Condition =
-Sum Property = System . Mining
-Sum Property = System . Mining Condition
-Sum Property = System . Mining Condition =
-Sum System . Mining
-Sum System . Mining Condition
-Sum System . Mining Condition =
-Sum Property = System . TargetMining
-Sum Property = System . TargetMining Condition
-Sum Property = System . TargetMining Condition =
-Sum System . TargetMining
-Sum System . TargetMining Condition
-Sum System . TargetMining Condition =
 Sum Property = System . Construction
 Sum Property = System . Construction Condition
 Sum Property = System . Construction Condition =
@@ -664,18 +592,6 @@ Sum Property = System . DistanceToSource Condition =
 Sum System . DistanceToSource
 Sum System . DistanceToSource Condition
 Sum System . DistanceToSource Condition =
-Sum Property = Farming
-Sum Property = Farming Condition
-Sum Property = Farming Condition =
-Sum Farming
-Sum Farming Condition
-Sum Farming Condition =
-Sum Property = TargetFarming
-Sum Property = TargetFarming Condition
-Sum Property = TargetFarming Condition =
-Sum TargetFarming
-Sum TargetFarming Condition
-Sum TargetFarming Condition =
 Sum Property = Industry
 Sum Property = Industry Condition
 Sum Property = Industry Condition =
@@ -712,18 +628,6 @@ Sum Property = TargetTrade Condition =
 Sum TargetTrade
 Sum TargetTrade Condition
 Sum TargetTrade Condition =
-Sum Property = Mining
-Sum Property = Mining Condition
-Sum Property = Mining Condition =
-Sum Mining
-Sum Mining Condition
-Sum Mining Condition =
-Sum Property = TargetMining
-Sum Property = TargetMining Condition
-Sum Property = TargetMining Condition =
-Sum TargetMining
-Sum TargetMining Condition
-Sum TargetMining Condition =
 Sum Property = Construction
 Sum Property = Construction Condition
 Sum Property = Construction Condition =
@@ -885,20 +789,8 @@ Mean Property
 Mean Property =
 Mean Property = Fleet
 Mean Property = Fleet .
-Mean Property = Fleet . Farming
-Mean Property = Fleet . Farming Condition
-Mean Property = Fleet . Farming Condition =
 Mean Fleet
 Mean Fleet .
-Mean Fleet . Farming
-Mean Fleet . Farming Condition
-Mean Fleet . Farming Condition =
-Mean Property = Fleet . TargetFarming
-Mean Property = Fleet . TargetFarming Condition
-Mean Property = Fleet . TargetFarming Condition =
-Mean Fleet . TargetFarming
-Mean Fleet . TargetFarming Condition
-Mean Fleet . TargetFarming Condition =
 Mean Property = Fleet . Industry
 Mean Property = Fleet . Industry Condition
 Mean Property = Fleet . Industry Condition =
@@ -935,18 +827,6 @@ Mean Property = Fleet . TargetTrade Condition =
 Mean Fleet . TargetTrade
 Mean Fleet . TargetTrade Condition
 Mean Fleet . TargetTrade Condition =
-Mean Property = Fleet . Mining
-Mean Property = Fleet . Mining Condition
-Mean Property = Fleet . Mining Condition =
-Mean Fleet . Mining
-Mean Fleet . Mining Condition
-Mean Fleet . Mining Condition =
-Mean Property = Fleet . TargetMining
-Mean Property = Fleet . TargetMining Condition
-Mean Property = Fleet . TargetMining Condition =
-Mean Fleet . TargetMining
-Mean Fleet . TargetMining Condition
-Mean Fleet . TargetMining Condition =
 Mean Property = Fleet . Construction
 Mean Property = Fleet . Construction Condition
 Mean Property = Fleet . Construction Condition =
@@ -1105,20 +985,8 @@ Mean Fleet . DistanceToSource Condition
 Mean Fleet . DistanceToSource Condition =
 Mean Property = Planet
 Mean Property = Planet .
-Mean Property = Planet . Farming
-Mean Property = Planet . Farming Condition
-Mean Property = Planet . Farming Condition =
 Mean Planet
 Mean Planet .
-Mean Planet . Farming
-Mean Planet . Farming Condition
-Mean Planet . Farming Condition =
-Mean Property = Planet . TargetFarming
-Mean Property = Planet . TargetFarming Condition
-Mean Property = Planet . TargetFarming Condition =
-Mean Planet . TargetFarming
-Mean Planet . TargetFarming Condition
-Mean Planet . TargetFarming Condition =
 Mean Property = Planet . Industry
 Mean Property = Planet . Industry Condition
 Mean Property = Planet . Industry Condition =
@@ -1155,18 +1023,6 @@ Mean Property = Planet . TargetTrade Condition =
 Mean Planet . TargetTrade
 Mean Planet . TargetTrade Condition
 Mean Planet . TargetTrade Condition =
-Mean Property = Planet . Mining
-Mean Property = Planet . Mining Condition
-Mean Property = Planet . Mining Condition =
-Mean Planet . Mining
-Mean Planet . Mining Condition
-Mean Planet . Mining Condition =
-Mean Property = Planet . TargetMining
-Mean Property = Planet . TargetMining Condition
-Mean Property = Planet . TargetMining Condition =
-Mean Planet . TargetMining
-Mean Planet . TargetMining Condition
-Mean Planet . TargetMining Condition =
 Mean Property = Planet . Construction
 Mean Property = Planet . Construction Condition
 Mean Property = Planet . Construction Condition =
@@ -1325,20 +1181,8 @@ Mean Planet . DistanceToSource Condition
 Mean Planet . DistanceToSource Condition =
 Mean Property = System
 Mean Property = System .
-Mean Property = System . Farming
-Mean Property = System . Farming Condition
-Mean Property = System . Farming Condition =
 Mean System
 Mean System .
-Mean System . Farming
-Mean System . Farming Condition
-Mean System . Farming Condition =
-Mean Property = System . TargetFarming
-Mean Property = System . TargetFarming Condition
-Mean Property = System . TargetFarming Condition =
-Mean System . TargetFarming
-Mean System . TargetFarming Condition
-Mean System . TargetFarming Condition =
 Mean Property = System . Industry
 Mean Property = System . Industry Condition
 Mean Property = System . Industry Condition =
@@ -1375,18 +1219,6 @@ Mean Property = System . TargetTrade Condition =
 Mean System . TargetTrade
 Mean System . TargetTrade Condition
 Mean System . TargetTrade Condition =
-Mean Property = System . Mining
-Mean Property = System . Mining Condition
-Mean Property = System . Mining Condition =
-Mean System . Mining
-Mean System . Mining Condition
-Mean System . Mining Condition =
-Mean Property = System . TargetMining
-Mean Property = System . TargetMining Condition
-Mean Property = System . TargetMining Condition =
-Mean System . TargetMining
-Mean System . TargetMining Condition
-Mean System . TargetMining Condition =
 Mean Property = System . Construction
 Mean Property = System . Construction Condition
 Mean Property = System . Construction Condition =
@@ -1543,18 +1375,6 @@ Mean Property = System . DistanceToSource Condition =
 Mean System . DistanceToSource
 Mean System . DistanceToSource Condition
 Mean System . DistanceToSource Condition =
-Mean Property = Farming
-Mean Property = Farming Condition
-Mean Property = Farming Condition =
-Mean Farming
-Mean Farming Condition
-Mean Farming Condition =
-Mean Property = TargetFarming
-Mean Property = TargetFarming Condition
-Mean Property = TargetFarming Condition =
-Mean TargetFarming
-Mean TargetFarming Condition
-Mean TargetFarming Condition =
 Mean Property = Industry
 Mean Property = Industry Condition
 Mean Property = Industry Condition =
@@ -1591,18 +1411,6 @@ Mean Property = TargetTrade Condition =
 Mean TargetTrade
 Mean TargetTrade Condition
 Mean TargetTrade Condition =
-Mean Property = Mining
-Mean Property = Mining Condition
-Mean Property = Mining Condition =
-Mean Mining
-Mean Mining Condition
-Mean Mining Condition =
-Mean Property = TargetMining
-Mean Property = TargetMining Condition
-Mean Property = TargetMining Condition =
-Mean TargetMining
-Mean TargetMining Condition
-Mean TargetMining Condition =
 Mean Property = Construction
 Mean Property = Construction Condition
 Mean Property = Construction Condition =
@@ -1764,20 +1572,8 @@ RMS Property
 RMS Property =
 RMS Property = Fleet
 RMS Property = Fleet .
-RMS Property = Fleet . Farming
-RMS Property = Fleet . Farming Condition
-RMS Property = Fleet . Farming Condition =
 RMS Fleet
 RMS Fleet .
-RMS Fleet . Farming
-RMS Fleet . Farming Condition
-RMS Fleet . Farming Condition =
-RMS Property = Fleet . TargetFarming
-RMS Property = Fleet . TargetFarming Condition
-RMS Property = Fleet . TargetFarming Condition =
-RMS Fleet . TargetFarming
-RMS Fleet . TargetFarming Condition
-RMS Fleet . TargetFarming Condition =
 RMS Property = Fleet . Industry
 RMS Property = Fleet . Industry Condition
 RMS Property = Fleet . Industry Condition =
@@ -1814,18 +1610,6 @@ RMS Property = Fleet . TargetTrade Condition =
 RMS Fleet . TargetTrade
 RMS Fleet . TargetTrade Condition
 RMS Fleet . TargetTrade Condition =
-RMS Property = Fleet . Mining
-RMS Property = Fleet . Mining Condition
-RMS Property = Fleet . Mining Condition =
-RMS Fleet . Mining
-RMS Fleet . Mining Condition
-RMS Fleet . Mining Condition =
-RMS Property = Fleet . TargetMining
-RMS Property = Fleet . TargetMining Condition
-RMS Property = Fleet . TargetMining Condition =
-RMS Fleet . TargetMining
-RMS Fleet . TargetMining Condition
-RMS Fleet . TargetMining Condition =
 RMS Property = Fleet . Construction
 RMS Property = Fleet . Construction Condition
 RMS Property = Fleet . Construction Condition =
@@ -1984,20 +1768,8 @@ RMS Fleet . DistanceToSource Condition
 RMS Fleet . DistanceToSource Condition =
 RMS Property = Planet
 RMS Property = Planet .
-RMS Property = Planet . Farming
-RMS Property = Planet . Farming Condition
-RMS Property = Planet . Farming Condition =
 RMS Planet
 RMS Planet .
-RMS Planet . Farming
-RMS Planet . Farming Condition
-RMS Planet . Farming Condition =
-RMS Property = Planet . TargetFarming
-RMS Property = Planet . TargetFarming Condition
-RMS Property = Planet . TargetFarming Condition =
-RMS Planet . TargetFarming
-RMS Planet . TargetFarming Condition
-RMS Planet . TargetFarming Condition =
 RMS Property = Planet . Industry
 RMS Property = Planet . Industry Condition
 RMS Property = Planet . Industry Condition =
@@ -2034,18 +1806,6 @@ RMS Property = Planet . TargetTrade Condition =
 RMS Planet . TargetTrade
 RMS Planet . TargetTrade Condition
 RMS Planet . TargetTrade Condition =
-RMS Property = Planet . Mining
-RMS Property = Planet . Mining Condition
-RMS Property = Planet . Mining Condition =
-RMS Planet . Mining
-RMS Planet . Mining Condition
-RMS Planet . Mining Condition =
-RMS Property = Planet . TargetMining
-RMS Property = Planet . TargetMining Condition
-RMS Property = Planet . TargetMining Condition =
-RMS Planet . TargetMining
-RMS Planet . TargetMining Condition
-RMS Planet . TargetMining Condition =
 RMS Property = Planet . Construction
 RMS Property = Planet . Construction Condition
 RMS Property = Planet . Construction Condition =
@@ -2204,20 +1964,8 @@ RMS Planet . DistanceToSource Condition
 RMS Planet . DistanceToSource Condition =
 RMS Property = System
 RMS Property = System .
-RMS Property = System . Farming
-RMS Property = System . Farming Condition
-RMS Property = System . Farming Condition =
 RMS System
 RMS System .
-RMS System . Farming
-RMS System . Farming Condition
-RMS System . Farming Condition =
-RMS Property = System . TargetFarming
-RMS Property = System . TargetFarming Condition
-RMS Property = System . TargetFarming Condition =
-RMS System . TargetFarming
-RMS System . TargetFarming Condition
-RMS System . TargetFarming Condition =
 RMS Property = System . Industry
 RMS Property = System . Industry Condition
 RMS Property = System . Industry Condition =
@@ -2254,18 +2002,6 @@ RMS Property = System . TargetTrade Condition =
 RMS System . TargetTrade
 RMS System . TargetTrade Condition
 RMS System . TargetTrade Condition =
-RMS Property = System . Mining
-RMS Property = System . Mining Condition
-RMS Property = System . Mining Condition =
-RMS System . Mining
-RMS System . Mining Condition
-RMS System . Mining Condition =
-RMS Property = System . TargetMining
-RMS Property = System . TargetMining Condition
-RMS Property = System . TargetMining Condition =
-RMS System . TargetMining
-RMS System . TargetMining Condition
-RMS System . TargetMining Condition =
 RMS Property = System . Construction
 RMS Property = System . Construction Condition
 RMS Property = System . Construction Condition =
@@ -2422,18 +2158,6 @@ RMS Property = System . DistanceToSource Condition =
 RMS System . DistanceToSource
 RMS System . DistanceToSource Condition
 RMS System . DistanceToSource Condition =
-RMS Property = Farming
-RMS Property = Farming Condition
-RMS Property = Farming Condition =
-RMS Farming
-RMS Farming Condition
-RMS Farming Condition =
-RMS Property = TargetFarming
-RMS Property = TargetFarming Condition
-RMS Property = TargetFarming Condition =
-RMS TargetFarming
-RMS TargetFarming Condition
-RMS TargetFarming Condition =
 RMS Property = Industry
 RMS Property = Industry Condition
 RMS Property = Industry Condition =
@@ -2470,18 +2194,6 @@ RMS Property = TargetTrade Condition =
 RMS TargetTrade
 RMS TargetTrade Condition
 RMS TargetTrade Condition =
-RMS Property = Mining
-RMS Property = Mining Condition
-RMS Property = Mining Condition =
-RMS Mining
-RMS Mining Condition
-RMS Mining Condition =
-RMS Property = TargetMining
-RMS Property = TargetMining Condition
-RMS Property = TargetMining Condition =
-RMS TargetMining
-RMS TargetMining Condition
-RMS TargetMining Condition =
 RMS Property = Construction
 RMS Property = Construction Condition
 RMS Property = Construction Condition =
@@ -2643,20 +2355,8 @@ Mode Property
 Mode Property =
 Mode Property = Fleet
 Mode Property = Fleet .
-Mode Property = Fleet . Farming
-Mode Property = Fleet . Farming Condition
-Mode Property = Fleet . Farming Condition =
 Mode Fleet
 Mode Fleet .
-Mode Fleet . Farming
-Mode Fleet . Farming Condition
-Mode Fleet . Farming Condition =
-Mode Property = Fleet . TargetFarming
-Mode Property = Fleet . TargetFarming Condition
-Mode Property = Fleet . TargetFarming Condition =
-Mode Fleet . TargetFarming
-Mode Fleet . TargetFarming Condition
-Mode Fleet . TargetFarming Condition =
 Mode Property = Fleet . Industry
 Mode Property = Fleet . Industry Condition
 Mode Property = Fleet . Industry Condition =
@@ -2693,18 +2393,6 @@ Mode Property = Fleet . TargetTrade Condition =
 Mode Fleet . TargetTrade
 Mode Fleet . TargetTrade Condition
 Mode Fleet . TargetTrade Condition =
-Mode Property = Fleet . Mining
-Mode Property = Fleet . Mining Condition
-Mode Property = Fleet . Mining Condition =
-Mode Fleet . Mining
-Mode Fleet . Mining Condition
-Mode Fleet . Mining Condition =
-Mode Property = Fleet . TargetMining
-Mode Property = Fleet . TargetMining Condition
-Mode Property = Fleet . TargetMining Condition =
-Mode Fleet . TargetMining
-Mode Fleet . TargetMining Condition
-Mode Fleet . TargetMining Condition =
 Mode Property = Fleet . Construction
 Mode Property = Fleet . Construction Condition
 Mode Property = Fleet . Construction Condition =
@@ -2863,20 +2551,8 @@ Mode Fleet . DistanceToSource Condition
 Mode Fleet . DistanceToSource Condition =
 Mode Property = Planet
 Mode Property = Planet .
-Mode Property = Planet . Farming
-Mode Property = Planet . Farming Condition
-Mode Property = Planet . Farming Condition =
 Mode Planet
 Mode Planet .
-Mode Planet . Farming
-Mode Planet . Farming Condition
-Mode Planet . Farming Condition =
-Mode Property = Planet . TargetFarming
-Mode Property = Planet . TargetFarming Condition
-Mode Property = Planet . TargetFarming Condition =
-Mode Planet . TargetFarming
-Mode Planet . TargetFarming Condition
-Mode Planet . TargetFarming Condition =
 Mode Property = Planet . Industry
 Mode Property = Planet . Industry Condition
 Mode Property = Planet . Industry Condition =
@@ -2913,18 +2589,6 @@ Mode Property = Planet . TargetTrade Condition =
 Mode Planet . TargetTrade
 Mode Planet . TargetTrade Condition
 Mode Planet . TargetTrade Condition =
-Mode Property = Planet . Mining
-Mode Property = Planet . Mining Condition
-Mode Property = Planet . Mining Condition =
-Mode Planet . Mining
-Mode Planet . Mining Condition
-Mode Planet . Mining Condition =
-Mode Property = Planet . TargetMining
-Mode Property = Planet . TargetMining Condition
-Mode Property = Planet . TargetMining Condition =
-Mode Planet . TargetMining
-Mode Planet . TargetMining Condition
-Mode Planet . TargetMining Condition =
 Mode Property = Planet . Construction
 Mode Property = Planet . Construction Condition
 Mode Property = Planet . Construction Condition =
@@ -3083,20 +2747,8 @@ Mode Planet . DistanceToSource Condition
 Mode Planet . DistanceToSource Condition =
 Mode Property = System
 Mode Property = System .
-Mode Property = System . Farming
-Mode Property = System . Farming Condition
-Mode Property = System . Farming Condition =
 Mode System
 Mode System .
-Mode System . Farming
-Mode System . Farming Condition
-Mode System . Farming Condition =
-Mode Property = System . TargetFarming
-Mode Property = System . TargetFarming Condition
-Mode Property = System . TargetFarming Condition =
-Mode System . TargetFarming
-Mode System . TargetFarming Condition
-Mode System . TargetFarming Condition =
 Mode Property = System . Industry
 Mode Property = System . Industry Condition
 Mode Property = System . Industry Condition =
@@ -3133,18 +2785,6 @@ Mode Property = System . TargetTrade Condition =
 Mode System . TargetTrade
 Mode System . TargetTrade Condition
 Mode System . TargetTrade Condition =
-Mode Property = System . Mining
-Mode Property = System . Mining Condition
-Mode Property = System . Mining Condition =
-Mode System . Mining
-Mode System . Mining Condition
-Mode System . Mining Condition =
-Mode Property = System . TargetMining
-Mode Property = System . TargetMining Condition
-Mode Property = System . TargetMining Condition =
-Mode System . TargetMining
-Mode System . TargetMining Condition
-Mode System . TargetMining Condition =
 Mode Property = System . Construction
 Mode Property = System . Construction Condition
 Mode Property = System . Construction Condition =
@@ -3301,18 +2941,6 @@ Mode Property = System . DistanceToSource Condition =
 Mode System . DistanceToSource
 Mode System . DistanceToSource Condition
 Mode System . DistanceToSource Condition =
-Mode Property = Farming
-Mode Property = Farming Condition
-Mode Property = Farming Condition =
-Mode Farming
-Mode Farming Condition
-Mode Farming Condition =
-Mode Property = TargetFarming
-Mode Property = TargetFarming Condition
-Mode Property = TargetFarming Condition =
-Mode TargetFarming
-Mode TargetFarming Condition
-Mode TargetFarming Condition =
 Mode Property = Industry
 Mode Property = Industry Condition
 Mode Property = Industry Condition =
@@ -3349,18 +2977,6 @@ Mode Property = TargetTrade Condition =
 Mode TargetTrade
 Mode TargetTrade Condition
 Mode TargetTrade Condition =
-Mode Property = Mining
-Mode Property = Mining Condition
-Mode Property = Mining Condition =
-Mode Mining
-Mode Mining Condition
-Mode Mining Condition =
-Mode Property = TargetMining
-Mode Property = TargetMining Condition
-Mode Property = TargetMining Condition =
-Mode TargetMining
-Mode TargetMining Condition
-Mode TargetMining Condition =
 Mode Property = Construction
 Mode Property = Construction Condition
 Mode Property = Construction Condition =
@@ -3522,20 +3138,8 @@ Max Property
 Max Property =
 Max Property = Fleet
 Max Property = Fleet .
-Max Property = Fleet . Farming
-Max Property = Fleet . Farming Condition
-Max Property = Fleet . Farming Condition =
 Max Fleet
 Max Fleet .
-Max Fleet . Farming
-Max Fleet . Farming Condition
-Max Fleet . Farming Condition =
-Max Property = Fleet . TargetFarming
-Max Property = Fleet . TargetFarming Condition
-Max Property = Fleet . TargetFarming Condition =
-Max Fleet . TargetFarming
-Max Fleet . TargetFarming Condition
-Max Fleet . TargetFarming Condition =
 Max Property = Fleet . Industry
 Max Property = Fleet . Industry Condition
 Max Property = Fleet . Industry Condition =
@@ -3572,18 +3176,6 @@ Max Property = Fleet . TargetTrade Condition =
 Max Fleet . TargetTrade
 Max Fleet . TargetTrade Condition
 Max Fleet . TargetTrade Condition =
-Max Property = Fleet . Mining
-Max Property = Fleet . Mining Condition
-Max Property = Fleet . Mining Condition =
-Max Fleet . Mining
-Max Fleet . Mining Condition
-Max Fleet . Mining Condition =
-Max Property = Fleet . TargetMining
-Max Property = Fleet . TargetMining Condition
-Max Property = Fleet . TargetMining Condition =
-Max Fleet . TargetMining
-Max Fleet . TargetMining Condition
-Max Fleet . TargetMining Condition =
 Max Property = Fleet . Construction
 Max Property = Fleet . Construction Condition
 Max Property = Fleet . Construction Condition =
@@ -3742,20 +3334,8 @@ Max Fleet . DistanceToSource Condition
 Max Fleet . DistanceToSource Condition =
 Max Property = Planet
 Max Property = Planet .
-Max Property = Planet . Farming
-Max Property = Planet . Farming Condition
-Max Property = Planet . Farming Condition =
 Max Planet
 Max Planet .
-Max Planet . Farming
-Max Planet . Farming Condition
-Max Planet . Farming Condition =
-Max Property = Planet . TargetFarming
-Max Property = Planet . TargetFarming Condition
-Max Property = Planet . TargetFarming Condition =
-Max Planet . TargetFarming
-Max Planet . TargetFarming Condition
-Max Planet . TargetFarming Condition =
 Max Property = Planet . Industry
 Max Property = Planet . Industry Condition
 Max Property = Planet . Industry Condition =
@@ -3792,18 +3372,6 @@ Max Property = Planet . TargetTrade Condition =
 Max Planet . TargetTrade
 Max Planet . TargetTrade Condition
 Max Planet . TargetTrade Condition =
-Max Property = Planet . Mining
-Max Property = Planet . Mining Condition
-Max Property = Planet . Mining Condition =
-Max Planet . Mining
-Max Planet . Mining Condition
-Max Planet . Mining Condition =
-Max Property = Planet . TargetMining
-Max Property = Planet . TargetMining Condition
-Max Property = Planet . TargetMining Condition =
-Max Planet . TargetMining
-Max Planet . TargetMining Condition
-Max Planet . TargetMining Condition =
 Max Property = Planet . Construction
 Max Property = Planet . Construction Condition
 Max Property = Planet . Construction Condition =
@@ -3962,20 +3530,8 @@ Max Planet . DistanceToSource Condition
 Max Planet . DistanceToSource Condition =
 Max Property = System
 Max Property = System .
-Max Property = System . Farming
-Max Property = System . Farming Condition
-Max Property = System . Farming Condition =
 Max System
 Max System .
-Max System . Farming
-Max System . Farming Condition
-Max System . Farming Condition =
-Max Property = System . TargetFarming
-Max Property = System . TargetFarming Condition
-Max Property = System . TargetFarming Condition =
-Max System . TargetFarming
-Max System . TargetFarming Condition
-Max System . TargetFarming Condition =
 Max Property = System . Industry
 Max Property = System . Industry Condition
 Max Property = System . Industry Condition =
@@ -4012,18 +3568,6 @@ Max Property = System . TargetTrade Condition =
 Max System . TargetTrade
 Max System . TargetTrade Condition
 Max System . TargetTrade Condition =
-Max Property = System . Mining
-Max Property = System . Mining Condition
-Max Property = System . Mining Condition =
-Max System . Mining
-Max System . Mining Condition
-Max System . Mining Condition =
-Max Property = System . TargetMining
-Max Property = System . TargetMining Condition
-Max Property = System . TargetMining Condition =
-Max System . TargetMining
-Max System . TargetMining Condition
-Max System . TargetMining Condition =
 Max Property = System . Construction
 Max Property = System . Construction Condition
 Max Property = System . Construction Condition =
@@ -4180,18 +3724,6 @@ Max Property = System . DistanceToSource Condition =
 Max System . DistanceToSource
 Max System . DistanceToSource Condition
 Max System . DistanceToSource Condition =
-Max Property = Farming
-Max Property = Farming Condition
-Max Property = Farming Condition =
-Max Farming
-Max Farming Condition
-Max Farming Condition =
-Max Property = TargetFarming
-Max Property = TargetFarming Condition
-Max Property = TargetFarming Condition =
-Max TargetFarming
-Max TargetFarming Condition
-Max TargetFarming Condition =
 Max Property = Industry
 Max Property = Industry Condition
 Max Property = Industry Condition =
@@ -4228,18 +3760,6 @@ Max Property = TargetTrade Condition =
 Max TargetTrade
 Max TargetTrade Condition
 Max TargetTrade Condition =
-Max Property = Mining
-Max Property = Mining Condition
-Max Property = Mining Condition =
-Max Mining
-Max Mining Condition
-Max Mining Condition =
-Max Property = TargetMining
-Max Property = TargetMining Condition
-Max Property = TargetMining Condition =
-Max TargetMining
-Max TargetMining Condition
-Max TargetMining Condition =
 Max Property = Construction
 Max Property = Construction Condition
 Max Property = Construction Condition =
@@ -4401,20 +3921,8 @@ Min Property
 Min Property =
 Min Property = Fleet
 Min Property = Fleet .
-Min Property = Fleet . Farming
-Min Property = Fleet . Farming Condition
-Min Property = Fleet . Farming Condition =
 Min Fleet
 Min Fleet .
-Min Fleet . Farming
-Min Fleet . Farming Condition
-Min Fleet . Farming Condition =
-Min Property = Fleet . TargetFarming
-Min Property = Fleet . TargetFarming Condition
-Min Property = Fleet . TargetFarming Condition =
-Min Fleet . TargetFarming
-Min Fleet . TargetFarming Condition
-Min Fleet . TargetFarming Condition =
 Min Property = Fleet . Industry
 Min Property = Fleet . Industry Condition
 Min Property = Fleet . Industry Condition =
@@ -4451,18 +3959,6 @@ Min Property = Fleet . TargetTrade Condition =
 Min Fleet . TargetTrade
 Min Fleet . TargetTrade Condition
 Min Fleet . TargetTrade Condition =
-Min Property = Fleet . Mining
-Min Property = Fleet . Mining Condition
-Min Property = Fleet . Mining Condition =
-Min Fleet . Mining
-Min Fleet . Mining Condition
-Min Fleet . Mining Condition =
-Min Property = Fleet . TargetMining
-Min Property = Fleet . TargetMining Condition
-Min Property = Fleet . TargetMining Condition =
-Min Fleet . TargetMining
-Min Fleet . TargetMining Condition
-Min Fleet . TargetMining Condition =
 Min Property = Fleet . Construction
 Min Property = Fleet . Construction Condition
 Min Property = Fleet . Construction Condition =
@@ -4621,20 +4117,8 @@ Min Fleet . DistanceToSource Condition
 Min Fleet . DistanceToSource Condition =
 Min Property = Planet
 Min Property = Planet .
-Min Property = Planet . Farming
-Min Property = Planet . Farming Condition
-Min Property = Planet . Farming Condition =
 Min Planet
 Min Planet .
-Min Planet . Farming
-Min Planet . Farming Condition
-Min Planet . Farming Condition =
-Min Property = Planet . TargetFarming
-Min Property = Planet . TargetFarming Condition
-Min Property = Planet . TargetFarming Condition =
-Min Planet . TargetFarming
-Min Planet . TargetFarming Condition
-Min Planet . TargetFarming Condition =
 Min Property = Planet . Industry
 Min Property = Planet . Industry Condition
 Min Property = Planet . Industry Condition =
@@ -4671,18 +4155,6 @@ Min Property = Planet . TargetTrade Condition =
 Min Planet . TargetTrade
 Min Planet . TargetTrade Condition
 Min Planet . TargetTrade Condition =
-Min Property = Planet . Mining
-Min Property = Planet . Mining Condition
-Min Property = Planet . Mining Condition =
-Min Planet . Mining
-Min Planet . Mining Condition
-Min Planet . Mining Condition =
-Min Property = Planet . TargetMining
-Min Property = Planet . TargetMining Condition
-Min Property = Planet . TargetMining Condition =
-Min Planet . TargetMining
-Min Planet . TargetMining Condition
-Min Planet . TargetMining Condition =
 Min Property = Planet . Construction
 Min Property = Planet . Construction Condition
 Min Property = Planet . Construction Condition =
@@ -4841,20 +4313,8 @@ Min Planet . DistanceToSource Condition
 Min Planet . DistanceToSource Condition =
 Min Property = System
 Min Property = System .
-Min Property = System . Farming
-Min Property = System . Farming Condition
-Min Property = System . Farming Condition =
 Min System
 Min System .
-Min System . Farming
-Min System . Farming Condition
-Min System . Farming Condition =
-Min Property = System . TargetFarming
-Min Property = System . TargetFarming Condition
-Min Property = System . TargetFarming Condition =
-Min System . TargetFarming
-Min System . TargetFarming Condition
-Min System . TargetFarming Condition =
 Min Property = System . Industry
 Min Property = System . Industry Condition
 Min Property = System . Industry Condition =
@@ -4891,18 +4351,6 @@ Min Property = System . TargetTrade Condition =
 Min System . TargetTrade
 Min System . TargetTrade Condition
 Min System . TargetTrade Condition =
-Min Property = System . Mining
-Min Property = System . Mining Condition
-Min Property = System . Mining Condition =
-Min System . Mining
-Min System . Mining Condition
-Min System . Mining Condition =
-Min Property = System . TargetMining
-Min Property = System . TargetMining Condition
-Min Property = System . TargetMining Condition =
-Min System . TargetMining
-Min System . TargetMining Condition
-Min System . TargetMining Condition =
 Min Property = System . Construction
 Min Property = System . Construction Condition
 Min Property = System . Construction Condition =
@@ -5059,18 +4507,6 @@ Min Property = System . DistanceToSource Condition =
 Min System . DistanceToSource
 Min System . DistanceToSource Condition
 Min System . DistanceToSource Condition =
-Min Property = Farming
-Min Property = Farming Condition
-Min Property = Farming Condition =
-Min Farming
-Min Farming Condition
-Min Farming Condition =
-Min Property = TargetFarming
-Min Property = TargetFarming Condition
-Min Property = TargetFarming Condition =
-Min TargetFarming
-Min TargetFarming Condition
-Min TargetFarming Condition =
 Min Property = Industry
 Min Property = Industry Condition
 Min Property = Industry Condition =
@@ -5107,18 +4543,6 @@ Min Property = TargetTrade Condition =
 Min TargetTrade
 Min TargetTrade Condition
 Min TargetTrade Condition =
-Min Property = Mining
-Min Property = Mining Condition
-Min Property = Mining Condition =
-Min Mining
-Min Mining Condition
-Min Mining Condition =
-Min Property = TargetMining
-Min Property = TargetMining Condition
-Min Property = TargetMining Condition =
-Min TargetMining
-Min TargetMining Condition
-Min TargetMining Condition =
 Min Property = Construction
 Min Property = Construction Condition
 Min Property = Construction Condition =
@@ -5280,20 +4704,8 @@ Spread Property
 Spread Property =
 Spread Property = Fleet
 Spread Property = Fleet .
-Spread Property = Fleet . Farming
-Spread Property = Fleet . Farming Condition
-Spread Property = Fleet . Farming Condition =
 Spread Fleet
 Spread Fleet .
-Spread Fleet . Farming
-Spread Fleet . Farming Condition
-Spread Fleet . Farming Condition =
-Spread Property = Fleet . TargetFarming
-Spread Property = Fleet . TargetFarming Condition
-Spread Property = Fleet . TargetFarming Condition =
-Spread Fleet . TargetFarming
-Spread Fleet . TargetFarming Condition
-Spread Fleet . TargetFarming Condition =
 Spread Property = Fleet . Industry
 Spread Property = Fleet . Industry Condition
 Spread Property = Fleet . Industry Condition =
@@ -5330,18 +4742,6 @@ Spread Property = Fleet . TargetTrade Condition =
 Spread Fleet . TargetTrade
 Spread Fleet . TargetTrade Condition
 Spread Fleet . TargetTrade Condition =
-Spread Property = Fleet . Mining
-Spread Property = Fleet . Mining Condition
-Spread Property = Fleet . Mining Condition =
-Spread Fleet . Mining
-Spread Fleet . Mining Condition
-Spread Fleet . Mining Condition =
-Spread Property = Fleet . TargetMining
-Spread Property = Fleet . TargetMining Condition
-Spread Property = Fleet . TargetMining Condition =
-Spread Fleet . TargetMining
-Spread Fleet . TargetMining Condition
-Spread Fleet . TargetMining Condition =
 Spread Property = Fleet . Construction
 Spread Property = Fleet . Construction Condition
 Spread Property = Fleet . Construction Condition =
@@ -5500,20 +4900,8 @@ Spread Fleet . DistanceToSource Condition
 Spread Fleet . DistanceToSource Condition =
 Spread Property = Planet
 Spread Property = Planet .
-Spread Property = Planet . Farming
-Spread Property = Planet . Farming Condition
-Spread Property = Planet . Farming Condition =
 Spread Planet
 Spread Planet .
-Spread Planet . Farming
-Spread Planet . Farming Condition
-Spread Planet . Farming Condition =
-Spread Property = Planet . TargetFarming
-Spread Property = Planet . TargetFarming Condition
-Spread Property = Planet . TargetFarming Condition =
-Spread Planet . TargetFarming
-Spread Planet . TargetFarming Condition
-Spread Planet . TargetFarming Condition =
 Spread Property = Planet . Industry
 Spread Property = Planet . Industry Condition
 Spread Property = Planet . Industry Condition =
@@ -5550,18 +4938,6 @@ Spread Property = Planet . TargetTrade Condition =
 Spread Planet . TargetTrade
 Spread Planet . TargetTrade Condition
 Spread Planet . TargetTrade Condition =
-Spread Property = Planet . Mining
-Spread Property = Planet . Mining Condition
-Spread Property = Planet . Mining Condition =
-Spread Planet . Mining
-Spread Planet . Mining Condition
-Spread Planet . Mining Condition =
-Spread Property = Planet . TargetMining
-Spread Property = Planet . TargetMining Condition
-Spread Property = Planet . TargetMining Condition =
-Spread Planet . TargetMining
-Spread Planet . TargetMining Condition
-Spread Planet . TargetMining Condition =
 Spread Property = Planet . Construction
 Spread Property = Planet . Construction Condition
 Spread Property = Planet . Construction Condition =
@@ -5720,20 +5096,8 @@ Spread Planet . DistanceToSource Condition
 Spread Planet . DistanceToSource Condition =
 Spread Property = System
 Spread Property = System .
-Spread Property = System . Farming
-Spread Property = System . Farming Condition
-Spread Property = System . Farming Condition =
 Spread System
 Spread System .
-Spread System . Farming
-Spread System . Farming Condition
-Spread System . Farming Condition =
-Spread Property = System . TargetFarming
-Spread Property = System . TargetFarming Condition
-Spread Property = System . TargetFarming Condition =
-Spread System . TargetFarming
-Spread System . TargetFarming Condition
-Spread System . TargetFarming Condition =
 Spread Property = System . Industry
 Spread Property = System . Industry Condition
 Spread Property = System . Industry Condition =
@@ -5770,18 +5134,6 @@ Spread Property = System . TargetTrade Condition =
 Spread System . TargetTrade
 Spread System . TargetTrade Condition
 Spread System . TargetTrade Condition =
-Spread Property = System . Mining
-Spread Property = System . Mining Condition
-Spread Property = System . Mining Condition =
-Spread System . Mining
-Spread System . Mining Condition
-Spread System . Mining Condition =
-Spread Property = System . TargetMining
-Spread Property = System . TargetMining Condition
-Spread Property = System . TargetMining Condition =
-Spread System . TargetMining
-Spread System . TargetMining Condition
-Spread System . TargetMining Condition =
 Spread Property = System . Construction
 Spread Property = System . Construction Condition
 Spread Property = System . Construction Condition =
@@ -5938,18 +5290,6 @@ Spread Property = System . DistanceToSource Condition =
 Spread System . DistanceToSource
 Spread System . DistanceToSource Condition
 Spread System . DistanceToSource Condition =
-Spread Property = Farming
-Spread Property = Farming Condition
-Spread Property = Farming Condition =
-Spread Farming
-Spread Farming Condition
-Spread Farming Condition =
-Spread Property = TargetFarming
-Spread Property = TargetFarming Condition
-Spread Property = TargetFarming Condition =
-Spread TargetFarming
-Spread TargetFarming Condition
-Spread TargetFarming Condition =
 Spread Property = Industry
 Spread Property = Industry Condition
 Spread Property = Industry Condition =
@@ -5986,18 +5326,6 @@ Spread Property = TargetTrade Condition =
 Spread TargetTrade
 Spread TargetTrade Condition
 Spread TargetTrade Condition =
-Spread Property = Mining
-Spread Property = Mining Condition
-Spread Property = Mining Condition =
-Spread Mining
-Spread Mining Condition
-Spread Mining Condition =
-Spread Property = TargetMining
-Spread Property = TargetMining Condition
-Spread Property = TargetMining Condition =
-Spread TargetMining
-Spread TargetMining Condition
-Spread TargetMining Condition =
 Spread Property = Construction
 Spread Property = Construction Condition
 Spread Property = Construction Condition =
@@ -6159,20 +5487,8 @@ StDev Property
 StDev Property =
 StDev Property = Fleet
 StDev Property = Fleet .
-StDev Property = Fleet . Farming
-StDev Property = Fleet . Farming Condition
-StDev Property = Fleet . Farming Condition =
 StDev Fleet
 StDev Fleet .
-StDev Fleet . Farming
-StDev Fleet . Farming Condition
-StDev Fleet . Farming Condition =
-StDev Property = Fleet . TargetFarming
-StDev Property = Fleet . TargetFarming Condition
-StDev Property = Fleet . TargetFarming Condition =
-StDev Fleet . TargetFarming
-StDev Fleet . TargetFarming Condition
-StDev Fleet . TargetFarming Condition =
 StDev Property = Fleet . Industry
 StDev Property = Fleet . Industry Condition
 StDev Property = Fleet . Industry Condition =
@@ -6209,18 +5525,6 @@ StDev Property = Fleet . TargetTrade Condition =
 StDev Fleet . TargetTrade
 StDev Fleet . TargetTrade Condition
 StDev Fleet . TargetTrade Condition =
-StDev Property = Fleet . Mining
-StDev Property = Fleet . Mining Condition
-StDev Property = Fleet . Mining Condition =
-StDev Fleet . Mining
-StDev Fleet . Mining Condition
-StDev Fleet . Mining Condition =
-StDev Property = Fleet . TargetMining
-StDev Property = Fleet . TargetMining Condition
-StDev Property = Fleet . TargetMining Condition =
-StDev Fleet . TargetMining
-StDev Fleet . TargetMining Condition
-StDev Fleet . TargetMining Condition =
 StDev Property = Fleet . Construction
 StDev Property = Fleet . Construction Condition
 StDev Property = Fleet . Construction Condition =
@@ -6379,20 +5683,8 @@ StDev Fleet . DistanceToSource Condition
 StDev Fleet . DistanceToSource Condition =
 StDev Property = Planet
 StDev Property = Planet .
-StDev Property = Planet . Farming
-StDev Property = Planet . Farming Condition
-StDev Property = Planet . Farming Condition =
 StDev Planet
 StDev Planet .
-StDev Planet . Farming
-StDev Planet . Farming Condition
-StDev Planet . Farming Condition =
-StDev Property = Planet . TargetFarming
-StDev Property = Planet . TargetFarming Condition
-StDev Property = Planet . TargetFarming Condition =
-StDev Planet . TargetFarming
-StDev Planet . TargetFarming Condition
-StDev Planet . TargetFarming Condition =
 StDev Property = Planet . Industry
 StDev Property = Planet . Industry Condition
 StDev Property = Planet . Industry Condition =
@@ -6429,18 +5721,6 @@ StDev Property = Planet . TargetTrade Condition =
 StDev Planet . TargetTrade
 StDev Planet . TargetTrade Condition
 StDev Planet . TargetTrade Condition =
-StDev Property = Planet . Mining
-StDev Property = Planet . Mining Condition
-StDev Property = Planet . Mining Condition =
-StDev Planet . Mining
-StDev Planet . Mining Condition
-StDev Planet . Mining Condition =
-StDev Property = Planet . TargetMining
-StDev Property = Planet . TargetMining Condition
-StDev Property = Planet . TargetMining Condition =
-StDev Planet . TargetMining
-StDev Planet . TargetMining Condition
-StDev Planet . TargetMining Condition =
 StDev Property = Planet . Construction
 StDev Property = Planet . Construction Condition
 StDev Property = Planet . Construction Condition =
@@ -6599,20 +5879,8 @@ StDev Planet . DistanceToSource Condition
 StDev Planet . DistanceToSource Condition =
 StDev Property = System
 StDev Property = System .
-StDev Property = System . Farming
-StDev Property = System . Farming Condition
-StDev Property = System . Farming Condition =
 StDev System
 StDev System .
-StDev System . Farming
-StDev System . Farming Condition
-StDev System . Farming Condition =
-StDev Property = System . TargetFarming
-StDev Property = System . TargetFarming Condition
-StDev Property = System . TargetFarming Condition =
-StDev System . TargetFarming
-StDev System . TargetFarming Condition
-StDev System . TargetFarming Condition =
 StDev Property = System . Industry
 StDev Property = System . Industry Condition
 StDev Property = System . Industry Condition =
@@ -6649,18 +5917,6 @@ StDev Property = System . TargetTrade Condition =
 StDev System . TargetTrade
 StDev System . TargetTrade Condition
 StDev System . TargetTrade Condition =
-StDev Property = System . Mining
-StDev Property = System . Mining Condition
-StDev Property = System . Mining Condition =
-StDev System . Mining
-StDev System . Mining Condition
-StDev System . Mining Condition =
-StDev Property = System . TargetMining
-StDev Property = System . TargetMining Condition
-StDev Property = System . TargetMining Condition =
-StDev System . TargetMining
-StDev System . TargetMining Condition
-StDev System . TargetMining Condition =
 StDev Property = System . Construction
 StDev Property = System . Construction Condition
 StDev Property = System . Construction Condition =
@@ -6817,18 +6073,6 @@ StDev Property = System . DistanceToSource Condition =
 StDev System . DistanceToSource
 StDev System . DistanceToSource Condition
 StDev System . DistanceToSource Condition =
-StDev Property = Farming
-StDev Property = Farming Condition
-StDev Property = Farming Condition =
-StDev Farming
-StDev Farming Condition
-StDev Farming Condition =
-StDev Property = TargetFarming
-StDev Property = TargetFarming Condition
-StDev Property = TargetFarming Condition =
-StDev TargetFarming
-StDev TargetFarming Condition
-StDev TargetFarming Condition =
 StDev Property = Industry
 StDev Property = Industry Condition
 StDev Property = Industry Condition =
@@ -6865,18 +6109,6 @@ StDev Property = TargetTrade Condition =
 StDev TargetTrade
 StDev TargetTrade Condition
 StDev TargetTrade Condition =
-StDev Property = Mining
-StDev Property = Mining Condition
-StDev Property = Mining Condition =
-StDev Mining
-StDev Mining Condition
-StDev Mining Condition =
-StDev Property = TargetMining
-StDev Property = TargetMining Condition
-StDev Property = TargetMining Condition =
-StDev TargetMining
-StDev TargetMining Condition
-StDev TargetMining Condition =
 StDev Property = Construction
 StDev Property = Construction Condition
 StDev Property = Construction Condition =
@@ -7038,20 +6270,8 @@ Product Property
 Product Property =
 Product Property = Fleet
 Product Property = Fleet .
-Product Property = Fleet . Farming
-Product Property = Fleet . Farming Condition
-Product Property = Fleet . Farming Condition =
 Product Fleet
 Product Fleet .
-Product Fleet . Farming
-Product Fleet . Farming Condition
-Product Fleet . Farming Condition =
-Product Property = Fleet . TargetFarming
-Product Property = Fleet . TargetFarming Condition
-Product Property = Fleet . TargetFarming Condition =
-Product Fleet . TargetFarming
-Product Fleet . TargetFarming Condition
-Product Fleet . TargetFarming Condition =
 Product Property = Fleet . Industry
 Product Property = Fleet . Industry Condition
 Product Property = Fleet . Industry Condition =
@@ -7088,18 +6308,6 @@ Product Property = Fleet . TargetTrade Condition =
 Product Fleet . TargetTrade
 Product Fleet . TargetTrade Condition
 Product Fleet . TargetTrade Condition =
-Product Property = Fleet . Mining
-Product Property = Fleet . Mining Condition
-Product Property = Fleet . Mining Condition =
-Product Fleet . Mining
-Product Fleet . Mining Condition
-Product Fleet . Mining Condition =
-Product Property = Fleet . TargetMining
-Product Property = Fleet . TargetMining Condition
-Product Property = Fleet . TargetMining Condition =
-Product Fleet . TargetMining
-Product Fleet . TargetMining Condition
-Product Fleet . TargetMining Condition =
 Product Property = Fleet . Construction
 Product Property = Fleet . Construction Condition
 Product Property = Fleet . Construction Condition =
@@ -7258,20 +6466,8 @@ Product Fleet . DistanceToSource Condition
 Product Fleet . DistanceToSource Condition =
 Product Property = Planet
 Product Property = Planet .
-Product Property = Planet . Farming
-Product Property = Planet . Farming Condition
-Product Property = Planet . Farming Condition =
 Product Planet
 Product Planet .
-Product Planet . Farming
-Product Planet . Farming Condition
-Product Planet . Farming Condition =
-Product Property = Planet . TargetFarming
-Product Property = Planet . TargetFarming Condition
-Product Property = Planet . TargetFarming Condition =
-Product Planet . TargetFarming
-Product Planet . TargetFarming Condition
-Product Planet . TargetFarming Condition =
 Product Property = Planet . Industry
 Product Property = Planet . Industry Condition
 Product Property = Planet . Industry Condition =
@@ -7308,18 +6504,6 @@ Product Property = Planet . TargetTrade Condition =
 Product Planet . TargetTrade
 Product Planet . TargetTrade Condition
 Product Planet . TargetTrade Condition =
-Product Property = Planet . Mining
-Product Property = Planet . Mining Condition
-Product Property = Planet . Mining Condition =
-Product Planet . Mining
-Product Planet . Mining Condition
-Product Planet . Mining Condition =
-Product Property = Planet . TargetMining
-Product Property = Planet . TargetMining Condition
-Product Property = Planet . TargetMining Condition =
-Product Planet . TargetMining
-Product Planet . TargetMining Condition
-Product Planet . TargetMining Condition =
 Product Property = Planet . Construction
 Product Property = Planet . Construction Condition
 Product Property = Planet . Construction Condition =
@@ -7478,20 +6662,8 @@ Product Planet . DistanceToSource Condition
 Product Planet . DistanceToSource Condition =
 Product Property = System
 Product Property = System .
-Product Property = System . Farming
-Product Property = System . Farming Condition
-Product Property = System . Farming Condition =
 Product System
 Product System .
-Product System . Farming
-Product System . Farming Condition
-Product System . Farming Condition =
-Product Property = System . TargetFarming
-Product Property = System . TargetFarming Condition
-Product Property = System . TargetFarming Condition =
-Product System . TargetFarming
-Product System . TargetFarming Condition
-Product System . TargetFarming Condition =
 Product Property = System . Industry
 Product Property = System . Industry Condition
 Product Property = System . Industry Condition =
@@ -7528,18 +6700,6 @@ Product Property = System . TargetTrade Condition =
 Product System . TargetTrade
 Product System . TargetTrade Condition
 Product System . TargetTrade Condition =
-Product Property = System . Mining
-Product Property = System . Mining Condition
-Product Property = System . Mining Condition =
-Product System . Mining
-Product System . Mining Condition
-Product System . Mining Condition =
-Product Property = System . TargetMining
-Product Property = System . TargetMining Condition
-Product Property = System . TargetMining Condition =
-Product System . TargetMining
-Product System . TargetMining Condition
-Product System . TargetMining Condition =
 Product Property = System . Construction
 Product Property = System . Construction Condition
 Product Property = System . Construction Condition =
@@ -7696,18 +6856,6 @@ Product Property = System . DistanceToSource Condition =
 Product System . DistanceToSource
 Product System . DistanceToSource Condition
 Product System . DistanceToSource Condition =
-Product Property = Farming
-Product Property = Farming Condition
-Product Property = Farming Condition =
-Product Farming
-Product Farming Condition
-Product Farming Condition =
-Product Property = TargetFarming
-Product Property = TargetFarming Condition
-Product Property = TargetFarming Condition =
-Product TargetFarming
-Product TargetFarming Condition
-Product TargetFarming Condition =
 Product Property = Industry
 Product Property = Industry Condition
 Product Property = Industry Condition =
@@ -7744,18 +6892,6 @@ Product Property = TargetTrade Condition =
 Product TargetTrade
 Product TargetTrade Condition
 Product TargetTrade Condition =
-Product Property = Mining
-Product Property = Mining Condition
-Product Property = Mining Condition =
-Product Mining
-Product Mining Condition
-Product Mining Condition =
-Product Property = TargetMining
-Product Property = TargetMining Condition
-Product Property = TargetMining Condition =
-Product TargetMining
-Product TargetMining Condition
-Product TargetMining Condition =
 Product Property = Construction
 Product Property = Construction Condition
 Product Property = Construction Condition =

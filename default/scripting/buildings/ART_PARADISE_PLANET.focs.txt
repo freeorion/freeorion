@@ -26,6 +26,7 @@ BuildingType
                 AddSpecial name = "GAIA_SPECIAL"
                 GenerateSitRepMessage
                     message = "EFFECT_ART_PLANET"
+                    label = "EFFECT_ART_PLANET_LABEL"
                     icon = "icons/specials_large/gaia.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner

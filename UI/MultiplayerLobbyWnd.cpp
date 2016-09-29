@@ -358,8 +358,8 @@ namespace {
         }
     };
 
-    const GG::X     LOBBY_WND_WIDTH(800);
-    const GG::Y     LOBBY_WND_HEIGHT(600);
+    const GG::X     LOBBY_WND_WIDTH(840);
+    const GG::Y     LOBBY_WND_HEIGHT(720);
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
     const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
     const GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
@@ -373,7 +373,7 @@ namespace {
 
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
-           GG::ONTOP | GG::INTERACTIVE),
+           GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
     m_chat_box(0),
     m_chat_input_edit(0),
     m_new_load_game_buttons(0),
@@ -441,6 +441,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     AttachChild(m_start_conditions_text);
 
     ResetDefaultPosition();
+    SetMinSize(GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT));
     DoLayout();
 
     // default settings (new game)
@@ -460,10 +461,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 }
 
 void MultiPlayerLobbyWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
-    if (old_size != Size())
-        DoLayout();
+    DoLayout();
 }
 
 GG::Rect MultiPlayerLobbyWnd::CalculatePosition() const {
@@ -576,6 +575,9 @@ void MultiPlayerLobbyWnd::Refresh() {
 
     m_start_game_bn->Disable(!ThisClientIsHost() || !CanStart());
 }
+
+GG::Pt MultiPlayerLobbyWnd::MinUsableSize() const
+{ return GG::Pt(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT); }
 
 void MultiPlayerLobbyWnd::DoLayout() {
     GG::X x(CONTROL_MARGIN);

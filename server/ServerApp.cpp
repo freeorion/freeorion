@@ -1265,7 +1265,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     }
 
     if (!success)
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
 
     DebugLogger() << "Applying first turn effects and updating meters";
@@ -1320,7 +1320,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
 
     if (!success) {
         ErrorLogger() << "Python scripted turn events failed.";
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
@@ -2332,7 +2332,8 @@ namespace {
         // what the victor started with minus what the second-largest troop
         // amount was
         std::multimap<double, int>::reverse_iterator victor_it = inverted_empires_troops.rbegin();
-        std::multimap<double, int>::reverse_iterator next_it = victor_it;   next_it++;
+        std::multimap<double, int>::reverse_iterator next_it = victor_it;
+        ++next_it;
         int victor_id = victor_it->second;
         double victor_troops = victor_it->first - next_it->first;
 
@@ -2979,7 +2980,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
         }
         if (unrestricted_monsters_present || !unrestricted_empires_present) {
             for (std::vector<int>::iterator monster_it = restricted_monsters.begin(); 
-                 monster_it != restricted_monsters.end(); monster_it++) 
+                 monster_it != restricted_monsters.end(); ++monster_it)
             {
                 TemporaryPtr<Fleet> monster_fleet = GetFleet(*monster_it);
                 // even if it was a diff test that made monster restricted, we will set arrival lane

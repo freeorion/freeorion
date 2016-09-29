@@ -47,6 +47,7 @@ Special
                 CreateShip designname = "SM_GUARD_1" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_SENTRY_CREATED"
+                    label = "EFFECT_SENTRY_CREATED_LABEL"
                     icon = "icons/monsters/sentry.png"
                     parameters = [
                         tag = "planet" data = Source.ID

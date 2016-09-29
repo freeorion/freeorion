@@ -10,15 +10,14 @@ import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
 import MilitaryAI
+import sys
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, Timer
 
 colonization_timer = Timer('getColonyFleets()')
 
-empire_species = {}
-empire_species_by_planet = {}
-empire_species_systems = {}  # TODO: as currently used, is duplicative with combo of foAI.foAIstate.popCtrSystemIDs and foAI.foAIstate.colonizedSystems
+
 empire_colonizers = {}
 empire_ship_builders = {}
 empire_shipyards = {}
@@ -235,8 +234,6 @@ def survey_universe():
         empire_status.update({'industrialists': 0, 'researchers': 0})
         AIstate.empireStars.clear()
         empire_outpost_ids.clear()
-        empire_species.clear()
-        empire_species_by_planet.clear()
         empire_colonizers.clear()
         empire_ship_builders.clear()
         empire_shipyards.clear()
@@ -246,7 +243,6 @@ def survey_universe():
         active_growth_specials.clear()
         if tech_is_complete(TechsListsAI.EXOBOT_TECH_NAME):
             empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
-        empire_species_systems.clear()
         AIstate.popCtrIDs[:] = []
         AIstate.popCtrSystemIDs[:] = []
         AIstate.outpostIDs[:] = []
@@ -256,7 +252,7 @@ def survey_universe():
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
-        state.cleanup()
+        state.update()
 
     # var setup done
 
@@ -296,13 +292,10 @@ def survey_universe():
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
-                else:
+                elif this_spec:
                     empire_has_qualifying_planet = True
                     AIstate.popCtrIDs.append(pid)
-                    empire_species_systems.setdefault(sys_id, {}).setdefault('pids', []).append(pid)
                     empire_has_pop_ctr_in_sys = True
-                    empire_species_by_planet[pid] = spec_name
-                    empire_species.setdefault(spec_name, []).append(pid)
                     for metab in [tag for tag in this_spec.tags if tag in AIDependencies.metabolismBoostMap]:
                         empire_metabolisms[metab] = empire_metabolisms.get(metab, 0.0) + planet.size
                     if this_spec.canProduceShips:
@@ -321,6 +314,20 @@ def survey_universe():
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
                     if "COMPUTRONIUM_SPECIAL" in planet.specials:  # only counting it if planet is populated
                         state.set_have_computronium()
+                else:
+                    # Logic says this should not happen, but it seems to happen some time for a single turm
+                    # TODO What causes this?
+                    empire_outpost_ids.add(pid)
+                    AIstate.outpostIDs.append(pid)
+                    print
+                    print >> sys.stderr, "+ + +"
+                    print >> sys.stderr, "DEBUG: ColonisationAI.survey_universe()"
+                    print >> sys.stderr, "Found a planet we own that has pop > 0 but has no species"
+                    print >> sys.stderr, "Planet: ", universe.getPlanet(pid)
+                    print >> sys.stderr, "Species: ", spec_name, "  ", this_spec
+                    print >> sys.stderr, "Population: ", planet_population
+                    print >> sys.stderr, "+ + +"
+                    print
 
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
@@ -380,10 +387,10 @@ def survey_universe():
         table_name="Empire species roster"
     )
 
-    for spec_name in empire_species:
+    for spec_name, planet_ids in state.get_empire_planets_by_species().items():
         this_spec = fo.getSpecies(spec_name)
         species_table.add_row(
-            (spec_name, empire_species[spec_name], spec_name in empire_colonizers,
+            (spec_name, planet_ids, spec_name in empire_colonizers,
              len(empire_ship_builders.get(spec_name, [])), list(this_spec.tags))
         )
     species_table.print_table()
@@ -494,7 +501,7 @@ def get_colony_fleets():
         if not planet:
             continue
         sys_id = planet.systemID
-        for pid2 in empire_species_systems.get(sys_id, {}).get('pids', []):
+        for pid2 in state.get_empire_inhabited_planets_by_system().get(sys_id, []):
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue
@@ -807,7 +814,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
     locally_owned_planets = [lpid for lpid in AIstate.colonizedSystems.get(this_sysid, []) if lpid != planet_id]
-    locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in empire_species_by_planet]
+    planets_with_species = state.get_inhabited_planets()
+    locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in planets_with_species]
     # triple count pop_ctrs
     existing_presence = len(locally_owned_planets) + 2 * len(locally_owned_pop_ctrs)
     system = universe.getSystem(this_sysid)
@@ -823,11 +831,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                          for psize in [-1, planet.size] for _special in
                          set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
 
-    common_grades = {'NO': 0.0, 'BAD': 0.5, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 4.0}
-    ind_tag_mod = common_grades.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
-    res_tag_mod = common_grades.get(get_ai_tag_grade(tag_list, "RESEARCH"), 1.0)
-    pop_tag_mod = {'BAD': 0.75, 'GOOD': 1.25}.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
-    supply_tag_mod = {'BAD': 0, 'GREAT': 2, 'ULTIMATE': 3}.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
+    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
+    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_ai_tag_grade(tag_list, "RESEARCH"), 1.0)
+    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(get_ai_tag_grade(tag_list, "POPULATION"), 1.0)
+    supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_ai_tag_grade(tag_list, "SUPPLY"), 1)
 
     # determine the potential supply provided by owning this planet, and if the planet is currently populated by
     # the evaluated species, then save this supply value in a cache.
@@ -1199,31 +1206,30 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             if special in planet_specials:
                 mining_bonus += 1
 
-        pro_sing_val = [0, 4][(len(claimed_stars.get(fo.starType.blackHole, [])) > 0)]
-        base_pop_ind = 0.2
-        ind_mult = 1 * max(ind_tag_mod,
-                           0.5 * (ind_tag_mod + res_tag_mod))  # TODO: repport an actual calc for research value
-        ind_tech_map = {"GRO_ENERGY_META": 0.5,
-                        "PRO_ROBOTIC_PROD": 0.4,
-                        "PRO_FUSION_GEN": 1.0,
-                        "PRO_INDUSTRY_CENTER_I": 1,
-                        "PRO_INDUSTRY_CENTER_II": 1,
-                        "PRO_INDUSTRY_CENTER_III": 1,
-                        "PRO_SOL_ORB_GEN": 2.0,  # TODO don't assume will build a gen at a blue/white star
-                        AIDependencies.PRO_SINGULAR_GEN: pro_sing_val,
-                        }
+        has_blackhole = len(claimed_stars.get(fo.starType.blackHole, [])) > 0
+        ind_tech_map_before_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_MODIFIED_BY_SPECIES
+        ind_tech_map_after_species_mod = AIDependencies.INDUSTRY_EFFECTS_PER_POP_NOT_MODIFIED_BY_SPECIES
 
-        for tech in ind_tech_map:
-            if tech_is_complete(tech):
-                ind_mult += ind_tech_map[tech]
+        ind_mult = 1
+        for tech in ind_tech_map_before_species_mod:
+            if tech_is_complete(tech) and (tech != AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
+                ind_mult += ind_tech_map_before_species_mod[tech]
+
+        ind_mult = ind_mult * max(ind_tag_mod,
+                                  0.5 * (ind_tag_mod + res_tag_mod))  # TODO: report an actual calc for research value
+
+        for tech in ind_tech_map_after_species_mod:
+            if tech_is_complete(tech) and (tech != AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
+                ind_mult += ind_tech_map_after_species_mod[tech]
+
         max_ind_factor = 0
         if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
             fixed_ind += discount_multiplier * 5
         if FocusType.FOCUS_INDUSTRY in species.foci:
             if 'TIDAL_LOCK_SPECIAL' in planet.specials:
                 ind_mult += 1
-            max_ind_factor += base_pop_ind * mining_bonus
-            max_ind_factor += base_pop_ind * ind_mult
+            max_ind_factor += AIDependencies.INDUSTRY_PER_POP * mining_bonus
+            max_ind_factor += AIDependencies.INDUSTRY_PER_POP * ind_mult
         cur_pop = 1.0  # assume an initial colonization value
         if planet.speciesName != "":
             cur_pop = planet.currentMeterValue(fo.meterType.population)
@@ -1237,19 +1243,18 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
         for special in [spec for spec in planet_specials if spec in AIDependencies.metabolismBoosts]:
             # TODO: also consider potential future benefit re currently unpopulated planets
-            gbonus = discount_multiplier * base_pop_ind * ind_mult * empire_metabolisms.get(
+            gbonus = discount_multiplier * AIDependencies.INDUSTRY_PER_POP * ind_mult * empire_metabolisms.get(
                 AIDependencies.metabolismBoosts[special], 0)  # due to growth applicability to other planets
             growth_val += gbonus
             detail.append("Bonus for %s: %.1f" % (special, gbonus))
 
-        base_pop_res = 0.2  # will also be doubling value of research, below
         if FocusType.FOCUS_RESEARCH in species.foci:
-            research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size
+            research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size
             if "ANCIENT_RUINS_SPECIAL" in planet.specials or "ANCIENT_RUINS_DEPLETED_SPECIAL" in planet.specials:
-                research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 5
+                research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size * 5
                 detail.append("Ruins Research")
             if "TEMPORAL_ANOMALY_SPECIAL" in planet.specials:
-                research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 25
+                research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size * 25
                 detail.append("Temporal Anomaly Research")
             if "COMPUTRONIUM_SPECIAL" in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *

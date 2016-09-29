@@ -565,8 +565,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);
 
     // create a temporary texture and static graphic
-    boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image =  new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC); // create a blank graphic
+    static boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
+    m_preview_image =  new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
 
     m_ok = new CUIButton(UserString("OK"));
     m_cancel = new CUIButton(UserString("CANCEL"));
@@ -701,13 +701,8 @@ void GalaxySetupWnd::DoLayout() {
 }
 
 void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image) {
-    if (m_preview_image) {
-        DeleteChild(m_preview_image);
-        m_preview_image = 0;
-    }
-    m_preview_image = new GG::StaticGraphic(new_image, GG::GRAPHIC_FITGRAPHIC);
-    AttachChild(m_preview_image);
-
+    if (m_preview_image)
+        m_preview_image->SetTexture(new_image);
     DoLayout();
 }
 

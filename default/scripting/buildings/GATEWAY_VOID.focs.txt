@@ -19,6 +19,7 @@ BuildingType
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_GATEWAY_VOID_DESTROY"
+                    label = "EFFECT_GATEWAY_VOID_DESTROY_LABEL"
                     parameters = [
                         tag = "buildingtype" data = "BLD_GATEWAY_VOID"
                         tag = "planet" data = Source.PlanetID
@@ -31,12 +32,18 @@ BuildingType
                 PopulationCenter
                 InSystem id = Source.SystemID
             ]
-            activation = Source
-            effects = SetTargetPopulation value = min(Value, 0.1)
+            activation = Turn low = Source.CreationTurn + 1
+            priority = 200
+            effects = [
+                SetTargetPopulation value = min(Value, 0)
+                SetPopulation value = min(Value, 0)
+                SetMaxSupply value = 0
+                SetSupply value = 0
+                ]
 
         EffectsGroup
             scope = InSystem id = Source.SystemID
-            activation = Source
+            activation = Turn low = Source.CreationTurn + 1
             effects = SetStealth value = Value + 1000
     ]
     icon = "icons/building/monument_to_exodus.png"

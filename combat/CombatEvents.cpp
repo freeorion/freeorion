@@ -939,9 +939,11 @@ std::string WeaponsPlatformEvent::DebugString() const {
     desc << "WeaponsPlatformEvent bout = " << bout << " attacker_id = "
         << attacker_id << " attacker_owner = "<< attacker_owner_id;
     for (std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> >::const_iterator target_it = events.begin()
-             ; target_it != events.end(); target_it++) {
+             ; target_it != events.end(); ++target_it)
+    {
         for (std::vector<WeaponFireEvent::WeaponFireEventPtr>::const_iterator attack_it = target_it->second.begin();
-             attack_it != target_it->second.end(); attack_it++) {
+             attack_it != target_it->second.end(); ++attack_it)
+        {
             desc << std::endl << (*attack_it)->DebugString();
         }
     }
@@ -956,10 +958,12 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
     std::set<int> did_not_damage;
 
     for (std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> >::const_iterator target_it = events.begin()
-             ; target_it != events.end(); target_it++) {
+             ; target_it != events.end(); ++target_it)
+    {
         double damage = 0.0f;
         for (std::vector<WeaponFireEvent::WeaponFireEventPtr>::const_iterator attack_it = target_it->second.begin();
-             attack_it != target_it->second.end(); attack_it++) {
+             attack_it != target_it->second.end(); ++attack_it)
+        {
             damage += (*attack_it)->damage;
         }
         if (damage <= 0.0f) {

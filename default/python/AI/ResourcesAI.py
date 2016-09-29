@@ -25,10 +25,9 @@ resource_timer = Timer('timer_bucket')
 # Local Constants
 INDUSTRY = FocusType.FOCUS_INDUSTRY
 RESEARCH = FocusType.FOCUS_RESEARCH
-MINING = FocusType.FOCUS_MINING  # not currently used in content
 GROWTH = FocusType.FOCUS_GROWTH
 PRODUCTION = FocusType.FOCUS_PROTECTION
-_focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", MINING: "Mining", GROWTH: "Growth", PRODUCTION: "Defense"}
+_focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PRODUCTION: "Defense"}
 
 # TODO use the priorityRatio to weight
 RESEARCH_WEIGHTING = 2.0
@@ -486,8 +485,9 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     print "Making Planet Focus Change Determinations\n"
 
     ratios = []
-    # for each planet, calculate RP:PP value ratio at which industry/Mining focus and research focus would have the same total value, & sort by that
-    # include a bias to slightly discourage changing foci
+    # for each planet, calculate RP:PP value ratio at which industry focus and
+    # research focus would have the same total value, & sort by that include a
+    # bias to slightly discourage changing foci
     target_pp = 0.001
     target_rp = 0.001
     resource_timer.start("Loop")  # loop

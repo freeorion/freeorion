@@ -17,6 +17,7 @@ BuildingType
                 ]
                 GenerateSitRepMessage
                     message = "EFFECT_STARLANE_BORE"
+                    label = "EFFECT_STARLANE_BORE_LABEL"
                     icon = "icons/tech/n-dimensional_structures.png"
                     parameters = tag = "system" data = Target.ID
                     empire = Source.Owner

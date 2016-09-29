@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_HYPER_DAM"
     description = "BLD_HYPER_DAM_DESC"
     buildcost = 250
-    buildtime = 10
+    buildtime = 8
     tags = "ORBITAL"
     location = And [
         Planet
@@ -18,11 +18,12 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                Not ResourceSupplyConnected empire = Source.Owner Condition = Building name = "BLD_BLACK_HOLE_POW_GEN"
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
@@ -31,10 +32,11 @@ BuildingType
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Not Star type = BlackHole
                 Focus type = "FOCUS_INDUSTRY"
+                Not ResourceSupplyConnected empire = Source.Owner Condition = Building name = "BLD_BLACK_HOLE_POW_GEN"
             ]
             activation = Source
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 5
+            effects = SetTargetPopulation value = Value - Target.SizeAsDouble
     ]
     icon = "icons/building/blackhole.png"
 

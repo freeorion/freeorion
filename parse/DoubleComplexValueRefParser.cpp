@@ -19,8 +19,10 @@ namespace parse {
             const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
 
             part_capacity
-                = (     tok.PartCapacity_ [ _a = construct<std::string>(_1) ]
-                     > parse::label(Name_token) > tok.string [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
+                = (
+                    (   tok.PartCapacity_
+                    |   tok.PartSecondaryStat_ ) [ _a = construct<std::string>(_1) ]
+                     >  parse::label(Name_token) > tok.string [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 

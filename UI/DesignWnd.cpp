@@ -341,36 +341,36 @@ PartControl::PartControl(const PartType* part) :
     if (!m_part)
         return;
 
-        m_background = new GG::StaticGraphic(PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
-        m_background->Show();
-        AttachChild(m_background);
+    m_background = new GG::StaticGraphic(PartBackgroundTexture(m_part), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
+    m_background->Show();
+    AttachChild(m_background);
 
 
-        // position of part image centred within part control.  control is size of a slot, but the
-        // part image is smaller
-        GG::X part_left = (Width() - PART_CONTROL_WIDTH) / 2;
-        GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
+    // position of part image centred within part control.  control is size of a slot, but the
+    // part image is smaller
+    GG::X part_left = (Width() - PART_CONTROL_WIDTH) / 2;
+    GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
 
-        //DebugLogger() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
-        m_icon = new GG::StaticGraphic(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_icon->MoveTo(GG::Pt(part_left, part_top));
-        m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
-        m_icon->Show();
-        AttachChild(m_icon);
-
-
-        SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+    //DebugLogger() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
+    m_icon = new GG::StaticGraphic(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon->MoveTo(GG::Pt(part_left, part_top));
+    m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
+    m_icon->Show();
+    AttachChild(m_icon);
 
 
-        //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
-                                                     UserString(m_part->Name()),
-                                                     UserString(m_part->Description()) + "\n" + m_part->CapacityDescription())
-                                                    )
-                                 );
+    SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+
+
+    //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
+                                                 UserString(m_part->Name()),
+                                                 UserString(m_part->Description()) + "\n" + m_part->CapacityDescription())
+                                                )
+                             );
 }
 
 void PartControl::Render() {}
@@ -732,7 +732,7 @@ void PartsListBox::Populate() {
     // if showing parts for a particular empire, cull redundant parts (if enabled)
     if (empire) {
         for (PartGroupsType::iterator group_it=part_groups.begin();
-             group_it != part_groups.end(); group_it++)
+             group_it != part_groups.end(); ++group_it)
         {
             ShipPartClass pclass = group_it->first.first;
             if (!m_show_superfluous_parts)
@@ -745,7 +745,7 @@ void PartsListBox::Populate() {
     // compatible with multiple slot types, ensure it is only displayed once
     std::set<const PartType* > already_added;
     for (PartGroupsType::iterator group_it=part_groups.begin();
-         group_it != part_groups.end(); group_it++)
+         group_it != part_groups.end(); ++group_it)
     {
         std::vector<const PartType* > this_group = group_it->second;
         std::multimap<double, const PartType*> sorted_group;
@@ -907,9 +907,9 @@ private:
 
     PartsListBox*   m_parts_list;
 
-    std::map<ShipPartClass, CUIButton*> m_class_buttons;
-    std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
-    CUIButton*                          m_superfluous_parts_button;
+    std::map<ShipPartClass, CUIStateButton*>    m_class_buttons;
+    std::pair<CUIStateButton*, CUIStateButton*> m_availability_buttons;
+    CUIStateButton*                             m_superfluous_parts_button;
 };
 
 DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
@@ -944,26 +944,26 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = new CUIButton(UserString(boost::lexical_cast<std::string>(part_class)), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+        m_class_buttons[part_class] = new CUIStateButton(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
-        GG::Connect(m_class_buttons[part_class]->LeftClickedSignal,
+        GG::Connect(m_class_buttons[part_class]->CheckedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
-    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
-    GG::Connect(m_availability_buttons.first->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.first->CheckedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
-    GG::Connect(m_availability_buttons.second->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.second->CheckedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
-    m_superfluous_parts_button = new CUIButton(UserString("PRODUCTION_WND_REDUNDANT"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_superfluous_parts_button = new CUIStateButton(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
-    GG::Connect(m_superfluous_parts_button->LeftClickedSignal,
+    GG::Connect(m_superfluous_parts_button->CheckedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
 
     // default to showing nothing
@@ -1020,7 +1020,7 @@ void DesignWnd::PartPalette::DoLayout() {
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW;
     int row = -1;
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin();
+    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin();
          it != m_class_buttons.end(); ++it)
     {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
@@ -1110,7 +1110,7 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
+    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
         it->second->SetCheck();
 }
 
@@ -1125,7 +1125,7 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
+    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
         it->second->SetCheck(false);
 }
 
@@ -2082,7 +2082,7 @@ private:
     BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
     BasesListBox*   m_saved_designs_list;   // designs saved to files
     BasesListBox*   m_monsters_list;        // monster designs
-    std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
+    std::pair<CUIStateButton*, CUIStateButton*>   m_availability_buttons;
 };
 
 DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
@@ -2095,14 +2095,14 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list(0),
     m_monsters_list(0)
 {
-    m_availability_buttons.first = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
-    GG::Connect(m_availability_buttons.first->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.first->CheckedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
-    m_availability_buttons.second = new CUIButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), ClientUI::ButtonHiliteColor(), ClientUI::ButtonHiliteBorderColor());
+    m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, boost::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
-    GG::Connect(m_availability_buttons.second->LeftClickedSignal,
+    GG::Connect(m_availability_buttons.second->CheckedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
@@ -2284,8 +2284,8 @@ public:
     virtual void    CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds);
     virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
     virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                 GG::Flags<GG::ModKey> mod_keys);
+    virtual void    DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                  GG::Flags<GG::ModKey> mod_keys);
     virtual void    DragDropLeave();
 
     virtual void    Render();
@@ -2490,16 +2490,21 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     SlotContentsAlteredSignal(0);
 }
 
-void SlotControl::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                               GG::Flags<GG::ModKey> mod_keys)
-{
-    Control::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
-    // TODO: mouseover highlight if drop acceptable
+void SlotControl::DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                GG::Flags<GG::ModKey> mod_keys) {
+
+    if (drop_wnds_acceptable.empty())
+        return;
+
+    DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+
+    if (drop_wnds_acceptable.begin()->second && m_part_control)
+        m_part_control->Hide();
 }
 
 void SlotControl::DragDropLeave() {
     if (m_part_control)
-        m_part_control->Hide();
+        m_part_control->Show();
 }
 
 void SlotControl::Render()

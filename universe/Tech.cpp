@@ -174,7 +174,7 @@ float Tech::ResearchCost(int empire_id) const {
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_cost) {
         return 1.0;
     } else {
-        if (ValueRef::ConstantExpr(m_research_cost))
+        if (m_research_cost->ConstantExpr())
             return m_research_cost->Eval();
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
@@ -193,7 +193,7 @@ int Tech::ResearchTime(int empire_id) const {
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_turns) {
         return 1;
     } else {
-        if (ValueRef::ConstantExpr(m_research_turns))
+        if (m_research_turns->ConstantExpr())
             return m_research_turns->Eval();
 
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);

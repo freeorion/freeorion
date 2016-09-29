@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8.5)
-
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 
@@ -12,10 +10,6 @@ find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
-if(WIN32)
-    find_package(GLEW REQUIRED)
-endif()
-
 include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIRS}
@@ -23,20 +17,10 @@ include_directories(
     ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
-
-    ${CMAKE_SOURCE_DIR}/PagedGeometry/include
 )
-
-if(WIN32)
-    include_directories(${GLEW_INCLUDE_DIRS})
-endif()
 
 add_definitions(-DFREEORION_BUILD_HUMAN)
 
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-endif ()
 
 set(freeorion_HEADER
     ../ClientApp.h
@@ -75,7 +59,6 @@ set(freeorion_HEADER
     ../../UI/IntroScreen.h
     ../../UI/LinkText.h
     ../../UI/MapWnd.h
-    ../../UI/MarkupBox.h
     ../../UI/MeterBrowseWnd.h
     ../../UI/MilitaryPanel.h
     ../../UI/ModeratorActionsWnd.h
@@ -145,7 +128,6 @@ set(freeorion_SOURCES
     ../../UI/IntroScreen.cpp
     ../../UI/LinkText.cpp
     ../../UI/MapWnd.cpp
-    ../../UI/MarkupBox.cpp
     ../../UI/MeterBrowseWnd.cpp
     ../../UI/MilitaryPanel.cpp
     ../../UI/ModeratorActionsWnd.cpp
@@ -186,22 +168,27 @@ set(freeorion_LINK_LIBS
     ${OPENGL_glu_LIBRARY}
     ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
-    ${Boost_LIBRARIES}
     ${SDL2_LIBRARY}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARY}
+    ${Boost_LOCALE_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
 if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-    list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
+    # Add icon resource file to freeorion.exe
+    list(APPEND freeorion_SOURCES FreeOrion.rc)
 endif ()
 
 add_executable(freeorion
     ${freeorion_HEADER}
     ${freeorion_SOURCES}
+)
+
+target_compile_options(
+    freeorion PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
 )
 
 target_link_libraries(freeorion

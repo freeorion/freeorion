@@ -1,10 +1,10 @@
 // EffectsGroups for System Defense Mines
 // arg1 total damage
-// arg2 priority_macro: unique result
+// arg2 priority
 // arg3 scope of systems effected: SOURCE, EMPIRE
 //
 // This macro handles multiple entries, where only the earliest applicable effects a target.
-//   arg2/priority_macro: the value assigned to the given macro should be unique from any other uses of EG_SYSTEM_MINES
+//   arg2/priority: the value should be unique from any other uses of EG_SYSTEM_MINES
 //   arg3/scope: applies to either the source system only, or to all systems with an empire owned planet.
 // Initial priority order of entries (earliest first):
 //   SYS_DEF_MINES_3
@@ -13,53 +13,99 @@
 //   SYS_DEF_MINES_1
 
 EG_SYSTEM_MINES
-'''        // damage ship; sitreps issued below
+'''        // Empire owned planet, damage enemy ship; sitreps issued below
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
                 ]
-                Not OwnedBy empire = Source.Owner
                 Structure low = @1@ + 0.0001
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
             priority = @2@
             effects = [
                 SetStructure value = Value - @1@
             ]
-        // destroy ship; sitreps issued below
+        // Unowned planet, damage non-friendly ship; sitreps issued below
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+            [[SYSTEM_MINES_SCOPE_@3@]]
+            Or [
+                Not Unowned
+                And [
+                    Unowned
+                    Not HasTag name = "UNOWNED_FRIENDLY"
+                    ]
+                ]
+                Structure low = @1@ + 0.0001
+            ]
+            activation = Unowned
+            stackinggroup = "DEF_MINES_DAMAGE_STACK"
+            priority = @2@
+            effects = [
+                SetStructure value = Value - @1@
+            ]
+
+        // Empire owned planet, destroy enemy ship; sitreps issued below
+        EffectsGroup
+            scope = And [
+                Ship
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
                 ]
-                Not OwnedBy empire = Source.Owner
                 Structure high = @1@
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
             priority = @2@
             effects = [
                 Destroy
             ]
+        // Unowned planet, destroy non-friendly ship; sitreps issued below
+        EffectsGroup
+            scope = And [
+                Ship
+                [[SYSTEM_MINES_SCOPE_@3@]]
+            Or [
+                Not Unowned
+                And [
+                    Unowned
+                    Not HasTag name = "UNOWNED_FRIENDLY"
+                    ]
+                ]
+                Structure low = @1@ + 0.0001
+            ]
+            activation = Unowned
+            stackinggroup = "DEF_MINES_DAMAGE_STACK"
+            priority = @2@
+            effects = [
+                Destroy
+            ]
+
+        // Sitreps
+
         // Planet owner sitrep - visible enemy fleet damaged
         EffectsGroup
             scope = And [
                 Fleet
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 VisibleToEmpire empire = Source.Owner
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_ENEMY_STACK"
             priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
+                    label = "EFFECT_MINES_LABEL"
                     icon = "icons/sitrep/combat_damage.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -73,11 +119,12 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 Unowned
                 VisibleToEmpire empire = Source.Owner
                 Structure low = @1@ + 0.0001
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_UNOWNED_STACK"
             priority = @2@
             effects = [
@@ -97,11 +144,12 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 Unowned
                 VisibleToEmpire empire = Source.Owner
                 Structure high = @1@
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_UNOWNED_STACK"
             priority = @2@
             effects = [
@@ -120,16 +168,18 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = @1@
                 VisibleToEmpire empire = Source.Owner
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_VISIBLE_ENEMY_STACK"
             priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
+                    label = "EFFECT_MINES_SHIP_DESTROYED_LABEL"
                     icon = "icons/sitrep/combat_destroyed.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -142,18 +192,20 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
                 ]
                 Not VisibleToEmpire empire = Source.Owner
             ]
+            activation = Not Unowned
             stackinggroup = "DEF_MINES_SITREP_PLANET_INVISIBLE_STACK"
             priority = @2@
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_UNKNOWN"
+                    label = "EFFECT_MINES_UNKNOWN_LABEL"
                     icon = "icons/sitrep/combat_damage.png"
                     parameters = [
                         tag = "system" data = Target.SystemID
@@ -164,7 +216,8 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Fleet
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
+                Not Unowned
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             stackinggroup = "DEF_MINES_SITREP_FLEET_STACK"
@@ -172,6 +225,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
+                    label = "EFFECT_MINES_LABEL"
                     icon = "icons/sitrep/combat_damage.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -185,7 +239,8 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-                [[SYSTEM_MINES_SCOPE(@3@)]]
+                [[SYSTEM_MINES_SCOPE_@3@]]
+                Not Unowned
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = @1@
             ]
@@ -194,6 +249,7 @@ EG_SYSTEM_MINES
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
+                    label = "EFFECT_MINES_SHIP_DESTROYED_LABEL"
                     icon = "icons/sitrep/combat_destroyed.png"
                     parameters = [
                         tag = "empire" data = Target.Owner
@@ -203,9 +259,6 @@ EG_SYSTEM_MINES
                     empire = Target.Owner
             ]
 '''
-
-SYSTEM_MINES_SCOPE
-'''[[SYSTEM_MINES_SCOPE_@1@]]'''
 
 SYSTEM_MINES_SCOPE_SOURCE
 '''InSystem id = Source.SystemID'''

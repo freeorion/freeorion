@@ -33,7 +33,7 @@ namespace fs = boost::filesystem;
 
 namespace {
     const GG::X PAGE_WIDTH(400);
-    const GG::Y PAGE_HEIGHT(450);
+    const GG::Y PAGE_HEIGHT(520);
     const GG::X INDENTATION(20);
     const GG::X ROW_WIDTH(PAGE_WIDTH - 4 - 14 - 5);
     const GG::X COLOR_SELECTOR_WIDTH(75);
@@ -56,23 +56,35 @@ namespace {
     class RowContentsWnd : public GG::Control {
     public:
         RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
-            Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
+            Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+            m_contents(contents)
         {
-            assert(contents);
-            if (!indentation_level) {
-                GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 1);
-                layout->Add(contents, 0, 0);
-                SetLayout(layout);
-            } else {
-                GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 2);
-                layout->SetMinimumColumnWidth(0, indentation_level * INDENTATION);
-                layout->SetColumnStretch(1, 1.0);
-                layout->Add(new PlaceholderWnd(GG::X1, GG::Y1), 0, 0);
-                layout->Add(contents, 0, 1);
-                SetLayout(layout);
+            if (!m_contents)
+                return;
+            AttachChild(m_contents);
+            m_contents->MoveTo(GG::Pt(GG::X(indentation_level * INDENTATION), GG::Y0));
+            DoLayout();
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            if (old_size != Size())
+                DoLayout();
+        }
+
+        void DoLayout() {
+            if (m_contents) {
+                //std::cout << "RowContentsWnd::DoLayout()" << std::endl;
+                m_contents->SizeMove(GG::Pt(), Size());
             }
         }
-        virtual void Render() {}
+
+        virtual void    Render() {
+            //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_RED, GG::CLR_PINK, 1);
+        }
+    private:
+        Wnd* m_contents;
     };
 
     struct BrowseForPathButtonFunctor {
@@ -369,6 +381,78 @@ namespace {
         font_wnd->Run();
         delete font_wnd;
     }
+
+    class OptionsListRow : public GG::ListBox::Row {
+    public:
+        OptionsListRow(GG::X w, GG::Y h, RowContentsWnd* contents) :
+            GG::ListBox::Row(w, h, ""),
+            m_contents(contents)
+        {
+            SetChildClippingMode(ClipToClient);
+            if (m_contents)
+                push_back(m_contents);
+        }
+
+        OptionsListRow(GG::X w, GG::Y h, Wnd* contents, int indentation = 0) :
+            GG::ListBox::Row(w, h, ""),
+            m_contents(0)
+        {
+            SetChildClippingMode(ClipToClient);
+            if (contents) {
+                m_contents = new RowContentsWnd(w, h, contents, indentation);
+                push_back(m_contents);
+            }
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            //std::cout << "OptionsListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            if (!empty() && old_size != Size() && m_contents)
+                m_contents->Resize(Size());
+        }
+
+        virtual void    Render() {
+            //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_BLUE, GG::CLR_YELLOW, 1);
+        }
+    private:
+        RowContentsWnd* m_contents;
+    };
+
+    class OptionsList : public CUIListBox {
+    public:
+        OptionsList() :
+            CUIListBox()
+        {
+            InitRowSizes();
+
+            SetColor(GG::CLR_ZERO);
+            SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+            SetVScrollWheelIncrement(ClientUI::Pts() * 10);
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            CUIListBox::SizeMove(ul, lr);
+            if (old_size != Size()) {
+                const GG::X row_width = ListRowWidth();
+                for (GG::ListBox::iterator it = begin(); it != end(); ++it)
+                    (*it)->Resize(GG::Pt(row_width, (*it)->Height()));
+            }
+        }
+
+    private:
+        GG::X ListRowWidth() const
+        { return Width() - RightMargin() - 5; }
+
+        void InitRowSizes() {
+            // preinitialize listbox/row column widths, because what
+            // ListBox::Insert does on default is not suitable for this case
+            SetNumCols(1);
+            SetColWidth(0, GG::X0);
+            LockColWidths();
+        }
+    };
 }
 
 OptionsWnd::OptionsWnd():
@@ -447,10 +531,8 @@ OptionsWnd::OptionsWnd():
 
     // manual reposition windows button
     GG::Button* window_reset_button = new CUIButton(UserString("OPTIONS_WINDOW_RESET"));
-    window_reset_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    GG::ListBox::Row* row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), window_reset_button, 0));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               window_reset_button, 0);
     current_page->Insert(row);
     GG::Connect(window_reset_button->LeftClickedSignal, HumanClientApp::GetApp()->RepositionWindowsSignal);
 
@@ -462,10 +544,7 @@ OptionsWnd::OptionsWnd():
 
     // flush stringtable button
     GG::Button* flush_button = new CUIButton(UserString("OPTIONS_FLUSH_STRINGTABLE"));
-    flush_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, 0));
+    row = new OptionsListRow(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6, flush_button, 0);
     current_page->Insert(row);
     GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
 
@@ -481,10 +560,7 @@ OptionsWnd::OptionsWnd():
 
     // show font texture button
     GG::Button* show_font_texture_button = new CUIButton(UserString("SHOW_FONT_TEXTURES"));
-    show_font_texture_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, show_font_texture_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), show_font_texture_button, 0));
+    row = new OptionsListRow(ROW_WIDTH, show_font_texture_button ->MinUsableSize().y + LAYOUT_MARGIN + 6, show_font_texture_button , 0);
     current_page->Insert(row);
     GG::Connect(show_font_texture_button->LeftClickedSignal, &ShowFontTextureWnd);
 
@@ -503,7 +579,7 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page,   0, "UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
-    BoolOption(current_page,   0, "UI.autogenerated-effects-descriptions", UserString("OPTIONS_AUTO_EFFECT_DESC"));
+    BoolOption(current_page,   0, "UI.dump-effects-descriptions",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
     BoolOption(current_page,   0, "verbose-logging",                       UserString("OPTIONS_VERBOSE_LOGGING_DESC"));
     BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
 
@@ -650,8 +726,10 @@ OptionsWnd::OptionsWnd():
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
-    DoLayout();
+    if (old_size != Size())
+        DoLayout();
 }
 
 void OptionsWnd::DoLayout() {
@@ -675,10 +753,7 @@ GG::Rect OptionsWnd::CalculatePosition() const {
 }
 
 GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
-    GG::ListBox* page = new CUIListBox();
-    page->SetColor(GG::CLR_ZERO);
-    page->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
-    page->SetVScrollWheelIncrement(ClientUI::Pts() * 10);
+    GG::ListBox* page = new OptionsList();
     m_tabs->AddWnd(page, name);
     m_tabs->SetCurrentWnd(m_tabs->NumWnds() - 1);
     return page;
@@ -686,20 +761,17 @@ GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
 
 void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level, const std::string& name) {
     assert(0 <= indentation_level);
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
-    row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, indentation_level));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, heading_text->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               heading_text, indentation_level);
     page->Insert(row);
 }
 
 GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
-    button->Resize(button->MinUsableSize());
-    row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, indentation_level));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                               button, indentation_level);
     page->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
@@ -748,18 +820,18 @@ namespace {
 }
 
 void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const std::string& hotkey_name) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     const Hotkey & hk = Hotkey::NamedHotkey(hotkey_name);
     std::string text = UserString(hk.GetDescription());
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     GG::Button* button = new CUIButton(hk.PrettyPrint());
 
-    layout->Add(text_control, 0, 0);
-    layout->Add(button, 0, 1);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
+                                        1, 2, 0, 5);
+    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button,         0, 1, GG::ALIGN_VCENTER | GG::ALIGN_RIGHT);
 
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6,
+                                               layout, indentation_level);
 
     GG::Connect(button->LeftClickedSignal, boost::bind(HandleSetHotkeyOption, hotkey_name, button));
     GG::Connect(button->RightClickedSignal, boost::bind(HandleResetHotkeyOption, hotkey_name, button));
@@ -768,7 +840,6 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
 }
 
 GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<int>* spin = 0;
@@ -781,16 +852,21 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
         spin = new CUISpin<int>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<int> > int_validator = boost::dynamic_pointer_cast<const Validator<int> >(validator))
         spin = new CUISpin<int>(value, 1, -1000000, 1000000, true);
-    assert(spin);
-    spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
-    layout->Add(spin, 0, 0);
-    layout->Add(text_control, 0, 1);
+    if (!spin) {
+        ErrorLogger() << "Unable to create IntOption spin";
+        return 0;
+    }
+    spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
+
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -800,7 +876,6 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
 }
 
 GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<double>* spin = 0;
@@ -813,16 +888,21 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
         spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<double> > double_validator = boost::dynamic_pointer_cast<const Validator<double> >(validator))
         spin = new CUISpin<double>(value, 1, -1000000, 1000000, true);
-    assert(spin);
-    spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
-    layout->Add(spin, 0, 0);
-    layout->Add(text_control, 0, 1);
+    if (!spin) {
+        ErrorLogger() << "Unable to create DoubleOption spin";
+        return 0;
+    }
+    spin->Resize(GG::Pt(SPIN_WIDTH, spin->MinUsableSize().y));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, spin->MinUsableSize().y, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(text_control, 0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+    layout->SetChildClippingMode(ClipToClient);
+
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
+
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -886,22 +966,27 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
                                 const std::vector<std::pair<std::string, std::string> >& filters,
                                 StringValidator string_validator, bool directory, bool relative_path)
 {
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     GG::Edit* edit = new CUIEdit(GetOptionsDB().Get<std::string>(option_name));
-    edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
+    edit->Resize(GG::Pt(50*SPIN_WIDTH, edit->Height())); // won't resize within layout bigger than its initial size, so giving a big initial size here
     GG::Button* button = new CUIButton("...");
-    button->SetMinSize(button->MinUsableSize());
-    button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, 0, LAYOUT_MARGIN);
-    layout->Add(text_control, 0, 0, 1, 2);
-    layout->Add(edit, 1, 0, 1, 1, GG::ALIGN_VCENTER);
-    layout->Add(button, 1, 1, 1, 1, GG::ALIGN_VCENTER);
-    layout->SetMinimumColumnWidth(1, button->Width());
-    layout->SetColumnStretch(0, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + std::max(edit->MinUsableSize().y, button->MinUsableSize().y) + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, indentation_level));
+
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ROW_WIDTH, button->MinUsableSize().y,
+                                        1, 3, 0, 5);
+
+    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(edit,           0, 1, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button,         0, 2, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(1, SPIN_WIDTH);
+    layout->SetMinimumColumnWidth(2, button->Width());
+    layout->SetColumnStretch(0, 0.5);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetColumnStretch(2, 0.0);
+
+    GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
     page->Insert(row);
+
     edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -1081,11 +1166,8 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // apply button, sized to fit text
     GG::Button* apply_button = new CUIButton(UserString("OPTIONS_APPLY"));
-    apply_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    apply_button->Resize(GG::Pt(GG::X(20), apply_button->MinUsableSize().y));
-    row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, indentation_level));
+    row = new OptionsListRow(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                             apply_button, indentation_level);
     page->Insert(row);
     GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
 
@@ -1097,10 +1179,10 @@ void OptionsWnd::HotkeysPage()
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
     std::map<std::string, std::set<std::string> > hotkeys = Hotkey::ClassifyHotkeys();
     for (std::map<std::string, std::set<std::string> >::iterator i = hotkeys.begin();
-         i != hotkeys.end(); i++)
+         i != hotkeys.end(); ++i)
     {
         CreateSectionHeader(page, 0, UserString(i->first));
-        for (std::set<std::string>::iterator j = i->second.begin(); j != i->second.end(); j++)
+        for (std::set<std::string>::iterator j = i->second.begin(); j != i->second.end(); ++j)
             HotkeyOption(page, 0, *j);
     }
     m_tabs->SetCurrentWnd(0);

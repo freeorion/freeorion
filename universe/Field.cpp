@@ -172,7 +172,7 @@ FieldType::FieldType(const std::string& name, const std::string& description,
     m_effects(effects),
     m_graphic(graphic)
 {
-    for ( std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+    for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
         m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
 
     if (m_stealth != 0.0f)

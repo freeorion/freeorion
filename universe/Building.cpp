@@ -261,7 +261,7 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
         return 1.0;
     } else {
-        if (ValueRef::ConstantExpr(m_production_cost))
+        if (m_production_cost && m_production_cost->ConstantExpr())
             return m_production_cost->Eval();
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
@@ -285,7 +285,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_time) {
         return 1;
     } else {
-        if (ValueRef::ConstantExpr(m_production_time))
+        if (m_production_time && m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
         TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);

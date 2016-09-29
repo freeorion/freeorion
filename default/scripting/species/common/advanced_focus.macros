@@ -42,6 +42,7 @@ ADVANCED_FOCUS_EFFECTS
             effects = [
                 GenerateSitrepMessage
                     message = "EFFECT_STARGATE"
+                    label = "EFFECT_STARGATE_LABEL"
                     icon = "icons/focus/stargate_receive.png"
                     parameters = [
                         tag = "fleet" data = Target.ID
@@ -59,35 +60,43 @@ ADVANCED_FOCUS_EFFECTS
             activation = And [
                 Planet
                 Focus type = "FOCUS_PLANET_DRIVE"
-                Or [
-                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
-                WithinStarlaneJumps jumps = 1 condition = Contains And [
-                    Ship 
-                    OwnedBy empire = Source.Owner
-                    DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
-                    Turn low = LocalCandidate.ArrivedOnTurn + 1
+                WithinStarlaneJumps jumps = 1 condition = And [
+                    System
+                    Contains And [
+                        Or [
+                            Building name = "BLD_PLANET_BEACON"
+                            And [
+                                Ship
+                                DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                                Turn low = LocalCandidate.ArrivedOnTurn + 1
+                            ]
+                        ]
+                        OwnedBy empire = Source.Owner
                     ]
+                    Not Contains Source
                 ]
             ]
             effects = [
                 MoveTo destination = And [
-                    OwnedBy empire = Source.Owner
+                    System
                     WithinStarlaneJumps jumps = 1 condition = Source
-                    Contains Or [
-                        And [
+                    Contains And [
+                        Or [
                             Building name = "BLD_PLANET_BEACON"
-                            OwnedBy empire = Source.Owner
+                            And [
+                                Ship
+                                DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                                Turn low = LocalCandidate.ArrivedOnTurn + 1
+                            ]
                         ]
-                        And [
-                            Ship 
-                            OwnedBy empire = Source.Owner
-                            DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
-                        ]
+                        OwnedBy empire = Source.Owner
                     ]
+                    Not Contains Source
                 ]
                 GenerateSitRepMessage
                         message = "EFFECT_PLANET_DRIVE"
-                    icon = "icons/building/planetary_stardrive.png"
+                        label = "EFFECT_PLANET_DRIVE_LABEL"
+                        icon = "icons/building/planetary_stardrive.png"
                         parameters = [
                                 tag = "planet" data = Source.ID
                                 tag = "system" data = Source.SystemID
@@ -99,15 +108,30 @@ ADVANCED_FOCUS_EFFECTS
         EffectsGroup
             scope = Source
             activation = And [
+                Random probability = 0.5
                 Planet
                 Focus type = "FOCUS_PLANET_DRIVE"
-                Random probability = 0.5
-                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+                WithinStarlaneJumps jumps = 1 condition = And [
+                    System
+                    Contains And [
+                        Or [
+                            Building name = "BLD_PLANET_BEACON"
+                            And [
+                                Ship
+                                DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                                Turn low = LocalCandidate.ArrivedOnTurn + 1
+                            ]
+                        ]
+                        OwnedBy empire = Source.Owner
+                    ]
+                    Not Contains Source
+                ]
                 Not WithinDistance distance = 200 condition = Building name = "BLD_LIGHTHOUSE"
             ]
             effects = [
                 GenerateSitRepMessage
                         message = "SITREP_PLANET_DRIVE_FAILURE"
+                        label = "SITREP_PLANET_DRIVE_FAILURE_LABEL"
                     icon = "icons/sitrep/colony_destroyed.png"
                         parameters = [
                                 tag = "planet" data = Source.ID
@@ -138,6 +162,7 @@ ADVANCED_FOCUS_EFFECTS
                     effects = [
                         GenerateSitrepMessage
                             message = "EFFECT_FLEET_MOVED_TO"
+                            label = "EFFECT_FLEET_MOVED_TO_LABEL"
                             parameters = [
                                 tag = "fleet" data = Target.ID
                                 tag = "system" data = Target.PreviousSystemID
@@ -150,6 +175,7 @@ ADVANCED_FOCUS_EFFECTS
                     else = [
                         GenerateSitrepMessage
                             message = "EFFECT_FLEET_MOVED_TOWARDS"
+                            label = "EFFECT_FLEET_MOVED_TOWARDS_LABEL"
                             parameters = [
                                 tag = "fleet" data = Target.ID
                                 tag = "system" data = Target.PreviousSystemID

@@ -96,6 +96,7 @@ BuildingType
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    label = "SITREP_NEW_COLONY_ESTABLISHED_LABEL"
                     icon = "icons/species/abaddonnian.png"
                     parameters = [
                         tag = "species" data = "SP_ABADDONI"

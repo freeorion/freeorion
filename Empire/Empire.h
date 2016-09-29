@@ -44,19 +44,22 @@ struct FO_COMMON_API ResearchQueue {
         Element() :
             name(),
             empire_id(ALL_EMPIRES),
-            allocated_rp(0.0),
-            turns_left(0)
+            allocated_rp(0.0f),
+            turns_left(0),
+            paused(false)
         {}
-        Element(const std::string& name_, int empire_id_, float spending_, int turns_left_) :
+        Element(const std::string& name_, int empire_id_, float spending_, int turns_left_, bool paused_ = false) :
             name(name_),
             empire_id(empire_id_),
             allocated_rp(spending_),
-            turns_left(turns_left_)
+            turns_left(turns_left_),
+            paused(paused_)
         {}
         std::string name;
         int         empire_id;
         float       allocated_rp;
         int         turns_left;
+        bool        paused;
     private:
         friend class boost::serialization::access;
         template <class Archive>
@@ -80,6 +83,8 @@ struct FO_COMMON_API ResearchQueue {
 
     /** \name Accessors */ //@{
     bool                        InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.
+    bool                        Paused(const std::string& tech_name) const; ///< Returns true iff \a tech is in this queue and paused.
+    bool                        Paused(int idx) const;                      ///< Returns true iff there are at least \a idx - 1 items in the queue and item with index \a idx is paused
     int                         ProjectsInProgress() const;                 ///< Returns the number of research projects currently (perhaps partially) funded.
     float                       TotalRPsSpent() const;                      ///< Returns the number of RPs currently spent on the projects in this queue.
     int                         EmpireID() const { return m_empire_id; }
@@ -108,8 +113,8 @@ struct FO_COMMON_API ResearchQueue {
     void            Update(float RPs, const std::map<std::string, float>& research_progress);
 
     // STL container-like interface
-    void            push_back(const std::string& tech_name);
-    void            insert(iterator it, const std::string& tech_name);
+    void            push_back(const std::string& tech_name, bool paused = false);
+    void            insert(iterator it, const std::string& tech_name, bool paused = false);
     void            erase(iterator it);
 
     iterator        begin();
@@ -164,9 +169,9 @@ struct FO_COMMON_API ProductionQueue {
     /** The type of a single element in the production queue. */
     struct Element {
         Element(); ///< default ctor.
-        Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_);
-        Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_);
-        Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_);
+        Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+        Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+        Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
 
         ProductionItem  item;
         int             empire_id;
@@ -181,6 +186,7 @@ struct FO_COMMON_API ProductionQueue {
         int             turns_left_to_next_item;
         int             turns_left_to_completion;
         int             rally_point_id;
+        bool            paused;
 
     private:
         friend class boost::serialization::access;
@@ -420,25 +426,31 @@ public:
     /** Removes tech with \a name from the research queue, if it is in the
       * research queue already. */
     void        RemoveTechFromQueue(const std::string& name);
+
+    void        PauseResearch(const std::string& name);
+    void        ResumeResearch(const std::string& name);
+
     /** Sets research progress of tech with \a name to \a progress. */
     void        SetTechResearchProgress(const std::string& name, float progress);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void        PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
+    void        PlaceProductionOnQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void        PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
+    void        PlaceProductionOnQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
-    void        PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
-    void        SetBuildQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
-    void        SetBuildQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to build for queue item \a index to \a quantity and \a blocksize 
-    void        SetBuildRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this build, to which they are automatically ordered to move after they are produced.
-    void        MoveBuildWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
-    void        RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
+    void        PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
+    void        SetProductionQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
+    void        SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to build for queue item \a index to \a quantity and \a blocksize 
+    void        SetProductionRallyPoint(int index, int rally_point_id = INVALID_OBJECT_ID);  ///< Sets the rally point for ships produced by this build, to which they are automatically ordered to move after they are produced.
+    void        MoveProductionWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
+    void        RemoveProductionFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
+    void        PauseProduction(int index);
+    void        ResumeProduction(int index);
 
     void        AddTech(const std::string& name);           ///< Inserts the given Tech into the Empire's list of available technologies.
     void        UnlockItem(const ItemSpec& item);           ///< Adds a given producible item (Building, Ship Hull, Ship part) to the list of available items.

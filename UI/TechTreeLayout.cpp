@@ -150,13 +150,13 @@ void TechTreeLayout::Edge::AddPoint(double x, double y)
 { m_points.push_back(std::pair<double,double>(x, y)); }
 
 void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double,double> > & points) const {
-    for(std::vector<std::pair<double,double> >::const_iterator p = m_points.begin(); p != m_points.end(); p++)
+    for(std::vector<std::pair<double,double> >::const_iterator p = m_points.begin(); p != m_points.end(); ++p)
         points.push_back(*p);
 }
 
 void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "Edge " << m_from << "-> " << m_to << ": ";
-    for(std::vector<std::pair<double,double> >::const_iterator p = m_points.begin(); p != m_points.end(); p++)
+    for(std::vector<std::pair<double,double> >::const_iterator p = m_points.begin(); p != m_points.end(); ++p)
         DebugLogger() << "(" << (*p).first << "," << (*p).second << ") ";
     DebugLogger() << "\n";
 }
@@ -180,7 +180,7 @@ TechTreeLayout::TechTreeLayout() :
  * releases all resources
  */
 TechTreeLayout::~TechTreeLayout() {
-    for (std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); p++)
+    for (std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); ++p)
         delete *p;
     m_nodes.clear();
     m_node_map.clear();
@@ -340,13 +340,13 @@ const std::vector<TechTreeLayout::Edge*>& TechTreeLayout::GetOutEdges(const std:
 }
 
 void TechTreeLayout::Debug() const {
-    for (std::vector<TechTreeLayout::Node*>::const_iterator n = m_nodes.begin(); n != m_nodes.end(); n++)
+    for (std::vector<TechTreeLayout::Node*>::const_iterator n = m_nodes.begin(); n != m_nodes.end(); ++n)
         (*n)->Debug();
 }
 
 void TechTreeLayout::Clear() {
     //!!! IMPORTANT !!! Node have to be delete in order m_depth ascending or we will access freed memory!
-    for (std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); p++)
+    for (std::vector<TechTreeLayout::Node*>::iterator p = m_nodes.begin(); p != m_nodes.end(); ++p)
         delete *p;
     m_nodes.clear();
     m_node_map.clear();

@@ -51,7 +51,6 @@ class RotatingPlanetControl;
 
 namespace {
     const int       EDGE_PAD(3);
-    const double    TWO_PI(2.0*3.1415926536);
     std::map<std::pair<int,int>,float>          colony_projections;
     std::map<std::pair<std::string,int>,float>  species_colony_projections;
 
@@ -616,13 +615,6 @@ public:
         m_initial_rotation(fmod(planet_id / 7.352535, 1.0)),    // arbitrary scale number applied to id to give consistent by varied angles
         m_star_type(star_type)
     {
-        if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-            std::string shader_text;
-            ReadFile(shader_path, shader_text);
-            s_scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
-        }
         Refresh();
     }
 
@@ -646,16 +638,8 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if (s_scanline_shader &&
-            m_visibility <= VIS_BASIC_VISIBILITY &&
-            GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
-        {
-            float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-            s_scanline_shader->Use();
-            s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-            CircleArc(ul, lr, 0.0, TWO_PI, true);
-            s_scanline_shader->stopUse();
-        }
+        if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            s_scanline_shader.RenderCircle(ul, lr);
     }
 
     void Refresh() {
@@ -714,9 +698,10 @@ private:
     double                          m_initial_rotation;
     StarType                        m_star_type;
 
-    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
+    static ScanlineRenderer         s_scanline_shader;
 };
-boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boost::shared_ptr<ShaderProgram>();
+
+ScanlineRenderer RotatingPlanetControl::s_scanline_shader;
 
 
 namespace {
@@ -1214,7 +1199,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     GetUniverse().InhibitUniverseObjectSignals(true);
     for (std::vector<TemporaryPtr<const Ship> >::const_iterator
          ship_it = capable_and_available_colony_ships.begin();
-         ship_it != capable_and_available_colony_ships.end(); ship_it++)
+         ship_it != capable_and_available_colony_ships.end(); ++ship_it)
     {
         TemporaryPtr<const Ship> ship = *ship_it;
         if (!ship)
@@ -1391,9 +1376,7 @@ void SidePanel::PlanetPanel::Refresh() {
             continue;
         if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
             continue;
-        std::list<std::string> shipyards_list;
-        UserStringList("FUNCTIONAL_SHIPYARD_BUILDING_LIST", shipyards_list);
-        if (std::find(shipyards_list.begin(), shipyards_list.end(), building->BuildingTypeName()) != shipyards_list.end()) {
+        if (building->HasTag(TAG_SHIPYARD)) {
             has_shipyard = true;
             break;
         }
@@ -1439,7 +1422,6 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     std::string colony_ship_species_name;
-    const ShipDesign* design = 0;
     float colony_ship_capacity = 0.0f;
     if (selected_colony_ship) {
         colony_ship_species_name = selected_colony_ship->SpeciesName();
@@ -2842,7 +2824,8 @@ void SidePanel::RefreshImpl() {
         }
         std::vector<GG::DropDownList::Row*> rows;
         rows.reserve(system_map.size());
-        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); sys_it++) {
+        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
+        {
             int sys_id = sys_it->second;
             rows.push_back(new SystemRow(sys_id));
         }

@@ -437,6 +437,7 @@ public:
     ResearchQueueOrder();
     ResearchQueueOrder(int empire, const std::string& tech_name);
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
+    ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy);
     //@}
 
 private:
@@ -445,6 +446,12 @@ private:
     std::string m_tech_name;
     int         m_position;
     bool        m_remove;
+    int         m_pause;
+
+    static const int INVALID_INDEX = -500;
+    static const int PAUSE = 1;
+    static const int RESUME = 2;
+    static const int INVALID_PAUSE_RESUME = -1;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -470,6 +477,7 @@ public:
     ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
     ProductionQueueOrder(int empire, int index, int new_index);
     ProductionQueueOrder(int empire, int index);
+    ProductionQueueOrder(int empire, int index, bool pause, float dummy);
     //@}
 
 private:
@@ -483,9 +491,13 @@ private:
     int         m_new_blocksize;
     int         m_new_index;
     int         m_rally_point_id;
+    int         m_pause;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
+    static const int PAUSE = 1;
+    static const int RESUME = 2;
+    static const int INVALID_PAUSE_RESUME = -1;
 
     friend class boost::serialization::access;
     template <class Archive>

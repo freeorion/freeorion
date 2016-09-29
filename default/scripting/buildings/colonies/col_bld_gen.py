@@ -97,6 +97,7 @@ t_main = string.Template('''BuildingType
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    label = "SITREP_NEW_COLONY_ESTABLISHED_LABEL"
                     icon = "${graphic}"
                     parameters = [
                         tag = "species" data = "${id}"

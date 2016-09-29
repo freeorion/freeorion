@@ -10,7 +10,8 @@ FreeOrion, an open-source game inspired by Master of Orion, is a turn-based game
 
 ## How to contribute
 
-http://freeorion.org/index.php/How_to_Help
+For more details please see our [Contribution Guidelines](CONTRIBUTING.md).
+
 
 ## License
 

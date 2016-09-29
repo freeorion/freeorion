@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+
+if(POLICY CMP0044)
+    cmake_policy(SET CMP0044 OLD)
+endif()
 
 include(GNUInstallDirs)
 
@@ -18,10 +22,7 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 ########################################
 project(FreeOrion)
 
-set(FreeOrion_VERSION 0.4.5+)
-
-set(MINIMUM_BOOST_VERSION 1.54.0)
-set(PYTHON_VERSION 2.7)
+set(FreeOrion_VERSION 0.4.6+)
 
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
@@ -33,30 +34,34 @@ else()
   message( STATUS "Not building Tests")
 endif ()
 
-find_package (Threads)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(WIN32)
-    set(CMAKE_INSTALL_BINDIR "")
-    set(FreeOrion_INSTALL_LIBDIR "")
+    set(CMAKE_INSTALL_BINDIR ".")
+    set(FreeOrion_INSTALL_LIBDIR ".")
 else()
     set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
 endif()
 
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+add_compile_options(
+    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
+    $<$<CXX_COMPILER_ID:gnu>:-Wall>
+    # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
+    $<$<CXX_COMPILER_ID:clang>:-Wall>
+    # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
+    $<$<CXX_COMPILER_ID:msvc>:/W4>
+)
 
 if (WIN32)
     add_definitions(
         -D_CRT_SECURE_NO_DEPRECATE
         -D_SCL_SECURE_NO_DEPRECATE
         -D_CRT_NONSTDC_NO_DEPRECATE
-        -DBOOST_ALL_DYN_LINK
         -DFREEORION_WIN32
         -D_WIN32_WINNT=0x0501
     )
@@ -64,7 +69,6 @@ if (WIN32)
         set (CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/../")
         set (BOOST_ROOT "${CMAKE_BINARY_DIR}/../Boost")
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
         set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     endif ()
@@ -74,16 +78,13 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(
         -DFREEORION_LINUX
         -DENABLE_BINRELOC
-        -DBOOST_ALL_DYN_LINK
     )
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     add_definitions(
         -DFREEORION_FREEBSD
         -DENABLE_BINRELOC
         -DBOOST_DATE_TIME_NO_LOCALE
     )
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
@@ -101,7 +102,37 @@ if (NOT FO_LINK_STATIC_BOOST_LIBS)
 endif ()
 
 
-find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
+########################################
+# Dependencies                         #
+########################################
+set(MINIMUM_PYTHON_VERSION 2.7)
+set(MINIMUM_BOOST_VERSION 1.54.0)
+
+find_package(Threads)
+find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
+find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION}
+    COMPONENTS
+        chrono
+        date_time
+        filesystem
+        iostreams
+        locale
+        log
+        regex
+        serialization
+        python
+        signals
+        system
+        thread
+    REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(Freetype REQUIRED)
+
+
+########################################
+# Build common code library            #
+########################################
 
 # To run the version generation every compile we need to deferr the
 # execution to a separate target and the existing python command
@@ -119,16 +150,6 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
-if (WIN32)
-    # Add icon resource file to freeorion.exe
-    if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)
-        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/FreeOrion.ico\"")
-    endif ()
-endif ()
-
-########################################
-# Build common code library            #
-########################################
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
 set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
@@ -136,12 +157,15 @@ add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
-########################################
-# Dependencies                         #
-########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem locale iostreams regex serialization signals system thread log REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(Freetype REQUIRED)
+if(${Boost_VERSION} EQUAL "106100")
+    # with boost 1.61 some boost::optional internals were changed. However
+    # boost::spirit relies on some API the old implementation provided.  This
+    # define enables the usage of the old boost::optional implementation.
+    # boost upstream tracks this bug as #12349
+    add_definitions(
+        -DBOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL
+    )
+endif()
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
@@ -295,34 +319,32 @@ add_library(freeorioncommon
     ${freeorioncommon_SOURCE}
 )
 
+target_compile_options(
+    freeorioncommon PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+)
+
 add_dependencies(freeorioncommon freeorionversion)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set_property(
-        SOURCE
-        util/SerializePathingEngine.cpp
-        PROPERTY
-        COMPILE_FLAGS -ftemplate-depth=512
-    )
-endif ()
-
 target_link_libraries(freeorioncommon
-    ${Boost_LIBRARIES}
+    ${Boost_CHRONO_LIBRARY}
+    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_IOSTREAMS_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Boost_SERIALIZATION_LIBRARY}
+    ${Boost_SIGNALS_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
     ${ZLIB_LIBRARIES}
-    ${OPENGL_LIBRARIES}
 )
 
 set_target_properties(freeorioncommon
     PROPERTIES
     DEFINE_SYMBOL "FREEORION_BUILD_COMMON"
 )
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set_target_properties(freeorioncommon
-        PROPERTIES
-        COMPILE_FLAGS "-fvisibility=hidden"
-)
-endif ()
 
 ########################################
 # Recurse Into Sources                 #

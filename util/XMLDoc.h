@@ -141,6 +141,7 @@ public:
 
     /** writes the XMLElement to an output stream; returns the stream */
     std::ostream& WriteElement(std::ostream& os, int indent = 0, bool whitespace = true) const;
+    std::string WriteElement(int indent = 0, bool whitespace = true) const;
 
     const_child_iterator child_begin() const; ///< const_iterator to the first child in the XMLElement
     const_child_iterator child_end() const;   ///< const_iterator to the last + 1 child in the XMLElement
@@ -273,9 +274,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** destroys the current contents of the XMLDoc, and replaces tham with the constents of the document in the input
+    /** destroys the current contents of the XMLDoc, and replaces them with the contents of the document in the input
         stream \a is; returns the stream*/
     std::istream& ReadDoc(std::istream& is);
+
+    /** destroys the current contents of the XMLDoc, and replaces them with the contents of the document in the input
+        string \a s */
+    void ReadDoc(const std::string& s);
     //@}
 
     XMLElement root_node;  ///< the single XMLElement in the document, under which all other XMLElement are children
@@ -302,138 +307,6 @@ private:
     static void PopElem(const char*, const char*);
     static void AppendToText(const char* first, const char* last);
 };
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Breaks a given string up into tokens.  The resulting vector contains all the non-whitespace characters from \a
-    str. */
-std::vector<std::string> Tokenize(const std::string& str);
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Takes a string of the form "(first, second) (first, second) ..." and produces two vectors of token strings: one for
-    keys and one for values. */
-std::pair<std::vector<std::string>, std::vector<std::string> > TokenizeMapString(const std::string& str);
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Takes an unsigned integer that is the result of the bitwise OR-ing of enumerated values of type T, and generates a
-    string of the form "value1 value2 value3 ...".  This function will yield the zero-value of enum type T
-    (e.g. "TF_NONE") if no nonzero flags are specified.  If no such zero-value exists, the returned string will be
-    empty.  \note This function depends on EnumMap<T> being defined. */
-template <class T>
-std::string StringFromFlags(unsigned int flags)
-{
-    std::string retval;
-    const GG::EnumMap<T>& enum_map = GG::GetEnumMap<T>();
-    T zero_value = T(-1); // if this value remains -1, we never found a zero value; otherwise it will be equal to 0
-    for (typename GG::EnumMap<T>::MapType::const_iterator it = enum_map.m_map.begin(); it != enum_map.m_map.end(); ++it) {
-        if (zero_value && !it->first) // take only the first zero-value, in case there are multiple such values
-            zero_value = it->first;
-        if (flags & it->first)
-            retval += it->second + " ";
-    }
-    if (retval.empty() && !zero_value)
-        retval = enum_map.FromEnum(zero_value) + " ";
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Takes a string of the form "value1 value2 value3 ..." and returns an unsigned integer that is the result of the
-    bitwise OR-ing of the enumerated values of type T in the string. \note This function depends on EnumMap<T> being
-    defined. */
-template <class T>
-unsigned int FlagsFromString(const std::string& str)
-{
-    unsigned int retval = 0;
-    const GG::EnumMap<T>& enum_map = GG::GetEnumMap<T>();
-    std::vector<std::string> tokens = Tokenize(str);
-    for (unsigned int i = 0; i < tokens.size(); ++i) {
-        retval |= enum_map.FromString(tokens[i]);
-    }
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Takes any simple STL container (vector, set, etc.) and puts its contents into a whitespace-delimited list.  Due to
-    the key-value pair organization of STL maps, this function does not work with them.  Use StringFromMap() instead. */
-template <class Cont>
-std::string StringFromContainer(const Cont& container)
-{
-    std::string retval;
-    for (typename Cont::const_iterator it = container.begin(); it != container.end(); ++it) {
-        retval += boost::lexical_cast<std::string>(*it) + " ";
-    }
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Takes an STL map and puts its contents into a whitespace-delimited list, in the format "(first, second) (first,
-    second) ...". */
-template <class T1, class T2>
-std::string StringFromMap(const std::map<T1, T2>& container)
-{
-    std::string retval;
-    for (typename std::map<T1, T2>::const_iterator it = container.begin(); it != container.end(); ++it) {
-        retval += "(" + boost::lexical_cast<std::string>(it->first) + ", " + boost::lexical_cast<std::string>(it->second) + ") ";
-    }
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Takes an STL multimap and puts its contents into a whitespace-delimited list, in the format "(first, second) (first,
-    second) ...". */
-template <class T1, class T2>
-std::string StringFromMultimap(const std::multimap<T1, T2>& container)
-{
-    std::string retval;
-    for (typename std::multimap<T1, T2>::const_iterator it = container.begin(); it != container.end(); ++it) {
-        retval += "(" + boost::lexical_cast<std::string>(it->first) + ", " + boost::lexical_cast<std::string>(it->second) + ") ";
-    }
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Creates a container of the specified type from a string consisting whitespace-delimited list of elements.  Due to
-    the key-value pair organization of STL maps, this function does not work with them.  Use ContainerFromMapString()
-    instead. */
-template <class Cont>
-Cont ContainerFromString(const std::string& str)
-{
-    Cont retval;
-    std::vector<std::string> tokens = Tokenize(str);
-    std::insert_iterator<Cont> ins_it = std::inserter(retval, retval.begin());
-    typedef typename Cont::value_type T;
-    for (unsigned int i = 0; i < tokens.size(); ++i) {
-        ins_it = boost::lexical_cast<T>(tokens[i]);
-    }
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Creates an STL map from a string consisting whitespace-delimited list of elements in the format "(first, second)
-    (first, second) ...". */
-template <class T1, class T2>
-std::map<T1, T2> MapFromString(const std::string& str)
-{
-    std::map<T1, T2> retval;
-    std::pair<std::vector<std::string>, std::vector<std::string> > tokens = TokenizeMapString(str);
-    for (unsigned int i = 0; i < tokens.first.size(); ++i) {
-        retval[boost::lexical_cast<T1>(tokens.first[i])] = boost::lexical_cast<T2>(tokens.second[i]);
-    }
-    return retval;
-}
-
-/** \deprecated All the GG XML classes are deprecated and will be removed upon the next major release.
-    Creates an STL multimap from a string consisting whitespace-delimited list of elements in the format "(first,
-    second) (first, second) ...". */
-template <class T1, class T2>
-std::multimap<T1, T2> MultimapFromString(const std::string& str)
-{
-    std::multimap<T1, T2> retval;
-    std::pair<std::vector<std::string>, std::vector<std::string> > tokens = TokenizeMapString(str);
-    for (unsigned int i = 0; i < tokens.first.size(); ++i) {
-        retval.insert(std::make_pair(boost::lexical_cast<T1>(tokens.first[i]), boost::lexical_cast<T2>(tokens.second[i])));
-    }
-    return retval;
-}
 
 #endif // _XMLDoc_h_
 

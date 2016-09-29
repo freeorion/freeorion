@@ -6,13 +6,12 @@ Species
 
     CanColonize
 
-    Tags = [ "ROBOTIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_GREAT_SUPPLY" ]
+    Tags = [ "ROBOTIC" "NO_INDUSTRY" "BAD_RESEARCH" "BAD_WEAPONS" "GREAT_SUPPLY" ]
 
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 

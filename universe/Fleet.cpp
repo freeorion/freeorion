@@ -39,7 +39,8 @@ namespace {
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
 
-                    TemporaryPtr<const System> cur_sys = GetSystem(*it);
+                TemporaryPtr<const System> cur_sys = GetSystem(*it);
+
                 if (!cur_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *it;
                     return distance;
@@ -626,7 +627,7 @@ float Fleet::MaxFuel() const {
 }
 
 int Fleet::FinalDestinationID() const {
-    if(m_travel_route.empty()){
+    if (m_travel_route.empty()) {
         return INVALID_OBJECT_ID;
     } else {
         return m_travel_route.back();

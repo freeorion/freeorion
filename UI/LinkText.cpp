@@ -109,9 +109,6 @@ const std::string& LinkText::RawText() const
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TextLinker::LClick_(pt, mod_keys); }
 
-void LinkText::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ TextLinker::LDoubleClick_(pt, mod_keys); }
-
 void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     GG::MenuItem menu_contents;
@@ -212,6 +209,7 @@ const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
 const std::string TextLinker::GRAPH_TAG("graph");
 
 TextLinker::TextLinker() :
+    m_links(),
     m_rollover_link(-1)
 {
     RegisterLinkTags();
@@ -455,9 +453,22 @@ void TextLinker::LocateLinks() {
 }
 
 int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
-    for (unsigned int i = 0; i < m_links.size(); ++i) {
-        for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
-            GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
+    std::vector<Link> links;
+    try {
+        links = m_links;
+    } catch (...) {
+        ErrorLogger() << "exception caught copying links in GetLinkUnderPt";
+        return -1;
+    }
+
+    GG::Pt tex_ul = TextUpperLeft();
+
+    for (unsigned int i = 0; i < links.size(); ++i) {
+        const Link& link = links[i];
+
+        for (unsigned int j = 0; j < link.rects.size(); ++j) {
+            GG::Rect link_rect = link.rects[j];
+            GG::Rect r = tex_ul + link_rect;
             if (r.Contains(pt))
                 return i;
         }

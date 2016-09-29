@@ -78,7 +78,7 @@ namespace {
         std::list<std::string> retval;
         UserStringList(list_key, retval);
         boost::python::list ret_list;
-        for (std::list< std::string >::iterator it = retval.begin(); it != retval.end(); it++)
+        for (std::list< std::string >::iterator it = retval.begin(); it != retval.end(); ++it)
             ret_list.append(*it);
         return ret_list;
     }

@@ -161,6 +161,13 @@ const std::string& XMLElement::Attribute(const std::string& attrib) const
         return empty_str;
 }
 
+std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const
+{
+    std::stringstream ss;
+    WriteElement(ss, indent, whitespace);
+    return ss.str();
+}
+
 std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, bool whitespace/* = true*/) const
 {
     if (whitespace)
@@ -318,6 +325,12 @@ std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace/* = true*/) con
     os << "<?xml version=\"1.0\"?>";
     if (whitespace) os << "\n";
     return root_node.WriteElement(os, 0, whitespace);
+}
+
+void XMLDoc::ReadDoc(const std::string& s)
+{
+    std::stringstream ss(s);
+    ReadDoc(ss);
 }
 
 std::istream& XMLDoc::ReadDoc(std::istream& is)
@@ -568,32 +581,4 @@ XMLDoc::RuleDefiner::RuleDefiner()
     EncName =
         alpha_p >> *(EncNameCh)
         ;
-}
-
-
-////////////////////////////////////////////////
-// Free Functions
-////////////////////////////////////////////////
-std::vector<std::string> Tokenize(const std::string& str)
-{
-    std::vector<std::string> retval;
-    parse(str.c_str(), *space_p >> *((+(anychar_p - space_p))[append(retval)] >> *space_p));
-    return retval;
-}
-
-std::pair<std::vector<std::string>, std::vector<std::string> > TokenizeMapString(const std::string& str)
-{
-    std::pair<std::vector<std::string>, std::vector<std::string> > retval;
-    if (!parse(str.c_str(), 
-               *space_p >> *(
-                   ch_p('(') >> *space_p >> 
-                   (+(anychar_p - space_p - ch_p(',')))[append(retval.first)] >> *space_p >> 
-                   ch_p(',') >> *space_p >> 
-                   (+(anychar_p - space_p - ch_p(')')))[append(retval.second)] >> *space_p >> 
-                   ch_p(')') >> *space_p
-                   )
-            ).full) {
-        throw std::invalid_argument("Tokenize() : The string \"" + str + "\" is not a well-formed map string.");
-    }
-    return retval;
 }

@@ -34,6 +34,7 @@ FieldType
                 SetStarType type = OneOf(White, Yellow, Orange, Red)
                 GenerateSitRepMessage
                     message = "EFFECT_NEBULA"
+                    label = "EFFECT_NEBULA_LABEL"
                     icon = "nebulae/nebula12.png"
                     parameters = [
                         tag = "system" data = Source.SystemID

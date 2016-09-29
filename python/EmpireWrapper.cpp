@@ -168,11 +168,12 @@ namespace {
         std::map<std::set<int>, float> planetsWithAvailablePP;
         std::map<std::set<int>, float> objectsWithAvailablePP = prodQueue.AvailablePP(industry_pool);
         for (std::map<std::set<int>, float>::iterator map_it = objectsWithAvailablePP.begin(); 
-             map_it != objectsWithAvailablePP.end(); map_it++)
+             map_it != objectsWithAvailablePP.end(); ++map_it)
         {
             std::set<int> planetSet;
             std::set<int> objSet = map_it->first;
-            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
+            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); ++obj_it)
+            {
                 TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
                 if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(*obj_it);
@@ -189,11 +190,12 @@ namespace {
         std::map<std::set<int>, float> planetsWithAllocatedPP;
         std::map<std::set<int>, float> objectsWithAllocatedPP = prodQueue.AllocatedPP();
         for (std::map<std::set<int>, float>::iterator map_it = objectsWithAllocatedPP.begin(); 
-             map_it != objectsWithAllocatedPP.end(); map_it++)
+             map_it != objectsWithAllocatedPP.end(); ++map_it)
         {
             std::set<int> planetSet;
             std::set<int> objSet = map_it->first;
-            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
+            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); ++obj_it)
+            {
                 TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
                 if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(*obj_it);
@@ -211,11 +213,12 @@ namespace {
         std::set<std::set<int> > planetsWithWastedPP;
         std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
         for (std::set<std::set<int> >::iterator sets_it = objectsWithWastedPP.begin(); 
-             sets_it != objectsWithWastedPP.end(); sets_it++)
+             sets_it != objectsWithWastedPP.end(); ++sets_it)
              {
                  std::set<int> planetSet;
                  std::set<int> objSet = *sets_it;
-                 for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); obj_it++) {
+                 for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); ++obj_it)
+                 {
                      TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
                      if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                          planetSet.insert(*obj_it);

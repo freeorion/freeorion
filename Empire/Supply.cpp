@@ -6,6 +6,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
+#include "../universe/Fleet.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
@@ -239,6 +240,81 @@ void SupplyManager::Update() {
         //DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
     }
 
+
+    /////
+    // probably temporary: additional restriction here for supply propagation
+    // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
+    /////
+    const std::vector<TemporaryPtr<Fleet> > fleets = GetUniverse().Objects().FindObjects<Fleet>();
+
+    for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
+        int empire_id = empire_it->first;
+        const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
+        std::set<int> systems_containing_friendly_fleets;
+
+        for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            TemporaryPtr<const Fleet> fleet = *it;
+            int system_id = fleet->SystemID();
+            if (system_id == INVALID_OBJECT_ID) {
+                continue;   // not in a system, so can't affect system obstruction
+            } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
+                continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
+            }
+
+            if (fleet->HasArmedShips() && fleet->Aggressive()) {
+                if (fleet->OwnedBy(empire_id)) {
+                    if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
+                        systems_containing_friendly_fleets.insert(system_id);
+                    }
+                }
+            }
+        }
+
+        std::set<int> systems_where_others_have_supply_sources_and_current_empire_doesnt;
+        // add all systems where others have supply
+        for (std::map<int, std::map<int, float> >::const_iterator it = empire_system_supply_ranges.begin();
+             it != empire_system_supply_ranges.end(); ++it)
+        {
+            if (it->first == empire_id || it->first == ALL_EMPIRES)
+                continue;
+
+            const std::map<int, float>& system_supply_ranges = it->second;
+            for (std::map<int, float>::const_iterator sys_it = system_supply_ranges.begin();
+                 sys_it != system_supply_ranges.end(); ++sys_it)
+            {
+                if (sys_it->second <= 0.0f)
+                    continue;
+                systems_where_others_have_supply_sources_and_current_empire_doesnt.insert(sys_it->first);
+            }
+        }
+        // remove systems were this empire has supply
+        std::map<int, std::map<int, float> >::const_iterator it = empire_system_supply_ranges.find(empire_id);
+        if (it != empire_system_supply_ranges.end()) {
+            const std::map<int, float>& system_supply_ranges = it->second;
+            for (std::map<int, float>::const_iterator sys_it = system_supply_ranges.begin();
+                 sys_it != system_supply_ranges.end(); ++sys_it)
+            {
+                if (sys_it->second <= 0.0f)
+                    continue;
+                systems_where_others_have_supply_sources_and_current_empire_doesnt.erase(sys_it->first);
+            }
+        }
+
+        // for systems where others have supply sources and this empire doesn't
+        // and where this empire has no fleets...
+        // supply is obstructed
+        for (std::set<int>::const_iterator sys_it = systems_where_others_have_supply_sources_and_current_empire_doesnt.begin();
+             sys_it != systems_where_others_have_supply_sources_and_current_empire_doesnt.end(); ++sys_it)
+        {
+            if (systems_containing_friendly_fleets.find(*sys_it) == systems_containing_friendly_fleets.end())
+                empire_supply_unobstructed_systems[empire_id].erase(*sys_it);
+        }
+    }
+    /////
+    // end probably temporary...
+    /////
+
+
     // system connections each empire can see / use for supply propagation
     std::map<int, std::map<int, std::set<int> > > empire_visible_starlanes;
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
@@ -386,6 +462,9 @@ void SupplyManager::Update() {
                 empire_ranges.erase(sys_id);
 
                 //DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
+
+                // Remove from unobstructed systems
+                empire_supply_unobstructed_systems[empire_id].erase(sys_id);
 
                 std::set<std::pair<int, int> >& lane_traversals = m_supply_starlane_traversals[empire_id];
                 std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;

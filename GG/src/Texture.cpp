@@ -29,30 +29,25 @@
 #include <GG/DrawUtil.h>
 #include <GG/utf8/checked.h>
 
-#if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
-# include <IL/il.h>
-# include <IL/ilu.h>
-#else
-# include <boost/filesystem/operations.hpp>
-# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-# endif
-# include "GIL/extension/dynamic_image/any_image.hpp"
-# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-#  pragma GCC diagnostic pop
-# endif
-# if GG_HAVE_LIBJPEG
-#  include "GIL/extension/io/jpeg_dynamic_io.hpp"
-# endif
-# if GG_HAVE_LIBPNG
-#  include "GIL/extension/io/png_dynamic_io.hpp"
-# endif
-# if GG_HAVE_LIBTIFF
-#  include "GIL/extension/io/tiff_dynamic_io.hpp"
-# endif
-# include <boost/algorithm/string/case_conv.hpp>
+#include <boost/filesystem/operations.hpp>
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
+#include "GIL/extension/dynamic_image/any_image.hpp"
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
+# pragma GCC diagnostic pop
+#endif
+#if GG_HAVE_LIBJPEG
+# include "GIL/extension/io/jpeg_dynamic_io.hpp"
+#endif
+#if GG_HAVE_LIBPNG
+# include "GIL/extension/io/png_dynamic_io.hpp"
+#endif
+#if GG_HAVE_LIBTIFF
+# include "GIL/extension/io/tiff_dynamic_io.hpp"
+#endif
+#include <boost/algorithm/string/case_conv.hpp>
 
 #include <iostream>
 #include <iomanip>
@@ -70,57 +65,6 @@ namespace {
             value *= 2;
         return value;
     }
-
-#if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
-    const bool VERBOSE_DEVIL_ERROR_REPORTING = true;
-
-    void CheckILErrors(const std::string& function_call)
-    {
-        ILuint error;
-        while ((error = ilGetError()) != IL_NO_ERROR) {
-            if (VERBOSE_DEVIL_ERROR_REPORTING) {
-                std::cerr << "IL call \"" << function_call << "\" failed with IL error \"" << iluErrorString(error)
-                          << "\" (code " << error << ")\n";
-            }
-        }
-    }
-
-    std::string ILenumToString(ILenum il_enum)
-    {
-#define ENUM_CASE(x) if (il_enum == x) return #x
-        ENUM_CASE(IL_COLOR_INDEX);
-        ENUM_CASE(IL_RGB);
-        ENUM_CASE(IL_RGBA);
-        ENUM_CASE(IL_BGR);
-        ENUM_CASE(IL_BGRA);
-        ENUM_CASE(IL_LUMINANCE);
-        ENUM_CASE(IL_LUMINANCE_ALPHA);
-        ENUM_CASE(IL_BYTE);
-        ENUM_CASE(IL_UNSIGNED_BYTE);
-        ENUM_CASE(IL_SHORT);
-        ENUM_CASE(IL_UNSIGNED_SHORT);
-        ENUM_CASE(IL_INT);
-        ENUM_CASE(IL_UNSIGNED_INT);
-        ENUM_CASE(IL_FLOAT);
-        ENUM_CASE(IL_DOUBLE);
-#undef ENUM_CASE
-        return "UNKNOWN";
-    }
-
-    bool g_il_initialized = false;
-    void InitDevIL()
-    {
-        if (!g_il_initialized) {
-            // ensure we're starting with an empty error stack
-            while (ilGetError() != IL_NO_ERROR) ;
-            ilInit();
-            CheckILErrors("ilInit()");
-            iluInit();
-            CheckILErrors("iluInit()");
-            g_il_initialized = true;
-        }
-    }
-#endif
 }
 
 ///////////////////////////////////////
@@ -279,55 +223,6 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     std::string filename = path.generic_string();
 #endif
 
-
-#if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
-
-    InitDevIL();
-
-    ILuint id, error;
-    ilGenImages(1, &id);
-    CheckILErrors("ilGenImages(1, &id)");
-    ilBindImage(id);
-    CheckILErrors("ilBindImage(id)");
-    ilLoadImage(const_cast<char*>(filename.c_str()));
-    if ((error = ilGetError()) != IL_NO_ERROR) {
-        std::string call = "ilLoadImage(\"" + filename + "\")";
-        if (VERBOSE_DEVIL_ERROR_REPORTING) {
-            std::cerr << "IL call \"" << call << "\" failed with IL error \"" << iluErrorString(error)
-                      << "\" (code " << error << ")\n";
-        }
-        CheckILErrors(call);
-        throw BadFile("Could not load temporary DevIL image from file \"" + filename + "\"");
-    }
-
-    m_path = path;
-    m_default_width = X(ilGetInteger(IL_IMAGE_WIDTH));
-    CheckILErrors("ilGetInteger(IL_IMAGE_WIDTH)");
-    m_default_height = Y(ilGetInteger(IL_IMAGE_HEIGHT));
-    CheckILErrors("ilGetInteger(IL_IMAGE_HEIGHT)");
-    m_bytes_pp = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
-    CheckILErrors("ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL)");
-    m_format = ilGetInteger(IL_IMAGE_FORMAT);
-    CheckILErrors("ilGetInteger(IL_IMAGE_FORMAT)");
-    if (m_format == IL_COLOR_INDEX) {
-        m_format = IL_RGBA;
-        m_type = IL_UNSIGNED_BYTE;
-        m_bytes_pp = 4;
-        ilConvertImage(m_format, m_type);
-        CheckILErrors("ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)");
-    } else {
-        m_type = ilGetInteger(IL_IMAGE_TYPE);
-        CheckILErrors("ilGetInteger(IL_IMAGE_TYPE)");
-    }
-    ILubyte* image_data = ilGetData();
-    CheckILErrors("ilGetData()");
-    Init(m_default_width, m_default_height, image_data, m_format, m_type, m_bytes_pp, mipmap);
-
-    ilDeleteImages(1, &id);
-    CheckILErrors("ilDeleteImages(1, &id)");
-
-#else
-
     BOOST_STATIC_ASSERT((sizeof(gil::gray8_pixel_t) == 1));
     BOOST_STATIC_ASSERT((sizeof(gil::gray_alpha8_pixel_t) == 2));
     BOOST_STATIC_ASSERT((sizeof(gil::rgb8_pixel_t) == 3));
@@ -425,8 +320,6 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
 
     assert(image_data);
     Init(m_default_width, m_default_height, image_data, m_format, m_type, m_bytes_pp, mipmap);
-
-#endif
 }
 
 void Texture::Init(X x, Y y, X width, Y height, X image_width, const unsigned char* image,

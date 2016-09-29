@@ -1,29 +1,15 @@
-cmake_minimum_required(VERSION 2.8.5)
-
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS iostreams python log REQUIRED)
-find_package(PythonLibs ${PYTHON_VERSION} REQUIRED)
-
 include_directories(
-    ${Boost_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_PATH}
 )
 
 add_definitions(-DFREEORION_BUILD_SERVER)
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-endif ()
-
 set(freeoriond_LINK_LIBS
     freeorioncommon
     freeorionparse
     ${PYTHON_LIBRARIES}
-    ${Boost_LIBRARIES}
+    ${Boost_PYTHON_LIBRARY}
 )
-
-if (WIN32)
-    link_directories(${BOOST_LIBRARYDIR})
-endif ()
 
 set (freeoriond_HEADER
     ../network/ServerNetworking.h
@@ -52,6 +38,11 @@ set (freeoriond_SOURCE
 add_executable(freeoriond
     ${freeoriond_HEADER}
     ${freeoriond_SOURCE}
+)
+
+target_compile_options(
+    freeoriond PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
 )
 
 target_link_libraries(freeoriond

@@ -9,7 +9,7 @@
 class PythonAI : public PythonBase, public AIBase {
 public:
     bool Initialize();
-    bool InitModules() override; // Initializes AI Python modules
+    bool InitModules(); // Initializes AI Python modules
 
     virtual void                GenerateOrders();
     virtual void                HandleChatMessage(int sender_id, const std::string& msg);

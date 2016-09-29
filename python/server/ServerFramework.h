@@ -9,7 +9,7 @@
 
 class PythonServer : public PythonBase {
 public:
-    bool InitModules() override; // Initializes server Python modules
+    bool InitModules(); // Initializes server Python modules
     bool CreateUniverse(std::map<int, PlayerSetupData>& player_setup_data); // Wraps call to the main Python universe generator function
     bool ExecuteTurnEvents();    // Wraps call to the main Python turn events function
 

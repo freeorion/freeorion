@@ -35,6 +35,7 @@ Special
                 SetPlanetType type = Target.NextBetterPlanetType
                 GenerateSitRepMessage
                     message = "EFFECT_GAIAN_TERRAFORM"
+                    label = "EFFECT_GAIAN_TERRAFORM_LABEL"
                     icon = "icons/building/terraform.png"
                     parameters = [
                         tag = "planet" data = Source.ID

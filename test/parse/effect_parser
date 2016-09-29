@@ -4,9 +4,6 @@ SetTargetPopulation  1.0
 SetTargetHealth  Value = 1.0
 SetTargetHealth  1.0
 SetTargetHealth  1.0
-SetTargetFarming  Value = 1.0
-SetTargetFarming  1.0
-SetTargetFarming  1.0
 SetTargetIndustry  Value = 1.0
 SetTargetIndustry  1.0
 SetTargetIndustry  1.0
@@ -16,9 +13,6 @@ SetTargetResearch  1.0
 SetTargetTrade  Value = 1.0
 SetTargetTrade  1.0
 SetTargetTrade  1.0
-SetTargetMining  Value = 1.0
-SetTargetMining  1.0
-SetTargetMining  1.0
 SetTargetConstruction  Value = 1.0
 SetTargetConstruction  1.0
 SetTargetConstruction  1.0
@@ -43,9 +37,6 @@ SetPopulation  1.0
 SetHealth  Value = 1.0
 SetHealth  1.0
 SetHealth  1.0
-SetFarming  Value = 1.0
-SetFarming  1.0
-SetFarming  1.0
 SetIndustry  Value = 1.0
 SetIndustry  1.0
 SetIndustry  1.0

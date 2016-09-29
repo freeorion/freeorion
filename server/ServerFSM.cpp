@@ -123,7 +123,8 @@ namespace {
         if (empire_names.empty())
             UserStringList("EMPIRE_NAMES", empire_names);
         std::set<std::string> validNames(empire_names.begin(), empire_names.end());
-        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); player_setup_it++) {
+        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); ++player_setup_it)
+        {
             std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);
             if (name_it != validNames.end())
                 validNames.erase(name_it);
@@ -218,17 +219,19 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         if (m_server.m_networking.PlayerIsHost(player_connection->PlayerID()))
             m_server.SelectNewHost();
 
-    } else if ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+    } else if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
                player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
-               // eliminated players can leave safely
-               && !GetEmpire(m_server.PlayerEmpireID(id))->Eliminated())
     {
-        // player abnormally disconnected during a regular game
-        DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)
-                               << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
-        std::string message = player_connection->PlayerName();
-        for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
-            if ((*it)->PlayerID() != id) {
+        const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
+        // eliminated and non-empire players can leave safely
+        if (empire && !empire->Eliminated()) {
+            // player abnormally disconnected during a regular game
+            DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << id
+                          << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
+            std::string message = player_connection->PlayerName();
+            for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
+                if ((*it)->PlayerID() == id)
+                    continue;
                 // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
                 (*it)->SendMessage(EndGameMessage((*it)->PlayerID(), Message::PLAYER_DISCONNECT, player_connection->PlayerName()));
             }
@@ -1383,7 +1386,6 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        bool host = server.m_networking.PlayerIsHost(player_id);
         player->SendMessage(ServerSaveGameDataRequestMessage(player_id, false));
         m_needed_reponses.insert(player_id);
     }

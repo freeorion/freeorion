@@ -252,10 +252,6 @@ namespace {
                                                          dist_along_lane);
     }
 
-    /* Updated each frame to shift rendered posistion of dots that are drawn to
-     * show fleet move lines. */
-    double move_line_animation_shift = 0.0;   // in pixels
-
     GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->Left() : GG::X0; }
     GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->Right() : GG::X0; }
     GG::Y WndTop(const GG::Wnd* wnd) { return wnd ? wnd->Top() : GG::Y0; }
@@ -372,7 +368,8 @@ public:
             if (TemporaryPtr<const Fleet> fleet = GetFleet(*it)) {
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
-                for (std::set< int >::iterator ship_it = fleet->ShipIDs().begin(); ship_it != fleet->ShipIDs().end(); ship_it++){
+                for (std::set< int >::iterator ship_it = fleet->ShipIDs().begin(); ship_it != fleet->ShipIDs().end(); ++ship_it)
+                {
                     if ( TemporaryPtr< Ship > ship = GetShip(*ship_it)) {
                         const float ship_range = ship->CurrentMeterValue(METER_DETECTION);
                         if (ship_range > 20)
@@ -386,7 +383,8 @@ public:
         }
         // get detection ranges for planets in the selected system (if any)
         if (const TemporaryPtr<const System> system = GetSystem(sel_system_id)) {
-            for (std::set< int >::iterator pid_it = system->PlanetIDs().begin(); pid_it != system->PlanetIDs().end(); pid_it++) {
+            for (std::set< int >::iterator pid_it = system->PlanetIDs().begin(); pid_it != system->PlanetIDs().end(); ++pid_it)
+            {
                 if (const TemporaryPtr< Planet > planet = GetPlanet(*pid_it)) {
                     const float planet_range = planet->CurrentMeterValue(METER_DETECTION);
                     if (planet_range > 20)
@@ -1411,6 +1409,8 @@ void MapWnd::Render() {
     if (m_research_wnd->Visible())
         return;
 
+    DeferredRefreshFleetButtons();
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -1561,23 +1561,20 @@ void MapWnd::RenderFields() {
     }
 
     // if any, render scanlines over not-visible fields
-    if (!m_field_scanline_circles.empty() &&
-        m_scanline_shader &&
-        HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES &&
-        GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (!m_field_scanline_circles.empty()
+        && HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES
+        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         m_field_scanline_circles.activate();
         glBindTexture(GL_TEXTURE_2D, 0);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        m_scanline_shader->Use();
-        float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-        m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+        m_scanline_shader.StartUsing();
 
         glDrawArrays(GL_TRIANGLES, 0, m_field_scanline_circles.size());
 
-        m_scanline_shader->stopUse();
+        m_scanline_shader.StopUsing();
         /*glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
@@ -1641,7 +1638,7 @@ void MapWnd::RenderSystemOverlays() {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glLoadIdentity();
-    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+    for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
          it != m_system_icons.end(); ++it)
     { it->second->RenderOverlay(ZoomFactor()); }
     glPopMatrix();
@@ -1695,13 +1692,10 @@ void MapWnd::RenderSystems() {
     // circles around system icons and fog over unexplored systems
     bool circles = GetOptionsDB().Get<bool>("UI.system-circles");
     bool fog_scanlines = false;
-    float fog_scanline_spacing = 4.0f;
     Universe& universe = GetUniverse();
 
-    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         fog_scanlines = true;
-        fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
-    }
 
     RenderScaleCircle();
 
@@ -1713,7 +1707,7 @@ void MapWnd::RenderSystems() {
         glLineWidth(1.5f);
         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
+        for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
              it != m_system_icons.end(); ++it)
         {
             const SystemIcon* icon = it->second;
@@ -1731,13 +1725,10 @@ void MapWnd::RenderSystems() {
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            if (fog_scanlines && m_scanline_shader) {
-                if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY) {
-                    m_scanline_shader->Use();
-                    m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-                    CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
-                    m_scanline_shader->stopUse();
-                }
+            if (fog_scanlines
+                && (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY))
+            {
+                m_scanline_shader.RenderCircle(circle_ul, circle_lr);
             }
 
             // render circles around systems that have at least one starlane, if circles are enabled.
@@ -1835,6 +1826,8 @@ void MapWnd::RenderFleetMovementLines() {
     int dot_spacing = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
     float rate = static_cast<float>(GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate"));
     int ticks = GG::GUI::GetGUI()->Ticks();
+    /* Updated each frame to shift rendered posistion of dots that are drawn to
+     * show fleet move lines. */
     float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots
@@ -1943,7 +1936,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, float
 
         // get next two vertices
         const MovementLineData::Vertex& vert1 = *verts_it;
-        verts_it++;
+        ++verts_it;
         const MovementLineData::Vertex& vert2 = *verts_it;
 
         // find centres of dots on screen
@@ -2319,16 +2312,19 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     DebugLogger() << "Initializing turn " << turn_number;
-    ScopedTimer init_timer("MapWnd::InitTurn", true);
+    SectionedScopedTimer timer("MapWnd::InitTurn", boost::chrono::milliseconds(1));
+    timer.EnterSection("init");
 
     //DebugLogger() << GetSupplyManager().Dump();
 
     Universe& universe = GetUniverse();
     const ObjectMap& objects = Objects();
 
+    timer.EnterSection("system graph");
     // FIXME: this is actually only needed when there was no mid-turn update
     universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
+    timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
@@ -2343,17 +2339,19 @@ void MapWnd::InitTurn() {
 
     GetUniverse().ApplyAppearanceEffects();
 
+    timer.EnterSection("rendering");
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
+    timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
     std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
     for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         TemporaryPtr<const System> system = *it;
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsInsertedSignal,
-                                                                     &MapWnd::FleetsAddedOrRemoved, this));
+                                                                     &MapWnd::FleetsInsertedSignalHandler, this));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsRemovedSignal,
-                                                                     &MapWnd::FleetsAddedOrRemoved, this));
+                                                                     &MapWnd::FleetsRemovedSignalHandler, this));
     }
 
     RefreshFleetSignals();
@@ -2365,6 +2363,7 @@ void MapWnd::InitTurn() {
     MoveChildUp(m_btn_turn);
 
 
+    timer.EnterSection("sitreps");
     // are there any sitreps to show?
     bool show_intro_sitreps = CurrentTurn() == 1 && GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression") <= TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
@@ -2418,25 +2417,21 @@ void MapWnd::InitTurn() {
     RefreshSliders();
 
 
-    boost::timer timer;
+    timer.EnterSection("update resource pools");
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePools();
-    DebugLogger() << "MapWnd::InitTurn updating resource pools time: " << (timer.elapsed() * 1000.0);
 
 
-    timer.restart();
+    timer.EnterSection("refresh research");
     m_research_wnd->Refresh();
-    DebugLogger() << "MapWnd::InitTurn research wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
-    timer.restart();
+    timer.EnterSection("refresh sidepanel");
     SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
-    DebugLogger() << "MapWnd::InitTurn sidepanel refresh time: " << (timer.elapsed() * 1000.0);
 
 
-    timer.restart();
+    timer.EnterSection("refresh production wnd");
     m_production_wnd->Refresh();
-    DebugLogger() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
     if (turn_number == 1 && this_client_empire) {
@@ -2452,20 +2447,19 @@ void MapWnd::InitTurn() {
         CenterOnMapCoord(0.0, 0.0);
     }
 
-    timer.restart();
+    timer.EnterSection("refresh indicators");
     RefreshIndustryResourceIndicator();
     RefreshResearchResourceIndicator();
     RefreshTradeResourceIndicator();
     RefreshFleetResourceIndicator();
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
-    DebugLogger() << "MapWnd::InitTurn indicators refresh time: " << (timer.elapsed() * 1000.0);
 
-    timer.restart();
+    timer.EnterSection("dispatch exploring");
     FleetUIManager::GetFleetUIManager().RefreshAll();
     DispatchFleetsExploring();
-    DebugLogger() << "MapWnd::InitTurn fleet UI refresh and exploring dispatch time: " << (timer.elapsed() * 1000.0);
 
+    timer.EnterSection("enable observers");
     HumanClientApp* app = HumanClientApp::GetApp();
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
         // this client is a moderator
@@ -2508,16 +2502,6 @@ void MapWnd::InitTurnRendering() {
     DebugLogger() << "MapWnd::InitTurnRendering";
     ScopedTimer timer("MapWnd::InitTurnRendering", true);
 
-    if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-        boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
-        std::string shader_text;
-        ReadFile(shader_path, shader_text);
-        if (!shader_text.empty()) {
-            m_scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
-        }
-    }
-
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
                   static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
@@ -2535,7 +2519,7 @@ void MapWnd::InitTurnRendering() {
     const ObjectMap& objects = Objects();
 
     // remove old system icons
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
     m_system_icons.clear();
 
@@ -2645,7 +2629,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     }
 
 
-    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
         TemporaryPtr<const System> system = GetSystem(system_id);
@@ -2781,16 +2765,94 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_circle_vertices.clear();
 }
 
-namespace {
+namespace GetPathsThroughSupplyLanes {
     // SupplyLaneMap map keyed by system containing all systems
     // corresponding to valid supply lane destinations
     typedef boost::unordered_multimap<int,int> SupplyLaneMMap;
 
-    // AncestorInfo stores the \p ids of systems one back on the path.
-    struct AncestorInfo {
-        AncestorInfo(int a, int o) : ids(1, a), single_origin(o) {}
-        std::vector<int> ids;  // previous systems
-        // originating terminal or nothing for connected resources
+
+    /**
+       GetPathsThroughSupplyLanes starts with:
+
+       \p terminal_points are system ids of systems that contain either
+       a resource source or a resource sink.
+
+       \p supply_lanes are pairs of system ids at the end of supply
+       lanes.
+
+       GetPathsThroughSupplyLanes returns a \p good_path.
+
+       The \p good_path is all system ids of systems connecting any \p
+       terminal_point to any other reachable \p terminal_point along the
+       \p supply_lanes. The \p good_path is all systems on a path that
+       could transport a resource from a source to a sink along a
+       starlane that is part of the starlanes through which supply can
+       flow (See Empire/Supply.h for details.). The \p good_path
+       includes the terminal point system ids that are part of the
+       path.  The \p good_path will exclude terminal_points not
+       connected to a supply lane, islands of supply lane not connected
+       to at least two terminal points, and dead-end lengths of supply
+       lane that don't connect between two terminal points.
+
+
+       Algorithm Descrition:
+
+       The algorithm starts with terminal points and supply lanes.  It
+       finds all paths from any terminal point to any other terminal
+       point connected only by supply lanes.
+
+       The algorithm finds and returns all system ids on the \p
+       good_path in two steps:
+       1) find mid points on paths along supply lanes between terminal points,
+       2) return the system ids collected by tracing the paths from
+          mid points to terminal points of the found paths.
+
+
+       In the first part, it starts a breadth first search from every
+       terminal point at once.  It tracks which terminal point each path
+       started from.
+
+       When two paths from different terminal points meet it records
+       both points that met as mid points on a good path between
+       terminal points.
+
+       When two paths meet from the same terminal points it merges them
+       into one path.
+
+
+       In the second part, it starts from the mid points and works its
+       way back to the terminal points, recording every system along the
+       path as part of the good path.  It stops when it reaches a system
+       already in the good path.
+
+
+       The algorithm is fast because neither the first nor the second
+       part visits any system more than once.
+
+       The first part uses visited to track already visited systems.
+
+       The second part stops back tracking along paths when it reaches
+       systems already on the good path.
+
+     */
+    void GetPathsThroughSupplyLanes(
+        boost::unordered_set<int>& good_path,
+        const boost::unordered_set<int>& terminal_points,
+        const SupplyLaneMMap& supply_lanes);
+
+    
+    // PathInfo stores the \p ids of systems one hop back on a path
+    // toward an \p o originating terminal system.
+    struct PathInfo {
+        PathInfo(int a, int o) : one_hop_back(1, a), single_origin(o) {}
+        PathInfo(int o) : one_hop_back(), single_origin(o) {}
+        // system(s) one hop back on the path.
+        // The terminal point has no preceding system.
+        // Merged paths are indicated with multiple preceding systems.
+        std::vector<int> one_hop_back;
+        // The originating terminal point.
+        // If single origin is boost::none then two paths with at least
+        // two different terminal points merged.
         boost::optional<int> single_origin;
     };
 
@@ -2799,13 +2861,6 @@ namespace {
         int prev, curr, origin;
     };
 
-    /**
-       Returns either:
-       a) a \p good_path between from any \p terminal_points to all
-       reachable \p terminal_points along the \p supply_lanes.
-       b) empty indicating no more work to do.
-
-     */
     void GetPathsThroughSupplyLanes(
         boost::unordered_set<int> & good_path,
         const boost::unordered_set<int> & terminal_points,
@@ -2817,64 +2872,86 @@ namespace {
         if (terminal_points.empty())
             return;
 
-        boost::unordered_map<int, AncestorInfo> ancestors;
-        std::deque<PrevCurrInfo> try_next;
-        std::vector<int> path;
+        // Part One:  Find all reachable mid points between two different
+        // terminal points.
 
-        // A list of all reachable midpoints between at least two different terminal points
+        // try_next holds systems reached in the breadth first search
+        // that have not had the supply lanes leaving them explored.
+        std::deque<PrevCurrInfo> try_next;
+
+        // visited holds systems already reached by the breadth first search.
+        boost::unordered_map<int, PathInfo> visited;
+
+        // reachable_midpoints holds all systems reachable from at least
+        // two different terminal points.
         std::vector<int> reachable_midpoints;
 
-        // Start from all terminal points.
+        // Initialize with all the terminal points, by adding all
+        // terminal points to the queue, and to visited.
         for (boost::unordered_set<int>::const_iterator start_it = terminal_points.begin();
              start_it != terminal_points.end(); ++start_it)
         {
             try_next.push_back(PrevCurrInfo(*start_it, *start_it, *start_it));
-            ancestors.insert(std::make_pair(*start_it, AncestorInfo(*start_it, *start_it)));
+            visited.insert(std::make_pair(*start_it, PathInfo(*start_it)));
         }
 
         // Find all reachable midpoints where paths from two different
         // terminal points meet.
         while (!try_next.empty() ) {
-            const PrevCurrInfo & curr = try_next.front();
+            // Try the next system from the queue.
+            const PrevCurrInfo& curr = try_next.front();
 
+            // Check each supply lane that exits this sytem.
             std::pair<SupplyLaneMMap::const_iterator, SupplyLaneMMap::const_iterator>
                 supplylane_endpoints = supply_lanes.equal_range(curr.curr);
             for (SupplyLaneMMap::const_iterator sup_it = supplylane_endpoints.first;
                  sup_it != supplylane_endpoints.second; ++sup_it)
             {
                 int next = sup_it->second;
+
+                // Skip the system if it back tracks.
                 if (next == curr.prev)
                     continue;
-                boost::unordered_map<int, AncestorInfo>::iterator ancestor = ancestors.find(next);
 
-                // Unvisited system, so create new ancestor.
-                if (ancestor == ancestors.end()) {
-                    ancestors.insert(std::make_pair(next, AncestorInfo(curr.curr, curr.origin)));
+                boost::unordered_map<int, PathInfo>::iterator previous = visited.find(next);
+
+                // next has no previous so it is an unvisited
+                // system. Create a new previous from curr->next with
+                // the same originating terminal point as the current
+                // system.
+                if (previous == visited.end()) {
+                    visited.insert(std::make_pair(next, PathInfo(curr.curr, curr.origin)));
                     try_next.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
 
-                // Previously visited so modify older ancestor to merge
-                // paths/create end points.
+                // next has an ancester so it was visited. Modify the
+                // older previous to merge paths/create mid points.
                 } else {
 
-                    // Same origin so add to ancestors.
-                    if (ancestor->second.single_origin
-                        && ancestor->second.single_origin == curr.origin)
+                    // curr and the previous have the same origin so add
+                    // curr to the systems one hop back along the path
+                    // to previous.
+                    if (previous->second.single_origin
+                        && previous->second.single_origin == curr.origin)
                     {
-                        ancestor->second.ids.push_back(curr.curr);
+                        previous->second.one_hop_back.push_back(curr.curr);
 
-                    // Different origins so mark both as ends of good paths
-                    } else if (ancestor->second.single_origin
-                        && ancestor->second.single_origin != curr.origin)
+                    // curr and the previous have different origins so
+                    // mark both as reachable midpoints along a good path.
+                    } else if (previous->second.single_origin
+                        && previous->second.single_origin != curr.origin)
                     {
-                        // Single origin becomes multi origin and these
-                        // points are marked as midpoints.
-                        ancestor->second.single_origin = boost::none;
+                        // Single origin becomes multi-origin and these
+                        // points are both marked as midpoints.
+                        previous->second.single_origin = boost::none;
                         reachable_midpoints.push_back(curr.curr);
                         reachable_midpoints.push_back(next);
 
-                    // Already multi-origin so add to ancestors
+                    // previous is multi-origin so it is already a mid
+                    // point on a good path to multiple terminal
+                    // points.  Add curr to the systems one hop back
+                    // along the path to previous.
                     } else
-                        ancestor->second.ids.push_back(curr.curr);
+                        previous->second.one_hop_back.push_back(curr.curr);
                 }
             }
             try_next.pop_front();
@@ -2882,32 +2959,52 @@ namespace {
 
         // Queue is exhausted.
 
+        // Part Two: Starting from the mid points find all systems on
+        // good paths between terminal points.
+
         // No terminal point has a path to any other terminal point.
         if (reachable_midpoints.empty())
             return;
 
         // Return all systems on any path back to a terminal point.
-        boost::unordered_set<int> ancestors_on_path;
+        // Start from every mid point and back track along all paths
+        // from that mid point adding each system to the good path.
+        // Stop back tracking when you hit a system already on the good
+        // path.
+
+        // All visited systems on the path(s) from this midpoint not yet processed.
+        boost::unordered_set<int> unprocessed;
+
         for (std::vector<int>::const_iterator reached_it = reachable_midpoints.begin();
              reached_it != reachable_midpoints.end(); ++reached_it)
         {
-            boost::unordered_map<int, AncestorInfo>::const_iterator ancestor_ii_sys;
+            boost::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
             int ii_sys;
-            ancestors_on_path.insert(*reached_it);
-            while (!ancestors_on_path.empty()) {
-                ii_sys = *ancestors_on_path.begin();
-                ancestors_on_path.erase(ancestors_on_path.begin());
-                if ((ancestor_ii_sys = ancestors.find(ii_sys)) != ancestors.end()
-                    && (good_path.count(ancestor_ii_sys->first) == 0 ))
+
+            // Add the mid point to unprocessed, and while there
+            // are more unprocessed keep checking if the next system is
+            // in the good_path.
+            unprocessed.insert(*reached_it);
+            while (!unprocessed.empty()) {
+                ii_sys = *unprocessed.begin();
+                unprocessed.erase(unprocessed.begin());
+
+                // If ii_sys is not in the good_path, then add it to the
+                // good_path and add all of its visited to the unprocessed.
+                if ((previous_ii_sys = visited.find(ii_sys)) != visited.end()
+                    && (good_path.count(ii_sys) == 0))
                 {
-                    good_path.insert(ancestor_ii_sys->first);
-                    ancestors_on_path.insert(ancestor_ii_sys->second.ids.begin(), ancestor_ii_sys->second.ids.end());
+                    good_path.insert(ii_sys);
+                    unprocessed.insert(previous_ii_sys->second.one_hop_back.begin(),
+                                       previous_ii_sys->second.one_hop_back.end());
                 }
             }
         }
         return;
     }
+}
 
+namespace {
 
     /** Look a \p kkey in \p mmap and if not found allocate a new
         shared_ptr with the default constructor.*/
@@ -2947,9 +3044,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_group_cores;
 
-    std::set<int>                           res_group_core_members;
+    boost::unordered_set<int>                           res_group_core_members;
     boost::unordered_map<int, boost::shared_ptr<std::set<int> > >   member_to_core;
-    boost::shared_ptr<std::set<int> >       under_alloc_res_grp_core_members;
+    boost::shared_ptr<boost::unordered_set<int> >       under_alloc_res_grp_core_members;
 
     if (this_client_empire) {
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
@@ -2987,8 +3084,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
 
 
-        // Convert supply starlanes to non-directional.
-        SupplyLaneMMap resource_supply_lanes_undirected;
+        // Convert supply starlanes to non-directional.  This saves half
+        // of the lookups.
+        GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
         const std::set<std::pair<int, int> >
             resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
 
@@ -3003,36 +3101,40 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // the supply network.
 
         for (boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator res_pool_sys_it = res_pool_systems.begin();
-             res_pool_sys_it != res_pool_systems.end(); res_pool_sys_it++)
+             res_pool_sys_it != res_pool_systems.end(); ++res_pool_sys_it)
         {
             boost::shared_ptr<std::set<int> >& group_core = lookup_or_make_shared(res_group_cores, res_pool_sys_it->first);
 
             // All individual resource system are included in the
             // network on their own.
             for (std::set<int>::iterator sys_it=res_pool_sys_it->second->begin();
-                 sys_it != res_pool_sys_it->second->end(); sys_it++)
+                 sys_it != res_pool_sys_it->second->end(); ++sys_it)
             {
                 group_core->insert(*sys_it);
                 res_group_core_members.insert(*sys_it);
             }
 
-            boost::unordered_set<int> paths;
+            // Convert res_pool_sys_it->second from set<int> to
+            // unordered_set<int> to improve lookup speed.
             boost::unordered_set<int> terminal_points;
             for (std::set<int>::iterator source_it=res_pool_sys_it->second->begin();
-                 source_it != res_pool_sys_it->second->end(); source_it++)
+                 source_it != res_pool_sys_it->second->end(); ++source_it)
             {
                 terminal_points.insert(*source_it);
             }
 
-            GetPathsThroughSupplyLanes(paths, terminal_points, resource_supply_lanes_undirected);
+            boost::unordered_set<int> paths;
+            GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
+                paths, terminal_points, resource_supply_lanes_undirected);
 
-            // All systems on the paths become valid end points
-            if (!paths.empty()) {
-                for (boost::unordered_set<int>::iterator path_it = paths.begin(); path_it!= paths.end(); path_it++) {
-                    group_core->insert(*path_it);
-                    res_group_core_members.insert(*path_it);
-                    member_to_core[*path_it] = group_core;
-                }
+            // All systems on the paths are valid end points so they are
+            // added to the core group of systems that will be rendered
+            // with thick lines.
+            for (boost::unordered_set<int>::iterator path_it = paths.begin(); path_it!= paths.end(); ++path_it)
+            {
+                group_core->insert(*path_it);
+                res_group_core_members.insert(*path_it);
+                member_to_core[*path_it] = group_core;
             }
         }
 
@@ -3045,8 +3147,11 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             std::map<std::set<int>, float>::const_iterator allocated_it = allocated_pp.find(it->first);
             if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
                 boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(it->first);
-                if (group_core_it != res_group_cores.end())
-                    under_alloc_res_grp_core_members = group_core_it->second;
+                if (group_core_it != res_group_cores.end()) {
+                    if (!under_alloc_res_grp_core_members)
+                        under_alloc_res_grp_core_members = boost::make_shared<boost::unordered_set<int> >();
+                    under_alloc_res_grp_core_members->insert(group_core_it->second->begin(), group_core_it->second->end());
+                }
             }
         }
     }
@@ -3056,7 +3161,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
     m_starlane_endpoints.clear();
 
-    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         int system_id = it->first;
 
         // skip systems that don't actually exist
@@ -3585,13 +3690,13 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
 }
 
 void MapWnd::ShowSystemNames() {
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         it->second->ShowName();
     }
 }
 
 void MapWnd::HideSystemNames() {
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         it->second->HideName();
     }
 }
@@ -3770,7 +3875,7 @@ void MapWnd::SelectSystem(int system_id) {
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(false);
         }
@@ -3783,7 +3888,7 @@ void MapWnd::SelectSystem(int system_id) {
 
         // place map selection indicator on newly selected system
         if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
-            std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
             if (it != m_system_icons.end())
                 it->second->SetSelected(true);
         }
@@ -3894,7 +3999,7 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
             fleet_wnd = manager.NewFleetWnd(system->ID(), fleet->Owner());
         } else {
             // get all (moving) fleets represented by fleet button for this fleet
-            std::map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
+            boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
             if (it == m_fleet_buttons.end()) {
                 ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
                 return;
@@ -3925,13 +4030,6 @@ void MapWnd::RemoveFleet(int fleet_id) {
     m_projected_fleet_lines.erase(fleet_id);
     m_selected_fleet_ids.erase(fleet_id);
     RefreshFleetButtons();
-}
-
-void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button) {
-    assert(fleet_button);
-    // each fleet represented by button could have different move path
-    for (std::vector<int>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it)
-        SetFleetMovementLine(*it);
 }
 
 void MapWnd::SetFleetMovementLine(int fleet_id) {
@@ -4063,7 +4161,7 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
@@ -4100,7 +4198,7 @@ void MapWnd::DoFleetButtonsLayout() {
     const int SYSTEM_ICON_SIZE = SystemIconSize();
 
     // position departing fleet buttons
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
         // calculate system icon position
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
@@ -4112,7 +4210,7 @@ void MapWnd::DoFleetButtonsLayout() {
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
 
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        boost::unordered_map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
             ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
@@ -4121,8 +4219,8 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        std::set<FleetButton*>& buttons = it->second;
-        for (std::set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
+        boost::unordered_set<FleetButton*>& buttons = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, true);
             ++n;
             (*button_it)->MoveTo(ul + icon_ul);
@@ -4130,7 +4228,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position stationary fleet buttons
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
         // calculate system icon position
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
@@ -4142,7 +4240,7 @@ void MapWnd::DoFleetButtonsLayout() {
                        GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
 
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
-        std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        boost::unordered_map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
             ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
@@ -4151,8 +4249,8 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // place all buttons
         int n = 1;
-        std::set<FleetButton*>& buttons = it->second;
-        for (std::set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
+        boost::unordered_set<FleetButton*>& buttons = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
             GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, false);
             ++n;
             (*button_it)->MoveTo(ul + icon_ul);
@@ -4160,27 +4258,31 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position moving fleet buttons
-    for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
-        FleetButton* fb = *it;
+    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
+         pos_it != m_moving_fleet_buttons.end(); ++pos_it)
+    {
+        for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it) {
+            FleetButton* fb = *it;
 
-        const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-        TemporaryPtr<const Fleet> fleet;
+            const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
+            TemporaryPtr<const Fleet> fleet;
 
-        // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
-        if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
-            ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
-            continue;
+            // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
+            if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
+                ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
+                continue;
+            }
+
+            std::pair<double, double> button_pos = MovingFleetMapPositionOnLane(fleet);
+            if (button_pos == std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION))
+                continue;   // skip positioning flees for which problems occurred...
+
+            // position button
+            GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
+                             button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+
+            fb->MoveTo(button_ul);
         }
-
-        std::pair<double, double> button_pos = MovingFleetMapPositionOnLane(fleet);
-        if (button_pos == std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION))
-            continue;   // skip positioning flees for which problems occurred...
-
-        // position button
-        GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
-                         button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
-
-        fb->MoveTo(button_ul);
     }
 }
 
@@ -4207,292 +4309,233 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<cons
     return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
 }
 
-void MapWnd::RefreshFleetButtons() {
+namespace {
+
+    typedef boost::unordered_map<std::pair<int, int>, std::vector<int> > SystemXEmpireToFleetsMap;
+    typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int> > LocationXEmpireToFleetsMap;
+
+    /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
+    TemporaryPtr<const Fleet> IsQualifiedFleet(const TemporaryPtr<const UniverseObject>& obj,
+                                               int empire_id,
+                                               const std::set<int>& known_destroyed_objects,
+                                               const std::set<int>& stale_object_info) {
+        int object_id = obj->ID();
+        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
+
+        if (fleet
+            && !fleet->Empty()
+            && (known_destroyed_objects.count(object_id) == 0)
+            && (stale_object_info.count(object_id) == 0))
+        {
+            return fleet;
+        }
+        return TemporaryPtr<const Fleet>();
+    }
+
+    /** If the \p fleet has orders and is departing from a valid system, return the system*/
+    TemporaryPtr<const System> IsDepartingFromSystem(const TemporaryPtr<const Fleet>& fleet) {
+        if (fleet->FinalDestinationID() != INVALID_OBJECT_ID
+            && !fleet->TravelRoute().empty()
+            && fleet->SystemID() != INVALID_OBJECT_ID)
+        {
+            TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
+            if (system)
+                return system;
+            ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
+                          << " of a departing fleet named " << fleet->Name();
+        }
+        return TemporaryPtr<const System>();
+    }
+
+    /** If the \p fleet is stationary in a valid system, return the system*/
+    TemporaryPtr<const System> IsStationaryInSystem(const TemporaryPtr<const Fleet>& fleet) {
+        if ((fleet->FinalDestinationID() == INVALID_OBJECT_ID
+             || fleet->TravelRoute().empty())
+            && fleet->SystemID() != INVALID_OBJECT_ID)
+        {
+            TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
+            if (system)
+                return system;
+            ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
+                          << " of a stationary fleet named " << fleet->Name();
+        }
+        return TemporaryPtr<const System>();
+    }
+
+    /** If the \p fleet has a valid destination and it not at a system, return true*/
+    bool IsMoving(const TemporaryPtr<const Fleet>& fleet) {
+        return (fleet->FinalDestinationID() != INVALID_OBJECT_ID
+                && fleet->SystemID() == INVALID_OBJECT_ID);
+    }
+}
+
+void MapWnd::RefreshFleetButtons()
+{ m_deferred_refresh_fleet_buttons = true; }
+
+void MapWnd::DeferredRefreshFleetButtons() {
+
+    if (!m_deferred_refresh_fleet_buttons)
+        return;
+    m_deferred_refresh_fleet_buttons = false;
+
     ScopedTimer timer("RefreshFleetButtons()");
+
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
-    const ObjectMap& objects = GetUniverse().Objects();
-
-    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging");
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
-    // for each system, each empire's fleets that are ordered to move,
-    // but still at the system: "departing fleets"
-    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > departing_fleets;
-    std::vector<TemporaryPtr<const UniverseObject> > departing_fleet_objects = objects.FindObjects(OrderedMovingFleetVisitor());
-    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = departing_fleet_objects.begin();
-        it != departing_fleet_objects.end(); ++it)
+    SystemXEmpireToFleetsMap   departing_fleets;
+    SystemXEmpireToFleetsMap   stationary_fleets;
+    LocationXEmpireToFleetsMap moving_fleets;
+
+    for (std::map<int, TemporaryPtr<UniverseObject> >::const_iterator candidate_it = Objects().ExistingFleetsBegin();
+         candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it)
     {
-        TemporaryPtr<const UniverseObject> obj = *it;
-        int object_id = obj->ID();
+        TemporaryPtr<const Fleet> fleet = IsQualifiedFleet(
+            candidate_it->second, client_empire_id,
+            this_client_known_destroyed_objects, this_client_stale_object_info);
 
-        if (verbose_logging)
-            DebugLogger() << "ordered-to-move fleet id: " << object_id;
-
-        // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
-            continue;
-        if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
+        if (!fleet)
             continue;
 
-        if (verbose_logging)
-            DebugLogger() << " ... not stale, not destroyed";
+        // Collect fleets with a travel route just departing.
+        if (TemporaryPtr<const System> departure_system = IsDepartingFromSystem(fleet)) {
+            departing_fleets[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
-        // skip fleets outside systems
-        if (obj->SystemID() == INVALID_OBJECT_ID)
-            continue;
+            // Collect stationary fleets by system.
+        } else if (TemporaryPtr<const System> stationary_system = IsStationaryInSystem(fleet)) {
+            // DebugLogger() << fleet->Name() << " is Stationary." ;
+            stationary_fleets[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
-        TemporaryPtr<const System> system = GetSystem(obj->SystemID());
-        if (!system) {
-            ErrorLogger() << "couldn't get system with id " << obj->SystemID() << " of an departing fleet named " << obj->Name() << " in RefreshFleetButtons()";
-            continue;
+            // Collect traveling fleets between systems by location
+        } else if (IsMoving(fleet)) {
+            // DebugLogger() << fleet->Name() << " is on the move." ;
+            moving_fleets[std::make_pair(std::make_pair(fleet->X(), fleet->Y()), fleet->Owner())].push_back(fleet->ID());
+        } else {
+            ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit.";
         }
-
-        if (verbose_logging)
-            DebugLogger() << " ... at system " << system->Name() << " (" << system->ID() << ")";
-
-        // skip empty fleets
-        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
-        if (fleet->Empty())
-            continue;
-
-        // store in map for this system and the fleet's owner empire
-        departing_fleets[system][obj->Owner()].push_back(fleet);
     }
-    departing_fleet_objects.clear();
 
-
-    // for each system, each empire's fleets in a system, not
-    // ordered to move: "stationary fleets"
-    std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > stationary_fleets;
-    std::vector<TemporaryPtr<const UniverseObject> > stationary_fleet_objects = objects.FindObjects(StationaryFleetVisitor());
-    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = stationary_fleet_objects.begin();
-         it != stationary_fleet_objects.end(); ++it)
-    {
-        TemporaryPtr<const UniverseObject> obj = *it;
-        int object_id = obj->ID();
-
-        if (verbose_logging)
-            DebugLogger() << "stationary fleet id: " << object_id;
-
-        // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
-            continue;
-        if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
-            continue;
-
-        if (verbose_logging)
-            DebugLogger() << " ... not stale, not destroyed";
-
-        // skip fleets outside systems
-        if (obj->SystemID() == INVALID_OBJECT_ID)
-            continue;
-
-        TemporaryPtr<const System> system = GetSystem(obj->SystemID());
-        if (!system) {
-            ErrorLogger() << "couldn't get system of a stationary fleet in RefreshFleetButtons()";
-            continue;
-        }
-
-        if (verbose_logging)
-            DebugLogger() << " ... at system " << system->Name() << " (" << system->ID() << ")";
-
-        // skip empty fleets
-        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
-        if (fleet->Empty())
-            continue;
-
-        // store in map for the system and fleet's owner empire
-        stationary_fleets[system][obj->Owner()].push_back(fleet);
-    }
-    stationary_fleet_objects.clear();
-
-
-    // for each universe location, map from empire id to fleets
-    // moving along starlanes: "moving fleets"
-    std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > > moving_fleets;
-    std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
-    for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = moving_fleet_objects.begin();
-         it != moving_fleet_objects.end(); ++it)
-    {
-        TemporaryPtr<const UniverseObject> obj = *it;
-        int object_id = obj->ID();
-
-        // skip known destroyed and stale info objects
-        if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
-            continue;
-        if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
-            continue;
-
-        if (obj->SystemID() != INVALID_OBJECT_ID) {
-            ErrorLogger() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
-            continue;
-        }
-
-        // skip empty fleets
-        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
-        if (fleet->Empty())
-            continue;
-
-        // store in map
-        moving_fleets[std::make_pair(obj->X(), obj->Y())][obj->Owner()].push_back(fleet);
-    }
-    moving_fleet_objects.clear();
-
-
-
-    // clear old fleet buttons
-    m_fleet_buttons.clear();            // duplicates pointers in following containers
-
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
-            delete *set_it;
-    m_stationary_fleet_buttons.clear();
-
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it)
-        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
-            delete *set_it;
-    m_departing_fleet_buttons.clear();
-
-    for (std::set<FleetButton*>::iterator set_it = m_moving_fleet_buttons.begin(); set_it != m_moving_fleet_buttons.end(); ++set_it)
-        delete *set_it;
-    m_moving_fleet_buttons.clear();
-
-
+    DeleteFleetButtons();
     // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
-
-    // departing fleets
-    for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
-         departing_fleets_it = departing_fleets.begin();
-         departing_fleets_it != departing_fleets.end(); ++departing_fleets_it)
-    {
-        TemporaryPtr<const System> system = departing_fleets_it->first;
-        int system_id = system->ID();
-        const std::map<int, std::vector<TemporaryPtr<const Fleet> > >& empires_map = departing_fleets_it->second;
-
-        // create button for each empire's fleets
-        for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const std::vector<TemporaryPtr<const Fleet> > fleets = empire_it->second;
-            if (fleets.empty())
-                continue;
-
-            // buttons need fleet IDs
-            std::vector<int> fleet_IDs;
-            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                fleet_IDs.push_back((*fleet_it)->ID());
-
-            // create new fleetbutton for this cluster of fleets
-            FleetButton* fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
-
-            // store
-            m_departing_fleet_buttons[system_id].insert(fb);
-
-            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                m_fleet_buttons[(*fleet_it)->ID()] = fb;
-
-            AttachChild(fb);
-            GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
-            GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
-        }
-    }
-
-    // stationary fleets
-    for (std::map<TemporaryPtr<const System>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
-         stationary_fleets_it = stationary_fleets.begin();
-         stationary_fleets_it != stationary_fleets.end(); ++stationary_fleets_it)
-    {
-        TemporaryPtr<const System> system = stationary_fleets_it->first;
-        int system_id = system->ID();
-        const std::map<int, std::vector<TemporaryPtr<const Fleet> > >& empires_map = stationary_fleets_it->second;
-
-        // create button for each empire's fleets
-        for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const std::vector<TemporaryPtr<const Fleet> > fleets = empire_it->second;
-            if (fleets.empty())
-                continue;
-
-            // buttons need fleet IDs
-            std::vector<int> fleet_IDs;
-            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                fleet_IDs.push_back((*fleet_it)->ID());
-
-            // create new fleetbutton for this cluster of fleets
-            FleetButton* fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
-
-            // store
-            m_stationary_fleet_buttons[system_id].insert(fb);
-
-            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                m_fleet_buttons[(*fleet_it)->ID()] = fb;
-
-            AttachChild(fb);
-            GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
-            GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
-        }
-    }
-
-    // moving fleets
-    for (std::map<std::pair<double, double>, std::map<int, std::vector<TemporaryPtr<const Fleet> > > >::iterator
-         moving_fleets_it = moving_fleets.begin();
-         moving_fleets_it != moving_fleets.end(); ++moving_fleets_it)
-    {
-        const std::map<int, std::vector<TemporaryPtr<const Fleet> > >& empires_map = moving_fleets_it->second;
-        //std::cout << "creating moving fleet buttons at location (" << moving_fleets_it->first.first << ", " << moving_fleets_it->first.second << ")" << std::endl;
-
-        // create button for each empire's fleets
-        for (std::map<int, std::vector<TemporaryPtr<const Fleet> > >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const std::vector<TemporaryPtr<const Fleet> >& fleets = empire_it->second;
-            if (fleets.empty())
-                continue;
-
-            //std::cout << " ... creating moving fleet buttons for empire " << empire->Name() << std::endl;
-
-            // buttons need fleet IDs
-            std::vector<int> fleet_IDs;
-            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                fleet_IDs.push_back((*fleet_it)->ID());
-
-            // create new fleetbutton for this cluster of fleets
-            FleetButton* fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
-
-            // store
-            m_moving_fleet_buttons.insert(fb);
-
-            for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                m_fleet_buttons[(*fleet_it)->ID()] = fb;
-
-            AttachChild(fb);
-            GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
-            GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
-        }
-    }
-
+    CreateFleetButtonsOfType(m_departing_fleet_buttons,  departing_fleets, FLEETBUTTON_SIZE);
+    CreateFleetButtonsOfType(m_stationary_fleet_buttons, stationary_fleets, FLEETBUTTON_SIZE);
+    CreateFleetButtonsOfType(m_moving_fleet_buttons,     moving_fleets, FLEETBUTTON_SIZE);
 
     // position fleetbuttons
     DoFleetButtonsLayout();
 
-
     // add selection indicators to fleetbuttons
     RefreshFleetButtonSelectionIndicators();
 
-
     // create movement lines (after positioning buttons, so lines will originate from button location)
-    for (std::map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
-        SetFleetMovementLine(it->second);
+    for (boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
+        SetFleetMovementLine(it->first);
 }
 
-void MapWnd::FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+template <typename K>
+void MapWnd::CreateFleetButtonsOfType (
+    boost::unordered_map<K, boost::unordered_set<FleetButton*> >& type_fleet_buttons,
+    const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
+    const FleetButton::SizeType & fleet_button_size)
+{
+    for (typename boost::unordered_map<std::pair<K, int>, std::vector<int> >::const_iterator fleets_it = fleets_map.begin();
+         fleets_it != fleets_map.end(); ++fleets_it)
+    {
+        const K& key = fleets_it->first.first;
+
+        // buttons need fleet IDs
+        const std::vector<int>& fleet_IDs = fleets_it->second;
+        if (fleet_IDs.empty())
+            continue;
+
+        // create new fleetbutton for this cluster of fleets
+        FleetButton* fb = new FleetButton(fleet_IDs, fleet_button_size);
+
+        // store per type of fleet button.
+        type_fleet_buttons[key].insert(fb);
+
+        // store for every fleet
+        for (std::vector<int>::const_iterator fleet_it = fleet_IDs.begin(); fleet_it != fleet_IDs.end(); ++fleet_it)
+            m_fleet_buttons[(*fleet_it)] = fb;
+
+        AttachChild(fb);
+        GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
+        GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
+    }
+}
+
+void MapWnd::DeleteFleetButtons() {
+    m_fleet_buttons.clear();            // duplicates pointers in following containers
+
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin();
+         it != m_stationary_fleet_buttons.end(); ++it)
+    {
+        for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    }
+    m_stationary_fleet_buttons.clear();
+
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
+         it != m_departing_fleet_buttons.end(); ++it)
+    {
+        for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    }
+    m_departing_fleet_buttons.clear();
+
+    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator
+         it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+    {
+        for (boost::unordered_set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    }
+    m_moving_fleet_buttons.clear();
+}
+
+void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
+        boost::unordered_map<int, boost::signals2::connection>::iterator
+            found_signal = m_fleet_state_change_signals.find(fleet->ID());
+        if (found_signal != m_fleet_state_change_signals.end()) {
+            found_signal->second.disconnect();
+            m_fleet_state_change_signals.erase(found_signal);
+        }
+    }
+}
+
+void MapWnd::AddFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("AddFleetsStateChangedSignal()", true);
+    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        TemporaryPtr<Fleet> fleet = *it;
+        m_fleet_state_change_signals[fleet->ID()] =
+            GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
+    }
+}
+
+void MapWnd::FleetsInsertedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("FleetsInsertedSignalHandler()", true);
     RefreshFleetButtons();
-    RefreshFleetSignals();
+    RemoveFleetsStateChangedSignal(fleets);
+    AddFleetsStateChangedSignal(fleets);
+}
+
+void MapWnd::FleetsRemovedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+    ScopedTimer timer("FleetsRemovedSignalHandler()", true);
+    RefreshFleetButtons();
+    RemoveFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::RefreshFleetSignals() {
+    ScopedTimer timer("RefreshFleetSignals()", true);
     // disconnect old fleet statechangedsignal connections
-    for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin();
+    for (boost::unordered_map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin();
          it != m_fleet_state_change_signals.end(); ++it)
     { it->second.disconnect(); }
     m_fleet_state_change_signals.clear();
@@ -4501,11 +4544,7 @@ void MapWnd::RefreshFleetSignals() {
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
     std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>();
-    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<Fleet> fleet = *it;
-        m_fleet_state_change_signals[fleet->ID()] =
-            GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
-    }
+    AddFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::RefreshSliders() {
@@ -5144,27 +5183,31 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+        boost::unordered_set<FleetButton*>& set = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
             (*button_it)->SetSelected(false);
     }
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
+    for (boost::unordered_map<int, boost::unordered_set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin();
+         it != m_departing_fleet_buttons.end(); ++it)
+    {
+        boost::unordered_set<FleetButton*>& set = it->second;
+        for (boost::unordered_set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
             (*button_it)->SetSelected(false);
     }
 
-    for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
-        (*it)->SetSelected(false);
+    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*> >::iterator pos_it = m_moving_fleet_buttons.begin();
+         pos_it != m_moving_fleet_buttons.end(); ++pos_it)
+    {
+        for (boost::unordered_set<FleetButton*>::iterator it = pos_it->second.begin(); it != pos_it->second.end(); ++it)
+            (*it)->SetSelected(false);
     }
-
 
     // add new selection indicators
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         int fleet_id = *it;
-        std::map<int, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet_id);
+        boost::unordered_map<int, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet_id);
         if (button_it != m_fleet_buttons.end())
             button_it->second->SetSelected(true);
     }
@@ -5264,33 +5307,13 @@ void MapWnd::Sanitize() {
 
     m_starlane_endpoints.clear();
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator set_it = set.begin(); set_it != set.end(); ++set_it)
-            delete *set_it;
-        set.clear();
-    }
-    m_stationary_fleet_buttons.clear();
+    DeleteFleetButtons();
 
-    for (std::map<int, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
-        std::set<FleetButton*>& set = it->second;
-        for (std::set<FleetButton*>::iterator set_it = set.begin(); set_it != set.end(); ++set_it)
-            delete *set_it;
-        set.clear();
-    }
-    m_departing_fleet_buttons.clear();
-
-    for (std::set<FleetButton*>::iterator set_it = m_moving_fleet_buttons.begin(); set_it != m_moving_fleet_buttons.end(); ++set_it)
-        delete *set_it;
-    m_moving_fleet_buttons.clear();
-
-    m_fleet_buttons.clear();    // contains duplicate pointers of those in moving, departing and stationary set / maps, so don't need to delete again
-
-    for (std::map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+    for (boost::unordered_map<int, boost::signals2::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();
     m_fleet_state_change_signals.clear();
 
-    for (std::map<int, std::vector<boost::signals2::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
+    for (boost::unordered_map<int, std::vector<boost::signals2::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
         std::vector<boost::signals2::connection>& vec = it->second;
         for (std::vector<boost::signals2::connection>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
             vec_it->disconnect();
@@ -5302,11 +5325,9 @@ void MapWnd::Sanitize() {
 
     m_projected_fleet_lines.clear();
 
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+    for (boost::unordered_map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         delete it->second;
     m_system_icons.clear();
-
-    m_scanline_shader.reset();
 
     m_fleets_exploring.clear();
 
@@ -5987,7 +6008,8 @@ void MapWnd::RefreshPopulationIndicator() {
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
-    for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
+    for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); ++it)
+    {
         TemporaryPtr<const UniverseObject> obj = objects.Object(*it);
         TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pc)
@@ -6000,9 +6022,9 @@ void MapWnd::RefreshPopulationIndicator() {
         population_counts[species_name] += this_pop;
         if (const Species* species = GetSpecies(species_name) ) {
             const std::set<std::string>& tags = species->Tags();
-            for (std::set<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++) {
-                if (tag_it->compare(0,7, "AI_TAG_") != 0)
-                    tag_counts[*tag_it] += this_pop;
+            for (std::set<std::string>::const_iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
+            {
+                tag_counts[*tag_it] += this_pop;
             }
         }
     }
@@ -6350,11 +6372,13 @@ namespace { //helper function for DispatchFleetsExploring
     std::set<int> AddNeighboorsToSet(const Empire *empire, const std::set<int> set){
         std::set<int> retval;
         std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
-        for(std::set<int>::iterator el = set.begin(); el != set.end(); el ++){ //for all elements of the set
+        for(std::set<int>::iterator el = set.begin(); el != set.end(); ++el)
+        {
             std::map<int, std::set<int> >::iterator new_neighboors_it = starlanes.find(*el);
             if(new_neighboors_it != starlanes.end()){
                 std::set<int> new_neighboors = new_neighboors_it->second;
-                for(std::set<int>::iterator it = new_neighboors.begin(); it != new_neighboors.end(); it ++){ //for all neighboors of this element
+                for(std::set<int>::iterator it = new_neighboors.begin(); it != new_neighboors.end(); ++it)
+                {
                     retval.insert(*it);
                 }
             }
@@ -6376,7 +6400,8 @@ namespace { //helper function for DispatchFleetsExploring
         bool found = false;
 
         while (distance < 50 && !found) { //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
-            for (std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++) {
+            for (std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; ++sys)
+            {
                 if (supplyable_systems.count(*sys) > 0) {
                     //we found a route to a supplyable system
                     return std::pair<int, int>(*sys, distance);
@@ -6412,7 +6437,7 @@ void MapWnd::DispatchFleetsExploring() {
                 fleet_idle.insert(fleet->ID());
             else
                 systems_being_explored.insert(fleet->FinalDestinationID());
-            it++;
+            ++it;
         }
     }
 
@@ -6432,7 +6457,7 @@ void MapWnd::DispatchFleetsExploring() {
     std::map<int, int> unknown_systems;
     const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
     for (std::set<int>::iterator it = candidates_unknown_systems.begin();
-         it != candidates_unknown_systems.end(); it ++)
+         it != candidates_unknown_systems.end(); ++it)
     {
         TemporaryPtr<System> system = GetSystem(*it);
         if (!system)
@@ -6462,7 +6487,8 @@ void MapWnd::DispatchFleetsExploring() {
         int last_visibility = NUM_VISIBILITIES; // greater than max visibility
         int better_fleet_id;
 
-        for (std::set<int>::iterator it = fleet_idle.begin(); it != fleet_idle.end(); it ++) {
+        for (std::set<int>::iterator it = fleet_idle.begin(); it != fleet_idle.end(); ++it)
+        {
             TemporaryPtr<Fleet> fleet = GetFleet(*it);
             if (!fleet || !fleet->MovePath().empty())
                 continue;
@@ -6470,7 +6496,8 @@ void MapWnd::DispatchFleetsExploring() {
             double far_min_dist = DBL_MAX;
             int far_system_id; //id of the closest unknown system without taking fuel into account
 
-            for (std::map<int, int>::iterator system_it = unknown_systems.begin(); system_it != unknown_systems.end(); system_it ++) {
+            for (std::map<int, int>::iterator system_it = unknown_systems.begin(); system_it != unknown_systems.end(); ++system_it)
+            {
                 if (systems_order_sent.find(system_it->first) != systems_order_sent.end())
                     continue; //someone already went there this turn
 
@@ -6480,7 +6507,8 @@ void MapWnd::DispatchFleetsExploring() {
                 bool is_doable_for_fuel = true;
                 std::list<int> route = pair.first;
                 double current_fuel = fleet->Fuel();
-                for (std::list<int>::iterator route_it = ++(route.begin()); route_it != route.end(); route_it ++) {
+                for (std::list<int>::iterator route_it = ++(route.begin()); route_it != route.end(); ++route_it)
+                {
                     if (supplyable_systems.count(*route_it) > 0) {
                         if (fleet->Fuel() != fleet->MaxFuel()) {
                             is_doable_for_fuel = false; //if we need to ressupply, do it the first time we enter the empire. If we are full, we can cross it.

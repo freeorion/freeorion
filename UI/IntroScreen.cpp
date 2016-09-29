@@ -50,11 +50,18 @@ public:
     ~CreditsWnd();
 
     virtual void    Render();
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) { StopRendering(); }
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+    { OnExit(); }
+    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+    {
+        if (key == GG::GGK_ESCAPE)
+            OnExit();
+    }
+
 
 private:
     void            DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
-    void            StopRendering();
+    void            OnExit();
 
     XMLElement                  m_credits;
     int                         m_cx, m_cy, m_cw, m_ch, m_co;
@@ -66,7 +73,7 @@ private:
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co) :
-    GG::Wnd(x, y, w, h, GG::ONTOP),
+    GG::Wnd(x, y, w, h, GG::INTERACTIVE | GG::MODAL),
     m_credits(credits),
     m_cx(cx),
     m_cy(cy),
@@ -86,12 +93,13 @@ CreditsWnd::~CreditsWnd() {
         glDeleteLists(m_display_list_id, 1);
 }
 
-void CreditsWnd::StopRendering() {
+void CreditsWnd::OnExit() {
     m_render = false;
     if (m_display_list_id != 0) {
         glDeleteLists(m_display_list_id, 1);
         m_display_list_id = 0;
     }
+    m_done = true;
 }
 
 void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency) {
@@ -175,7 +183,7 @@ void CreditsWnd::Render() {
 
     //check if we are done
     if (m_credits_height + m_ch < m_co + ticks_delta/40)
-        StopRendering();
+        OnExit();
 }
 
 
@@ -193,7 +201,6 @@ IntroScreen::IntroScreen() :
     m_website(0),
     m_credits(0),
     m_exit_game(0),
-    m_credits_wnd(0),
     m_menu(0),
     m_splash(0),
     m_logo(0),
@@ -206,7 +213,7 @@ IntroScreen::IntroScreen() :
 
     m_logo = new GG::StaticGraphic(ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
-    m_version = new CUILabel(FreeOrionVersionString(), GG::FORMAT_NOWRAP);
+    m_version = new CUILabel(FreeOrionVersionString(), GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     m_version->MoveTo(GG::Pt(Width() - m_version->Width(), Height() - m_version->Height()));
 
     AttachChild(m_splash);
@@ -251,47 +258,32 @@ IntroScreen::IntroScreen() :
 }
 
 IntroScreen::~IntroScreen() {
-    delete m_credits_wnd;
     delete m_splash;
     // m_menu, m_version, m_logo were childs of m_splash, so don't need to be deleted here
 }
 
 void IntroScreen::OnSinglePlayer() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
     HumanClientApp::GetApp()->NewSinglePlayerGame();
 }
 
 void IntroScreen::OnQuickStart() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
     HumanClientApp::GetApp()->NewSinglePlayerGame(true);
 }
 
 void IntroScreen::OnMultiPlayer() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
     HumanClientApp::GetApp()->MultiPlayerGame();
 }
 
 void IntroScreen::OnLoadGame() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
     HumanClientApp::GetApp()->LoadSinglePlayerGame();
 }
 
 void IntroScreen::OnOptions() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
-
     OptionsWnd options_wnd;
     options_wnd.Run();
 }
 
 void IntroScreen::OnAbout() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
-
     About about_wnd;
     about_wnd.Run();
 }
@@ -300,13 +292,6 @@ void IntroScreen::OnWebsite()
 { HumanClientApp::GetApp()->OpenURL("http://freeorion.org"); }
 
 void IntroScreen::OnCredits() {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-        return;
-    }
-
-
     XMLDoc doc;
     boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
     doc.ReadDoc(ifs);
@@ -324,18 +309,15 @@ void IntroScreen::OnCredits() {
 
     int credit_side_pad(30);
 
-    m_credits_wnd = new CreditsWnd(GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
-                                   credits,
-                                   credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
-                                   Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
+    CreditsWnd credits_wnd(GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
+                           credits,
+                           credit_side_pad, 0, Value(m_menu->Left()) - credit_side_pad,
+                           Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
-    m_splash->AttachChild(m_credits_wnd);
+    credits_wnd.Run();
 }
 
 void IntroScreen::OnExitGame() {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
-
     GG::GUI::GetGUI()->Exit(0);
 }
 

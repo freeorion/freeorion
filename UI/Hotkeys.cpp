@@ -90,7 +90,7 @@ std::set<std::string> Hotkey::DefinedHotkeys() {
     std::set<std::string> retval;
     if (s_hotkeys) {
         for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-             i != s_hotkeys->end(); i++)
+             i != s_hotkeys->end(); ++i)
         { retval.insert(i->first); }
     }
     return retval;
@@ -152,7 +152,7 @@ void Hotkey::AddOptions(OptionsDB& db) {
     if (!s_hotkeys)
         return;
     for (std::map<std::string, Hotkey>::const_iterator i = s_hotkeys->begin();
-         i != s_hotkeys->end(); i++)
+         i != s_hotkeys->end(); ++i)
     {
         const Hotkey& hotkey = i->second;
         std::string n = "UI.hotkeys.";
@@ -204,7 +204,7 @@ std::string Hotkey::PrettyPrint() const
 
 void Hotkey::ReadFromOptions(OptionsDB& db) {
     for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-         i != s_hotkeys->end(); i++)
+         i != s_hotkeys->end(); ++i)
     {
         Hotkey& hotkey = i->second;
 
@@ -279,7 +279,7 @@ std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
     std::map<std::string, std::set<std::string> > ret;
     if (s_hotkeys) {
         for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-             i != s_hotkeys->end(); i++)
+             i != s_hotkeys->end(); ++i)
         {
             const std::string& hk_name = i->first;
             std::string section = "HOTKEYS_GENERAL";
@@ -353,7 +353,7 @@ InvisibleWindowCondition::InvisibleWindowCondition(const std::list<const GG::Wnd
 
 bool InvisibleWindowCondition::IsActive() const {
     for (std::list<const GG::Wnd*>::const_iterator i = m_blacklist.begin();
-         i != m_blacklist.end(); i++)
+         i != m_blacklist.end(); ++i)
     {
         if ((*i)->Visible())
             return false;
@@ -387,7 +387,7 @@ OrCondition::OrCondition(HotkeyCondition* c1, HotkeyCondition* c2,
 
 bool OrCondition::IsActive() const {
     for (std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
-         i != m_conditions.end(); i++)
+         i != m_conditions.end(); ++i)
     {
         if ((*i)->IsActive())
             return true;
@@ -397,7 +397,7 @@ bool OrCondition::IsActive() const {
 
 OrCondition::~OrCondition() {
     for (std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
-         i != m_conditions.end(); i++)
+         i != m_conditions.end(); ++i)
     { delete *i; }
 }
 
@@ -427,7 +427,7 @@ AndCondition::AndCondition(HotkeyCondition* c1, HotkeyCondition* c2,
 
 bool AndCondition::IsActive() const {
     for (std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
-         i != m_conditions.end(); i++)
+         i != m_conditions.end(); ++i)
     {
         if (!(*i)->IsActive())
             return false;
@@ -437,7 +437,7 @@ bool AndCondition::IsActive() const {
 
 AndCondition::~AndCondition() {
     for (std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
-         i != m_conditions.end(); i++)
+         i != m_conditions.end(); ++i)
     { delete *i; }
 }
 
@@ -446,8 +446,7 @@ AndCondition::~AndCondition() {
 //////////////////////////////////////////////////////////////////////
 HotkeyManager* HotkeyManager::s_singleton = 0;
 
-HotkeyManager::HotkeyManager() :
-    m_hotkey_disablings_count(0)
+HotkeyManager::HotkeyManager()
 {}
 
 HotkeyManager::~HotkeyManager()
@@ -461,7 +460,7 @@ HotkeyManager* HotkeyManager::GetManager() {
 
 void HotkeyManager::RebuildShortcuts() {
     for (std::set<boost::signals2::connection>::iterator i = m_internal_connections.begin();
-         i != m_internal_connections.end(); i++)
+         i != m_internal_connections.end(); ++i)
     { i->disconnect(); }
     m_internal_connections.clear();
 
@@ -471,7 +470,8 @@ void HotkeyManager::RebuildShortcuts() {
 
     // Now, build up again all the shortcuts
     GG::GUI* gui = GG::GUI::GetGUI();
-    for (Connections::iterator i = m_connections.begin(); i != m_connections.end(); i++) {
+    for (Connections::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
+    {
         const Hotkey& hk = Hotkey::NamedHotkey(i->first);
 
         gui->SetAccelerator(hk.m_key, hk.m_mod_keys);
@@ -507,7 +507,7 @@ bool HotkeyManager::ProcessNamedShortcut(const std::string& name, GG::Key key, G
     // First update the connection state according to the current status.
     ConditionalConnectionList& conds = m_connections[name];
     for (ConditionalConnectionList::iterator i = conds.begin();
-         i != conds.end(); i++)
+         i != conds.end(); ++i)
     {
         i->UpdateConnection();
         if (!i->connection.connected())

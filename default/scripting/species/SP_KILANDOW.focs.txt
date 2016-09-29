@@ -5,13 +5,12 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "PHOTOTROPHIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_STEALTH" "CTRL_EXTINCT" ]
+    tags = [ "PHOTOTROPHIC" "GREAT_RESEARCH" "AVERAGE_SUPPLY" "BAD_STEALTH" "CTRL_EXTINCT" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 
@@ -28,7 +27,7 @@ Species
         [[BAD_STEALTH]]
 
         EffectsGroup
-            description = "GREAT_ASTEROID_INDUSTRY"
+            description = "GREAT_ASTEROID_INDUSTRY_DESC"
             scope = And [
                 Source
                 Focus type = "FOCUS_INDUSTRY"

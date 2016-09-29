@@ -55,6 +55,7 @@ private:
     void    AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, int pos = -1);
     void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    QueueItemPaused(GG::ListBox::iterator it, bool pause);
 
     ProductionInfoPanel*        m_research_info_panel;
     ResearchQueueWnd*           m_queue_wnd;

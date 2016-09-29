@@ -17,6 +17,9 @@
 #include "CUIDrawUtil.h"
 #include "CUIControls.h"
 
+#include <boost/optional.hpp>
+#include <boost/tuple/tuple.hpp>
+
 namespace {
     /** Returns text wrapped in GG RGBA tags for specified colour */
     std::string ColourWrappedtext(const std::string& text, const GG::Clr colour)
@@ -35,12 +38,15 @@ namespace {
 
     const int       EDGE_PAD(3);
 
-    const GG::X     METER_BROWSE_LABEL_WIDTH(300);
-    const GG::X     METER_BROWSE_VALUE_WIDTH(50);
+    GG::X MeterBrowseLabelWidth()
+    { return GG::X(30*ClientUI::Pts()); }
+
+    GG::X MeterBrowseValueWidth()
+    { return GG::X(4*ClientUI::Pts()); }
 }
 
 MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type/* = INVALID_METER_TYPE*/) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),
     m_object_id(object_id),
@@ -81,7 +87,7 @@ namespace {
 
 void MeterBrowseWnd::Initialize() {
     m_row_height = GG::Y(ClientUI::Pts()*3/2);
-    const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+    const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
@@ -122,34 +128,34 @@ void MeterBrowseWnd::Initialize() {
 
         m_current_label = new CUILabel(UserString("TT_THIS_TURN"), GG::FORMAT_RIGHT);
         m_current_label->MoveTo(GG::Pt(GG::X0, top));
-        m_current_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        m_current_label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(m_current_label);
 
         m_current_value = new CUILabel("");
-        m_current_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        m_current_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        m_current_value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        m_current_value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(m_current_value);
         top += m_row_height;
 
         m_next_turn_label = new CUILabel(UserString("TT_NEXT_TURN"), GG::FORMAT_RIGHT);
         m_next_turn_label->MoveTo(GG::Pt(GG::X0, top));
-        m_next_turn_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        m_next_turn_label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(m_next_turn_label);
 
         m_next_turn_value = new CUILabel("");
-        m_next_turn_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        m_next_turn_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        m_next_turn_value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        m_next_turn_value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(m_next_turn_value);
         top += m_row_height;
 
         m_change_label = new CUILabel(UserString("TT_CHANGE"), GG::FORMAT_RIGHT);
         m_change_label->MoveTo(GG::Pt(GG::X0, top));
-        m_change_label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        m_change_label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(m_change_label);
 
         m_change_value = new CUILabel("");
-        m_change_value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        m_change_value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        m_change_value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        m_change_value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(m_change_value);
         top += m_row_height;
     }
@@ -170,7 +176,7 @@ void MeterBrowseWnd::Initialize() {
 
     UpdateEffectLabelsAndValues(top);
 
-    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
+    Resize(GG::Pt(MeterBrowseLabelWidth() + MeterBrowseValueWidth(), top));
 
     m_initialized = true;
 }
@@ -184,6 +190,91 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
         Initialize();
 }
 
+namespace {
+    /** Return the vector of accounting information from \p obj_id of \p meter_type.*/
+    boost::optional<const std::vector<Effect::AccountingInfo>& > GetAccountingInfo(
+        int obj_id, const MeterType& meter_type)
+    {
+        // get object and meter, aborting if not valid
+        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(obj_id);
+        if (!obj) {
+            ErrorLogger() << "Couldn't get object with id " << obj_id;
+            return boost::none;
+        }
+
+        // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
+        const Universe& universe = GetUniverse();
+        const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+        Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(obj_id);
+        if (map_it == effect_accounting_map.end())
+            return boost::none;
+        const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
+
+        // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
+        std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(meter_type);
+        if (meter_it == meter_map.end() || meter_it->second.empty())
+            return boost::none;
+
+        const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
+        return info_vec;
+    }
+}
+
+namespace DualMeter {
+
+    /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
+        actual_meter_type and \p target_meter_type associated with \p obj. */
+    boost::tuple<float, float, float> CurrentProjectedTarget(
+        const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type)
+    {
+        const Meter* actual_meter = obj.GetMeter(actual_meter_type);
+
+        float current = Meter::INVALID_VALUE;
+        float projected = Meter::INVALID_VALUE;
+        if (actual_meter) {
+            current = actual_meter->Initial();
+            projected = obj.NextTurnCurrentMeterValue(actual_meter_type);
+
+            // If there is accounting info, correct the projected result by including the
+            // results of all known effects in addition to the default meter change.
+            if (boost::optional<const std::vector<Effect::AccountingInfo>&>
+                maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
+            {
+                const std::vector<Effect::AccountingInfo>& info_vec = *maybe_info_vec;
+
+                projected -= current;
+                for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin();
+                     info_it != info_vec.end(); ++info_it)
+                {
+                    if ((info_it->cause_type == ECT_UNKNOWN_CAUSE)
+                        || (info_it->cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
+                    {
+                        continue;
+                    }
+                    projected += info_it->meter_change;
+                }
+            }
+        }
+
+        const Meter* target_meter = obj.GetMeter(target_meter_type);
+        const float target = target_meter ? target_meter->Current() : Meter::INVALID_VALUE;
+
+        // Clamp projected value with the target value
+        if (actual_meter && target_meter
+            && ((current <= target && target < projected)
+                || (projected < target && target <= current)))
+        {
+            projected = target;
+        }
+
+        // Clamp when there is no target.
+        if (!target_meter)
+            projected = current;
+
+        return boost::make_tuple(current, projected, target);
+    }
+}
+
 void MeterBrowseWnd::UpdateSummary() {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj)
@@ -192,37 +283,38 @@ void MeterBrowseWnd::UpdateSummary() {
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
     const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
+    if (!primary_meter) {
+        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
+        return;
+    }
+
     float breakdown_total = 0.0f;
     std::string breakdown_meter_name;
 
-    if (primary_meter && secondary_meter) {
+    if (secondary_meter) {
         if (!m_current_value || !m_next_turn_value || !m_change_value) {
             ErrorLogger() << "MeterBrowseWnd::UpdateSummary has primary and secondary meters, but is missing one or more controls to display them";
             return;
         }
 
-        // Primary meter holds value from turn to turn and changes slow each turn.
-        // The current value of the primary meter doesn't change with focus changes
-        // so its growth from turn to turn is important to show
-        float primary_current = obj->InitialMeterValue(m_primary_meter_type);
-        float primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
-        float primary_change = primary_next - primary_current;
+        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+            *obj, m_primary_meter_type, m_secondary_meter_type);
 
-        m_current_value->SetText(DoubleToString(primary_current, 3, false));
-        m_next_turn_value->SetText(DoubleToString(primary_next, 3, false));
+        m_current_value->SetText(DoubleToString(boost::get<0>(current_projected_target), 3, false));
+        m_next_turn_value->SetText(DoubleToString(boost::get<1>(current_projected_target), 3, false));
+        float primary_change = boost::get<1>(current_projected_target) - boost::get<0>(current_projected_target);
         m_change_value->SetText(ColouredNumber(primary_change));
 
         // target or max meter total for breakdown summary
-        breakdown_total = obj->CurrentMeterValue(m_secondary_meter_type);
+        breakdown_total = boost::get<2>(current_projected_target);
         breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
-
-    } else if (primary_meter) {
-        // unpaired meter total for breakdown summary
-        breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
-        breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     } else {
-        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
-        return;
+        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+            *obj, m_primary_meter_type, m_secondary_meter_type);
+
+        // unpaired meter total for breakdown summary
+        breakdown_total = boost::get<0>(current_projected_target);
+        breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     }
 
     // set accounting breakdown total / summary
@@ -240,24 +332,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     }
     m_effect_labels_and_values.clear();
 
-
-    // get object and meter, aborting if not valid
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
-    if (!obj) {
-        ErrorLogger() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
-        return;
-    }
-
-
-    // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
-    const Universe& universe = GetUniverse();
-    const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(m_object_id);
-    if (map_it == effect_accounting_map.end())
-        return;
-    const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
-
-
     // select which meter type to display accounting for.  if there is a valid
     // secondary meter type, then this is probably the target or max meter and
     // should have accounting displayed.  if there is no valid secondary meter
@@ -271,13 +345,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (accounting_displayed_for_meter == INVALID_METER_TYPE)
         return; // nothing to display
 
-
-    // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
-    std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(accounting_displayed_for_meter);
-    if (meter_it == meter_map.end() || meter_it->second.empty())
-        return; // couldn't find appropriate meter type, or there were no entries for that meter.
-    const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
-
+    boost::optional<const std::vector<Effect::AccountingInfo>&>
+        maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
+    if (!maybe_info_vec)
+        return;
+    const std::vector<Effect::AccountingInfo>& info_vec = *maybe_info_vec;
 
     // add label-value pairs for each alteration recorded for this meter
     for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
@@ -368,23 +440,22 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             text += UserString("TT_INHERENT");
             break;
 
-        case ECT_UNKNOWN_CAUSE: {
+        case ECT_UNKNOWN_CAUSE:
         default:
             const std::string& label_template = (info_it->custom_label.empty()
                 ? UserString("TT_UNKNOWN")
                 : UserString(info_it->custom_label));
             text += label_template;
         }
-        }
 
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
-        label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
         GG::Label* value = new CUILabel(ColouredNumber(info_it->meter_change));
-        value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
@@ -399,7 +470,7 @@ ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_
 
 void ShipDamageBrowseWnd::Initialize() {
     m_row_height = GG::Y(ClientUI::Pts()*3/2);
-    const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+    const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
     TemporaryPtr<const UniverseObject> ship = GetShip(m_object_id);
@@ -425,7 +496,7 @@ void ShipDamageBrowseWnd::Initialize() {
 
     UpdateEffectLabelsAndValues(top);
 
-    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
+    Resize(GG::Pt(MeterBrowseLabelWidth() + MeterBrowseValueWidth(), top));
 
     m_initialized = true;
 }
@@ -498,12 +569,12 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
-        label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
         GG::Label* value = new CUILabel(ColouredNumber(part_attack));
-        value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-        value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
+        value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 

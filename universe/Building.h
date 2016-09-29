@@ -68,7 +68,14 @@ protected:
 
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
+
+#if BOOST_VERSION == 106100
+public:
+#endif
     ~Building() {}
+#if BOOST_VERSION == 106100
+protected:
+#endif
 
     virtual Building*       Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
     //@}
@@ -110,7 +117,7 @@ public:
         m_icon(icon)
     {
         Init();
-        for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
+        for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); ++tag_it)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 

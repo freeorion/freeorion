@@ -6,6 +6,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/weak_ptr.hpp>
+#include <boost/functional/hash.hpp>
 
 template <class T> class EnableTemporaryFromThis;
 template <class T> class TemporaryPtr;
@@ -121,6 +122,16 @@ private:
 template <class Y>
 std::ostream& operator<<(std::ostream& o, const TemporaryPtr<Y>& p)
 { return (o << ""); }
+
+// Replace with a C++11 hash function.
+namespace boost {
+    template<typename Y>
+        struct hash<TemporaryPtr<const Y> > {
+        inline size_t operator() (const TemporaryPtr<const Y>& y) const {
+            return boost::hash<const Y*>()(y.get());
+        }
+    };
+}
 
 #include "TemporaryPtr.tcc"
 

@@ -5,13 +5,12 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "LIGHT_SENSITIVE" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_ULTIMATE_DETECTION" "AI_TAG_GOOD_STEALTH" "CTRL_EXTINCT" ]
+    tags = [ "LITHIC" "LIGHT_SENSITIVE" "GOOD_INDUSTRY" "AVERAGE_SUPPLY" "ULTIMATE_DETECTION" "GOOD_STEALTH" "CTRL_EXTINCT" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
         [[HAS_RESEARCH_FOCUS]]
         [[HAS_GROWTH_FOCUS]]
-        [[HAS_MINING_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
 
@@ -29,7 +28,7 @@ Species
         [[GOOD_STEALTH]]
 
         EffectsGroup
-            description = "LIGHT_SENSITIVE"
+            description = "LIGHT_SENSITIVE_DESC"
             scope = Source
             activation = AND [
                 Planet
