@@ -218,6 +218,13 @@ extern GG_API const WndFlag NO_WND_FLAGS;
     Core parts of GG will continue to immediately update layout until
     peripheral parts are updated to expect deferred updates.
 
+    The default implementation of PreRender() only clears the flag set by RequirePreRender().
+    For a class to defer its layout to the prerender phase it needs to override PreRender() and
+    implement its layout changes in PreRender().
+
+    Legacy GG did not have a prerender phase and all layout changes were immediate.  Any Wnd class
+    that does not override PreRender() will update layout immediately when executing mutating functions.
+
     <h3>Browse Info</h3>
 
     <br>Browse info is a non-interactive informational window that pops up
@@ -611,13 +618,18 @@ public:
     void SetLayoutCellMargin(unsigned int margin);
 
     /** Update Wnd prior to Render().
+
         PreRender() is called before Render() if RequirePreRender() was called.
-        The default PreRender() resets RequirePreRender.  Wnd::PreRender should
-        be called in any overrides to reset RequirePreRender().
-        PreRender() of child windows will be called before this PreRender(). */
+        The default PreRender() resets the flag from RequirePreRender().
+        Wnd::PreRender() should be called in any overrides to reset
+        RequirePreRender().
+
+        In the GUI processing loop the PreRender() of child windows whose
+        RequirePreRender() flag is set will have been called before their
+        parent PreRender(). */
     virtual void PreRender();
 
-    /** Require that layout be updated before the next Render(). */
+    /** Require that PreRender() be called to update layout before the next Render(). */
     virtual void RequirePreRender();
 
     /** Draws this Wnd.  Note that Wnds being dragged for a drag-and-drop
