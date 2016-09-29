@@ -243,8 +243,14 @@ protected:
     virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
     virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
-    /** Do all the layout work*/
     virtual void DoLayout(Pt ul, Pt lr);
+
+    /** Redo the layout.  This is called internally when something changes and
+        it needs to redo the layout.
+
+        Bug:  This does nothing if the size has not changed.  Fixing it to use
+        call DoLayout() even when the size has not changed breaks all text boxes.
+    */
     virtual void RedoLayout();
     //@}
 

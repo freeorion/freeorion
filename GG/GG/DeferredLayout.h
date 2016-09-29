@@ -39,8 +39,8 @@ protected:
     //@}
 
 private:
-    Pt   m_ul_prerender;        ///< ul for PreRender
-    Pt   m_lr_prerender;        ///< lr for PreRender
+    Pt   m_ul_prerender;
+    Pt   m_lr_prerender;
     bool m_stop_deferred_resize_recursion;
 };
 

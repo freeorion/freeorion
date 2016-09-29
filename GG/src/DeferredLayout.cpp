@@ -1,5 +1,5 @@
 /* GG is a GUI for SDL and OpenGL.
-   Copyright (C) 2003-2008 T. Zachary Laine
+   Copyright (C) 2016-2016 LGM Doyle
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public License
@@ -18,21 +18,20 @@
 
    If you do not wish to comply with the terms of the LGPL please
    contact the author as other terms are available for a fee.
-
-   Zach Laine
-   whatwasthataddress@gmail.com */
+   */
 
 #include <GG/DeferredLayout.h>
 
 using namespace GG;
 
 DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
-               unsigned int border_margin/* = 0*/, unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
+                               unsigned int border_margin/* = 0*/,
+                               unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
     Layout(x, y, w, h, rows, columns, border_margin, cell_margin),
     m_ul_prerender(Pt(x, y)),
     m_lr_prerender(Pt(x + w, y + h)),
     m_stop_deferred_resize_recursion(false)
-{ }
+{}
 
 void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
 {
@@ -43,6 +42,8 @@ void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
 
     m_ul_prerender = ul;
     m_lr_prerender = lr;
+
+    // Note: m_upperleft and m_lowerright will be updated when DoLayout() is called in PreRender().
 }
 
 void DeferredLayout::PreRender()
