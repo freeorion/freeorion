@@ -19,7 +19,6 @@ from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complet
 from TechsListsAI import EXOBOT_TECH_NAME
 from common.print_utils import Table, Sequence, Text
 
-
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 _design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 
@@ -34,24 +33,23 @@ def find_best_designs_this_turn():
     design_timer.start('Updating cache for new turn')
     ShipDesignAI.Cache.update_for_new_turn()
     _design_cache.clear()
-    design_timer.start('Military')
-    _design_cache[PriorityType.PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
-    design_timer.start('Orbital Invasion')
-    _design_cache[PriorityType.PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
-    design_timer.start('Invasion')
-    _design_cache[PriorityType.PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
-    design_timer.start('Orbital Colonization')
-    _design_cache[PriorityType.PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.OrbitalColonisationShipDesigner().optimize_design()
-    design_timer.start('Colonization')
-    _design_cache[PriorityType.PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
-    design_timer.start('Orbital Outposter')
-    _design_cache[PriorityType.PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
-    design_timer.start('Outposter')
-    _design_cache[PriorityType.PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
-    design_timer.start('Orbital Defense')
-    _design_cache[PriorityType.PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
-    design_timer.start('Scouts')
-    _design_cache[PriorityType.PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
+
+    # TODO Dont use PriorityType but introduce more reasonable Enum
+    designers = [
+        ('Military', PriorityType.PRODUCTION_MILITARY, ShipDesignAI.MilitaryShipDesigner),
+        ('Orbital Invasion', PriorityType.PRODUCTION_ORBITAL_INVASION, ShipDesignAI.OrbitalTroopShipDesigner),
+        ('Invasion', PriorityType.PRODUCTION_INVASION, ShipDesignAI.StandardTroopShipDesigner),
+        ('Orbital Colonization', PriorityType.PRODUCTION_ORBITAL_COLONISATION, ShipDesignAI.OrbitalColonisationShipDesigner),
+        ('Colonization', PriorityType.PRODUCTION_COLONISATION, ShipDesignAI.StandardColonisationShipDesigner),
+        ('Orbital Outposter', PriorityType.PRODUCTION_ORBITAL_OUTPOST, ShipDesignAI.OrbitalOutpostShipDesigner),
+        ('Outposter', PriorityType.PRODUCTION_OUTPOST, ShipDesignAI.StandardOutpostShipDesigner),
+        ('Orbital Defense', PriorityType.PRODUCTION_ORBITAL_DEFENSE, ShipDesignAI.OrbitalDefenseShipDesigner),
+        ('Scouts', PriorityType.PRODUCTION_EXPLORATION, ShipDesignAI.ScoutShipDesigner),
+    ]
+
+    for timer_name, priority_type, designer in designers:
+        design_timer.start(timer_name)
+        _design_cache[priority_type] = designer().optimize_design()
     design_timer.start('Krill Spawner')
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     if fo.currentTurn() % 10 == 0:
