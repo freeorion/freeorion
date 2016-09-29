@@ -1336,7 +1336,7 @@ def assign_colony_fleets_to_colonise():
             foAI.foAIstate.qualifyingOutpostBaseTargets[target_id][1] = -1  # TODO: should probably delete
             ai_target = universe_object.Planet(target_id)
             ai_fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
-            ai_fleet_mission.add_target(MissionType.ORBITAL_OUTPOST, ai_target)
+            ai_fleet_mission.set_target(MissionType.ORBITAL_OUTPOST, ai_target)
 
     # assign fleet targets to colonisable planets
     send_colony_ships(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs.items(),
@@ -1427,4 +1427,4 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         fleet_id = this_fleet_list[0]
         already_targeted.append(planet_id)
         ai_target = universe_object.Planet(planet_id)
-        foAI.foAIstate.get_fleet_mission(fleet_id).add_target(mission_type, ai_target)
+        foAI.foAIstate.get_fleet_mission(fleet_id).set_target(mission_type, ai_target)

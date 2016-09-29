@@ -441,7 +441,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
             fleet_mission = foAI.foAIstate.get_fleet_mission(fleetID)
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
-            fleet_mission.add_target(mission_type, target)
+            fleet_mission.set_target(mission_type, target)
 
 
 def assign_invasion_fleets_to_invade():
@@ -502,7 +502,7 @@ def assign_invasion_fleets_to_invade():
             foAI.foAIstate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
             target = universe_object.Planet(target_id)
             fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
-            fleet_mission.add_target(MissionType.ORBITAL_INVASION, target)
+            fleet_mission.set_target(MissionType.ORBITAL_INVASION, target)
 
     invasion_fleet_ids = AIstate.invasionFleetIDs
 

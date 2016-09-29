@@ -7,7 +7,6 @@ import FreeOrionAI as foAI
 import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
-import PlanetUtilsAI
 from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
 
@@ -17,8 +16,9 @@ ORDERS_FOR_MISSION = {
     MissionType.COLONISATION: OrderColonize,
     MissionType.INVASION: OrderInvade,
     MissionType.MILITARY: OrderMilitary,
+    # SECURE is mostly same as MILITARY, but waits for system removal from all targeted system lists
+    # (invasion, colonization, outpost, blockade) before clearing
     MissionType.SECURE: OrderMilitary,
-    # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
     MissionType.ORBITAL_INVASION: OrderInvade,
     MissionType.ORBITAL_OUTPOST: OrderOutpost,
     MissionType.ORBITAL_DEFENSE: OrderDefend
@@ -28,6 +28,21 @@ COMBAT_MISSION_TYPES = (
     MissionType.MILITARY,
     MissionType.SECURE
 )
+
+MERGEABLE_MISSION_TYPES = (
+    MissionType.MILITARY,
+    MissionType.INVASION,
+    MissionType.ORBITAL_INVASION,
+    MissionType.SECURE,
+    MissionType.ORBITAL_DEFENSE,
+)
+
+COMPATIBLE_ROLES_MAP = {
+    MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
+    MissionType.MILITARY: [MissionType.MILITARY],
+    MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
+    MissionType.INVASION: [MissionType.INVASION],
+}
 
 
 class AIFleetMission(object):
@@ -41,75 +56,81 @@ class AIFleetMission(object):
         self.type = None
         self.target = None
 
-    def add_target(self, mission_type, target):
+    def set_target(self, mission_type, target):
+        """
+        Set mission and target for this fleet.
+
+        :type mission_type: MissionType
+        :type target: UniverseObject
+        """
         if self.type == mission_type and self.target == target:
             return
         if self.type or self.target:
-            print "Change mission assignment from %s:%s to %s:%s" % (self.type,
-                                                                     self.target,
-                                                                     mission_type,
-                                                                     target)
+            print "Change mission assignment from %s:%s to %s:%s" % (self.type, self.target, mission_type, target)
         self.type = mission_type
         self.target = target
 
     def clear_target(self):
+        """Clear target and mission for this fleet."""
         self.target = None
         self.type = None
 
     def has_target(self, mission_type, target):
+        """
+        Check if fleet has specified mission_type and target.
+
+        :type mission_type: MissionType
+        :type target: UniverseObject
+        :rtype: bool
+        """
         return self.type == mission_type and self.target == target
 
     def clear_fleet_orders(self):
+        """Clear this fleets orders but do not clear mission and target."""
         self.orders = []
 
     def _get_fleet_order_from_target(self, mission_type, target):
+        """
+        Get a fleet order according to mission type and target.
+
+        :type mission_type: MissionType
+        :type target: UniverseObject
+        :rtype: AIFleetOrder
+        """
         fleet_target = Fleet(self.fleet.id)
         return ORDERS_FOR_MISSION[mission_type](fleet_target, target)
 
-    def check_mergers(self, fleet_id=None, context=""):
-        if fleet_id is None:
-            fleet_id = self.fleet.id
+    def check_mergers(self, context=""):
+        """
+        If possible and reasonable, merge this fleet with others.
 
-        if self.type not in (MissionType.MILITARY,
-                             MissionType.INVASION,
-                             MissionType.ORBITAL_INVASION,
-                             MissionType.SECURE,
-                             MissionType.ORBITAL_DEFENSE,
-                             ):
+        :param context: Context of the function call for logging purposes
+        :type context: str
+        """
+        if self.type not in MERGEABLE_MISSION_TYPES:
             return
         universe = fo.getUniverse()
         empire_id = fo.empireID()
+        fleet_id = self.fleet.id
         main_fleet = universe.getFleet(fleet_id)
         system_id = main_fleet.systemID
         if system_id == -1:
             return  # can't merge fleets in middle of starlane
         system_status = foAI.foAIstate.systemStatus[system_id]
         destroyed_list = list(universe.destroyedObjectIDs(empire_id))
-        other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
+        other_fleets_here = [fid for fid in system_status.get('myFleetsAccessible', []) if fid != fleet_id and
+                             fid not in destroyed_list and universe.getFleet(fid).ownedBy(empire_id)]
         if not other_fleets_here:
-            return  # nothing of record to merge with
+            return
 
-        if not self.target:
-            m_mt0_id = None
-        else:
-            m_mt0_id = self.target.id
-
-        # TODO consider establishing an AI strategy & tactics planning document for discussing & planning
-        # high level considerations for issues like fleet merger
-        compatible_roles_map = {
-            MissionType.ORBITAL_DEFENSE: [MissionType.ORBITAL_DEFENSE],
-            MissionType.MILITARY: [MissionType.MILITARY],
-            MissionType.ORBITAL_INVASION: [MissionType.ORBITAL_INVASION],
-            MissionType.INVASION: [MissionType.INVASION],
-        }
-
+        target_id = self.target.id if self.target else None
         main_fleet_role = foAI.foAIstate.get_fleet_role(fleet_id)
         for fid in other_fleets_here:
             fleet_role = foAI.foAIstate.get_fleet_role(fid)
-            if fleet_role not in compatible_roles_map[main_fleet_role]:  # TODO: if fleetRoles such as LongRange start being used, adjust this
-                continue  # will only considering subsuming fleets that have a compatible role
+            if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
+                continue
             fleet = universe.getFleet(fid)
-            if not (fleet and (fleet.systemID == system_id)):
+            if not fleet or fleet.systemID != system_id:
                 continue
             if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
                 continue
@@ -126,26 +147,21 @@ class AIFleetMission(object):
                 do_merge = True
             else:
                 if not self.target and (main_fleet.speed > 0 or fleet.speed == 0):
-                    # print "\t\t\t ** Considering merging fleetA (id: %4d) into fleet (id %d) and former has no targets, will take it. FleetA mission was %s "%(fid, fleetID, fleet_mission)
                     do_merge = True
                 else:
                     target = fleet_mission.target.id if fleet_mission.target else None
-                    if target == m_mt0_id:
-                        print "Military fleet %d has same target as %s fleet %d and will (at least temporarily) be merged into the latter" % (fid, fleet_role, fleet_id)
+                    if target == target_id:
+                        print "Military fleet %d has same target as %s fleet %d. Merging." % (fid, fleet_role, fleet_id)
                         do_merge = True  # TODO: should probably ensure that fleetA has aggression on now
                     elif main_fleet.speed > 0:
                         neighbors = foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', [])
-                        if (target == system_id) and m_mt0_id in neighbors:  # consider 'borrowing' for work in neighbor system  # TODO check condition
-                            if self.type in (MissionType.MILITARY,
-                                             MissionType.SECURE):
-                                # continue
-                                if self.type == MissionType.SECURE:  # actually, currently this is probably the only one of all four that should really be possible in this situation
-                                    need_left = 1.5 * sum([sysStat.get('fleetThreat', 0) for sysStat in
-                                                           [foAI.foAIstate.systemStatus.get(neighbor, {}) for neighbor in
-                                                                                                          [nid for nid in foAI.foAIstate.systemStatus.get(system_id, {}).get('neighbors', []) if nid != m_mt0_id]]])
-                                    fb_rating = foAI.foAIstate.get_rating(fid)
-                                    if (need_left < fb_rating.get('overall', 0)) and fb_rating.get('nships', 0) > 1:
-                                        do_merge = True
+                        if target == system_id and target_id in neighbors and self.type == MissionType.SECURE:
+                            # consider 'borrowing' for work in neighbor system  # TODO check condition
+                            need_left = 1.5 * sum(foAI.foAIstate.systemStatus.get(nid, {}).get('fleetThreat', 0)
+                                                  for nid in neighbors if nid != target_id)
+                            fb_rating = foAI.foAIstate.get_rating(fid)
+                            if (need_left < fb_rating.get('overall', 0)) and fb_rating.get('nships', 0) > 1:
+                                do_merge = True
             if do_merge:
                 FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
                                                   context="Order %s of mission %s" % (context, self))
@@ -284,7 +300,7 @@ class AIFleetMission(object):
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)
         target = Planet(target_id)
-        self.add_target(MissionType.INVASION, target)
+        self.set_target(MissionType.INVASION, target)
         self.generate_fleet_orders()
 
     def issue_fleet_orders(self):

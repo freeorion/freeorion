@@ -93,7 +93,7 @@ def assign_scouts_to_explore_systems():
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         target = universe_object.System(this_sys_id)
         if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target)) > 0:
-            fleet_mission.add_target(MissionType.EXPLORATION, target)
+            fleet_mission.set_target(MissionType.EXPLORATION, target)
             sent_list.append(this_sys_id)
         else:  # system too far out, skip it, but can add scout back to available pool
             print "sys_id %d too far out for fleet ( ID %d ) to reach" % (this_sys_id, fleet_id)

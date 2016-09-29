@@ -729,7 +729,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
             mission_type = MissionType.ORBITAL_DEFENSE
-            fleet_mission.add_target(mission_type, target)
+            fleet_mission.set_target(mission_type, target)
 
         all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
         if not all_military_fleet_ids:
@@ -790,7 +790,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 mission_type = MissionType.SECURE
             else:
                 mission_type = MissionType.MILITARY
-            fleet_mission.add_target(mission_type, target)
+            fleet_mission.set_target(mission_type, target)
             fleet_mission.generate_fleet_orders()
             if not doing_main:
                 foAI.foAIstate.misc.setdefault('ReassignedFleetMissions', []).append(fleet_mission)
