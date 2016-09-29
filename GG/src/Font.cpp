@@ -747,12 +747,12 @@ bool Font::FormattingTag::operator==(const TextElement &rhs) const
 }
 
 ///////////////////////////////////////
-// class GG::Font::TextElements
+// class GG::Font::TextAndElementsAssembler
 ///////////////////////////////////////
-class Font::TextElements::TextElementsImpl
+class Font::TextAndElementsAssembler::TextAndElementsAssemblerImpl
 {
 public:
-    TextElementsImpl(const Font& font) :
+    TextAndElementsAssemblerImpl(const Font& font) :
         m_font(font), m_text(), m_text_elements(), m_are_widths_calculated(false)
     {}
 
@@ -885,42 +885,50 @@ private:
 };
 
 
-Font::TextElements::TextElements(const Font& font) :
-    pimpl(new TextElementsImpl(font))
+Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
+    pimpl(new TextAndElementsAssemblerImpl(font))
 {}
 // Required because Impl is defined here
-Font::TextElements::~TextElements()
+Font::TextAndElementsAssembler::~TextAndElementsAssembler()
 {}
-const std::string& Font::TextElements::Text()
+const std::string& Font::TextAndElementsAssembler::Text()
 { return pimpl->Text(); }
-const std::vector<boost::shared_ptr<Font::TextElement> >& Font::TextElements::Elements()
+
+const std::vector<boost::shared_ptr<Font::TextElement> >& Font::TextAndElementsAssembler::Elements()
 { return pimpl->Elements(); }
-Font::TextElements& Font::TextElements::AddOpenTag(const std::string& tag) {
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const std::string& tag) {
     pimpl->AddOpenTag(tag);
     return *this;
 }
-Font::TextElements& Font::TextElements::AddOpenTag(
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(
     const std::string& tag, const std::vector<std::string>& params) {
     pimpl->AddOpenTag(tag, &params);
     return *this;
 }
-Font::TextElements& Font::TextElements::AddCloseTag(const std::string& tag) {
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(const std::string& tag) {
     pimpl->AddCloseTag(tag);
     return *this;
 }
-Font::TextElements& Font::TextElements::AddText(const std::string& text) {
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(const std::string& text) {
     pimpl->AddText(text);
     return *this;
 }
-Font::TextElements& Font::TextElements::AddWhitespace(const std::string& whitespace) {
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddWhitespace(const std::string& whitespace) {
     pimpl->AddWhitespace(whitespace);
     return *this;
 }
-Font::TextElements& Font::TextElements::AddNewline() {
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddNewline() {
     pimpl->AddNewline();
     return *this;
 }
-Font::TextElements& Font::TextElements::AddOpenTag(const Clr& color) {
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const Clr& color) {
     pimpl->AddOpenTag(color);
     return *this;
 }

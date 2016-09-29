@@ -247,20 +247,18 @@ public:
         mutable X cached_width;
     };
 
-    /** \brief Used to encapsulate a text and tokens together to be rendered
-        using GG::Font.
-
-        TextElements allows a matched pair of XML string and vector of TextElement to be directly
-        constructed while avoiding the computationally costly ComputeTextElements() function.
+    /** \brief TextAndElementsAssembler is used to assemble a matched pair of text and a vector of
+        TextElement, without incurring the computational cost of parsing the text with
+        ComputeTextElements().
 
         The pair of string and vector returned by Text() and Elements() are consistent with each
-        other and can be used with the fast constructor for TextControl.
+        other and can be used with the fast constructor or the fast SetText variant of TextControl.
     */
-    class GG_API TextElements
+    class GG_API TextAndElementsAssembler
     {
     public:
-        TextElements(const Font& font);
-        ~TextElements();
+        TextAndElementsAssembler(const Font& font);
+        ~TextAndElementsAssembler();
 
         /** Return the constructed text.*/
         const std::string& Text();
@@ -268,24 +266,24 @@ public:
         const std::vector<boost::shared_ptr<TextElement> >& Elements();
 
         /** Add an open tag iff it exists as a recognized tag.*/
-        TextElements& AddOpenTag(const std::string& tag);
+        TextAndElementsAssembler& AddOpenTag(const std::string& tag);
         /** Add an open tag iff it exists as a recognized tag.*/
-        TextElements& AddOpenTag(const std::string& tag, const std::vector<std::string>& params);
+        TextAndElementsAssembler& AddOpenTag(const std::string& tag, const std::vector<std::string>& params);
         /** Add a close tag iff it exists as a recognized tag.*/
-        TextElements& AddCloseTag(const std::string& tag);
+        TextAndElementsAssembler& AddCloseTag(const std::string& tag);
         /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
-        TextElements& AddText(const std::string& text);
+        TextAndElementsAssembler& AddText(const std::string& text);
         /** Add a white space element.*/
-        TextElements& AddWhitespace(const std::string& whitespace);
+        TextAndElementsAssembler& AddWhitespace(const std::string& whitespace);
         /** Add a new line element.*/
-        TextElements& AddNewline();
+        TextAndElementsAssembler& AddNewline();
 
         /** Add an open Clr tag.*/
-        TextElements& AddOpenTag(const Clr& color);
+        TextAndElementsAssembler& AddOpenTag(const Clr& color);
 
     private:
-        class TextElementsImpl;
-        boost::scoped_ptr<TextElementsImpl> const pimpl;
+        class TextAndElementsAssemblerImpl;
+        boost::scoped_ptr<TextAndElementsAssemblerImpl> const pimpl;
     };
 
     /** \brief The type of TextElement that represents a text formatting
