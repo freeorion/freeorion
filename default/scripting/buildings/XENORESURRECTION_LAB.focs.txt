@@ -42,12 +42,13 @@ BuildingType
                 Planet
                 HasSpecial name = "KRAKEN_IN_THE_ICE_SPECIAL"
             ]
-            activation = Source
+            activation = OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
             effects = [
                 CreateShip designname = "SM_WHITE_KRAKEN" empire = Source.Owner
                 RemoveSpecial name = "KRAKEN_IN_THE_ICE_SPECIAL"
                 GenerateSitRepMessage
                     message = "EFFECT_WHITE_KRAKEN_RESURRECTED"
+                    label = "EFFECT_WHITE_KRAKEN_RESURRECTED_LABEL"
                     icon = "icons/monsters/kraken-5.png"
                     parameters = [
                         tag = "planet" data = Source.PlanetID

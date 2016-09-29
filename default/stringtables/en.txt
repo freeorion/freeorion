@@ -821,7 +821,7 @@ SM_WHITE_KRAKEN
 White Kraken
 
 SM_WHITE_KRAKEN_DESC
-'''The White Kraken is a white-colored prehistoric ancestor of the Kraken Space Monster.'''
+The White Kraken is a white-colored prehistoric ancestor of the Kraken Space Monster.
 
 SM_BLACK_KRAKEN
 Black Kraken
