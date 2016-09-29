@@ -605,8 +605,6 @@ public:
 
     virtual bool    InWindow(const GG::Pt& pt) const;
 
-    /** Require that layout and format be updated before the next Render()*/
-    virtual void    RequirePreRender();
     /** Update layout and format only if required.*/
     virtual void    PreRender();
     virtual void    Render();
@@ -656,7 +654,6 @@ private:
     bool                            m_selected;
     int                             m_eta;
     bool                            m_enqueued;
-    bool                            m_needs_prerender;
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
@@ -713,13 +710,8 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
     return GG::Pt(GG::X0, GG::Y0) <= p && p < GG::Pt(TechPanelWidth(), TechPanelHeight());
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::RequirePreRender()
-{ m_needs_prerender = true; }
-
 void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
-    if (!m_needs_prerender)
-        return;
-    m_needs_prerender = false;
+    GG::Wnd::PreRender();
 
     const int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
@@ -769,7 +761,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
-    PreRender();
     const int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
     GG::Y text_top(0);

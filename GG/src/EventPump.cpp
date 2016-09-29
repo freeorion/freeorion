@@ -76,6 +76,7 @@ void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state, bool do_non_render
 
     if (do_rendering) {
         // do one iteration of the render loop
+        gui->PreRender();
         gui->RenderBegin();
         gui->Render();
         gui->RenderEnd();

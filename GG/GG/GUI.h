@@ -382,6 +382,11 @@ public:
     //@}
 
     static GUI*  GetGUI();                  ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
+
+    /** If \p wnd is visible recursively call PreRenderWindow() on all \p wnd's children and then
+        call \p wnd->PreRender().  The order guarantees that when wnd->PreRender() is called all
+        of \p wnd's children have already been prerendered.*/
+    static void  PreRenderWindow(Wnd* wnd);
     static void  RenderWindow(Wnd* wnd);    ///< renders a window (if it is visible) and all its visible descendents recursively
     virtual void RenderDragDropWnds();      ///< renders Wnds currently being drag-dropped
 
@@ -423,6 +428,8 @@ protected:
 
     /** \name Mutators */ ///@{
     void           ProcessBrowseInfo();    ///< determines the current browse info mode, if any
+    /** Allow all windows in the z-list to update data before rendering. */
+    virtual void   PreRender();
     virtual void   RenderBegin() = 0;      ///< clears the backbuffer, etc.
     virtual void   Render();               ///< renders the windows in the z-list
     virtual void   RenderEnd() = 0;        ///< swaps buffers, etc.
