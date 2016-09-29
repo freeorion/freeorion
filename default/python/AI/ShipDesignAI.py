@@ -2132,14 +2132,13 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
     recursive_dict_diff(dict_a, dict_b, diff)
     --> diff = {1:2, 2:{3:4}}
 
-    :param dict_new:
     :type dict_new: dict
-    :param dict_old:
-    :type dict_old: dict
+    :type dict  _old: dict
     :param dict_diff: Difference between dict_old and dict_new, modified and filled within this function
     :type dict_diff: dict
     :param diff_level_threshold: Depth to next diff up to which non-diff entries are stored in dict_diff
-    :return:
+    :return: recursive depth distance to entries differing in dict_new and dict_old
+    :rtype: int
     """
     NO_DIFF = 9999
     min_diff_level = NO_DIFF
