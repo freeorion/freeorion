@@ -1197,6 +1197,9 @@ bool GUI::SetNextFocusWndInCycle()
 void GUI::Wait(unsigned int ms)
 { boost::this_thread::sleep_for(boost::chrono::milliseconds(ms)); }
 
+void GUI::Wait(boost::chrono::microseconds us)
+{ boost::this_thread::sleep_for(us); }
+
 void GUI::Register(Wnd* wnd)
 { if (wnd) s_impl->m_zlist.Add(wnd); }
 
