@@ -936,7 +936,7 @@ public:
                                 bool include_empire_meter_effects = false,
                                 bool only_generate_sitrep_effects = false) const;
 
-    virtual bool        IsAppearanceEffect() const { return true; }
+    virtual bool        IsSitrepEffect() const { return true; }
     virtual std::string Dump() const;
 
     const std::string&              MessageString() const       { return m_message_string; }
