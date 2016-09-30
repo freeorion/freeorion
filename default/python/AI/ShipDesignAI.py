@@ -656,7 +656,7 @@ class ShipDesigner(object):
     evaluate(): Returns a rating for the design as of the current state
     update_hull(hullname): sets the hull used in the design
     update_parts(partname_list): sets the parts used in the design
-    update_species(speciesname): sets the piloting species
+    update_species(species): sets the piloting species
     update_stats(): calculates the stats of the design based on hull+parts+species
     add_design(): Adds the shipdesign in the C++ part of the game
 
@@ -684,6 +684,7 @@ class ShipDesigner(object):
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
+        self.species = None         # name of the piloting species (string)
         self.hull = None            # hull object (not hullname!)
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
@@ -708,10 +709,6 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
-        # species modifiers
-        self.weapons_grade = ""
-        self.shields_grade = ""
-        self.troops_grade = ""
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -804,7 +801,7 @@ class ShipDesigner(object):
         :param species:
         :type species: str
         """
-        self.weapons_grade, self.shields_grade, self.troops_grade = foAI.foAIstate.get_piloting_grades(species)
+        self.species = species
 
     def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
@@ -848,10 +845,7 @@ class ShipDesigner(object):
             self.production_time = max(self.production_time,
                                        local_time_cache.get(part.name, part.productionTime(fo.empireID(), self.pid)))
             partclass = part.partClass
-            if partclass in WEAPONS:
-                capacity = self._calculate_weapon_strength(part, ignore_species=ignore_species)
-            else:  # TODO Hangar part modifiers
-                capacity = part.capacity
+            capacity = part.capacity if partclass not in WEAPONS else _calculate_weapon_strength(part)
             if partclass in FUEL:
                 self.fuel += capacity
             elif partclass in ENGINES:
@@ -871,8 +865,10 @@ class ShipDesigner(object):
             elif partclass in ARMOUR:
                 self.structure += capacity
             elif partclass in WEAPONS:
-                shots = self._calculate_weapon_shots(part, ignore_species=ignore_species)
-                self.attacks[capacity] = self.attacks.get(capacity, 0) + shots
+                if capacity in self.attacks:
+                    self.attacks[capacity] += 1
+                else:
+                    self.attacks[capacity] = 1
             elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
@@ -890,10 +886,13 @@ class ShipDesigner(object):
 
         self._apply_hardcoded_effects()
 
-        if not ignore_species:
-            self.shields = foAI.foAIstate.weight_shields(self.shields, self.shields_grade)
+        if self.species and not ignore_species:
+            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
+            self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
+            if self.attacks:
+                self.attacks = foAI.foAIstate.weight_attacks(self.attacks, weapons_grade)
             if self.troops:
-                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, self.troops_grade)
+                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, troops_grade)
 
     def _apply_hardcoded_effects(self):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1093,13 +1092,14 @@ class ShipDesigner(object):
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
             # The same is true for the canProduceShips trait which simply means no hull can be built.
+            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
-                relevant_grades.append("WEAPON: %s" % self.weapons_grade)
+                relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                relevant_grades.append("SHIELDS: %s" % self.shields_grade)
+                relevant_grades.append("SHIELDS: %s" % shields_grade)
             if TROOPS & self.useful_part_classes:
-                relevant_grades.append("TROOPS: %s" % self.troops_grade)
+                relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
 
