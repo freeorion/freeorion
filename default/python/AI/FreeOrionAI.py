@@ -87,18 +87,19 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
 
     # initialize AIstate
     global foAIstate
+    print "Initializing foAIstate..."
     foAIstate = AIstate.AIstate(aggression)
     foAIstate.session_start_cleanup()
-    print "Initialized foAIstate class"
+    print "Initialization of foAIstate complete!"
+    print "Trying to rename our homeworld..."
     planet_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != -1:
         planet = universe.getPlanet(planet_id)
         new_name = " ".join([random.choice(_capitals.get(aggression, []) or [" "]).strip(), planet.name])
-        print "Capitol City Names are: ", _capitals
-        print "This Capitol New name is ", new_name
+        print "    Renaming to %s..." % new_name
         res = fo.issueRenameOrder(planet_id, new_name)
-        print "Capitol Rename attempt result: %d; planet now named %s" % (res, planet.name)
+        print "    Result: %d; Planet is now named %s" % (res, planet.name)
 
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
@@ -217,7 +218,9 @@ def generateOrders():  # pylint: disable=invalid-name
 
     turn = fo.currentTurn()
     turn_uid = foAIstate.set_turn_uid()
-    print "Start turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid)
+    print "\n\n\n", "=" * 20,
+    print "Starting turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid),
+    print "=" * 20, "\n"
 
     turn_timer.start("AI planning")
     # set the random seed (based on galaxy seed, empire name and current turn)

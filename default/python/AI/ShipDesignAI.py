@@ -122,6 +122,7 @@ class ShipDesignCache(object):
         self.best_designs = {}
         self.production_cost = {}
         self.production_time = {}
+        self.last_printed = {}
 
     def update_for_new_turn(self):
         """ Update the cache for the current turn.
@@ -130,7 +131,7 @@ class ShipDesignCache(object):
         i.e. before any other function of this module is used.
         """
         print
-        print "-----   Updating ShipDesign cache for new turn   -----"
+        print 10 * "=", "Updating ShipDesignCache for new turn", 10 * "="
         if not self.map_reference_design_name:
             self._build_cache_after_load()
         self._check_cache_for_consistency()
@@ -199,12 +200,21 @@ class ShipDesignCache(object):
             for slot in self.parts_for_planets[pid]:
                 print slot, ":", self.parts_for_planets[pid][slot]
 
-    def print_best_designs(self):
-        """Print the best designs that were previously found."""
+    def print_best_designs(self, print_diff_only=True):
+        """Print the best designs that were previously found.
+
+        :param print_diff_only: Print only changes to cache since last print
+        :type print_diff_only: bool
+        """
         print "Currently cached best designs:"
-        for classname in self.best_designs:
+        if print_diff_only:
+            print_dict = {}
+            recursive_dict_diff(self.best_designs, self.last_printed, print_dict, diff_level_threshold=1)
+        else:
+            print_dict = self.best_designs
+        for classname in print_dict:
             print classname
-            cache_name = self.best_designs[classname]
+            cache_name = print_dict[classname]
             for consider_fleet in cache_name:
                 print 4*" ", consider_fleet
                 cache_upkeep = cache_name[consider_fleet]
@@ -223,6 +233,7 @@ class ShipDesignCache(object):
                                 for hullname in sorted(cache_parts, reverse=True, key=lambda x: cache_parts[x][0]):
                                     print 24*" ", hullname, ":",
                                     print cache_parts[hullname]
+        self.last_printed = copy.deepcopy(self.best_designs)
 
     def print_production_cost(self):
         """Print production_cost cache."""
@@ -328,8 +339,8 @@ class ShipDesignCache(object):
                 cached_name = self.part_by_partname[partname].name
                 if cached_name != partname:
                     self.part_by_partname[partname] = fo.getPartType(partname)
-                    print "WARNING: Part cache corrupted."
-                    print "Expected: %s, got: %s. Cache was repaired." % (partname, cached_name)
+                    print "  WARNING: Part cache corrupted."
+                    print "    Expected: %s, got: %s. Cache was repaired." % (partname, cached_name)
         except Exception as e:
             self.part_by_partname.clear()
             print_error(e)
@@ -344,8 +355,8 @@ class ShipDesignCache(object):
             try:
                 cached_name = fo.getShipDesign(self.design_id_by_name[designname]).name
                 if cached_name != designname:
-                    print "WARNING: ShipID cache corrupted."
-                    print "Expected: %s, got: %s. Repairing cache." % (designname, cached_name)
+                    print "  WARNING: ShipID cache corrupted."
+                    print "    Expected: %s, got: %s. Repairing cache." % (designname, cached_name)
                     design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                           if designname == fo.getShipDesign(shipDesignID).name]), None)
                     if design_id is not None:
@@ -353,7 +364,7 @@ class ShipDesignCache(object):
                     else:
                         corrupted.append(designname)
             except AttributeError:
-                print "WARNING: ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache."
+                print "  WARNING: ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache."
                 print traceback.format_exc()  # do not print to stderr as this is an "expected" exception.
                 design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                       if designname == fo.getShipDesign(shipDesignID).name]), None)
@@ -559,12 +570,15 @@ class ShipDesignCache(object):
             for partname in available_parts:
                 if partname in local_ignore:
                     continue
+                part_slottypes = get_part_type(partname).mountableSlotTypes
                 ship_design = None
                 for hullname in local_testhulls:
+                    if not any((slot in get_hulltype(hullname).slots for slot in part_slottypes)):
+                        continue
                     ship_design = _get_design_by_name("%s_%s_%s" % (TESTDESIGN_NAME_PART, partname, hullname))
                     if ship_design:
                         if _can_build(ship_design, empire_id, pid):
-                            for slot in get_part_type(partname).mountableSlotTypes:
+                            for slot in part_slottypes:
                                 local_cache.setdefault(slot, []).append(partname)
                                 local_ignore.update(self.strictly_worse_parts[partname])
                         break
@@ -1381,7 +1395,7 @@ class ShipDesigner(object):
             """return the design name based on the name_template"""
             return name_template % (empire_initials, basename, self.running_index[basename])
         self.__class__.running_index.setdefault(basename, 1)
-        while _get_design_by_name(design_name()):
+        while _get_design_by_name(design_name(), looking_for_new_design=True):
             self.__class__.running_index[basename] += 1
         return design_name()
 
@@ -2006,7 +2020,7 @@ def _create_ship_design(design_name, hull_name, part_names, model="fighter",
     return res
 
 
-def _update_design_by_name_cache(design_name, verbose=False):
+def _update_design_by_name_cache(design_name, verbose=False, cache_as_invalid=True):
     """Updates the design by name cache
 
     :param design_name: the name of the design that needs updating
@@ -2024,18 +2038,16 @@ def _update_design_by_name_cache(design_name, verbose=False):
         if fo.getShipDesign(design_id).name == design_name:
             design = fo.getShipDesign(design_id)
             break
-
     if design:
         Cache.design_id_by_name[design_name] = design.id
-    else:
+    elif cache_as_invalid:
         # invalid design
         print "Shipdesign %s seems not to exist: Caching as invalid design." % design_name
         Cache.design_id_by_name[design_name] = ShipDesignTypes.SHIPDESIGN_INVALID
-
     return design
 
 
-def _get_design_by_name(design_name, update_invalid=False):
+def _get_design_by_name(design_name, update_invalid=False, looking_for_new_design=False):
     """Return the shipDesign object of the design with the name design_name.
 
     Results are cached for performance improvements. The cache is to be
@@ -2056,7 +2068,7 @@ def _get_design_by_name(design_name, update_invalid=False):
             update_invalid and (Cache.design_id_by_name[design_name] == ShipDesignTypes.SHIPDESIGN_INVALID)):
         design = fo.getShipDesign(Cache.design_id_by_name[design_name])
     else:
-        design = _update_design_by_name_cache(design_name)
+        design = _update_design_by_name_cache(design_name, cache_as_invalid=not looking_for_new_design)
 
     return design
 
@@ -2108,3 +2120,38 @@ def _can_build(design, empire_id, pid):
     :return: bool
     """
     return design.productionLocationForEmpire(empire_id, pid)
+
+
+def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
+    """Find the entries in dict_new that are not present in dict_old and store them in dict_diff.
+
+    Example usage:
+    dict_a = {1:2, 2: {2: 3, 3: 4}}
+    dict_b = {2: {2: 3, 3: 3}}
+    diff = {}
+    recursive_dict_diff(dict_a, dict_b, diff)
+    --> diff = {1:2, 2:{3:4}}
+
+    :type dict_new: dict
+    :type dict  _old: dict
+    :param dict_diff: Difference between dict_old and dict_new, modified and filled within this function
+    :type dict_diff: dict
+    :param diff_level_threshold: Depth to next diff up to which non-diff entries are stored in dict_diff
+    :return: recursive depth distance to entries differing in dict_new and dict_old
+    :rtype: int
+    """
+    NO_DIFF = 9999
+    min_diff_level = NO_DIFF
+    for key, value in dict_new.iteritems():
+        if not key in dict_old:
+            dict_diff[key] = copy.deepcopy(value)
+            min_diff_level = 0
+        elif isinstance(value, dict):
+            this_diff_level = recursive_dict_diff(value, dict_old[key], dict_diff.setdefault(key, {}), diff_level_threshold) + 1
+            min_diff_level = min(min_diff_level, this_diff_level)
+            if this_diff_level > NO_DIFF and min_diff_level > diff_level_threshold:
+                del dict_diff[key]
+        elif not key in dict_old or value != dict_old[key]:
+                dict_diff[key] = copy.deepcopy(value)
+                min_diff_level = 0
+    return min_diff_level

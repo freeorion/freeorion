@@ -28,22 +28,28 @@ unmetThreat = 0
 
 def calculate_priorities():
     """Calculates the priorities of the AI player."""
-    print("checking statuses")
-    # Industry, Research, Colony, Invasion, Military
-
+    print "\n", 10 * "=", "Preparing to Calculate Priorities", 10 * "="
     prioritiees_timer.start('setting Production Priority')
     foAI.foAIstate.set_priority(PriorityType.RESOURCE_PRODUCTION, 50)  # let this one stay fixed & just adjust Research
+
+    print "\n*** Calculating Research Priority ***\n"
     prioritiees_timer.start('setting Research Priority')
     foAI.foAIstate.set_priority(PriorityType.RESOURCE_RESEARCH, _calculate_research_priority())  # TODO: do univ _survey before this
-    prioritiees_timer.start('Evaluating Colonization Status')
 
+    print "\n*** Updating Colonization Status ***\n"
+    prioritiees_timer.start('Evaluating Colonization Status')
     ColonisationAI.get_colony_fleets()  # sets foAI.foAIstate.colonisablePlanetIDs and foAI.foAIstate.outpostPlanetIDs and many other values used by other modules
+
+    print "\n*** Updating Invasion Status ***\n"
     prioritiees_timer.start('Evaluating Invasion Status')
     InvasionAI.get_invasion_fleets()  # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
+
+    print "\n*** Updating Military Status ***\n"
     prioritiees_timer.start('Evaluating Military Status')
     MilitaryAI.get_military_fleets()
+
+    print("\n** Calculating Production Priorities ***\n")
     prioritiees_timer.start('reporting Production Priority')
-    print("Calculating priorities")
     _calculate_industry_priority()  # purely for reporting purposes
     prioritiees_timer.start('setting Exploration Priority')
 
@@ -171,7 +177,6 @@ def _calculate_research_priority():
     if got_quant:
         research_priority = min(research_priority + 0.1 * industry_priority, research_priority * 1.3)
     research_priority = int(research_priority)
-    print ""
     print "Research Production (current/target) : ( %.1f / %.1f )" % (total_rp, target_rp)
     print "Priority for Research: %d (new target ~ %d RP)" % (research_priority, total_pp * research_priority / industry_priority)
 
