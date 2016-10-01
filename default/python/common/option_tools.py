@@ -72,7 +72,7 @@ def _create_default_config_file(path):
         for k, v in entries.iteritems():
             config.set(section, k, str(v))
     if path:
-        with open(path, 'w') as configfile:
+        with open(unicode(path, 'utf-8'), 'w') as configfile:
             config.write(configfile)
         print "default config is dumped to %s" % path
     return config

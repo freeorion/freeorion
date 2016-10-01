@@ -167,6 +167,6 @@ def make_stub(data, result_path):
     for function in sorted(groups['function'], key=itemgetter('name')):
         res.append(handle_function(function))
 
-    with open(result_path, 'w') as f:
+    with open(unicode(result_path, 'utf-8'), 'w') as f:
         f.write('\n\n\n'.join(res))
         f.write('\n')

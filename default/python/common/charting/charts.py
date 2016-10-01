@@ -48,7 +48,7 @@ def parse_file(file_name, ai=True):
         got_name = False
         data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
         details = {'color': {1, 1, 1, 1}, 'name': "", 'species': ""}
-        with open(file_name, 'r') as lf:
+        with open(unicode(file_name, 'utf-8'), 'r') as lf:
             while True:
                 line = lf.readline()
                 if not line:

@@ -88,7 +88,7 @@ class LogTimer(object):
             mode = 'w'  # empty file
         else:
             mode = 'a'
-        with open(self.log_name, mode) as f:
+        with open(unicode(self.log_name, 'utf-8'), mode) as f:
             f.write(text)
             f.write('\n')
 
