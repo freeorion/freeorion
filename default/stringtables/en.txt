@@ -3942,7 +3942,7 @@ In the expressions describing these, the term Source will generally refer to the
 # %4% local time required on the planet to produce the item.
 ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
-At location %1% the cost and time are %2% %3% over %4% turns.'''
+At location %1%, the cost and time are %2% %3% over %4% turns.'''
 
 # FIXME
 # Displays the ship design properties inside a Pedia article in detail.
@@ -4352,10 +4352,23 @@ RESEARCH_TITLE
 Research
 
 RESEARCH_TEXT
-'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new technologies. Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it. For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
+'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new [[encyclopedia TECHNOLOGIES_TITLE]].
+
+Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it. For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
 The tech at the top of the queue is given RPs first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
 
 Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be used.'''
+
+TECHNOLOGIES_TITLE
+Technologies
+
+TECHNOLOGIES_TEXT
+'''New effects, improved planetary stats, buildings, and ship parts can be unlocked by researching the associated technologies.
+
+Completing [[encyclopedia RESEARCH_TITLE]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
+If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
+
+Generally, an item unlocked by a newly researched technology does not require [[encyclopedia SUPPLY_TITLE]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the already-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade during the following turn.'''
 
 HAPPINESS_TITLE
 Happiness
@@ -4609,7 +4622,7 @@ Right click [[DESIGN_WND_SAVED_DESIGNS]] designs and copy a single or all saved 
 
 [[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
 
-The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated technologies.
+The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated [[encyclopedia TECHNOLOGIES_TITLE]].
 
 The [[DESIGN_WND_PART_PALETTE_TITLE]] window has filters to display/hide entire categories of parts.
 
@@ -5707,7 +5720,7 @@ BEGINNER_HINT_17
 17: [[encyclopedia SHIELDS_TITLE]] on ships defend against every shot that hits the ship, reducing the damage by the amount of the shield value. Ship shield values can be affected by various factors including space storms, what type of star system you are in, or if you are close to a captured empire capital planet.
 
 BEGINNER_HINT_18
-18: [[encyclopedia FOCUS_TITLE]] - pay attention to the focus setting of new planets that are added to your empire, either from settling them or from conquering them. This setting controls if the planet focuses on industrial production or on research or on defense. Later in the game, more focus options may unlock as new technologies are researched, and different species may have different focus options available.
+18: [[encyclopedia FOCUS_TITLE]] - pay attention to the focus setting of new planets that are added to your empire, either from settling them or from conquering them. This setting controls if the planet focuses on industrial production or on research or on defense. Later in the game, more focus options may unlock as new [[encyclopedia TECHNOLOGIES_TITLE]] are researched, and different species may have different focus options available.
 
 BEGINNER_HINT_19
 19: A colony can be established on an [[encyclopedia OUTPOSTS_TITLE]] by constructing a colony building or by using a [[predefinedshipdesign SD_COLONY_SHIP]]. Most colony buildings require a [[encyclopedia SUPPLY_TITLE]] connection to a planet with at least 5 [[encyclopedia HAPPINESS_TITLE]], and 3 population. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
@@ -8044,7 +8057,7 @@ DESC_SPECIES_NOT
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
 # %3% textual description of the upper limit for the number of enqueued items.
-# %4% textual description fo the items enqueued.
+# %4% textual description for the items enqueued.
 DESC_ENQUEUED
 ''' where empire %1% has between %2% and %3% things on the production queue'''
 
@@ -8214,7 +8227,7 @@ DESC_METER_VALUE_CURRENT_MAX_NOT
 DESC_SHIP_PART_METER_VALUE_CURRENT
 ''' that has %2% %1% between %3% and %4%'''
 
-# %1% name of the ship eter.
+# %1% name of the ship meter.
 # %2% textual description of the ship part.
 # %3% textual description of the lower limit for the meter value.
 # %4% textual description of the upper limit for the meter value.
@@ -10130,7 +10143,7 @@ Automated History Analyser
 BLD_AUTO_HISTORY_ANALYSER_DESC
 '''The Automated History Analyser can only be built on a planet with [[buildingtype BLD_CULTURE_ARCHIVES]]. Increases target [[encyclopedia RESEARCH_TITLE]] by 5.
 
-An automated research center with enormous computing power that scours the digitalised cultural archieves to come up with patterns, interdisciplinary parallels and lost or unfinished insights.'''
+An automated research center with enormous computing power that scours the digitalised cultural archives to come up with patterns, interdisciplinary parallels and lost or unfinished insights.'''
 
 BLD_IMPERIAL_PALACE
 Imperial Palace
@@ -10326,7 +10339,7 @@ BLD_GATEWAY_VOID
 Gateway to the Void
 
 BLD_GATEWAY_VOID_DESC
-'''The ability to close off a system almost entirely can be useful for an empire on the defensive. Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are immediately reduced to [[encyclopedia OUTPOSTS_TITLE]] status. The Stealth of all objects within the system is increased by 1000, making them almost impossible to detect.
+'''The ability to close off a system almost entirely can be useful for an empire on the defensive. Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are immediately reduced to [[encyclopedia OUTPOSTS_TITLE]] status. The [[encyclopedia STEALTH_TITLE]] of all objects within the system is increased by 1000, making them almost impossible to detect.
 
 A dimensional tear capable of magnifying the destructive potential of the Void Mind in a localized region.'''
 
