@@ -1,0 +1,90 @@
+Species
+    name = "SP_ANCIENT_GUARDIANS"
+    description = "SP_ANCIENT_GUARDIANS_DESC"
+    gameplay_description = "SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC"
+
+    tags = [ "ROBOTIC" "NO_INDUSTRY" "NO_RESEARCH" "AVERAGE_SUPPLY" "DESTROYED_ON_CONQUEST"]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[NO_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        // not for description
+
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+
+        // huge bonus to planetary shields
+        EffectsGroup
+            description = "ANCIENT_PLANETARY_SHIELD_DESC"
+            scope = And [
+                Source
+                Planet
+            ]
+            effects = SetMaxShield value = Value + 500
+
+        // huge bonus to ground troops
+        EffectsGroup
+            description = "ANCIENT_DEFENSE_TROOPS_DESC"
+            scope = And [
+                Source
+                Planet
+            ]
+            effects = SetMaxTroops value = Value + Target.Population * 10
+
+        // set population to max
+        EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = Turn high = 1
+            effects = SetPopulation value = Target.TargetPopulation
+
+        // self-destruct when captured
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = [
+                SetPopulation value = 0
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_GUARDIANS_CAPTURED"
+                    label = "EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL"
+                    icon = "icons/species/robotic-08.png"
+                    parameters = tag = "planet" data = Source.ID
+                    empire = Source.Owner
+        ]
+
+    ]
+
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Good
+        type = Inferno      environment = Good
+        type = Radiated     environment = Good
+        type = Barren       environment = Good
+        type = Tundra       environment = Good
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Good
+        type = Gasgiant     environment = Good
+    ]
+
+    graphic = "icons/species/robotic-08.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"
