@@ -1096,11 +1096,11 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
         if sys_supply <= 0:
             if sys_supply + planet_supply >= 0:
-                supply_val = 100 * (planet_supply - max(-3, sys_supply))
+                supply_val = 40 * (planet_supply - max(-3, sys_supply))
             else:
                 supply_val = 200 * (planet_supply + sys_supply)  # a penalty
         elif planet_supply > sys_supply == 1:  # TODO: check min neighbor supply
-            supply_val = 50 * (planet_supply - sys_supply)
+            supply_val = 20 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
 
         # if AITags != "":
