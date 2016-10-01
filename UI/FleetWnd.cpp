@@ -3017,7 +3017,7 @@ void FleetWnd::SetStatIconValues() {
     {
         TemporaryPtr<const Fleet> fleet = *fleet_it;
 
-        if ( !(m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) )
+        if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
             continue;
 
         std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
@@ -3112,7 +3112,7 @@ void FleetWnd::Refresh() {
                 this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
             { continue; }
 
-            if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
+            if ( ((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id) ) {
                 m_fleet_ids.insert(fleet_id);
                 AddFleet(fleet_id);
             }
