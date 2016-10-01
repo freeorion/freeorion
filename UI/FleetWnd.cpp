@@ -2850,6 +2850,11 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_fleet_detail_panel(0),
     m_stat_icons()
 {
+    if (!fleet_ids.empty()) {
+        if (TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_ids.begin()))
+            m_empire_id = fleet->Owner();
+    }
+
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
         m_fleet_ids.insert(*it);
     Init(selected_fleet_id);
