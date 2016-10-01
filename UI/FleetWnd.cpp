@@ -3826,6 +3826,21 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     return INVALID_OBJECT_ID;
 }
 
+namespace {
+    std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id) {
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
+        if (!fleet)
+            return "";
+
+        int nearest_system_id(GetUniverse().NearestSystemTo(fleet->X(), fleet->Y()));
+        if (TemporaryPtr<const System> system = GetSystem(nearest_system_id)) {
+            const std::string& sys_name = system->ApparentName(client_empire_id);
+            return sys_name;
+        }
+        return "";
+    }
+}
+
 std::string FleetWnd::TitleText() const {
     // if no fleets available, default to indicating no fleets
     if (m_fleet_ids.empty())
@@ -3835,24 +3850,30 @@ std::string FleetWnd::TitleText() const {
 
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
-    if (const Empire* empire = GetEmpire(m_empire_id)) {
-        if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
-            const std::string& sys_name = system->ApparentName(client_empire_id);
-            return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
-                                  empire->Name() % sys_name);
-        } else {
-            return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS")) %
-                                  empire->Name());
-        }
-    } else {
-        if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
-            const std::string& sys_name = system->ApparentName(client_empire_id);
-            return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
-                                  sys_name);
-        } else {
-            return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS")));
-        }
+    const Empire* empire = GetEmpire(m_empire_id);
+
+    if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
+        const std::string& sys_name = system->ApparentName(client_empire_id);
+        return (empire
+                ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
+                                 empire->Name() % sys_name)
+                : boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
+                                 sys_name));
     }
+
+    const std::string sys_name = SystemNameNearestToFleet(client_empire_id, *m_fleet_ids.begin());
+    if (!sys_name.empty()) {
+        return (empire
+                ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_NEAR_SYSTEM")) %
+                                 empire->Name() % sys_name)
+                : boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_NEAR_SYSTEM")) %
+                                 sys_name));
+    }
+
+    return (empire
+            ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS")) %
+                             empire->Name())
+            : boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS"))));
 }
 
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
