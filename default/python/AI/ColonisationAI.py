@@ -1352,7 +1352,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         fleet_id = this_fleet_list[0]
         already_targeted.append(planet_id)
         ai_target = universe_object.Planet(planet_id)
-        foAI.foAIstate.get_fleet_mission(fleet_id).add_target(mission_type, ai_target)
+        foAI.foAIstate.get_fleet_mission(fleet_id).set_target(mission_type, ai_target)
 
 
 def _print_empire_species_roster():
