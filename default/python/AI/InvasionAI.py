@@ -229,6 +229,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     detail = []
     building_values = {"BLD_IMPERIAL_PALACE": 1000,
                        "BLD_CULTURE_ARCHIVES": 1000,
+                       "BLD_AUTO_HISTORY_ANALYSER": 100,
                        "BLD_SHIPYARD_BASE": 100,
                        "BLD_SHIPYARD_ORG_ORB_INC": 200,
                        "BLD_SHIPYARD_ORG_XENO_FAC": 200,

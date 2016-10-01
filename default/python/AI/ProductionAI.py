@@ -176,6 +176,7 @@ def get_best_ship_ratings(planet_ids):
         return []
 
 
+# TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
 def generate_production_orders():
     """generate production orders"""
     # first check ship designs
@@ -258,7 +259,7 @@ def generate_production_orders():
             ))
 
         table.print_table()
-        print 
+        print
         capital_buildings = [universe.getBuilding(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
         possible_building_type_ids = []
@@ -297,6 +298,14 @@ def generate_production_orders():
                 print "No capital queued buildings"
             print
             queued_building_names = [bldg.name for bldg in capital_queued_buildings]
+
+            if "BLD_AUTO_HISTORY_ANALYSER" in possible_building_types:
+                for pid in automatic_historic_analyzer_locations():
+                    res = fo.issueEnqueueBuildingProductionOrder("BLD_AUTO_HISTORY_ANALYSER", pid)
+                    print "Enqueueing BLD_AUTO_HISTORY_ANALYSER at planet %s - result %d" % (universe.getPlanet(pid), res)
+                    if res:
+                        cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
+                        building_expense += cost / time
 
             if (total_pp > 40 or ((current_turn > 40) and (ColonisationAI.empire_status.get('industrialists', 0) >= 20))) and ("BLD_INDUSTRY_CENTER" in possible_building_types) and ("BLD_INDUSTRY_CENTER" not in (capital_buildings+queued_building_names)) and (building_expense < building_ratio*total_pp):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", homeworld.id)
@@ -1030,7 +1039,7 @@ def generate_production_orders():
                 dest_set.add(dd_sys_id)
                 dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(dd_sys_id, empire.empireID))
                 dest_set.update(dd_neighbors.keys())
-            
+
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
         print "Considering building %s, found current and queued systems %s" % (building_name, ppstring(PlanetUtilsAI.sys_name_ids(cur_drydoc_sys.union(queued_sys))))
         for sys_id, pids in state.get_empire_inhabited_planets_by_system().items():  # TODO: sort/prioritize in some fashion
@@ -1469,3 +1478,96 @@ def _print_production_queue(after_turn=False):
             "%d" % element.turnsLeft,
         ])
     prod_queue_table.print_table()
+
+
+def automatic_historic_analyzer_locations():
+    """
+    Find possible locations for the BLD_AUTO_HISTORY_ANALYSER building and return a subset of chosen building locations.
+
+    :return: Random possible locations up to max queueable amount. Empty if no location found or can't queue another one
+    :rtype: list
+    """
+    empire = fo.getEmpire()
+    universe = fo.getUniverse()
+    total_pp = empire.productionPoints
+    history_analyser = "BLD_AUTO_HISTORY_ANALYSER"
+    culture_archives = "BLD_CULTURE_ARCHIVES"
+
+    ARB_LARGE_NUMBER = 1e4
+    conditions = {
+        # aggression: (min_pp, min_turn, min_pp_to_queue_another_one)
+        fo.aggression.beginner: (100, 100, ARB_LARGE_NUMBER),
+        fo.aggression.turtle: (75, 75, ARB_LARGE_NUMBER),
+        fo.aggression.cautious: (60, 60, ARB_LARGE_NUMBER),
+        fo.aggression.typical: (30, 50, ARB_LARGE_NUMBER),
+        fo.aggression.aggressive: (25, 50, ARB_LARGE_NUMBER),
+        fo.aggression.maniacal: (25, 50, 100)
+    }
+
+    min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.aggression,
+                                                                 (ARB_LARGE_NUMBER, ARB_LARGE_NUMBER, ARB_LARGE_NUMBER))
+    # If we can colonize good planets instead, do not build this.
+    num_colony_targets = 0
+    for pid in ColonisationAI.all_colony_opportunities:
+        try:
+            best_species_score = ColonisationAI.all_colony_opportunities[pid][0][0]
+        except IndexError:
+            continue
+        if best_species_score > 500:
+            num_colony_targets += 1
+
+    num_covered = get_number_of_existing_outpost_and_colony_ships() + get_number_of_queued_outpost_and_colony_ships()
+    remaining_targets = num_colony_targets - num_covered
+    min_pp *= remaining_targets
+
+    max_enqueued = 1 if total_pp > min_pp or fo.currentTurn() > turn_trigger else 0
+    max_enqueued += int(total_pp / min_pp_per_additional)
+
+    if max_enqueued <= 0:
+        return []
+
+    # find possible locations
+    possible_locations = set()
+    for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
+        planet = universe.getPlanet(pid)
+        if not planet or planet.currentMeterValue(fo.meterType.targetPopulation) < 1:
+            continue
+        buildings_here = [bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs)]
+        if planet and culture_archives in buildings_here and history_analyser not in buildings_here:
+            possible_locations.add(pid)
+
+    # check existing queued buildings and remove from possible locations
+    queued_locs = {e.locationID for e in empire.productionQueue if e.buildType == EmpireProductionTypes.BT_BUILDING and
+                   e.name == history_analyser}
+
+    possible_locations -= queued_locs
+    chosen_locations = []
+    for i in range(min(max_enqueued, len(possible_locations))):
+        chosen_locations.append(possible_locations.pop())
+    return chosen_locations
+
+
+def get_number_of_queued_outpost_and_colony_ships():
+    """Get the total number of queued outpost/colony ships/bases.
+
+    :rtype: int
+    """
+    num_ships = 0
+    for element in fo.getEmpire().productionQueue:
+        if element.turnsLeft >= 0 and element.buildType == EmpireProductionTypes.BT_SHIP:
+            if foAI.foAIstate.get_ship_role(element.designID) in (ShipRoleType.CIVILIAN_OUTPOST,
+                                                                  ShipRoleType.BASE_OUTPOST,
+                                                                  ShipRoleType.BASE_COLONISATION,
+                                                                  ShipRoleType.CIVILIAN_COLONISATION):
+                num_ships += element.blocksize
+    return num_ships
+
+
+def get_number_of_existing_outpost_and_colony_ships():
+    """Get the total number of existing outpost/colony ships/bases.
+
+    :rtype: int
+    """
+    num_colony_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION))
+    num_outpost_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST))
+    return num_outpost_fleets + num_colony_fleets
