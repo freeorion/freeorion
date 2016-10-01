@@ -536,29 +536,6 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
     return retval;
 }
 
-FleetWnd* FleetUIManager::NewFleetWnd(int system_id, int empire_id,
-                                      int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
-{
-    std::string config_name = "";
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
-        CloseAll();
-        // Only write to OptionsDB if in single fleet window mode.
-        config_name = FLEET_WND_NAME;
-    }
-    FleetWnd* retval = new FleetWnd(system_id, empire_id, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
-
-    m_fleet_wnds.insert(retval);
-    GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,           this);
-    GG::Connect(retval->ClickedSignal,              &FleetUIManager::FleetWndClicked,           this);
-    GG::Connect(retval->FleetRightClickedSignal,    FleetRightClickedSignal);
-    GG::Connect(retval->ShipRightClickedSignal,     ShipRightClickedSignal);
-
-    GG::GUI::GetGUI()->Register(retval);
-
-    return retval;
-}
-
 void FleetUIManager::CullEmptyWnds() {
     // scan through FleetWnds, deleting those that have no fleets
     for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ) {
@@ -2842,7 +2819,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
          GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
          const std::string& config_name) :
-    MapWndPopup("", flags, config_name),
+    MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
@@ -2861,21 +2838,6 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
         m_fleet_ids.insert(*it);
     Init(selected_fleet_id);
 }
-
-FleetWnd::FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
-         int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
-         const std::string& config_name) :
-    MapWndPopup("", flags | GG::RESIZABLE, config_name),
-    m_fleet_ids(),
-    m_empire_id(empire_id),
-    m_system_id(system_id),
-    m_order_issuing_enabled(order_issuing_enabled),
-    m_fleets_lb(0),
-    m_new_fleet_drop_target(0),
-    m_fleet_detail_panel(0),
-    m_stat_icons()
-{ Init(selected_fleet_id); }
 
 FleetWnd::~FleetWnd() {
     ClientUI::GetClientUI()->GetMapWnd()->ClearProjectedFleetMovementLines();
