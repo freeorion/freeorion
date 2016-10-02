@@ -1,8 +1,8 @@
 English
 
-#This is the English String Table file for FreeOrion
+# This is the English String Table file for FreeOrion
 #
-#Translate this file to other languages.
+# Translate this file to other languages.
 #
 # Notes: to avoid potential conflict with functional keys in other files, do not
 # make any stringtable keys beginning with "FUNCTIONAL_".
@@ -5345,6 +5345,7 @@ Ancient Ruins Empty Excavation
 
 EFFECT_NATIVES_TECH
 On %planet%: The technology %tech% was learned from the %species%!
+
 EFFECT_NATIVES_TECH_LABEL
 Native Tech
 
@@ -12205,7 +12206,7 @@ AVERAGE_POPULATION_DESC
 GOOD_POPULATION_DESC
 +	Good Population 125%
 
-FIXED_LOW_POPULATION
+FIXED_LOW_POPULATION_DESC
 −−	Maximum Population is fixed at 5
 
 BAD_SUPPLY_DESC

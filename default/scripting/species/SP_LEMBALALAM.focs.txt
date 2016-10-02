@@ -4,13 +4,12 @@ Species
     gameplay_description = "SP_LEMBALALAM_GAMEPLAY_DESC"
     Native
 
-    tags = [ "ORGANIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GOOD_STEALTH"]
+    tags = [ "ORGANIC" "NO_INDUSTRY" "GOOD_RESEARCH" "AVERAGE_SUPPLY" "GOOD_STEALTH"]
 
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/
         [[HAS_RESEARCH_FOCUS]]
         /*[[HAS_GROWTH_FOCUS]]*/
-        /*[[HAS_MINING_FOCUS]]*/
         [[HAS_ADVANCED_FOCI]]
     ]
 
@@ -52,13 +51,23 @@ Species
 
         // Max Population is fixed at 5
         EffectsGroup
-            description = "FIXED_LOW_POPULATION"
+            description = "FIXED_LOW_POPULATION_DESC"
             scope = Source
             activation = Planet
             priority = 130
             effects = [
                 SetTargetPopulation value = 5 accountinglabel = "IMMORTAL_LABEL"
             ]
+
+
+        // set population to max
+        EffectsGroup
+            scope = And [
+                Source
+                Planet
+            ]
+            activation = Turn high = 1
+            effects = SetPopulation value = Target.TargetPopulation
 
         // Give techs to empire
         EffectsGroup
@@ -71,6 +80,7 @@ Species
                 GiveEmpireTech name = "SPY_STEALTH_1" empire = Target.Owner                
                 GenerateSitRepMessage
                     message = "EFFECT_NATIVES_TECH"
+                    label = "EFFECT_NATIVES_TECH_LABEL"
                     icon = "icons/species/other-01.png"
                     parameters = [
                         tag = "planet" data = Source.ID
@@ -91,6 +101,7 @@ Species
                 GiveEmpireTech name = "SPY_STEALTH_2" empire = Target.Owner                
                 GenerateSitRepMessage
                     message = "EFFECT_NATIVES_TECH"
+                    label = "EFFECT_NATIVES_TECH_LABEL"
                     icon = "icons/species/other-01.png"
                     parameters = [
                         tag = "planet" data = Source.ID
@@ -110,6 +121,7 @@ Species
                 GiveEmpireTech name = "GRO_LIFECYCLE_MAN" empire = Target.Owner                
                 GenerateSitRepMessage
                     message = "EFFECT_NATIVES_TECH"
+                    label = "EFFECT_NATIVES_TECH_LABEL"
                     icon = "icons/species/other-01.png"
                     parameters = [
                         tag = "planet" data = Source.ID
