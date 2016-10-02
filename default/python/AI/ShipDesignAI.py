@@ -1537,7 +1537,7 @@ class ShipDesigner(object):
             if weapon_name not in _raised_warnings:
                 _raised_warnings.add(weapon_name)
                 print_error(("WARNING: Encountered unknown weapon (%s): "
-                             "The AI will play on but damage estimates may be incorrect leading to worse performance. "
+                             "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
                              "Please update AIDependencies.py and "
                              "add the weapon with its upgrade techs to WEAPON_UPGRADE_DICT") % weapon_name,
                             location="ShipDesignAI._calculate_weapon_strength()", trace=True)
