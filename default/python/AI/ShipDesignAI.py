@@ -1525,7 +1525,7 @@ class ShipDesigner(object):
         :rtype: bool
         """
         return any(part.partClass in partclass for part in self.parts)
-
+        base_damage = weapon_part.capacity
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
         weapon_name = weapon_part.name
