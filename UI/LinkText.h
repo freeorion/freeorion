@@ -10,6 +10,7 @@ class LinkDecorator {
 public:
     /** \name Structors */ //@{
     LinkDecorator() {};
+    virtual ~LinkDecorator() {};
     //@}
 
     /// Gets called for each link of the type this decorator is assigned to.
