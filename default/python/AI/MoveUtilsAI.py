@@ -208,7 +208,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     sys_distances = sorted([(universe.jumpDistance(start_system_id, sys_id), sys_id)
                             for sys_id in drydock_system_ids])
 
-    fleet_rating = foAI.foAIstate.get_rating(fleet_id).get('overall', 0)
+    fleet_rating = foAI.foAIstate.get_rating(fleet_id)
     for dock_sys in [universe.getSystem(sys_id) for (_, sys_id) in sys_distances]:
         path = can_travel_to_system(fleet_id, start_sys, dock_sys)
 

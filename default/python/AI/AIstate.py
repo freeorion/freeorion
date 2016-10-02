@@ -578,7 +578,7 @@ class AIstate(object):
     def get_rating(self, fleet_id, force_new=False, enemy_stats=None):
         """Returns a dict with various rating info."""
         if fleet_id in self.fleetStatus and not force_new and enemy_stats is None:
-            return self.fleetStatus[fleet_id].get('rating', {})
+            return self.fleetStatus[fleet_id].get('rating', 0)
         else:
             fleet = fo.getUniverse().getFleet(fleet_id)
             if not fleet:
@@ -701,8 +701,8 @@ class AIstate(object):
                 fleet_table.add_row(
                     [
                         fleet,
-                        old_rating.get('overall', 0),
-                        new_rating.get('overall', 0),
+                        old_rating,
+                        new_rating,
                         this_sys or 'starlane',
                         next_sys or '-',
                         old_rating.get('summary', None)
