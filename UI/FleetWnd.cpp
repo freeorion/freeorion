@@ -3659,7 +3659,6 @@ void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
 
 void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     DebugLogger() << "FleetWnd::UniverseObjectDeleted";
-    DebugLogger().flush();
 
     // check if deleted object was a fleet.  if not, abort.
     TemporaryPtr<const Fleet> deleted_fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
@@ -3681,7 +3680,6 @@ void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
         }
     }
     DebugLogger() << "FleetWnd::UniverseObjectDeleted done";
-    DebugLogger().flush();
 }
 
 void FleetWnd::SystemChangedSlot() {

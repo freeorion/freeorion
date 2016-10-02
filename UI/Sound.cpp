@@ -237,7 +237,7 @@ void Sound::SoundImpl::Enable() {
 
     InitOpenAL();
     if (!m_initialized) {
-        ErrorLogger() "Unable to initialize audio.  Sound effects and music are disabled.";
+        ErrorLogger() << "Unable to initialize audio.  Sound effects and music are disabled.";
         // TODO: Let InitOpenAL throw the OpenAL error message which
         // might be more useful.
         throw InitializationFailureException("ERROR_SOUND_INITIALIZATION_FAILED");
