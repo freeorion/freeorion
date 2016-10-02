@@ -4444,8 +4444,11 @@ Each [[encyclopedia ENC_SPECIES]] has its own environmental preferences, which d
 
 The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the max population value if the species colonizes the planet, whereas a red number indicates that the population will stay idle or will decrease, to finally perish if the species attempts to colonize the planet.
 
-When terraforming a planet (by [[encyclopedia RESEARCH_TITLE]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed in the Planet Suitability report.'''
+When terraforming a planet (by [[encyclopedia RESEARCH_TITLE]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed below.
 
+Clockwise from top: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]] 
+
+<img src="encyclopedia/EP_wheel.png"></img>'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
