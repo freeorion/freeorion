@@ -181,6 +181,7 @@ def generate_production_orders():
     # first check ship designs
     # next check for buildings etc that could be placed on queue regardless of locally available PP
     # next loop over resource groups, adding buildings & ships
+    _print_production_queue()
     universe = fo.getUniverse()
     capital_id = PlanetUtilsAI.get_capital()
     if capital_id is None or capital_id == -1:
@@ -1109,9 +1110,7 @@ def generate_production_orders():
                                                      design.productionCost(empire.empireID, homeworld.id),
                                                      design.productionTime(empire.empireID, homeworld.id))
     print
-    print "Projects already in Production Queue:"
     production_queue = empire.productionQueue
-    print "production summary: %s" % [elem.name for elem in production_queue]
     queued_colony_ships = {}
     queued_outpost_ships = 0
     queued_troop_ships = 0
@@ -1389,6 +1388,7 @@ def generate_production_orders():
                     fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
         print
     fo.updateProductionQueue()
+    _print_production_queue(after_turn=True)
 
 
 def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
@@ -1440,3 +1440,32 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
         if res:
             num_queued += 1
             already_covered.extend(AIstate.colonizedSystems[universe.getPlanet(pid).systemID])
+
+
+def _print_production_queue(after_turn=False):
+    """Print production queue content with relevant info in table format."""
+    universe = fo.getUniverse()
+    s = "after" if after_turn else "before"
+    title = "Production Queue Turn %d %s ProductionAI calls" % (fo.currentTurn(), s)
+    prod_queue_table = Table(
+        [Text('Object'), Text('Location'), Text('Quantity'), Text('Progress'), Text('Allocated PP'), Text('Turns left')],
+        table_name=title
+    )
+    for element in fo.getEmpire().productionQueue:
+        if element.buildType == EmpireProductionTypes.BT_SHIP:
+            item = fo.getShipDesign(element.designID)
+        elif element.buildType == EmpireProductionTypes.BT_BUILDING:
+            item = fo.getBuildingType(element.name)
+        else:
+            continue
+        cost = item.productionCost(fo.empireID(), element.locationID)
+
+        prod_queue_table.add_row([
+            element.name,
+            universe.getPlanet(element.locationID),
+            "%dx %d" % (element.remaining, element.blocksize),
+            "%.1f / %.1f" %(element.progress, cost),
+            "%.1f" % element.allocation,
+            "%d" % element.turnsLeft,
+        ])
+    prod_queue_table.print_table()
