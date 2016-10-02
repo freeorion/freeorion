@@ -59,7 +59,7 @@ class ShipCombatStats(object):
             """
             self.structure = 1 if structure is None else structure
             self.shields = 0 if shields is None else shields
-            self.attacks = {} if attacks is None else attacks
+            self.attacks = {} if attacks is None else tuple_to_dict(attacks)
 
         def get_stats(self, hashable=False):
             """
