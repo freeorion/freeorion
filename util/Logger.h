@@ -2,6 +2,8 @@
 #define _Logger_h_
 
 #include <boost/log/trivial.hpp>
+#include <boost/log/expressions/keyword.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 
 #include "Export.h"
 
@@ -13,19 +15,28 @@ FO_COMMON_API void InitLogger(const std::string& logFile, const std::string& pat
 /** Accessors for the App's logger */
 FO_COMMON_API void SetLoggerPriority(int priority);
 
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
+
 #define __BASE_FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 
+#define FO_LOGGER(lvl)\
+    BOOST_LOG_STREAM_WITH_PARAMS(::boost::log::trivial::logger::get(),\
+        (::boost::log::keywords::severity = ::boost::log::trivial::lvl)) <<\
+        ::boost::log::add_value("SrcFilename", __BASE_FILENAME__) <<\
+        ::boost::log::add_value("SrcLinenum", __LINE__)
+
 #define TraceLogger()\
-    BOOST_LOG_TRIVIAL(trace)
+    FO_LOGGER(trace)
 
 #define DebugLogger()\
-    BOOST_LOG_TRIVIAL(debug)
+    FO_LOGGER(debug)
 
 #define ErrorLogger()\
-    BOOST_LOG_TRIVIAL(error) << __BASE_FILENAME__ << ":" << __LINE__ << " : "
+    FO_LOGGER(error)
 
 #define FatalLogger()\
-    BOOST_LOG_TRIVIAL(fatal) << __BASE_FILENAME__ << ":" << __LINE__ << " : "
+    FO_LOGGER(fatal)
 
 extern int g_indent;
 

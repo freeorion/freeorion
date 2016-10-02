@@ -50,18 +50,19 @@ int g_indent = 0;
 std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
-void InitLogger(const std::string& logFile, const std::string& pattern) {
+void InitLogger(const std::string& logFile, const std::string& process) {
     logging::add_file_log(
         keywords::file_name = logFile.c_str(),
         keywords::auto_flush = true,
         keywords::format = expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
             << " [" << expr::attr<logging::trivial::severity_level>("Severity") << "] "
-            << pattern << " : " << expr::message
+            << process << " : " << log_src_filename << ":" << log_src_linenum << " : "
+            << expr::message
         );
 
     logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
-    logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock()); 
+    logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
     DebugLogger() << "Logger initialized";
     DebugLogger() << FreeOrionVersionString();
