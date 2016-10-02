@@ -1562,7 +1562,7 @@ class ShipDesigner(object):
             base_shots = 1
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_piloting_grades(self.species)
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
             species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
@@ -1576,7 +1576,7 @@ class ShipDesigner(object):
         base_damage = hangar_part.secondaryStat
         # species modifier
         if not ignore_species:
-            weapons_grade = CombatRatingsAI.get_piloting_grades(self.species)
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
             species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(hangar_name, 0)
         else:
             species_modifier = 0
