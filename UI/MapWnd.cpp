@@ -2186,7 +2186,11 @@ void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
-    if (!m_dragged && !m_in_production_view_mode) {
+    FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
+
+    // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
+    if (manager.ActiveFleetWnd()) { manager.CloseAll(); }
+    else if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(INVALID_OBJECT_ID);
         m_side_panel->Hide();
     }
