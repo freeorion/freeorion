@@ -4711,6 +4711,36 @@ Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]] and the recen
 
 '''
 
+SITREP_IGNORE_BLOCK_TITLE
+Ignoring and Blocking SitReps
+
+SITREP_IGNORE_BLOCK_SHORT_DESC
+Ignoring a specific SitRep and blocking SitRep types.
+
+SITREP_IGNORE_BLOCK_TEXT
+'''There are two options for hiding Situation Reports (SitReps): Ignoring and Blocking.
+
+Ignoring a SitRep is always for a specific event.
+For example, a specific ship arriving at a specific system.
+A different ship arriving at that system, or the same ship arriving at a different system are both different events, and will still be displayed.
+
+Blocking a SitRep <i>type</i> applies to any SitRep for the same type of event.
+For example, <u>[[SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL]]</u> applies to any ship owned by the players empire arriving at any system.
+
+<u>[[SITREP_SNOOZE_INDEFINITE]]</u> will hide the SitRep for all turns, starting from turn 0.
+Options to ignore for 5 or 10 turns will start counting from the turn being viewed in the Situation Report window.
+Ignoring a SitRep only applies to the current game session.
+If the client is restarted or a game is loaded, these SitReps are displayed again.
+
+Blocking a SitRep type applies to all turns and will persist between game sessions.
+Previously blocked SitRep types may be re-enabled by clicking the Filters button.
+SitRep types will have a check mark next to them if they are enabled/shown.
+SitRep types only appear in the Filters list once an event has occurred that would trigger them.
+
+Ignoring is useful for hiding a reoccurring event, such as reminders to build a [[buildingtype BLD_GAS_GIANT_GEN]] at one planet.
+
+Blocking is useful if you find some types of SitReps unhelpful, such as once you have seen all of the [[encyclopedia BEGINNER_HINTS]].'''
+
 AI_ERROR_MSG
 AI_Error: AI script error
 
@@ -5026,19 +5056,19 @@ FILTERS
 Filters
 
 SITREP_SNOOZE_5_TURNS
-'''  Hide this Sitrep for 5 turns'''
+'''  For 5 turns, ignore this SitRep'''
 
 SITREP_SNOOZE_10_TURNS
-'''  Hide this Sitrep for 10 turns'''
+'''  For 10 turns, ignore this SitRep'''
 
 SITREP_SNOOZE_INDEFINITE
-'''  Indefinite dismissal for this SitRep'''
+'''  Completely ignore this SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Show all SitReps indefinitely dismissed'''
+'''  Show completely ignored SitReps'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Show all hidden or dismissed SitReps'''
+'''  Show all ignored SitReps'''
 
 SITREP_WELCOME
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
@@ -5728,7 +5758,7 @@ BEGINNER_HINT_19
 19: A colony can be established on an [[encyclopedia OUTPOSTS_TITLE]] by constructing a colony building or by using a [[predefinedshipdesign SD_COLONY_SHIP]]. Most colony buildings require a [[encyclopedia SUPPLY_TITLE]] connection to a planet with at least 5 [[encyclopedia HAPPINESS_TITLE]], and 3 population. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
 
 BEGINNER_HINT_20
-20: Specific Situation Reports (like this one) can be temporarily hidden or dismissed by right clicking on their icon and selecting one of the options. Reports of a certain type may be filtered out on a more permanent basis using the Filters menu at the bottom of this window. These beginner game hints are grouped as [[encyclopedia BEGINNER_HINTS]] in the filter list.
+20: Specific Situation Reports (like this one) can be temporarily ignored by right clicking on their icon and selecting one of the options. Reports of a certain type may be filtered out on a more permanent basis using the Filters menu at the bottom of this window. These beginner game hints are grouped as [[encyclopedia BEGINNER_HINTS]] in the filter list.
 
 BEGINNER_HINT_21
 21: You can set a destination for a ship that is still in the production queue. With the production screen open: click on the target system in the galaxy map, then right click on the ship in the production queue. When a menu of choices for that ship pops up choose 'Rally to ' and it should have the name of the selected system where you want the ship to automatically go once construction completes.
@@ -9848,7 +9878,7 @@ SPY_CUSTOM_ADVISORIES
 Empire Intelligence Agency
 
 SPY_CUSTOM_ADVISORIES_DESC
-'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps).  If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can dismiss the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
+'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps).  If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can ignore the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
 (Note: in a multiplayer game, the content files of the Server are the ones which determine what SitReps are sent to empires.)
