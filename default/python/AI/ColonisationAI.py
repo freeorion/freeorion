@@ -934,8 +934,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             ast_val = 0
             if tech_is_complete("PRO_MICROGRAV_MAN"):
                 per_ast = 5
-            else:
+            elif fo.currentTurn() > 40:
                 per_ast = 2.5
+            else:
+                per_ast = 0.1
             if system:
                 for pid in system.planetIDs:
                     other_planet = universe.getPlanet(pid)
@@ -954,9 +956,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             if tech_is_complete("SHP_ASTEROID_HULLS"):
                 per_ast = 20
             elif tech_is_complete("CON_ORBITAL_CON"):
-                per_ast = 10
-            else:
                 per_ast = 5
+            else:
+                per_ast = 0.1
             if system:
                 for pid in system.planetIDs:
                     other_planet = universe.getPlanet(pid)
@@ -1030,11 +1032,11 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
         if sys_supply <= 0:
             if sys_supply + planet_supply >= 0:
-                supply_val = 100 * (planet_supply - max(-3, sys_supply))
+                supply_val = 40 * (planet_supply - max(-3, sys_supply))
             else:
                 supply_val = 200 * (planet_supply + sys_supply)  # a penalty
         elif planet_supply > sys_supply == 1:  # TODO: check min neighbor supply
-            supply_val = 50 * (planet_supply - sys_supply)
+            supply_val = 20 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
 
         # if AITags != "":
