@@ -41,15 +41,6 @@ Hull
     ]
     effectsgroups = [
         EffectsGroup
-            scope = Source
-            activation = Source
-            effects = [
-                SetStructure value = Value + 2
-                SetFuel value = Value + 0.2
-                SetDetection value = Value + 50
-            ]
-
-        EffectsGroup
             scope = And [
                 WithinDistance distance = 0 condition = Source
                 Ship
@@ -71,6 +62,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
 
+        [[LIVING_HULL_EFFECTS_GROUPS]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
         [[UNOWNED_MOVE]]

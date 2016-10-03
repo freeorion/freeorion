@@ -37,6 +37,7 @@ Hull
         Star type = [Blue BlackHole]
     ]
     effectsgroups = [
+        [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

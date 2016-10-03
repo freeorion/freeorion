@@ -37,7 +37,6 @@ Hull
             activation = Turn low = Source.CreationTurn + 1
             effects = [
                 SetStructure value =  Value + Value
-                SetFuel value = Value + 0.2
             ]
 
         EffectsGroup
@@ -51,6 +50,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*0.5, 25)
 
+        [[LIVING_HULL_BASE_FUEL_REGEN]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
         [[UNOWNED_MOVE]]
