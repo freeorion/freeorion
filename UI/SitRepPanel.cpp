@@ -600,24 +600,35 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const
 void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
 
     GG::MenuItem menu_contents;
-    std::string sitrep_text;
+    std::string sitrep_text, sitrep_template;
     int start_turn = 0;
     SitRepRow* sitrep_row(0);
     if (it != m_sitreps_lb->end()) 
         sitrep_row = dynamic_cast<SitRepRow*>(*it);
     if (sitrep_row) {
-        sitrep_text = sitrep_row->GetSitRepEntry().GetText();
-        start_turn = sitrep_row->GetSitRepEntry().GetTurn();
+        const SitRepEntry& sitrep_entry = sitrep_row->GetSitRepEntry();
+        sitrep_text = sitrep_entry.GetText();
+        start_turn = sitrep_entry.GetTurn();
         if (start_turn > 0) {
             menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_5_TURNS"),      1, false, false));
             menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_10_TURNS"),     2, false, false));
             menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_INDEFINITE"),   3, false, false));
         }
+        sitrep_template = sitrep_entry.GetLabelString();
+        std::string sitrep_label = sitrep_entry.GetStringtableLookupFlag() ? UserString(sitrep_template) : sitrep_template;
+
+        if (!sitrep_label.empty() && !sitrep_template.empty()) {
+            menu_contents.next_level.push_back(GG::MenuItem(str(FlexibleFormat(UserString("SITREP_HIDE_TEMPLATE"))
+                                                                               % sitrep_label),       4, false, false));
+        }
     }
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_ALL"),        4, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"), 5, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem("? - " + UserString("SITREP_IGNORE_BLOCK_TITLE"),   8, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem("  " + UserString("HOTKEY_COPY"),                  10, false, false));
+    if (m_hidden_sitrep_templates.size() > 0)
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SHOWALL_TEMPLATES"),       5, false, false));
+
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_ALL"),            6, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"),     7, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem("? - " + UserString("SITREP_IGNORE_BLOCK_TITLE"), 8, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem("  " + UserString("HOTKEY_COPY"),                10, false, false));
 
     CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (!popup.Run())
@@ -639,10 +650,22 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
         permanently_snoozed_sitreps.insert(sitrep_text);
         break;
     }
-    case 4: { //
+    case 4: { // Add template for the row entry to hidden templates
+        m_hidden_sitrep_templates.insert(sitrep_template);
+        SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
+        Update();
+        break;
+    }
+    case 5: { // Show all hidden templates
+        m_hidden_sitrep_templates.clear();
+        SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
+        Update();
+        break;
+    }
+    case 6: { //
         snoozed_sitreps.clear();
     }
-    case 5: { //
+    case 7: { //
         permanently_snoozed_sitreps.clear();
         break;
     }

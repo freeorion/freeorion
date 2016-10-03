@@ -5085,6 +5085,13 @@ SITREP_SNOOZE_CLEAR_INDEFINITE
 SITREP_SNOOZE_CLEAR_ALL
 '''  Show all ignored SitReps'''
 
+# %1% localized name of SitRep template
+SITREP_HIDE_TEMPLATE
+'''  Block all %1% SitReps'''
+
+SITREP_SHOWALL_TEMPLATES
+'''  Show all blocked SitReps'''
+
 SITREP_WELCOME
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
 
