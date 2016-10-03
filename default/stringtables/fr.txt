@@ -817,6 +817,12 @@ SM_KRAKEN_3_DESC
 
 Environnement favori: Géantes Gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes Gazeuses.'''
 
+SM_WHITE_KRAKEN
+Kraken Blanc
+
+SM_WHITE_KRAKEN_DESC
+Le Kraken Blanc, logiquement reconnaissable à la blancheur de son corps, est un ancêtre préhistorique du monstre de l'espace Kraken.
+
 SM_BLACK_KRAKEN
 Kraken Noir
 
@@ -956,13 +962,13 @@ FLD_ION_STORM
 Tempête Ionique
 
 FLD_ION_STORM_DESC
-Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant en son sein.
+Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet s'y trouvant. Tout objet au sein de la tempête voit sa [[encyclopedia STEALTH_TITLE]] augmenter de 40, mais son [[encyclopedia DETECTION_RANGE_TITLE]] diminuer de 40.
 
 FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
 
 FLD_MOLECULAR_CLOUD_DESC
-Nuage diffus de molécules complexes pouvant perturber le champ de protection des astronefs.
+Nuage diffus de molécules complexes pouvant perturber le champ de protection des astronefs, ces derniers voyant la solidité de leurs [[encyclopedia SHIELDS_TITLE]] diminuer de 15. 
 
 FLD_NEBULA_1
 Nébuleuse
@@ -4438,7 +4444,11 @@ Chaque [[encyclopedia ENC_SPECIES]] a ses propres préférences environnementale
 
 Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit sur une planète dans le panneau latéral. À la suite de la donnée d'Habitabilité, un nombre de couleur verte indique la population maximale pouvant être atteinte si l'espèce colonise la planète, tandis qu'un nombre de couleur rouge indique que la population n'évoluera pas ou diminuera, pour finalement disparaître si l'espèce tente de coloniser la planète.
 
-Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[encyclopedia RESEARCH_TITLE]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les étapes de terraformation peuvent être consultées dans le rapport d'Habitabilité d'une planète sous la forme d'une représentation circulaire des différents types d'Environnement.'''
+Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[encyclopedia RESEARCH_TITLE]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les étapes de terraformation d'une planète peuvent être consultées ci-dessous sous la forme d'une représentation circulaire des différents types d'Environnement.
+
+Depuis midi dans le sens horaire: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]] 
+
+<img src="encyclopedia/EP_wheel.png"></img>'''
 
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
@@ -5336,6 +5346,12 @@ Sur %planet% : des Ruines Ancestrales ont été excavées, mais ne révélant qu
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Fouille infructueuse de Ruines Ancestrales
 
+EFFECT_ANCIENT_GUARDIANS_CAPTURED
+Sur %planet% : les [[species SP_ANCIENT_GUARDIANS]] se sont auto-détruits après que la planète ait été capturée!
+
+EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL
+Auto-destruction des Gardiens Ancestraux
+
 EFFECT_CONC_CAMP_COMLETE
 L'épuration ethnique est achevée sur la planète %planet%.
 
@@ -5425,6 +5441,12 @@ Sur %planet% : un %predefinedshipdesign% est prêt pour le service.
 
 EFFECT_SENTRY_CREATED_LABEL
 Création Factionnaire
+
+EFFECT_WHITE_KRAKEN_RESURRECTED
+Sur %planet% : un [[predefinedshipdesign SM_WHITE_KRAKEN]] a été ressuscité et est prêt à l'emploi.
+
+EFFECT_WHITE_KRAKEN_RESURRECTED_LABEL
+Monstre ressuscité
 
 EFFECT_GATEWAY_VOID_DESTROY
 La structure %buildingtype% a détruit la flotte %fleet% sur la planète %planet%.
@@ -6488,6 +6510,18 @@ SP_EXOBOT_DESC
 '''Bien que moins efficaces que des citoyens classiques, les Exobots peuvent coloniser les planètes inhospitalières, et y construire d'autres Exobots.
 '''
 
+SP_ANCIENT_GUARDIANS
+Gardiens Ancestraux
+SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
+'''Robots gardiens conçus en des temps immémoriaux par une civilisation de Précurseurs.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+S'auto-détruisent s'ils sont conquis.
+'''
+
+SP_ANCIENT_GUARDIANS_DESC
+'''Issues de la technologie des Précurseurs, ces machines ancestrales peuvent s'adapter et combattre dans n'importe quel type d'environnement. Faisant preuve d'une loyauté infaillible et d'un engagement total, ces gardiens protègent continuellement leur planète de tout envahisseur, sans même prendre le temps de réparer ou d'améliorer leurs fortifications. S'ils sont vaincus ou capturés, les Robots Gardiens n'hésitent pas un seul instant à s'auto-détruire.
+'''
+
 SP_EXPERIMENTOR
 Expérimentateur
 
@@ -6711,6 +6745,14 @@ Nid Mastodonte
 
 JUGGERNAUT_NEST_SPECIAL_DESC
 Avec le temps, de jeunes Mastodontes naîtront sur cette planète. Un empire maîtrisant la [[tech SHP_DOMESTIC_MONSTER]] pourra les apprivoiser.
+
+KRAKEN_IN_THE_ICE_SPECIAL
+Kraken Congelé
+
+KRAKEN_IN_THE_ICE_SPECIAL_DESC
+'''En maîtrisant les technologies de [[tech SHP_DOMESTIC_MONSTER]] et de [[tech LRN_XENOARCH]], un [[predefinedshipdesign SM_WHITE_KRAKEN]] peut être ressuscité et domestiqué en construisant sur cette planète une [[buildingtype BLD_XENORESURRECTION_LAB]].
+
+Profondément enfoui sous la croûte glacée de cette planète, gît un ancêtre préhistorique à la peau blanche du monstre de l'espace Kraken.'''
 
 HEAD_ON_A_SPIKE_SPECIAL
 Tête Empalée
@@ -9529,7 +9571,7 @@ SHP_ADV_DAM_CONT
 Contrôle Avancé des Dégâts
 
 SHP_ADV_DAM_CONT_DESC
-Répare les astronefs endommagés d'une valeur de 10% de leur [[encyclopedia STRUCTURE_TITLE]] à chaque tour, s'ils sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_BASIC_DAM_CONT]] ainsi que la [[tech SHP_FLEET_REPAIR]].
+Répare les astronefs endommagés d'une valeur de 10% de leur [[encyclopedia STRUCTURE_TITLE]] à chaque tour, s'ils sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_BASIC_DAM_CONT]] ainsi que la [[tech SHP_FLEET_REPAIR]] et opère également en dehors des lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire.
 
 SHP_ROOT_AGGRESSION  # translated
 Agression
@@ -10102,6 +10144,14 @@ BLD_CULTURE_LIBRARY_DESC
 '''Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 5.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la population planétaire est réduite à zéro.'''
+
+BLD_AUTO_HISTORY_ANALYSER
+Analyseur Historique Automatisé
+
+BLD_AUTO_HISTORY_ANALYSER_DESC
+'''L' Analyseur Historique Automatisé peut être construit sur une planète abritant des [[buildingtype BLD_CULTURE_ARCHIVES]]. Augmente la [[encyclopedia RESEARCH_TITLE]] Optimale de 5.
+
+Un centre de recherche automatisé doté d'une énorme puissance de calcul, parcourant continuellement la multitude de données au sein des archives  culturelles, afin de faire émerger de possibles analogies, d'établir des parallèles interdisciplinaires, ou bien de redécouvrir des concepts tombés dans l'oubli ou non finalisés.'''
 
 BLD_IMPERIAL_PALACE
 Palais Impérial
@@ -11871,6 +11921,12 @@ Corps Kraken Massif
 SH_KRAKEN_3_BODY_DESC
 Un formidable monstre de l'espace de grande taille.
 
+SH_WHITE_KRAKEN_BODY
+Corps Kraken Blanc
+
+SH_WHITE_KRAKEN_BODY_DESC
+Un ancêtre préhistorique à la peau blanche du monstre de l'espace Kraken.
+
 SH_BLACK_KRAKEN_BODY
 Corps Kraken Noir
 
@@ -12061,6 +12117,9 @@ GREAT_DEFENSE_TROOPS_DESC
 ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Parfait en [[encyclopedia TROOP_TITLE]] défensive : 300%
 
+ANCIENT_DEFENSE_TROOPS_DESC
++++	[[encyclopedia TROOP_TITLE]] ancestrale défensive : 10 par Population
+
 NO_OFFENSE_TROOPS_DESC
 −−−	Pas d'[[encyclopedia TROOP_TITLE]] offensive
 
@@ -12144,6 +12203,9 @@ GOOD_SHIP_SHIELD_DESC
 
 GOOD_PLANETARY_SHIELD_DESC
 +	Bons [[encyclopedia SHIELDS_TITLE]] planétaires : +5
+
+ANCIENT_PLANETARY_SHIELD_DESC
++++	[[encyclopedia SHIELDS_TITLE]] planétaires ancestraux : +500
 
 GOOD_PLANETARY_DEFENSE_DESC
 +	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire : +5
