@@ -489,6 +489,8 @@ def get_colony_fleets():
                 continue  # already building for here
             loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
             this_score = evaluate_planet(pid, MissionType.OUTPOST, None, empire, [])
+            for species in empire_colonizers:
+                this_score = max(this_score, evaluate_planet(pid, MissionType.COLONISATION, species, empire, []))
             planet = universe.getPlanet(pid)
             if this_score == 0:
                 # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc, this_score)
