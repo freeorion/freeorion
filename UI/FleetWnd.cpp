@@ -579,7 +579,7 @@ bool FleetUIManager::CloseAll() {
     std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
 
     for (std::size_t i = 0; i < vec.size(); ++i)
-        delete vec[i];
+        vec[i]->CloseClicked();
 
     m_active_fleet_wnd = 0;
 
