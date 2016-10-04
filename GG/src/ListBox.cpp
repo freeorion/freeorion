@@ -897,7 +897,7 @@ void ListBox::Render()
         {
             top = std::max((*curr_sel)->Top(), cl_ul.y);
             bottom = std::min(top + (*curr_sel)->Height(), cl_lr.y);
-            FlatRectangle(Pt(cl_ul.x, cl_ul.y + top), Pt(cl_lr.x, cl_ul.y + bottom),
+            FlatRectangle(Pt(cl_ul.x, top), Pt(cl_lr.x, bottom),
                           hilite_color_to_use, CLR_ZERO, 0);
         }
     }
