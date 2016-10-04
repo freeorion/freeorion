@@ -1317,8 +1317,8 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_env_size);
         delete m_env_size;              m_env_size = 0;
 
-        DetachChild(m_focus_drop);      m_focus_drop = 0;
-        delete m_focus_drop;
+        DetachChild(m_focus_drop);
+        delete m_focus_drop;            m_focus_drop = 0;
 
         DetachChild(m_population_panel);
         delete m_population_panel;      m_population_panel = 0;
