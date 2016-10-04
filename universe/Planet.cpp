@@ -41,14 +41,6 @@ namespace {
 
 
 ////////////////////////////////////////////////////////////
-// Year
-////////////////////////////////////////////////////////////
-Year::Year(Day d) :
-    TypesafeFloat(d / 360.0f)
-{}
-
-
-////////////////////////////////////////////////////////////
 // Planet
 ////////////////////////////////////////////////////////////
 Planet::Planet() :
@@ -407,19 +399,19 @@ PlanetSize Planet::NextLargerPlanetSize() const
 PlanetSize Planet::NextSmallerPlanetSize() const
 { return PlanetSizeIncrement(m_size, -1); }
 
-Year Planet::OrbitalPeriod() const
+float Planet::OrbitalPeriod() const
 { return m_orbital_period; }
 
-Radian Planet::InitialOrbitalPosition() const
+float Planet::InitialOrbitalPosition() const
 { return m_initial_orbital_position; }
 
-Radian Planet::OrbitalPositionOnTurn(int turn) const
+float Planet::OrbitalPositionOnTurn(int turn) const
 { return m_initial_orbital_position + OrbitalPeriod() * 2.0 * 3.1415926 / 4 * turn; }
 
-Day Planet::RotationalPeriod() const
+float Planet::RotationalPeriod() const
 { return m_rotational_period; }
 
-Degree Planet::AxialTilt() const
+float Planet::AxialTilt() const
 { return m_axial_tilt; }
 
 TemporaryPtr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
@@ -611,7 +603,7 @@ void Planet::SetSize(PlanetSize size) {
     StateChangedSignal();
 }
 
-void Planet::SetRotationalPeriod(Day days)
+void Planet::SetRotationalPeriod(float days)
 { m_rotational_period = days; }
 
 void Planet::SetHighAxialTilt() {

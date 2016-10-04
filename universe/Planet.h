@@ -8,72 +8,6 @@
 
 #include "../util/Export.h"
 
-/** A type that is implicitly convertible to and from float, but which is not
-    implicitly convertible among other numeric types. */
-class TypesafeFloat {
-public:
-    TypesafeFloat() : m_value(0.0f) {}
-    TypesafeFloat(float f) : m_value(f) {}
-    operator float () const { return m_value; }
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_NVP(m_value); }
-
-private:
-    float m_value;
-};
-
-class Day;
-
-/** A value type representing a "year".  A "year" is arbitrarily defined to be 4
-    turns. */
-class Year : public TypesafeFloat {
-public:
-    Year() : TypesafeFloat() {}
-    Year(float f) : TypesafeFloat(f) {}
-    explicit Year(Day d);
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
-};
-
-/** A value type representing a "day".  A "day" is arbitrarily defined to be
-    1/360 of a "year", and 1/90 of a turn. */
-class Day : public TypesafeFloat {
-public:
-    Day() : TypesafeFloat() {}
-    Day(float f) : TypesafeFloat(f) {}
-    explicit Day(Year y) : TypesafeFloat(y * 360.0f) {}
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
-};
-
-/** A value type used to represent an angle in radians. */
-class Radian : public TypesafeFloat {
-public:
-    Radian() : TypesafeFloat() {}
-    Radian(float f) : TypesafeFloat(f) {}
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
-};
-
-/** A value type used to represent an angle in degrees. */
-class Degree : public TypesafeFloat {
-public:
-    Degree() : TypesafeFloat() {}
-    Degree(float f) : TypesafeFloat(f) {}
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-    { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeFloat); }
-};
-
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet :
     public UniverseObject,
@@ -103,11 +37,20 @@ public:
     PlanetSize                  NextLargerPlanetSize() const;
     PlanetSize                  NextSmallerPlanetSize() const;
 
-    Year                        OrbitalPeriod() const;
-    Radian                      InitialOrbitalPosition() const;
-    Radian                      OrbitalPositionOnTurn(int turn) const;
-    Day                         RotationalPeriod() const;
-    Degree                      AxialTilt() const;
+    /**
+     * An orbital period is equal to a planets "year". A "year" is arbitrarily
+     * defined to be 4 turns. */
+    float                       OrbitalPeriod() const;
+    /** @returns an angle in radians. */
+    float                       InitialOrbitalPosition() const;
+    /** @returns an angle in radians. */
+    float                       OrbitalPositionOnTurn(int turn) const;
+    /**
+     * The rotational period represents a planets "day".  A "day" is
+     * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
+    float                       RotationalPeriod() const;
+    /** @returns an angle in degree. */
+    float                       AxialTilt() const;
 
     const std::set<int>&        BuildingIDs() const {return m_buildings;}
 
@@ -145,7 +88,7 @@ public:
     void            SetOriginalType(PlanetType type);   ///< sets the original type of this Planet to \a type
     void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
 
-    void            SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet
+    void            SetRotationalPeriod(float days);    ///< sets the rotational period of this planet
     void            SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
 
     void            AddBuilding(int building_id);       ///< adds the building to the planet
@@ -210,10 +153,10 @@ private:
     PlanetType      m_type;
     PlanetType      m_original_type;
     PlanetSize      m_size;
-    Year            m_orbital_period;
-    Radian          m_initial_orbital_position;
-    Day             m_rotational_period;
-    Degree          m_axial_tilt;
+    float           m_orbital_period;
+    float           m_initial_orbital_position;
+    float           m_rotational_period;
+    float           m_axial_tilt;
 
     std::set<int>   m_buildings;
 
