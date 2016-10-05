@@ -1430,6 +1430,9 @@ Sets size of system icons below which the fixed-size tiny icons will be shown.
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip pop-up delay, in ms.
 
+OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
+When searching the pedia, check for matches in article contents.
+
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Sets delay between holding a key and repeat keypresses being generated
 
