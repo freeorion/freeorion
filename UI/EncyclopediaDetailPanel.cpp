@@ -882,10 +882,16 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     std::string match_report;
     std::set<std::pair<std::string, std::string> > already_listed_results;  // pair of category / article name
 
-    // assemble link text to all pedia entrys, indexed by name
-    const std::vector<std::string>& dir_names = GetSearchTextDirNames();
+    // assemble link text to all pedia entries, indexed by name
+    std::vector<std::string> dir_names = GetSearchTextDirNames();
+    const std::map<std::string, std::vector<EncyclopediaArticle> >& articles = GetEncyclopedia().articles;
+    for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator art_it = articles.begin();
+         art_it != articles.end(); ++art_it)
+    {
+        dir_names.push_back(art_it->first);
+    }
 
-    // map from human-readable-name to (link-text, category nam
+    // map from human-readable-name to (link-text, category name)
     std::multimap<std::string, std::pair<std::string, std::string> > all_pedia_entries_list;
 
 
