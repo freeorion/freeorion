@@ -52,8 +52,10 @@ namespace {
     const GG::Y TEXT_MARGIN_Y(0);
     const int DESCRIPTION_PADDING(3);
 
-    void    AddOptions(OptionsDB& db)
-    { db.Add("UI.dump-effects-descriptions", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"),  false,  Validator<bool>()); }
+    void    AddOptions(OptionsDB& db) {
+        db.Add("UI.dump-effects-descriptions", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"),  false,  Validator<bool>());
+        db.Add("UI.encyclopedia.search.articles", UserStringNop("OPTIONS_DB_ENC_SEARCH_ARTICLE"),     true,   Validator<bool>());
+    }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const std::string EMPTY_STRING;
@@ -472,6 +474,25 @@ namespace {
         { retval += it->second.first; }
 
         return retval;
+    }
+
+    /** Find Encyclopedia article with given name
+     * @param[in] name name entry of the article
+     */
+    EncyclopediaArticle GetPediaArticle(const std::string& name) {
+        const std::map<std::string, std::vector<EncyclopediaArticle> >& articles = GetEncyclopedia().articles;
+        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it = articles.begin();
+             category_it != articles.end(); ++category_it)
+        {
+            for (std::vector<EncyclopediaArticle>::const_iterator article_it = category_it->second.begin();
+                 article_it != category_it->second.end(); ++article_it)
+            {
+                if (article_it->name == name) {
+                    return *article_it;
+                }
+            }
+        }
+        return EncyclopediaArticle("", "", "", "", "");
     }
 }
 
@@ -983,6 +1004,27 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
             if (boost::icontains(entry_it->first, *word_it)) {
                 match_report += entry_it->second.first;
                 already_listed_results.insert(std::make_pair(entry_it->second.second, entry_it->first));
+            }
+        }
+    }
+
+    // search for matches within article text
+    if (GetOptionsDB().Get<bool>("UI.encyclopedia.search.articles")) {
+        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
+        for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
+            entry_it = all_pedia_entries_list.begin();
+            entry_it != all_pedia_entries_list.end(); ++entry_it)
+        {
+            std::set<std::pair<std::string, std::string> >::const_iterator dupe_it =
+                already_listed_results.find(std::make_pair(entry_it->second.second, entry_it->first));
+            if (dupe_it != already_listed_results.end())
+                continue;
+
+            EncyclopediaArticle article_entry = GetPediaArticle(entry_it->second.second);
+            if (boost::icontains(UserString(article_entry.description), search_text)) {
+                match_report += entry_it->second.first;
+                already_listed_results.insert(std::make_pair(entry_it->second.second, entry_it->first));
+                break;
             }
         }
     }
