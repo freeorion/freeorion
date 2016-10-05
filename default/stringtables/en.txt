@@ -3891,6 +3891,9 @@ Word Title Matches
 ENC_SEARCH_PARTIAL_MATCHES
 Partial-Word Title Matches
 
+ENC_SEARCH_ARTICLE_MATCHES
+Article Content Matches
+
 ENC_SEARCH_NOTHING_FOUND
 No Matches Found
 
