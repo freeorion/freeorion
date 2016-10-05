@@ -122,6 +122,7 @@ public:
     virtual bool        IsEmpireMeterEffect() const { return false; }
     virtual bool        IsAppearanceEffect() const { return false; }
     virtual bool        IsSitrepEffect() const { return false; }
+    virtual bool        IsConditionalEffect() const { return false; }
 
     virtual void        SetTopLevelContent(const std::string& content_name) = 0;
 
@@ -1070,8 +1071,17 @@ public:
     virtual bool        IsMeterEffect() const;
     virtual bool        IsAppearanceEffect() const;
     virtual bool        IsSitrepEffect() const;
+    virtual bool        IsConditionalEffect() const { return true; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
+
+protected:
+    void                Execute(const ScriptingContext& context, const TargetSet& targets,
+                                AccountingMap* accounting_map = 0,
+                                bool only_meter_effects = false,
+                                bool only_appearance_effects = false,
+                                bool include_empire_meter_effects = false,
+                                bool only_generate_sitrep_effects = false) const;
 
 private:
     Condition::ConditionBase*   m_target_condition; // condition to apply to each target object to determine which effects to execute
