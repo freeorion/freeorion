@@ -685,33 +685,49 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
 {}
 
 namespace {
-    // Global set of tags requiring action fron Font. Wrapped in a function for deterministic static initialization order.
-    std::set<std::string>& ActionTags()
-    {
-        static std::set<std::string> action_tags;
-        return action_tags;
-    }
+    class TagHandler {
+        public:
+        TagHandler() : m_known_tags()
+        {}
+
+        void Insert(const std::string& tag) {
+            m_known_tags.insert(tag);
+        }
+
+        void Erase(const std::string& tag) {
+            m_known_tags.erase(tag);
+        }
+
+        void Clear() {
+            m_known_tags.clear();
+        }
+
+        const std::set<std::string>& KnownTags()
+        { return m_known_tags; }
+
+        private:
+        // set of tags known to the handler
+        std::set<std::string> m_known_tags;
+    };
+
 
     // Global set of known tags. Wrapped in a function for deterministic static initialization order.
-    std::set<std::string>& KnownTags()
+    TagHandler& StaticTagHandler()
     {
-        static std::set<std::string> known_tags;
-        return known_tags;
+        static TagHandler tag_handler;
+        return tag_handler;
     }
 
     // Registers the default action and known tags.
     int RegisterDefaultTags() {
-        ActionTags().insert("i");
-        ActionTags().insert("s");
-        ActionTags().insert("u");
-        ActionTags().insert("rgba");
-        ActionTags().insert(ALIGN_LEFT_TAG);
-        ActionTags().insert(ALIGN_CENTER_TAG);
-        ActionTags().insert(ALIGN_RIGHT_TAG);
-        ActionTags().insert(PRE_TAG);
-
-        // Always know the action tags.
-        KnownTags().insert(ActionTags().begin(), ActionTags().end());
+        StaticTagHandler().Insert("i");
+        StaticTagHandler().Insert("s");
+        StaticTagHandler().Insert("u");
+        StaticTagHandler().Insert("rgba");
+        StaticTagHandler().Insert(ALIGN_LEFT_TAG);
+        StaticTagHandler().Insert(ALIGN_CENTER_TAG);
+        StaticTagHandler().Insert(ALIGN_RIGHT_TAG);
+        StaticTagHandler().Insert(PRE_TAG);
 
         // Must have return value to call at static initialization time.
         return 0;
@@ -1012,7 +1028,7 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
 
     bool temp_bool = false;
     std::stack<Substring> tag_stack;
-    MatchesKnownTag matches_known_tag(KnownTags(), temp_bool);
+    MatchesKnownTag matches_known_tag(StaticTagHandler().KnownTags(), temp_bool);
     MatchesTopOfStack matches_tag_stack(tag_stack, temp_bool);
 
     mark_tag tag_name_tag(1);
@@ -1074,18 +1090,14 @@ Pt Font::TextExtent(const std::string& text, const std::vector<LineData>& line_d
 }
 
 void Font::RegisterKnownTag(const std::string& tag)
-{ KnownTags().insert(tag); }
+{ StaticTagHandler().Insert(tag); }
 
 void Font::RemoveKnownTag(const std::string& tag)
-{
-    if (KnownTags().find(tag) == KnownTags().end())
-        KnownTags().erase(tag);
-}
+{ StaticTagHandler().Erase(tag); }
 
 void Font::ClearKnownTags()
 {
-    // Clear known tags.
-    KnownTags().clear();
+    StaticTagHandler().Clear();
 
     // Always know the default tags.
     RegisterDefaultTags();
@@ -1104,7 +1116,7 @@ void Font::FillTextElements(const std::string& text,
         using namespace boost::xpressive;
 
         std::stack<Substring> tag_stack;
-        MatchesKnownTag matches_known_tag(KnownTags(), ignore_tags);
+        MatchesKnownTag matches_known_tag(StaticTagHandler().KnownTags(), ignore_tags);
         MatchesTopOfStack matches_tag_stack(tag_stack, ignore_tags);
 
         mark_tag tag_name_tag(1);
