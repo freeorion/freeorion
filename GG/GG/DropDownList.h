@@ -212,7 +212,6 @@ protected:
     //@}
 
 private:
-    void            SelectImpl(iterator it, bool signal);
     const ListBox*  LB() const;
 
     ModalListPicker*    m_modal_picker;
