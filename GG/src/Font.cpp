@@ -711,7 +711,6 @@ namespace {
         CompiledRegex(const std::set<std::string>& known_tags, bool strip_unpaired_tags) :
             m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
             m_EVERYTHING() {
-
             // Synonyms for s1 thru s5 sub matches
             mark_tag tag_name_tag(1);
             mark_tag open_bracket_tag(2);
@@ -800,7 +799,9 @@ namespace {
 
     class TagHandler {
         public:
-        TagHandler() : m_known_tags()
+        TagHandler() : m_known_tags(),
+                       m_regex_w_tags(m_known_tags, false),
+                       m_regex_w_tags_skipping_unmatched(m_known_tags, true)
         {}
 
         void Insert(const std::string& tag) {
@@ -817,10 +818,24 @@ namespace {
 
         const std::set<std::string>& KnownTags()
         { return m_known_tags; }
+        // Return a regex bound to \p text using the currently known
+        // tags possible \p ignore_tags and/or \p strip_unpaired_tags
+        sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
+            if (!strip_unpaired_tags)
+                return m_regex_w_tags.BindRegexToText(text, ignore_tags);
+            else
+                return m_regex_w_tags_skipping_unmatched.BindRegexToText(text, ignore_tags);
+        }
 
         private:
         // set of tags known to the handler
         std::set<std::string> m_known_tags;
+
+        // Compiled regular expression including tag stack
+        CompiledRegex m_regex_w_tags;
+
+        // Compiled regular expression using tags but skipping unmatched tags.
+        CompiledRegex m_regex_w_tags_skipping_unmatched;
     };
 
 
