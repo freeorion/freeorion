@@ -700,6 +700,104 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
 {}
 
 namespace {
+    using namespace boost::xpressive;
+
+    /** CompiledRegex maintains a compiled boost::xpressive regular
+        expression that includes a tag stack which can be cleared and
+        provided to callers without the overhead of recompiling the
+        regular expression.*/
+    class CompiledRegex {
+        public:
+        CompiledRegex(const std::set<std::string>& known_tags, bool strip_unpaired_tags) :
+            m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
+            m_EVERYTHING() {
+
+            // Synonyms for s1 thru s5 sub matches
+            mark_tag tag_name_tag(1);
+            mark_tag open_bracket_tag(2);
+            mark_tag close_bracket_tag(3);
+            mark_tag whitespace_tag(4);
+            mark_tag text_tag(5);
+
+            //   [<]+?   -+ 'non-greedy'   ~not   set[|] 'set', _s space
+            // anythin but space or <
+            const sregex TAG_PARAM =
+                -+~set[_s | '<'];
+
+            //+_w one or more greed word chars, () group no capture, [] semantic
+            const sregex OPEN_TAG_NAME =
+                (+_w)[check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
+            // (+_w) one or more greedy word check matches stack
+            const sregex CLOSE_TAG_NAME =
+                (+_w)[check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
+            // *blank zero or more greedy whitespace, >> followed by , _ln newline,
+            // (set = 'a', 'b') [ab], +blank one or more greedy blank
+            const sregex WHITESPACE =
+                (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
+
+            // < followed by not space or <   or one or more not space or <
+            const sregex TEXT =
+                ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
+
+            if (!strip_unpaired_tags) {
+                m_EVERYTHING =
+                    ('<' >> (tag_name_tag = OPEN_TAG_NAME) // < followed by TAG_NAME
+                     >> repeat<0, 9>(+blank >> TAG_PARAM)  //repeat 0 to 9  single blank followed
+                                                           //by TAG_PARAM
+                     >> (open_bracket_tag.proto_base() = '>'))  //s1. close tag and push
+                    [PushP(ref(m_text), ref(m_tag_stack), ref(m_ignore_tags), tag_name_tag)] |
+                    ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
+                    (whitespace_tag = WHITESPACE) |
+                    (text_tag = TEXT);
+            } else {
+                // don't care about matching with tag stack when
+                // matching close tags, or updating the stack when
+                // matching open tags
+                m_EVERYTHING =
+                    ('<' >> OPEN_TAG_NAME >> repeat<0, 9>(+blank >> TAG_PARAM) >> '>') |
+                    ("</" >> OPEN_TAG_NAME >> '>') |
+                    (whitespace_tag = WHITESPACE) |
+                    (text_tag = TEXT);
+            }
+        }
+
+        sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) {
+            if (!m_tag_stack.empty()) {
+                std::stack<Font::Substring> empty_stack;
+                std::swap(m_tag_stack, empty_stack);
+            }
+            m_text = &new_text;
+            m_ignore_tags = ignore_tags;
+            return m_EVERYTHING;
+        }
+
+        private:
+
+        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) {
+            return m_ignore_tags ? false : m_known_tags->count(sub.str()) != 0;
+        }
+
+        bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) {
+            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
+            if (retval) {
+                m_tag_stack.pop();
+                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
+                    m_ignore_tags = false;
+            }
+            return retval;
+        }
+
+        const std::string* m_text;
+        const std::set<std::string>* m_known_tags;
+        bool m_ignore_tags;
+
+        // m_tag_stack is used to track XML opening/closing tags.
+        std::stack<Font::Substring> m_tag_stack;
+
+        // The combined regular expression.
+        sregex m_EVERYTHING;
+    };
+
     class TagHandler {
         public:
         TagHandler() : m_known_tags()
