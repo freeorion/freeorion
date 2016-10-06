@@ -240,6 +240,21 @@ namespace {
     };
     const boost::xpressive::function<PushSubmatchOntoStack>::type Push = {{}};
 
+    struct PushSubmatchOntoStackP
+    {
+        typedef void result_type;
+        void operator()(const std::string* str,
+                        std::stack<Font::Substring>& tag_stack,
+                        bool& ignore_tags,
+                        const boost::xpressive::ssub_match& sub) const
+        {
+            tag_stack.push(Font::Substring(*str, sub));
+            if (tag_stack.top() == PRE_TAG)
+                ignore_tags = true;
+        }
+    };
+    const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
+
     bool operator==(const Font::Substring& lhs, const boost::xpressive::ssub_match& rhs)
     {
         return lhs.size() == static_cast<std::size_t>(rhs.length()) &&
