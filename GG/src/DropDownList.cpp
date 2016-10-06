@@ -220,6 +220,12 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
         if (LB()->NumRows() && !LB()->Empty())
             return --LB()->end();
         break;
+    case GGK_RETURN:
+    case GGK_KP_ENTER:
+    case GGK_ESCAPE:
+        EndRun();
+        return boost::none;
+        break;
     default:
         return boost::none;
     }
