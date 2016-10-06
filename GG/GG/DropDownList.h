@@ -91,6 +91,7 @@ public:
     Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
 
     Y               DropHeight() const; ///< returns the height of the drop-down list
+    bool            Dropped() const;                ///< Return true if the drop down list is open.
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */
     Flags<ListBoxStyle> Style() const;

@@ -42,6 +42,8 @@ public:
 
     ModalListPicker(Clr color, const Wnd* relative_to_wnd);
 
+    virtual bool   Run();
+    bool           Dropped() const;
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void ModalInit();
 
@@ -60,6 +62,7 @@ private:
 
     ListBox*    m_lb_wnd;
     const Wnd*  m_relative_to_wnd;
+    bool m_dropped;  ///< Is the drop down list open.
 };
 
 namespace {
@@ -100,7 +103,8 @@ namespace {
 ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
-    m_relative_to_wnd(relative_to_wnd)
+    m_relative_to_wnd(relative_to_wnd),
+    m_dropped(false)
 {
     Connect(m_lb_wnd->SelChangedSignal,     &ModalListPicker::LBSelChangedSlot, this);
     Connect(m_lb_wnd->LeftClickedSignal,    &ModalListPicker::LBLeftClickSlot,  this);
@@ -109,6 +113,17 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, ModalListPickerSelChangedEcho(*this));
 }
+
+
+bool ModalListPicker::Run() {
+    m_dropped = true;
+    bool retval = Wnd::Run();
+    m_dropped = false;
+    return retval;
+}
+
+bool ModalListPicker::Dropped() const
+{ return m_dropped; }
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 { EndRun(); }
@@ -203,6 +218,9 @@ bool DropDownList::Selected(std::size_t n) const
 
 Clr DropDownList::InteriorColor() const
 { return LB()->InteriorColor(); }
+
+bool DropDownList::Dropped() const
+{ return m_modal_picker->Dropped(); }
 
 Y DropDownList::DropHeight() const
 { return LB()->Height(); }
