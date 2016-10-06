@@ -64,6 +64,9 @@ public:
     /** emitted when a new item is selected; will be end() when no item is
       * selected */
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
+
+    /** Signal \a true when drop down opens and false when it closes.*/
+    typedef boost::signals2::signal<void (bool)>       DropDownOpenedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -116,6 +119,8 @@ public:
     virtual GG::X  DisplayedRowWidth() const;
 
     mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
+
+    DropDownOpenedSignalType DropDownOpenedSignal;
     //@}
 
     /** \name Mutators */ ///@{

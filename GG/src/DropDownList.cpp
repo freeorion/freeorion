@@ -510,7 +510,9 @@ void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     }
     LB()->m_first_col_shown = 0;
 
+    DropDownOpenedSignal(true);
     m_modal_picker->Run();
+    DropDownOpenedSignal(false);
 }
 
 void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
