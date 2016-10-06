@@ -111,7 +111,7 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
 }
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
-{ m_done = true; }
+{ EndRun(); }
 
 void ModalListPicker::ModalInit()
 {
@@ -129,13 +129,13 @@ void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
         ListBox::iterator sel_it = *rows.begin();
         SelChangedSignal(sel_it);
     }
-    m_done = true;
+    EndRun();
 }
 
 void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     Hide();
-    m_done = true;
+    EndRun();
 }
 
 
