@@ -718,19 +718,22 @@ namespace {
             mark_tag whitespace_tag(4);
             mark_tag text_tag(5);
 
-            //   [<]+?   -+ 'non-greedy'   ~not   set[|] 'set', _s space
-            // anythin but space or <
+            // The comments before each regex are intended to clarify the mapping from xpressive
+            // notation to the more typical regex notation.  If you read xpressive or don't read
+            // regex then ignore them.
+
+            // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
             const sregex TAG_PARAM =
                 -+~set[_s | '<'];
 
-            //+_w one or more greed word chars, () group no capture, [] semantic
+            //+_w one or more greed word chars,  () group no capture,  [] semantic operation
             const sregex OPEN_TAG_NAME =
                 (+_w)[check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
             // (+_w) one or more greedy word check matches stack
             const sregex CLOSE_TAG_NAME =
                 (+_w)[check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
-            // *blank zero or more greedy whitespace, >> followed by , _ln newline,
-            // (set = 'a', 'b') [ab], +blank one or more greedy blank
+            // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
+            // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
             const sregex WHITESPACE =
                 (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
 
@@ -741,9 +744,9 @@ namespace {
             if (!strip_unpaired_tags) {
                 m_EVERYTHING =
                     ('<' >> (tag_name_tag = OPEN_TAG_NAME) // < followed by TAG_NAME
-                     >> repeat<0, 9>(+blank >> TAG_PARAM)  //repeat 0 to 9  single blank followed
-                                                           //by TAG_PARAM
-                     >> (open_bracket_tag.proto_base() = '>'))  //s1. close tag and push
+                     >> repeat<0, 9>(+blank >> TAG_PARAM)  // repeat 0 to 9 a single blank followed
+                                                           // by TAG_PARAM
+                     >> (open_bracket_tag.proto_base() = '>'))  // s1. close tag and push operation
                     [PushP(ref(m_text), ref(m_tag_stack), ref(m_ignore_tags), tag_name_tag)] |
                     ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
                     (whitespace_tag = WHITESPACE) |
