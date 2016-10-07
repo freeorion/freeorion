@@ -336,6 +336,8 @@ bool Edit::InDoubleButtonDownMode() const
 std::pair<CPSize, CPSize> Edit::DoubleButtonDownCursorPos() const
 { return m_double_click_cursor_pos; }
 
+/** Return the index of the last LineData() or 0 if LineData is empty.
+    Allows index based Edit to handle empty line data. */
 std::vector<GG::Font::LineData>::size_type Edit::LastLineIndexOrZero() const {
     return std::max(std::vector<GG::Font::LineData>::size_type(0), GetLineData().size() - 1);
 }
