@@ -248,7 +248,14 @@ public:
     };
 
     /** \brief Used to encapsulate a text and tokens together to be rendered
-        using GG::Font. */
+        using GG::Font.
+
+        TextElements allows a matched pair of XML string and vector of TextElement to be directly
+        constructed while avoiding the computationally costly ComputeTextElements() function.
+
+        The pair of string and vector returned by Text() and Elements() are consistent with each
+        other and can be used with the fast constructor for TextControl.
+    */
     class GG_API TextElements
     {
     public:
