@@ -614,6 +614,10 @@ namespace {
             m_known_tags.clear();
         }
 
+        bool IsKnown(const std::string &tag) {
+            return m_known_tags.find(tag) != m_known_tags.end();
+        }
+
         // Return a regex bound to \p text using the currently known
         // tags.  If required \p ignore_tags and/or \p strip_unpaired_tags.
         xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
@@ -740,6 +744,185 @@ bool Font::FormattingTag::operator==(const TextElement &rhs) const
             && params == ft->params
             && tag_name == ft->tag_name
             && close_tag == ft->close_tag);
+}
+
+///////////////////////////////////////
+// class GG::Font::TextElements
+///////////////////////////////////////
+class Font::TextElements::TextElementsImpl
+{
+public:
+    TextElementsImpl(const Font& font) :
+        m_font(font), m_text(), m_text_elements(), m_are_widths_calculated(false)
+    {}
+
+    /** Return the constructed text.*/
+    const std::string& Text()
+    { return m_text; }
+
+    /** Return the constructed TextElements.*/
+    const std::vector<boost::shared_ptr<TextElement> >& Elements()
+    {
+        if (!m_are_widths_calculated)
+            m_font.FillTemplatedText(m_text, m_text_elements, m_text_elements.begin());
+
+        return m_text_elements;
+    }
+
+    /** Add an open tag iff it exists as a recognized tag.*/
+    void AddOpenTag(const std::string& tag, const std::vector<std::string>* params = 0)
+    {
+        if (!StaticTagHandler().IsKnown(tag))
+            return;
+
+        m_are_widths_calculated = false;
+
+        boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(false));
+        size_t tag_begin = m_text.size();
+        size_t tag_name_begin = m_text.append("<").size();
+        size_t tag_name_end = m_text.append(tag).size();
+        element->tag_name = Substring(m_text,
+                                      boost::next(m_text.begin(), tag_name_begin),
+                                      boost::next(m_text.begin(), tag_name_end));
+
+        if (params) {
+            for (std::vector<std::string>::const_iterator it = params->begin();
+                 it != params->end(); ++it)
+            {
+                m_text.append(" ");
+                size_t param_begin = m_text.size();
+                size_t param_end = m_text.append(*it).size();
+
+                element->params.push_back(Substring(m_text,
+                                                    boost::next(m_text.begin(), param_begin),
+                                                    boost::next(m_text.begin(), param_end)));
+            }
+        }
+        size_t tag_end = m_text.append(">").size();
+        element->text = Substring(m_text,
+                                  boost::next(m_text.begin(), tag_begin),
+                                  boost::next(m_text.begin(), tag_end));
+
+        m_text_elements.push_back(element);
+    }
+
+    /** Add a close tag iff it exists as a recognized tag.*/
+    void AddCloseTag(const std::string& tag)
+    {
+        if (!StaticTagHandler().IsKnown(tag))
+            return;
+
+        m_are_widths_calculated = false;
+
+        boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(true));
+        size_t tag_begin = m_text.size();
+        size_t tag_name_begin = m_text.append("</").size();
+        size_t tag_name_end = m_text.append(tag).size();
+        size_t tag_end = m_text.append(">").size();
+        element->text = Substring(m_text,
+                                  boost::next(m_text.begin(), tag_begin),
+                                  boost::next(m_text.begin(), tag_end));
+
+        element->tag_name = Substring(m_text,
+                                      boost::next(m_text.begin(), tag_name_begin),
+                                      boost::next(m_text.begin(), tag_name_end));
+        m_text_elements.push_back(element);
+    }
+
+    /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
+    void AddText(const std::string& text)
+    {
+        m_are_widths_calculated = false;
+
+        boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, false));
+        size_t begin = m_text.size();
+        size_t end = m_text.append(text).size();
+        element->text = Substring(m_text,
+                                  boost::next(m_text.begin(), begin),
+                                  boost::next(m_text.begin(), end));
+        m_text_elements.push_back(element);
+    }
+
+    /** Add a white space element.*/
+    void AddWhitespace(const std::string& whitespace)
+    {
+        m_are_widths_calculated = false;
+
+        boost::shared_ptr<Font::TextElement> element(new Font::TextElement(true, false));
+        size_t begin = m_text.size();
+        size_t end = m_text.append(whitespace).size();
+        element->text = Substring(m_text,
+                                  boost::next(m_text.begin(), begin),
+                                  boost::next(m_text.begin(), end));
+        m_text_elements.push_back(element);
+    }
+
+    /** Add a white space element.*/
+    void AddNewline()
+    {
+        m_are_widths_calculated = false;
+
+        boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, true));
+        m_text_elements.push_back(element);
+    }
+
+    /** Add open color tag.*/
+    void AddOpenTag(const Clr& color) {
+        std::vector<std::string> params;
+        params.push_back(boost::lexical_cast<std::string>(static_cast<int>(color.r)));
+        params.push_back(boost::lexical_cast<std::string>(static_cast<int>(color.g)));
+        params.push_back(boost::lexical_cast<std::string>(static_cast<int>(color.b)));
+        params.push_back(boost::lexical_cast<std::string>(static_cast<int>(color.a)));
+
+        AddOpenTag("rgba", &params);
+    }
+
+private:
+    const Font& m_font;
+    std::string m_text;
+    std::vector<boost::shared_ptr<TextElement> > m_text_elements;
+    bool m_are_widths_calculated;
+};
+
+
+Font::TextElements::TextElements(const Font& font) :
+    pimpl(new TextElementsImpl(font))
+{}
+// Required because Impl is defined here
+Font::TextElements::~TextElements()
+{}
+const std::string& Font::TextElements::Text()
+{ return pimpl->Text(); }
+const std::vector<boost::shared_ptr<Font::TextElement> >& Font::TextElements::Elements()
+{ return pimpl->Elements(); }
+Font::TextElements& Font::TextElements::AddOpenTag(const std::string& tag) {
+    pimpl->AddOpenTag(tag);
+    return *this;
+}
+Font::TextElements& Font::TextElements::AddOpenTag(
+    const std::string& tag, const std::vector<std::string>& params) {
+    pimpl->AddOpenTag(tag, &params);
+    return *this;
+}
+Font::TextElements& Font::TextElements::AddCloseTag(const std::string& tag) {
+    pimpl->AddCloseTag(tag);
+    return *this;
+}
+Font::TextElements& Font::TextElements::AddText(const std::string& text) {
+    pimpl->AddText(text);
+    return *this;
+}
+Font::TextElements& Font::TextElements::AddWhitespace(const std::string& whitespace) {
+    pimpl->AddWhitespace(whitespace);
+    return *this;
+}
+Font::TextElements& Font::TextElements::AddNewline() {
+    pimpl->AddNewline();
+    return *this;
+}
+Font::TextElements& Font::TextElements::AddOpenTag(const Clr& color) {
+    pimpl->AddOpenTag(color);
+    return *this;
 }
 
 ///////////////////////////////////////

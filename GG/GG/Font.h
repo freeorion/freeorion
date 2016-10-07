@@ -247,6 +247,40 @@ public:
         mutable X cached_width;
     };
 
+    /** \brief Used to encapsulate a text and tokens together to be rendered
+        using GG::Font. */
+    class GG_API TextElements
+    {
+    public:
+        TextElements(const Font& font);
+        ~TextElements();
+
+        /** Return the constructed text.*/
+        const std::string& Text();
+        /** Return the constructed TextElements.*/
+        const std::vector<boost::shared_ptr<TextElement> >& Elements();
+
+        /** Add an open tag iff it exists as a recognized tag.*/
+        TextElements& AddOpenTag(const std::string& tag);
+        /** Add an open tag iff it exists as a recognized tag.*/
+        TextElements& AddOpenTag(const std::string& tag, const std::vector<std::string>& params);
+        /** Add a close tag iff it exists as a recognized tag.*/
+        TextElements& AddCloseTag(const std::string& tag);
+        /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
+        TextElements& AddText(const std::string& text);
+        /** Add a white space element.*/
+        TextElements& AddWhitespace(const std::string& whitespace);
+        /** Add a new line element.*/
+        TextElements& AddNewline();
+
+        /** Add an open Clr tag.*/
+        TextElements& AddOpenTag(const Clr& color);
+
+    private:
+        class TextElementsImpl;
+        boost::scoped_ptr<TextElementsImpl> const pimpl;
+    };
+
     /** \brief The type of TextElement that represents a text formatting
         tag. */
     struct GG_API FormattingTag : TextElement
