@@ -1362,7 +1362,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
     CPSize code_point_offset(0);
     std::vector<boost::shared_ptr<TextElement> > pending_formatting_tags;
     for (std::size_t i = 0; i < text_elements.size(); ++i) {
-        boost::shared_ptr<TextElement> elem = text_elements[i];
+        const boost::shared_ptr<TextElement>& elem = text_elements[i];
         // if a newline is explicitly requested, start a new one
         if (elem->Type() == TextElement::NEWLINE) {
             line_data.push_back(LineData());
