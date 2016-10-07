@@ -1204,9 +1204,10 @@ namespace DebugOutput {
     }
 
     void PrintLineBreakdown(const std::string& text,
-                       const Flags<TextFormat>& format,
-                       const X box_width,
-                       const std::vector<Font::LineData>& line_data) {
+                            const Flags<TextFormat>& format,
+                            const X box_width,
+                            const std::vector<Font::LineData>& line_data)
+    {
         std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
                   << static_cast<const void*>(&*text.begin()) << ") format="
                   << format << " box_width=" << box_width << ")" << std::endl;
