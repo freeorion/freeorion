@@ -231,6 +231,8 @@ public:
             element represents. */
         CPSize CodePointSize() const;
 
+        virtual bool operator==(const TextElement &rhs) const;
+
         /** The text from the original string represented by the element. */
         Substring text;
 
@@ -258,6 +260,8 @@ public:
         virtual void Bind(const std::string& whole_text);
 
         virtual TextElementType Type() const;
+
+        virtual bool operator==(const TextElement &rhs) const;
 
         /** The parameter strings within the tag, e.g. "0", "0", "0", and "255"
             for the tag "<rgba 0 0 0 255>". */

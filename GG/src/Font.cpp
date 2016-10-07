@@ -523,6 +523,12 @@ CPSize Font::TextElement::CodePointSize() const
 { return CPSize(widths.size()); }
 
 
+bool Font::TextElement::operator==(const TextElement &rhs) const
+{
+    return (text == rhs.text && widths == rhs.widths
+            && whitespace == rhs.whitespace && newline == rhs.newline);
+}
+
 ///////////////////////////////////////
 // class GG::Font::FormattingTag
 ///////////////////////////////////////
@@ -550,6 +556,15 @@ void Font::FormattingTag::Bind(const std::string& whole_text)
 Font::FormattingTag::TextElementType Font::FormattingTag::Type() const
 { return close_tag ? CLOSE_TAG : OPEN_TAG; }
 
+bool Font::FormattingTag::operator==(const TextElement &rhs) const
+{
+    Font::FormattingTag const* ft = dynamic_cast<Font::FormattingTag const*>(&rhs);
+    return (ft
+            && Font::TextElement::operator==(rhs)
+            && params == ft->params
+            && tag_name == ft->tag_name
+            && close_tag == ft->close_tag);
+}
 
 ///////////////////////////////////////
 // class GG::Font::LineData
