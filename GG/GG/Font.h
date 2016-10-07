@@ -493,10 +493,9 @@ public:
 
     /** Fill \p text_elements with the font widths of characters from \p text starting from \p
         start. */
-    void FillTemplatedText(
-        const std::string& text,
-        std::vector<boost::shared_ptr<TextElement> >& text_elements,
-        std::vector<boost::shared_ptr<TextElement> >::iterator starting_from) const;
+    void FillTemplatedText(const std::string& text,
+                           std::vector<boost::shared_ptr<TextElement> >& text_elements,
+                           std::vector<boost::shared_ptr<TextElement> >::iterator starting_from) const;
 
     /** DetermineLines() returns the \p line_data resulting from adding the necessary line
         breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
