@@ -1615,8 +1615,7 @@ void Font::ChangeTemplatedText(
     // Find the target text element.
     size_t curr_offset = 0;
     std::vector<boost::shared_ptr<Font::TextElement> >::iterator te_it = text_elements.begin();
-    while (te_it != text_elements.end())
-    {
+    while (te_it != text_elements.end()) {
         if ((*te_it)->Type() == TextElement::TEXT) {
             // Change the target text element
             if (targ_offset == curr_offset) {
