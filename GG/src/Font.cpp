@@ -710,7 +710,8 @@ namespace {
         public:
         CompiledRegex(const std::set<std::string>& known_tags, bool strip_unpaired_tags) :
             m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
-            m_EVERYTHING() {
+            m_EVERYTHING()
+        {
             // Synonyms for s1 thru s5 sub matches
             mark_tag tag_name_tag(1);
             mark_tag open_bracket_tag(2);
@@ -802,9 +803,10 @@ namespace {
 
     class TagHandler {
         public:
-        TagHandler() : m_known_tags(),
-                       m_regex_w_tags(m_known_tags, false),
-                       m_regex_w_tags_skipping_unmatched(m_known_tags, true)
+        TagHandler() :
+            m_known_tags(),
+            m_regex_w_tags(m_known_tags, false),
+            m_regex_w_tags_skipping_unmatched(m_known_tags, true)
         {}
 
         void Insert(const std::string& tag) {
@@ -1242,13 +1244,17 @@ void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
 
 void Font::FillTextElements(const std::string& text,
                             bool ignore_tags,
-                            std::vector<boost::shared_ptr<TextElement> >& text_elements) const {
+                            std::vector<boost::shared_ptr<TextElement> >& text_elements) const
+{
     if (text_elements.empty()) {
         using namespace boost::xpressive;
 
-        sregex & regex = StaticTagHandler().Regex(text, ignore_tags);
+        // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
+        sregex& regex = StaticTagHandler().Regex(text, ignore_tags);
         sregex_iterator it(text.begin(), text.end(), regex);
 
+        // These are the types found by the regular expression: XML open/close tags, text and
+        // whitespace.  Each type will correspond to a type of TextElement.
         mark_tag tag_name_tag(1);
         mark_tag open_bracket_tag(2);
         mark_tag close_bracket_tag(3);
@@ -1258,7 +1264,8 @@ void Font::FillTextElements(const std::string& text,
         sregex_iterator end_it;
         while (it != end_it)
         {
-            // consolidate adjacent blocks of text
+            // Consolidate adjacent blocks of text.  If adjacent found substrings are all text, merge
+            // them into a single Substring.
             bool need_increment = false;
             Substring combined_text;
             if ((*it)[text_tag].matched) {
@@ -1273,10 +1280,16 @@ void Font::FillTextElements(const std::string& text,
                 need_increment = true;
             }
 
+            // If the element is not a text element then it must be an open tag, a close tag or whitespace.
             if (combined_text.empty()) {
+
+                // Open XML tag.
                 if ((*it)[open_bracket_tag].matched) {
                     boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(false));
                     element->text = Substring(text, (*it)[0]);
+
+                    // Check open tags for submatches which are parameters.  For example a Color tag
+                    // might have RGB parameters.
                     if (1 < (*it).nested_results().size()) {
                         element->params.reserve((*it).nested_results().size() - 1);
                         for (smatch::nested_results_type::const_iterator nested_it =
@@ -1289,17 +1302,25 @@ void Font::FillTextElements(const std::string& text,
                     }
                     element->tag_name = Substring(text, (*it)[tag_name_tag]);
                     text_elements.push_back(element);
+
+                // Close XML tag
                 } else if ((*it)[close_bracket_tag].matched) {
                     boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(true));
                     element->text = Substring(text, (*it)[0]);
                     element->tag_name = Substring(text, (*it)[tag_name_tag]);
                     text_elements.push_back(element);
+
+                // Whitespace element
                 } else if ((*it)[whitespace_tag].matched) {
                     boost::shared_ptr<Font::TextElement> element(new Font::TextElement(true, false));
                     element->text = Substring(text, (*it)[whitespace_tag]);
                     text_elements.push_back(element);
+
+                    // If the last character of a whitespace element is a line ending then create a
+                    // newline TextElement.
                     char last_char = *boost::prior(element->text.end());
                     if (last_char == '\n' || last_char == '\f' || last_char == '\r') {
+                        // Basic text element.
                         boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, true));
                         text_elements.push_back(element);
                     }

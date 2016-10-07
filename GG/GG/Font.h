@@ -445,15 +445,18 @@ public:
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
 
+    /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
                        RenderCache& cache, const std::vector<LineData>* line_data = 0,
                        RenderState* render_state = 0) const;
 
+    /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(const Pt& pt1, const Pt& pt2, const std::string& text,
                        Flags<TextFormat>& format, const std::vector<LineData>& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
 
+    /** Render the glyphs from the \p cache.*/
     void RenderCachedText(RenderCache& cache) const;
 
     /** Sets \a render_state as if all the text before (<i>begin_line</i>,
