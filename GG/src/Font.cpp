@@ -700,7 +700,7 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
 {}
 
 namespace {
-    using namespace boost::xpressive;
+    namespace xpr = boost::xpressive;
 
     /** CompiledRegex maintains a compiled boost::xpressive regular
         expression that includes a tag stack which can be cleared and
@@ -713,42 +713,42 @@ namespace {
             m_EVERYTHING()
         {
             // Synonyms for s1 thru s5 sub matches
-            mark_tag tag_name_tag(1);
-            mark_tag open_bracket_tag(2);
-            mark_tag close_bracket_tag(3);
-            mark_tag whitespace_tag(4);
-            mark_tag text_tag(5);
+            xpr::mark_tag tag_name_tag(1);
+            xpr::mark_tag open_bracket_tag(2);
+            xpr::mark_tag close_bracket_tag(3);
+            xpr::mark_tag whitespace_tag(4);
+            xpr::mark_tag text_tag(5);
 
             // The comments before each regex are intended to clarify the mapping from xpressive
             // notation to the more typical regex notation.  If you read xpressive or don't read
             // regex then ignore them.
 
             // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
-            const sregex TAG_PARAM =
-                -+~set[_s | '<'];
+            const xpr::sregex TAG_PARAM =
+                -+~xpr::set[xpr::_s | '<'];
 
             //+_w one or more greed word chars,  () group no capture,  [] semantic operation
-            const sregex OPEN_TAG_NAME =
-                (+_w)[check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
+            const xpr::sregex OPEN_TAG_NAME =
+                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
             // (+_w) one or more greedy word check matches stack
-            const sregex CLOSE_TAG_NAME =
-                (+_w)[check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
+            const xpr::sregex CLOSE_TAG_NAME =
+                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
             // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
             // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
-            const sregex WHITESPACE =
-                (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
+            const xpr::sregex WHITESPACE =
+                (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
 
             // < followed by not space or <   or one or more not space or <
-            const sregex TEXT =
-                ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
+            const xpr::sregex TEXT =
+                ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
 
             if (!strip_unpaired_tags) {
                 m_EVERYTHING =
-                    ('<' >> (tag_name_tag = OPEN_TAG_NAME) // < followed by TAG_NAME
-                     >> repeat<0, 9>(+blank >> TAG_PARAM)  // repeat 0 to 9 a single blank followed
-                                                           // by TAG_PARAM
-                     >> (open_bracket_tag.proto_base() = '>'))  // s1. close tag and push operation
-                    [PushP(ref(m_text), ref(m_tag_stack), ref(m_ignore_tags), tag_name_tag)] |
+                    ('<' >> (tag_name_tag = OPEN_TAG_NAME)           // < followed by TAG_NAME
+                     >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)  // repeat 0 to 9 a single blank followed
+                                                                     // by TAG_PARAM
+                     >> (open_bracket_tag.proto_base() = '>'))       // s1. close tag and push operation
+                    [PushP(xpr::ref(m_text), xpr::ref(m_tag_stack), xpr::ref(m_ignore_tags), tag_name_tag)] |
                     ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
                     (whitespace_tag = WHITESPACE) |
                     (text_tag = TEXT);
@@ -757,14 +757,14 @@ namespace {
                 // matching close tags, or updating the stack when
                 // matching open tags
                 m_EVERYTHING =
-                    ('<' >> OPEN_TAG_NAME >> repeat<0, 9>(+blank >> TAG_PARAM) >> '>') |
+                    ('<' >> OPEN_TAG_NAME >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM) >> '>') |
                     ("</" >> OPEN_TAG_NAME >> '>') |
                     (whitespace_tag = WHITESPACE) |
                     (text_tag = TEXT);
             }
         }
 
-        sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) {
+        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) {
             if (!m_tag_stack.empty()) {
                 std::stack<Font::Substring> empty_stack;
                 std::swap(m_tag_stack, empty_stack);
@@ -798,7 +798,7 @@ namespace {
         std::stack<Font::Substring> m_tag_stack;
 
         // The combined regular expression.
-        sregex m_EVERYTHING;
+        xpr::sregex m_EVERYTHING;
     };
 
     class TagHandler {
@@ -825,7 +825,7 @@ namespace {
         { return m_known_tags; }
         // Return a regex bound to \p text using the currently known
         // tags possible \p ignore_tags and/or \p strip_unpaired_tags
-        sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
+        xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
             if (!strip_unpaired_tags)
                 return m_regex_w_tags.BindRegexToText(text, ignore_tags);
             else
