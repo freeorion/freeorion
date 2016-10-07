@@ -1331,25 +1331,36 @@ std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextT
     }
 
     // fill in the widths of code points in each TextElement
-    for (std::size_t i = 0; i < text_elements.size(); ++i) {
-        std::string::const_iterator it = text_elements[i]->text.begin();
-        std::string::const_iterator end_it = text_elements[i]->text.end();
-        while (it != end_it) {
-            text_elements[i]->widths.push_back(X0);
-            boost::uint32_t c = utf8::next(it, end_it);
-            if (c != WIDE_NEWLINE) {
-                GlyphMap::const_iterator it = m_glyphs.find(c);
-                // use a space when an unrendered glyph is requested (the
-                // space chararacter is always renderable)
-                text_elements[i]->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
-            }
-        }
-    }
+    FillTemplatedText(text, text_elements, text_elements.begin());
 
 #if DEBUG_DETERMINELINES
     DebugOutput::PrintParseResults(text_elements);
 #endif
     return text_elements;
+}
+
+
+void Font::FillTemplatedText(
+    const std::string& text,
+    std::vector<boost::shared_ptr<Font::TextElement> >& text_elements,
+    std::vector<boost::shared_ptr<Font::TextElement> >::iterator start) const
+{
+    std::vector<boost::shared_ptr<Font::TextElement> >::iterator& te_it = start;
+    for (; te_it != text_elements.end(); ++te_it) {
+        boost::shared_ptr<TextElement> elem = (*te_it);
+        std::string::const_iterator it = elem->text.begin();
+        std::string::const_iterator end_it = elem->text.end();
+        while (it != end_it) {
+            elem->widths.push_back(X0);
+            boost::uint32_t c = utf8::next(it, end_it);
+            if (c != WIDE_NEWLINE) {
+                GlyphMap::const_iterator it = m_glyphs.find(c);
+                // use a space when an unrendered glyph is requested (the
+                // space chararacter is always renderable)
+                elem->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
+            }
+        }
+    }
 }
 
 std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
