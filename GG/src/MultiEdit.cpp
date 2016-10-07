@@ -884,7 +884,8 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
             m_cursor_begin = m_cursor_end = HighCursorPos();
         } else if (!GetLineData().empty() && m_cursor_end.second <
                     GetLineData()[m_cursor_end.first].char_data.size() -
-                    (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()) ? 1 : 0)) {
+                    (LineEndsWithEndlineCharacter(GetLineData(), m_cursor_end.first, Text()) ? 1 : 0))
+        {
             ++m_cursor_end.second;
         } else if (!GetLineData().empty() && m_cursor_end.first < GetLineData().size() - 1) {
             ++m_cursor_end.first;
