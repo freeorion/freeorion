@@ -484,6 +484,176 @@ std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vecto
     return retval;
 }
 
+namespace {
+    namespace xpr = boost::xpressive;
+
+    /** CompiledRegex maintains a compiled boost::xpressive regular
+        expression that includes a tag stack which can be cleared and
+        provided to callers without the overhead of recompiling the
+        regular expression.*/
+    class CompiledRegex {
+        public:
+        CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
+            m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
+            m_EVERYTHING()
+        {
+            // Synonyms for s1 thru s5 sub matches
+            xpr::mark_tag tag_name_tag(1);
+            xpr::mark_tag open_bracket_tag(2);
+            xpr::mark_tag close_bracket_tag(3);
+            xpr::mark_tag whitespace_tag(4);
+            xpr::mark_tag text_tag(5);
+
+            // The comments before each regex are intended to clarify the mapping from xpressive
+            // notation to the more typical regex notation.  If you read xpressive or don't read
+            // regex then ignore them.
+
+            // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
+            const xpr::sregex TAG_PARAM =
+                -+~xpr::set[xpr::_s | '<'];
+
+            //+_w one or more greed word chars,  () group no capture,  [] semantic operation
+            const xpr::sregex OPEN_TAG_NAME =
+                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
+
+            // (+_w) one or more greedy word check matches stack
+            const xpr::sregex CLOSE_TAG_NAME =
+                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
+
+            // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
+            // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
+            const xpr::sregex WHITESPACE =
+                (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
+
+            // < followed by not space or <   or one or more not space or <
+            const xpr::sregex TEXT =
+                ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
+
+            if (!strip_unpaired_tags) {
+                m_EVERYTHING =
+                    ('<' >> (tag_name_tag = OPEN_TAG_NAME)           // < followed by TAG_NAME
+                     >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)  // repeat 0 to 9 a single blank followed
+                                                                     // by TAG_PARAM
+                     >> (open_bracket_tag.proto_base() = '>'))       // s1. close tag and push operation
+                    [PushP(xpr::ref(m_text), xpr::ref(m_tag_stack), xpr::ref(m_ignore_tags), tag_name_tag)] |
+                    ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
+                    (whitespace_tag = WHITESPACE) |
+                    (text_tag = TEXT);
+            } else {
+                // don't care about matching with tag stack when
+                // matching close tags, or updating the stack when
+                // matching open tags
+                m_EVERYTHING =
+                    ('<' >> OPEN_TAG_NAME >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM) >> '>') |
+                    ("</" >> OPEN_TAG_NAME >> '>') |
+                    (whitespace_tag = WHITESPACE) |
+                    (text_tag = TEXT);
+            }
+        }
+
+        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) {
+            if (!m_tag_stack.empty()) {
+                std::stack<Font::Substring> empty_stack;
+                std::swap(m_tag_stack, empty_stack);
+            }
+            m_text = &new_text;
+            m_ignore_tags = ignore_tags;
+            return m_EVERYTHING;
+        }
+
+        private:
+
+        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) {
+            return m_ignore_tags ? false : m_known_tags->count(sub.str()) != 0;
+        }
+
+        bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) {
+            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
+            if (retval) {
+                m_tag_stack.pop();
+                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
+                    m_ignore_tags = false;
+            }
+            return retval;
+        }
+
+        const std::string* m_text;
+        const boost::unordered_set<std::string>* m_known_tags;
+        bool m_ignore_tags;
+
+        // m_tag_stack is used to track XML opening/closing tags.
+        std::stack<Font::Substring> m_tag_stack;
+
+        // The combined regular expression.
+        xpr::sregex m_EVERYTHING;
+    };
+
+    class TagHandler {
+        public:
+        TagHandler() :
+            m_known_tags(),
+            m_regex_w_tags(m_known_tags, false),
+            m_regex_w_tags_skipping_unmatched(m_known_tags, true)
+        {}
+
+        void Insert(const std::string& tag) {
+            m_known_tags.insert(tag);
+        }
+
+        void Erase(const std::string& tag) {
+            m_known_tags.erase(tag);
+        }
+
+        void Clear() {
+            m_known_tags.clear();
+        }
+
+        // Return a regex bound to \p text using the currently known
+        // tags possible \p ignore_tags and/or \p strip_unpaired_tags
+        xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
+            if (!strip_unpaired_tags)
+                return m_regex_w_tags.BindRegexToText(text, ignore_tags);
+            else
+                return m_regex_w_tags_skipping_unmatched.BindRegexToText(text, ignore_tags);
+        }
+
+        private:
+        // set of tags known to the handler
+        boost::unordered_set<std::string> m_known_tags;
+
+        // Compiled regular expression including tag stack
+        CompiledRegex m_regex_w_tags;
+
+        // Compiled regular expression using tags but skipping unmatched tags.
+        CompiledRegex m_regex_w_tags_skipping_unmatched;
+    };
+
+
+    // Global set of known tags. Wrapped in a function for deterministic static initialization order.
+    TagHandler& StaticTagHandler()
+    {
+        static TagHandler tag_handler;
+        return tag_handler;
+    }
+
+    // Registers the default action and known tags.
+    int RegisterDefaultTags() {
+        StaticTagHandler().Insert("i");
+        StaticTagHandler().Insert("s");
+        StaticTagHandler().Insert("u");
+        StaticTagHandler().Insert("rgba");
+        StaticTagHandler().Insert(ALIGN_LEFT_TAG);
+        StaticTagHandler().Insert(ALIGN_CENTER_TAG);
+        StaticTagHandler().Insert(ALIGN_RIGHT_TAG);
+        StaticTagHandler().Insert(PRE_TAG);
+
+        // Must have return value to call at static initialization time.
+        return 0;
+    }
+
+    // Register the default tags at static initialization time.
+    int register_tags_dummy = RegisterDefaultTags();
+}
 
 ///////////////////////////////////////
 // class GG::Font::TextElement
@@ -683,177 +853,6 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
     advance(adv),
     width(ul.x - lr.x)
 {}
-
-namespace {
-    namespace xpr = boost::xpressive;
-
-    /** CompiledRegex maintains a compiled boost::xpressive regular
-        expression that includes a tag stack which can be cleared and
-        provided to callers without the overhead of recompiling the
-        regular expression.*/
-    class CompiledRegex {
-        public:
-        CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
-            m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
-            m_EVERYTHING()
-        {
-            // Synonyms for s1 thru s5 sub matches
-            xpr::mark_tag tag_name_tag(1);
-            xpr::mark_tag open_bracket_tag(2);
-            xpr::mark_tag close_bracket_tag(3);
-            xpr::mark_tag whitespace_tag(4);
-            xpr::mark_tag text_tag(5);
-
-            // The comments before each regex are intended to clarify the mapping from xpressive
-            // notation to the more typical regex notation.  If you read xpressive or don't read
-            // regex then ignore them.
-
-            // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
-            const xpr::sregex TAG_PARAM =
-                -+~xpr::set[xpr::_s | '<'];
-
-            //+_w one or more greed word chars,  () group no capture,  [] semantic operation
-            const xpr::sregex OPEN_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
-
-            // (+_w) one or more greedy word check matches stack
-            const xpr::sregex CLOSE_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
-
-            // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
-            // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
-            const xpr::sregex WHITESPACE =
-                (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
-
-            // < followed by not space or <   or one or more not space or <
-            const xpr::sregex TEXT =
-                ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
-
-            if (!strip_unpaired_tags) {
-                m_EVERYTHING =
-                    ('<' >> (tag_name_tag = OPEN_TAG_NAME)           // < followed by TAG_NAME
-                     >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)  // repeat 0 to 9 a single blank followed
-                                                                     // by TAG_PARAM
-                     >> (open_bracket_tag.proto_base() = '>'))       // s1. close tag and push operation
-                    [PushP(xpr::ref(m_text), xpr::ref(m_tag_stack), xpr::ref(m_ignore_tags), tag_name_tag)] |
-                    ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
-                    (whitespace_tag = WHITESPACE) |
-                    (text_tag = TEXT);
-            } else {
-                // don't care about matching with tag stack when
-                // matching close tags, or updating the stack when
-                // matching open tags
-                m_EVERYTHING =
-                    ('<' >> OPEN_TAG_NAME >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM) >> '>') |
-                    ("</" >> OPEN_TAG_NAME >> '>') |
-                    (whitespace_tag = WHITESPACE) |
-                    (text_tag = TEXT);
-            }
-        }
-
-        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) {
-            if (!m_tag_stack.empty()) {
-                std::stack<Font::Substring> empty_stack;
-                std::swap(m_tag_stack, empty_stack);
-            }
-            m_text = &new_text;
-            m_ignore_tags = ignore_tags;
-            return m_EVERYTHING;
-        }
-
-        private:
-
-        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) {
-            return m_ignore_tags ? false : m_known_tags->count(sub.str()) != 0;
-        }
-
-        bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) {
-            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
-            if (retval) {
-                m_tag_stack.pop();
-                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
-                    m_ignore_tags = false;
-            }
-            return retval;
-        }
-
-        const std::string* m_text;
-        const boost::unordered_set<std::string>* m_known_tags;
-        bool m_ignore_tags;
-
-        // m_tag_stack is used to track XML opening/closing tags.
-        std::stack<Font::Substring> m_tag_stack;
-
-        // The combined regular expression.
-        xpr::sregex m_EVERYTHING;
-    };
-
-    class TagHandler {
-        public:
-        TagHandler() :
-            m_known_tags(),
-            m_regex_w_tags(m_known_tags, false),
-            m_regex_w_tags_skipping_unmatched(m_known_tags, true)
-        {}
-
-        void Insert(const std::string& tag) {
-            m_known_tags.insert(tag);
-        }
-
-        void Erase(const std::string& tag) {
-            m_known_tags.erase(tag);
-        }
-
-        void Clear() {
-            m_known_tags.clear();
-        }
-
-        // Return a regex bound to \p text using the currently known
-        // tags possible \p ignore_tags and/or \p strip_unpaired_tags
-        xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
-            if (!strip_unpaired_tags)
-                return m_regex_w_tags.BindRegexToText(text, ignore_tags);
-            else
-                return m_regex_w_tags_skipping_unmatched.BindRegexToText(text, ignore_tags);
-        }
-
-        private:
-        // set of tags known to the handler
-        boost::unordered_set<std::string> m_known_tags;
-
-        // Compiled regular expression including tag stack
-        CompiledRegex m_regex_w_tags;
-
-        // Compiled regular expression using tags but skipping unmatched tags.
-        CompiledRegex m_regex_w_tags_skipping_unmatched;
-    };
-
-
-    // Global set of known tags. Wrapped in a function for deterministic static initialization order.
-    TagHandler& StaticTagHandler()
-    {
-        static TagHandler tag_handler;
-        return tag_handler;
-    }
-
-    // Registers the default action and known tags.
-    int RegisterDefaultTags() {
-        StaticTagHandler().Insert(ITALIC_TAG);
-        StaticTagHandler().Insert(SHADOW_TAG);
-        StaticTagHandler().Insert(UNDERLINE_TAG);
-        StaticTagHandler().Insert(RGBA_TAG);
-        StaticTagHandler().Insert(ALIGN_LEFT_TAG);
-        StaticTagHandler().Insert(ALIGN_CENTER_TAG);
-        StaticTagHandler().Insert(ALIGN_RIGHT_TAG);
-        StaticTagHandler().Insert(PRE_TAG);
-
-        // Must have return value to call at static initialization time.
-        return 0;
-    }
-
-    // Register the default tags at static initialization time.
-    int register_tags_dummy = RegisterDefaultTags();
-}
 
 ///////////////////////////////////////
 // class GG::Font
