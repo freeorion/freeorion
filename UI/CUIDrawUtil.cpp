@@ -246,7 +246,7 @@ bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, in
                         bool upper_left_angled/* = true*/, bool lower_right_angled)
 {
     bool retval = false;
-    if (retval = (ul <= pt && pt < lr)) {
+    if ((retval = ((ul <= pt) && (pt < lr)))) {
         GG::Pt dist_from_ul = pt - ul;
         GG::Pt dist_from_lr = lr - pt;
         bool inside_upper_left_corner = upper_left_angled ? (angle_offset < Value(dist_from_ul.x) + Value(dist_from_ul.y)) : true;

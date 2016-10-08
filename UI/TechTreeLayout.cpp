@@ -215,7 +215,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     std::vector<std::vector<Node*> > nodes_at_each_depth(max_node_depth + 1);
     for (std::vector<Node*>::iterator it = m_nodes.begin(); it != m_nodes.end(); ++it) {
         Node* node = *it;
-        assert(node->GetDepth() >= 0 && node->GetDepth() < nodes_at_each_depth.size());
+        assert((node->GetDepth() >= 0) && (node->GetDepth() < nodes_at_each_depth.size()));
         nodes_at_each_depth[node->GetDepth()].push_back(node);
     }
     // sort within each depth column

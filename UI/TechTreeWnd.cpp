@@ -739,7 +739,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
         m_name_label->SizeMove(text_ul, text_ul + text_size);
 
         // show cost and duration for unresearched techs
-        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
+        const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
+        if (empire) {
             if (empire->TechResearched(m_tech_name))
                 m_cost_and_duration_label->Hide();
             else {
@@ -748,6 +749,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
                 m_cost_and_duration_label->SizeMove(text_ll, text_ll + text_size);
                 m_cost_and_duration_label->Show();
             }
+        }
 
         // ETA background and text
         if (m_eta != -1 && font_pts > 10) {

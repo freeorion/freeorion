@@ -169,7 +169,7 @@ void MultiEdit::Render()
     Font::RenderState state(text_color_to_use);
     std::size_t first_visible_row = FirstVisibleRow();
     std::size_t last_visible_row = LastVisibleRow();
-    Flags<TextFormat> text_format = TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM) | FORMAT_VCENTER;
+    Flags<TextFormat> text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
     const std::vector<Font::LineData>& lines = GetLineData();
     GetFont()->ProcessTagsBefore(lines, state, first_visible_row, CP0);
 

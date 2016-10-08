@@ -2512,7 +2512,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
         GG::ListBox::Row* row = **sel_it;
         ShipRow* ship_row = 0;
         try {   // casing rows here sometimes causes RTTI exceptions.  not sure why, but need to avoid crash.
-            if (ship_row = dynamic_cast<ShipRow*>(row)) {
+            if ((ship_row = dynamic_cast<ShipRow*>(row))) {
                 if (ship_row->ShipID() != INVALID_OBJECT_ID)
                     retval.insert(ship_row->ShipID());
                 //std::cout << " ship row for ship: " << ship_row->ShipID() << " is selected" << std::endl << std::flush;

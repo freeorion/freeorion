@@ -1924,14 +1924,14 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 
     bool vertical_needed =
         m_first_row_shown != m_rows.begin() ||
-        m_rows.size() && (cl_sz.y < total_y_extent ||
-                          (cl_sz.y < total_y_extent - SCROLL_WIDTH &&
-                           cl_sz.x < total_x_extent - SCROLL_WIDTH));
+        (m_rows.size() && (cl_sz.y < total_y_extent ||
+                           (cl_sz.y < total_y_extent - SCROLL_WIDTH &&
+                            cl_sz.x < total_x_extent - SCROLL_WIDTH)));
     bool horizontal_needed =
         m_first_col_shown ||
-        m_rows.size() && (cl_sz.x < total_x_extent ||
-                          (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
-                           cl_sz.y < total_y_extent - SCROLL_WIDTH));
+        (m_rows.size() && (cl_sz.x < total_x_extent ||
+                           (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
+                            cl_sz.y < total_y_extent - SCROLL_WIDTH)));
 
 
     if (m_add_padding_at_end) {
