@@ -61,6 +61,10 @@
 
 #include <stdexcept>
 
+/** @file
+ * @brief  Implements free functions and classes to modify, read and write
+ *      simple XML files.
+ */
 
 #define DEBUG_OUTPUT 0
 
