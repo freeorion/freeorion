@@ -212,4 +212,3 @@ template void PlayerInfo::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchi
 template void PlayerInfo::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void PlayerInfo::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void PlayerInfo::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-

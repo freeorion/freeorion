@@ -4,7 +4,7 @@
 
 #include "Serialize.ipp"
 
-// exports for boost serialization of polymorphic ModeratorAction hierarchy
+
 BOOST_CLASS_EXPORT(Moderator::DestroyUniverseObject)
 BOOST_CLASS_EXPORT(Moderator::SetOwner)
 BOOST_CLASS_EXPORT(Moderator::AddStarlane)
@@ -42,14 +42,10 @@ void Moderator::SetOwner::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_new_owner_empire_id);
 }
 
-/// @cond SERIALIZE_MOD_ACTION  // Conditional api documentation
-
 template void Moderator::SetOwner::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Moderator::SetOwner::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void Moderator::SetOwner::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::SetOwner::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-
-/// @endcond
 
 template <class Archive>
 void Moderator::AddStarlane::serialize(Archive& ar, const unsigned int version)
@@ -86,14 +82,10 @@ void Moderator::CreateSystem::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_star_type);
 }
 
-/// @cond SERIALIZE_MOD_ACTION  // Conditional api documentation
-
 template void Moderator::CreateSystem::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Moderator::CreateSystem::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void Moderator::CreateSystem::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::CreateSystem::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-
-/// @endcond
 
 template <class Archive>
 void Moderator::CreatePlanet::serialize(Archive& ar, const unsigned int version)
@@ -104,11 +96,7 @@ void Moderator::CreatePlanet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_planet_size);
 }
 
-/// @cond SERIALIZE_MOD_ACTION  // Conditional api documentation
-
 template void Moderator::CreatePlanet::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Moderator::CreatePlanet::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
 template void Moderator::CreatePlanet::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Moderator::CreatePlanet::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
-
-/// @endcond

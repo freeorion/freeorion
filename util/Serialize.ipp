@@ -25,34 +25,6 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/serialization/optional.hpp>
 
-// disabling these tests as they reportedly cause problems on some systems
-// and binary serialization portability is apparently broken regardless of
-// whether these tests pass, as far as I'm aware.
-#if 0
-// some endianness and size checks to ensure portability of binary save files;
-// of one or more of these fails, it means that FreeOrion is not supported on
-// your platform/compiler pair, and must be modified to provide data of the
-// appropriate size(s).
-#ifndef BOOST_LITTLE_ENDIAN
-#  error "Incompatible endianness for binary serialization."
-#endif
-BOOST_STATIC_ASSERT(sizeof(char) == 1);
-BOOST_STATIC_ASSERT(sizeof(short) == 2);
-BOOST_STATIC_ASSERT(sizeof(int) == 4);
-BOOST_STATIC_ASSERT(sizeof(long long) == 8);
-BOOST_STATIC_ASSERT(sizeof(float) == 4);
-BOOST_STATIC_ASSERT(sizeof(double) == 8);
-
-// This is commented out, but left here by way of explanation.  This assert is
-// the only one that seems to fail on 64-bit systems.  It would seem that
-// short of writing some Boost.Serialization archive that handles longs
-// portably, we cannot transmit longs across machines with different bit-size
-// architectures.  So, don't use longs -- use long longs instead if you need
-// something bigger than an int for some reason.
-//BOOST_STATIC_ASSERT(sizeof(long) == 4);
-#endif
-
-
 #include <GG/Clr.h>
 
 namespace boost { namespace serialization {
