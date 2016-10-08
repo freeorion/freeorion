@@ -65,7 +65,8 @@ ScopedTimer::ScopedTimer(const std::string& timed_name,
     m_impl(new Impl(timed_name, true, threshold))
 {}
 
-// ~ScopedTimer is required because Impl is defined here.
+//! @note
+//!     ~ScopedTimer is required because Impl is defined here.
 ScopedTimer::~ScopedTimer()
 {}
 
