@@ -184,8 +184,6 @@ public:
     bool            IsFleetExploring(const int fleet_id);
     void            DispatchFleetsExploring();                      //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
 
-protected:
-    virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
     void            RefreshTradeResourceIndicator();

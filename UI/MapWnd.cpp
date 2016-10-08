@@ -2187,9 +2187,10 @@ void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
+    bool quick_close_wnds = GetOptionsDB().Get<bool>("UI.window-quickclose");
 
     // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
-    if (!m_dragged && !m_in_production_view_mode && manager.ActiveFleetWnd()) {
+    if (!m_dragged && !m_in_production_view_mode && manager.ActiveFleetWnd() && quick_close_wnds) {
         manager.CloseAll(); }
     else if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(INVALID_OBJECT_ID);
@@ -2208,21 +2209,6 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
             StarType star_type = m_moderator_wnd->SelectedStarType();
             net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
                 Moderator::CreateSystem(u_pos.first, u_pos.second, star_type)));
-            return;
-        }
-    }
-
-
-    // Attempt to close open fleet windows (if any are open and this is
-    // allowed), then attempt to close the SidePanel (if open);
-    // if these fail, go ahead with the context-sensitive popup menu. Note
-    // that this enforces a one-close-per-click policy.
-    if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-        if (FleetUIManager::GetFleetUIManager().CloseAll())
-            return;
-
-        if (m_side_panel->Visible()) {
-            m_side_panel->Hide();
             return;
         }
     }
@@ -4145,23 +4131,6 @@ void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
 
 void MapWnd::ClearProjectedFleetMovementLines()
 { m_projected_fleet_lines.clear(); }
-
-bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-    if (event.Type() == GG::WndEvent::RClick && FleetUIManager::GetFleetUIManager().empty()) {
-        // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.
-        // Note that this enforces a one-close-per-click policy.
-
-        if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-            if (m_side_panel->Visible()) {
-                m_side_panel->Hide();
-                DetachChild(m_side_panel);
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
 
 void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
