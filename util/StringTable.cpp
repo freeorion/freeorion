@@ -16,47 +16,42 @@ namespace {
     const std::string ERROR_STRING = "ERROR: ";
 }
 
-// StringTable
+
 StringTable::StringTable():
     m_filename(DEFAULT_FILENAME)
 { Load(); }
 
-StringTable::StringTable(const std::string& filename, std::shared_ptr<const StringTable> lookups_fallback_table):
+StringTable::StringTable(const std::string& filename, std::shared_ptr<const StringTable> fallback):
     m_filename(filename)
-{ Load(lookups_fallback_table); }
+{ Load(fallback); }
 
 StringTable::~StringTable()
 {}
 
-bool StringTable::StringExists(const std::string& index) const {
+bool StringTable::StringExists(const std::string& key) const {
     std::lock_guard<std::mutex> lock(m_mutex);
-    return m_strings.count(index);
+    return m_strings.count(key);
 }
 
-bool StringTable::Empty() const {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_strings.empty();
-}
-
-const std::string& StringTable::operator[] (const std::string& index) const {
+const std::string& StringTable::operator[] (const std::string& key) const {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    auto it = m_strings.find(index);
+    auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;
 
-    auto error = m_error_strings.insert(ERROR_STRING + index);
+    auto error = m_error_strings.insert(ERROR_STRING + key);
     return *(error.first);
 }
 
-void StringTable::Load(std::shared_ptr<const StringTable> lookups_fallback_table) {
+void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    if (lookups_fallback_table && !lookups_fallback_table->m_initialized) {
+    if (fallback && !fallback->m_initialized) {
         // this prevents deadlock if two stringtables were to be loaded
         // simultaneously with eachother as fallback tables
         ErrorLogger() << "StringTable::Load given uninitialized stringtable as fallback. Ignoring.";
-        lookups_fallback_table = nullptr;
+        fallback = nullptr;
     }
 
     auto path = FilenameToPath(m_filename);
@@ -75,10 +70,10 @@ void StringTable::Load(std::shared_ptr<const StringTable> lookups_fallback_table
 
     std::map<std::string, std::string> fallback_lookup_strings;
     std::string fallback_table_file;
-    if (lookups_fallback_table) {
-        std::lock_guard<std::mutex> fallback_lock(lookups_fallback_table->m_mutex);
-        fallback_table_file = lookups_fallback_table->Filename();
-        fallback_lookup_strings.insert(lookups_fallback_table->m_strings.begin(), lookups_fallback_table->m_strings.end());
+    if (fallback) {
+        std::lock_guard<std::mutex> fallback_lock(fallback->m_mutex);
+        fallback_table_file = fallback->Filename();
+        fallback_lookup_strings.insert(fallback->m_strings.begin(), fallback->m_strings.end());
     }
 
     using namespace boost::xpressive;

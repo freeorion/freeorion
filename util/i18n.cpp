@@ -146,8 +146,8 @@ void FlushLoadedStringTables() {
 const std::string& UserString(const std::string& str) {
     std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (GetStringTable().StringExists(str))
-        return GetStringTable().String(str);
-    return GetDefaultStringTable().String(str);
+        return GetStringTable()[str];
+    return GetDefaultStringTable()[str];
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {
