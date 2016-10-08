@@ -42,7 +42,7 @@ namespace {
                         > -(parse::label(Name_token)        >   string_value_ref      [ _c = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_d, _1) ]
                             )
                            )
@@ -55,7 +55,7 @@ namespace {
                         > -(parse::label(Name_token)        >   string_value_ref [ _b = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_c, _1) ]
                             )
                            )
@@ -70,7 +70,7 @@ namespace {
                         > -(parse::label(Name_token)        >   string_value_ref [ _e = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_f, _1) ]
                             )
                            )
@@ -85,7 +85,7 @@ namespace {
                         > -(parse::label(Name_token)        >   string_value_ref [ _e = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_f, _1) ]
                             )
                            )
@@ -99,7 +99,7 @@ namespace {
                         > -(parse::label(Name_token)    >   string_value_ref [ _d = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_f, _1) ]
                             )
                            )
@@ -115,7 +115,7 @@ namespace {
                         > -(parse::label(Name_token)    >   string_value_ref [ _d = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_f, _1) ]
                             )
                            )
@@ -130,7 +130,7 @@ namespace {
                         > -(parse::label(Name_token)    >   string_value_ref    [ _d = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_e, _1) ]
                             )
                            )
@@ -144,7 +144,7 @@ namespace {
                         > -(parse::label(Name_token)    >   string_value_ref [ _d = _1 ])
                         > -(parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_e, _1) ]
                             )
                            )

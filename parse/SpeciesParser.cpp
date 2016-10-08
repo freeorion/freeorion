@@ -76,7 +76,7 @@ namespace {
             foci
                 =    parse::label(Foci_token)
                 >    (
-                            '[' > +focus_type [ push_back(_r1, _1) ] > ']'
+                    ('[' > +focus_type [ push_back(_r1, _1) ] > ']')
                         |   focus_type [ push_back(_r1, _1) ]
                      )
                 ;
@@ -92,7 +92,7 @@ namespace {
                 ;
 
             environment_map
-                =    '[' > +environment_map_element [ insert(_val, _1) ] > ']'
+                =    ('[' > +environment_map_element [ insert(_val, _1) ] > ']')
                 |    environment_map_element [ insert(_val, _1) ]
                 ;
 

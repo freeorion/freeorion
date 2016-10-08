@@ -49,12 +49,12 @@ namespace parse { namespace detail {
                 ;
 
             location
-                =    parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
+                =    (parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ])
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
             enqueue_location
-                =    parse::label(EnqueueLocation_token) > parse::detail::condition_parser [ _r1 = _1 ]
+                =    (parse::label(EnqueueLocation_token) > parse::detail::condition_parser [ _r1 = _1 ])
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 

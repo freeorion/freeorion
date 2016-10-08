@@ -72,7 +72,7 @@ namespace {
                 =    design_prefix(_a, _b, _c, _f)
                 >    parse::label(Parts_token)
                 >    (
-                            '[' > +tok.string [ push_back(_d, _1) ] > ']'
+                    ('[' > +tok.string [ push_back(_d, _1) ] > ']')
                         |   tok.string [ push_back(_d, _1) ]
                      )
                 >   -(

@@ -71,7 +71,7 @@ namespace {
                 =  -(
                         parse::label(MountableSlotTypes_token)
                     >   (
-                            '[' > +parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ] > ']'
+                        ('[' > +parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ] > ']')
                         |   parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ]
                         )
                      )

@@ -87,7 +87,7 @@ namespace parse { namespace detail {
 
         std::ptrdiff_t distance = std::distance(first, parse::detail::s_end);
 
-        return success && (!distance || distance == 1 && *first == '\n');
+        return success && (!distance || (distance == 1 && *first == '\n'));
     }
 } }
 

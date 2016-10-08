@@ -90,7 +90,7 @@ namespace {
                 =  -(
                         parse::label(Slots_token)
                     >   (
-                            '[' > +slot [ push_back(_r1, _1) ] > ']'
+                        ('[' > +slot [ push_back(_r1, _1) ] > ']')
                             |   slot [ push_back(_r1, _1) ]
                         )
                      )

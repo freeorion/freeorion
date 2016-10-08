@@ -96,7 +96,7 @@ namespace {
                 ;
 
             primary_expr
-                =   '(' > expr > ')'
+                =   ('(' > expr > ')')
                 |   constant
                 |   free_variable
                 |   bound_variable

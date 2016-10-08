@@ -28,12 +28,12 @@ namespace {
                         >   parse::label(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
                         >   parse::label(Effects_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_b, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_b, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_b, _1) ]
                             )
                         > -(parse::label(Else_token)
                         >   (
-                                '[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']'
+                            ('[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']')
                             |   parse::effect_parser() [ push_back(_c, _1) ]
                             )
                            )
