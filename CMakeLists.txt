@@ -157,6 +157,10 @@ add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
+add_definitions(
+    -DBOOST_SPIRIT_USE_PHOENIX_V3
+)
+
 if(${Boost_VERSION} EQUAL "106100")
     # with boost 1.61 some boost::optional internals were changed. However
     # boost::spirit relies on some API the old implementation provided.  This
