@@ -91,9 +91,9 @@ namespace {
 ////////////////////////////////////////////////
 // XMLElement
 ////////////////////////////////////////////////
-XMLElement::XMLElement(const std::string& t, bool r) :
-    m_tag(t),
-    m_root(r)
+XMLElement::XMLElement(const std::string& tag, bool root) :
+    m_tag(tag),
+    m_root(root)
 {}
 
 const std::string& XMLElement::Tag() const
@@ -108,17 +108,17 @@ int XMLElement::NumChildren() const
 int XMLElement::NumAttributes() const
 { return m_attributes.size(); }
 
-bool XMLElement::ContainsChild(const std::string& child) const
-{ return ChildIndex(child) != -1; }
+bool XMLElement::ContainsChild(const std::string& tag) const
+{ return ChildIndex(tag) != -1; }
 
-bool XMLElement::ContainsAttribute(const std::string& attrib) const
-{ return m_attributes.find(attrib) != m_attributes.end(); }
+bool XMLElement::ContainsAttribute(const std::string& key) const
+{ return m_attributes.find(key) != m_attributes.end(); }
 
-int XMLElement::ChildIndex(const std::string& child) const
+int XMLElement::ChildIndex(const std::string& key) const
 {
     int retval = -1;
     for (unsigned int i = 0; i < m_children.size(); ++i) {
-        if (m_children[i].m_tag == child) {
+        if (m_children[i].m_tag == key) {
             retval = i;
             break;
         }
@@ -126,19 +126,19 @@ int XMLElement::ChildIndex(const std::string& child) const
     return retval;
 }
 
-const XMLElement& XMLElement::Child(unsigned int idx) const
-{ return m_children.at(idx); }
+const XMLElement& XMLElement::Child(unsigned int index) const
+{ return m_children.at(index); }
 
-const XMLElement& XMLElement::Child(const std::string& child) const
+const XMLElement& XMLElement::Child(const std::string& tag) const
 {
     unsigned int i = 0;
     for (; i < m_children.size(); ++i) {
-        if (m_children[i].m_tag == child)
+        if (m_children[i].m_tag == tag)
             break;
     }
 
     if (i == m_children.size())
-        throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + child + "\".");
+        throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
     return m_children[i];
 }
@@ -151,10 +151,10 @@ const XMLElement& XMLElement::LastChild() const
     return m_children.back();
 }
 
-const std::string& XMLElement::Attribute(const std::string& attrib) const
+const std::string& XMLElement::Attribute(const std::string& key) const
 {
     static const std::string empty_str("");
-    std::map<std::string, std::string>::const_iterator it = m_attributes.find(attrib);
+    std::map<std::string, std::string>::const_iterator it = m_attributes.find(key);
     if (it != m_attributes.end())
         return it->second;
     else
@@ -214,19 +214,19 @@ XMLElement::const_attr_iterator XMLElement::attr_begin() const
 XMLElement::const_attr_iterator XMLElement::attr_end() const
 { return m_attributes.end(); }
 
-XMLElement& XMLElement::Child(unsigned int idx)
-{ return m_children.at(idx); }
+XMLElement& XMLElement::Child(unsigned int index)
+{ return m_children.at(index); }
 
-XMLElement& XMLElement::Child(const std::string& child)
+XMLElement& XMLElement::Child(const std::string& tag)
 {
     unsigned int i = 0;
     for (; i < m_children.size(); ++i) {
-        if (m_children[i].m_tag == child)
+        if (m_children[i].m_tag == tag)
             break;
     }
 
     if (i == m_children.size())
-        throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + child + "\".");
+        throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
     return m_children[i];
 }
@@ -239,8 +239,8 @@ XMLElement& XMLElement::LastChild()
     return m_children.back();
 }
 
-void XMLElement::SetAttribute(const std::string& attrib, const std::string& val)
-{ m_attributes[attrib] = val; }
+void XMLElement::SetAttribute(const std::string& key, const std::string& value)
+{ m_attributes[key] = value; }
 
 void XMLElement::SetTag(const std::string& tag)
 { m_tag = tag; }
@@ -248,42 +248,42 @@ void XMLElement::SetTag(const std::string& tag)
 void XMLElement::SetText(const std::string& text)
 { m_text = text; }
 
-void XMLElement::RemoveAttribute(const std::string& attrib)
-{ m_attributes.erase(attrib); }
+void XMLElement::RemoveAttribute(const std::string& key)
+{ m_attributes.erase(key); }
 
 void XMLElement::RemoveAttributes()
 { m_attributes.clear(); }
 
-void XMLElement::AppendChild(const XMLElement& e)
-{ m_children.push_back(e); }
+void XMLElement::AppendChild(const XMLElement& child)
+{ m_children.push_back(child); }
 
-void XMLElement::AppendChild(const std::string& child)
-{ m_children.push_back(XMLElement(child)); }
+void XMLElement::AppendChild(const std::string& tag)
+{ m_children.push_back(XMLElement(tag)); }
 
-void XMLElement::AddChildBefore(const XMLElement& e, unsigned int idx)
+void XMLElement::AddChildBefore(const XMLElement& child, unsigned int index)
 {
-    if (m_children.size() <= idx)
-        throw NoSuchIndex("XMLElement::AddChildBefore(): Index " + boost::lexical_cast<std::string>(idx) + " is out of range for XMLElement \"" + Tag() + "\".");
+    if (m_children.size() <= index)
+        throw NoSuchIndex("XMLElement::AddChildBefore(): Index " + boost::lexical_cast<std::string>(index) + " is out of range for XMLElement \"" + Tag() + "\".");
 
-    m_children.insert(m_children.begin() + idx, e);
+    m_children.insert(m_children.begin() + index, child);
 }
 
-void XMLElement::RemoveChild(unsigned int idx)
+void XMLElement::RemoveChild(unsigned int index)
 {
-    if (m_children.size() <= idx)
-        throw NoSuchIndex("XMLElement::RemoveChild(): Index " + boost::lexical_cast<std::string>(idx) + " is out of range for XMLElement \"" + Tag() + "\".");
+    if (m_children.size() <= index)
+        throw NoSuchIndex("XMLElement::RemoveChild(): Index " + boost::lexical_cast<std::string>(index) + " is out of range for XMLElement \"" + Tag() + "\".");
 
-    m_children.erase(m_children.begin() + idx);
+    m_children.erase(m_children.begin() + index);
 }
 
-void XMLElement::RemoveChild(const std::string& child)
+void XMLElement::RemoveChild(const std::string& tag)
 {
-    int idx = ChildIndex(child);
+    int index = ChildIndex(tag);
 
-    if (idx == -1)
-        throw NoSuchChild("XMLElement::RemoveChild(): The XMLElement \"" + Tag() + "\" contains no child \"" + child + "\".");
+    if (index == -1)
+        throw NoSuchChild("XMLElement::RemoveChild(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
-    m_children.erase(m_children.begin() + idx);
+    m_children.erase(m_children.begin() + index);
 }
 
 void XMLElement::RemoveChildren()
