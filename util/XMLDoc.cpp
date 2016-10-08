@@ -1,57 +1,60 @@
-/* Copyright (C) 2006 T. Zachary Laine
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public License
-   as published by the Free Software Foundation; either version 2.1
-   of the License, or (at your option) any later version.
-   
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-    
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA
-
-   If you do not wish to comply with the terms of the LGPL please
-   contact the author as other terms are available for a fee.
-    
-   Zach Laine
-   whatwasthataddress@hotmail.com */
-
-/** This notice came from the original file from which all the XML parsing code 
-    was taken, part of the spirit distribution.  The code was modified slightly 
-    by me, and doesn't contain all the original code.  Thanks to Daniel Nuffer 
-    for his great work. */
-/*=============================================================================
-    simplexml.cpp
-
-    Spirit V1.3
-    URL: http://spirit.sourceforge.net/
-
-    Copyright (c) 2001, Daniel C. Nuffer
-
-    This software is provided 'as-is', without any express or implied
-    warranty. In no event will the copyright holder be held liable for
-    any damages arising from the use of this software.
-
-    Permission is granted to anyone to use this software for any purpose,
-    including commercial applications, and to alter it and redistribute
-    it freely, subject to the following restrictions:
-
-    1.  The origin of this software must not be misrepresented; you must
-        not claim that you wrote the original software. If you use this
-        software in a product, an acknowledgment in the product documentation
-        would be appreciated but is not required.
-
-    2.  Altered source versions must be plainly marked as such, and must
-        not be misrepresented as being the original software.
-
-    3.  This notice may not be removed or altered from any source
-        distribution.
-=============================================================================*/
+//! Copyright (C) 2006 T. Zachary Laine
+//!
+//! This library is free software; you can redistribute it and/or
+//! modify it under the terms of the GNU Lesser General Public License
+//! as published by the Free Software Foundation; either version 2.1
+//! of the License, or (at your option) any later version.
+//!
+//! This library is distributed in the hope that it will be useful,
+//! but WITHOUT ANY WARRANTY; without even the implied warranty of
+//! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//! Lesser General Public License for more details.
+//!
+//! You should have received a copy of the GNU Lesser General Public
+//! License along with this library; if not, write to the Free
+//! Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+//! 02111-1307 USA
+//!
+//! If you do not wish to comply with the terms of the LGPL please
+//! contact the author as other terms are available for a fee.
+//!
+//! ----
+//!
+//! Zach Laine
+//! whatwasthataddress@hotmail.com/
+//!
+//! This notice came from the original file from which all the XML parsing code
+//! was taken, part of the spirit distribution.  The code was modified slightly
+//! by me, and doesn't contain all the original code.  Thanks to Daniel Nuffer
+//! for his great work.
+//!
+//! ----
+//!
+//! simplexml.cpp
+//!
+//! Spirit V1.3
+//! URL: http://spirit.sourceforge.net/
+//!
+//! Copyright (c) 2001, Daniel C. Nuffer
+//!
+//! This software is provided 'as-is', without any express or implied
+//! warranty. In no event will the copyright holder be held liable for
+//! any damages arising from the use of this software.
+//!
+//! Permission is granted to anyone to use this software for any purpose,
+//! including commercial applications, and to alter it and redistribute
+//! it freely, subject to the following restrictions:
+//!
+//! 1.  The origin of this software must not be misrepresented; you must
+//!     not claim that you wrote the original software. If you use this
+//!     software in a product, an acknowledgment in the product documentation
+//!     would be appreciated but is not required.
+//!
+//! 2.  Altered source versions must be plainly marked as such, and must
+//!     not be misrepresented as being the original software.
+//!
+//! 3.  This notice may not be removed or altered from any source
+//!     distribution.
 
 
 #include "XMLDoc.h"
@@ -62,23 +65,19 @@
 #include <stdexcept>
 #include <sstream>
 
-/** @file
- * @brief  Implements free functions and classes to modify, read and write
- *      simple XML files.
- */
 
 namespace {
     using namespace boost::spirit::classic;
 
     typedef chset<unsigned char> chset_t;
 
-    // XML grammar rules
+    //! XML grammar rules
     rule<> document, prolog, element, Misc, Reference, CData, doctypedecl,
            XMLDecl, SDDecl, VersionInfo, EncodingDecl, VersionNum, Eq,
            EmptyElemTag, STag, content, ETag, Attribute, AttValue, CharData,
            Comment, CDSect, CharRef, EntityRef, EncName, Name, Comment1, S;
 
-    // XML Character classes
+    //! XML Character classes
     chset_t Char("\x9\xA\xD\x20-\xFF");
     chset_t Letter("\x41-\x5A\x61-\x7A\xC0-\xD6\xD8-\xF6\xF8-\xFF");
     chset_t Digit("0-9");
@@ -87,9 +86,7 @@ namespace {
     chset_t Sch("\x20\x9\xD\xA");
 }
 
-////////////////////////////////////////////////
-// XMLElement
-////////////////////////////////////////////////
+
 const std::string& XMLElement::Tag() const
 { return m_tag; }
 
@@ -169,10 +166,6 @@ void XMLElement::SetText(const std::string& text)
 { m_text = text; }
 
 
-////////////////////////////////////////////////
-// XMLDoc
-////////////////////////////////////////////////
-// static(s)
 XMLDoc*                  XMLDoc::s_curr_parsing_doc = nullptr;
 std::vector<XMLElement*> XMLDoc::s_element_stack;
 XMLDoc::RuleDefiner      XMLDoc::s_rule_definer;
@@ -273,16 +266,16 @@ XMLDoc::RuleDefiner::RuleDefiner()
     document =
         prolog >> element >> *Misc
         ;
-        
+
     S =
         +(Sch)
         ;
-        
+
     Name =
         (Letter | '_' | ':')
             >> *(NameChar)
         ;
-        
+
     AttValue =
         '"'
             >> (
