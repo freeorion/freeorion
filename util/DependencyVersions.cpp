@@ -13,6 +13,10 @@
 #include <boost/version.hpp>
 #include <sstream>
 
+/** @file
+ * @brief  Implement free functions to access the dependency versions.
+ */
+
 namespace {
     std::string BoostVersionString()
     { return BOOST_LIB_VERSION; }
