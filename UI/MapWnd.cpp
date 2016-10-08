@@ -2189,7 +2189,8 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
-    if (manager.ActiveFleetWnd()) { manager.CloseAll(); }
+    if (!m_dragged && !m_in_production_view_mode && manager.ActiveFleetWnd()) {
+        manager.CloseAll(); }
     else if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(INVALID_OBJECT_ID);
         m_side_panel->Hide();
