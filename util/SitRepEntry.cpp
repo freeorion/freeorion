@@ -10,6 +10,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Universe.h"
 
+
 SitRepEntry::SitRepEntry() :
     VarText(),
     m_turn(INVALID_GAME_TURN),
