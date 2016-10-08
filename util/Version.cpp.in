@@ -1,12 +1,12 @@
 #include "util/Version.h"
 
-/** @file
- * @brief  Implement a free function to access the application version.
- *
- * @warning  DON'T EDIT MANUALLY Version.cpp.  @e Version.cpp is generated from
- *      @e Version.cpp.in by the @e cmake/make_versioncpp.py utility script
- *      that is used or should be used by all build systems.
- */
+//! @file
+//!     Implement a free function to access the application version.
+//!
+//! @warning
+//!     DON'T EDIT MANUALLY Version.cpp.  @e Version.cpp is generated from
+//!     @e Version.cpp.in by the @e cmake/make_versioncpp.py utility script
+//!     that is used or should be used by all build systems.
 
 namespace {
     static const std::string retval = "v${FreeOrion_VERSION} ${FreeOrion_BRANCH}[build ${FreeOrion_BUILD_NO}] ${FreeOrion_BUILDSYS}";
