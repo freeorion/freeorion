@@ -67,6 +67,10 @@ namespace {
     const boost::uint32_t WIDE_FF = '\f';
     const boost::uint32_t WIDE_TAB = '\t';
 
+    const std::string ITALIC_TAG = "i";
+    const std::string SHADOW_TAG = "s";
+    const std::string UNDERLINE_TAG = "u";
+    const std::string RGBA_TAG = "rgba";
     const std::string ALIGN_LEFT_TAG = "left";
     const std::string ALIGN_CENTER_TAG = "center";
     const std::string ALIGN_RIGHT_TAG = "right";
@@ -853,10 +857,10 @@ namespace {
 
     // Registers the default action and known tags.
     int RegisterDefaultTags() {
-        StaticTagHandler().Insert("i");
-        StaticTagHandler().Insert("s");
-        StaticTagHandler().Insert("u");
-        StaticTagHandler().Insert("rgba");
+        StaticTagHandler().Insert(ITALIC_TAG);
+        StaticTagHandler().Insert(SHADOW_TAG);
+        StaticTagHandler().Insert(UNDERLINE_TAG);
+        StaticTagHandler().Insert(RGBA_TAG);
         StaticTagHandler().Insert(ALIGN_LEFT_TAG);
         StaticTagHandler().Insert(ALIGN_CENTER_TAG);
         StaticTagHandler().Insert(ALIGN_RIGHT_TAG);
@@ -1927,7 +1931,7 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
 void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_color,
                      RenderState& render_state) const
 {
-    if (tag->tag_name == "i") {
+    if (tag->tag_name == ITALIC_TAG) {
         if (tag->close_tag) {
             if (render_state.use_italics) {
                 --render_state.use_italics;
@@ -1935,7 +1939,7 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
         } else {
             ++render_state.use_italics;
         }
-    } else if (tag->tag_name == "u") {
+    } else if (tag->tag_name == UNDERLINE_TAG) {
         if (tag->close_tag) {
             if (render_state.draw_underline) {
                 --render_state.draw_underline;
@@ -1943,7 +1947,7 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
         } else {
             ++render_state.draw_underline;
         }
-    } else if (tag->tag_name == "s") {
+    } else if (tag->tag_name == SHADOW_TAG) {
         if (tag->close_tag) {
             if (render_state.use_shadow) {
                 --render_state.use_shadow;
@@ -1951,7 +1955,7 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
         } else {
             ++render_state.use_shadow;
         }
-    } else if (tag->tag_name == "rgba") {
+    } else if (tag->tag_name == RGBA_TAG) {
         if (tag->close_tag) {
             // Popping is ok also for an empty color stack.
             render_state.PopColor();
