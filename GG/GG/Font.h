@@ -108,6 +108,7 @@ GG_API std::string RgbaTag(const Clr& c);
     <br>The supported tags are:
     - \verbatim<i></i> \endverbatim                 Italics
     - \verbatim<u></u> \endverbatim                 Underline
+    - \verbatim<s></s> \endverbatim                 Shadow
     - \verbatim<rgba r g b a></rgba> \endverbatim   Color. Sets current rendering color to that specified by parameters.  Parameters may be either floating point values in the range [0.0, 1.0], or integer values in the range [0, 255].  All parameters must be in one format or the other.  The \</rgba> tag restores the previously set \<rgba> color, or restores the default color used to render the text when there are no other \<rgba> tags in effect.  Example tag: \<rgba 0.4 0.5 0.6 0.7>.
     - \verbatim<left></left> \endverbatim           Left-justified text.
     - \verbatim<center></center> \endverbatim       Centered text.
