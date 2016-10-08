@@ -14,7 +14,6 @@
 
 namespace xpr = boost::xpressive;
 
-// Forward declarations
 class Tech;
 class BuildingType;
 class Special;
@@ -28,22 +27,32 @@ const FieldType*    GetFieldType(const std::string& name);
 
 
 namespace {
-    //////////////////////////////////////////
-    ///// Tag substitution generators////////
-    ////////////////////////////////////////
-
-    /// Surround content with approprite tags based on tag_of
+    //! Return @p content surrounded by the given @p tags.
+    //!
+    //! @param content
+    //!     The text that should be wrapped into @p tags.
+    //! @param tag
+    //!     The tags that should be wrapping the given @p content.  The tag
+    //!     shouldn't contain whitespace.
+    //! @param data
+    //!     Additional data assigned to the @p tag.
+    //!
+    //! @return
+    //!     The tagged content.
     std::string WithTags(const std::string& content, const std::string& tag, const std::string& data) {
         std::string open_tag = "<" + tag + " " + data + ">";
         std::string close_tag = "</" + tag + ">";
         return open_tag + content + close_tag;
     }
 
-    /// The signature of functions that generate substitution strings for
-    /// tags.
+    //! Function signature of tag substitution functions.
+    //!
+    //! @param data
+    //!     Data values The signature of functions that generate substitution
+    //!     strings for tags.
     typedef boost::optional<std::string> (*TagString)(const std::string& data);
 
-    ///Get string substitute for a tag that is a universe object
+    //! Get string substitute for a tag that is a universe object
     boost::optional<std::string> UniverseObjectString(const std::string& data, const std::string& tag) {
         int object_id = INVALID_OBJECT_ID;
         try {
@@ -58,7 +67,7 @@ namespace {
         return WithTags(GetVisibleObjectName(obj), tag, data);
     }
 
-    /// Returns substitution string for a predefined ship design tag
+    //! Returns substitution string for a predefined ship design tag
     boost::optional<std::string> PredefinedShipDesignString(const std::string& data) {
         const ShipDesign* design = GetPredefinedShipDesign(data);
         if (!design)
@@ -83,7 +92,7 @@ namespace {
         return retval;
     }
 
-    /// Returns substitution string for a ship design tag
+    //! Returns substitution string for a ship design tag
     template <typename T,T* (*GetByID)(int)>
     boost::optional<std::string> IDString(const std::string& data, const std::string& tag) {
         int id{};
@@ -99,10 +108,10 @@ namespace {
         return WithTags(object->Name(), tag, data);
     }
 
-    /// Returns substitution string for an empire tag
-    /// Interprets value of data as a name.
-    /// Returns translation of name, if Get says
-    /// that a thing by that name exists, otherwise boost::none.
+    //! Returns substitution string for an empire tag
+    //! Interprets value of data as a name.
+    //! Returns translation of name, if Get says
+    //! that a thing by that name exists, otherwise boost::none.
     template <typename T,const T* (*GetByName)(const std::string&)>
     boost::optional<std::string> NameString(const std::string& data, const std::string& tag) {
         if (!GetByName(data))
@@ -110,7 +119,7 @@ namespace {
         return WithTags(UserString(data), tag, data);
     }
 
-    /// Global substitution map, wrapped in a function to avoid initialization order issues
+    //! Global substitution map, wrapped in a function to avoid initialization order issues
     const std::map<std::string, TagString>& SubstitutionMap() {
         static std::map<std::string, TagString> substitute_map{
             {VarText::TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
@@ -157,9 +166,8 @@ namespace {
     }
 
 
-    /** Looks up the given match in the Universe and returns the Universe entities
-     * value.
-     */
+    //! Looks up the given match in the Universe and returns the Universe
+    //! entities value.
     struct Substitute {
         Substitute(const std::map<std::string, std::string>& variables,
                    bool& valid) :
@@ -198,7 +206,7 @@ namespace {
     };
 }
 
-// static(s)
+
 const std::string VarText::TEXT_TAG = "text";
 const std::string VarText::RAW_TEXT_TAG = "rawtext";
 
@@ -229,9 +237,9 @@ VarText::VarText() :
     m_stringtable_lookup_flag(false)
 {}
 
-VarText::VarText(const std::string& template_string, bool stringtable_lookup_template/* = true*/) :
+VarText::VarText(const std::string& template_string, bool stringtable_lookup/* = true*/) :
     m_template_string(template_string),
-    m_stringtable_lookup_flag(stringtable_lookup_template)
+    m_stringtable_lookup_flag(stringtable_lookup)
 {}
 
 const std::string& VarText::GetText() const {
@@ -246,9 +254,9 @@ bool VarText::Validate() const {
     return m_validated;
 }
 
-void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup_template/* = true*/) {
-    m_text = text;
-    m_stringtable_lookup_flag = stringtable_lookup_template;
+void VarText::SetTemplateString(const std::string& template_string, bool stringtable_lookup/* = true*/) {
+    m_template_string = template_string;
+    m_stringtable_lookup_flag = stringtable_lookup;
 }
 
 std::vector<std::string> VarText::GetVariableTags() const {
