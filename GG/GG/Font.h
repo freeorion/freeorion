@@ -108,6 +108,7 @@ GG_API std::string RgbaTag(const Clr& c);
     <br>The supported tags are:
     - \verbatim<i></i> \endverbatim                 Italics
     - \verbatim<u></u> \endverbatim                 Underline
+    - \verbatim<s></s> \endverbatim                 Shadow
     - \verbatim<rgba r g b a></rgba> \endverbatim   Color. Sets current rendering color to that specified by parameters.  Parameters may be either floating point values in the range [0.0, 1.0], or integer values in the range [0, 255].  All parameters must be in one format or the other.  The \</rgba> tag restores the previously set \<rgba> color, or restores the default color used to render the text when there are no other \<rgba> tags in effect.  Example tag: \<rgba 0.4 0.5 0.6 0.7>.
     - \verbatim<left></left> \endverbatim           Left-justified text.
     - \verbatim<center></center> \endverbatim       Centered text.
@@ -445,15 +446,18 @@ public:
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
 
+    /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
                        RenderCache& cache, const std::vector<LineData>* line_data = 0,
                        RenderState* render_state = 0) const;
 
+    /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(const Pt& pt1, const Pt& pt2, const std::string& text,
                        Flags<TextFormat>& format, const std::vector<LineData>& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
 
+    /** Render the glyphs from the \p cache.*/
     void RenderCachedText(RenderCache& cache) const;
 
     /** Sets \a render_state as if all the text before (<i>begin_line</i>,
@@ -563,6 +567,12 @@ private:
     };
 
     typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
+
+    /**Populate \p text_elements with TextElements parsed from \p
+       text. \p ignore_tags determines if all KnownTags() are ignored.*/
+    void FillTextElements(const std::string& text,
+                          bool ignore_tags,
+                          std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     Pt DetermineLinesImpl(const std::string& text,
                           Flags<TextFormat>& format,
