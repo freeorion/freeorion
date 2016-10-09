@@ -38,79 +38,78 @@
 
 /** @brief  Represents a simplified XML markup element.
  *
- * An XMLElement represent represents a XML element from the opening tag
- * \<tag-name\>, including its attributes to the corresponding closing tag
- * \</tag-name\>.  This may or may not include a text data section \b OR child
- * XML elements.
+ * An XMLElement represents a XML element from the opening tag * \<tag-name\>,
+ * including its attributes to the corresponding closing tag \</tag-name\>.
+ * This may or may not include a text data section @b OR child XML elements.
  *
- * For take the "burns" example:
-   \code{.xml}
+ * Using the "burns" example:
+   @code{.xml}
    <burns>Say <quote>Goodnight</quote> Gracie.</burns>
-   \endcode
+   @endcode
  *
  * may not work as expected.  The resulting XMLElement \<burns\> node will
  * contain both the "Say " and the " Gracie." text fragment.  Or represented
  * differently:
  *
-   \code{.js}
+   @code{.js}
    burns.Text() == "Say  Gracie."
-   \endcode
+   @endcode
  *
  * However, if used to represent data structures like the example struct foo:
  *
-   \code{.cpp}
+   @code{.cpp}
    struct foo
    {
       int ref_ct;
       double data;
    };
-   \endcode
+   @endcode
  *
  * the current implementation creates a XML representation similar to:
  *
-   \code{.xml}
+   @code{.xml}
    <bar>
      <foo>
        <ref_ct>13<ref_ct/>
        <data>0.364951<data/>
      </foo>
    </bar>
-   \endcode
+   @endcode
  *
  * Further, while the "burns" example is standard XML, an XMLElement optionally
  * accepts its single text string in quotes, and strips off trailing white
  * space, in direct contrary to the XML standard.  So "burns" from above is
  * equivalent to:
-   \code{.xml}
+   @code{.xml}
    <burns>"Say  Gracie."<quote>Goodnight</quote></burns>
-   \endcode
+   @endcode
  * or:
-   \code{.xml}
+   @code{.xml}
    <burns>Say  Gracie.<quote>Goodnight</quote></burns>
-   \endcode
+   @endcode
  * or:
-   \code{.xml}
+   @code{.xml}
    <burns>"Say  Gracie."
      <quote>Goodnight</quote>
    </burns>
-   \endcode
+   @endcode
  * or:
-    \code{.xml}
-    <burns>Say  Gracie.
-      <quote>Goodnight</quote>
-    </burns>
-    \endcode
+   @code{.xml}
+   <burns>Say  Gracie.
+     <quote>Goodnight</quote>
+   </burns>
+   @endcode
  *
  * Each of these examples yields to
-   \code{.js}
+   @code{.js}
    burns.Text() == "Say  Gracie."
-   \endcode
+   @endcode
  *
  * When an XMLElement is saved, its text is saved within a CDATA section.  Any
  * string can be put inside one of these quoted text fields, even text that
  * includes an arbitrary number of quotes.  So any std::string or c-string can
  * be assigned to an element.  However, when hand-editing an XML file containing
- * such text strings, need to be a bit careful.  The closing quote must be the
+ * such text strings, one needs to be careful.  The closing quote must be the
  * last thing other than white space.  Adding more than one quoted text string
  * to the XML element, with each string separated by other elements, will result
  * in a single concatenated string, as illustrated above.
@@ -307,7 +306,7 @@ public:
     /** @brief  Returns the last XMLElement child of this XMLElement.
      *
      * @return  A reference to the last XMLElement child.
-     * \throw XMLElement:NoSuchIndex  When there are no child XMLElement%s.
+     * @throw XMLElement:NoSuchIndex  When there are no child XMLElement%s.
      */
     const XMLElement& LastChild() const;
 
@@ -324,10 +323,10 @@ public:
      *      stream @p os with indentation level @p indent when @p whitespace
      *      is set.
      *
-     * @param [in] os  The output stream this document should be written to.
-     * @param [in] indent  The indentation level this element should be
+     * @param[in] os  The output stream this document should be written to.
+     * @param[in] indent  The indentation level this element should be
      *      indented.
-     * @param [in] whitespace  If set to true the child XMLElement%s are
+     * @param[in] whitespace  If set to true the child XMLElement%s are
      *      indented and newline separated.
      * @return  The given @p os output stream.
      */
@@ -336,9 +335,9 @@ public:
     /** @brief  Return this XMLElement XML formatted as string with indentation
      * level @p indent when @p whitespace is set.
      *
-     * @param [in] indent  The indentation level this element should be
+     * @param[in] indent  The indentation level this element should be
      *      indented.
-     * @param [in] whitespace  If set to true the child XMLElement%s are
+     * @param[in] whitespace  If set to true the child XMLElement%s are
      *      indented and newline separated.
      * @return  A string containing the XML formatted representation of this
      *      XMLElement.
@@ -528,8 +527,8 @@ public:
 
     /** @brief  Construct a document from the given input stream @p is.
      *
-     * @param[in] is  An input stream that provides an XML markup document when
-     *      reading.
+     * @param[in] is  An input stream that provides an XML markup document once
+     *      read.
      *
      * @bug  @p is isn't actually read but ignored and an empty (and maybe
      *      invalid) document is created.  Use XMLDoc::ReadDoc(std::istream&)
@@ -542,8 +541,8 @@ public:
     /** @brief  Write the contents of the XMLDoc into the given output stream
      *      @p os with optional @p indent.
      *
-     * @param [in] os  The output stream this document should be written to.
-     * @param [in] indent  If set to true the XML elements are indented and
+     * @param[in] os  The output stream this document should be written to.
+     * @param[in] indent  If set to true the XML elements are indented and
      *      newline separated.
      * @return  The given @p os output stream.
      */
@@ -554,8 +553,8 @@ public:
     /** @brief  Clears the current content of this XMLDoc instance and read a
      *      new document from the given input stream @p is.
      *
-     * @param[in] is  An input stream that provides an XML markup document when
-     *      reading.
+     * @param[in] is  An input stream that provides an XML markup document once
+     *      read.
      * @return  The given @p is input stream.
      */
     std::istream& ReadDoc(std::istream& is);
