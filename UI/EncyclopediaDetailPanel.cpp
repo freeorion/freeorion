@@ -31,6 +31,7 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/VarText.h"
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
 #include "../combat/CombatEvents.h"

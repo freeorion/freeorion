@@ -3,6 +3,7 @@
 #include "../CUIControls.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
+#include "../../util/VarText.h"
 #include "../../universe/ShipDesign.h"
 
 #include "CombatReportData.h"

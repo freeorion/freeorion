@@ -13,6 +13,7 @@
 #include "../../util/AppInterface.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
+#include "../../util/VarText.h"
 #include "../../universe/UniverseObject.h"
 #include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"

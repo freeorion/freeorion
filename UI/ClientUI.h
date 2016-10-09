@@ -8,25 +8,19 @@
 #endif
 
 #include <boost/filesystem/path.hpp>
-#include <boost/format.hpp>
 #include <GG/GGFwd.h>
 
 #include "../universe/Enums.h"
 #include "../util/Random.h"
-#include "../util/SitRepEntry.h"
 
-class ClientNetworking;
 class Fleet;
 class IntroScreen;
 class MapWnd;
 class MessageWnd;
 class PlayerListWnd;
 class MultiPlayerLobbyWnd;
-class SitRepEntry;
 struct SaveGameUIData;
 class System;
-class Tech;
-class BuildingType;
 template <class T> class TemporaryPtr;
 
 
