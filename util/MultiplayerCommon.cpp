@@ -5,6 +5,7 @@
 #include "Logger.h"
 #include "OptionsDB.h"
 #include "Random.h"
+#include "XMLDoc.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"

@@ -4,6 +4,7 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"
+#include "../../util/XMLDoc.h"
 
 #include <GG/utf8/checked.h>
 

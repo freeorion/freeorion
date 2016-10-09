@@ -4,7 +4,6 @@
 #include "Export.h"
 #include "Logger.h"
 #include "OptionValidators.h"
-#include "XMLDoc.h"
 
 #include <boost/any.hpp>
 #include <boost/signals2/signal.hpp>
@@ -13,6 +12,8 @@
 
 
 class OptionsDB;
+class XMLDoc;
+class XMLElement;
 
 /////////////////////////////////////////////
 // Free Functions
@@ -171,8 +172,12 @@ public:
     /** writes a usage message to \a os */
     void        GetUsage(std::ostream& os, const std::string& command_line = "") const;
 
-    /** returns the contents of the DB as an XMLDoc. */
-    XMLDoc      GetXML() const;
+    /** @brief  Saves the contents of the options DB to the @p doc XMLDoc.
+     *
+     * @param[in,out] doc  The document this OptionsDB should be written to.
+     *      This resets the given @p doc.
+     */
+    void GetXML(XMLDoc& doc) const;
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. */

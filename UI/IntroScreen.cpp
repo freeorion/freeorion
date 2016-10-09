@@ -13,6 +13,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 #include "../util/Version.h"
+#include "../util/XMLDoc.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
