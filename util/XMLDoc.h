@@ -24,19 +24,10 @@
    Zach Laine
    whatwasthataddress@hotmail.com */
 
-#ifndef _GG_Enum_h_
-#include <GG/Enum.h>
-#endif
-
-#ifndef _GG_Exception_h_
-#include <GG/Exception.h>
-#endif
-
-#include <boost/lexical_cast.hpp>
-
 #include <map>
 #include <string>
 #include <vector>
+#include <GG/Exception.h>
 
 #include "Export.h"
 

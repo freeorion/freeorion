@@ -56,6 +56,7 @@
 
 #include "XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
 #include <boost/spirit/include/classic.hpp>
 
 #include <stdexcept>
