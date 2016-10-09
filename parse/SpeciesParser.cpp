@@ -24,13 +24,7 @@ namespace std {
 
 namespace {
     struct insert_species_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2> // Phoenix v2
-        struct result
-        { typedef void type; };
-#else
         typedef void result_type;
-#endif
 
         void operator()(std::map<std::string, Species*>& species, Species* specie) const {
             if (!species.insert(std::make_pair(specie->Name(), specie)).second) {

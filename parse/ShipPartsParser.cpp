@@ -27,13 +27,7 @@ namespace std {
 
 namespace {
     struct insert_part_type_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2> // Phoenix v2
-        struct result
-        { typedef void type; };
-#else
         typedef void result_type;
-#endif
 
         void operator()(std::map<std::string, PartType*>& part_types, PartType* part_type) const {
             if (!part_types.insert(std::make_pair(part_type->Name(), part_type)).second) {
