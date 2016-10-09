@@ -43,13 +43,7 @@ namespace parse {
     }
 
     struct report_error_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2, typename Arg3, typename Arg4> // Phoenix v2
-        struct result
-        { typedef void type; };
-#else
         typedef void result_type;
-#endif
 
         template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
         void operator()(Arg1 first, Arg2, Arg3 it, Arg4 rule_name) const

@@ -18,13 +18,7 @@ namespace std {
 
 namespace {
     struct insert_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2> // Phoenix v2
-        struct result
-        { typedef void type; };
-#else
         typedef void result_type;
-#endif
 
         void operator()(std::map<std::string, ShipDesign*>& designs, ShipDesign* design) const {
             if (!designs.insert(std::make_pair(design->Name(false), design)).second) {

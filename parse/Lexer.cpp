@@ -10,13 +10,7 @@
 
 namespace {
     struct strip_quotes_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2> // Phoenix v2
-        struct result
-        { typedef std::string type; };
-#else
         typedef std::string result_type;
-#endif
 
         std::string operator()(const parse::text_iterator& start, const parse::text_iterator& end) const {
             std::string::const_iterator start_ = start;

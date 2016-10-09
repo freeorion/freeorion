@@ -20,13 +20,7 @@ namespace {
     typedef std::map<std::string, Keymap>   NamedKeymaps;
 
     struct insert_key_pair_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2> // Phoenix v2
-        struct result
-        { typedef void type; };
-#else
         typedef void result_type;
-#endif
 
         void operator()(Keymap& keymap, const Keymap::value_type& key_id_pair) const {
             keymap[key_id_pair.first] = key_id_pair.second;
@@ -36,13 +30,7 @@ namespace {
     const boost::phoenix::function<insert_key_pair_> insert_key_pair;
 
     struct insert_key_map_ {
-#if BOOST_VERSION < 105600
-        template <typename Arg1, typename Arg2> // Phoenix v2
-        struct result
-        { typedef void type; };
-#else
         typedef void result_type;
-#endif
 
         void operator()(NamedKeymaps& named_keymaps, const NamedKeymaps::value_type& name_keymap) const {
             named_keymaps[name_keymap.first] = name_keymap.second;
