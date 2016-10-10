@@ -87,15 +87,15 @@ namespace {
                 > ((parse::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
                 >   parse::label(Effects_token)
                 >   (
-                    ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
-                        |   parse::effect_parser() [ push_back(_d, _1) ]
+                            ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
+                        |    parse::effect_parser() [ push_back(_d, _1) ]
                     )
                     [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g) ]
                 ;
 
             start
                 =    ('[' > +effects_group [ push_back(_val, construct<boost::shared_ptr<Effect::EffectsGroup> >(_1)) ] > ']')
-                |    effects_group [ push_back(_val, construct<boost::shared_ptr<Effect::EffectsGroup> >(_1)) ]
+                |     effects_group [ push_back(_val, construct<boost::shared_ptr<Effect::EffectsGroup> >(_1)) ]
                 ;
 
             effects_group.name("EffectsGroup");

@@ -68,10 +68,10 @@ namespace {
 
             spawn
                 =    (      (parse::label(SpawnRate_token)   > parse::double_ [ _r1 = _1 ])
-                        |   eps [ _r1 = 1.0 ]
+                        |    eps [ _r1 = 1.0 ]
                      )
                 >    (      (parse::label(SpawnLimit_token)  > parse::int_ [ _r2 = _1 ])
-                        |   eps [ _r2 = 9999 ]
+                        |    eps [ _r2 = 9999 ]
                      )
                 ;
 
