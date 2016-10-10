@@ -270,7 +270,6 @@
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
     <ClCompile Include="..\..\universe\Fighter.cpp" />
-    <ClCompile Include="..\..\util\DependencyVersions.cpp" />
     <ClCompile Include="..\..\util\EnumText.cpp" />
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp" />
     <ClCompile Include="..\..\util\ScopedTimer.cpp" />

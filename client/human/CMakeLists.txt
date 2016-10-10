@@ -157,6 +157,7 @@ set(freeorion_SOURCES
     ../../UI/TechTreeLayout.cpp
     ../../UI/TechTreeWnd.cpp
     ../../UI/TextBrowseWnd.cpp
+    ../../util/DependencyVersions.cpp
 )
 
 set(freeorion_LINK_LIBS

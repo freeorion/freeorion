@@ -217,6 +217,7 @@
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
     <ClCompile Include="..\..\universe\UniverseGenerator.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
+    <ClCompile Include="..\..\util\DependencyVersions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

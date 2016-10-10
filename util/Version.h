@@ -34,10 +34,8 @@ FO_COMMON_API const std::string& FreeOrionVersionString();
  * @return  A map with the dependency versions.  The key represents the
  *      dependency name, the value corresponding dependency version string.
  *
- * @bug  The current implementation doesn't expose all dependencies of all
- *      application components.  For example the human client has a dependency
- *      on Vorbis but because this function is part of common it isn't added to
- *      the dependency map.
+ * @note  This function returns different dependencies, depending on which game
+ *      executable it was called from.
  */
 FO_COMMON_API std::map<std::string, std::string> DependencyVersions();
 

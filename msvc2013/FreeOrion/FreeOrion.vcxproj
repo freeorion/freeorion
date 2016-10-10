@@ -333,6 +333,7 @@
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
     <ClCompile Include="..\..\UI\TextBrowseWnd.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
+    <ClCompile Include="..\..\util\DependencyVersions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\client\human\FreeOrion.rc">
