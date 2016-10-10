@@ -70,11 +70,11 @@ std::map<std::string, std::string> DependencyVersions() {
 
 void LogDependencyVersions() {
     std::map<std::string, std::string> vers = DependencyVersions();
-    DebugLogger() << "Dependency versions from headers:";
+    InfoLogger() << "Dependency versions from headers:";
     for (std::map<std::string, std::string>::const_iterator it = vers.begin();
          it != vers.end(); ++it)
     {
         if (!it->second.empty())
-            DebugLogger() << it->first << ": " << it->second;
+            InfoLogger() << it->first << ": " << it->second;
     }
 }

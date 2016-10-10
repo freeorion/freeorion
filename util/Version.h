@@ -41,11 +41,8 @@ FO_COMMON_API const std::string& FreeOrionVersionString();
  */
 FO_COMMON_API std::map<std::string, std::string> DependencyVersions();
 
-/** @brief  Log the map returned by DependencyVersions() into the @e debug log
+/** @brief  Log the map returned by DependencyVersions() into the @e info log
  *      channel.
- *
- * @bug  The @e debug log channel isn't the right place to log this but we don't
- *      have any @e info log channel currently.
  */
 FO_COMMON_API void LogDependencyVersions();
 
