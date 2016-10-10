@@ -32,6 +32,12 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 #define DebugLogger()\
     FO_LOGGER(debug)
 
+#define InfoLogger()\
+    FO_LOGGER(info)
+
+#define WarnLogger()\
+    FO_LOGGER(warn)
+
 #define ErrorLogger()\
     FO_LOGGER(error)
 
