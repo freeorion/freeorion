@@ -55,12 +55,14 @@ There are further specialized documents available that should be considered
 when working within the FreeOrion project.  Those are:
 
 * [GitHub Issue/PR Labels] - How to properly label Issues/PRs on Github.
+* [Release Issue template] - Template for release checklist Issues.
 
 
 [FreeOrion Git]: https://github.com/freeorion/freeorion.git
 [FreeOrion Issues]: https://github.com/freeorion/freeorion/issues
 [FreeOrion Forum]: http://www.freeorion.org/forum/
 [GitHub Issue/PR Labels]: .github/labels.md
+[Release Issue template]: .github/RELEASE_TEMPLATE.md
 [Code Standards]: http://www.freeorion.org/index.php/Code_Standards
 [Pull Request]: https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/
 [Commit Messages]: http://chris.beams.io/posts/git-commit/
