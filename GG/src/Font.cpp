@@ -217,34 +217,6 @@ namespace {
         FT_Library m_library;
     } g_library;
 
-    struct MatchesKnownTag
-    {
-        MatchesKnownTag(const boost::unordered_set<std::string>& known_tags,
-                        bool& ignore_tags) :
-            m_known_tags(known_tags),
-            m_ignore_tags(ignore_tags)
-        {}
-        bool operator()(const boost::xpressive::ssub_match& sub) const
-        { return m_ignore_tags ? false : m_known_tags.find(sub.str()) != m_known_tags.end(); }
-        const boost::unordered_set<std::string>& m_known_tags;
-        bool& m_ignore_tags;
-    };
-
-    struct PushSubmatchOntoStack
-    {
-        typedef void result_type;
-        void operator()(const std::string& str,
-                        std::stack<Font::Substring>& tag_stack,
-                        bool& ignore_tags,
-                        const boost::xpressive::ssub_match& sub) const
-        {
-            tag_stack.push(Font::Substring(str, sub));
-            if (tag_stack.top() == PRE_TAG)
-                ignore_tags = true;
-        }
-    };
-    const boost::xpressive::function<PushSubmatchOntoStack>::type Push = {{}};
-
     struct PushSubmatchOntoStackP
     {
         typedef void result_type;
@@ -259,33 +231,6 @@ namespace {
         }
     };
     const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
-
-    bool operator==(const Font::Substring& lhs, const boost::xpressive::ssub_match& rhs)
-    {
-        return lhs.size() == static_cast<std::size_t>(rhs.length()) &&
-            !std::memcmp(&*lhs.begin(), &*rhs.first, lhs.size());
-    }
-
-    struct MatchesTopOfStack
-    {
-        MatchesTopOfStack(std::stack<Font::Substring>& tag_stack,
-                          bool& ignore_tags) :
-            m_tag_stack(tag_stack),
-            m_ignore_tags(ignore_tags)
-        {}
-        bool operator()(const boost::xpressive::ssub_match& sub) const
-        {
-            bool retval = m_tag_stack.empty() ? false : m_tag_stack.top() == sub;
-            if (retval) {
-                m_tag_stack.pop();
-                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
-                    m_ignore_tags = false;
-            }
-            return retval;
-        }
-        std::stack<Font::Substring>& m_tag_stack;
-        bool& m_ignore_tags;
-    };
 
     void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data, Alignment orig_just, Alignment prev_just)
     {
@@ -828,9 +773,6 @@ namespace {
             m_known_tags.clear();
         }
 
-        const boost::unordered_set<std::string>& KnownTags()
-        { return m_known_tags; }
-
         // Return a regex bound to \p text using the currently known
         // tags possible \p ignore_tags and/or \p strip_unpaired_tags
         xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
@@ -1167,50 +1109,31 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
 {
     using namespace boost::xpressive;
 
-    bool temp_bool = false;
-    std::stack<Substring> tag_stack;
-    MatchesKnownTag matches_known_tag(StaticTagHandler().KnownTags(), temp_bool);
-    MatchesTopOfStack matches_tag_stack(tag_stack, temp_bool);
+    sregex & regex = StaticTagHandler().Regex(text, false, strip_unpaired_tags);
 
     mark_tag tag_name_tag(1);
     mark_tag open_bracket_tag(2);
     mark_tag close_bracket_tag(3);
-    mark_tag printable_text_tag(4);
+    mark_tag whitespace_tag(4);
+    mark_tag text_tag(5);
 
-    const sregex TAG_PARAM =
-    -+~set[_s | '<'];
-    const sregex OPEN_TAG_NAME =
-        (+_w)[check(matches_known_tag)];
-    const sregex CLOSE_TAG_NAME =
-        (+_w)[check(matches_tag_stack)];
-    const sregex WHITESPACE =
-        (*blank >> (_ln | (set = '\n', '\r', '\f'))) | +blank;
-    const sregex TEXT =
-        ('<' >> *~set[_s | '<']) | (+~set[_s | '<']);
-    const sregex PRINTABLE_TEXT = WHITESPACE | TEXT;
-    sregex EVERYTHING;
-    if (!strip_unpaired_tags)
-        EVERYTHING =    // push open tag matches to the tag stack, and make sure close tags match the top open tag on the stack
-            ('<' >> (tag_name_tag = OPEN_TAG_NAME) >> repeat<0, 9>(+blank >> TAG_PARAM) >> (open_bracket_tag.proto_base() = '>'))
-            [Push(boost::xpressive::ref(text), boost::xpressive::ref(tag_stack), ref(temp_bool), tag_name_tag)] |
-            ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
-            (printable_text_tag = PRINTABLE_TEXT);
-    else
-        EVERYTHING =    // don't care about matching with tag stack when matching close tags, or updating the stack when matching open tags
-            ('<' >> OPEN_TAG_NAME >> repeat<0, 9>(+blank >> TAG_PARAM) >> '>') |
-            ("</" >> OPEN_TAG_NAME >> '>') |
-            (printable_text_tag = PRINTABLE_TEXT);
-
-    std::string retval;
+    std::stringstream retval;
 
     // scan through matched markup and text, saving only the non-tag-text
-    sregex_iterator it(text.begin(), text.end(), EVERYTHING);
+    sregex_iterator it(text.begin(), text.end(), regex);
     sregex_iterator end_it;
     for (; it != end_it; ++it) {
-        retval += Substring(text, (*it)[printable_text_tag]);
+        sub_match<std::string::const_iterator> const* text_match;
+        sub_match<std::string::const_iterator> const* whitespace_match;
+
+        if ((text_match = &(*it)[text_tag]) && (text_match->matched))
+            retval << Substring(text, *text_match);
+
+        else if ((whitespace_match = &(*it)[whitespace_tag]) && whitespace_match->matched)
+            retval << Substring(text, *whitespace_match);
     }
 
-    return retval;
+    return retval.str();
 }
 
 Pt Font::TextExtent(const std::string& text, Flags<TextFormat> format/* = FORMAT_NONE*/, X box_width/* = X0*/) const
