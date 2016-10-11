@@ -663,7 +663,7 @@ class AIstate(object):
 
         fleet_table = Table([
             Text('Fleet'), Float('Old rating'), Float('New rating'),
-            Text('Location'), Text('Destination'), Text('Summary')],
+            Text('Location'), Text('Destination')],
             table_name="Fleet Summary Turn %d" % fo.currentTurn()
         )
         for fleet_id in fleet_list:
@@ -705,7 +705,6 @@ class AIstate(object):
                         new_rating,
                         this_sys or 'starlane',
                         next_sys or '-',
-                        old_rating.get('summary', None)
                     ])
 
                 status['rating'] = new_rating
