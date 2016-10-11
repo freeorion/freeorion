@@ -115,7 +115,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     num_milships = sum(foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids)
 
     if "Main" in thisround:
-        totMilRating = sum(foAI.foAIstate.get_rating(fid).get('overall', 0) for fid in all_military_fleet_ids)
+        totMilRating = sum(CombatRatingsAI.get_fleet_rating(fid) for fid in all_military_fleet_ids)
 
     enemy_rating = foAI.foAIstate.empire_standard_enemy_rating
 
