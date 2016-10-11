@@ -766,7 +766,7 @@ def generate_classic_research_orders():
     # Both LRN_ART_MINDS and GRO_SUBTER_HAB are prioritized over this.
     if not tech_is_complete(Dep.LRN_PHYS_BRAIN):
         print "Considering whether to fast-track %s to build Automatic History Analyzer" % Dep.LRN_PHYS_BRAIN
-        if ProductionAI.automatic_historic_analyzer_locations():
+        if ProductionAI.find_automatic_historic_analyzer_candidates():
             artif_mind_idx = artif_minds in research_queue_list and research_queue_list.index(artif_minds) or 0
             subter_hab_idx = Dep.GRO_SUBTER_HAB in research_queue_list and research_queue_list.index(Dep.GRO_SUBTER_HAB) or 0
             insert_idx = 1 + max(artif_mind_idx, subter_hab_idx)

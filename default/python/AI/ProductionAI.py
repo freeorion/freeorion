@@ -300,7 +300,7 @@ def generate_production_orders():
             queued_building_names = [bldg.name for bldg in capital_queued_buildings]
 
             if "BLD_AUTO_HISTORY_ANALYSER" in possible_building_types:
-                for pid in automatic_historic_analyzer_locations():
+                for pid in find_automatic_historic_analyzer_candidates():
                     res = fo.issueEnqueueBuildingProductionOrder("BLD_AUTO_HISTORY_ANALYSER", pid)
                     print "Enqueueing BLD_AUTO_HISTORY_ANALYSER at planet %s - result %d" % (universe.getPlanet(pid), res)
                     if res:
@@ -1480,7 +1480,7 @@ def _print_production_queue(after_turn=False):
     prod_queue_table.print_table()
 
 
-def automatic_historic_analyzer_locations():
+def find_automatic_historic_analyzer_candidates():
     """
     Find possible locations for the BLD_AUTO_HISTORY_ANALYSER building and return a subset of chosen building locations.
 
