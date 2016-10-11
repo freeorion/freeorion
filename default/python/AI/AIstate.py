@@ -761,7 +761,7 @@ class AIstate(object):
                     fleet,
                     mission.type or "None",
                     len(fleet.shipIDs),
-                    self.get_rating(fleet_id).get('overall', 0),
+                    CombatRatingsAI.get_fleet_rating(fleet_id),
                     mission.target or "-"
                 ])
         mission_table.print_table()
