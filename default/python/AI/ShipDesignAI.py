@@ -1722,7 +1722,7 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
         # now, consider offensive potential of our fighters
         enemy_dmg_avg = self.additional_specifications.avg_enemy_weapon_strength
         launched_1st_bout = min(self.fighter_capacity, self.fighter_launch_rate)
-        launched_2nd_bout = min(self.fighter_capacity - self.fighter_launch_rate, self.fighter_launch_rate)
+        launched_2nd_bout = min(self.fighter_capacity - launched_1st_bout, self.fighter_launch_rate)
         survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
         total_fighter_damage = self.fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
         fighter_damage_per_bout = total_fighter_damage / 3
