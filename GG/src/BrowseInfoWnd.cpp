@@ -133,8 +133,8 @@ void TextBoxBrowseInfoWnd::SetText(const std::string& str)
     unsigned int margins = 2 * TextMargin();
 
     std::vector<Font::LineData> lines;
-    std::vector<boost::shared_ptr<Font::TextElement> > text_elements = m_font->ExpensiveParseFromTextToTextElements(str, GetTextFormat());
     Flags<TextFormat> fmt = GetTextFormat();
+    std::vector<boost::shared_ptr<Font::TextElement> > text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
     Pt extent = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins), text_elements, lines);
     SetMinSize(extent + Pt(X(margins), Y(margins)));
     m_text_control->SetText(str);
