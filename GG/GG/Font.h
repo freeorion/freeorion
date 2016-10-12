@@ -435,7 +435,7 @@ public:
 
     /** Formatted text rendering. */
     void RenderText(const Pt& pt1, const Pt& pt2, const std::string& text, Flags<TextFormat>& format,
-                    const std::vector<LineData>* line_data = 0, RenderState* render_state = 0) const;
+                    const std::vector<LineData>& line_data, RenderState* render_state = 0) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,

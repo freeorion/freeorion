@@ -2042,7 +2042,11 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         // render ETA number in white with black shadows
         std::string text = "<s>" + boost::lexical_cast<std::string>(vert.eta) + "</s>";
         glColor(GG::CLR_WHITE);
-        font->RenderText(ul, lr, text, flags);
+        // TODO cache the text_elements
+        std::vector<GG::Font::LineData> lines;
+        std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
+        font->DetermineLines(text, flags, lr.x - ul.x, text_elements, lines);
+        font->RenderText(ul, lr, text, flags, lines);
     }
     glPopMatrix();
 }

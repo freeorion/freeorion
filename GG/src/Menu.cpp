@@ -519,7 +519,13 @@ void PopupMenu::Render()
                 glColor3ub(clr.r, clr.g, clr.b);
 
                 if (!menu.next_level[j].separator) {
-                    m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt);
+                    // TODO cache line data v expensive calculation
+                    std::vector<Font::LineData> lines;
+                    std::vector<boost::shared_ptr<Font::TextElement> > text_elements
+                        = m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
+                    Pt menu_sz = m_font->DetermineLines(menu.next_level[j].label, fmt, X0, text_elements, lines);
+
+                    m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt, lines);
 
                 } else {
                     Line(line_rect.ul.x + HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_HEIGHT/2 + INDICATOR_VERTICAL_MARGIN,

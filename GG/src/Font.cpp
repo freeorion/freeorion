@@ -937,21 +937,14 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                      const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
-                      {
+                      const std::vector<LineData>& line_data, RenderState* render_state/* = 0*/) const
+{
     RenderState state;
     if (!render_state)
         render_state = &state;
 
-    // get breakdown of how text is divided into lines
-    std::vector<LineData> lines;
-    if (!line_data) {
-        DetermineLines(text, format, lr.x - ul.x, lines);
-        line_data = &lines;
-    }
-
-    RenderText(ul, lr, text, format, *line_data, *render_state,
-               0, CP0, line_data->size(), CPSize(line_data->back().char_data.size()));
+    RenderText(ul, lr, text, format, line_data, *render_state,
+               0, CP0, line_data.size(), CPSize(line_data.back().char_data.size()));
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
