@@ -465,6 +465,16 @@ public:
     void ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
                            std::size_t begin_line, CPSize begin_char) const;
 
+    /**Populate \p text_elements with TextElements parsed from \p
+       text. \p ignore_tags determines if all KnownTags() are ignored.
+
+       This function is costly even on one character texts. Do not call it from tight loops.  Do
+       not call it from within Render().  Do not call it repeatedly on a known text.
+    */
+    void ExpensiveParseFromTextToTextElements(const std::string& text,
+                                              bool ignore_tags,
+                                              std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
+
     /** Returns the maximum dimensions of the string in x and y, and populates
         \a line_data. */
     Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
@@ -567,12 +577,6 @@ private:
     };
 
     typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
-
-    /**Populate \p text_elements with TextElements parsed from \p
-       text. \p ignore_tags determines if all KnownTags() are ignored.*/
-    void FillTextElements(const std::string& text,
-                          bool ignore_tags,
-                          std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     Pt DetermineLinesImpl(const std::string& text,
                           Flags<TextFormat>& format,

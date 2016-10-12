@@ -1253,7 +1253,7 @@ namespace DebugOutput {
     }
 }
 
-void Font::FillTextElements(const std::string& text,
+void Font::ExpensiveParseFromTextToTextElements(const std::string& text,
                             bool ignore_tags,
                             std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
@@ -1385,7 +1385,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
         text_elements_ptr ? *text_elements_ptr : local_text_elements;
 
     bool ignore_tags = format & FORMAT_IGNORETAGS;
-    FillTextElements(text, ignore_tags, text_elements);
+    ExpensiveParseFromTextToTextElements(text, ignore_tags, text_elements);
 
     RenderState render_state;
     int tab_width = 8; // default tab width
