@@ -476,10 +476,9 @@ public:
     std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
                                                                                             const Flags<TextFormat>& format) const;
 
-    /** DetermineLines() calculates the \p line_data resulting from adding the necessary line
+    /** DetermineLines() returns the \p line_data resulting from adding the necessary line
         breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
-        the \p text into a box of width \p box_width. It returns the text extent of that \p
-        line_data.
+        the \p text into a box of width \p box_width.
 
         It accounts for alignment, wrapping and justification of the \p text.
 
@@ -489,9 +488,8 @@ public:
         behavior.  \p text_elements contains internal pointers to the \p text to which it is
         bound.  Compatible means the exact same \p text object, not the same text content.
         */
-    Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        const std::vector<boost::shared_ptr<TextElement> >& text_elements,
-                        std::vector<LineData>& line_data) const;
+    std::vector<LineData>   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
+                                           const std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
     Pt   TextExtent(const std::string& text, const std::vector<LineData>& line_data) const;
@@ -569,11 +567,8 @@ private:
 
     typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
 
-    Pt DetermineLinesImpl(const std::string& text,
-                          Flags<TextFormat>& format,
-                          X box_width,
-                          std::vector<LineData>& line_data,
-                          const std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
+    std::vector<LineData> DetermineLinesImpl(const std::string& text, Flags<TextFormat>& format, X box_width,
+                                             const std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);

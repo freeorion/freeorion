@@ -1067,11 +1067,10 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
     }
 }
 
-Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        const std::vector<boost::shared_ptr<TextElement> >& text_elements,
-                        std::vector<LineData>& line_data) const
+std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
+                                                 const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
-    return DetermineLinesImpl(text, format, box_width, line_data, text_elements);
+    return DetermineLinesImpl(text, format, box_width, text_elements);
 }
 
 std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
@@ -1337,11 +1336,8 @@ std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextT
     return text_elements;
 }
 
-Pt Font::DetermineLinesImpl(const std::string& text,
-                            Flags<TextFormat>& format,
-                            X box_width,
-                            std::vector<LineData>& line_data,
-                            const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
+std::vector<Font::LineData> Font::DetermineLinesImpl(const std::string& text, Flags<TextFormat>& format, X box_width,
+                                                     const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
     ValidateFormat(format);
 
@@ -1358,7 +1354,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
         orig_just = ALIGN_RIGHT;
     bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
 
-    line_data.clear();
+    std::vector<Font::LineData> line_data;
     line_data.push_back(LineData());
     line_data.back().justification = orig_just;
 
@@ -1539,7 +1535,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
     DebugOutput::PrintLineBreakdown(text, format, box_width, line_data);
 #endif
 
-    return TextExtent(text, line_data);
+    return line_data;
 }
 
 FT_Error Font::GetFace(FT_Face& face)

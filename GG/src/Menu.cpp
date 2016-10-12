@@ -463,11 +463,11 @@ void PopupMenu::Render()
                 if (menu.next_level[j].next_level.size() || menu.next_level[j].checked)
                     needs_indicator = true;
             }
-            std::vector<Font::LineData> lines;
             Flags<TextFormat> fmt = FORMAT_LEFT | FORMAT_TOP;
             std::vector<boost::shared_ptr<Font::TextElement> > text_elements
                 = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
-            Pt menu_sz = m_font->DetermineLines(str, fmt, X0, text_elements, lines); // get dimensions of text in menu
+            std::vector<Font::LineData> lines = m_font->DetermineLines(str, fmt, X0, text_elements);
+            Pt menu_sz = m_font->TextExtent(str, lines); // get dimensions of text in menu
             menu_sz.x += 2 * HORIZONTAL_MARGIN;
             if (needs_indicator)
                 menu_sz.x += CHECK_WIDTH + 2 * HORIZONTAL_MARGIN; // make room for the little arrow
@@ -522,10 +522,10 @@ void PopupMenu::Render()
 
                 if (!menu.next_level[j].separator) {
                     // TODO cache line data v expensive calculation
-                    std::vector<Font::LineData> lines;
                     std::vector<boost::shared_ptr<Font::TextElement> > text_elements
                         = m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
-                    Pt menu_sz = m_font->DetermineLines(menu.next_level[j].label, fmt, X0, text_elements, lines);
+                    std::vector<Font::LineData> lines =
+                        m_font->DetermineLines(menu.next_level[j].label, fmt, X0, text_elements);
 
                     m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt, lines);
 
