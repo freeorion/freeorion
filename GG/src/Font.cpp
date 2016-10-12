@@ -1319,14 +1319,14 @@ std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextT
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
                 text_elements.push_back(element);
 
-                // Close XML tag
+            // Close XML tag
             } else if ((*it)[close_bracket_tag].matched) {
                 boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(true));
                 element->text = Substring(text, (*it)[0]);
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
                 text_elements.push_back(element);
 
-                // Whitespace element
+            // Whitespace element
             } else if ((*it)[whitespace_tag].matched) {
                 boost::shared_ptr<Font::TextElement> element(new Font::TextElement(true, false));
                 element->text = Substring(text, (*it)[whitespace_tag]);
@@ -1336,11 +1336,12 @@ std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextT
                 // newline TextElement.
                 char last_char = *boost::prior(element->text.end());
                 if (last_char == '\n' || last_char == '\f' || last_char == '\r') {
-                    // Basic text element.
                     boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, true));
                     text_elements.push_back(element);
                 }
             }
+
+        // Basic text element.
         } else {
             boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, false));
             element->text = combined_text;
