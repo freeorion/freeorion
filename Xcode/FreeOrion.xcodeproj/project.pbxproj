@@ -335,8 +335,10 @@
 		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
 		CE6730B01BC29F23004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
+		CE71ED7A1DADAB120085A4DC /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
+		CE71ED7B1DADAB130085A4DC /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
+		CE71ED7C1DADAB140085A4DC /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CE76B9CF1CBD7ACC0085A4DC /* ChangeLog.md in Resources */ = {isa = PBXBuildFile; fileRef = CE76B9CD1CBD7A990085A4DC /* ChangeLog.md */; };
-		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */; };
 		CED6E5521C6DDC0F0085A4DC /* Fighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CED6E5501C6DDC0F0085A4DC /* Fighter.cpp */; };
 		CEDABCF01C688D050085A4DC /* libboost_locale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEDABCEF1C688D050085A4DC /* libboost_locale.a */; };
@@ -2618,7 +2620,6 @@
 				47103C100CF04E5900A7DF2B /* UniverseObject.cpp in Sources */,
 				47103C110CF04E5900A7DF2B /* ValueRef.cpp in Sources */,
 				47103C150CF04E5900A7DF2B /* Message.cpp in Sources */,
-				CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */,
 				47103C160CF04E5900A7DF2B /* Empire.cpp in Sources */,
 				47103C170CF04E5900A7DF2B /* EmpireManager.cpp in Sources */,
 				47103C180CF04E5900A7DF2B /* ResourcePool.cpp in Sources */,
@@ -2705,6 +2706,7 @@
 				471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */,
 				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
 				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
+				CE71ED7A1DADAB120085A4DC /* DependencyVersions.cpp in Sources */,
 				2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */,
 				82B4313414A74E07003EEE42 /* UniverseGenerator.cpp in Sources */,
 				82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */,
@@ -2720,6 +2722,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE71ED7C1DADAB140085A4DC /* DependencyVersions.cpp in Sources */,
 				471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */,
 				CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */,
 				CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */,
@@ -2837,6 +2840,7 @@
 				8275F3FC1AD31381003568FF /* IconTextBrowseWnd.cpp in Sources */,
 				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
 				8275F3FF1AD31381003568FF /* MultiIconValueIndicator.cpp in Sources */,
+				CE71ED7B1DADAB130085A4DC /* DependencyVersions.cpp in Sources */,
 				471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */,
 				8275F4021AD31381003568FF /* ResourcePanel.cpp in Sources */,
 				8275F3FE1AD31381003568FF /* MilitaryPanel.cpp in Sources */,
