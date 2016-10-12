@@ -465,15 +465,16 @@ public:
     void ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
                            std::size_t begin_line, CPSize begin_char) const;
 
-    /**Populate \p text_elements with TextElements parsed from \p
-       text. \p ignore_tags determines if all KnownTags() are ignored.
+    /** Return a vector of TextElements parsed from \p text, using the
+        FORMAT_IGNORETAGS bit in \p format to determine if all KnownTags()
+        are ignored.
 
-       This function is costly even on one character texts. Do not call it from tight loops.  Do
-       not call it from within Render().  Do not call it repeatedly on a known text.
+        This function is costly even on single character texts. Do not call
+        it from tight loops.  Do not call it from within Render().  Do not
+        call it repeatedly on a known text.
     */
-    void ExpensiveParseFromTextToTextElements(const std::string& text,
-                                              const Flags<TextFormat>& format,
-                                              std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
+    std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
+                                                                                            const Flags<TextFormat>& format) const;
 
     /** Returns the maximum dimensions of the string in x and y, and populates
         \a line_data. */
