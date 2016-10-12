@@ -448,7 +448,7 @@ public:
 
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                       RenderCache& cache, const std::vector<LineData>* line_data = 0,
+                       RenderCache& cache, const std::vector<LineData>& line_data,
                        RenderState* render_state = 0) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
@@ -474,7 +474,7 @@ public:
         call it repeatedly on a known text.
     */
     std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
-                                                                                            const Flags<TextFormat>& format = FORMAT_NONE) const;
+                                                                                            const Flags<TextFormat>& format) const;
 
     /** Returns the maximum dimensions of the string in x and y, and populates
         \a line_data. */

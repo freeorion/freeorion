@@ -162,7 +162,7 @@ void TextControl::RefreshCache() {
     PurgeCache();
     m_render_cache = new Font::RenderCache();
     if (m_font)
-        m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, &m_line_data);
+        m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, m_line_data);
 }
 
 void TextControl::PurgeCache()
