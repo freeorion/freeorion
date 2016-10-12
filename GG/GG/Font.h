@@ -474,7 +474,7 @@ public:
         call it repeatedly on a known text.
     */
     std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
-                                                                                            const Flags<TextFormat>& format) const;
+                                                                                            const Flags<TextFormat>& format = FORMAT_NONE) const;
 
     /** Returns the maximum dimensions of the string in x and y, and populates
         \a line_data. */
