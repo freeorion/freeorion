@@ -1254,7 +1254,7 @@ namespace DebugOutput {
 }
 
 void Font::ExpensiveParseFromTextToTextElements(const std::string& text,
-                            bool ignore_tags,
+                            const Flags<TextFormat>& format,
                             std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
     if (text_elements.empty()) {
@@ -1262,6 +1262,8 @@ void Font::ExpensiveParseFromTextToTextElements(const std::string& text,
 
         if (text.empty())
             return;
+
+        bool ignore_tags = format & FORMAT_IGNORETAGS;
 
         // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
         sregex& regex = StaticTagHandler().Regex(text, ignore_tags);
@@ -1384,8 +1386,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
     std::vector<boost::shared_ptr<TextElement> >& text_elements =
         text_elements_ptr ? *text_elements_ptr : local_text_elements;
 
-    bool ignore_tags = format & FORMAT_IGNORETAGS;
-    ExpensiveParseFromTextToTextElements(text, ignore_tags, text_elements);
+    ExpensiveParseFromTextToTextElements(text, format, text_elements);
 
     RenderState render_state;
     int tab_width = 8; // default tab width

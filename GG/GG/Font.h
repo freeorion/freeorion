@@ -472,7 +472,7 @@ public:
        not call it from within Render().  Do not call it repeatedly on a known text.
     */
     void ExpensiveParseFromTextToTextElements(const std::string& text,
-                                              bool ignore_tags,
+                                              const Flags<TextFormat>& format,
                                               std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     /** Returns the maximum dimensions of the string in x and y, and populates
