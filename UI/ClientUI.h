@@ -5,6 +5,9 @@
 #  ifdef Message
 #    undef Message
 #  endif
+#  ifdef MessageBox
+#    undef MessageBox
+#  endif
 #endif
 
 #include <boost/filesystem/path.hpp>

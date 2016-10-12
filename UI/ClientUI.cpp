@@ -45,6 +45,12 @@
 #include <string>
 #include <algorithm>
 
+#ifdef FREEORION_WIN32
+#  ifdef MessageBox
+#    undef MessageBox
+#  endif
+#endif
+
 const Tech* GetTech(const std::string& name);
 
 bool TextureFileNameCompare(const boost::shared_ptr<GG::Texture> t1, const boost::shared_ptr<GG::Texture> t2)
