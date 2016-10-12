@@ -2439,7 +2439,12 @@ namespace {
             std::string species_name = *it;
 
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
-            max_species_name_column1_width = std::max(font->TextExtent(species_name_column1).x, max_species_name_column1_width);
+            std::vector<GG::Font::LineData> lines;
+            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+            std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+                font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
+            GG::Pt extent = font->DetermineLines(species_name_column1, format, GG::X(1 << 15), text_elements, lines);
+            max_species_name_column1_width = std::max(extent.x, max_species_name_column1_width);
 
             // Setting the planet's species allows all of it meters to reflect
             // species (and empire) properties, such as environment type
@@ -2478,8 +2483,16 @@ namespace {
             std::string user_species_name = UserString(it->second.first);
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % LinkTaggedText(VarText::SPECIES_TAG, it->second.first));
 
-            while (font->TextExtent(species_name_column1).x < max_species_name_column1_width)
-            { species_name_column1 += "\t"; }
+            std::vector<GG::Font::LineData> lines;
+            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+            std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+                font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
+            GG::Pt extent = font->DetermineLines(species_name_column1, format, GG::X(1 << 15), text_elements, lines);
+            while (extent.x < max_species_name_column1_width) {
+                species_name_column1 += "\t";
+                text_elements = font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
+                extent = font->DetermineLines(species_name_column1, format, GG::X(1 << 15), text_elements, lines);
+            }
 
             if (it->first > 0) {
                 if (!positive_header_placed) {

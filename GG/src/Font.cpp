@@ -1136,12 +1136,6 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
     return retval.str();
 }
 
-Pt Font::TextExtent(const std::string& text, Flags<TextFormat> format/* = FORMAT_NONE*/, X box_width/* = X0*/) const
-{
-    std::vector<LineData> lines;
-    return DetermineLines(text, format, box_width ? box_width : X(1 << 15), lines);
-}
-
 Pt Font::TextExtent(const std::string& text, const std::vector<LineData>& line_data) const
 {
     Pt retval;

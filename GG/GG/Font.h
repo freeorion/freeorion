@@ -497,12 +497,6 @@ public:
                         const std::vector<boost::shared_ptr<TextElement> >& text_elements,
                         std::vector<LineData>& line_data) const;
 
-    /** Returns the maximum dimensions of the string in x and y.  Provided as
-        a convenience; it just calls DetermineLines with the given
-        parameters. */
-    Pt   TextExtent(const std::string& text, Flags<TextFormat> format = FORMAT_NONE,
-                    X box_width = X0) const;
-
     /** Returns the maximum dimensions of the text in x and y. */
     Pt   TextExtent(const std::string& text, const std::vector<LineData>& line_data) const;
     //@}

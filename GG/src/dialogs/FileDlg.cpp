@@ -265,8 +265,8 @@ void FileDlg::DoLayout()
 
     // determine the space needed to display both text labels in the chosen font; use this to expand the edit as far as
     // possible
-    X labels_width = std::max(m_font->TextExtent(m_files_label->Text()).x, 
-                              m_font->TextExtent(m_file_types_label->Text()).x) + H_SPACING;
+    X labels_width = std::max((m_files_label->MinUsableSize()).x,
+                              (m_file_types_label->MinUsableSize()).x) + H_SPACING;
 
     m_files_label->MoveTo(Pt(X0, Height() - (button_height + V_SPACING) * 2));
     m_files_label->Resize(Pt(labels_width - H_SPACING / 2, button_height));
@@ -657,7 +657,8 @@ void FileDlg::UpdateDirectoryText()
 #else
     std::string str = s_working_dir.string();
 #endif
-    while (m_font->TextExtent(str).x > Width() - 2 * H_SPACING) {
+    m_curr_dir_text->SetText(str);
+    while (m_curr_dir_text->Width() > Width() - 2 * H_SPACING) {
         std::string::size_type slash_idx = str.find('/', 1);
         std::string::size_type backslash_idx = str.find('\\', 1);
         if (slash_idx != std::string::npos) {
@@ -669,8 +670,8 @@ void FileDlg::UpdateDirectoryText()
         } else {
             break;
         }
+        m_curr_dir_text->SetText(str);
     }
-    *m_curr_dir_text << str;
     DoLayout();
 }
 
