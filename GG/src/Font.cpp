@@ -1068,27 +1068,10 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
 }
 
 Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data) const
-{ return DetermineLinesImpl(text, format, box_width, line_data, 0); }
-
-Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data,
-                        std::vector<boost::shared_ptr<TextElement> >& text_elements) const
-{
-    assert(text_elements.empty());
-    return DetermineLinesImpl(text, format, box_width, line_data, &text_elements);
-}
-
-Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
                         const std::vector<boost::shared_ptr<TextElement> >& text_elements,
                         std::vector<LineData>& line_data) const
 {
-    assert(!text_elements.empty());
-    return DetermineLinesImpl(text,
-                              format,
-                              box_width,
-                              line_data,
-                              const_cast<std::vector<boost::shared_ptr<TextElement> >*>(&text_elements));
+    return DetermineLinesImpl(text, format, box_width, line_data, text_elements);
 }
 
 std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
@@ -1358,11 +1341,9 @@ Pt Font::DetermineLinesImpl(const std::string& text,
                             Flags<TextFormat>& format,
                             X box_width,
                             std::vector<LineData>& line_data,
-                            std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const
+                            const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
     ValidateFormat(format);
-
-    std::vector<boost::shared_ptr<TextElement> > text_elements = ExpensiveParseFromTextToTextElements(text, format);
 
     RenderState render_state;
     int tab_width = 8; // default tab width

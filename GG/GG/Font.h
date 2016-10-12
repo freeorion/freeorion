@@ -477,20 +477,7 @@ public:
                                                                                             const Flags<TextFormat>& format) const;
 
     /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data. */
-    Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data) const;
-
-    /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data and \a text_elements.  Note that \a text_elements must be
-        empty. */
-    Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data,
-                        std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
-
-    /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data.  The contents of \a text_elements will be used, and the
-        equivalent work done by DetermineLines() will be skipped.  Supplying a
+        \a line_data.  The contents of \a text_elements will be used.  Supplying a
         \a text and a \a text_elements that are incompatible will result in
         undefined behavior. */
     Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
@@ -577,7 +564,7 @@ private:
                           Flags<TextFormat>& format,
                           X box_width,
                           std::vector<LineData>& line_data,
-                          std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const;
+                          const std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);

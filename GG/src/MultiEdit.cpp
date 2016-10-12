@@ -303,7 +303,9 @@ void MultiEdit::SetText(const std::string& str)
             TextControl::SetText(str);
         } else {
             std::vector<Font::LineData> lines;
-            GetFont()->DetermineLines(str, format, cl_sz.x, lines);
+            std::vector<boost::shared_ptr<Font::TextElement> > text_elements
+                = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
+            Pt extent = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements, lines);
             if (m_max_lines_history < lines.size()) {
                 std::size_t first_line = 0;
                 std::size_t last_line = m_max_lines_history - 1;
