@@ -476,10 +476,19 @@ public:
     std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
                                                                                             const Flags<TextFormat>& format) const;
 
-    /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data.  The contents of \a text_elements will be used.  Supplying a
-        \a text and a \a text_elements that are incompatible will result in
-        undefined behavior. */
+    /** DetermineLines() calculates the \p line_data resulting from adding the necessary line
+        breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
+        the \p text into a box of width \p box_width. It returns the text extent of that \p
+        line_data.
+
+        It accounts for alignment, wrapping and justification of the \p text.
+
+        A \p box_width of X0 will add a line break at every whitespace element in \p text_elements.
+
+        Supplying a \p text and \p text_elements that are incompatible will result in undefined
+        behavior.  \p text_elements contains internal pointers to the \p text to which it is
+        bound.  Compatible means the exact same \p text object, not the same text content.
+        */
     Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
                         const std::vector<boost::shared_ptr<TextElement> >& text_elements,
                         std::vector<LineData>& line_data) const;
