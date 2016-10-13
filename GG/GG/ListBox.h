@@ -178,8 +178,10 @@ public:
         void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
         //@}
 
+        boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
     protected:
         void AdjustLayout(bool adjust_for_push_back = false);
+        virtual void           RClick(const Pt& pt, GG::Flags<GG::ModKey> mod);
 
         std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)
         Alignment              m_row_alignment;  ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
@@ -499,9 +501,9 @@ protected:
 
     void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
 
-protected:
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                     const Pt& pt, Flags<ModKey> mod_keys) const;
+    void            HandleRowRightClicked(const Pt& pt, Flags<ModKey> mod);
 
 private:
     void            ConnectSignals();
