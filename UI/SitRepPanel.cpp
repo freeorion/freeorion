@@ -619,6 +619,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     }
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_ALL"),        4, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"), 5, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem("  " + UserString("HOTKEY_COPY"),                   10, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndInnerBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -646,6 +647,12 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     }
     case 5: { //
         permanently_snoozed_sitreps.clear();
+        break;
+    }
+    case 10: { // Copy text of sitrep
+        if (sitrep_text.empty())
+            break;
+        GG::GUI::GetGUI()->SetClipboardText(GG::Font::StripTags(sitrep_text));
         break;
     }
 
