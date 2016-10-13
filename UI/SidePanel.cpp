@@ -2830,6 +2830,8 @@ void SidePanel::RefreshImpl() {
             rows.push_back(new SystemRow(sys_id));
         }
         m_system_name->Insert(rows, false);
+
+        // select in the list the currently-selected system
         for (GG::DropDownList::iterator it = m_system_name->begin();
              it != m_system_name->end(); ++it)
         {

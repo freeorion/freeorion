@@ -12929,6 +12929,12 @@ Switch to previous system
 HOTKEY_MAP_ZOOM_NEXT_SYSTEM
 Switch to next system
 
+HOTKEY_MAP_ZOOM_PREV_SYSTEM
+Switch to previous system containing own planets
+
+HOTKEY_MAP_ZOOM_NEXT_SYSTEM
+Switch to next system containing own planets
+
 HOTKEY_MAP_ZOOM_PREV_FLEET
 Switch to previous fleet
 

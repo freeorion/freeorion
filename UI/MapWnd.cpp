@@ -57,6 +57,7 @@
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/PtRect.h>
@@ -168,8 +169,10 @@ namespace {
         Hotkey::AddHotkey("map.zoom_out",             UserStringNop("HOTKEY_MAP_ZOOM_OUT"),             GG::GGK_x,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_out_alt",         UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),         GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_home_system",     UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),     GG::GGK_h,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_system",     UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),     GG::GGK_LESS,       GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_next_system",     UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),     GG::GGK_GREATER,    GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_prev_system",     UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),     GG::GGK_COMMA,      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_next_system",     UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),     GG::GGK_PERIOD,     GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.zoom_prev_owned_system",UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),GG::GGK_LESS,     GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("map.zoom_next_owned_system",UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),GG::GGK_GREATER,  GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
         Hotkey::AddHotkey("map.zoom_prev_fleet",      UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),      GG::GGK_f,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_next_fleet",      UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),      GG::GGK_g,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_prev_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_f,          GG::MOD_KEY_ALT);
@@ -6041,39 +6044,145 @@ bool MapWnd::ZoomToHomeSystem() {
     return true;
 }
 
-bool MapWnd::ZoomToPrevOwnedSystem() {
-    // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
-    std::vector<int> vec = Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
-    std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
-    if (it == vec.end()) {
-        m_current_owned_system = vec.empty() ? INVALID_OBJECT_ID : vec.back();
-    } else {
-        m_current_owned_system = it == vec.begin() ? vec.back() : *--it;
+namespace {
+    const std::locale& GetLocale() {
+        static boost::locale::generator gen;
+        static std::locale loc = gen("en_US.UTF-8");    // should sort accented latin letters reasonably
+        return loc;
     }
 
-    if (m_current_owned_system != INVALID_OBJECT_ID) {
-        CenterOnObject(m_current_owned_system);
-        SelectSystem(m_current_owned_system);
+    struct CustomRowCmp {
+        bool operator()(const std::pair<std::string, int>& lhs, const std::pair<std::string, int>& rhs) {
+            return GetLocale().operator()(lhs.first, rhs.first);    // todo: use .second values to break ties
+        }
+    };
+
+    std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
+        // get systems, store alphabetized
+        std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
+        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+            sys_it != Objects().const_end<System>(); ++sys_it)
+        {
+            system_names_ids.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+        }
+        return system_names_ids;
+    }
+
+    std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
+        std::vector<TemporaryPtr<UniverseObject> > owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
+
+        // get IDs of systems that contain any owned planets
+        boost::unordered_set<int> system_ids;
+        for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator it = owned_planets.begin();
+             it != owned_planets.end(); ++it)
+        { system_ids.insert((*it)->SystemID()); }
+
+        // store systems, sorted alphabetically
+        std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
+        for (boost::unordered_set<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it) {
+            if (TemporaryPtr<const System> sys = GetSystem(*it))
+                system_names_ids.insert(std::make_pair(sys->Name(), sys->ID()));
+        }
+
+        return system_names_ids;
+    }
+}
+
+bool MapWnd::ZoomToPrevOwnedSystem() {
+    // get planets owned by client's player, sorted alphabetically
+    std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids = GetOwnedSystemNamesIDs(HumanClientApp::GetApp()->EmpireID());
+    if (system_names_ids.empty())
+        return false;
+
+    // find currently selected system in list
+    std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
+    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    if (sel_sys) {
+        it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        if (it != system_names_ids.rend())
+            ++it;
+    }
+    if (it == system_names_ids.rend())
+        it = system_names_ids.rbegin();
+
+    if (it != system_names_ids.rend()) {
+        CenterOnObject(it->second);
+        SelectSystem(it->second);
     }
 
     return true;
 }
 
 bool MapWnd::ZoomToNextOwnedSystem() {
-    // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
-    std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
-    std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
-    if (it == vec.end()) {
-        m_current_owned_system = vec.empty() ? INVALID_OBJECT_ID : vec.front();
-    } else {
-        std::vector<int>::iterator next_it = it;
-        ++next_it;
-        m_current_owned_system = next_it == vec.end() ? vec.front() : *next_it;
+    // get planets owned by client's player, sorted alphabetically
+    std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids = GetOwnedSystemNamesIDs(HumanClientApp::GetApp()->EmpireID());
+    if (system_names_ids.empty())
+        return false;
+
+    std::set<std::pair<std::string, int>, CustomRowCmp>::const_iterator it = system_names_ids.end();
+
+    // find currently selected system in list
+    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    if (sel_sys) {
+        it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        if (it != system_names_ids.end())
+            ++it;
+    }
+    if (it == system_names_ids.end())
+        it = system_names_ids.begin();
+
+    if (it != system_names_ids.end()) {
+        CenterOnObject(it->second);
+        SelectSystem(it->second);
     }
 
-    if (m_current_owned_system != INVALID_OBJECT_ID) {
-        CenterOnObject(m_current_owned_system);
-        SelectSystem(m_current_owned_system);
+    return true;
+}
+
+bool MapWnd::ZoomToPrevSystem() {
+    std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids = GetSystemNamesIDs();
+    if (system_names_ids.empty())
+        return false;
+
+    // find currently selected system in list
+    std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
+    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    if (sel_sys) {
+        it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        if (it != system_names_ids.rend())
+            ++it;
+    }
+    if (it == system_names_ids.rend())
+        it = system_names_ids.rbegin();
+
+    if (it != system_names_ids.rend()) {
+        CenterOnObject(it->second);
+        SelectSystem(it->second);
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToNextSystem() {
+    std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids = GetSystemNamesIDs();
+    if (system_names_ids.empty())
+        return false;
+
+    std::set<std::pair<std::string, int>, CustomRowCmp>::const_iterator it = system_names_ids.end();
+
+    // find currently selected system in list
+    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    if (sel_sys) {
+        it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
+        if (it != system_names_ids.end())
+            ++it;
+    }
+    if (it == system_names_ids.end())
+        it = system_names_ids.begin();
+
+    if (it != system_names_ids.end()) {
+        CenterOnObject(it->second);
+        SelectSystem(it->second);
     }
 
     return true;
@@ -6245,9 +6354,13 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
     hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_system",
+    hkm->Connect(this, &MapWnd::ZoomToPrevSystem,       "map.zoom_prev_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_system",
+    hkm->Connect(this, &MapWnd::ZoomToNextSystem,       "map.zoom_next_system",
+                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_owned_system",
+                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_owned_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
 
     // the list of windows for which the fleet shortcuts are blacklisted.

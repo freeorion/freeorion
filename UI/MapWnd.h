@@ -393,6 +393,8 @@ private:
     bool            ZoomToHomeSystem();
     bool            ZoomToPrevOwnedSystem();
     bool            ZoomToNextOwnedSystem();
+    bool            ZoomToPrevSystem();
+    bool            ZoomToNextSystem();
     bool            ZoomToPrevIdleFleet();
     bool            ZoomToNextIdleFleet();
     bool            ZoomToPrevFleet();
