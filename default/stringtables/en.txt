@@ -5353,7 +5353,7 @@ EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Ancient Ruins Empty Excavation
 
 EFFECT_ANCIENT_GUARDIANS_CAPTURED
-On %planet%: The [[species SP_ANCIENT_GUARDIANS]] self-destructed when the planet was captured!
+On %planet%: The [[species SP_ANCIENT_GUARDIANS]] self-destructed when the planet was captured! The planet is now an Outpost under your control.
 
 EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL
 Ancient Guardians self destruct
@@ -6521,7 +6521,7 @@ Ancient Guardians
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Guardian Robots constructed by a Precursor civilization aeons ago
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-Will self-destruct when conquered
+Will self-destruct when conquered, leaving an outpost owned by the conqueror behind.
 '''
 
 SP_ANCIENT_GUARDIANS_DESC
