@@ -193,6 +193,27 @@ namespace {
     };
 
     //////////////////////////////////
+    // SitRepLinkText
+    //////////////////////////////////
+    class SitRepLinkText : public LinkText {
+    public:
+        SitRepLinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                       GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK) :
+            LinkText(x, y, w, str, font, format, color) {}
+
+        mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
+
+    protected:
+        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+            if (GetLinkUnderPt(pt) != -1) {
+                LinkText::RClick(pt, mod_keys);
+            } else {
+                RightClickedSignal(pt, mod_keys);
+            }
+        }
+    };
+
+    //////////////////////////////////
     // SitRepDataPanel
     //////////////////////////////////
     class SitRepDataPanel : public GG::Control {
@@ -237,6 +258,11 @@ namespace {
 
         const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
 
+        mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
+
+    protected:
+        void            RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod) { RightClickedSignal(pt, mod); }
+
     private:
         void            DoLayout() {
             if (!m_initialized)
@@ -264,15 +290,17 @@ namespace {
             m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
 
-            m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
-                                       ClientUI::GetFont(),
-                                       GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
+            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
+                                             ClientUI::GetFont(),
+                                             GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK,
+                                             ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
 
             GG::Connect(m_link_text->LinkClickedSignal,       &HandleLinkClick);
             GG::Connect(m_link_text->LinkDoubleClickedSignal, &HandleLinkClick);
             GG::Connect(m_link_text->LinkRightClickedSignal,  &HandleLinkClick);
+            GG::Connect(m_link_text->RightClickedSignal,      &SitRepDataPanel::RClick,     this);
 
             DoLayout();
         }
@@ -281,7 +309,7 @@ namespace {
 
         SitRepEntry         m_sitrep_entry;
         GG::StaticGraphic*  m_icon;
-        LinkText*           m_link_text;
+        SitRepLinkText*     m_link_text;
     };
 
     ////////////////////////////////////////////////
@@ -298,6 +326,7 @@ namespace {
             SetChildClippingMode(ClipToClient);
             m_panel = new SitRepDataPanel(w, h, sitrep);
             push_back(m_panel);
+            GG::Connect(m_panel->RightClickedSignal, &SitRepRow::RClick, this);
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
