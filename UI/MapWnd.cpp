@@ -3885,13 +3885,13 @@ void MapWnd::SelectSystem(int system_id) {
         }
     }
 
+    InitScaleCircleRenderingBuffer();
 
     if (m_in_production_view_mode) {
         // don't need to do anything to ensure this->m_side_panel is visible,
         // since it should be hidden if in production view mode.
         return;
     }
-
 
     // even if selected system hasn't changed, it may be nessary to show or
     // hide this mapwnd's sidepanel, in case it was hidden at some point and
@@ -3904,8 +3904,6 @@ void MapWnd::SelectSystem(int system_id) {
         // selected a valid system, show sidepanel
         m_side_panel->Show();
     }
-
-    InitScaleCircleRenderingBuffer();
 }
 
 void MapWnd::ReselectLastFleet() {
