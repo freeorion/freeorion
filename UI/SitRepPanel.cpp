@@ -521,10 +521,7 @@ void SitRepPanel::FilterClicked() {
     menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
                                        ALL_INDEX, false, false));
 
-    GG::PopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(),
-                        ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(),
-                        ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(), menu_contents);
     if (!popup.Run())
         return;
     int selected_menu_item = popup.MenuID();
@@ -591,8 +588,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_ALL"),        4, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"), 5, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndInnerBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (!popup.Run())
         return;
     int selected_menu_item = popup.MenuID();

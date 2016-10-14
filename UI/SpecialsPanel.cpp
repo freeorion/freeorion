@@ -1,7 +1,5 @@
 #include "SpecialsPanel.h"
 
-#include <GG/Menu.h>
-
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -145,8 +143,7 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
         GG::MenuItem menu_contents;
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
         if (!popup.Run() || popup.MenuID() != 1) {
             return false;

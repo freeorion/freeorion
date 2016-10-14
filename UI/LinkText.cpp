@@ -1,6 +1,7 @@
 #include "LinkText.h"
 
 #include "ClientUI.h"
+#include "CUIControls.h"
 #include "../Empire/Empire.h"
 #include "../universe/UniverseObject.h"
 #include "../util/AppInterface.h"
@@ -10,7 +11,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
-#include <GG/Menu.h>
 #include <GG/GUI.h>
 
 namespace {
@@ -118,8 +118,7 @@ void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),  2, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 9: {

@@ -425,8 +425,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 3: { // scrap building

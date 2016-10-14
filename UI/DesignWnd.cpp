@@ -1849,8 +1849,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_SAVE"),       3, false, false));
 
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
         if (popup.Run()) {
             switch (popup.MenuID()) {
@@ -1904,8 +1903,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_ADD"),       1, false, false));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   2, false, false));
 
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
         if (popup.Run()) {
             switch (popup.MenuID()) {

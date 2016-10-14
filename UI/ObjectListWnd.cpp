@@ -1628,10 +1628,7 @@ private:
         menu_contents.next_level.push_back(fleets_submenu);
 
 
-        GG::PopupMenu popup(clicked_button->Left(), clicked_button->Bottom(),
-                            ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(),
-                            ClientUI::EditHiliteColor());
+        CUIPopupMenu popup(clicked_button->Left(), clicked_button->Bottom(), menu_contents);
         if (!popup.Run())
             return;
         int selected_menu_item = popup.MenuID();
@@ -2491,8 +2488,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     }
 
     // run popup and respond
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: {

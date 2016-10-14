@@ -655,8 +655,7 @@ namespace {
             menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
 
 
-            GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                                ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+            CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
             if (popup.Run()) {
                 switch (popup.MenuID()) {
