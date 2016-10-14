@@ -388,6 +388,10 @@ void ListBox::Row::AdjustLayout(bool adjust_for_push_back/* = false*/)
     }
 }
 
+void ListBox::Row::RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) {
+     RightClickedSignal(pt, mod);
+}
+
 
 ////////////////////////////////////////////////
 // GG::ListBox::RowPtrIteratorLess
@@ -482,6 +486,14 @@ void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter las
                 it->second = true;
             } catch (const DontAcceptDrop&) {}
         }
+    }
+}
+
+void ListBox::HandleRowRightClicked(const Pt& pt, GG::Flags<GG::ModKey> mod) {
+    iterator row_it = RowUnderPt(pt);
+    if (row_it != m_rows.end()) {
+        m_rclick_row = row_it;
+        RightClickedSignal(row_it, pt, mod);
     }
 }
 
@@ -1652,6 +1664,7 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     if (signal)
         AfterInsertSignal(it);
 
+    Connect(row->RightClickedSignal, &ListBox::HandleRowRightClicked, this);
     return retval;
 }
 
