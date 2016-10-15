@@ -894,8 +894,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
     menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
@@ -1869,8 +1868,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
     menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {

@@ -2242,8 +2242,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       11,false, zoomSlider));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   12,false, detectionRange));
         // display popup menu
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
         if (popup.Run()) {
             switch (popup.MenuID()) {
                 case 1: { GetOptionsDB().Set<bool>("show-fps",                       !fps);        break; }

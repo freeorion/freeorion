@@ -22,7 +22,6 @@
 #include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
-#include <GG/Menu.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Enum.h>
@@ -2631,8 +2630,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     }
 
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // rename ship
@@ -3429,8 +3427,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         }
    }
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
-                        ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
