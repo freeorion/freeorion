@@ -12,6 +12,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <GG/Cursor.h>
 
 struct HumanClientFSM;
 class MultiPlayerLobbyWnd;
@@ -74,6 +75,10 @@ public:
     void                HandleSaveGameDataRequest();
 
     void                OpenURL(const std::string& url);
+
+    void                AddWaitingFlag(std::string reason);         ///< Ensure the wait cursor is used until \p reason is cleared
+    void                ClearWaitingFlag(std::string reason);       ///< Decrements the waiting flag \p reason.  If no remaining flags, sets cursor to default
+    void                ResetCursorToDefault();                     ///< Forces cursor to default cursor, removing any existing wait flags
     //@}
 
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
@@ -120,6 +125,9 @@ private:
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
     int                         m_auto_turns;           ///< auto turn counter
     bool                        m_have_window_focus;
+    boost::shared_ptr<GG::TextureCursor>    m_default_cursor;   ///< standard cursor
+    boost::shared_ptr<GG::TextureCursor>    m_wait_cursor;      ///< cursor rendered during a wait period
+    std::map<std::string, int>              m_wait_flags;
 };
 
 #endif // _HumanClientApp_h_

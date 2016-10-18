@@ -193,7 +193,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_game_started(false),
     m_connected(false),
     m_auto_turns(0),
-    m_have_window_focus(true)
+    m_have_window_focus(true),
+    m_default_cursor(0),
+    m_wait_cursor(0)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -247,8 +249,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
     boost::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
+    m_default_cursor = boost::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)));
+    SetCursor(m_default_cursor);
     RenderCursor(true);
+    boost::shared_ptr<GG::Texture> cursor_wait_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "wait.png");
+    m_wait_cursor = boost::make_shared<GG::TextureCursor>(cursor_wait_texture, GG::Pt(GG::X(8), GG::Y(9)));
 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),
                          GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
@@ -1237,4 +1242,43 @@ void HumanClientApp::OpenURL(const std::string& url) {
 
     // execute open command
     system(command.c_str());
+}
+
+void HumanClientApp::AddWaitingFlag(std::string reason) {
+    if (reason.empty()) {
+        ErrorLogger() << "Requested addition of empty wait flag";
+        return;
+    }
+
+    TraceLogger() << "Request to add wait flag: " << reason;
+    m_wait_flags[reason]++;
+
+    SetCursor(m_wait_cursor);
+}
+
+void HumanClientApp::ClearWaitingFlag(std::string reason) {
+    if (reason.empty()) {
+        ErrorLogger() << "Requested clear of empty wait flag";
+        return;
+    }
+
+    TraceLogger() << "Request to clear wait flag: " << reason;
+    if (m_wait_flags.find(reason) == m_wait_flags.end()) {
+        ErrorLogger() << "Requested clear of wait flag that does not exist: " << reason;
+    } else if (m_wait_flags[reason] <= 1) {
+        TraceLogger() << "Removing wait flag: " << reason;
+        m_wait_flags.erase(reason);
+    } else {
+        TraceLogger() << "Decreased counter on wait flag: " << reason;
+        m_wait_flags[reason]--;
+        return;
+    }
+
+    if (m_wait_flags.empty())
+        SetCursor(m_default_cursor);
+}
+
+void HumanClientApp::ResetCursorToDefault() {
+    SetCursor(m_default_cursor);
+    m_wait_flags.clear();
 }
