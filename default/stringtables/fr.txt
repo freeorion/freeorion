@@ -1449,7 +1449,7 @@ OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Si activé, cliquer sur plusieurs boutons de flotte ouvrent plusieurs Fenêtres Flottes en même temps. Si désactivé, toute ouverture d'une Fenêtre Flottes ferme celle précédemment affichée.
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Active/Désactive l'effet du clic droit sur la carte galactique qui ferme d'abord les Fenêtres Flottes puis, lorsque réitéré, le panneau latéral de système stellaire.
+Active/Désactive la fermeture d'une ou plusieurs Fenêtres Flottes via un clic-gauche sur la carte galactique.
 
 OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 Active/Désactive le repositionnement automatique des fenêtres lorsque la taille d'affichage de l'application est modifiée.
@@ -2186,7 +2186,7 @@ OPTIONS_MULTIPLE_FLEET_WNDS
 Fenêtres Flottes multiples
 
 OPTIONS_QUICK_CLOSE_WNDS
-Fermeture rapide des fenêtres
+Fermeture rapide des fenêtres Flottes
 
 OPTIONS_SHOW_SIDEPANEL_PLANETS
 Affichage des planètes dans le panneau latéral
@@ -5352,8 +5352,14 @@ Sur %planet% : des Ruines Ancestrales ont été excavées, mais ne révélant qu
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Fouille infructueuse de Ruines Ancestrales
 
+EFFECT_NATIVES_TECH
+Sur %planet% : la technologie %tech% a été assimilée grâce à l'espèce %species%!
+
+EFFECT_NATIVES_TECH_LABEL
+Technologie indigène
+
 EFFECT_ANCIENT_GUARDIANS_CAPTURED
-Sur %planet% : les [[species SP_ANCIENT_GUARDIANS]] se sont auto-détruits après que la planète ait été capturée!
+Sur %planet% : les [[species SP_ANCIENT_GUARDIANS]] se sont auto-détruits après que la planète ait été capturée! La planète est à présent un Avant-Poste sous votre contrôle.
 
 EFFECT_ANCIENT_GUARDIANS_CAPTURED_LABEL
 Auto-destruction des Gardiens Ancestraux
@@ -5974,6 +5980,23 @@ Structure sociale:
 Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu œuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
 '''
 
+SP_LEMBALALAM  # translated
+Lembala'Lam
+SP_LEMBALALAM_GAMEPLAY_DESC
+'''Reptiles ancestraux égocentriques et dégénérescents, ne pouvant plus se reproduire.
+Préfèrent les Planètes [[PT_DESERT]]s.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+Contrôler les Lembala octroie les technologies suivantes : [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] et [[tech GRO_LIFECYCLE_MAN]]. 
+'''
+
+SP_LEMBALALAM_DESC
+'''Description:
+Les Lembala'Lam sont une ancienne espèce au crépuscule de leur existence. Semblables par le passé à des reptiles tels les serpents ou les geckos, l'évolution de leur physionomie d'origine a été corrompue par leur mode de vie fortement influencé par l'amélioration mécanique. Sans machines de toutes sortes, ils seraient aujourd'hui incapables de se mouvoir ou de se nourrir. Leur système de reproduction s'en est retrouvé totalement inhibé, mais encore plus important, plus aucune relation de confiance n'unit l'espèce. Car le dernier clou planté dans le cercueil de la société Lembala fut l'invention d'un système automatisé transférant l'esprit d'un Lembala mourant dans un clone de remplacement, chaque Lembala s'assurant de disposer de centaines de corps de rechange précieusement conservés et dissimulés. La quasi-totalité des ressources mentales et matérielles des Lembala est utilisée pour entretenir cette immortalité artificielle, au détriment du développement réel de leur civilisation. 
+
+Structure sociale:
+Les Lembala connaissent chacun de leurs semblables depuis les âges les plus reculés, mais la méfiance envers tout un chacun est le seul sentiment partagé. Ces relations délétères engendrent de nombreuses impasses sociétales et paralysent leur gouvernement, pourtant démocratique, depuis une éternité. En raison de cette paranoïa constante et du manque d'altruisme des Lembala, même la coopération la plus basique est vouée à l'échec, les rares fois où une tentative de collaboration semble émerger.
+'''
+
 SP_TAEGHIRUS  # translated
 Tae Ghirus
 
@@ -6521,7 +6544,7 @@ Gardiens Ancestraux
 SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC
 '''Robots gardiens conçus en des temps immémoriaux par une civilisation de Précurseurs.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-S'auto-détruisent s'ils sont conquis.
+S'auto-détruisent s'ils sont conquis, laissant un avant-poste au vainqueur.
 '''
 
 SP_ANCIENT_GUARDIANS_DESC
@@ -9397,7 +9420,7 @@ Domination Psychique
 
 LRN_PSY_DOM_DESC
 '''A 10% de chance de prendre le contrôle des astronefs ennemis avec équipages non-télépathiques, et se trouvant dans le même système qu'une planète en Focus Domination, à moins que l'empire ennemi ne maîtrise également la [[tech LRN_PSY_DOM]].
-Immunise contre la prise de contrôle d'un astronef par un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]].
+Immunise également contre la prise de contrôle d'un astronef par un [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]].
 
 Il est difficile de soumettre un individu conscient à un contrôle mental total par une entité étrangère, et ce contre son gré. En manipulant cependant les durées de soumission, la force mentale accumulée par une population sur plusieurs heures peut être canalisée sur un unique individu durant quelques secondes, engendrant ainsi une compulsion quasi-irrésistible de se joindre à l'esprit unifié.'''
 
@@ -12193,6 +12216,9 @@ AVERAGE_POPULATION_DESC
 GOOD_POPULATION_DESC
 +	Grande Population : 125%
 
+FIXED_LOW_POPULATION_DESC
+−−	Population Maximale limitée à 5
+
 BAD_SUPPLY_DESC
 −	Mauvais en [[encyclopedia SUPPLY_TITLE]] : aucun bonus
 
@@ -12276,6 +12302,9 @@ ENV_ENCAPSUL_LABEL
 
 SELF_SUSTAINING_LABEL
 Autosuffisant
+
+IMMORTAL_LABEL
+Immortalité et pas de reproduction
 
 SUBTERRANEAN_LABEL
 Bonus Habitat Souterrain
@@ -12928,6 +12957,12 @@ Système précédent
 
 HOTKEY_MAP_ZOOM_NEXT_SYSTEM
 Système suivant
+
+HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM
+Système précédent avec planètes contrôlées
+
+HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM
+Système suivant avec planètes contrôlées
 
 HOTKEY_MAP_ZOOM_PREV_FLEET
 Flotte précédente
