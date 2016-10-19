@@ -176,7 +176,11 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
             DebugLogger() << "Allocating buffers for XML serialization...";
             std::string serial_str, compressed_str;
             try {
-                serial_str.reserve(    std::pow(2.0, 29.0));
+                DebugLogger() << "String Max Size: " << serial_str.max_size();
+                std::string::size_type capacity = std::min(serial_str.max_size(),
+                                                           static_cast<std::string::size_type>(std::pow(2.0, 29.0)));
+                DebugLogger() << "Reserving Capacity:: " << capacity;
+                serial_str.reserve(    capacity);
                 compressed_str.reserve(std::pow(2.0, 26.0));
             } catch (...) {
                 DebugLogger() << "Unable to preallocate full serialization buffers. Attempting serialization with dynamic buffer allocation.";
