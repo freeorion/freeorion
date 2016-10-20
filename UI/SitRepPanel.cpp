@@ -380,7 +380,7 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     GG::Connect(m_next_turn_button->LeftClickedSignal,  &SitRepPanel::NextClicked,          this);
     GG::Connect(m_last_turn_button->LeftClickedSignal,  &SitRepPanel::LastClicked,          this);
     GG::Connect(m_filter_button->LeftClickedSignal,     &SitRepPanel::FilterClicked,        this);
-    GG::Connect(m_sitreps_lb->DoubleClickedSignal,      &SitRepPanel::DismissSitRep,        this);
+    GG::Connect(m_sitreps_lb->DoubleClickedSignal,      &SitRepPanel::IgnoreSitRep,         this);
     GG::Connect(m_sitreps_lb->RightClickedSignal,       &SitRepPanel::DismissalMenu,        this);
 
     DoLayout();
@@ -584,7 +584,7 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
-void SitRepPanel::DismissSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
+void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
     SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(*it);
     if (!sitrep_row) {
         return;
@@ -616,7 +616,8 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     }
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_ALL"),        4, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"), 5, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem("  " + UserString("HOTKEY_COPY"),                   10, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem("? - " + UserString("SITREP_IGNORE_BLOCK_TITLE"),   8, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem("  " + UserString("HOTKEY_COPY"),                  10, false, false));
 
     CUIPopupMenu popup(pt.x, pt.y, menu_contents);
     if (!popup.Run())
@@ -643,6 +644,10 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     }
     case 5: { //
         permanently_snoozed_sitreps.clear();
+        break;
+    }
+    case 8: { // Display help article
+        ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE");
         break;
     }
     case 10: { // Copy text of sitrep

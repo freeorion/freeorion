@@ -37,7 +37,7 @@ private:
     void            NextClicked();
     void            LastClicked();
     void            FilterClicked();
-    void            DismissSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod);
+    void            IgnoreSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod);
     void            DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod);
     void            DoLayout();
 
