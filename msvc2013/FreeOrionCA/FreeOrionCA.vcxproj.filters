@@ -277,5 +277,8 @@
     <ClCompile Include="..\..\python\UniverseWrapper.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\DependencyVersions.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

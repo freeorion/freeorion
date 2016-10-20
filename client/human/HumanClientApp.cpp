@@ -208,7 +208,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
 
     try {
-        DebugLogger() << "GL Version String: " << GetGLVersionString();
+        InfoLogger() << "GL Version String: " << GetGLVersionString();
     } catch (...) {
         ErrorLogger() << "Unable to get GL Version String?";
     }

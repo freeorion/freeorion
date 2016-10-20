@@ -33,6 +33,7 @@ set (freeoriond_SOURCE
     ../python/server/ServerWrapper.cpp
     ../python/server/ServerFramework.cpp
     ../universe/UniverseGenerator.cpp
+    ../util/DependencyVersions.cpp
 )
 
 add_executable(freeoriond

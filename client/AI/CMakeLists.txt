@@ -32,6 +32,7 @@ set (freeorionca_SOURCE
     ../../python/LoggingWrapper.cpp
     ../../python/UniverseWrapper.cpp
     ../../python/AI/AIWrapper.cpp
+    ../../util/DependencyVersions.cpp
 )
 
 add_executable(freeorionca

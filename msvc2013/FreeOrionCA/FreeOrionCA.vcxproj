@@ -218,6 +218,7 @@
     <ClCompile Include="..\..\python\EnumWrapper.cpp" />
     <ClCompile Include="..\..\python\LoggingWrapper.cpp" />
     <ClCompile Include="..\..\python\UniverseWrapper.cpp" />
+    <ClCompile Include="..\..\util\DependencyVersions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

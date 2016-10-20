@@ -65,7 +65,7 @@ void InitLogger(const std::string& logFile, const std::string& process) {
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
     DebugLogger() << "Logger initialized";
-    DebugLogger() << FreeOrionVersionString();
+    InfoLogger() << FreeOrionVersionString();
 
     int options_db_log_priority = PriorityValue(GetOptionsDB().Get<std::string>("log-level"));
     SetLoggerPriority(options_db_log_priority);

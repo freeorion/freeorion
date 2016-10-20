@@ -2,29 +2,40 @@
 
 #include "Logger.h"
 
-#include <SDL2/SDL_version.h>
-#include <zlib.h>
-#include <png.h>
-#include <python2.7/patchlevel.h>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-#include <boost/version.hpp>
 #include <sstream>
 
-namespace {
-    std::string BoostVersionString()
-    { return BOOST_LIB_VERSION; }
+#include <zlib.h>
+#include <boost/version.hpp>
 
+#if defined(FREEORION_BUILD_SERVER) || defined(FREEORION_BUILD_AI)
+#   include <python2.7/patchlevel.h>
+#endif
+
+#if defined(FREEORION_BUILD_HUMAN)
+#   include <SDL2/SDL_version.h>
+#   include <png.h>
+#   include <ft2build.h>
+#   include FT_FREETYPE_H
+#   include <vorbis/codec.h>
+#endif
+
+
+/** @file
+ * @brief  Implement free functions to access the dependency versions.
+ */
+
+namespace {
+#if defined(FREEORION_BUILD_HUMAN)
     std::string SDLVersionString() {
         std::stringstream ss;
-        ss << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL;
+        SDL_version version;
+
+        SDL_GetVersion(&version);
+        ss << static_cast<int>(version.major) << "."
+           << static_cast<int>(version.minor) << "."
+           << static_cast<int>(version.patch);
         return ss.str();
     }
-
-    std::string ZLibVersionString()
-    { return ZLIB_VERSION; }
 
     std::string FreeTypeVersionString() {
         std::stringstream ss;
@@ -36,41 +47,43 @@ namespace {
     //std::string OggVersionString()
     //{ return ""; }
 
-    // Vorbis requires calling a function in the shared library to get the
-    // version string, but I don't want to add the vorbis dependency to anything
-    // that uses the Common library.
-    //std::string VorbisVersionString() {
-    //    const char* retval = vorbis_version_string();
-    //    return retval;
-    //}
-
-    std::string PythonVersionString()
-    { return PY_VERSION; }
+    std::string VorbisVersionString() {
+        const char* retval = vorbis_version_string();
+        return retval;
+    }
 
     std::string PNGVersionString()
     { return PNG_LIBPNG_VER_STRING; }
+#endif
 }
 
 std::map<std::string, std::string> DependencyVersions() {
     std::map<std::string, std::string> retval;
     // fill with all findable version strings...
-    retval["Boost"] =       BoostVersionString();
+    retval["zlib"] =        ZLIB_VERSION;
+    retval["Boost"] =       BOOST_LIB_VERSION;
+
+#if defined(FREEORION_BUILD_SERVER) || defined(FREEORION_BUILD_AI)
+    retval["Python"] =      PY_VERSION;
+#endif
+
+#if defined(FREEORION_BUILD_HUMAN)
     retval["SDL"] =         SDLVersionString();
-    retval["zlib"] =        ZLibVersionString();
     retval["FreeType"] =    FreeTypeVersionString();
-    retval["Python"] =      PythonVersionString();
     retval["PNG"] =         PNGVersionString();
+    retval["libvorbis"] =   VorbisVersionString();
+#endif
 
     return retval;
 }
 
 void LogDependencyVersions() {
     std::map<std::string, std::string> vers = DependencyVersions();
-    DebugLogger() << "Dependency versions from headers:";
+    InfoLogger() << "Dependency versions from headers:";
     for (std::map<std::string, std::string>::const_iterator it = vers.begin();
          it != vers.end(); ++it)
     {
         if (!it->second.empty())
-            DebugLogger() << it->first << ": " << it->second;
+            InfoLogger() << it->first << ": " << it->second;
     }
 }
