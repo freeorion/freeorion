@@ -8,7 +8,6 @@ add_executable(test_parsers
 target_link_libraries(test_parsers
     freeorioncommon
     freeorionparse
-    log4cpp
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
