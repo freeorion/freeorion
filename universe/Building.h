@@ -69,11 +69,11 @@ protected:
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);
 
-#if BOOST_VERSION == 106100
+#if BOOST_VERSION >= 106100
 public:
 #endif
     ~Building() {}
-#if BOOST_VERSION == 106100
+#if BOOST_VERSION >= 106100
 protected:
 #endif
 
