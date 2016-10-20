@@ -86,7 +86,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT=0x0501;FREEORION_BUILD_AI;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;LOG4CPP_STLPORT_AND_BOOST_BUILD</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../../../include/python2.7/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../../../include/python2.7/;../../../include/zlib/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
@@ -119,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT=0x0501;FREEORION_BUILD_AI;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;LOG4CPP_STLPORT_AND_BOOST_BUILD</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../../../include/python2.7/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../../../include/python2.7/;../../../include/zlib/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
