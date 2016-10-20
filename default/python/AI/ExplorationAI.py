@@ -50,7 +50,7 @@ def assign_scouts_to_explore_systems():
 
     already_covered, available_scouts = get_current_exploration_info()
 
-    print "Explorable sys IDs: %s" % explore_list
+    print "Explorable system IDs: %s" % explore_list
     print "Already targeted: %s" % already_covered
     needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
     check_list = foAI.foAIstate.needsEmergencyExploration + needs_vis + explore_list
@@ -75,9 +75,9 @@ def assign_scouts_to_explore_systems():
                 if this_sys_id in foAI.foAIstate.needsEmergencyExploration:
                     del foAI.foAIstate.needsEmergencyExploration[
                         foAI.foAIstate.needsEmergencyExploration.index(this_sys_id)]
-                print "sys id %d already currently visible; skipping exploration" % this_sys_id
+                print "system id %d already currently visible; skipping exploration" % this_sys_id
                 continue
-        # TODO: if blocked byu monster, try to find nearby sys from which to see this sys
+        # TODO: if blocked byu monster, try to find nearby system from which to see this system
         if (sys_status.setdefault('monsterThreat', 0) > 2000 * foAI.foAIstate.aggression) or (fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200):
             print "Skipping exploration of system %d due to Big Monster, threat %d" % (this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
             continue
@@ -102,7 +102,7 @@ def assign_scouts_to_explore_systems():
     return
     # pylint: disable=pointless-string-statement
     """
-    #TODO: consider matching sys to closest scout, also consider rejecting scouts that would travel a blockaded path
+    #TODO: consider matching system to closest scout, also consider rejecting scouts that would travel a blockaded path
     sent_list=[]
     sysList= list(explorable_system_ids)
     shuffle( sysList ) #so that a monster defended system wont always be selected early
@@ -216,8 +216,8 @@ def update_explored_systems():
         if empire.hasExploredSystem(sys_id):  # consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
             del foAI.foAIstate.unexploredSystemIDs[sys_id]
             foAI.foAIstate.exploredSystemIDs[sys_id] = 1
-            sys = universe.getSystem(sys_id)
-            print "Moved system %s from unexplored list to explored list" % sys
+            system = universe.getSystem(sys_id)
+            print "Moved system %s from unexplored list to explored list" % system
             if sys_id in borderUnexploredSystemIDs:
                 del borderUnexploredSystemIDs[sys_id]
             newly_explored.append(sys_id)

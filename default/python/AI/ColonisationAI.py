@@ -191,7 +191,7 @@ def check_supply():
     # TODO consider that this should not be more then maximal value in empire.systemSupplyRanges
     supply_distance += 6  # should not be more than max value in supplyProjections
 
-    # we should not rely on constant here, for sys, supply in supplyProjections need to add systems in supply range
+    # we should not rely on constant here, for system, supply in supplyProjections need to add systems in supply range
     for jumps in range(-supply_distance, 1):  # [-supply_distance, ..., -2, -1, 0]
         annexable_system_ids.update(systems_by_supply_tier.get(jumps, []))
     colonization_timer.stop()
@@ -245,8 +245,8 @@ def survey_universe():
     # var setup done
 
     for sys_id in universe.systemIDs:
-        sys = universe.getSystem(sys_id)
-        if not sys:
+        system = universe.getSystem(sys_id)
+        if not system:
             continue
         empire_has_colony_in_sys = False
         empire_has_pop_ctr_in_sys = False
@@ -256,7 +256,7 @@ def survey_universe():
         best_local_pilot_val = 0
         if sys_id in AIstate.colonyTargetedSystemIDs:
             empire_has_qualifying_planet = True
-        for pid in sys.planetIDs:
+        for pid in system.planetIDs:
             planet = universe.getPlanet(pid)
             if not planet:
                 continue
@@ -359,7 +359,7 @@ def survey_universe():
                 AIstate.popCtrSystemIDs.append(sys_id)
             else:
                 AIstate.outpostSystemIDs.append(sys_id)
-            AIstate.empireStars.setdefault(sys.starType, []).append(sys_id)
+            AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = foAI.foAIstate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:
                 colony_status['colonies_under_attack'].append(sys_id)
