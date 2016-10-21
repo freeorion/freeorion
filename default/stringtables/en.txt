@@ -5071,32 +5071,32 @@ FILTERS
 Filters
 
 SITREP_IGNORE_MENU
-'''  Ignore'''
+Ignore
 
 SITREP_BLOCK_MENU
-'''  Block'''
+Block
 
 SITREP_SNOOZE_5_TURNS
-'''  For 5 turns, ignore this SitRep'''
+For 5 turns, ignore this SitRep
 
 SITREP_SNOOZE_10_TURNS
-'''  For 10 turns, ignore this SitRep'''
+For 10 turns, ignore this SitRep
 
 SITREP_SNOOZE_INDEFINITE
-'''  Completely ignore this SitRep'''
+Completely ignore this SitRep
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Show completely ignored SitReps'''
+Show completely ignored SitReps
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Show all ignored SitReps'''
+Show all ignored SitReps
 
 # %1% localized name of SitRep template
 SITREP_HIDE_TEMPLATE
-'''  Block all %1% SitReps'''
+Block all %1% SitReps
 
 SITREP_SHOWALL_TEMPLATES
-'''  Show all blocked SitReps'''
+Show all blocked SitReps
 
 SITREP_WELCOME
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
