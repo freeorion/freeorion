@@ -11453,7 +11453,7 @@ SP_SOLAR_CONCENTRATOR
 Solar Concentrator
 
 SP_SOLAR_CONCENTRATOR_DESC
-The Solar Concentrator uses the phototropic effect of [[tech SHP_ORG_HULL]]s to increase the strength of [[tech SHP_WEAPON_2_1]]. The effectness depends on the brightness of the star at the current location. It is expected to increase the weapons strength between 1.5 and 4.5. The research of [[tech SHP_SOLAR_CONNECTION]] suggest to increase the collecting surface to maximize the effect.
+The Solar Concentrator uses the phototropic effect of [[tech SHP_ORG_HULL]]s to increase the strength of [[tech SHP_WEAPON_2_1]]. The effectiveness depends on the brightness of the star at the current location. It is expected to increase the weapons strength between 1.5 and 4.5. The research of [[tech SHP_SOLAR_CONNECTION]] suggest to increase the collecting surface to maximize the effect.
 
 SHP_SOLAR_CONNECTION
 Solarweb
