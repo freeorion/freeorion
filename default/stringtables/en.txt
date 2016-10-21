@@ -5070,6 +5070,12 @@ Situation Report - Turn %1%
 FILTERS
 Filters
 
+SITREP_IGNORE_MENU
+'''  Ignore'''
+
+SITREP_BLOCK_MENU
+'''  Block'''
+
 SITREP_SNOOZE_5_TURNS
 '''  For 5 turns, ignore this SitRep'''
 
