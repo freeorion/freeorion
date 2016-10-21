@@ -542,7 +542,6 @@ EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/config.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/build_support.py \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/GIL \
                          @CMAKE_CURRENT_SOURCE_DIR@/GG/gen_signals.py \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/glext.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/GG/SignalTemplate.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal0.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal1.h \

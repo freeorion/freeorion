@@ -598,7 +598,6 @@
 		471023510CEF3AAB00A7DF2B /* Flags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flags.h; sourceTree = "<group>"; };
 		471023520CEF3AAB00A7DF2B /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
 		471023530CEF3AAB00A7DF2B /* gen_signals.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gen_signals.py; sourceTree = "<group>"; };
-		471023540CEF3AAB00A7DF2B /* glext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glext.h; sourceTree = "<group>"; };
 		471023550CEF3AAB00A7DF2B /* GUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUI.h; sourceTree = "<group>"; };
 		471023560CEF3AAB00A7DF2B /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layout.h; sourceTree = "<group>"; };
 		471023570CEF3AAB00A7DF2B /* ListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListBox.h; sourceTree = "<group>"; };
@@ -1386,7 +1385,6 @@
 				471023530CEF3AAB00A7DF2B /* gen_signals.py */,
 				CE6183961BB80D1300952BEA /* GGFwd.h */,
 				8257A8D91A90BA8C0006777D /* GLClientAndServerBuffer.h */,
-				471023540CEF3AAB00A7DF2B /* glext.h */,
 				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
 				471023550CEF3AAB00A7DF2B /* GUI.h */,
 				471023560CEF3AAB00A7DF2B /* Layout.h */,
