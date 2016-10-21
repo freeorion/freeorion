@@ -4352,6 +4352,8 @@ The Industry of a planet can be used for any production projects of [[encycloped
 
 Each project has a minimum number of turns required to build it. For example, if a project that cost 15 PPs, and had a minimum time of 3 turns, 5 PPs is the maximum that could be put towards its completion per turn.
 The project at the top of the queue is given PPs first. Any remaining PP are then given to the next project in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
+
+When ships are added to the queue they have two drop down menus that enable you to build the same ship multiple times. The first is to build that ship the specified number of times. So if 5 is selected the shipyard will build one ship and then build another ship and so forth until it has built 5 ships. If the second one to the right is selected the shipyard will build that number of ships. Note: To change these values you must left click to open the drop down menu and then left click again on the desired value to change it. You can change the numbers with your mouse scroll wheel, but it will not be recognized.
 '''
 
 RESEARCH_TITLE
