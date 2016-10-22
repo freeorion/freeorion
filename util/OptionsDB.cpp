@@ -11,7 +11,6 @@
 #include <stdexcept>
 #include <string>
 
-#include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -229,22 +228,20 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
 
         os << std::string(description_column - 1, ' ');
 
-        std::vector<std::string> tokenized_strings;
-        using boost::spirit::classic::anychar_p;
-        using boost::spirit::classic::rule;
-        using boost::spirit::classic::space_p;
-        rule<> tokenizer = +(*space_p >> (+(anychar_p - space_p))[PushBack(tokenized_strings)]);
-        parse(UserString(it->second.description).c_str(), tokenizer);
+        typedef boost::tokenizer<boost::char_separator<char> > Tokenizer;
+        boost::char_separator<char> separator(" \t");
+        Tokenizer tokens(UserString(it->second.description), separator);
         int curr_column = description_column;
-        for (unsigned int i = 0; i < tokenized_strings.size(); ++i) {
-            if (80 < curr_column + tokenized_strings[i].size() + (i ? 1 : 0)) {
-                os << "\n" << std::string(description_column, ' ') << tokenized_strings[i];
-                curr_column = description_column + tokenized_strings[i].size();
+        for (Tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+            if (80 < curr_column + it->size()) {
+                os << "\n" << std::string(description_column, ' ') << *it;
+                curr_column = description_column + it->size();
             } else {
-                os << " " << tokenized_strings[i];
-                curr_column += tokenized_strings[i].size() + 1;
+                os << " " << *it;
+                curr_column += it->size() + 1;
             }
         }
+
         if (it->second.validator) {
             std::stringstream stream;
             stream << UserString("COMMAND_LINE_DEFAULT") << it->second.DefaultValueToString();
