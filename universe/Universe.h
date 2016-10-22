@@ -20,12 +20,6 @@
 
 #include "../util/Export.h"
 
-#ifdef FREEORION_WIN32
-// because the linker gets confused about Win32 API functions...
-#  undef GetObject
-#  undef GetObjectA
-#endif
-
 class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;

@@ -45,6 +45,10 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
+// boost::spirit::classic pulls in windows.h which in turn defines macro
+// versions of min and max.  Defining NOMINMAX disables the creation of those
+// macros
+#define NOMINMAX
 #include <boost/spirit/include/classic.hpp>
 #include <boost/spirit/include/classic_dynamic.hpp>
 #include <boost/system/system_error.hpp>

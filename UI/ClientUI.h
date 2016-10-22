@@ -1,15 +1,6 @@
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 
-#ifdef FREEORION_WIN32
-#  ifdef Message
-#    undef Message
-#  endif
-#  ifdef MessageBox
-#    undef MessageBox
-#  endif
-#endif
-
 #include <boost/filesystem/path.hpp>
 #include <GG/GGFwd.h>
 

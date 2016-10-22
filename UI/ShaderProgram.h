@@ -1,11 +1,6 @@
 #ifndef _ShaderProgram_h_
 #define _ShaderProgram_h_
 
-#ifdef _MSC_VER
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-#endif
-
 // include OpenGL headers
 #if defined(__APPLE__) && defined(__MACH__)
 # include <OpenGL/gl.h>
