@@ -36,35 +36,33 @@ namespace {
     ////////////////////////////////////////
 
     /// Surround content with approprite tags based on tag_of
-    std::string WithTags(const std::string& content, const std::string& tag, const XMLElement& data) {
-        std::string open_tag = "<" + tag + " " + data.Attribute("value") + ">";
+    std::string WithTags(const std::string& content, const std::string& tag, const std::string& data) {
+        std::string open_tag = "<" + tag + " " + data + ">";
         std::string close_tag = "</" + tag + ">";
         return open_tag + content + close_tag;
     }
 
     /// The signature of functions that generate substitution strings for
     /// tags.
-    typedef std::string (*TagString)(const XMLElement& data, const std::string& tag, bool& valid);
+    typedef std::string (*TagString)(const std::string& data, const std::string& tag, bool& valid);
 
     /// Get string substitute for a translated text tag
-    std::string TextString(const XMLElement& data, const std::string& tag, bool& valid) {
-        const std::string& text = data.Attribute("value");
-        return UserString(text);
+    std::string TextString(const std::string& data, const std::string& tag, bool& valid) {
+        return UserString(data);
     }
 
     /// Get string substitute for a raw text tag
-    std::string RawTextString(const XMLElement& data, const std::string& tag, bool& valid) {
-        const std::string& text = data.Attribute("value");
-        return text;
+    std::string RawTextString(const std::string& data, const std::string& tag, bool& valid) {
+        return data;
     }
 
     ///Get string substitute for a tag that is a universe object
-    std::string UniverseObjectString(const XMLElement& data, const std::string& tag, bool& valid) {
+    std::string UniverseObjectString(const std::string& data, const std::string& tag, bool& valid) {
         int object_id = INVALID_OBJECT_ID;
         try {
-            object_id = boost::lexical_cast<int>(data.Attribute("value"));
+            object_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
-            ErrorLogger() << "UniverseObjectString couldn't cast \"" << data.Attribute("value") << "\" to int for object ID.";
+            ErrorLogger() << "UniverseObjectString couldn't cast \"" << data << "\" to int for object ID.";
             valid = false;
             return UserString("ERROR");
         }
@@ -79,16 +77,16 @@ namespace {
     }
 
     /// combat links always just labelled "Combat"; don't need to look up details
-    std::string CombatLogString(const XMLElement& data, const std::string& tag, bool& valid)
+    std::string CombatLogString(const std::string& data, const std::string& tag, bool& valid)
     { return WithTags(UserString("COMBAT"), tag, data); }
 
     /// Returns substitution string for a ship design tag
-    std::string ShipDesignString(const XMLElement& data, const std::string& tag, bool& valid) {
+    std::string ShipDesignString(const std::string& data, const std::string& tag, bool& valid) {
         int design_id = ShipDesign::INVALID_DESIGN_ID;
         try {
-            design_id = boost::lexical_cast<int>(data.Attribute("value"));
+            design_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
-            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data.Attribute("value") << "\" to int for ship design ID.";
+            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data << "\" to int for ship design ID.";
             valid = false;
             return UserString("ERROR");
         }
@@ -102,11 +100,10 @@ namespace {
     }
 
     /// Returns substitution string for a predefined ship design tag
-    std::string PredefinedShipDesignString(const XMLElement& data, const std::string& tag, bool& valid) {
-        const std::string& design_name = data.Attribute("value");
-        const ShipDesign* design = GetPredefinedShipDesign(design_name);
+    std::string PredefinedShipDesignString(const std::string& data, const std::string& tag, bool& valid) {
+        const ShipDesign* design = GetPredefinedShipDesign(data);
         if (!design) {
-            ErrorLogger() << "SubstituteAndAppend couldn't get predefined ship design with name " << design_name;
+            ErrorLogger() << "SubstituteAndAppend couldn't get predefined ship design with name " << data;
             valid = false;
             return UserString("ERROR");
         }
@@ -114,12 +111,12 @@ namespace {
     }
 
     /// Returns substitution string for an empire tag
-    std::string EmpireString(const XMLElement& data, const std::string& tag, bool& valid) {
+    std::string EmpireString(const std::string& data, const std::string& tag, bool& valid) {
         int empire_id = ALL_EMPIRES;
         try {
-            empire_id = boost::lexical_cast<int>(data.Attribute("value"));
+            empire_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
-            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data.Attribute("value") << "\" to int for empire ID.";
+            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data << "\" to int for empire ID.";
             valid = false;
             return UserString("ERROR");
         }
@@ -136,13 +133,12 @@ namespace {
     /// Returns translation of name, if Get says
     /// that a thing by that name exists, otherwise ERROR.
     template <typename T,const T* (*GetByName)(const std::string&)>
-    std::string NameString(const XMLElement& data, const std::string& tag, bool& valid) {
-        std::string name = data.Attribute("value");
-        if (!GetByName(name)) {
+    std::string NameString(const std::string& data, const std::string& tag, bool& valid) {
+        if (!GetByName(data)) {
             valid = false;
             return UserString("ERROR");
         }
-        return WithTags(UserString(name), tag, data);
+        return WithTags(UserString(data), tag, data);
     }
 
     /// Returns a map that tells shich function should be used to
@@ -182,7 +178,7 @@ namespace {
     /** Converts (first, last) to a string, looks up its value in the Universe,
       * then appends this to the end of a std::string. */
     struct SubstituteAndAppend {
-        SubstituteAndAppend(const XMLElement& variables, std::string& str, bool& valid) :
+        SubstituteAndAppend(const std::map<std::string, std::string>& variables, std::string& str, bool& valid) :
             m_variables(variables),
             m_str(str),
             m_valid(valid)
@@ -214,17 +210,16 @@ namespace {
             }
 
             // look up child
-            if (!m_variables.ContainsChild(label)) {
+            std::map<std::string, std::string>::const_iterator elem = m_variables.find(label);
+            if (m_variables.end() == elem) {
                 m_str += UserString("ERROR");
                 m_valid = false;
                 return;
             }
 
-            const XMLElement& token_elem = m_variables.Child(label);
-
             std::map<std::string, TagString>::const_iterator substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
-                m_str += substituter->second(token_elem, tag, m_valid);
+                m_str += substituter->second(elem->second, tag, m_valid);
             } else {
                 ErrorLogger() << "SubstituteAndAppend::operator(): No substitution scheme defined for tag: " << tag << " from token: " << token;
                 m_str += UserString("ERROR");
@@ -232,7 +227,7 @@ namespace {
             }
         }
 
-        const XMLElement&   m_variables;
+        const std::map<std::string, std::string>&   m_variables;
         std::string&        m_str;
         bool&               m_valid;
     };
@@ -310,16 +305,13 @@ void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup
 
 std::vector<std::string> VarText::GetVariableTags() const {
     std::vector<std::string> retval;
-    for (XMLElement::const_child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it)
-        retval.push_back(it->Tag());
+    for (std::map<std::string, std::string>::const_iterator it = m_variables.begin(); it != m_variables.end(); ++it)
+        retval.push_back(it->first);
     return retval;
 }
 
-void VarText::AddVariable(const std::string& tag, const std::string& data) {
-    XMLElement elem(tag);
-    elem.SetAttribute("value", data);
-    m_variables.AppendChild(elem);
-}
+void VarText::AddVariable(const std::string& tag, const std::string& data)
+{ m_variables[tag] = data; }
 
 void VarText::GenerateVarText() const {
     // generate a string complete with substituted variables and hyperlinks

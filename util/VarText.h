@@ -1,14 +1,12 @@
 #ifndef _VarText_h_
 #define _VarText_h_
 
-#ifndef _XMLDoc_h_
-#include "XMLDoc.h"
-#endif
+#include <map>
+#include <string>
+#include <vector>
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
-
-#include <string>
 
 #include "Export.h"
 
@@ -83,7 +81,7 @@ protected:
 
     std::string         m_template_string;          ///< the template string for this VarText, into which variables are substituted to render the text as user-readable
     bool                m_stringtable_lookup_flag;  ///< should the template string be looked up in the stringtable prior to substitution for variables?
-    XMLElement          m_variables;                ///< the data about variables to be substitued into the template string to render the VarText
+    std::map<std::string, std::string> m_variables; ///< the data about variables to be substitued into the template string to render the VarText
     mutable std::string m_text;                     ///< the user-readable rendered text with substitutions made
     mutable bool        m_validated;                ///< did vartext generation succeed without problems?
 
@@ -98,24 +96,8 @@ template <class Archive>
 void VarText::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_template_string)
-        & BOOST_SERIALIZATION_NVP(m_stringtable_lookup_flag);
-
-
-    std::vector<std::pair<std::string, std::string> > variables;
-
-    if (Archive::is_saving::value) {
-        for (XMLElement::child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it) {
-            variables.push_back(std::make_pair(it->Tag(), it->Attribute("value")));
-        }
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(variables);
-
-    if (Archive::is_loading::value) {
-        for (unsigned int i = 0; i < variables.size(); ++i) {
-            AddVariable(variables[i].first, variables[i].second);
-        }
-    }
+        & BOOST_SERIALIZATION_NVP(m_stringtable_lookup_flag)
+        & BOOST_SERIALIZATION_NVP(m_variables);
 }
 
 #endif // _VarText_h_

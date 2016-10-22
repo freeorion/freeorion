@@ -25,12 +25,10 @@ SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std
 {}
 
 int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
-    if (!m_variables.ContainsChild(tag))
-        return -1;
-    const XMLElement& token_elem = m_variables.Child(tag);
+    std::map<std::string, std::string>::const_iterator elem = m_variables.find(tag);
     try {
-        const std::string& text = token_elem.Attribute("value");
-        return boost::lexical_cast<int>(text);
+        if (elem != m_variables.end())
+            return boost::lexical_cast<int>(elem->second);
     } catch (...) {
         return -1;
     }
@@ -39,19 +37,16 @@ int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
 
 const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     static const std::string EMPTY_STRING;
-    if (!m_variables.ContainsChild(tag))
+    std::map<std::string, std::string>::const_iterator elem = m_variables.find(tag);
+    if (elem == m_variables.end())
         return EMPTY_STRING;
-    const XMLElement& token_elem = m_variables.Child(tag);
-    return token_elem.Attribute("value");
-    return EMPTY_STRING;
+    return elem->second;
 }
 
 std::string SitRepEntry::Dump() const {
     std::string retval = "SitRep template_string = \"" + m_template_string + "\"";
-    if (m_variables.NumChildren() > 0) {
-        for (XMLElement::const_child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it)
-            retval += " " + it->Tag() + " = " + it->Attribute("value");
-    }
+    for (std::map<std::string, std::string>::const_iterator it = m_variables.begin(); it != m_variables.end(); ++it)
+        retval += " " + it->first + " = " + it->second;
     retval += " turn = " + boost::lexical_cast<std::string>(m_turn);
     retval += " icon = " + m_icon;
     retval += " label = " + m_label;
