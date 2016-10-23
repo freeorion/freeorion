@@ -4,8 +4,6 @@ if(POLICY CMP0044)
     cmake_policy(SET CMP0044 OLD)
 endif()
 
-include(GNUInstallDirs)
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 IF(NOT CMAKE_BUILD_TYPE)
@@ -21,6 +19,8 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 # Configuration                        #
 ########################################
 project(FreeOrion)
+
+include(GNUInstallDirs)
 
 set(FreeOrion_VERSION 0.4.6+)
 
