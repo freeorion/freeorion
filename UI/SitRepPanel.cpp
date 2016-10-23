@@ -648,9 +648,10 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     }
     menu_contents.next_level.push_back(submenu_block);
 
-    menu_contents.next_level.push_back(GG::MenuItem("? - " + UserString("SITREP_IGNORE_BLOCK_TITLE"),                 9,
+    menu_contents.next_level.push_back(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"),                         9,
                                                     false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"),                        10,
+    menu_contents.next_level.push_back(GG::MenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") +
+                                                    UserString("SITREP_IGNORE_BLOCK_TITLE"),                         10,
                                                     false, false));
 
     CUIPopupMenu popup(pt.x, pt.y, menu_contents);
@@ -692,14 +693,14 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
         Update();
         break;
     }
-    case 9: { // Display help article
-        ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE");
-        break;
-    }
-    case 10: { // Copy text of sitrep
+    case 9: { // Copy text of sitrep
         if (sitrep_text.empty())
             break;
         GG::GUI::GetGUI()->SetClipboardText(GG::Font::StripTags(sitrep_text));
+        break;
+    }
+    case 10: { // Display help article
+        ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE");
         break;
     }
 

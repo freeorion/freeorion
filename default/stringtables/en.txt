@@ -239,6 +239,9 @@ Unowned
 NOWHERE
 Cannot be produced
 
+# Prefix to use for menu items that will open a pedia entry
+POPUP_MENU_PEDIA_PREFIX
+'''Help: '''
 
 ##
 ## Major errors
