@@ -211,9 +211,6 @@ void TextControl::SetText(const std::string& str,
         return;
     m_text = str;
 
-    if (!m_font)
-        return;
-
     m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
 
     m_text_elements = text_elements;
@@ -222,6 +219,10 @@ void TextControl::SetText(const std::string& str,
     {
         (*it)->Bind(m_text);
     }
+
+    if (!m_font)
+        return;
+
     m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
     Pt text_sz = m_font->TextExtent(m_line_data);
     m_text_ul = Pt();
