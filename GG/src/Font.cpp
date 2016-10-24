@@ -1345,12 +1345,17 @@ void Font::FillTemplatedText(
     std::vector<boost::shared_ptr<Font::TextElement> >& text_elements,
     std::vector<boost::shared_ptr<Font::TextElement> >::iterator start) const
 {
+    // For each TextElement in text_elements starting from start.
     std::vector<boost::shared_ptr<Font::TextElement> >::iterator& te_it = start;
     for (; te_it != text_elements.end(); ++te_it) {
         boost::shared_ptr<TextElement> elem = (*te_it);
+
+        // For each character in the TextElement.
         std::string::const_iterator it = elem->text.begin();
         std::string::const_iterator end_it = elem->text.end();
         while (it != end_it) {
+
+            // Find and set the width of the character glyph.
             elem->widths.push_back(X0);
             boost::uint32_t c = utf8::next(it, end_it);
             if (c != WIDE_NEWLINE) {
