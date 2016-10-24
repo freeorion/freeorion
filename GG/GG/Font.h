@@ -147,7 +147,7 @@ public:
             pair.second. */
         Substring(const std::string& str_, const IterPair& pair);
 
-        /** Rebind to a different string.*/
+        /** Rebind to \p str_, by changing the pointer str to point to \p str_.*/
         void Bind(const std::string& str_);
 
         /** Returns an iterator to the beginning of the substring. */
@@ -209,7 +209,12 @@ public:
 
         virtual ~TextElement(); ///< Virtual dtor.
 
-        /** Rebind to a different string.*/
+        /** Rebind to \p whole_text, by binding the SubString data member text to \p whole_text.
+
+            Binding to a new \p whole_text is very fast compared to re-parsing the entire \p
+            whole_text and allows TextElements of TextElementType TEXT to be changed quickly if it
+            is known that the parse would be the same.
+         */
         virtual void Bind(const std::string& whole_text);
 
         /** Returns the TextElementType of the element. */
@@ -248,7 +253,8 @@ public:
             (e.g. "</rgba>"). */
         FormattingTag(bool close);
 
-        /** Rebind to a different string.*/
+        /** Rebind to \p whole_text by binding both the base class and the data member tag_name
+            to \p whole_text. */
         virtual void Bind(const std::string& whole_text);
 
         virtual TextElementType Type() const;
