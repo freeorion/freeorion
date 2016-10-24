@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\GG\GG\ClrConstants.h" />
     <ClInclude Include="..\..\GG\GG\Control.h" />
     <ClInclude Include="..\..\GG\GG\Cursor.h" />
+    <ClInclude Include="..\..\GG\GG\DeferredLayout.h" />
     <ClInclude Include="..\..\GG\GG\dialogs\ColorDlg.h" />
     <ClInclude Include="..\..\GG\GG\dialogs\FileDlg.h" />
     <ClInclude Include="..\..\GG\GG\dialogs\ThreeButtonDlg.h" />
@@ -87,6 +88,7 @@
     <ClCompile Include="..\..\GG\src\ClrConstants.cpp" />
     <ClCompile Include="..\..\GG\src\Control.cpp" />
     <ClCompile Include="..\..\GG\src\Cursor.cpp" />
+    <ClCompile Include="..\..\GG\src\DeferredLayout.cpp" />
     <ClCompile Include="..\..\GG\src\dialogs\ColorDlg.cpp" />
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp" />
     <ClCompile Include="..\..\GG\src\dialogs\ThreeButtonDlg.cpp" />

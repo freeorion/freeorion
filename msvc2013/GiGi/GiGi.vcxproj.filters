@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -215,6 +215,9 @@
     <ClInclude Include="..\..\GG\GG\RichText\RichText.h">
       <Filter>Header Files\RichText</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GG\GG\DeferredLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
@@ -321,7 +324,7 @@
     </ClCompile>
     <ClCompile Include="..\..\GG\src\GLClientAndServerBuffer.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\..\GG\src\RichText\BlockControl.cpp">
       <Filter>Source Files\RichText</Filter>
     </ClCompile>
@@ -338,6 +341,9 @@
       <Filter>Source Files\RichText</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\ScrollPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\DeferredLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
