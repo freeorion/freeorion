@@ -1262,6 +1262,12 @@ Adresse du fichier son à jouer lorsqu'un bouton est cliqué.
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
 Adresse du fichier son à jouer lorsque le bouton de Tour est cliqué.
 
+OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE
+Active/désactive la lecture d'un fichier son au début d'un nouveau tour.
+
+OPTIONS_DB_UI_SOUND_NEWTURN_FILE
+Le fichier son joué au début d'un nouveau tour, si activé.
+
 OPTIONS_DB_UI_SOUND_LIST_SELECT
 Adresse du fichier son à jouer lorsqu'une liste est refermée.
 
@@ -2475,6 +2481,15 @@ Sons des fenêtres
 
 OPTIONS_SOUND_BUTTON
 Sons des boutons
+
+OPTIONS_SOUND_NEWTURN
+Nouveau tour
+
+OPTIONS_SOUND_NEWTURN_TOGGLE
+Activé
+
+OPTIONS_SOUND_NEWTURN_FILE
+Fichier son
 
 OPTIONS_SOUND_ALERT
 Alerte
@@ -4711,6 +4726,36 @@ Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_
 
 '''
 
+SITREP_IGNORE_BLOCK_TITLE
+Ignorer et Bloquer des SitReps
+
+SITREP_IGNORE_BLOCK_SHORT_DESC
+Ignorer un SitRep spécifique et bloquer des types de SitRep.
+
+SITREP_IGNORE_BLOCK_TEXT
+'''Deux options sont disponibles pour masquer des Rapports de Situation (SitReps): Ignorer et Bloquer.
+
+Ignorer un SitRep fait référence à un événement spécifique.
+Par exemple, un astronef spécifique atteignant un système spécifique.
+Un autre astronef atteignant ce même système, ou le même astronef atteignant un autre système sont tous deux des événements différents, et seront donc toujours affichés.
+
+Bloquer un <i>type</i> de SitRep s'applique à tous les SitReps faisant référence au même type d'événement.
+Par exemple, <u>[[SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL]]</u> fait référence à tout astronef appartenant à l'empire du joueur atteignant n'importe quel système.
+
+<u>[[SITREP_SNOOZE_INDEFINITE]]</u> masquera le SitRep pour tous les tours, à partir du tour 0.
+Les options Ignorer pour 5 ou 10 tours débuteront le décompte à partir du tour affiché dans la fenêtre Rapport de Situation.
+Ignorer un SitRep est pris en compte seulement pour la session de jeu en cours.
+Si le client est redémarré ou une autre partie chargée, ces SitReps sont à nouveau affichés.
+
+Bloquer un type de SitRep est appliqué pour tous les tours et conservé entre différentes sessions de jeu.
+Les types de SitRep précédemment bloqués peuvent être réactivés en cliquant sur le bouton Filtres.
+Les types de SitRep sont suivis d'un icône de validation s'ils sont activés/affichés.
+Les types de SitRep apparaissent dans la liste Filtres seulement une fois que l'événement correspondant s'est produit.
+
+Ignorer est utile pour masquer un événement récurrent, tels les rappels pour construire un [[buildingtype BLD_GAS_GIANT_GEN]] sur une planète.
+
+Bloquer est utile si vous considérez certains types de SitReps superflus, telles les [[encyclopedia BEGINNER_HINTS]] une fois toutes celles-ci connues.'''
+
 AI_ERROR_MSG
 Erreur_IA : Erreur de script d'IA
 
@@ -5026,19 +5071,19 @@ FILTERS
 Filtres
 
 SITREP_SNOOZE_5_TURNS
-'''  Masquer ce SitRep pour 5 tours'''
+'''  Pour 5 tours, ignorer ce SitRep'''
 
 SITREP_SNOOZE_10_TURNS
-'''  Masquer ce SitRep pour 10 tours'''
+'''  Pour 10 tours, ignorer ce SitRep'''
 
 SITREP_SNOOZE_INDEFINITE
-'''  Désactiver indéfiniment ce SitRep'''
+'''  Ignorer indéfiniment ce SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Réafficher tous les SitReps désactivés indéfiniment'''
+'''  Réafficher tous les SitReps ignorés indéfiniment'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Réafficher tous les SitReps masqués ou désactivés'''
+'''  Réafficher tous les SitReps ignorés'''
 
 SITREP_WELCOME  # translated
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
@@ -5266,7 +5311,7 @@ SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
 Un %shipdesign% ('%ship%' de %empire%) a atteint le système %system%.
 
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
-Astronef arrivé à destination
+Astronef impérial arrivé à destination
 
 SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
 La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %system%.
@@ -5734,7 +5779,7 @@ BEGINNER_HINT_19
 19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[encyclopedia SUPPLY_TITLE]] à une planète présentant un indicateur [[encyclopedia HAPPINESS_TITLE]] d'au moins 5, et une Population supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
 
 BEGINNER_HINT_20
-20: Les Rapports de Situation spécifiques (tel celui-ci) peuvent être temporairement masqués ou désactivés via un clic-droit sur leur icône, puis en sélectionnant une des options proposées. Les Rapports d'un certain type peuvent également être filtrés en utilisant le menu 'Filtres' de la Fenêtre 'Rapport de Situation'. Les astuces de jeu destinées aux débutants sont regroupées sous la dénomination [[encyclopedia BEGINNER_HINTS]] dans la liste de filtres.
+20: Les Rapports de Situation spécifiques (tel celui-ci) peuvent être temporairement ignorés via un clic-droit sur leur icône, puis en sélectionnant une des options proposées. Les Rapports d'un certain type peuvent également être filtrés en utilisant le menu 'Filtres' de la Fenêtre 'Rapport de Situation'. Les astuces de jeu destinées aux débutants sont regroupées sous la dénomination [[encyclopedia BEGINNER_HINTS]] dans la liste de filtres.
 
 BEGINNER_HINT_21
 21: Il est possible de définir une destination pour un astronef se trouvant encore dans la file d'attente de Production. Lorsque la Fenêtre Production est ouverte, cliquez sur le système de destination sur la carte galactique, puis effectuez un clic-droit sur l'astronef présent dans la file d'attente. Parmi la liste des options proposées, choisissez 'Rallier' suivi du nom du système sélectionné, vers lequel l'astronef se rendra automatiquement une fois sa construction terminée.
@@ -9871,7 +9916,7 @@ SPY_CUSTOM_ADVISORIES
 Renseignement Impérial
 
 SPY_CUSTOM_ADVISORIES_DESC
-'''La Direction du Renseignement Impérial rassemble et traite les informations émanant de plusieurs sources, tels que les espions, les informateurs, ainsi que les organismes officiels de commandement. Les sujets les plus importants sont présentés à chaque tour comme Rapports de Situation (SitReps). Si un SitRep est réaffiché tour après tour plus qu'il n'est nécessaire pour mémoriser l'information, il est possible de retirer le SitRep pour le tour en cours par un double-clic sur son icône, ou bien pour plusieurs tours par un clic-droit sur l'icône du SitRep.
+'''La Direction du Renseignement Impérial rassemble et traite les informations émanant de plusieurs sources, tels que les espions, les informateurs, ainsi que les organismes officiels de commandement. Les sujets les plus importants sont présentés à chaque tour comme Rapports de Situation (SitReps). Si un SitRep est réaffiché tour après tour plus qu'il n'est nécessaire pour mémoriser l'information, il est possible d'ignorer le SitRep pour le tour en cours par un double-clic sur son icône, ou bien pour plusieurs tours par un clic-droit sur l'icône du SitRep.
 
 La plupart des Sitreps sont prédéfinis ou déterminés automatiquement, mais des Sitreps Personnalisés peuvent être spécifiés et/ou traduits en éditant le fichier default/customizations/custom_sitreps.txt.
 (Note: lors d'une partie multijoueurs, les fichiers du Serveur sont utilisés afin de déterminer quels SitReps sont envoyés aux empires.)
