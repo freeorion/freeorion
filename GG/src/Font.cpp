@@ -1311,9 +1311,9 @@ std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextT
                     for (smatch::nested_results_type::const_iterator nested_it =
                              ++(*it).nested_results().begin();
                          nested_it != (*it).nested_results().end();
-                         ++nested_it) {
-                        element->params.push_back(
-                            Substring(text, (*nested_it)[0]));
+                         ++nested_it)
+                    {
+                        element->params.push_back(Substring(text, (*nested_it)[0]));
                     }
                 }
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
