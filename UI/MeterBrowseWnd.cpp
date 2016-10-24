@@ -367,7 +367,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         switch (info_it->cause_type) {
         case ECT_TECH: {
             name.clear();
-            if (empire = GetEmpire(source->Owner()))
+            if ((empire = GetEmpire(source->Owner())))
                 name = empire->Name();
             const std::string& label_template = (info_it->custom_label.empty()
                 ? UserString("TT_TECH")

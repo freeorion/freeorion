@@ -46,6 +46,6 @@ Effect::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const bo
 
 bool Effect::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const {
     return (this->source_object_id < right.source_object_id ||
-        (this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group);
+            ((this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group));
 }
 

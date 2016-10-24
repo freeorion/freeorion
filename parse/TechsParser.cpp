@@ -104,15 +104,15 @@ namespace {
 
             prerequisites
                 =   parse::label(Prerequisites_token)
-                >  (    '[' > +tok.string [ insert(_r1, _1) ] > ']'
-                    |   tok.string [ insert(_r1, _1) ]
+                >  (    ('[' > +tok.string [ insert(_r1, _1) ] > ']')
+                    |    tok.string [ insert(_r1, _1) ]
                    )
                 ;
 
             unlocks
                 =   parse::label(Unlock_token)
-                >  (    '[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']'
-                    |   parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
+                >  (    ('[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']')
+                    |    parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
                    )
                 ;
 

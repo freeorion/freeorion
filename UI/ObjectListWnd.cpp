@@ -1392,7 +1392,7 @@ private:
 
         for (std::size_t i = 1; i < m_controls.size(); ++i) {
             right = left + GetColumnWidth(static_cast<int>(i));
-            if (ctrl = m_controls[i])
+            if ((ctrl = m_controls[i]))
                 ctrl->SizeMove(GG::Pt(left, top), GG::Pt(right, bottom));
             left = right + PAD;
         }

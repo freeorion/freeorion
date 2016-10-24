@@ -37,8 +37,8 @@ namespace {
                 >    parse::label(Name_token) > tok.string [ _a = _1 ]
                 >    parse::label(Ships_token)
                 >    (
-                            '[' > +tok.string [ push_back(_b, _1) ] > ']'
-                        |   tok.string [ push_back(_b, _1) ]
+                            ('[' > +tok.string [ push_back(_b, _1) ] > ']')
+                        |    tok.string [ push_back(_b, _1) ]
                      )
                 [ push_back(_r1, new_<FleetPlan>(_a, _b, phoenix::val(true))) ]
                 ;

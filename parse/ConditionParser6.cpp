@@ -52,15 +52,15 @@ namespace {
             using phoenix::push_back;
 
             string_ref_vec
-                =   '[' > +string_value_ref [ push_back(_val, _1) ] > ']'
-                |   string_value_ref [ push_back(_val, _1) ]
+                =   ('[' > +string_value_ref [ push_back(_val, _1) ] > ']')
+                |    string_value_ref [ push_back(_val, _1) ]
                 ;
 
             homeworld
                 =   tok.Homeworld_
                 >   (
-                        parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
-                    |   eps [ _val = new_<Condition::Homeworld>() ]
+                        (parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ])
+                    |    eps [ _val = new_<Condition::Homeworld>() ]
                     )
                 ;
 
@@ -75,16 +75,16 @@ namespace {
             species
                 =   tok.Species_
                 >   (
-                        parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ]
-                    |   eps [ _val = new_<Condition::Species>() ]
+                        (parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ])
+                    |    eps [ _val = new_<Condition::Species>() ]
                     )
                 ;
 
             focus_type
                 =   tok.Focus_
                 >   (
-                        parse::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
-                |   eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
+                        (parse::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ])
+                |        eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
                     )
                 ;
 
@@ -92,8 +92,8 @@ namespace {
                 =   tok.Planet_
                 >>  parse::label(Type_token)
                 >   (
-                        '[' > +planet_type_value_ref [ push_back(_a, _1) ] > ']'
-                    |   planet_type_value_ref [ push_back(_a, _1) ]
+                        ('[' > +planet_type_value_ref [ push_back(_a, _1) ] > ']')
+                    |    planet_type_value_ref [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetType>(_a) ]
                 ;
@@ -102,8 +102,8 @@ namespace {
                 =   tok.Planet_
                 >>  parse::label(Size_token)
                 >   (
-                        '[' > +planet_size_value_ref [ push_back(_a, _1) ] > ']'
-                    |   planet_size_value_ref [ push_back(_a, _1) ]
+                        ('[' > +planet_size_value_ref [ push_back(_a, _1) ] > ']')
+                    |    planet_size_value_ref [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
@@ -112,8 +112,8 @@ namespace {
                 =   (tok.Planet_
                 >>  parse::label(Environment_token)
                 >   (
-                        '[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']'
-                    |   planet_environment_value_ref [ push_back(_a, _1) ]
+                        ('[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']')
+                    |    planet_environment_value_ref [ push_back(_a, _1) ]
                     )
                 >  -(parse::label(Species_token)        >  string_value_ref [_b = _1]))
                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]

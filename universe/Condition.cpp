@@ -2609,8 +2609,8 @@ void Contains::Eval(const ScriptingContext& parent_context,
     }
 
     // how complicated is this containment test?
-    if (search_domain == MATCHES && matches.empty() ||
-        search_domain == NON_MATCHES && non_matches.empty())
+    if (((search_domain == MATCHES) && matches.empty()) ||
+        ((search_domain == NON_MATCHES) && non_matches.empty()))
     {
         // don't need to evaluate anything...
 
@@ -2814,8 +2814,8 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     }
 
     // how complicated is this containment test?
-    if (search_domain == MATCHES && matches.empty() ||
-        search_domain == NON_MATCHES && non_matches.empty())
+    if (((search_domain == MATCHES) && matches.empty()) ||
+        ((search_domain == NON_MATCHES) && non_matches.empty()))
     {
         // don't need to evaluate anything...
 
@@ -3648,7 +3648,7 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     bool simple_eval_safe = ((!m_species_name || m_species_name->LocalCandidateInvariant()) &&
-                             parent_context.condition_root_candidate || RootCandidateInvariant());
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
         for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
@@ -6606,8 +6606,8 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
                           ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
-                            parent_context.condition_root_candidate || RootCandidateInvariant();
+    bool simple_eval_safe = m_distance->LocalCandidateInvariant()
+        && (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
@@ -6734,8 +6734,8 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
                                ObjectSet& matches, ObjectSet& non_matches,
                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = m_jumps->LocalCandidateInvariant() &&
-                            parent_context.condition_root_candidate || RootCandidateInvariant();
+    bool simple_eval_safe = m_jumps->LocalCandidateInvariant()
+        && (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
         TemporaryPtr<const UniverseObject> no_object;

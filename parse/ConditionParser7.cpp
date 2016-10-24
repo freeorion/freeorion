@@ -58,8 +58,8 @@ namespace {
                 =    tok.Star_
                 >    parse::label(Type_token)
                 >    (
-                            '[' > +star_type_value_ref [ push_back(_a, _1) ] > ']'
-                        |   star_type_value_ref [ push_back(_a, _1) ]
+                            ('[' > +star_type_value_ref [ push_back(_a, _1) ] > ']')
+                        |    star_type_value_ref [ push_back(_a, _1) ]
                      )
                 [ _val = new_<Condition::StarType>(_a) ]
                 ;

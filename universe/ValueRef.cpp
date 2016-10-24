@@ -632,8 +632,8 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     IF_CURRENT_VALUE(float)
 
     if (m_ref_type == NON_OBJECT_REFERENCE) {
-        if (property_name == "UniverseCentreX" |
-            property_name == "UniverseCentreY")
+        if ((property_name == "UniverseCentreX") |
+            (property_name == "UniverseCentreY"))
         {
             return GetUniverse().UniverseWidth() / 2;
         } else if (property_name == "UniverseWidth") {

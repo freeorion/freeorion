@@ -96,15 +96,15 @@ namespace {
                 ;
 
             primary_expr
-                =   '(' > expr > ')'
-                |   constant
-                |   free_variable
-                |   bound_variable
-                |   int_bound_variable_cast
-                |   statistic
-                |   int_statistic_cast
-                |   double_var_complex()
-                |   int_complex_variable_cast
+                =   ('(' > expr > ')')
+                |    constant
+                |    free_variable
+                |    bound_variable
+                |    int_bound_variable_cast
+                |    statistic
+                |    int_statistic_cast
+                |    double_var_complex()
+                |    int_complex_variable_cast
                 ;
 
             bound_variable_name.name("real number bound variable name (e.g., Population)");

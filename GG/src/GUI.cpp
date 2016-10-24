@@ -393,9 +393,9 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
         }
 
         // notify wnd under cursor of presence of drag-and-drop wnd(s)
-        if (m_curr_drag_wnd_dragged &&
-            dragged_wnd->DragDropDataType() != "" &&
-            mouse_button == 0 ||
+        if ((m_curr_drag_wnd_dragged &&
+             (dragged_wnd->DragDropDataType() != "") &&
+             (mouse_button == 0)) ||
             !m_drag_drop_wnds.empty())
         {
             std::set<Wnd*> ignores;
@@ -483,7 +483,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
 
     bool in_drag_drop =
         !m_drag_drop_wnds.empty() ||
-        m_curr_drag_wnd_dragged && click_wnd && click_wnd->DragDropDataType() != "" && mouse_button == 0;
+        (m_curr_drag_wnd_dragged && click_wnd && (click_wnd->DragDropDataType() != "") && (mouse_button == 0));
 
     m_mouse_button_state[mouse_button] = false;
     m_drag_wnds[mouse_button] = 0; // if the mouse button is released, stop the tracking the drag window

@@ -406,8 +406,8 @@ bool Slider<T>::EventFilter(Wnd* w, const WndEvent& event)
 template <class T>
 void Slider<T>::MoveTabToPosn()
 {
-    assert(m_range_min <= m_posn && m_posn <= m_range_max ||
-           m_range_max <= m_posn && m_posn <= m_range_min);
+    assert((m_range_min <= m_posn && m_posn <= m_range_max) ||
+           (m_range_max <= m_posn && m_posn <= m_range_min));
     double fractional_distance = static_cast<double>(m_posn - m_range_min) / (m_range_max - m_range_min);
     int tab_width = m_orientation == VERTICAL ? Value(m_tab->Height()) : Value(m_tab->Width());
     int line_length = (m_orientation == VERTICAL ? Value(Height()) : Value(Width())) - tab_width;

@@ -1763,8 +1763,8 @@ std::string Operation<T>::Description() const
              (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
               op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
             ) ||
-            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
            )
             parenthesize_lhs = true;
     }
@@ -1775,8 +1775,8 @@ std::string Operation<T>::Description() const
              (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
               op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
             ) ||
-            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
            )
             parenthesize_rhs = true;
     }
@@ -1879,8 +1879,8 @@ std::string Operation<T>::Dump() const
              (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
               op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
             ) ||
-            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
            )
             parenthesize_lhs = true;
     }
@@ -1891,8 +1891,8 @@ std::string Operation<T>::Dump() const
              (op_type == EXPONENTIATE   || op_type == TIMES     || op_type == DIVIDE ||
               op_type == PLUS           || op_type == MINUS     || op_type == NEGATE)
             ) ||
-            ((m_op_type == TIMES        || m_op_type == DIVIDE) &&
-             (op_type == PLUS           || op_type == MINUS)    || op_type == NEGATE)
+            (((m_op_type == TIMES        || m_op_type == DIVIDE) &&
+              (op_type == PLUS           || op_type == MINUS))    || op_type == NEGATE)
            )
             parenthesize_rhs = true;
     }

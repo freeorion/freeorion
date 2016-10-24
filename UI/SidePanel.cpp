@@ -1446,7 +1446,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
-    bool can_colonize =     selected_colony_ship && (colonizable  && colony_ship_capacity > 0.0f || (outpostable && colony_ship_capacity == 0.0f));
+    bool can_colonize =     selected_colony_ship && ((colonizable  && (colony_ship_capacity > 0.0f)) || (outpostable && (colony_ship_capacity == 0.0f)));
 
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
 
@@ -2976,11 +2976,13 @@ void SidePanel::DoLayout() {
     m_planet_panel_container->SizeMove(ul, lr);
 
     // hide scrollbar if there is no planets in the system
-    if (TemporaryPtr<const System> system = GetSystem(s_system_id))
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
+    if (system) {
         if (system->PlanetIDs().empty())
             m_planet_panel_container->HideScrollbar();
         else
             m_planet_panel_container->ShowScrollbar();
+    }
 
     // resize system resource summary
     if (m_system_resource_summary) {
