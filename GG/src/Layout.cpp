@@ -32,7 +32,6 @@
 #include <cassert>
 #include <cmath>
 
-
 using namespace GG;
 
 namespace {
@@ -86,7 +85,7 @@ Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
     m_row_params(rows),
     m_column_params(columns),
     m_ignore_child_resize(false),
-    m_ignore_parent_resize(false),
+    m_stop_resize_recursion(false),
     m_render_outline(false),
     m_outline_color(CLR_MAGENTA)
 {
@@ -202,8 +201,11 @@ void Layout::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* desti
 }
 
 void Layout::SizeMove(const Pt& ul, const Pt& lr)
+{ DoLayout(ul, lr); }
+
+void Layout::DoLayout(Pt ul, Pt lr)
 {
-    if (m_ignore_parent_resize)
+    if (m_stop_resize_recursion)
         return;
 
     // these hold values used to calculate m_min_usable_size
@@ -340,7 +342,9 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
     bool size_or_min_size_changed = false;
     Pt new_min_size(TotalMinWidth(), TotalMinHeight());
     if (new_min_size != MinSize()) {
+        ScopedAssign<bool> assignment(m_stop_resize_recursion, true);
         SetMinSize(new_min_size);
+        CorrectPositionOfSizeMove(ul, lr);
         size_or_min_size_changed = true;
     }
     Pt original_size = Size();
@@ -352,7 +356,7 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
     if (Wnd* parent = Parent()) {
         if (const_cast<const Wnd*>(parent)->GetLayout() == this) {
             Pt new_parent_min_size = MinSize() + parent->Size() - parent->ClientSize();
-            ScopedAssign<bool> assignment(m_ignore_parent_resize, true);
+            ScopedAssign<bool> assignment(m_stop_resize_recursion, true);
             parent->SetMinSize(Pt(new_parent_min_size.x, new_parent_min_size.y));
         }
     }
@@ -421,10 +425,10 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
     }
 
     if (m_row_params.back().current_origin + m_row_params.back().current_width != Value(Height()) - m_border_margin)
-        throw FailedCalculationCheck("Layout::SizeMove() : calculated row positions do not sum to the height of the layout");
+        throw FailedCalculationCheck("Layout::DoLayout() : calculated row positions do not sum to the height of the layout");
 
     if (m_column_params.back().current_origin + m_column_params.back().current_width != Value(Width()) - m_border_margin)
-        throw FailedCalculationCheck("Layout::SizeMove() : calculated column positions do not sum to the width of the layout");
+        throw FailedCalculationCheck("Layout::DoLayout() : calculated column positions do not sum to the width of the layout");
 
     // resize cells and their contents
     m_ignore_child_resize = true;
@@ -433,14 +437,19 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
               Y(m_row_params[it->second.first_row].current_origin));
         Pt lr(X(m_column_params[it->second.last_column - 1].current_origin + m_column_params[it->second.last_column - 1].current_width),
               Y(m_row_params[it->second.last_row - 1].current_origin + m_row_params[it->second.last_row - 1].current_width));
+        Pt ul_margin(X0, Y0);
+        Pt lr_margin(X0, Y0);
         if (0 < it->second.first_row)
-            ul.y += static_cast<int>(m_cell_margin / 2);
+            ul_margin.y += static_cast<int>(m_cell_margin / 2);
         if (0 < it->second.first_column)
-            ul.x += static_cast<int>(m_cell_margin / 2);
+            ul_margin.x += static_cast<int>(m_cell_margin / 2);
         if (it->second.last_row < m_row_params.size())
-            lr.y -= static_cast<int>(m_cell_margin / 2.0 + 0.5);
+            lr_margin.y += static_cast<int>(m_cell_margin / 2.0 + 0.5);
         if (it->second.last_column < m_column_params.size())
-            lr.x -= static_cast<int>(m_cell_margin / 2.0 + 0.5);
+            lr_margin.x += static_cast<int>(m_cell_margin / 2.0 + 0.5);
+
+        ul += ul_margin;
+        lr -= lr_margin;
 
         if (it->second.alignment == ALIGN_NONE) { // expand to fill available space
             it->first->SizeMove(ul, lr);
@@ -448,6 +457,17 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
             Pt available_space = lr - ul;
             Pt min_usable_size = it->first->MinUsableSize();
             Pt min_size = it->first->MinSize();
+
+            // HACK! This is put here so that TextControl, which is currently GG's
+            // only height-for-width Wnd type, doesn't get vertically squashed
+            // down to 0-height cells.  Note that they can still get horizontally
+            // squashed.
+            if (TextControl *text_control = dynamic_cast<TextControl*>(it->first)) {
+                X text_width = (lr.x - ul.x);
+                min_usable_size = text_control->MinUsableSize(text_width);
+                min_size = min_usable_size;
+            }
+
             Pt window_size(std::min(available_space.x, std::max(it->second.original_size.x, std::max(min_size.x, min_usable_size.x))),
                            std::min(available_space.y, std::max(it->second.original_size.y, std::max(min_size.y, min_usable_size.y))));
             Pt resize_ul, resize_lr;
@@ -483,7 +503,7 @@ void Layout::SizeMove(const Pt& ul, const Pt& lr)
     m_ignore_child_resize = false;
 
     if (ContainingLayout() && size_or_min_size_changed)
-        ContainingLayout()->ChildSizeOrMinSizeOrMaxSizeChanged();
+        ContainingLayout()->ChildSizeOrMinSizeChanged();
 }
 
 void Layout::Render()
@@ -708,7 +728,7 @@ void Layout::RedoLayout()
     Resize(Size());
 }
 
-void Layout::ChildSizeOrMinSizeOrMaxSizeChanged()
+void Layout::ChildSizeOrMinSizeChanged()
 {
     if (!m_ignore_child_resize)
         RedoLayout();

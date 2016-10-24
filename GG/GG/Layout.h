@@ -240,6 +240,16 @@ protected:
     virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
     virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
     virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+
+    virtual void DoLayout(Pt ul, Pt lr);
+
+    /** Redo the layout.  This is called internally when something changes and
+        it needs to redo the layout.
+
+        Bug:  This does nothing if the size has not changed.  Fixing it to use
+        call DoLayout() even when the size has not changed breaks all text boxes.
+    */
+    virtual void RedoLayout();
     //@}
 
 private:
@@ -274,8 +284,7 @@ private:
     X      TotalMinWidth() const;
     Y      TotalMinHeight() const;
     void   ValidateAlignment(Flags<Alignment>& alignment);
-    void   RedoLayout();
-    void   ChildSizeOrMinSizeOrMaxSizeChanged();
+    void   ChildSizeOrMinSizeChanged();
 
     std::vector<std::vector<Wnd*> > m_cells;
     unsigned int                    m_border_margin;
@@ -285,7 +294,7 @@ private:
     std::map<Wnd*, WndPosition>     m_wnd_positions;
     Pt                              m_min_usable_size;
     bool                            m_ignore_child_resize;
-    bool                            m_ignore_parent_resize;
+    bool                            m_stop_resize_recursion;
     bool                            m_render_outline;
     Clr                             m_outline_color;
 

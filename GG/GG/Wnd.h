@@ -465,6 +465,9 @@ public:
 
     /** Returns the region under point \a pt. */
     virtual WndRegion WindowRegion(const Pt& pt) const;
+
+    /** Adjusts \p ul and \p lr to correct for minsize and maxsize.*/
+    void CorrectPositionOfSizeMove(Pt& ul, Pt& lr) const;
     //@}
 
     /** \name Mutators */ ///@{
@@ -542,10 +545,10 @@ public:
     void Resize(const Pt& sz);
 
     /** Sets the minimum allowable size of window \a pt. */
-    void SetMinSize(const Pt& sz);
+    virtual void SetMinSize(const Pt& sz);
 
     /** Sets the maximum allowable size of window \a pt. */
-    void SetMaxSize(const Pt& sz);
+    virtual void SetMaxSize(const Pt& sz);
 
     /** Places \a wnd in child ptr list, sets's child's \a m_parent member to
         \a this. */
