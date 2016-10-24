@@ -492,7 +492,7 @@ namespace {
         provided to callers without the overhead of recompiling the
         regular expression.*/
     class CompiledRegex {
-        public:
+    public:
         CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
             m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
             m_EVERYTHING()
@@ -561,7 +561,7 @@ namespace {
             return m_EVERYTHING;
         }
 
-        private:
+    private:
 
         bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) {
             return m_ignore_tags ? false : m_known_tags->count(sub.str()) != 0;
@@ -588,28 +588,34 @@ namespace {
         xpr::sregex m_EVERYTHING;
     };
 
+    /** TagHandler stores a set of all known tags and provides pre-compiled regexs for those tags.
+
+     Known tags are tags that will be parsed into TextElement OPEN_TAG or CLOSE_TAG. */
     class TagHandler {
-        public:
+    public:
         TagHandler() :
             m_known_tags(),
             m_regex_w_tags(m_known_tags, false),
             m_regex_w_tags_skipping_unmatched(m_known_tags, true)
         {}
 
+        /** Add a tag to the set of known tags.*/
         void Insert(const std::string& tag) {
             m_known_tags.insert(tag);
         }
 
+        /** Remove a tag from the set of known tags.*/
         void Erase(const std::string& tag) {
             m_known_tags.erase(tag);
         }
 
+        /** Remove all tags from the set of known tags.*/
         void Clear() {
             m_known_tags.clear();
         }
 
         // Return a regex bound to \p text using the currently known
-        // tags possible \p ignore_tags and/or \p strip_unpaired_tags
+        // tags.  If required \p ignore_tags and/or \p strip_unpaired_tags.
         xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
             if (!strip_unpaired_tags)
                 return m_regex_w_tags.BindRegexToText(text, ignore_tags);
@@ -617,7 +623,7 @@ namespace {
                 return m_regex_w_tags_skipping_unmatched.BindRegexToText(text, ignore_tags);
         }
 
-        private:
+    private:
         // set of tags known to the handler
         boost::unordered_set<std::string> m_known_tags;
 
