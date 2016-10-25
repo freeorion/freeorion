@@ -161,6 +161,8 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
         print "This empire has been eliminated. Ignoring chat message"
         return
 
+    if handle_simulation_command(message_text):
+        return
     # print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
     # perhaps it is a debugging interaction
     if handle_debug_chat(sender_id, message_text):
@@ -316,3 +318,14 @@ def declare_war_on_all():  # pylint: disable=invalid-name
 
 
 init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())
+
+
+def handle_simulation_command(message):
+    if message == 'simulate':
+        try:
+            import combat_simulator
+            combat_simulator.CombatManager().run(150)
+        except Exception as e:
+            print_error(e)
+        return True
+    return False
