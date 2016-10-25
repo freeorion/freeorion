@@ -30,7 +30,6 @@ class CombatManager(object):
     def __init__(self):
         self.faction_A = Faction(boni_A)
         self.faction_B = Faction(boni_B)
-        self.parse_shiplist()
 
     def parse_shiplist(self):
         del ships_A[:]
@@ -61,7 +60,6 @@ class CombatManager(object):
                         self.faction_B.add_ship(design_name=this_line)
 
 
-
     def add_ship_for_A(self, design_id=None, design_name=None):
         self.faction_A.add_ship(design_id, design_name)
 
@@ -76,6 +74,7 @@ class CombatManager(object):
 
     def run(self, iterations):
         self.__init__()
+        self.parse_shiplist()
 
         WIN_A = -1
         WIN_B = 1
