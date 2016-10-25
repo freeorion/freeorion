@@ -112,7 +112,7 @@ def get_invasion_fleets():
                 continue
             # TODO: have TroopShipDesigner give the expected number of troops including species effects directly
             troops_per_ship = best_base_trooper_here.troopCapacity
-            _, _, species_troop_grade = CombatRatingsAI.get_species_troops_grade(loc_planet.speciesName)
+            species_troop_grade = CombatRatingsAI.get_species_troops_grade(loc_planet.speciesName)
             troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
             if not troops_per_ship:
                 print "The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet
