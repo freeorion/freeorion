@@ -325,6 +325,7 @@
 		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
 		CE2C454D1C65036F0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE2C454E1C6503990085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
+		CE3102B61DBFD0730085A4DC /* DeferredLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
 		CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839D1BB80D2E00952BEA /* BlockControl.cpp */; };
 		CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */; };
@@ -1091,6 +1092,8 @@
 		CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonParamsParser.cpp; sourceTree = "<group>"; };
 		CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
 		CE2C454C1C65036F0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
+		CE3102B41DBFD05B0085A4DC /* DeferredLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredLayout.h; sourceTree = "<group>"; };
+		CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredLayout.cpp; sourceTree = "<group>"; };
 		CE594BA51CB2D1360085A4DC /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = algorithm.hpp; sourceTree = "<group>"; };
 		CE594BA61CB2D1360085A4DC /* bit_aligned_pixel_iterator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bit_aligned_pixel_iterator.hpp; sourceTree = "<group>"; };
 		CE594BA71CB2D1360085A4DC /* bit_aligned_pixel_reference.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bit_aligned_pixel_reference.hpp; sourceTree = "<group>"; };
@@ -1370,6 +1373,7 @@
 				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
 				471023440CEF3AAB00A7DF2B /* Control.h */,
 				471023450CEF3AAB00A7DF2B /* Cursor.h */,
+				CE3102B41DBFD05B0085A4DC /* DeferredLayout.h */,
 				471023460CEF3AAB00A7DF2B /* dialogs */,
 				4710234A0CEF3AAB00A7DF2B /* DrawUtil.h */,
 				4710234B0CEF3AAB00A7DF2B /* DropDownList.h */,
@@ -1455,6 +1459,7 @@
 				471023970CEF3AAC00A7DF2B /* Control.cpp */,
 				471023980CEF3AAC00A7DF2B /* Cursor.cpp */,
 				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
+				CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */,
 				471023990CEF3AAC00A7DF2B /* dialogs */,
 				4710239E0CEF3AAC00A7DF2B /* DrawUtil.cpp */,
 				4710239F0CEF3AAC00A7DF2B /* DropDownList.cpp */,
@@ -2683,6 +2688,7 @@
 				CE6183A91BB80D2E00952BEA /* TagParser.cpp in Sources */,
 				4710242E0CEF3AAC00A7DF2B /* Texture.cpp in Sources */,
 				4710242F0CEF3AAC00A7DF2B /* Timer.cpp in Sources */,
+				CE3102B61DBFD0730085A4DC /* DeferredLayout.cpp in Sources */,
 				471024300CEF3AAC00A7DF2B /* Wnd.cpp in Sources */,
 				471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */,
 				CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */,
