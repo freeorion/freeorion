@@ -2341,7 +2341,7 @@ namespace {
                                             boost::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, GG::X width)
     {
         general_type = UserString("SP_PLANET_SUITABILITY");
 
@@ -2439,7 +2439,12 @@ namespace {
             std::string species_name = *it;
 
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
-            max_species_name_column1_width = std::max(font->TextExtent(species_name_column1).x, max_species_name_column1_width);
+            std::vector<GG::Font::LineData> lines;
+            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+            std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+                font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
+            GG::Pt extent = font->DetermineLines(species_name_column1, format, width, text_elements, lines);
+            max_species_name_column1_width = std::max(extent.x, max_species_name_column1_width);
 
             // Setting the planet's species allows all of it meters to reflect
             // species (and empire) properties, such as environment type
@@ -2478,8 +2483,16 @@ namespace {
             std::string user_species_name = UserString(it->second.first);
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % LinkTaggedText(VarText::SPECIES_TAG, it->second.first));
 
-            while (font->TextExtent(species_name_column1).x < max_species_name_column1_width)
-            { species_name_column1 += "\t"; }
+            std::vector<GG::Font::LineData> lines;
+            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+            std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+                font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
+            GG::Pt extent = font->DetermineLines(species_name_column1, format, width, text_elements, lines);
+            while (extent.x < max_species_name_column1_width) {
+                species_name_column1 += "\t";
+                text_elements = font->ExpensiveParseFromTextToTextElements(species_name_column1, format);
+                extent = font->DetermineLines(species_name_column1, format, width, text_elements, lines);
+            }
 
             if (it->first > 0) {
                 if (!positive_header_placed) {
@@ -2538,7 +2551,8 @@ namespace {
                                             boost::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, boost::weak_ptr<const ShipDesign>& incomplete_design)
+                                            GG::Clr& color, boost::weak_ptr<const ShipDesign>& incomplete_design,
+                                            GG::X width)
     {
         if (item_type == TextLinker::ENCYCLOPEDIA_TAG) {
             RefreshDetailPanelPediaTag(         item_type, item_name,
@@ -2596,7 +2610,7 @@ namespace {
         } else if (item_type == PLANET_SUITABILITY_REPORT) {
             RefreshDetailPanelSuitabilityTag(   item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description, color, width);
         } else if (item_type == TEXT_SEARCH_RESULTS) {
             RefreshDetailPanelSearchResultsTag( item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
@@ -2638,7 +2652,7 @@ void EncyclopediaDetailPanel::Refresh() {
     GetRefreshDetailPanelInfo(m_items_it->first, m_items_it->second,
                               name, texture, other_texture, turns, cost, cost_units,
                               general_type, specific_type, detailed_description, color,
-                              m_incomplete_design);
+                              m_incomplete_design, ClientWidth());
 
     if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;

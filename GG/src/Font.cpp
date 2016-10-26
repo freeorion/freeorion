@@ -937,21 +937,14 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                      const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
-                      {
+                      const std::vector<LineData>& line_data, RenderState* render_state/* = 0*/) const
+{
     RenderState state;
     if (!render_state)
         render_state = &state;
 
-    // get breakdown of how text is divided into lines
-    std::vector<LineData> lines;
-    if (!line_data) {
-        DetermineLines(text, format, lr.x - ul.x, lines);
-        line_data = &lines;
-    }
-
-    RenderText(ul, lr, text, format, *line_data, *render_state,
-               0, CP0, line_data->size(), CPSize(line_data->back().char_data.size()));
+    RenderText(ul, lr, text, format, line_data, *render_state,
+               0, CP0, line_data.size(), CPSize(line_data.back().char_data.size()));
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
@@ -965,21 +958,14 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format, RenderCache& cache,
-                         const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
+                         const std::vector<LineData>& line_data, RenderState* render_state/* = 0*/) const
  {
     RenderState state;
     if (!render_state)
         render_state = &state;
 
-    // get breakdown of how text is divided into lines
-    std::vector<LineData> lines;
-    if (!line_data) {
-        DetermineLines(text, format, lr.x - ul.x, lines);
-        line_data = &lines;
-    }
-
-    PreRenderText(ul, lr, text, format, *line_data, *render_state,
-                  0, CP0, line_data->size(), line_data->empty() ? CP0 : CPSize(line_data->back().char_data.size()), cache);
+    PreRenderText(ul, lr, text, format, line_data, *render_state,
+                  0, CP0, line_data.size(), line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
@@ -1082,27 +1068,10 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
 }
 
 Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data) const
-{ return DetermineLinesImpl(text, format, box_width, line_data, 0); }
-
-Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data,
-                        std::vector<boost::shared_ptr<TextElement> >& text_elements) const
-{
-    assert(text_elements.empty());
-    return DetermineLinesImpl(text, format, box_width, line_data, &text_elements);
-}
-
-Pt Font::DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
                         const std::vector<boost::shared_ptr<TextElement> >& text_elements,
                         std::vector<LineData>& line_data) const
 {
-    assert(!text_elements.empty());
-    return DetermineLinesImpl(text,
-                              format,
-                              box_width,
-                              line_data,
-                              const_cast<std::vector<boost::shared_ptr<TextElement> >*>(&text_elements));
+    return DetermineLinesImpl(text, format, box_width, line_data, text_elements);
 }
 
 std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
@@ -1134,12 +1103,6 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
     }
 
     return retval.str();
-}
-
-Pt Font::TextExtent(const std::string& text, Flags<TextFormat> format/* = FORMAT_NONE*/, X box_width/* = X0*/) const
-{
-    std::vector<LineData> lines;
-    return DetermineLines(text, format, box_width ? box_width : X(1 << 15), lines);
 }
 
 Pt Font::TextExtent(const std::string& text, const std::vector<LineData>& line_data) const
@@ -1253,139 +1216,134 @@ namespace DebugOutput {
     }
 }
 
-void Font::FillTextElements(const std::string& text,
-                            bool ignore_tags,
-                            std::vector<boost::shared_ptr<TextElement> >& text_elements) const
+std::vector<boost::shared_ptr<Font::TextElement> > Font::ExpensiveParseFromTextToTextElements(const std::string& text,
+                                                                                              const Flags<TextFormat>& format) const
 {
-    if (text_elements.empty()) {
-        using namespace boost::xpressive;
+    std::vector<boost::shared_ptr<TextElement> > text_elements;
 
-        if (text.empty())
-            return;
+    using namespace boost::xpressive;
 
-        // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
-        sregex& regex = StaticTagHandler().Regex(text, ignore_tags);
-        sregex_iterator it(text.begin(), text.end(), regex);
+    if (text.empty())
+        return text_elements;
 
-        // These are the types found by the regular expression: XML open/close tags, text and
-        // whitespace.  Each type will correspond to a type of TextElement.
-        mark_tag tag_name_tag(1);
-        mark_tag open_bracket_tag(2);
-        mark_tag close_bracket_tag(3);
-        mark_tag whitespace_tag(4);
-        mark_tag text_tag(5);
+    bool ignore_tags = format & FORMAT_IGNORETAGS;
 
-        sregex_iterator end_it;
-        while (it != end_it)
-        {
-            // Consolidate adjacent blocks of text.  If adjacent found substrings are all text, merge
-            // them into a single Substring.
-            bool need_increment = true;
-            Substring combined_text;
-            sub_match<std::string::const_iterator> const* text_match;
-            while (it != end_it
-                   && (text_match = &(*it)[text_tag])
-                   && text_match->matched) {
-                need_increment = false;
-                if (combined_text.empty())
-                    combined_text = Substring(text, *text_match);
-                else
-                    combined_text += *text_match;
-                ++it;
-            }
+    // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
+    sregex& regex = StaticTagHandler().Regex(text, ignore_tags);
+    sregex_iterator it(text.begin(), text.end(), regex);
 
-            // If the element is not a text element then it must be an open tag, a close tag or whitespace.
-            if (combined_text.empty()) {
+    // These are the types found by the regular expression: XML open/close tags, text and
+    // whitespace.  Each type will correspond to a type of TextElement.
+    mark_tag tag_name_tag(1);
+    mark_tag open_bracket_tag(2);
+    mark_tag close_bracket_tag(3);
+    mark_tag whitespace_tag(4);
+    mark_tag text_tag(5);
 
-                // Open XML tag.
-                if ((*it)[open_bracket_tag].matched) {
-                    boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(false));
-                    element->text = Substring(text, (*it)[0]);
+    sregex_iterator end_it;
+    while (it != end_it)
+    {
+        // Consolidate adjacent blocks of text.  If adjacent found substrings are all text, merge
+        // them into a single Substring.
+        bool need_increment = true;
+        Substring combined_text;
+        sub_match<std::string::const_iterator> const* text_match;
+        while (it != end_it
+               && (text_match = &(*it)[text_tag])
+               && text_match->matched) {
+            need_increment = false;
+            if (combined_text.empty())
+                combined_text = Substring(text, *text_match);
+            else
+                combined_text += *text_match;
+            ++it;
+        }
 
-                    // Check open tags for submatches which are parameters.  For example a Color tag
-                    // might have RGB parameters.
-                    if (1 < (*it).nested_results().size()) {
-                        element->params.reserve((*it).nested_results().size() - 1);
-                        for (smatch::nested_results_type::const_iterator nested_it =
-                                 ++(*it).nested_results().begin();
-                             nested_it != (*it).nested_results().end();
-                             ++nested_it) {
-                            element->params.push_back(
-                                Substring(text, (*nested_it)[0]));
-                        }
-                    }
-                    element->tag_name = Substring(text, (*it)[tag_name_tag]);
-                    text_elements.push_back(element);
+        // If the element is not a text element then it must be an open tag, a close tag or whitespace.
+        if (combined_text.empty()) {
 
-                // Close XML tag
-                } else if ((*it)[close_bracket_tag].matched) {
-                    boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(true));
-                    element->text = Substring(text, (*it)[0]);
-                    element->tag_name = Substring(text, (*it)[tag_name_tag]);
-                    text_elements.push_back(element);
+            // Open XML tag.
+            if ((*it)[open_bracket_tag].matched) {
+                boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(false));
+                element->text = Substring(text, (*it)[0]);
 
-                // Whitespace element
-                } else if ((*it)[whitespace_tag].matched) {
-                    boost::shared_ptr<Font::TextElement> element(new Font::TextElement(true, false));
-                    element->text = Substring(text, (*it)[whitespace_tag]);
-                    text_elements.push_back(element);
-
-                    // If the last character of a whitespace element is a line ending then create a
-                    // newline TextElement.
-                    char last_char = *boost::prior(element->text.end());
-                    if (last_char == '\n' || last_char == '\f' || last_char == '\r') {
-                        // Basic text element.
-                        boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, true));
-                        text_elements.push_back(element);
+                // Check open tags for submatches which are parameters.  For example a Color tag
+                // might have RGB parameters.
+                if (1 < (*it).nested_results().size()) {
+                    element->params.reserve((*it).nested_results().size() - 1);
+                    for (smatch::nested_results_type::const_iterator nested_it =
+                             ++(*it).nested_results().begin();
+                         nested_it != (*it).nested_results().end();
+                         ++nested_it)
+                    {
+                        element->params.push_back(Substring(text, (*nested_it)[0]));
                     }
                 }
-            } else {
-                boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, false));
-                element->text = combined_text;
+                element->tag_name = Substring(text, (*it)[tag_name_tag]);
                 text_elements.push_back(element);
-            }
 
-            if (need_increment)
-                ++it;
-        }
+            // Close XML tag
+            } else if ((*it)[close_bracket_tag].matched) {
+                boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(true));
+                element->text = Substring(text, (*it)[0]);
+                element->tag_name = Substring(text, (*it)[tag_name_tag]);
+                text_elements.push_back(element);
 
-        // fill in the widths of code points in each TextElement
-        for (std::size_t i = 0; i < text_elements.size(); ++i) {
-            std::string::const_iterator it = text_elements[i]->text.begin();
-            std::string::const_iterator end_it = text_elements[i]->text.end();
-            while (it != end_it) {
-                text_elements[i]->widths.push_back(X0);
-                boost::uint32_t c = utf8::next(it, end_it);
-                if (c != WIDE_NEWLINE) {
-                    GlyphMap::const_iterator it = m_glyphs.find(c);
-                    // use a space when an unrendered glyph is requested (the
-                    // space chararacter is always renderable)
-                    text_elements[i]->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
+            // Whitespace element
+            } else if ((*it)[whitespace_tag].matched) {
+                boost::shared_ptr<Font::TextElement> element(new Font::TextElement(true, false));
+                element->text = Substring(text, (*it)[whitespace_tag]);
+                text_elements.push_back(element);
+
+                // If the last character of a whitespace element is a line ending then create a
+                // newline TextElement.
+                char last_char = *boost::prior(element->text.end());
+                if (last_char == '\n' || last_char == '\f' || last_char == '\r') {
+                    boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, true));
+                    text_elements.push_back(element);
                 }
             }
+
+        // Basic text element.
+        } else {
+            boost::shared_ptr<Font::TextElement> element(new Font::TextElement(false, false));
+            element->text = combined_text;
+            text_elements.push_back(element);
         }
+
+        if (need_increment)
+            ++it;
+    }
+
+    // fill in the widths of code points in each TextElement
+    for (std::size_t i = 0; i < text_elements.size(); ++i) {
+        std::string::const_iterator it = text_elements[i]->text.begin();
+        std::string::const_iterator end_it = text_elements[i]->text.end();
+        while (it != end_it) {
+            text_elements[i]->widths.push_back(X0);
+            boost::uint32_t c = utf8::next(it, end_it);
+            if (c != WIDE_NEWLINE) {
+                GlyphMap::const_iterator it = m_glyphs.find(c);
+                // use a space when an unrendered glyph is requested (the
+                // space chararacter is always renderable)
+                text_elements[i]->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
+            }
+        }
+    }
 
 #if DEBUG_DETERMINELINES
-        DebugOutput::PrintParseResults(text_elements);
+    DebugOutput::PrintParseResults(text_elements);
 #endif
-    }
+    return text_elements;
 }
 
 Pt Font::DetermineLinesImpl(const std::string& text,
                             Flags<TextFormat>& format,
                             X box_width,
                             std::vector<LineData>& line_data,
-                            std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const
+                            const std::vector<boost::shared_ptr<TextElement> >& text_elements) const
 {
     ValidateFormat(format);
-
-    std::vector<boost::shared_ptr<TextElement> > local_text_elements;
-
-    std::vector<boost::shared_ptr<TextElement> >& text_elements =
-        text_elements_ptr ? *text_elements_ptr : local_text_elements;
-
-    bool ignore_tags = format & FORMAT_IGNORETAGS;
-    FillTextElements(text, ignore_tags, text_elements);
 
     RenderState render_state;
     int tab_width = 8; // default tab width

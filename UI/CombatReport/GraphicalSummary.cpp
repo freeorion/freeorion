@@ -586,8 +586,13 @@ public:
         GG::Pt pos(GG::X(0), GG::Y(0));
         for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it) {
             ToggleData& toggle = **it;
-            toggle.button->Resize(GG::Pt(cui_font->TextExtent(toggle.button->Text(), GG::FORMAT_LEFT).x + OPTION_BUTTON_PADDING,
-                                         OPTION_BUTTON_HEIGHT));
+            if (!toggle.button->Children().empty()) {
+                //Assume first child of the button is the label
+                if (const GG::TextControl* label = dynamic_cast<GG::TextControl const*>(toggle.button->Children().front())) {
+                    toggle.button->Resize(GG::Pt(label->MinUsableSize().x
+                                                 + OPTION_BUTTON_PADDING, OPTION_BUTTON_HEIGHT));
+                }
+            }
             toggle.button->MoveTo(pos);
             pos.x += toggle.button->Width() + OPTION_BUTTON_PADDING;
         }

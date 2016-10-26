@@ -435,7 +435,7 @@ public:
 
     /** Formatted text rendering. */
     void RenderText(const Pt& pt1, const Pt& pt2, const std::string& text, Flags<TextFormat>& format,
-                    const std::vector<LineData>* line_data = 0, RenderState* render_state = 0) const;
+                    const std::vector<LineData>& line_data, RenderState* render_state = 0) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
@@ -448,7 +448,7 @@ public:
 
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                       RenderCache& cache, const std::vector<LineData>* line_data = 0,
+                       RenderCache& cache, const std::vector<LineData>& line_data,
                        RenderState* render_state = 0) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
@@ -465,32 +465,33 @@ public:
     void ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
                            std::size_t begin_line, CPSize begin_char) const;
 
-    /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data. */
-    Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data) const;
+    /** Return a vector of TextElements parsed from \p text, using the
+        FORMAT_IGNORETAGS bit in \p format to determine if all KnownTags()
+        are ignored.
 
-    /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data and \a text_elements.  Note that \a text_elements must be
-        empty. */
-    Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
-                        std::vector<LineData>& line_data,
-                        std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
+        This function is costly even on single character texts. Do not call
+        it from tight loops.  Do not call it from within Render().  Do not
+        call it repeatedly on a known text.
+    */
+    std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
+                                                                                            const Flags<TextFormat>& format) const;
 
-    /** Returns the maximum dimensions of the string in x and y, and populates
-        \a line_data.  The contents of \a text_elements will be used, and the
-        equivalent work done by DetermineLines() will be skipped.  Supplying a
-        \a text and a \a text_elements that are incompatible will result in
-        undefined behavior. */
+    /** DetermineLines() calculates the \p line_data resulting from adding the necessary line
+        breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
+        the \p text into a box of width \p box_width. It returns the text extent of that \p
+        line_data.
+
+        It accounts for alignment, wrapping and justification of the \p text.
+
+        A \p box_width of X0 will add a line break at every whitespace element in \p text_elements.
+
+        Supplying a \p text and \p text_elements that are incompatible will result in undefined
+        behavior.  \p text_elements contains internal pointers to the \p text to which it is
+        bound.  Compatible means the exact same \p text object, not the same text content.
+        */
     Pt   DetermineLines(const std::string& text, Flags<TextFormat>& format, X box_width,
                         const std::vector<boost::shared_ptr<TextElement> >& text_elements,
                         std::vector<LineData>& line_data) const;
-
-    /** Returns the maximum dimensions of the string in x and y.  Provided as
-        a convenience; it just calls DetermineLines with the given
-        parameters. */
-    Pt   TextExtent(const std::string& text, Flags<TextFormat> format = FORMAT_NONE,
-                    X box_width = X0) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
     Pt   TextExtent(const std::string& text, const std::vector<LineData>& line_data) const;
@@ -568,17 +569,11 @@ private:
 
     typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
 
-    /**Populate \p text_elements with TextElements parsed from \p
-       text. \p ignore_tags determines if all KnownTags() are ignored.*/
-    void FillTextElements(const std::string& text,
-                          bool ignore_tags,
-                          std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
-
     Pt DetermineLinesImpl(const std::string& text,
                           Flags<TextFormat>& format,
                           X box_width,
                           std::vector<LineData>& line_data,
-                          std::vector<boost::shared_ptr<TextElement> >* text_elements_ptr) const;
+                          const std::vector<boost::shared_ptr<TextElement> >& text_elements) const;
 
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);

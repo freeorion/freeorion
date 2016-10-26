@@ -92,11 +92,15 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     /// Creates a text control that support resizing and word wrap.
-    GG::Label* CreateResizingText(const std::string& string)
+    GG::Label* CreateResizingText(const std::string& string, GG::X width)
     {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
-        GG::Pt extent = ClientUI::GetFont()->TextExtent(string);
+        std::vector<GG::Font::LineData> lines;
+        GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+        std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+            ClientUI::GetFont()->ExpensiveParseFromTextToTextElements(string, fmt);
+        GG::Pt extent = ClientUI::GetFont()->DetermineLines(string, fmt, width, text_elements, lines);
         GG::Label* text = new CUILabel(string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
         text->Resize(GG::Pt(extent.x, extent.y));
         text->ClipText(true);
@@ -162,7 +166,7 @@ public:
         return retval;
     }
 
-    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full)
+    static GG::Control* CellForColumn(const SaveFileColumn& column, const FullPreview& full, GG::X max_width)
     {
         GG::Clr color = ClientUI::TextColor();
         std::string value = ColumnInPreview(full, column.m_name);
@@ -177,9 +181,9 @@ public:
 
         if (column.m_fixed) {
             retval = new CUILabel(value, format_flags);
-            retval->Resize(GG::Pt(column.FixedWidth(), ClientUI::GetFont()->Height()));
+            retval->Resize(GG::Pt(column.FixedWidth(max_width), ClientUI::GetFont()->Height()));
         } else {
-            retval = CreateResizingText(value);
+            retval = CreateResizingText(value, max_width);
         }
 
         retval->SetTextColor(color);
@@ -189,11 +193,21 @@ public:
     bool Fixed() const
     { return m_fixed; }
 
-    GG::X FixedWidth() const {
+    GG::X FixedWidth(GG::X max_width) const {
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         // We need to maintain the fixed sizes since the base list box messes them
-        return std::max(font->TextExtent(m_wide_as).x, font->TextExtent(Title()).x)
-            + GG::X(SAVE_FILE_CELL_MARGIN);
+        std::vector<GG::Font::LineData> lines;
+        GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+
+        //TODO cache this resulting extent
+        std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+            font->ExpensiveParseFromTextToTextElements(m_wide_as, fmt);
+        GG::Pt extent1 = font->DetermineLines(m_wide_as, fmt, max_width, text_elements, lines);
+
+        text_elements = font->ExpensiveParseFromTextToTextElements(Title(), fmt);
+        GG::Pt extent2 = font->DetermineLines(Title(), fmt, max_width, text_elements, lines);
+
+        return std::max(extent1.x, extent2.x) + GG::X(SAVE_FILE_CELL_MARGIN);
     }
 
     double Stretch() const
@@ -319,7 +333,7 @@ public:
         for (std::vector<SaveFileColumn>::const_iterator it = visible_columns.begin();
              it != visible_columns.end(); ++it)
         {
-            push_back(SaveFileColumn::CellForColumn(*it, full));
+            push_back(SaveFileColumn::CellForColumn(*it, full, ClientWidth()));
         }
         for (std::vector<SaveFileColumn>::const_iterator it = columns.begin();
              it != columns.end(); ++it)
@@ -375,7 +389,7 @@ public:
             for (unsigned int i = 0; i < columns.size(); ++i){
                 const SaveFileColumn& column = columns[i];
                 layout->SetColumnStretch ( i, column.Stretch() );
-                layout->SetMinimumColumnWidth ( i, column.FixedWidth() ); // Considers header
+                layout->SetMinimumColumnWidth ( i, column.FixedWidth(ClientWidth()) ); // Considers header
             }
         } else {
             // Give the directory label at least all the room that the other columns demand anyway
@@ -383,7 +397,7 @@ public:
             GG::X sum(0);
             for (unsigned int i = 0; i < columns.size(); ++i) {
                 const SaveFileColumn& column = columns[i];
-                sum += column.FixedWidth();
+                sum += column.FixedWidth(ClientWidth());
             }
             layout->SetMinimumColumnWidth (0, sum);
         }
@@ -636,7 +650,12 @@ void SaveFileDialog::Init() {
         m_remote_dir_dropdown = new CUIDropDownList(6);
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 1);
         m_layout->Add(m_remote_dir_dropdown, 0, 2 , 1, 2);
-        GG::X drop_width = font->TextExtent(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL).x;
+        std::vector<GG::Font::LineData> lines;
+        GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+        std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+            font->ExpensiveParseFromTextToTextElements(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL, fmt);
+        GG::X drop_width = font->DetermineLines(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL,
+                                                fmt, ClientWidth(), text_elements, lines).x;
         m_layout->SetMinimumColumnWidth(2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2));
         m_layout->SetMinimumColumnWidth(3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2));
 
@@ -651,10 +670,20 @@ void SaveFileDialog::Init() {
 
     m_layout->SetMinimumRowHeight(0, m_current_dir_edit->MinUsableSize().y);
     m_layout->SetRowStretch      (1, 1.0 );
-    m_layout->SetMinimumRowHeight(3, font->TextExtent(cancel_btn->Text()).y);
+    std::vector<GG::Font::LineData> lines;
+    GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+    std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+        font->ExpensiveParseFromTextToTextElements(cancel_btn->Text(), fmt);
+    GG::Pt extent = ClientUI::GetFont()->DetermineLines(cancel_btn->Text(), fmt, ClientWidth(), text_elements, lines);
+    m_layout->SetMinimumRowHeight(3, extent.y);
 
-    m_layout->SetMinimumColumnWidth(0, std::max(font->TextExtent(filename_label->Text()).x,
-                                                font->TextExtent(directory_label->Text()).x));
+    text_elements = font->ExpensiveParseFromTextToTextElements(filename_label->Text(), fmt);
+    GG::Pt extent1 = font->DetermineLines(filename_label->Text(), fmt, ClientWidth(), text_elements, lines);
+
+    text_elements = font->ExpensiveParseFromTextToTextElements(directory_label->Text(), fmt);
+    GG::Pt extent2 = font->DetermineLines(directory_label->Text(), fmt, ClientWidth(), text_elements, lines);
+
+    m_layout->SetMinimumColumnWidth(0, std::max(extent1.x, extent2.x));
     m_layout->SetColumnStretch(1, 1.0);
 
     SetLayout(m_layout);
