@@ -31,6 +31,7 @@ Hull
         ]
     ]
     effectsgroups = [
+        [[AVERAGE_BASE_FUEL_REGEN]]
         [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

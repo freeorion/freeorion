@@ -12314,6 +12314,17 @@ TELEPATHIC_DETECTION_DESC
 
 
 ##
+## Fuel regeneration
+##
+
+AVERAGE_BASE_FUEL_REGEN_DESC
+'''	Average stationary [[encyclopedia FUEL_TITLE]] recovery: + 0.1'''
+
+LIVING_HULL_BASE_FUEL_REGEN_DESC
+'''	Living Organic Hull stationary [[encyclopedia FUEL_TITLE]] recovery: + 0.3'''
+
+
+##
 ## Accounting labels
 ##
 
@@ -12591,6 +12602,9 @@ Cloak Cross-Interference
 
 TRANSPATIAL_CLOAK_INTERACTION
 Transpatial Drive - Cloak Interaction
+
+BASE_FUEL_REGEN_LABEL
+Stationary Fuel Regen
 
 
 ##

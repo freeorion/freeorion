@@ -43,6 +43,7 @@ Hull
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
 
+        [[AVERAGE_BASE_FUEL_REGEN]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
         [[UNOWNED_MOVE]]

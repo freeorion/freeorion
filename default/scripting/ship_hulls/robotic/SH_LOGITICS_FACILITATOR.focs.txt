@@ -83,6 +83,7 @@ Hull
             priority = [[VERY_LATE_PRIORITY]]
             effects = SetStructure value = max((Target.Structure + ( Target.Structure/10 )), (Target.Structure + 20))
 
+        [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]

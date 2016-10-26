@@ -88,6 +88,7 @@ Hull
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
             effects = SetStealth value = Value - 100
 
+        [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
