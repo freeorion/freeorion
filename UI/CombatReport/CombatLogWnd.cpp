@@ -140,7 +140,7 @@ namespace {
 
         SetBorderMargin(BORDER_MARGIN);
 
-        SetLayout(new GG::Layout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
+        SetLayout(new GG::DeferredLayout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
         SetCollapsed(true);
     }
