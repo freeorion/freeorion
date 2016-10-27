@@ -1593,6 +1593,11 @@ class WarShipDesigner(ShipDesigner):
     def __init__(self):
         super(WarShipDesigner, self).__init__()
 
+    def _adjusted_production_cost(self):
+        # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
+        # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
+        return super(WarShipDesigner, self)._adjusted_production_cost()**2
+
     def _effective_structure(self):
         effective_structure = self.structure + self._expected_organic_growth() + self._remaining_growth() / 5
         effective_structure *= self._shield_factor()
