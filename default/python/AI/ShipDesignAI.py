@@ -615,7 +615,7 @@ class AdditionalSpecifications(object):
         self.minimum_speed = 0
         self.minimum_structure = 1
         self.minimum_fighter_launch_rate = 0
-        self.enemy_shields = 0
+        self.enemy_shields = 1  # to avoid spamming flak cannons
         self.max_enemy_weapon_strength = 0
         self.avg_enemy_weapon_strength = 0
         self.expected_turns_till_fight = 2
@@ -637,6 +637,7 @@ class AdditionalSpecifications(object):
         :type enemy: CombatRatingsAI.ShipCombatStats
         """
         enemy_attack_stats, enemy_structure, self.enemy_shields = enemy.get_basic_stats()
+        self.enemy_shields += 1  # add bias against weak weapons to account to allow weapons to stay longer relevant.
         if enemy_attack_stats:
             self.max_enemy_weapon_strength = max(enemy_attack_stats.keys())
             n = 0
