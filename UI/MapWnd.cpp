@@ -2046,9 +2046,9 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         std::string text = "<s>" + boost::lexical_cast<std::string>(vert.eta) + "</s>";
         glColor(GG::CLR_WHITE);
         // TODO cache the text_elements
-        std::vector<GG::Font::LineData> lines;
         std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
-        font->DetermineLines(text, flags, lr.x - ul.x, text_elements, lines);
+        std::vector<GG::Font::LineData> lines =
+            font->DetermineLines(text, flags, lr.x - ul.x, text_elements);
         font->RenderText(ul, lr, text, flags, lines);
     }
     glPopMatrix();

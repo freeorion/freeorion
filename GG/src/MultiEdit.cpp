@@ -302,10 +302,9 @@ void MultiEdit::SetText(const std::string& str)
         if (m_max_lines_history == ALL_LINES) {
             TextControl::SetText(str);
         } else {
-            std::vector<Font::LineData> lines;
             std::vector<boost::shared_ptr<Font::TextElement> > text_elements
                 = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
-            Pt extent = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements, lines);
+            std::vector<Font::LineData> lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
             if (m_max_lines_history < lines.size()) {
                 std::size_t first_line = 0;
                 std::size_t last_line = m_max_lines_history - 1;
@@ -359,7 +358,7 @@ void MultiEdit::SetText(const std::string& str)
         CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
         this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
 
-        m_contents_sz = GetFont()->TextExtent(Text(), GetLineData());
+        m_contents_sz = GetFont()->TextExtent(GetLineData());
 
         AdjustScrolls();
         AdjustView();

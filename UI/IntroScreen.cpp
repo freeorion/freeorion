@@ -132,12 +132,12 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
                         credit += person.Attribute("task");
                         credit += "</rgba>";
                     }
-                    std::vector<GG::Font::LineData> lines;
                     std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
                         m_font->ExpensiveParseFromTextToTextElements(credit, format);
-                    m_font->DetermineLines(credit, format, x2 - x1, text_elements, lines);
+                    std::vector<GG::Font::LineData> lines =
+                        m_font->DetermineLines(credit, format, x2 - x1, text_elements);
                     m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
-                    offset += m_font->TextExtent(credit, lines).y + 2;
+                    offset += m_font->TextExtent(lines).y + 2;
                 }
             }
             offset += m_font->Lineskip() + 2;
