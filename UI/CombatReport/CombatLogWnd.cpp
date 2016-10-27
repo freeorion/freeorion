@@ -1,6 +1,6 @@
 #include "CombatLogWnd.h"
 
-#include <GG/Layout.h>
+#include <GG/DeferredLayout.h>
 #include <GG/Scroll.h>
 #include <GG/ScrollPanel.h>
 
@@ -386,7 +386,7 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
     }
 
     m_wnd.DeleteChildren();
-    GG::Layout* layout = new GG::Layout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y
+    GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y
                                         , m_wnd.Width(), m_wnd.Height()
                                         , 1, 1 ///< numrows, numcols
                                         , 0, 0 ///< wnd margin, cell margin
