@@ -588,9 +588,11 @@ public:
             ToggleData& toggle = **it;
             if (!toggle.button->Children().empty()) {
                 //Assume first child of the button is the label
-                if (const GG::TextControl* label = dynamic_cast<GG::TextControl const*>(toggle.button->Children().front())) {
-                    toggle.button->Resize(GG::Pt(label->MinUsableSize().x
-                                                 + OPTION_BUTTON_PADDING, OPTION_BUTTON_HEIGHT));
+                if (const GG::TextControl* label = dynamic_cast<GG::TextControl const*>(toggle.button->Children().front()))
+                {
+                    toggle.button->Resize(
+                        GG::Pt(label->MinUsableSize().x + OPTION_BUTTON_PADDING,
+                               OPTION_BUTTON_HEIGHT));
                 }
             }
             toggle.button->MoveTo(pos);

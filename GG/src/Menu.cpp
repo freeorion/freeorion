@@ -522,8 +522,8 @@ void PopupMenu::Render()
 
                 if (!menu.next_level[j].separator) {
                     // TODO cache line data v expensive calculation
-                    std::vector<boost::shared_ptr<Font::TextElement> > text_elements
-                        = m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
+                    std::vector<boost::shared_ptr<Font::TextElement> > text_elements =
+                        m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
                     std::vector<Font::LineData> lines =
                         m_font->DetermineLines(menu.next_level[j].label, fmt, X0, text_elements);
 
