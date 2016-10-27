@@ -867,7 +867,7 @@ void Planet::PopGrowthProductionResearchPhase() {
                 species_it->second++;
         }
         // remove species
-        SetSpecies("");
+        PopCenter::Reset();
     }
 
     if (!just_conquered) {
