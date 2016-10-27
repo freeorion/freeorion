@@ -1586,7 +1586,26 @@ class ShipDesigner(object):
         return base_damage + species_modifier + tech_modifier
 
 
-class MilitaryShipDesigner(ShipDesigner):
+class WarShipDesigner(ShipDesigner):
+    basename = "Warship (do not build me)"
+    description = "Military Ship"
+
+    def __init__(self):
+        super(WarShipDesigner, self).__init__()
+
+    def _effective_structure(self):
+        effective_structure = self.structure + self._expected_organic_growth() + self._remaining_growth() / 5
+        effective_structure *= self._shield_factor()
+        return effective_structure
+
+    def _speed_factor(self):
+        return 1 + 0.005*(self.speed - 85)
+
+    def _fuel_factor(self):
+        return 1 + 0.03 * (self._effective_fuel() - self._minimum_fuel()) ** 0.5
+
+
+class MilitaryShipDesigner(WarShipDesigner):
     """Class that implements military designs.
 
     Extends __init__()
@@ -1624,10 +1643,9 @@ class MilitaryShipDesigner(ShipDesigner):
         total_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
         if total_dmg <= 0:
             return INVALID_DESIGN_RATING
-        effective_structure = self.structure + self._expected_organic_growth() + self._remaining_growth()/5
-        effective_structure *= self._shield_factor()
-        speed_factor = 1 + 0.005*(self.speed - 85)
-        fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
+        effective_structure = self._effective_structure()
+        speed_factor = self._speed_factor()
+        fuel_factor = self._fuel_factor()
         return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
@@ -1687,7 +1705,7 @@ class MilitaryShipDesigner(ShipDesigner):
         return self.structure*self._total_dmg()*(1+self.shields/10)
 
 
-class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from MilitaryShipDesigner
+class CarrierShipDesigner(WarShipDesigner):  # TODO consider inheriting from MilitaryShipDesigner
     """Class that implements military designs with fighter parts.
 
     Extends __init__()
@@ -1716,8 +1734,7 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
             return INVALID_DESIGN_RATING
         # first, calculate "normal" weapon stuff
         weapon_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
-        effective_structure = self.structure + self._expected_organic_growth() + self._remaining_growth()/5
-        effective_structure *= self._shield_factor()
+        effective_structure = self._effective_structure()
 
         # now, consider offensive potential of our fighters
         enemy_dmg_avg = self.additional_specifications.avg_enemy_weapon_strength
@@ -1734,8 +1751,8 @@ class CarrierShipDesigner(ShipDesigner):  # TODO consider inheriting from Milita
         total_dmg = weapon_dmg + fighter_damage_per_bout
         effective_structure += damage_prevented
 
-        speed_factor = 1 + 0.005*(self.speed - 85)
-        fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
+        speed_factor = self._speed_factor()
+        fuel_factor = self._fuel_factor()
         return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     # TODO Implement _starting_guess() for faster convergence

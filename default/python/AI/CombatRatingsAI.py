@@ -206,7 +206,6 @@ class ShipCombatStats(object):
         fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
         damage_prevented = fighters_shot_down * e_avg_attack
         my_structure += damage_prevented
-
         return my_total_attack * my_structure
 
     def get_stats(self, hashable=False):
