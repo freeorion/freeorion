@@ -20,7 +20,7 @@
 
 class CombatLogWnd::CombatLogWndImpl {
 public:
-    CombatLogWndImpl(CombatLogWnd& _log);//GG::X w, GG::Y h);
+    CombatLogWndImpl(CombatLogWnd& _log);
 
     /** \name Accessors */ ///@{
     GG::Pt MinUsableSize() const;
@@ -47,14 +47,14 @@ public:
         GG::X w, int viewing_empire_id, std::vector<GG::Wnd *>& new_logs,
         ConstCombatEventPtr& event, std::string& details);
 
-    //Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
+    // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
     std::vector<GG::Wnd*> MakeCombatLogPanel(
         GG::X w, int viewing_empire_id, ConstCombatEventPtr event);
 
     // public interface
     CombatLogWnd& m_wnd;
 
-    ///default flags for a text link log segment
+    // default flags for a text link log segment
     GG::Flags<GG::TextFormat> m_text_format_flags;
     boost::shared_ptr<GG::Font> m_font;
 
@@ -119,7 +119,7 @@ namespace {
         LinkText* title;
         std::vector<GG::Wnd *> details;
 
-        //distance between expansion symbol and text
+        // distance between expansion symbol and text
         static const unsigned int BORDER_MARGIN = 5;
 
     };
@@ -235,7 +235,7 @@ namespace {
             m_signals()
         {
 
-            //Register for signals that might bring the text into view
+            // Register for signals that might bring the text into view
 
             if (CombatLogWnd const* log = FindParentOfType<CombatLogWnd>(&parent)) {
                 m_signals.push_back(
@@ -249,8 +249,8 @@ namespace {
 
             }
 
-            //Parent doesn't contain any of the expected parents so just
-            //show the text.
+            // Parent doesn't contain any of the expected parents so just
+            // show the text.
             if (m_signals.empty()) {
                 SetText(str);
                 m_text.reset();
@@ -261,7 +261,7 @@ namespace {
 
         void HandleMaybeVisible() {
 
-            //Assumes the log is the second tab.
+            // Assumes the log is the second tab.
             GG::OverlayWnd const* tab = FindParentOfType<const GG::OverlayWnd>(Parent());
             if (tab && (tab->CurrentWndIndex() != 1))
                 return;
@@ -340,15 +340,15 @@ void CombatLogWnd::CombatLogWndImpl::PopulateWithFlatLogs(GG::X w, int viewing_e
 }
 
 
-//Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
+// Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
 std::vector<GG::Wnd*> CombatLogWnd::CombatLogWndImpl::MakeCombatLogPanel(GG::X w, int viewing_empire_id,
                                                                          ConstCombatEventPtr event)
 {
     std::vector<GG::Wnd *> new_logs;
 
-    //Create and accordion log if there are detail or sub events and
-    //the log isn't explicitly flatten.  Otherwise, flatten the log,
-    //details and sub events.
+    // Create an accordion log if there are detail or sub events and
+    // the log isn't explicitly flattened.  Otherwise, flatten the log,
+    // details and sub events.
 
     if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
         new_logs.push_back(new CombatLogAccordionPanel(w, *this, viewing_empire_id, event));
@@ -427,7 +427,7 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
         }
     }
 
-    //Add a dummy row that the layout manager can use to add space.
+    // Add a dummy row that the layout manager can use to add space.
     AddRow(DecorateLinkText(""));
     layout->SetRowStretch(layout->Rows() - 1, 1);
 
@@ -443,7 +443,7 @@ CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
     SetName("CombatLogWnd");
 }
 
-//This virtual destructor must exist to ensure that the pimpl is destroyed.
+// This virtual destructor must exist to ensure that the pimpl is destroyed.
 CombatLogWnd::~CombatLogWnd()
 {}
 
