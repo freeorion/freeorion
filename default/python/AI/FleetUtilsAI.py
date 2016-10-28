@@ -69,7 +69,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
 
 
 def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
-                           fleet_pool_set, fleet_list, species="", take_any=False, extend_search=True):
+                           fleet_pool_set, fleet_list, species="", take_any=False):
     """
     Implements breadth-first search through systems
     mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked,
@@ -128,15 +128,14 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 return fleet_list
 
         # finished system without meeting requirements. Add neighboring systems to search queue.
-        if extend_search:
-            for neighbor_id in [el.key() for el in
-                                universe.getSystemNeighborsMap(this_system_id, fo.empireID())]:
-                if all((
-                            neighbor_id not in systems_checked,
-                            neighbor_id not in systems_to_check,
-                            neighbor_id in foAI.foAIstate.exploredSystemIDs
-                )):
-                    systems_to_check.append(neighbor_id)
+        for neighbor_id in [el.key() for el in
+                            universe.getSystemNeighborsMap(this_system_id, fo.empireID())]:
+            if all((
+                        neighbor_id not in systems_checked,
+                        neighbor_id not in systems_to_check,
+                        neighbor_id in foAI.foAIstate.exploredSystemIDs
+            )):
+                systems_to_check.append(neighbor_id)
     # we ran out of systems or fleets to check but did not meet requirements yet.
     if take_any or (stats_meet_reqs(cur_stats, min_stats)
                     and any(universe.getFleet(fid).shipIDs for fid in fleet_list)):
