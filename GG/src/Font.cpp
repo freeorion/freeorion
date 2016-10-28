@@ -761,7 +761,7 @@ public:
     {}
 
     /** Return the constructed text.*/
-    const std::string& Text()
+    const std::string& Text() const
     { return m_text; }
 
     /** Return the constructed TextElements.*/
