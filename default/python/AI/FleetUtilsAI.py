@@ -142,7 +142,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             if 'troopCapacity' in target_stats:
                 cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + troop_capacity
             # if we already meet the requirements, we can stop looking for more ships
-            if (sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships) \
+            if (sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= 1) \
                     and stats_meet_reqs(cur_stats, target_stats):
                 return fleet_list
 
