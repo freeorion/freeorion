@@ -69,8 +69,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
 
 
 def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked,
-                           fleet_pool_set, fleet_list, take_any=False, extend_search=True,
-                           verbose=False, depth=0):
+                           fleet_pool_set, fleet_list, take_any=False, extend_search=True):
     """
     Implements breadth-first search through systems
     mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked,

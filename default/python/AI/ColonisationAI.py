@@ -1346,8 +1346,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             this_fleet_list = FleetUtilsAI.get_fleets_for_mission(nships=1, target_stats={}, min_stats={}, cur_stats={},
                                                                   species=this_spec, systems_to_check=[sys_id],
                                                                   systems_checked=[],
-                                                                  fleet_pool_set=fleet_pool, fleet_list=found_fleets,
-                                                                  verbose=False)
+                                                                  fleet_pool_set=fleet_pool, fleet_list=found_fleets)
         except:
             continue
         if not this_fleet_list:
