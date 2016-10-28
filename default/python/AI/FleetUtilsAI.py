@@ -82,23 +82,25 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
     universe = fo.getUniverse()
     colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION, ShipRoleType.BASE_COLONISATION)
 
+    # loop over systems in a breadth-first-search trying to find nearby suitable ships in fleet_pool_set
     while systems_to_check and fleet_pool_set:
         this_system_id = systems_to_check.pop(0)
         systems_checked.append(this_system_id)
         accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
         fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
-
+        # loop over all fleets in the system, split them if possible and select suitable ships
         while fleets_here:
             fleet_id = fleets_here.pop(0)
             fleet = universe.getFleet(fleet_id)
             if not fleet:
                 fleet_pool_set.remove(fleet_id)
                 continue
+            # try splitting fleet
             if len(list(fleet.shipIDs)) > 1:
-                new_fleets = split_fleet(fleet_id)  # try splitting fleet
+                new_fleets = split_fleet(fleet_id)
                 fleet_pool_set.update(new_fleets)
                 fleets_here.extend(new_fleets)
-
+            # check species for colonization missions
             if species:
                 for ship_id in fleet.shipIDs:
                     ship = universe.getShip(ship_id)
@@ -106,24 +108,25 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
                         break
                 else:  # no suitable species found
                     continue
-
+            # check troop capacity for invasion missions
             troop_capacity = 0
             if 'troopCapacity' in target_stats:
                 troop_capacity = count_troops_in_fleet(fleet_id)
                 if troop_capacity <= 0:
                     continue
-
+            # all checks passed, add ship to selected fleets and update the stats
             fleet_list.append(fleet_id)
             fleet_pool_set.remove(fleet_id)
             this_rating = foAI.foAIstate.get_rating(fleet_id)
             cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'troopCapacity' in target_stats:
                 cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + troop_capacity
+            # if we already meet the requirements, we can stop looking for more ships
             if (sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships) \
                     and stats_meet_reqs(cur_stats, target_stats):
                 return fleet_list
 
-        # finished system without meeting requirements
+        # finished system without meeting requirements. Add neighboring systems to search queue.
         if extend_search:
             for neighbor_id in [el.key() for el in
                                 universe.getSystemNeighborsMap(this_system_id, fo.empireID())]:
