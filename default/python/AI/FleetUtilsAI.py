@@ -69,7 +69,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
 
 
 def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
-                           fleet_pool_set, fleet_list, species="", take_any=False):
+                           fleet_pool_set, fleet_list, species=""):
     """
     Implements breadth-first search through systems
     mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked,
@@ -137,8 +137,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             )):
                 systems_to_check.append(neighbor_id)
     # we ran out of systems or fleets to check but did not meet requirements yet.
-    if take_any or (stats_meet_reqs(cur_stats, min_stats)
-                    and any(universe.getFleet(fid).shipIDs for fid in fleet_list)):
+    if stats_meet_reqs(cur_stats, min_stats) and any(universe.getFleet(fid).shipIDs for fid in fleet_list):
         return fleet_list
     else:
         return []
