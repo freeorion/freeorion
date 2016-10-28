@@ -494,7 +494,10 @@ namespace {
     class CompiledRegex {
     public:
         CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
-            m_text(0), m_known_tags(&known_tags), m_ignore_tags(false), m_tag_stack(),
+            m_text(0),
+            m_known_tags(&known_tags),
+            m_ignore_tags(false),
+            m_tag_stack(),
             m_EVERYTHING()
         {
             // Synonyms for s1 thru s5 sub matches
@@ -600,27 +603,24 @@ namespace {
         {}
 
         /** Add a tag to the set of known tags.*/
-        void Insert(const std::string& tag) {
-            m_known_tags.insert(tag);
-        }
+        void Insert(const std::string& tag)
+        { m_known_tags.insert(tag); }
 
         /** Remove a tag from the set of known tags.*/
-        void Erase(const std::string& tag) {
-            m_known_tags.erase(tag);
-        }
+        void Erase(const std::string& tag)
+        { m_known_tags.erase(tag); }
 
         /** Remove all tags from the set of known tags.*/
-        void Clear() {
-            m_known_tags.clear();
-        }
+        void Clear()
+        { m_known_tags.clear(); }
 
-        bool IsKnown(const std::string &tag) {
-            return m_known_tags.find(tag) != m_known_tags.end();
-        }
+        bool IsKnown(const std::string &tag) const
+        { return m_known_tags.find(tag) != m_known_tags.end(); }
 
         // Return a regex bound to \p text using the currently known
         // tags.  If required \p ignore_tags and/or \p strip_unpaired_tags.
-        xpr::sregex & Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false) {
+        xpr::sregex& Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false)
+        {
             if (!strip_unpaired_tags)
                 return m_regex_w_tags.BindRegexToText(text, ignore_tags);
             else
@@ -647,7 +647,8 @@ namespace {
     }
 
     // Registers the default action and known tags.
-    int RegisterDefaultTags() {
+    int RegisterDefaultTags()
+    {
         StaticTagHandler().Insert("i");
         StaticTagHandler().Insert("s");
         StaticTagHandler().Insert("u");
@@ -753,7 +754,10 @@ class Font::TextAndElementsAssembler::TextAndElementsAssemblerImpl
 {
 public:
     TextAndElementsAssemblerImpl(const Font& font) :
-        m_font(font), m_text(), m_text_elements(), m_are_widths_calculated(false)
+        m_font(font),
+        m_text(),
+        m_text_elements(),
+        m_are_widths_calculated(false)
     {}
 
     /** Return the constructed text.*/
@@ -777,6 +781,7 @@ public:
 
         m_are_widths_calculated = false;
 
+        // Create the opening part of an open tag, like this: "<tag"
         boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(false));
         size_t tag_begin = m_text.size();
         size_t tag_name_begin = m_text.append("<").size();
@@ -785,6 +790,7 @@ public:
                                       boost::next(m_text.begin(), tag_name_begin),
                                       boost::next(m_text.begin(), tag_name_end));
 
+        // If there are params add them, like this: "<tag param1 param2"
         if (params) {
             for (std::vector<std::string>::const_iterator it = params->begin();
                  it != params->end(); ++it)
@@ -798,6 +804,8 @@ public:
                                                     boost::next(m_text.begin(), param_end)));
             }
         }
+
+        // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
         size_t tag_end = m_text.append(">").size();
         element->text = Substring(m_text,
                                   boost::next(m_text.begin(), tag_begin),
@@ -814,6 +822,7 @@ public:
 
         m_are_widths_calculated = false;
 
+        // Create a close tag that looks like this: "</tag>"
         boost::shared_ptr<Font::FormattingTag> element(new Font::FormattingTag(true));
         size_t tag_begin = m_text.size();
         size_t tag_name_begin = m_text.append("</").size();
@@ -857,7 +866,7 @@ public:
         m_text_elements.push_back(element);
     }
 
-    /** Add a white space element.*/
+    /** Add a newline element.*/
     void AddNewline()
     {
         m_are_widths_calculated = false;
@@ -867,7 +876,8 @@ public:
     }
 
     /** Add open color tag.*/
-    void AddOpenTag(const Clr& color) {
+    void AddOpenTag(const Clr& color)
+    {
         std::vector<std::string> params;
         params.push_back(boost::lexical_cast<std::string>(static_cast<int>(color.r)));
         params.push_back(boost::lexical_cast<std::string>(static_cast<int>(color.g)));
@@ -888,47 +898,56 @@ private:
 Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
     pimpl(new TextAndElementsAssemblerImpl(font))
 {}
+
 // Required because Impl is defined here
 Font::TextAndElementsAssembler::~TextAndElementsAssembler()
 {}
+
 const std::string& Font::TextAndElementsAssembler::Text()
 { return pimpl->Text(); }
 
 const std::vector<boost::shared_ptr<Font::TextElement> >& Font::TextAndElementsAssembler::Elements()
 { return pimpl->Elements(); }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const std::string& tag) {
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const std::string& tag)
+{
     pimpl->AddOpenTag(tag);
     return *this;
 }
 
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(
-    const std::string& tag, const std::vector<std::string>& params) {
+    const std::string& tag, const std::vector<std::string>& params)
+{
     pimpl->AddOpenTag(tag, &params);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(const std::string& tag) {
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(const std::string& tag)
+{
     pimpl->AddCloseTag(tag);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(const std::string& text) {
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(const std::string& text)
+{
     pimpl->AddText(text);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddWhitespace(const std::string& whitespace) {
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddWhitespace(const std::string& whitespace)
+{
     pimpl->AddWhitespace(whitespace);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddNewline() {
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddNewline()
+{
     pimpl->AddNewline();
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const Clr& color) {
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(const Clr& color)
+{
     pimpl->AddOpenTag(color);
     return *this;
 }

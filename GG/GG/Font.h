@@ -129,7 +129,11 @@ class GG_API Font
 {
 public:
     /** \brief A range of iterators into a std::string that defines a
-        substring found in a string being rendered by Font. */
+        substring found in a string being rendered by Font.
+
+        Substring is bound to a particular instance of a std::string.  If
+        that particular std::string goes out of scope or is deleted then
+        behavior is undefined, but may seg fault with the next access. */
     class GG_API Substring
     {
     public:
@@ -147,7 +151,11 @@ public:
             pair.second. */
         Substring(const std::string& str_, const IterPair& pair);
 
-        /** Rebind to \p str_, by changing the pointer str to point to \p str_.*/
+        /** Attach this Substring to \p str_.
+
+            This changes the iterators from pointing into the previous
+            std::string to pointing into \p str_.
+        */
         void Bind(const std::string& str_);
 
         /** Returns an iterator to the beginning of the substring. */
@@ -209,11 +217,26 @@ public:
 
         virtual ~TextElement(); ///< Virtual dtor.
 
-        /** Rebind to \p whole_text, by binding the SubString data member text to \p whole_text.
+        /** Attach this TextElement to the string \p whole_text, by
+            attaching the SubString data member text to \p whole_text.
 
-            Binding to a new \p whole_text is very fast compared to re-parsing the entire \p
-            whole_text and allows TextElements of TextElementType TEXT to be changed quickly if it
-            is known that the parse would be the same.
+            Binding to a new \p whole_text is very fast compared to
+            re-parsing the entire \p whole_text and allows TextElements of
+            TextElementType TEXT to be changed quickly if it is known that
+            the parse would be the same.
+
+            It is efficient when you want to do a text parse or layout
+            once, and then create several different controls that have the
+            same text layout and text contents, but each of them needs to
+            keep there own internal copy of the text. So, while the pointer
+            diffs are all the same, since the text contents are the same,
+            the pointer to the string in each TextElement (and its
+            contained Substring) needs to be set to the appropriate copy of
+            the string.
+
+            This is used in TextControl and its derived classes to re-use
+            entire vectors of TextElement with different std::strings
+            without re-parsing the std::string.
          */
         virtual void Bind(const std::string& whole_text);
 
@@ -294,8 +317,9 @@ public:
             (e.g. "</rgba>"). */
         FormattingTag(bool close);
 
-        /** Rebind to \p whole_text by binding both the base class and the data member tag_name
-            to \p whole_text. */
+        /** Attach to \p whole_text by binding all Substring data members,
+            both the base class and the data member tag_name to the string
+            \p whole_text.*/
         virtual void Bind(const std::string& whole_text);
 
         virtual TextElementType Type() const;
@@ -535,7 +559,7 @@ public:
                                                                                             const Flags<TextFormat>& format) const;
 
     /** Fill \p text_elements with the font widths of characters from \p text starting from \p
-        start. */
+        starting_from. */
     void FillTemplatedText(const std::string& text,
                            std::vector<boost::shared_ptr<TextElement> >& text_elements,
                            std::vector<boost::shared_ptr<TextElement> >::iterator starting_from) const;
