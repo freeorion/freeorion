@@ -68,16 +68,35 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     return targeted_planets
 
 
+# TODO: as used, cur_stats is  just another return value
 def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                            fleet_pool_set, fleet_list, species=""):
-    """
-    Implements breadth-first search through systems
-    mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked,
-    fleet_pool_set as fleets are checked also mutates fleet_list as running list of selected fleets;
-    this list will be returned as the function return value if the target statsare met or if upon exhausting
-    systems_to_check both take_any is true and the min stats are met.
+    """Get fleets for a mission.
+
+    Implements breadth-first search through systems starting at the **starting_sytem**.
+    In each system, local fleets are checked if they are in the allowed **fleet_pool_set** and suitable for the mission.
+    If so, they are added to the **fleet_list** and **cur_stats** is updated with the currently selected fleet summary.
+    The search continues until the requirements defined in **target_stats** are met or there are no more systems/fleets.
+    In that case, if the **min_stats** are covered, the **fleet_list** is returned anyway.
     Otherwise, an empty list is returned by the function, in which case the caller can make an evaluation of
     an emergency use of the found fleets in fleet_list; if not to be used they should be added back to the main pool.
+
+    :param target_stats: stats the fleet should ideally meet
+    :type target_stats: dict
+    :param min_stats: minimum stats the final fleet must meet to be accepted
+    :type min_stats: dict
+    :param cur_stats: (**mutated**) stat summary of selected fleet
+    :type cur_stats: dict
+    :param starting_system: system_id where breadth-first-search is centered
+    :type starting_system: int
+    :param fleet_pool_set: fleets allowed to be selected
+    :type: fleet_pool_set: set[int]
+    :param fleet_list: fleets that are selected for the mission.
+    :type fleet_list: list[int]
+    :param species: species for colonization mission
+    :type species: str
+    :return: List of selected fleet_ids or empty list if couldn't meet minimum requirements.
+    :rtype: list[int]
     """
     universe = fo.getUniverse()
     colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION, ShipRoleType.BASE_COLONISATION)
