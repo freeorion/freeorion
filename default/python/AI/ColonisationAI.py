@@ -1343,7 +1343,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         this_spec = target[1][1]
         found_fleets = []
         try:
-            this_fleet_list = FleetUtilsAI.get_fleets_for_mission(nships=1, target_stats={}, min_stats={}, cur_stats={},
+            this_fleet_list = FleetUtilsAI.get_fleets_for_mission(target_stats={}, min_stats={}, cur_stats={},
                                                                   starting_system=sys_id,
                                                                   species=this_spec,
                                                                   fleet_pool_set=fleet_pool, fleet_list=found_fleets)

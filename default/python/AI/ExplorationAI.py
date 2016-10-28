@@ -81,7 +81,7 @@ def assign_scouts_to_explore_systems():
         if (sys_status.setdefault('monsterThreat', 0) > 2000 * foAI.foAIstate.aggression) or (fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200):
             print "Skipping exploration of system %d due to Big Monster, threat %d" % (this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
             continue
-        this_fleet_list = FleetUtilsAI.get_fleets_for_mission(nships=1, target_stats={}, min_stats={}, cur_stats={},
+        this_fleet_list = FleetUtilsAI.get_fleets_for_mission(target_stats={}, min_stats={}, cur_stats={},
                                                               starting_system=this_sys_id, fleet_pool_set=available_scouts,
                                                               fleet_list=[])
         if not this_fleet_list:
