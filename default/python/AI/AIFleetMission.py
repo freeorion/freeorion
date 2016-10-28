@@ -294,7 +294,7 @@ class AIFleetMission(object):
         found_fleets = []
         # TODO check if next statement does not mutate any global states and can be removed
         _ = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, {},
-                                                systems_to_check=[fleet.systemID], systems_checked=[],
+                                                starting_system=fleet.systemID, systems_checked=[],
                                                 fleet_pool_set=set(new_fleets), fleet_list=found_fleets)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)

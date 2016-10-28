@@ -82,7 +82,7 @@ def assign_scouts_to_explore_systems():
             print "Skipping exploration of system %d due to Big Monster, threat %d" % (this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
             continue
         this_fleet_list = FleetUtilsAI.get_fleets_for_mission(nships=1, target_stats={}, min_stats={}, cur_stats={},
-                                                              systems_to_check=[this_sys_id],
+                                                              starting_system=this_sys_id,
                                                               systems_checked=[], fleet_pool_set=available_scouts,
                                                               fleet_list=[])
         if not this_fleet_list:

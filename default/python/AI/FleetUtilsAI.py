@@ -68,7 +68,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     return targeted_planets
 
 
-def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, systems_to_check, systems_checked,
+def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, starting_system, systems_checked,
                            fleet_pool_set, fleet_list, species="", take_any=False, extend_search=True):
     """
     Implements breadth-first search through systems
@@ -81,7 +81,7 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, systems_t
     """
     universe = fo.getUniverse()
     colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION, ShipRoleType.BASE_COLONISATION)
-
+    systems_to_check = [starting_system]
     # loop over systems in a breadth-first-search trying to find nearby suitable ships in fleet_pool_set
     while systems_to_check and fleet_pool_set:
         this_system_id = systems_to_check.pop(0)
