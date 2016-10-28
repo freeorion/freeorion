@@ -89,9 +89,9 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     :type cur_stats: dict
     :param starting_system: system_id where breadth-first-search is centered
     :type starting_system: int
-    :param fleet_pool_set: fleets allowed to be selected
+    :param fleet_pool_set: (**mutated**) fleets allowed to be selected. Split fleed_ids are added, used ones removed.
     :type: fleet_pool_set: set[int]
-    :param fleet_list: fleets that are selected for the mission.
+    :param fleet_list: (**mutated**) fleets that are selected for the mission. Gets filled during the call.
     :type fleet_list: list[int]
     :param species: species for colonization mission
     :type species: str
