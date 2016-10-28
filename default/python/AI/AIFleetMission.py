@@ -288,7 +288,6 @@ class AIFleetMission(object):
         new_fleets = FleetUtilsAI.split_fleet(fleet_id)
         self.clear_target()  # TODO: clear from foAIstate
         self.clear_fleet_orders()
-        # pods_needed = max(0, math.ceil((target_troops - 2 * (FleetUtilsAI.count_parts_fleetwide(fleet_id, ["GT_TROOP_POD"])) + 0.05) / 2.0))
         troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fleet_id))
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': troops_needed}

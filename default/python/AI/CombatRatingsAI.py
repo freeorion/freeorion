@@ -377,3 +377,18 @@ def combine_ratings_list(ratings_list):
     """
     return reduce(combine_ratings, ratings_list) if ratings_list else 0
 
+
+def rating_needed(target, current=0):
+    """Estimate the needed rating to achieve target rating.
+
+    :param target: Target rating to be reached
+    :type target: float
+    :param current: Already existing rating
+    :type current: float
+    :return: Estimated missing rating to reach target
+    :rtype: float
+    """
+    if current >= target or target <= 0:
+        return 0
+    else:
+        return target + current - 2 * (target * current)**0.5

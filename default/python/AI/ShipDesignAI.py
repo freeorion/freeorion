@@ -12,6 +12,7 @@ best_military_designs = myDesign.optimize_design()  # best designs per planet: (
 
 Available ship classes:
 - MilitaryShipDesigner: basic military ship
+- CarrierShipDesigner: military ship that includes fighter-related parts such as hangars and launch bays
 - OrbitalTroopShipDesigner: Troop ships for invasion in the same system
 - StandardTroopShipDesigner: Troop ships for invasion of other systems
 - OrbitalColonisationShipDesigner: Ships for colonization in the same system
@@ -24,6 +25,7 @@ Internal use only:
 Classes:
 - ShipDesignCache: caches information used in this module. Only use the defined instance (variable name "Cache")
 - ShipDesigner: base class for all designs. Provides basic and general functionalities
+- WarShipDesigner: base class for all military-related ships.
 - ColonisationShipDesignerBaseClass: base class for all colonisation ships which provides common functionalities
 - OutpostShipDesignerBaseClass: same but for outpost ships
 - TroopShipDesignerBaseClass: same but for troop ships
@@ -1717,7 +1719,7 @@ class MilitaryShipDesigner(WarShipDesigner):
         return self.structure*self._total_dmg()*(1+self.shields/10)
 
 
-class CarrierShipDesigner(WarShipDesigner):  # TODO consider inheriting from MilitaryShipDesigner
+class CarrierShipDesigner(WarShipDesigner):
     """Class that implements military designs with fighter parts.
 
     Extends __init__()

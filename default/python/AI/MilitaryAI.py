@@ -4,8 +4,7 @@ import AIstate
 import universe_object
 from EnumsAI import MissionType
 import FleetUtilsAI
-from FleetUtilsAI import rating_needed
-from CombatRatingsAI import combine_ratings, combine_ratings_list
+from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_needed
 import PlanetUtilsAI
 import PriorityAI
 import ColonisationAI

@@ -9,14 +9,16 @@ from ShipDesignAI import get_part_type
 __designStats = {}
 
 
-def rating_needed(target, current=0):
-    if current >= target or target <= 0:
-        return 0
-    else:
-        return target + current - 2 * (target * current)**0.5
-
-
 def stats_meet_reqs(stats, reqs):
+    """Check if (fleet) stats meet requirements.
+
+    :param stats: Stats (of fleet)
+    :type stats: dict
+    :param reqs: Requirements
+    :type reqs: dict
+    :return: True if requirements are met.
+    :rtype: bool
+    """
     try:
         for key in reqs:
             if stats.get(key, 0) < reqs[key]:
@@ -26,28 +28,11 @@ def stats_meet_reqs(stats, reqs):
         return False
 
 
-def count_parts_fleetwide(fleet_id, parts_list):
-    tally = 0
-    universe = fo.getUniverse()
-    fleet = universe.getFleet(fleet_id)
-    if not fleet:
-        return 0
-    for ship_id in fleet.shipIDs:
-        ship = universe.getShip(ship_id)
-        if not ship: 
-            continue
-        design = ship.design
-        if not design: 
-            continue
-        for part in design.parts:
-            if part in parts_list:
-                tally += 1
-    return tally
-
-
 def count_troops_in_fleet(fleet_id):
-    """
-    :param fleet_id:
+    """Get the number of troops in the fleet.
+
+    :param fleet_id: fleet to be queried
+    :type fleet_id: int
     :return: total troopCapacity of the fleet
     """
     universe = fo.getUniverse()
@@ -63,8 +48,14 @@ def count_troops_in_fleet(fleet_id):
 
 
 def get_targeted_planet_ids(planet_ids, mission_type):
-    """return subset list of planet ids that are targets of the specified mission type
-    :rtype : list of planet ids
+    """Find the planets that are targets of the specified mission type.
+
+    :param planet_ids: planets to be queried
+    :type planet_ids: list[int]
+    :param mission_type:
+    :type mission_type: MissionType
+    :return: Subset of *planet_ids* targeted by *mission_type*
+    :rtype: list[int]
     """
     selected_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([mission_type])
     targeted_planets = []
@@ -182,7 +173,13 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
 
 
 def split_fleet(fleet_id):
-    """Splits a fleet into its ships."""
+    """Split a fleet into its ships.
+
+    :param fleet_id: fleet to be split.
+    :type fleet_id: int
+    :return: New fleets. Empty if couldn't split.
+    :rtype: list[int]
+    """
     universe = fo.getUniverse()
     empire_id = fo.empireID()
     fleet = universe.getFleet(fleet_id)
@@ -240,7 +237,7 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
         if not this_ship or this_ship.isMonster != b_has_monster:  # TODO Is there any reason for the monster check?
             continue
         this_rating = CombatRatingsAI.ShipCombatStats(ship_id).get_rating()
-        remaining_rating = rating_needed(remaining_rating, this_rating)
+        remaining_rating = CombatRatingsAI.rating_needed(remaining_rating, this_rating)
         if remaining_rating < leave_rating:  # merging this would leave old fleet under minimum rating, try other ships.
             continue
         transferred = fo.issueFleetTransferOrder(ship_id, fleet_b_id)
