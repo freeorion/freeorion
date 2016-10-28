@@ -401,7 +401,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
         target_stats = {'rating': 10, 'troopCapacity': ptroops+1}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats,
-                                                           starting_system=sys_id, systems_checked=[],
+                                                           starting_system=sys_id,
                                                            fleet_pool_set=invasion_fleet_pool, fleet_list=found_fleets)
         if not these_fleets:
             if not FleetUtilsAI.stats_meet_reqs(found_stats, min_stats):
@@ -468,7 +468,7 @@ def assign_invasion_fleets_to_invade():
             target_stats = {'rating': 10, 'troopCapacity': troops_needed}
 
             FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats,
-                                                starting_system=sys_id, systems_checked=[],
+                                                starting_system=sys_id,
                                                 fleet_pool_set=local_base_troops, fleet_list=found_fleets)
             for fid2 in found_fleets:
                 FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
