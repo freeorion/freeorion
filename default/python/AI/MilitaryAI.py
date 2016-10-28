@@ -737,11 +737,9 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             break
         found_fleets = []
         found_stats = {}
-        try:
-            these_fleets = FleetUtilsAI.get_fleets_for_mission({'rating': alloc}, {'rating': minalloc}, found_stats, starting_system=sys_id,
-                                                               fleet_pool_set=avail_mil_fleet_ids, fleet_list=found_fleets)
-        except:
-            continue
+        these_fleets = FleetUtilsAI.get_fleets_for_mission({'rating': alloc}, {'rating': minalloc}, found_stats,
+                                                           starting_system=sys_id, fleet_pool_set=avail_mil_fleet_ids,
+                                                           fleet_list=found_fleets)
         if not these_fleets:
             if not found_fleets or not (FleetUtilsAI.stats_meet_reqs(found_stats, {'rating': minalloc}) or takeAny):
                 if doing_main:
