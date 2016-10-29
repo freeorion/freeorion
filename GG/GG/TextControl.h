@@ -95,6 +95,16 @@ public:
     //@}
     virtual ~TextControl();
 
+    /** Assignment operator.
+
+        Text Control requires an assignment operator because m_text_elements contains pointers
+        to m_text which need to be bound with Bind() to the m_text in this TextControl.
+
+        Using the assignment operator is faster than using SetText() with text from another
+        TextControl because it avoids the XML parse overhead.
+    */
+    TextControl& operator=(const TextControl& that);
+
     /** \name Accessors */ ///@{
     virtual Pt        MinUsableSize() const;
 
