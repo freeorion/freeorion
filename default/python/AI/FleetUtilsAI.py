@@ -100,12 +100,12 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     """
     universe = fo.getUniverse()
     colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION, ShipRoleType.BASE_COLONISATION)
-    systems_to_check = [starting_system]
-    systems_checked = []
+    systems_enqueued = [starting_system]
+    systems_visited = []
     # loop over systems in a breadth-first-search trying to find nearby suitable ships in fleet_pool_set
-    while systems_to_check and fleet_pool_set:
-        this_system_id = systems_to_check.pop(0)
-        systems_checked.append(this_system_id)
+    while systems_enqueued and fleet_pool_set:
+        this_system_id = systems_enqueued.pop(0)
+        systems_visited.append(this_system_id)
         accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
         fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
         # loop over all fleets in the system, split them if possible and select suitable ships
@@ -150,11 +150,11 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
         for neighbor_id in [el.key() for el in
                             universe.getSystemNeighborsMap(this_system_id, fo.empireID())]:
             if all((
-                        neighbor_id not in systems_checked,
-                        neighbor_id not in systems_to_check,
-                        neighbor_id in foAI.foAIstate.exploredSystemIDs
+                    neighbor_id not in systems_visited,
+                    neighbor_id not in systems_enqueued,
+                    neighbor_id in foAI.foAIstate.exploredSystemIDs
             )):
-                systems_to_check.append(neighbor_id)
+                systems_enqueued.append(neighbor_id)
     # we ran out of systems or fleets to check but did not meet requirements yet.
     if stats_meet_reqs(cur_stats, min_stats) and any(universe.getFleet(fid).shipIDs for fid in fleet_list):
         return fleet_list
