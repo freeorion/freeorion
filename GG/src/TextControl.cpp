@@ -75,6 +75,27 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
     SetText(str, text_elements);
 }
 
+TextControl::TextControl(const TextControl& that) :
+    Control(that.Left(), that.Top(), that.Width(), that.Height()),
+    m_text(that.m_text),
+    m_format(that.m_format),
+    m_text_color(that.m_text_color),
+    m_clip_text(that.m_clip_text),
+    m_set_min_size(that.m_set_min_size),
+    m_text_elements(that.m_text_elements),
+    m_code_points(that.m_code_points),
+    m_font(that.m_font),
+    m_render_cache(that.m_render_cache),
+    m_cached_minusable_size_width(that.m_cached_minusable_size_width),
+    m_cached_minusable_size(that.m_cached_minusable_size)
+{
+    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
+         it != m_text_elements.end(); ++it)
+    {
+        (*it)->Bind(m_text);
+    }
+}
+
 TextControl::~TextControl()
 {
     delete m_render_cache;

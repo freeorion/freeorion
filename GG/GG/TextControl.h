@@ -80,6 +80,18 @@ public:
                 const boost::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
+
+    /** Copy constructor.
+
+        Text Control requires a copy-constructor because m_text_elements contains pointers
+        to m_text which need to be bound with Bind() to the m_text in the new TextControl.
+
+        Using the copy constructor is faster than constructing a TextControl with text from another
+        TextControl because it avoids the XML parse overhead.
+
+        Since Control does not have a way to access Flags the copy using default flags.
+    */
+    explicit TextControl(const TextControl& that);
     //@}
     virtual ~TextControl();
 
