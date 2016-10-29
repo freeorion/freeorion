@@ -86,7 +86,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     :type target_stats: dict
     :param min_stats: minimum stats the final fleet must meet to be accepted
     :type min_stats: dict
-    :param cur_stats: (**mutated**) stat summary of selected fleet
+    :param cur_stats: (**mutated**) stat summary of selected fleets
     :type cur_stats: dict
     :param starting_system: system_id where breadth-first-search is centered
     :type starting_system: int
