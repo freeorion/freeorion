@@ -68,7 +68,8 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     return targeted_planets
 
 
-# TODO: as used, cur_stats is  just another return value
+# TODO: Avoid mutable arguments and use return values instead
+# TODO: Use Dijkstra's algorithm instead of BFS to consider starlane length
 def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                            fleet_pool_set, fleet_list, species=""):
     """Get fleets for a mission.
@@ -112,7 +113,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
         while fleets_here:
             fleet_id = fleets_here.pop(0)
             fleet = universe.getFleet(fleet_id)
-            if not fleet:
+            if not fleet:  # TODO should be checked before passed to the function
                 fleet_pool_set.remove(fleet_id)
                 continue
             # try splitting fleet
