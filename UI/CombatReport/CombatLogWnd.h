@@ -20,6 +20,7 @@ public:
     void SetFont(boost::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
+    virtual void PreRender();
     //@}
 
     ///link clicked signals: first string is the link type, second string is the specific item clicked

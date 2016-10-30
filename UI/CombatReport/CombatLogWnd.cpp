@@ -143,6 +143,7 @@ namespace {
         SetLayout(new GG::DeferredLayout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
         SetCollapsed(true);
+        RequirePreRender();
     }
 
     CombatLogAccordionPanel::~CombatLogAccordionPanel() {
@@ -185,12 +186,8 @@ GG::Pt CombatLogWnd::CombatLogWndImpl::MinUsableSize() const {
     return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
 }
 
-void CombatLogWnd::CombatLogWndImpl::HandleWndChanged() {
-    GG::Pt size = m_wnd.Size();
-    m_wnd.Resize(size + GG::Pt(2*m_font->SpaceWidth(), GG::Y0));
-    m_wnd.Resize(size);
-    m_wnd.WndChangedSignal();
-}
+void CombatLogWnd::CombatLogWndImpl::HandleWndChanged()
+{ m_wnd.RequirePreRender(); }
 
 
 namespace {
@@ -464,3 +461,9 @@ GG::Pt CombatLogWnd::MinUsableSize() const
 
 void CombatLogWnd::HandleMadeVisible()
 { return pimpl->HandleWndChanged(); }
+
+void CombatLogWnd::PreRender()
+{
+    GG::Wnd::PreRender();
+    WndChangedSignal();
+}
