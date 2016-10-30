@@ -1559,6 +1559,7 @@ private:
         const std::string&          GetTech() { return m_tech; }
         virtual void                Render();
         static std::vector<GG::X>   ColWidths(GG::X total_width);
+        static std::vector<GG::Alignment> ColAlignments();
         void                        Update();
 
     private:
@@ -1574,6 +1575,7 @@ private:
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
     std::multimap<std::string, TechRow*>    m_all_tech_rows;
+    GG::ListBox::Row*                       m_header_row;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {
@@ -1597,6 +1599,20 @@ std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_widt
     retval.push_back(TIME_WIDTH);
     retval.push_back(CATEGORY_WIDTH);
     retval.push_back(DESC_WIDTH);
+
+    return retval;
+}
+
+std::vector<GG::Alignment> TechTreeWnd::TechListBox::TechRow::ColAlignments() {
+    std::vector<GG::Alignment> retval;
+
+    retval.push_back(GG::ALIGN_CENTER);  // graphic
+    retval.push_back(GG::ALIGN_LEFT);  // name
+    retval.push_back(GG::ALIGN_RIGHT);  // cost
+    retval.push_back(GG::ALIGN_RIGHT);  // time
+    retval.push_back(GG::ALIGN_LEFT);  // category
+    retval.push_back(GG::ALIGN_LEFT);  // description
+
     return retval;
 }
 
@@ -1610,39 +1626,45 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 
     std::vector<GG::X> col_widths = ColWidths(w);
     const GG::X GRAPHIC_WIDTH =   col_widths[0];
-    const GG::X NAME_WIDTH =      col_widths[1];
-    const GG::X COST_WIDTH =      col_widths[2];
-    const GG::X TIME_WIDTH =      col_widths[3];
-    const GG::X CATEGORY_WIDTH =  col_widths[4];
-    const GG::X DESC_WIDTH =      col_widths[5];
-    const GG::Y HEIGHT(Value(GRAPHIC_WIDTH));
+    const GG::Y ICON_HEIGHT(std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6));
+    // TODO replace string padding with new TextFormat flag
+    std::string just_pad = "    ";
 
-    GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-    graphic->Resize(GG::Pt(GRAPHIC_WIDTH, HEIGHT));
+    GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech),
+                                                       GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    GG::Label* text = new CUILabel(UserString(m_tech), GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(NAME_WIDTH, HEIGHT));
+    GG::Label* text = new CUILabel(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
+    text->SetResetMinSize(false);
     text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    text = new CUILabel(cost_str, GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(COST_WIDTH, HEIGHT));
+    text = new CUILabel(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text->SetResetMinSize(false);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    text = new CUILabel(time_str, GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(TIME_WIDTH, HEIGHT));
+    text = new CUILabel(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text->SetResetMinSize(false);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(CATEGORY_WIDTH, HEIGHT));
+    text = new CUILabel(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
+    text->SetResetMinSize(false);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(DESC_WIDTH, HEIGHT));
+    text = new CUILabel(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 }
 
@@ -1650,14 +1672,16 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     const Tech* this_row_tech = ::GetTech(m_tech);
     if (!this_row_tech || this->size() < 4)
         return;
+    // TODO replace string padding with new TextFormat flag
+    std::string just_pad = "    ";
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((size() >= 3) ? at(2) : 0))
-        tc->SetText(cost_str);
+    if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : 0))
+        cost_btn->SetText(cost_str + just_pad + just_pad);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((size() >= 4) ? at(3) : 0))
-        tc->SetText(time_str);
+    if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : 0))
+        time_btn->SetText(time_str + just_pad + just_pad);
 }
 
 TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
@@ -1668,7 +1692,7 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     GG::Connect(LeftClickedSignal,      &TechListBox::TechLeftClicked,      this);
     GG::Connect(RightClickedSignal,     &TechListBox::TechRightClicked,     this);
 
-    SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    SetStyle(GG::LIST_NOSEL);
 
     // show all categories...
     m_categories_shown.clear();
@@ -1681,13 +1705,55 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
 
-    std::vector<GG::X> col_widths = TechRow::ColWidths(w - ClientUI::ScrollWidth() - 6);
-    SetNumCols(col_widths.size());
-    LockColWidths();
-    for (unsigned int i = 0; i < col_widths.size(); ++i) {
-        SetColWidth(i, col_widths[i]);
-        SetColAlignment(i, GG::ALIGN_LEFT);
+    GG::X row_width = w - ClientUI::ScrollWidth() - ClientUI::Pts();
+    std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
+    const GG::Y HEIGHT(Value(col_widths[0]));
+    m_header_row = new GG::ListBox::Row(row_width, HEIGHT, "");
+
+    CUILabel* graphic_col = new CUILabel("");  // graphic
+    graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));
+    graphic_col->ClipText(true);
+    graphic_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(graphic_col);
+
+    CUIButton* name_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_NAME"));
+    name_col->Resize(GG::Pt(col_widths[1], HEIGHT));
+    name_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(name_col);
+
+    CUIButton* cost_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_COST"));
+    cost_col->Resize(GG::Pt(col_widths[2], HEIGHT));
+    cost_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(cost_col);
+
+    CUIButton* time_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_TIME"));
+    time_col->Resize(GG::Pt(col_widths[3], HEIGHT));
+    time_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(time_col);
+
+    CUIButton* category_col = new CUIButton( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
+    category_col->Resize(GG::Pt(col_widths[4], HEIGHT));
+    category_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(category_col);
+
+    CUIButton* descr_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
+    descr_col->Resize(GG::Pt(col_widths[5], HEIGHT));
+    descr_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(descr_col);
+
+    m_header_row->Resize(GG::Pt(row_width, HEIGHT));
+
+    // Initialize column widths before setting header
+    int num_cols = m_header_row->size();
+    std::vector<GG::Alignment> col_alignments = TechRow::ColAlignments();
+    SetNumCols(num_cols);
+    for (int i = 0; i < num_cols; ++i) {
+        SetColWidth(i, m_header_row->at(i)->Width());
+        SetColAlignment(i, col_alignments[i]);
     }
+
+    SetColHeaders(m_header_row);
+    LockColWidths();
 }
 
 TechTreeWnd::TechListBox::~TechListBox() {
@@ -1724,6 +1790,8 @@ void TechTreeWnd::TechListBox::Populate() {
     double insertion_elapsed = 0.0;
     boost::timer creation_timer;
     boost::timer insertion_timer;
+
+    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
     // HACK! This caching of TechRows works only if there are no "hidden" techs
     // that are added to the manager mid-game.
     TechManager& manager = GetTechManager();
@@ -1732,7 +1800,7 @@ void TechTreeWnd::TechListBox::Populate() {
             const std::string& tech_name = UserString(tech->Name());
             creation_timer.restart();
             m_all_tech_rows.insert(std::make_pair(tech_name,
-                new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech->Name())));
+                new TechRow(row_width, tech->Name())));
             creation_elapsed += creation_timer.elapsed();
         }
     }
@@ -1755,7 +1823,7 @@ void TechTreeWnd::TechListBox::Populate() {
     }
 
     // set attributes after clear and insert, cached rows may have incorrect widths
-    std::vector<GG::X> col_widths = TechRow::ColWidths(Width());
+    std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
     int num_cols = static_cast<int>(col_widths.size());
     for (int i = 0; i < num_cols; ++i)
         SetColWidth(i, col_widths[i]);
