@@ -37,6 +37,9 @@ namespace {
     }
 
     static const std::string EMPTY_STRING;
+
+    /** @content_tag{CTRL_STAT_SKIP_DEPOP} Do not count PopCenter%s with this tag for SpeciesPlanetsDepoped stat */
+    const std::string TAG_STAT_SKIP_DEPOP = "CTRL_STAT_SKIP_DEPOP";
 }
 
 
@@ -859,12 +862,14 @@ void Planet::PopGrowthProductionResearchPhase() {
         if (Empire* empire = GetEmpire(this->Owner())) {
             empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
-            // record depopulation of planet with species while owned by this empire
-            std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
-            if (species_it == empire->SpeciesPlanetsDepoped().end())
-                empire->SpeciesPlanetsDepoped()[SpeciesName()] = 1;
-            else
-                species_it->second++;
+            if (!HasTag(TAG_STAT_SKIP_DEPOP)) {
+                // record depopulation of planet with species while owned by this empire
+                std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
+                if (species_it == empire->SpeciesPlanetsDepoped().end())
+                    empire->SpeciesPlanetsDepoped()[SpeciesName()] = 1;
+                else
+                    species_it->second++;
+            }
         }
         // remove species
         PopCenter::Reset();
