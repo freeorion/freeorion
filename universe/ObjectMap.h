@@ -72,10 +72,10 @@ public:
         }
 
         bool operator==(const iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::iterator::operator==(other); }
+        { return (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) == other); }
 
         bool operator!=(const iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::iterator::operator!=(other); }
+        { return (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) != other);}
 
     private:
         // 
@@ -87,7 +87,7 @@ public:
         // return a "null" pointer.  We assume that we are dealing with valid
         // iterators in the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, boost::shared_ptr<T> >::iterator::operator==(m_owner.Map<T>().end())) {
+            if (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) == (m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
                 m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::iterator::operator*().second);
@@ -135,10 +135,10 @@ public:
         }
 
         bool operator==(const const_iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator==(other); }
+        { return (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) == other); }
 
         bool operator!=(const const_iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator!=(other); }
+        { return (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) != other); }
 
     private:
         // See iterator for comments.
@@ -149,7 +149,7 @@ public:
         // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
         // the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, boost::shared_ptr<T> >::const_iterator::operator==(m_owner.Map<T>().end())) {
+            if (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) == (m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
                 m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::const_iterator::operator*().second);
