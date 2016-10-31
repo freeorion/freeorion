@@ -239,6 +239,9 @@ Sans propriétaire
 NOWHERE
 Ne peut pas être produit
 
+# Prefix to use for menu items that will open a pedia entry
+POPUP_MENU_PEDIA_PREFIX
+'''Aide: '''
 
 ##
 ## Major errors
@@ -4373,10 +4376,23 @@ RESEARCH_TITLE
 Recherche
 
 RESEARCH_TEXT
-'''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles technologies. La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 PR et requiert 5 tours, un maximum de 4 PR seulement par tour peut lui être consacré.
+'''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles [[encyclopedia TECHNOLOGIES_TITLE]].
+
+La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 PR et requiert 5 tours, un maximum de 4 PR seulement par tour peut lui être consacré.
 Les PR sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
 
 À l'inverse de l'Industrie, la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire.'''
+
+TECHNOLOGIES_TITLE  # translated
+Technologies
+
+TECHNOLOGIES_TEXT
+'''De nouveaux effets, indicateurs planétaires améliorés, structures, et équipements d'astronef peuvent être débloqués via la [[encyclopedia RESEARCH_TITLE]] des technologies associées.
+
+Effectuer la [[RESEARCH_TITLE]] d'une technologie débloquant un objet donnera uniquement à l'empire la connaissance des modalités de production de cet objet. La production effective d'un objet peut être soumise à d'autres conditions, tel l'accès à certaines ressources.
+Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant la bulle d'aide de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
+
+En général, la disponibilité ou l'activation d'un objet débloqué par la [[RESEARCH_TITLE]] d'une technologie ne nécessite pas de connection aux lignes d'[[encyclopedia SUPPLY_TITLE]] (par exemple une structure ou une amélioration d'un indicateur planétaire). Toutefois, si une technologie améliorant un équipement d'astronef est recherchée puis assimilée (par exemple un armement), les astronefs déjà existants doivent se trouver dans une zone d'approvisionnement, être stationnaires et ne pas être en situation de combat, afin de recevoir l'amélioration au cours du tour suivant.'''
 
 HAPPINESS_TITLE
 Bonheur
@@ -4633,7 +4649,7 @@ Au lancement d'une nouvelle partie, un clic-droit sur les modèles [[DESIGN_WND_
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] affiche comme son nom l'indique les équipements. Ceux dont la technologie associée a été recherchée et assimilée sont disponibles et peuvent être intégrés dans un modèle d'astronef. D'autres équipements sont indisponibles si aucune [[encyclopedia RESEARCH_TITLE]] n'a encore été effectuée concernant la technologie associée ou si cet équipement est seulement utilisable par les monstres.
 
-Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef. Certains items indisponibles peuvent être débloqués en effectuant une [[RESEARCH_TITLE]] sur la technologie associée.
+Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef. Certains items indisponibles peuvent être débloqués via la [[RESEARCH_TITLE]] des [[encyclopedia TECHNOLOGIES_TITLE]] associées.
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] propose également des filtres pour afficher/cacher les équipements par catégorie.
 
@@ -5070,20 +5086,33 @@ Rapport de Situation - Tour %1%
 FILTERS
 Filtres
 
+SITREP_IGNORE_MENU
+Ignorer
+
+SITREP_BLOCK_MENU
+Bloquer
+
 SITREP_SNOOZE_5_TURNS
-'''  Pour 5 tours, ignorer ce SitRep'''
+Pour 5 tours, ignorer ce SitRep
 
 SITREP_SNOOZE_10_TURNS
-'''  Pour 10 tours, ignorer ce SitRep'''
+Pour 10 tours, ignorer ce SitRep
 
 SITREP_SNOOZE_INDEFINITE
-'''  Ignorer indéfiniment ce SitRep'''
+Ignorer indéfiniment ce SitRep
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Réafficher tous les SitReps ignorés indéfiniment'''
+Réafficher tous les SitReps ignorés indéfiniment
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Réafficher tous les SitReps ignorés'''
+Réafficher tous les SitReps ignorés
+
+# %1% localized name of SitRep template
+SITREP_HIDE_TEMPLATE
+Bloquer tous les SitReps "%1%"
+
+SITREP_SHOWALL_TEMPLATES
+Réafficher tous les SitReps bloqués
 
 SITREP_WELCOME  # translated
 [[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
@@ -5773,7 +5802,7 @@ BEGINNER_HINT_17
 17: Les [[encyclopedia SHIELDS_TITLE]] d'astronef constituent une défense contre chaque tir ennemi, réduisant les [[encyclopedia DAMAGE_TITLE]] subis de la valeur de solidité du Bouclier de l'astronef. La solidité d'un Bouclier peut être affecté par divers facteurs comme les tempêtes spatiales, le type d'étoile au sein du système, ou la proximité d'une Planète Capitale d'un Empire ayant été capturée.
 
 BEGINNER_HINT_18
-18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'Industrie, la Recherche ou la Défense. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les technologies requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
+18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'Industrie, la Recherche ou la Défense. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les [[encyclopedia TECHNOLOGIES_TITLE]] requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
 
 BEGINNER_HINT_19
 19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[encyclopedia SUPPLY_TITLE]] à une planète présentant un indicateur [[encyclopedia HAPPINESS_TITLE]] d'au moins 5, et une Population supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
@@ -8139,7 +8168,7 @@ DESC_SPECIES_NOT
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
 # %3% textual description of the upper limit for the number of enqueued items.
-# %4% textual description fo the items enqueued.
+# %4% textual description for the items enqueued.
 DESC_ENQUEUED
 ''' lieu où l'empire %1% a entre %2% et %3% projets dans la file d'attente de production'''
 
@@ -8309,7 +8338,7 @@ DESC_METER_VALUE_CURRENT_MAX_NOT
 DESC_SHIP_PART_METER_VALUE_CURRENT
 ''' ayant une valeur %1% comprise entre %3% et %4% pour l'équipement %2%'''
 
-# %1% name of the ship eter.
+# %1% name of the ship meter.
 # %2% textual description of the ship part.
 # %3% textual description of the lower limit for the meter value.
 # %4% textual description of the upper limit for the meter value.
@@ -12314,6 +12343,17 @@ TELEPATHIC_DETECTION_DESC
 
 
 ##
+## Fuel regeneration
+##
+
+AVERAGE_BASE_FUEL_REGEN_DESC
+'''	Récupération stationnaire normale de [[encyclopedia FUEL_TITLE]]: + 0.1'''
+
+LIVING_HULL_BASE_FUEL_REGEN_DESC
+'''	Coque Organique Vivante - Récupération stationnaire de [[encyclopedia FUEL_TITLE]]: + 0.3'''
+
+
+##
 ## Accounting labels
 ##
 
@@ -12591,6 +12631,9 @@ Brouillage Camouflage
 
 TRANSPATIAL_CLOAK_INTERACTION
 Interaction Propulsion Transpatiale - Camouflage
+
+BASE_FUEL_REGEN_LABEL
+Récupération Stationnaire Carburant
 
 
 ##
