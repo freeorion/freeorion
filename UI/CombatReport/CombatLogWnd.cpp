@@ -1,5 +1,6 @@
 #include "CombatLogWnd.h"
 
+#include <GG/GUI.h>
 #include <GG/DeferredLayout.h>
 #include <GG/Scroll.h>
 #include <GG/ScrollPanel.h>
@@ -143,6 +144,7 @@ namespace {
         SetLayout(new GG::DeferredLayout(UpperLeft().x, UpperLeft().y, Width(), Height(), 1, 1));
         GetLayout()->Add(title, 0, 0, 1, 1);
         SetCollapsed(true);
+        RequirePreRender();
     }
 
     CombatLogAccordionPanel::~CombatLogAccordionPanel() {
@@ -185,12 +187,8 @@ GG::Pt CombatLogWnd::CombatLogWndImpl::MinUsableSize() const {
     return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
 }
 
-void CombatLogWnd::CombatLogWndImpl::HandleWndChanged() {
-    GG::Pt size = m_wnd.Size();
-    m_wnd.Resize(size + GG::Pt(2*m_font->SpaceWidth(), GG::Y0));
-    m_wnd.Resize(size);
-    m_wnd.WndChangedSignal();
-}
+void CombatLogWnd::CombatLogWndImpl::HandleWndChanged()
+{ m_wnd.RequirePreRender(); }
 
 
 namespace {
@@ -464,3 +462,24 @@ GG::Pt CombatLogWnd::MinUsableSize() const
 
 void CombatLogWnd::HandleMadeVisible()
 { return pimpl->HandleWndChanged(); }
+
+void CombatLogWnd::PreRender() {
+    GG::Wnd::PreRender();
+
+    /* Workaround
+
+     Problem: CombatLogWnd is incorrectly initialized with a width of 30 which causes the combat
+     accordion windows to incorrectly size themselves as if the title text were 30 wide.
+
+    This fix forces the combat accordion window to correctly resize itself.
+
+    TODO: Fix intial size of CombatReport from (30,15) to its actual first displayed size.*/
+    GG::Pt size = Size();
+    Resize(size + GG::Pt(2*pimpl->m_font->SpaceWidth(), GG::Y0));
+    GG::GUI::PreRenderWindow(this);
+    Resize(size);
+    GG::GUI::PreRenderWindow(this);
+    /* End workaround. */
+
+    WndChangedSignal();
+}
