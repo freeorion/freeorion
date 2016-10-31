@@ -463,8 +463,7 @@ GG::Pt CombatLogWnd::MinUsableSize() const
 void CombatLogWnd::HandleMadeVisible()
 { return pimpl->HandleWndChanged(); }
 
-void CombatLogWnd::PreRender()
-{
+void CombatLogWnd::PreRender() {
     GG::Wnd::PreRender();
 
     /* Workaround
