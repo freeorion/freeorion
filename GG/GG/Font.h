@@ -129,7 +129,11 @@ class GG_API Font
 {
 public:
     /** \brief A range of iterators into a std::string that defines a
-        substring found in a string being rendered by Font. */
+        substring found in a string being rendered by Font.
+
+        Substring is bound to a particular instance of a std::string.  If
+        that particular std::string goes out of scope or is deleted then
+        behavior is undefined, but may seg fault with the next access. */
     class GG_API Substring
     {
     public:
@@ -146,6 +150,13 @@ public:
         /** Construction from base.  \a pair.first must be <= \a
             pair.second. */
         Substring(const std::string& str_, const IterPair& pair);
+
+        /** Attach this Substring to \p str_.
+
+            This changes the iterators from pointing into the previous
+            std::string to pointing into \p str_.
+        */
+        void Bind(const std::string& str_);
 
         /** Returns an iterator to the beginning of the substring. */
         std::string::const_iterator begin() const;
@@ -206,6 +217,29 @@ public:
 
         virtual ~TextElement(); ///< Virtual dtor.
 
+        /** Attach this TextElement to the string \p whole_text, by
+            attaching the SubString data member text to \p whole_text.
+
+            Binding to a new \p whole_text is very fast compared to
+            re-parsing the entire \p whole_text and allows TextElements of
+            TextElementType TEXT to be changed quickly if it is known that
+            the parse would be the same.
+
+            It is efficient when you want to do a text parse or layout
+            once, and then create several different controls that have the
+            same text layout and text contents, but each of them needs to
+            keep there own internal copy of the text. So, while the pointer
+            diffs are all the same, since the text contents are the same,
+            the pointer to the string in each TextElement (and its
+            contained Substring) needs to be set to the appropriate copy of
+            the string.
+
+            This is used in TextControl and its derived classes to re-use
+            entire vectors of TextElement with different std::strings
+            without re-parsing the std::string.
+         */
+        virtual void Bind(const std::string& whole_text);
+
         /** Returns the TextElementType of the element. */
         virtual TextElementType Type() const;
 
@@ -219,6 +253,8 @@ public:
         /** Returns the number of code points in the original string that the
             element represents. */
         CPSize CodePointSize() const;
+
+        virtual bool operator==(const TextElement &rhs) const;
 
         /** The text from the original string represented by the element. */
         Substring text;
@@ -234,6 +270,45 @@ public:
         mutable X cached_width;
     };
 
+    /** \brief TextAndElementsAssembler is used to assemble a matched pair of text and a vector of
+        TextElement, without incurring the computational cost of parsing the text with
+        ComputeTextElements().
+
+        The pair of string and vector returned by Text() and Elements() are consistent with each
+        other and can be used with the fast constructor or the fast SetText variant of TextControl.
+    */
+    class GG_API TextAndElementsAssembler
+    {
+    public:
+        TextAndElementsAssembler(const Font& font);
+        ~TextAndElementsAssembler();
+
+        /** Return the constructed text.*/
+        const std::string& Text();
+        /** Return the constructed TextElements.*/
+        const std::vector<boost::shared_ptr<TextElement> >& Elements();
+
+        /** Add an open tag iff it exists as a recognized tag.*/
+        TextAndElementsAssembler& AddOpenTag(const std::string& tag);
+        /** Add an open tag iff it exists as a recognized tag.*/
+        TextAndElementsAssembler& AddOpenTag(const std::string& tag, const std::vector<std::string>& params);
+        /** Add a close tag iff it exists as a recognized tag.*/
+        TextAndElementsAssembler& AddCloseTag(const std::string& tag);
+        /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
+        TextAndElementsAssembler& AddText(const std::string& text);
+        /** Add a white space element.*/
+        TextAndElementsAssembler& AddWhitespace(const std::string& whitespace);
+        /** Add a new line element.*/
+        TextAndElementsAssembler& AddNewline();
+
+        /** Add an open Clr tag.*/
+        TextAndElementsAssembler& AddOpenTag(const Clr& color);
+
+    private:
+        class TextAndElementsAssemblerImpl;
+        boost::scoped_ptr<TextAndElementsAssemblerImpl> const pimpl;
+    };
+
     /** \brief The type of TextElement that represents a text formatting
         tag. */
     struct GG_API FormattingTag : TextElement
@@ -242,7 +317,14 @@ public:
             (e.g. "</rgba>"). */
         FormattingTag(bool close);
 
+        /** Attach to \p whole_text by binding all Substring data members,
+            both the base class and the data member tag_name to the string
+            \p whole_text.*/
+        virtual void Bind(const std::string& whole_text);
+
         virtual TextElementType Type() const;
+
+        virtual bool operator==(const TextElement &rhs) const;
 
         /** The parameter strings within the tag, e.g. "0", "0", "0", and "255"
             for the tag "<rgba 0 0 0 255>". */
@@ -475,6 +557,12 @@ public:
     */
     std::vector<boost::shared_ptr<Font::TextElement> > ExpensiveParseFromTextToTextElements(const std::string& text,
                                                                                             const Flags<TextFormat>& format) const;
+
+    /** Fill \p text_elements with the font widths of characters from \p text starting from \p
+        starting_from. */
+    void FillTemplatedText(const std::string& text,
+                           std::vector<boost::shared_ptr<TextElement> >& text_elements,
+                           std::vector<boost::shared_ptr<TextElement> >::iterator starting_from) const;
 
     /** DetermineLines() returns the \p line_data resulting from adding the necessary line
         breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit
