@@ -68,107 +68,98 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     return targeted_planets
 
 
-def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked,
-                           fleet_pool_set, fleet_list, take_any=False, extend_search=True,
-                           verbose=False, depth=0):
-    """
-    Implements breadth-first search through systems
-    mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked,
-    fleet_pool_set as fleets are checked also mutates fleet_list as running list of selected fleets;
-    this list will be returned as the function return value if the target statsare met or if upon exhausting
-    systems_to_check both take_any is true and the min stats are met.
+# TODO: Avoid mutable arguments and use return values instead
+# TODO: Use Dijkstra's algorithm instead of BFS to consider starlane length
+def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
+                           fleet_pool_set, fleet_list, species=""):
+    """Get fleets for a mission.
+
+    Implements breadth-first search through systems starting at the **starting_sytem**.
+    In each system, local fleets are checked if they are in the allowed **fleet_pool_set** and suitable for the mission.
+    If so, they are added to the **fleet_list** and **cur_stats** is updated with the currently selected fleet summary.
+    The search continues until the requirements defined in **target_stats** are met or there are no more systems/fleets.
+    In that case, if the **min_stats** are covered, the **fleet_list** is returned anyway.
     Otherwise, an empty list is returned by the function, in which case the caller can make an evaluation of
     an emergency use of the found fleets in fleet_list; if not to be used they should be added back to the main pool.
+
+    :param target_stats: stats the fleet should ideally meet
+    :type target_stats: dict
+    :param min_stats: minimum stats the final fleet must meet to be accepted
+    :type min_stats: dict
+    :param cur_stats: (**mutated**) stat summary of selected fleets
+    :type cur_stats: dict
+    :param starting_system: system_id where breadth-first-search is centered
+    :type starting_system: int
+    :param fleet_pool_set: (**mutated**) fleets allowed to be selected. Split fleed_ids are added, used ones removed.
+    :type: fleet_pool_set: set[int]
+    :param fleet_list: (**mutated**) fleets that are selected for the mission. Gets filled during the call.
+    :type fleet_list: list[int]
+    :param species: species for colonization mission
+    :type species: str
+    :return: List of selected fleet_ids or empty list if couldn't meet minimum requirements.
+    :rtype: list[int]
     """
-    if verbose:
-        print ("get_fleets_for_mission: (nships:%1d, targetStats:%s, minStats:%s, "
-               "curStats:%s, species:%6s, systemsToCheck:%8s, systemsChecked:%8s, "
-               "fleetPoolSet:%8s, fleetList:%8s) ") % (nships, target_stats, min_stats, cur_stats, species,
-                                                       systems_to_check, systems_checked, fleet_pool_set, fleet_list)
     universe = fo.getUniverse()
-    if not (systems_to_check and fleet_pool_set):
-        if verbose:
-            print "no more systems or fleets to check"
-        if take_any:
-            return fleet_list
-        elif stats_meet_reqs(cur_stats, min_stats) and sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships:
-            return fleet_list
-        else:
-            return []
-    this_system_id = systems_to_check.pop(0)  # take the head of the line
-    systems_checked.append(this_system_id)
-
-    accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
-    fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
-
-    if verbose:
-        print "found fleetPool Fleets %s" % fleets_here
-    while fleets_here:
-        fleet_id = fleets_here.pop(0)
-        fleet = universe.getFleet(fleet_id)
-        if not fleet:
-            print "in get_fleets_for_mission, fleet_id %d appears invalid; cannot retrieve" % fleet_id
-            fleet_pool_set.remove(fleet_id)
-            continue
-        if len(list(fleet.shipIDs)) > 1:
-            new_fleets = split_fleet(fleet_id)  # try splitting fleet
-            fleet_pool_set.update(new_fleets)
-            fleets_here.extend(new_fleets)
-        meets_species_req = False
-        needs_species = False
-        if species != "":
-            needs_species = True
-        has_species = ""
-
-        colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION,
-                              ShipRoleType.BASE_COLONISATION)
-        for shipID in fleet.shipIDs:
-            ship = universe.getShip(shipID)
-            if foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles:
-                has_species = ship.speciesName
-                if has_species == species:
-                    meets_species_req = True
-                    break
-        troop_capacity = 0
-        needs_troops = 'troopCapacity' in target_stats
-        if needs_troops:
-            troop_capacity = count_troops_in_fleet(fleet_id)
-
-        use_fleet = (((not needs_species and not has_species) or meets_species_req) and
-                     ((needs_troops and troop_capacity > 0) or (not needs_troops and not troop_capacity)))
-        if use_fleet:
+    colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION, ShipRoleType.BASE_COLONISATION)
+    systems_enqueued = [starting_system]
+    systems_visited = []
+    # loop over systems in a breadth-first-search trying to find nearby suitable ships in fleet_pool_set
+    while systems_enqueued and fleet_pool_set:
+        this_system_id = systems_enqueued.pop(0)
+        systems_visited.append(this_system_id)
+        accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
+        fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
+        # loop over all fleets in the system, split them if possible and select suitable ships
+        while fleets_here:
+            fleet_id = fleets_here.pop(0)
+            fleet = universe.getFleet(fleet_id)
+            if not fleet:  # TODO should be checked before passed to the function
+                fleet_pool_set.remove(fleet_id)
+                continue
+            # try splitting fleet
+            if len(list(fleet.shipIDs)) > 1:
+                new_fleets = split_fleet(fleet_id)
+                fleet_pool_set.update(new_fleets)
+                fleets_here.extend(new_fleets)
+            # check species for colonization missions
+            if species:
+                for ship_id in fleet.shipIDs:
+                    ship = universe.getShip(ship_id)
+                    if ship and foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles and species == ship.SpeciesName:
+                        break
+                else:  # no suitable species found
+                    continue
+            # check troop capacity for invasion missions
+            troop_capacity = 0
+            if 'troopCapacity' in target_stats:
+                troop_capacity = count_troops_in_fleet(fleet_id)
+                if troop_capacity <= 0:
+                    continue
+            # all checks passed, add ship to selected fleets and update the stats
             fleet_list.append(fleet_id)
             fleet_pool_set.remove(fleet_id)
-            this_rating = foAI.foAIstate.get_rating(fleet_id)  # Done!
+            this_rating = foAI.foAIstate.get_rating(fleet_id)
             cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'troopCapacity' in target_stats:
-                # ToDo: Check if replaceable by troop_capacity
-                cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + count_troops_in_fleet(fleet_id)
-            if (sum([len(universe.getFleet(fid).shipIDs) for fid in fleet_list]) >= nships)\
+                cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + troop_capacity
+            # if we already meet the requirements, we can stop looking for more ships
+            if (sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= 1) \
                     and stats_meet_reqs(cur_stats, target_stats):
-                if verbose:
-                    print "returning fleetlist: %s" % fleet_list
                 return fleet_list
-    # finished loop without meeting reqs
-    if extend_search:
-        for neighbor_id in [el.key() for el in universe.getSystemNeighborsMap(this_system_id, foAI.foAIstate.empireID)]:
+
+        # finished system without meeting requirements. Add neighboring systems to search queue.
+        for neighbor_id in [el.key() for el in
+                            universe.getSystemNeighborsMap(this_system_id, fo.empireID())]:
             if all((
-                neighbor_id not in systems_checked,
-                neighbor_id not in systems_to_check,
-                neighbor_id in foAI.foAIstate.exploredSystemIDs
+                    neighbor_id not in systems_visited,
+                    neighbor_id not in systems_enqueued,
+                    neighbor_id in foAI.foAIstate.exploredSystemIDs
             )):
-                systems_to_check.append(neighbor_id)
-    try:
-        return get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check,
-                                      systems_checked, fleet_pool_set, fleet_list, take_any=take_any,
-                                      extend_search=extend_search, verbose=verbose, depth=depth + 1)
-    except:
-        s1 = len(systems_to_check)
-        s2 = len(systems_checked)
-        s3 = len(set(systems_to_check + systems_checked))
-        print "Error: exception triggered in 'getFleetsForMissions' and caught at depth %d w/s1/s2/s3 (%d/%d/%d): " % (
-            depth + 2, s1, s2, s3)
-        print traceback.format_exc()
+                systems_enqueued.append(neighbor_id)
+    # we ran out of systems or fleets to check but did not meet requirements yet.
+    if stats_meet_reqs(cur_stats, min_stats) and any(universe.getFleet(fid).shipIDs for fid in fleet_list):
+        return fleet_list
+    else:
         return []
 
 

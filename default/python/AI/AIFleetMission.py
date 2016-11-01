@@ -289,15 +289,12 @@ class AIFleetMission(object):
         self.clear_target()  # TODO: clear from foAIstate
         self.clear_fleet_orders()
         troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fleet_id))
-        found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': troops_needed}
         target_stats = {'rating': 10, 'troopCapacity': troops_needed}
         found_fleets = []
         # TODO check if next statement does not mutate any global states and can be removed
-        _ = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats, "",
-                                                systems_to_check=[fleet.systemID], systems_checked=[],
-                                                fleet_pool_set=set(new_fleets), fleet_list=found_fleets,
-                                                verbose=False)
+        _ = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, {}, starting_system=fleet.systemID,
+                                                fleet_pool_set=set(new_fleets), fleet_list=found_fleets)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)
         target = Planet(target_id)
