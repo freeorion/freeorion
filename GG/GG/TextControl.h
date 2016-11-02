@@ -175,8 +175,29 @@ public:
 
     /** Change TextControl's text to replace the text at templated \p targ_offset with \p new_text.
 
+        This replaces the entire text of the TextElement at offset \p targ_offset and adjusts the
+        string \p text to be consistent even if the \p new_text is longer/shorter than the original
+        TEXT type TextElement.
+
         This does not reparse the TextControl's text. It is faster than SetText on a new
-        string. It will not find white space in the inserted text. */
+        string. It will not find white space in the inserted text.
+
+        \p targ_offset is the zero based offset of the TextElements of type TEXT.  It ignores
+        other types of TextElements such as TAGS, WHITESPACE and NEWLINE, when determining the
+        offset.
+
+        Here is an example of changing a ship name from "oldname" to "New Ship Name":
+
+        original text:             "<i>Ship:<\i> oldname ID:"
+        orignal m_text_elements:   [<OPEN_TAG i>, <TEXT "Ship:">, <CLOSE_TAG i>, <WHITESPACE>, <TEXT oldname>, <WHITESPACE>, <TEXT ID:>]
+
+        ChangeTemplatedText(text, text_elements, "New Ship Name", 1);
+
+        changed text:              "<i>Ship:<\i> New Ship Name ID:"
+        changed m_text_elements:   [<OPEN_TAG i>, <TEXT "Ship:">, <CLOSE_TAG i>, <WHITESPACE>, <TEXT New Ship Name>, <WHITESPACE>, <TEXT ID:>]
+
+    */
+
     void ChangeTemplatedText(const std::string& new_text, size_t targ_offset);
 
     /** Returns the Font used by this TextControl to render its text. */

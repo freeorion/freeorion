@@ -564,12 +564,34 @@ public:
                            std::vector<boost::shared_ptr<TextElement> >& text_elements,
                            std::vector<boost::shared_ptr<TextElement> >::iterator starting_from) const;
 
-    /** Change \p text_elements and \p text to replace the text at \p targ_offset with \p new_text.
+    /** Change \p text_elements and \p text to replace the text of the TextElement at
+        \p targ_offset with \p new_text.
+
+        This replaces the entire text of the TextElement at offset \p targ_offset and adjusts the
+        string \p text to be consistent even if the \p new_text is longer/shorter than the original
+        TEXT type TextElement.
 
         This does not recompute the text_elements. It is faster than ComputeTextElements on a new
         string. It will not find white space in the inserted text.
 
-        \p text and \p text_elements are assumed to be consistent and both will be changed. */
+        \p text and \p text_elements are assumed to be consistent with each other and both will be
+        changed to remain consistent.
+
+        \p targ_offset is the zero based offset of the TextElements of type TEXT.  It ignores
+        other types of TextElements such as TAGS, WHITESPACE and NEWLINE, when determining the
+        offset.
+
+        Here is an example of changing a ship name from "oldname" to "New Ship Name":
+
+        original text:             "<i>Ship:<\i> oldname ID:"
+        orignal text_elements:     [<OPEN_TAG i>, <TEXT "Ship:">, <CLOSE_TAG i>, <WHITESPACE>, <TEXT oldname>, <WHITESPACE>, <TEXT ID:>]
+
+        ChangeTemplatedText(text, text_elements, "New Ship Name", 1);
+
+        changed text:              "<i>Ship:<\i> New Ship Name ID:"
+        changed text_elements:     [<OPEN_TAG i>, <TEXT "Ship:">, <CLOSE_TAG i>, <WHITESPACE>, <TEXT New Ship Name>, <WHITESPACE>, <TEXT ID:>]
+
+    */
     void ChangeTemplatedText(std::string& text,
                              std::vector<boost::shared_ptr<TextElement> >& text_elements,
                              const std::string& new_text,
