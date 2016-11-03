@@ -182,7 +182,7 @@ protected:
 
     /** Return the index of the last LineData() or 0 if LineData is empty.
      Allows index based Edit to handle empty line data.*/
-    std::vector<GG::Font::LineData>::size_type LastLineIndexOrZero() const;
+    std::vector<GG::Font::LineData>::size_type NumLines() const;
     //@}
 
     /** \name Mutators */ ///@{

@@ -456,7 +456,6 @@ Y MultiEdit::BottomMargin() const
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 {
-
     if (GetLineData().empty())
         return std::pair<std::size_t, CPSize>(0, CP0);
 
@@ -571,7 +570,7 @@ std::size_t MultiEdit::RowAt(Y y) const
     if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < 0) {
         retval = Value(y / GetFont()->Lineskip());
     } else { // FORMAT_BOTTOM
-        retval = LastLineIndexOrZero() -
+        retval = NumLines() -
             Value((ClientSize().y + (m_vscroll && m_hscroll ? BottomMargin() : Y0) - y - 1) / GetFont()->Lineskip());
     }
     return retval;
@@ -624,17 +623,17 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
 }
 
 std::size_t MultiEdit::FirstVisibleRow() const
-{ return std::min(RowAt(Y0), LastLineIndexOrZero()); }
+{ return std::min(RowAt(Y0), NumLines()); }
 
 std::size_t MultiEdit::LastVisibleRow() const
-{ return std::min(RowAt(ClientSize().y), LastLineIndexOrZero()); }
+{ return std::min(RowAt(ClientSize().y), NumLines()); }
 
 std::size_t MultiEdit::FirstFullyVisibleRow() const
 {
     std::size_t retval = RowAt(Y0);
     if (m_first_row_shown % GetFont()->Lineskip())
         ++retval;
-    return std::min(retval, LastLineIndexOrZero());
+    return std::min(retval, NumLines());
 }
 
 std::size_t MultiEdit::LastFullyVisibleRow() const
@@ -642,7 +641,7 @@ std::size_t MultiEdit::LastFullyVisibleRow() const
     std::size_t retval = RowAt(ClientSize().y);
     if ((m_first_row_shown + ClientSize().y + BottomMargin()) % GetFont()->Lineskip())
         --retval;
-    return std::min(retval, LastLineIndexOrZero());
+    return std::min(retval, NumLines());
 }
 
 CPSize MultiEdit::FirstVisibleChar(std::size_t row) const
@@ -964,7 +963,7 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
                 m_cursor_end.first = 0;
                 m_cursor_end.second = CP0;
             } else {
-                m_cursor_end.first = std::min(m_cursor_end.first + rows_moved, LastLineIndexOrZero());
+                m_cursor_end.first = std::min(m_cursor_end.first + rows_moved, NumLines());
                 if (GetLineData()[m_cursor_end.first].char_data.size() < m_cursor_end.second)
                     m_cursor_end.second = CPSize(GetLineData()[m_cursor_end.first].char_data.size());
             }
