@@ -19,6 +19,21 @@
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+
+#if defined(_MSC_VER)
+#  if (_MSC_VER == 1900)
+namespace boost {
+    const volatile UniverseObject*  get_pointer(const volatile UniverseObject* p) { return p; }
+    const volatile Fleet*           get_pointer(const volatile Fleet* p) { return p; }
+    const volatile Ship*            get_pointer(const volatile Ship* p) { return p; }
+    const volatile Planet*          get_pointer(const volatile Planet* p) { return p; }
+    const volatile System*          get_pointer(const volatile System* p) { return p; }
+    const volatile Field*           get_pointer(const volatile Field* p) { return p; }
+    const volatile Building*        get_pointer(const volatile Building* p) { return p; }
+}
+#  endif
+#endif
+
 namespace {
     void                    DumpObjects(const Universe& universe)
     { DebugLogger() << universe.Objects().Dump(); }

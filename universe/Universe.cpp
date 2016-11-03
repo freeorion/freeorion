@@ -46,6 +46,14 @@
 #include <stdexcept>
 
 
+#if defined(_MSC_VER)
+#  if (_MSC_VER == 1900)
+namespace boost {
+    const volatile Universe* get_pointer(const volatile Universe* p) { return p; }
+}
+#  endif
+#endif
+
 namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
