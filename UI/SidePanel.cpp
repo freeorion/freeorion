@@ -470,6 +470,7 @@ public:
     /** \name Mutators */ //@{
     void                    Select(bool selected);
 
+    virtual void            PreRender();
     virtual void            Render();
     virtual void            LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void            LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -1740,7 +1741,7 @@ void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Wnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
@@ -1919,6 +1920,11 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
+
+void SidePanel::PlanetPanel::PreRender() {
+    GG::Wnd::PreRender();
+    DoLayout();
+}
 
 void SidePanel::PlanetPanel::Render() {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
