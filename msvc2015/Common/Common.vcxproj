@@ -182,7 +182,7 @@
     </None>
     <CustomBuild Include="..\..\util\Version.cpp.in">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2013"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2015"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">"$(SolutionDir)..\python.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2013"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
