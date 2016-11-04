@@ -78,8 +78,8 @@ public:
     /** Fast constructor.
 
      This constructor requires a \p str and \text_elements that are consistent with each other.
-     Font::ComputeTextElements() will not be called on \p str.  Hence this constructor is much
-     faster than the first constructor.*/
+     Font::ExpensiveParseFromTextToTextElements() will not be called on \p str.  Hence this
+     constructor is much faster than the first constructor.*/
     TextControl(X x, Y y, X w, Y h, const std::string& str,
                 const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements,
                 const boost::shared_ptr<Font>& font,

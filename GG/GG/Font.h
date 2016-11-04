@@ -272,7 +272,7 @@ public:
 
     /** \brief TextAndElementsAssembler is used to assemble a matched pair of text and a vector of
         TextElement, without incurring the computational cost of parsing the text with
-        ComputeTextElements().
+        ExpensiveParseFromTextToTextElements().
 
         The pair of string and vector returned by Text() and Elements() are consistent with each
         other and can be used with the fast constructor or the fast SetText variant of TextControl.
@@ -571,8 +571,9 @@ public:
         string \p text to be consistent even if the \p new_text is longer/shorter than the original
         TEXT type TextElement.
 
-        This does not recompute the text_elements. It is faster than ComputeTextElements on a new
-        string. It will not find white space in the inserted text.
+        This does not recompute the text_elements. It is faster than
+        ExpensiveParseFromTextToTextElements on a new string. It will not find white space in the
+        inserted text.
 
         \p text and \p text_elements are assumed to be consistent with each other and both will be
         changed to remain consistent.
