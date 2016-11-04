@@ -2650,6 +2650,11 @@ bool SidePanel::InWindow(const GG::Pt& pt) const {
 GG::Pt SidePanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
 
+void SidePanel::PreRender() {
+    GG::Wnd::PreRender();
+    DoLayout();
+}
+
 void SidePanel::Render()
 { CUIWnd::Render(); }
 
@@ -2998,7 +3003,7 @@ void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 void SidePanel::SystemSelectionChanged(GG::DropDownList::iterator it) {

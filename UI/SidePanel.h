@@ -45,6 +45,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void        Render();
+    virtual void        PreRender();
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     /** Updates contents of sidepanel, but doesn't recreate contents or check
