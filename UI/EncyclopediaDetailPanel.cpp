@@ -32,6 +32,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/VarText.h"
+#include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
 #include "../combat/CombatEvents.h"
@@ -617,6 +618,11 @@ EncyclopediaDetailPanel::~EncyclopediaDetailPanel() {
     delete m_graph;
 }
 
+void EncyclopediaDetailPanel::PreRender() {
+    GG::Wnd::PreRender();
+    DoLayout();
+}
+
 void EncyclopediaDetailPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
@@ -627,6 +633,8 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     const int BTN_WIDTH = 24;
     const int Y_OFFSET = 22;
+
+    SectionedScopedTimer timer("EncyclopediaDetailPanel::DoLayout", boost::chrono::milliseconds(1));
 
     // name
     GG::Pt ul = GG::Pt(GG::X(6), GG::Y(Y_OFFSET));
@@ -649,7 +657,9 @@ void EncyclopediaDetailPanel::DoLayout() {
     // main verbose description (fluff, effects, unlocks, ...)
     ul = GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + TEXT_MARGIN_Y + Y_OFFSET + 1);
     lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
+    timer.EnterSection("description->SizeMove");
     m_description_panel->SizeMove(ul, lr);
+    timer.EnterSection("");
 
     // graph
     m_graph->SizeMove(ul + GG::Pt(GG::X1, GG::Y1), lr - GG::Pt(GG::X1, GG::Y1));
@@ -692,7 +702,7 @@ void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const

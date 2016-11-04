@@ -32,6 +32,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    PreRender();
     virtual void    Render();
 
     /** Need to redefine this so that icons and name can be put at the top of
