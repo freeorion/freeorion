@@ -28,6 +28,7 @@ public:
     void            OpenForInput();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    PreRender();
     //@}
 
     /** emitted when the edit gains focus.  Keyboard accelerators elsewhere

@@ -363,7 +363,12 @@ void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
     CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())
-        DoLayout();
+        RequirePreRender();
+}
+
+void MessageWnd::PreRender() {
+    GG::Wnd::PreRender();
+    DoLayout();
 }
 
 void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id) {
