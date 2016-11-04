@@ -19,6 +19,7 @@ public:
     virtual GG::Pt ClientLowerRight() const;
 
     /** \name Mutators */ //@{
+    virtual void PreRender();
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
@@ -43,14 +44,11 @@ protected:
     virtual void    DoLayout();
     virtual void    InitBuffer();
 
-    GG::Button*             m_expand_button;    ///< at top right/left of panel, toggles the panel open/closed to show details or minimal summary
-    bool                    m_collapsed;
-    bool                    m_is_left; ///< Is expand button on the left?
-
-    GG::Clr                 m_interior_color;
-
-    /// The number of pixels between the expansion button and the client area.
-    unsigned int            m_border_margin;
+    GG::Button*     m_expand_button;    ///< at top right/left of panel, toggles the panel open/closed to show details or minimal summary
+    bool            m_collapsed;
+    bool            m_is_left;          ///< Is expand button on the left?
+    GG::Clr         m_interior_color;
+    unsigned int    m_border_margin;    ///< The number of pixels between the expansion button and the client area.
 };
 
 #endif
