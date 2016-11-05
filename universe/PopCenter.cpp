@@ -117,6 +117,11 @@ void PopCenter::PopCenterResetTargetMaxUnpairedMeters() {
 }
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
+	if (m_species_name.empty()) {
+		// No changes to population or happiness
+		return;
+	}
+
     float cur_pop = CurrentMeterValue(METER_POPULATION);
     float pop_growth = NextTurnPopGrowth(); // may be negative
     float new_pop = cur_pop + pop_growth;
