@@ -1037,7 +1037,7 @@ namespace {
             ship->OwnedBy(empire_id) &&
             ship->GetVisibility(empire_id) >= VIS_PARTIAL_VISIBILITY &&
             ship->OrderedScrapped() == false &&
-            fleet->FinalDestinationID() == INVALID_OBJECT_ID )
+            fleet->FinalDestinationID() == INVALID_OBJECT_ID)
         { return true; }
         return false;
     }
@@ -1048,9 +1048,9 @@ namespace {
         TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return false;
-        if ( IsAvailable(ship, system_id, empire_id) &&
+        if (IsAvailable(ship, system_id, empire_id) &&
             ship->CanColonize() &&
-            ship->OrderedColonizePlanet() == INVALID_OBJECT_ID )
+            ship->OrderedColonizePlanet() == INVALID_OBJECT_ID)
         { return true; }
         return false;
     };
@@ -1063,7 +1063,7 @@ namespace {
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
             ship->HasTroops() &&
-            ship->OrderedInvadePlanet() == INVALID_OBJECT_ID )
+            ship->OrderedInvadePlanet() == INVALID_OBJECT_ID)
         { return true; }
         return false;
     };
@@ -1076,7 +1076,7 @@ namespace {
             return false;
         if (IsAvailable(ship, system_id, empire_id) &&
             ship->CanBombard() &&
-            ship->OrderedBombardPlanet() == INVALID_OBJECT_ID )
+            ship->OrderedBombardPlanet() == INVALID_OBJECT_ID)
         { return true; }
         return false;
     };
@@ -1095,12 +1095,9 @@ namespace {
                 retval.push_back(*tag_it);
                 break;
             } else if ((tag_it->length() > TAG_BOMBARD_PREFIX.length()) &&
-                (tag_it->substr(0, TAG_BOMBARD_PREFIX.length()) == TAG_BOMBARD_PREFIX))
-            {
-                retval.push_back(tag_it->substr(TAG_BOMBARD_PREFIX.length()));
-            }
+                       (tag_it->substr(0, TAG_BOMBARD_PREFIX.length()) == TAG_BOMBARD_PREFIX))
+            { retval.push_back(tag_it->substr(TAG_BOMBARD_PREFIX.length())); }
         }
-
         return retval;
     }
 
@@ -1386,7 +1383,6 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenBombardShips(int target_p
                 break;
             }
         }
-
     }
 
     return retval;
