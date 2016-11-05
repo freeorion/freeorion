@@ -54,6 +54,11 @@ namespace {
     std::map<std::pair<int,int>,float>          colony_projections;
     std::map<std::pair<std::string,int>,float>  species_colony_projections;
 
+    /** @content_tag(CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
+    const std::string TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";
+    /** @content_tag{CTRL_BOMBARD_} Prefix tag allowing automatic ship selection for bombard, must post-fix a valid planet tag **/
+    const std::string TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
+
     void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
 
     struct RotatingPlanetData {
@@ -1063,6 +1068,42 @@ namespace {
         return false;
     };
 
+    bool AvailableToBombard(TemporaryPtr<const Ship> ship, int system_id, int empire_id) {
+        if (!ship)
+            return false;
+        TemporaryPtr<Fleet> fleet = GetFleet(ship->FleetID());
+        if (!fleet)
+            return false;
+        if (IsAvailable(ship, system_id, empire_id) &&
+            ship->CanBombard() &&
+            ship->OrderedBombardPlanet() == INVALID_OBJECT_ID )
+        { return true; }
+        return false;
+    };
+
+    /** Parse content tags for a Ship, returning tags that potentially match with those of a Planet.
+     *  If the Ship contains the content tag defined in TAG_BOMBARD_ALWAYS, only that tag will be returned.
+     */
+    std::vector<std::string> BombardTagsForShip(TemporaryPtr<const Ship> ship) {
+        std::vector<std::string> retval;
+        if (!ship)
+            return retval;
+        std::set<std::string> tags = ship->Tags();
+        for (std::set<std::string>::iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it) {
+            if (*tag_it == TAG_BOMBARD_ALWAYS) {
+                retval.clear();
+                retval.push_back(*tag_it);
+                break;
+            } else if ((tag_it->length() > TAG_BOMBARD_PREFIX.length()) &&
+                (tag_it->substr(0, TAG_BOMBARD_PREFIX.length()) == TAG_BOMBARD_PREFIX))
+            {
+                retval.push_back(tag_it->substr(TAG_BOMBARD_PREFIX.length()));
+            }
+        }
+
+        return retval;
+    }
+
     bool CanColonizePlanetType(TemporaryPtr<const Ship> ship, PlanetType planet_type) {
         if (!ship || planet_type == INVALID_PLANET_TYPE)
             return false;
@@ -1306,6 +1347,51 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_
     return retval;
 }
 
+/** Returns valid Ship%s capable of bombarding a given planet.
+ * @param target_planet_id ID of planet to potentially bombard
+ */
+std::set<TemporaryPtr<const Ship> > AutomaticallyChosenBombardShips(int target_planet_id) {
+    std::set<TemporaryPtr<const Ship> > retval;
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return retval;
+
+    TemporaryPtr<const Planet> target_planet = GetPlanet(target_planet_id);
+    if (!target_planet)
+        return retval;
+    int system_id = target_planet->SystemID();
+    TemporaryPtr<const System> system = GetSystem(system_id);
+    if (!system)
+        return retval;
+
+    //Can't bombard owned-by-self planets; early exit
+    if (target_planet->OwnedBy(empire_id))
+        return retval;
+
+    const ObjectMap& objects = Objects();
+    std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
+
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        TemporaryPtr<const Ship> ship = *it;
+        // owned ship is capable of bombarding a planet in this system
+        if (!AvailableToBombard(ship, system_id, empire_id))
+            continue;
+
+        // Select ship if the planet contains a content tag specified by the ship, or ship is tagged to always be selected
+        std::vector<std::string> bombard_tags = BombardTagsForShip(ship);
+        for (std::vector<std::string>::iterator tag_it = bombard_tags.begin(); tag_it != bombard_tags.end(); ++tag_it) {
+            if ((*tag_it == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(*tag_it))) {
+                retval.insert(ship);
+                break;
+            }
+        }
+
+    }
+
+    return retval;
+}
+
 void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
@@ -1422,7 +1508,8 @@ void SidePanel::PlanetPanel::Refresh() {
 
     std::set<TemporaryPtr<const Ship> > bombard_ships = ValidSelectedBombardShips(SidePanel::SystemID());
     if (bombard_ships.empty()) {
-        // todo: auto select some?
+        std::set<TemporaryPtr<const Ship> > autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
+        bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
     std::string colony_ship_species_name;
@@ -2191,7 +2278,8 @@ void SidePanel::PlanetPanel::ClickBombard() {
         std::set<TemporaryPtr<const Ship> > bombard_ships = ValidSelectedBombardShips(planet->SystemID());
 
         if (bombard_ships.empty()) {
-            // todo: auto select some?
+            std::set<TemporaryPtr<const Ship> > autoselected_bombard_ships = AutomaticallyChosenBombardShips(m_planet_id);
+            bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
         }
 
         for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = bombard_ships.begin();
