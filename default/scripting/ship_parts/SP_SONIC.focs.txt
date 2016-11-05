@@ -2,9 +2,11 @@ Part
     name = "SP_SONIC"
     description = "SP_SONIC_DESC"
     class = Bombard
+    capacity = 0.5
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "CTRL_BOMBARD_LITHIC" ]
     location = All
     effectsgroups = [
         EffectsGroup    // players can order sonic shockwave used on enemies
