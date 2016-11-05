@@ -12,6 +12,7 @@ Special
     effectsgroups =
         EffectsGroup
             scope = Source
+            activation = NOT Population high = 0
             priority = [[LATE_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + 3
