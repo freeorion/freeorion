@@ -74,8 +74,41 @@ public:
     TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
+
+    /** Fast constructor.
+
+     This constructor requires a \p str and \text_elements that are consistent with each other.
+     Font::ExpensiveParseFromTextToTextElements() will not be called on \p str.  Hence this
+     constructor is much faster than the first constructor.*/
+    TextControl(X x, Y y, X w, Y h, const std::string& str,
+                const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements,
+                const boost::shared_ptr<Font>& font,
+                Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
+                Flags<WndFlag> flags = NO_WND_FLAGS);
+
+    /** Copy constructor.
+
+        Text Control requires a copy-constructor because m_text_elements contains pointers
+        to m_text which need to be bound with Bind() to the m_text in the new TextControl.
+
+        Using the copy constructor is faster than constructing a TextControl with text from another
+        TextControl because it avoids the XML parse overhead.
+
+        Since Control does not have a way to access Flags the copy using default flags.
+    */
+    explicit TextControl(const TextControl& that);
     //@}
     virtual ~TextControl();
+
+    /** Assignment operator.
+
+        Text Control requires an assignment operator because m_text_elements contains pointers
+        to m_text which need to be bound with Bind() to the m_text in this TextControl.
+
+        Using the assignment operator is faster than using SetText() with text from another
+        TextControl because it avoids the XML parse overhead.
+    */
+    TextControl& operator=(const TextControl& that);
 
     /** \name Accessors */ ///@{
     virtual Pt        MinUsableSize() const;
@@ -165,11 +198,16 @@ public:
         the newly rendered text occupies. */
     virtual void SetText(const std::string& str);
 
-    /** Sets the text displayed in this control to \a str \p text_elements
-        pair.  This is faster than SetText without \p text_elements. May resize
-        the window.  If the control was constructed with FORMAT_NOWRAP, calls
-        to this function cause the window to be resized to whatever space the
-        newly rendered text occupies. */
+    /** Sets the text displayed in this control to the \p str \p text_elements
+        pair.  This is faster than SetText without \p text_elements.
+
+        This may resize the window.  If the control was constructed with FORMAT_NOWRAP, calls to
+        this function cause the window to be resized to whatever space the newly rendered text
+        occupies.
+
+        If the \p str and \p text_elements are inconsistent and \p str is shorter than expected
+        from examining \p text_elements then it will return without changing the TextControl.
+    */
     virtual void SetText(const std::string& str,
                          const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements);
 
@@ -282,6 +320,10 @@ private:
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
     void RefreshCache();
     void PurgeCache();
+
+    /** Recompute line data, code points, text extent and minusable size cache when
+        m_text_elements changes.*/
+    void RecomputeLineData();
 
     std::string                 m_text;
     Flags<TextFormat>           m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)

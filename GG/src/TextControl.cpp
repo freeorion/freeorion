@@ -55,10 +55,76 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     SetText(str);
 }
 
+TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
+                         const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements,
+                         const boost::shared_ptr<Font>& font,
+                         Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
+                         Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
+    Control(x, y, w, h, flags),
+    m_text(),
+    m_format(format),
+    m_text_color(color),
+    m_clip_text(false),
+    m_set_min_size(false),
+    m_text_elements(),
+    m_code_points(0),
+    m_font(font),
+    m_render_cache(0),
+    m_cached_minusable_size_width(X0),
+    m_cached_minusable_size(Pt())
+{
+    ValidateFormat();
+    SetText(str, text_elements);
+}
+
+TextControl::TextControl(const TextControl& that) :
+    Control(that.Left(), that.Top(), that.Width(), that.Height()),
+    m_text(that.m_text),
+    m_format(that.m_format),
+    m_text_color(that.m_text_color),
+    m_clip_text(that.m_clip_text),
+    m_set_min_size(that.m_set_min_size),
+    m_text_elements(that.m_text_elements),
+    m_code_points(that.m_code_points),
+    m_font(that.m_font),
+    m_render_cache(that.m_render_cache),
+    m_cached_minusable_size_width(that.m_cached_minusable_size_width),
+    m_cached_minusable_size(that.m_cached_minusable_size)
+{
+    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
+         it != m_text_elements.end(); ++it)
+    {
+        (*it)->Bind(m_text);
+    }
+}
+
 TextControl::~TextControl()
 {
     delete m_render_cache;
     m_render_cache = 0;
+}
+
+TextControl& TextControl::operator=(const TextControl& that)
+{
+    m_text = that.m_text;
+    m_format = that.m_format;
+    m_text_color = that.m_text_color;
+    m_clip_text = that.m_clip_text;
+    m_set_min_size = that.m_set_min_size;
+    m_text_elements = that.m_text_elements;
+    m_code_points = that.m_code_points;
+    m_font = that.m_font;
+    m_render_cache = that.m_render_cache;
+    m_cached_minusable_size_width = that.m_cached_minusable_size_width;
+    m_cached_minusable_size = that.m_cached_minusable_size;
+
+    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
+         it != m_text_elements.end(); ++it)
+    {
+        (*it)->Bind(m_text);
+    }
+
+    return *this;
 }
 
 Pt TextControl::MinUsableSize() const
@@ -96,11 +162,11 @@ std::string TextControl::Text(CPSize from, CPSize to) const
 
     //std::cout << "low: " << low << "  high: " << high << std::endl << std::flush;
 
-    std::pair<std::size_t, CPSize> low_pos = LinePositionOf(low, GetLineData());
-    std::pair<std::size_t, CPSize> high_pos = LinePositionOf(high, GetLineData());
+    std::pair<std::size_t, CPSize> low_pos = LinePositionOf(low, m_line_data);
+    std::pair<std::size_t, CPSize> high_pos = LinePositionOf(high, m_line_data);
 
-    StrSize low_string_idx = StringIndexOf(low_pos.first, low_pos.second, GetLineData());
-    StrSize high_string_idx = StringIndexOf(high_pos.first, high_pos.second, GetLineData());
+    StrSize low_string_idx = StringIndexOf(low_pos.first, low_pos.second, m_line_data);
+    StrSize high_string_idx = StringIndexOf(high_pos.first, high_pos.second, m_line_data);
 
     std::string::const_iterator low_it = m_text.begin() + Value(low_string_idx);
     std::string::const_iterator high_it = m_text.begin() + Value(high_string_idx);
@@ -187,21 +253,8 @@ void TextControl::SetText(const std::string& str)
     if (!m_font)
         return;
 
-    m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
     m_text_elements = m_font->ExpensiveParseFromTextToTextElements(m_text, m_format);
-    m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
-    Pt text_sz = m_font->TextExtent(m_line_data);
-    m_text_ul = Pt();
-    m_text_lr = text_sz;
-    AdjustMinimumSize();
-    PurgeCache();
-    if (m_format & FORMAT_NOWRAP) {
-        Resize(text_sz);
-    } else {
-        RecomputeTextBounds();
-    }
-
-    m_cached_minusable_size_width = X0;
+    RecomputeLineData();
 }
 
 void TextControl::SetText(const std::string& str,
@@ -209,9 +262,18 @@ void TextControl::SetText(const std::string& str,
 {
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
-    m_text = str;
 
-    m_code_points = CPSize(utf8::distance(str.begin(), str.end()));
+    std::size_t expected_length(0);
+    for (std::vector<boost::shared_ptr<Font::TextElement> >::const_iterator it = text_elements.begin();
+         it != text_elements.end(); ++it)
+    {
+        expected_length +=(*it)->text.size();
+    }
+
+    if (expected_length > str.size())
+        return;
+
+    m_text = str;
 
     m_text_elements = text_elements;
     for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
@@ -220,33 +282,24 @@ void TextControl::SetText(const std::string& str,
         (*it)->Bind(m_text);
     }
 
-    if (!m_font)
-        return;
-
-    m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
-    Pt text_sz = m_font->TextExtent(m_line_data);
-    m_text_ul = Pt();
-    m_text_lr = text_sz;
-    AdjustMinimumSize();
-    PurgeCache();
-    if (m_format & FORMAT_NOWRAP) {
-        Resize(text_sz);
-    } else {
-        RecomputeTextBounds();
-    }
-
-    m_cached_minusable_size_width = X0;
+    RecomputeLineData();
 }
 
 void TextControl::ChangeTemplatedText(const std::string& new_text, size_t targ_offset) {
     m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
+    RecomputeLineData();
+}
+
+void TextControl::RecomputeLineData() {
+    if (!m_font)
+        return;
+
     m_code_points = CPSize(utf8::distance(m_text.begin(), m_text.end()));
 
     m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
     Pt text_sz = m_font->TextExtent(m_line_data);
     m_text_ul = Pt();
     m_text_lr = text_sz;
-    AdjustMinimumSize();
     PurgeCache();
     if (m_format & FORMAT_NOWRAP) {
         Resize(text_sz);
@@ -296,7 +349,6 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
         Pt text_sz = m_font->TextExtent(m_line_data);
         m_text_ul = Pt();
         m_text_lr = text_sz;
-        AdjustMinimumSize();
         PurgeCache();
     }
     RecomputeTextBounds();
