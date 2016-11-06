@@ -566,3 +566,15 @@ def get_fuel(fleet_id):
     """
     fleet = fo.getUniverse().getFleet(fleet_id)
     return fleet and fleet.fuel or 0.0
+
+
+def get_max_fuel(fleet_id):
+    """Get maximum fuel capacity of fleet.
+
+    :param fleet_id: Queried fleet
+    :type fleet_id: int
+    :return: max fuel of fleet
+    :rtype: float
+    """
+    fleet = fo.getUniverse().getFleet(fleet_id)
+    return fleet and fleet.maxFuel or 0.0
