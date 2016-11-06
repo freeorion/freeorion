@@ -3027,6 +3027,7 @@
 					"\"$(SOURCE_ROOT)/..\"",
 				);
 				LD_GENERATE_MAP_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/dep/lib\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3150,6 +3151,7 @@
 					"\"$(SOURCE_ROOT)/dep/Frameworks/SDL2.framework/Headers\"",
 					"\"$(SOURCE_ROOT)/..\"",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/dep/lib\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3305,6 +3307,7 @@
 					"\"$(SOURCE_ROOT)/dep/Frameworks/SDL2.framework/Headers\"",
 					"\"$(SOURCE_ROOT)/..\"",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/dep/lib\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
