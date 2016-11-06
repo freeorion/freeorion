@@ -15,6 +15,7 @@ import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map
 from universe_object import System
+from AIDependencies import INVALID_ID
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -67,7 +68,7 @@ class AIstate(object):
         if homeworld:
             self.__origin_home_system_id = homeworld.systemID
         else:
-            self.__origin_home_system_id = -1
+            self.__origin_home_system_id = INVALID_ID
         self.visBorderSystemIDs = {self.__origin_home_system_id: 1}
         self.visInteriorSystemIDs = {}
         self.exploredSystemIDs = {}
@@ -135,7 +136,7 @@ class AIstate(object):
         fleetsLostBySystem.clear()
         invasionTargets[:] = []
         exploration_center = PlanetUtilsAI.get_capital_sys_id()
-        if exploration_center == -1:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
+        if exploration_center == INVALID_ID:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.__origin_home_system_id
 
         # check if planets in cache is still present. Remove destroyed.
@@ -152,14 +153,14 @@ class AIstate(object):
         ExplorationAI.graphFlags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
-            print "Border Exploration Update (relative to %s)" % (PlanetUtilsAI.sys_name_ids([exploration_center, -1])[0])
+            print "Border Exploration Update (relative to %s)" % (PlanetUtilsAI.sys_name_ids([exploration_center, INVALID_ID])[0])
             print "-------------------------------------------------"
-        if self.visBorderSystemIDs.keys() == [-1]:
+        if self.visBorderSystemIDs.keys() == [INVALID_ID]:
             self.visBorderSystemIDs.clear()
             self.visBorderSystemIDs[exploration_center] = 1
         for sys_id in self.visBorderSystemIDs.keys():  # This dict modified during iteration.
             if fo.currentTurn() < 50:
-                print "Considering border system %s" % (PlanetUtilsAI.sys_name_ids([sys_id, -1])[0])
+                print "Considering border system %s" % (PlanetUtilsAI.sys_name_ids([sys_id, INVALID_ID])[0])
             ExplorationAI.follow_vis_system_connections(sys_id, exploration_center)
         newly_explored = ExplorationAI.update_explored_systems()
         nametags = []
@@ -292,7 +293,7 @@ class AIstate(object):
                 continue
             if not fleet.empty:
                 # TODO: check if currently in system and blockaded before accepting destination as location
-                this_system_id = (fleet.nextSystemID != -1 and fleet.nextSystemID) or fleet.systemID
+                this_system_id = (fleet.nextSystemID != INVALID_ID and fleet.nextSystemID) or fleet.systemID
                 if fleet.ownedBy(empire_id):
                     if fleet_id not in destroyed_object_ids:
                         my_fleets_by_system.setdefault(this_system_id, []).append(fleet_id)
@@ -453,7 +454,7 @@ class AIstate(object):
             for fid in sys_status['myfleets']:
                 this_rating = self.get_rating(fid, True, self.get_standard_enemy())  # DONE!
                 my_ratings_list.append(this_rating)
-            if sys_id != -1:
+            if sys_id != INVALID_ID:
                 sys_status['myFleetRating'] = my_ratings_list and CombatRatingsAI.combine_ratings_list(my_ratings_list) or 0
                 sys_status['all_local_defenses'] = CombatRatingsAI.combine_ratings(sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))

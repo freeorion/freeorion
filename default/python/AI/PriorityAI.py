@@ -15,6 +15,7 @@ import AIDependencies
 from turn_state import state
 from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
 from freeorion_tools import Timer, tech_is_complete
+from AIDependencies import INVALID_ID
 
 prioritiees_timer = Timer('calculate_priorities()')
 
@@ -402,7 +403,7 @@ def _calculate_military_priority():
 
     universe = fo.getUniverse()
     capital_id = PlanetUtilsAI.get_capital()
-    if capital_id is None or capital_id == -1:
+    if capital_id is None or capital_id == INVALID_ID:
         return 0  # no capitol (not even a capitol-in-the-making), means can't produce any ships
         
     have_l1_weaps = (tech_is_complete("SHP_WEAPON_1_4") or

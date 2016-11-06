@@ -62,6 +62,9 @@ supply_by_size = {
     fo.planetSize.gasGiant: -1,
 }
 
+# C++ code details
+INVALID_ID = -1
+
 # </editor-fold>
 
 

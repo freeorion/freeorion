@@ -7,6 +7,7 @@ import fleet_orders
 import ColonisationAI
 import PlanetUtilsAI
 from freeorion_tools import ppstring
+from AIDependencies import INVALID_ID
 
 
 def get_fleet_orders_from_system_targets(fleet_target, targets):  # TODO consider to change targets to single target
@@ -76,7 +77,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
         path_func = universe.shortestPath
     start_sys_id = from_system_target.id
     target_sys_id = to_system_target.id
-    if start_sys_id != -1 and target_sys_id != -1:
+    if start_sys_id != INVALID_ID and target_sys_id != INVALID_ID:
         short_path = list(path_func(start_sys_id, target_sys_id, empire_id))
     else:
         short_path = []
@@ -155,9 +156,9 @@ def get_nearest_supplied_system(start_system_id):
         return universe_object.System(start_system_id)
     else:
         min_jumps = 9999  # infinity
-        supply_system_id = -1
+        supply_system_id = INVALID_ID
         for system_id in fleet_supplyable_system_ids:
-            if start_system_id != -1 and system_id != -1:
+            if start_system_id != INVALID_ID and system_id != INVALID_ID:
                 least_jumps_len = universe.jumpDistance(start_system_id, system_id)
                 if least_jumps_len < min_jumps:
                     min_jumps = least_jumps_len
@@ -180,11 +181,11 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     :return: closest system_id capable of repairing
     :rtype: int
     """
-    if start_system_id == -1:
+    if start_system_id == INVALID_ID:
         print >> sys.stderr, "get_best_drydock_system_id passed bad system id."
         return None
 
-    if fleet_id == -1:
+    if fleet_id == INVALID_ID:
         print >> sys.stderr, "get_best_drydock_system_id passed bad fleet id."
         return None
 
@@ -194,7 +195,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     start_sys = universe.getSystem(start_system_id)
     drydock_system_ids = set()
     for sys_id, pids in ColonisationAI.empire_dry_docks.iteritems():
-        if sys_id == -1:
+        if sys_id == INVALID_ID:
             print >> sys.stderr, "get_best_drydock_system_id passed bad dry dock sys_id."
             continue
         for pid in pids:
@@ -271,7 +272,7 @@ def __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_
     new_targets = result_system_targets[:]
     if from_system_target and to_system_target and supply_system_target:
         universe = fo.getUniverse()
-        if from_system_target.id != -1 and to_system_target.id != -1:
+        if from_system_target.id != INVALID_ID and to_system_target.id != INVALID_ID:
             least_jumps_path = universe.leastJumpsPath(from_system_target.id, to_system_target.id, empire_id)
         else:
             least_jumps_path = []

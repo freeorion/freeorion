@@ -8,7 +8,7 @@ import PlanetUtilsAI
 import CombatRatingsAI
 from freeorion_tools import print_error
 from universe_object import Fleet, System, Planet
-
+from AIDependencies import INVALID_ID
 dumpTurn = 0
 
 
@@ -190,7 +190,7 @@ class OrderResupply(AIFleetOrder):
             # else:
             # if self.order_type == AIFleetOrderType.ORDER_REPAIR:
             #     fo.issueAggressionOrder(fleet_id, False)
-            start_id = [fleet.systemID, fleet.nextSystemID][fleet.systemID == -1]
+            start_id = [fleet.systemID, fleet.nextSystemID][fleet.systemID == INVALID_ID]
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
             print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s" % (fleet_id, self.ORDER_NAME,
                                                                                                   PlanetUtilsAI.sys_name_ids([dest_id]),
@@ -459,7 +459,7 @@ class OrderRepair(AIFleetOrder):
         fleet = self.fleet.get_object()
         if system_id not in [fleet.systemID, fleet.nextSystemID]:
             fo.issueAggressionOrder(fleet_id, False)
-            start_id = [fleet.systemID, fleet.nextSystemID][fleet.systemID == -1]
+            start_id = [fleet.systemID, fleet.nextSystemID][fleet.systemID == INVALID_ID]
             dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleet_id, start_id, system_id)
             print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s" % (fleet_id, self.ORDER_NAME,
                                                                                                   PlanetUtilsAI.sys_name_ids([dest_id]),

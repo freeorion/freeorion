@@ -5,7 +5,7 @@ import CombatRatingsAI
 import traceback
 from universe_object import Planet
 from ShipDesignAI import get_part_type
-
+from AIDependencies import INVALID_ID
 __designStats = {}
 
 
@@ -196,7 +196,7 @@ def split_fleet(fleet_id):
             newfleets.append(new_fleet_id)
             foAI.foAIstate.newlySplitFleets[new_fleet_id] = True
         else:
-            if fleet.systemID == -1:
+            if fleet.systemID == INVALID_ID:
                 print "Error - tried to split ship id (%d) from fleet %d when fleet is in starlane" % (ship_id, fleet_id)
             else:
                 print "Error - got no fleet ID back after trying to split ship id (%d) from fleet %d" % (ship_id, fleet_id)

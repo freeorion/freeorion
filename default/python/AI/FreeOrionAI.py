@@ -27,6 +27,7 @@ import ProductionAI
 import ResearchAI
 import ResourcesAI
 import TechsListsAI
+from AIDependencies import INVALID_ID
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
 
@@ -94,7 +95,7 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     print "Trying to rename our homeworld..."
     planet_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
-    if planet_id is not None and planet_id != -1:
+    if planet_id is not None and planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
         new_name = " ".join([random.choice(_capitals.get(aggression, []) or [" "]).strip(), planet.name])
         print "    Renaming to %s..." % new_name
