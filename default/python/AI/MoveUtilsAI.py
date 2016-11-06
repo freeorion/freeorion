@@ -5,6 +5,7 @@ import AIstate
 import universe_object
 import fleet_orders
 import ColonisationAI
+import FleetUtilsAI
 import PlanetUtilsAI
 from freeorion_tools import ppstring
 
@@ -66,8 +67,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
     fleet_supplyable_system_ids = set(empire.fleetSupplyableSystemIDs)
     # get current fuel and max fuel
     universe = fo.getUniverse()
-    fleet = universe.getFleet(fleet_id)
-    fuel = int(fleet.fuel)
+    fuel = int(FleetUtilsAI.get_fuel(fleet_id))  # round down to get actually number of jumps
     if fuel < 1.0 or from_system_target.id == to_system_target.id:
         return []
     if foAI.foAIstate.aggression <= fo.aggression.typical or True:  # TODO: sort out if shortestPath leaves off some intermediate destinations
