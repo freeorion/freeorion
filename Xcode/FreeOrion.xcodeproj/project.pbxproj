@@ -3020,6 +3020,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/freetype\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -3145,6 +3146,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/freetype\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
@@ -3301,6 +3303,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/dep/include\"",
+					"\"$(SOURCE_ROOT)/dep/include/freetype\"",
 					"\"$(SOURCE_ROOT)/../GG\"",
 					"\"$(SOURCE_ROOT)/../network\"",
 					"\"$(SOURCE_ROOT)/dep/Frameworks/Python.framework/Headers\"",
