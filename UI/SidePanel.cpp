@@ -606,6 +606,8 @@ private:
                                 m_valid_selection_predicate;
 
     GG::Scroll*                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+
+    bool                        m_ignore_recurisve_resize;
 };
 
 class RotatingPlanetControl : public GG::Control {
@@ -2263,7 +2265,8 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_planet_panels(),
     m_selected_planet_id(INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(GG::VERTICAL))
+    m_vscroll(new CUIScroll(GG::VERTICAL)),
+    m_ignore_recurisve_resize(false)
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
@@ -2383,6 +2386,11 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
+    if (m_ignore_recurisve_resize)
+        return;
+
+    GG::ScopedAssign<bool> prevent_inifinite_recursion(m_ignore_recurisve_resize, true);
+
     GG::Y y = GG::Y0;
     GG::X x = GG::X0;
 
