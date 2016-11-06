@@ -9,40 +9,27 @@ import PlanetUtilsAI
 from freeorion_tools import ppstring
 
 
-def get_fleet_orders_from_system_targets(fleet_target, targets):  # TODO consider to change targets to single target
+def create_move_orders_to_system(fleet, target):
     """
-    Return Move orders to fleet.
+    Create a list of move orders from the fleet's current system to the target system.
 
-    :param fleet_target:
-    :type fleet_target: universe_object.Fleet
-    :param targets:
-    :type targets: list
-    :return: list of OrdersMove
-    :rtype: list
+    :param fleet: Fleet to be moved
+    :type fleet: universe_object.Fleet
+    :param target: target system
+    :type target: universe_object.System
+    :return: list of move orders
+    :rtype: list[fleet_orders.OrdersMove]
     """
-    result = []
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
-    # determine system where fleet will be or where is if is going nowhere
-    last_system_target = fleet_target.get_system()
-    secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
-    # for every system which fleet wanted to visit, determine systems to visit and create move orders
-    for target in targets:
-        # determine systems required to visit(with possible return to supplied system)
-        ensure_return = target.id not in secure_targets
-        system_targets = can_travel_to_system(fleet_target.id, last_system_target, target, ensure_return=ensure_return)
-        # print "making path with %d targets: "%len(system_targets) , ppstring(PlanetUtilsAI.sys_name_ids( [sysTarg.id for sysTarg in system_targets]))
-        if system_targets:
-            # for every system required to visit create move order
-            for system_targer in system_targets:
-                # remember last system which will be visited
-                last_system_target = system_targer
-                # create move order
-                fleet_order = fleet_orders.OrderMove(fleet_target, system_targer)
-                result.append(fleet_order)
-        else:
-            if last_system_target.id != target.id:
-                print "fleetID: %s can't travel to target: %s" % (fleet_target.id, target)
+    starting_system = fleet.get_system()  # current fleet location or current target system if on starlane
+    # if the mission does not end at the targeted system, make sure we can actually return to supply after moving.
+    ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs
+                                         + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
+    system_targets = can_travel_to_system(fleet.id, starting_system, target, ensure_return=ensure_return)
+    result = [fleet_orders.OrderMove(fleet, system) for system in system_targets]
+    if not result and starting_system.id != target.id:
+        print >> sys.stderr, "fleet %s can't travel to system %s" % (fleet.id, target)
     return result
 
 
@@ -51,7 +38,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
     Return list systems to be visited.
 
     :param fleet_id:
-    :param fleet_id: int
+    :type fleet_id: int
     :param from_system_target:
     :type from_system_target: universe_object.System
     :param to_system_target:
