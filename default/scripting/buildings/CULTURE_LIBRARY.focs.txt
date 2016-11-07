@@ -10,6 +10,7 @@ BuildingType
             scope = And [
                 Object id = Source.PlanetID
                 Planet
+                NOT Population high = 0
             ]
             priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + 5
