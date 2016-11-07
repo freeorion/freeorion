@@ -2564,7 +2564,8 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
 ////////////////////////////////////////////////
 // static(s)
 int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
-bool                                       SidePanel::s_needs_prerender = false;
+bool                                       SidePanel::s_needs_update = false;
+bool                                       SidePanel::s_needs_refresh = false;
 std::set<SidePanel*>                       SidePanel::s_side_panels;
 std::set<boost::signals2::connection>      SidePanel::s_system_connections;
 std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signals;
@@ -2635,7 +2636,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));
 
-    DoLayout();
+    RequirePreRender();
     Hide();
 
     s_side_panels.insert(this);
@@ -2665,11 +2666,6 @@ bool SidePanel::InWindow(const GG::Pt& pt) const {
 
 GG::Pt SidePanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
-
-void SidePanel::PreRender() {
-    GG::Wnd::PreRender();
-    DoLayout();
-}
 
 void SidePanel::Render()
 { CUIWnd::Render(); }
@@ -2743,15 +2739,32 @@ void SidePanel::InitBuffers() {
 
 void SidePanel::PreRender() {
     GG::Wnd::PreRender();
-    if (!s_needs_prerender)
-        return;
-    s_needs_prerender = false;
 
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->UpdateImpl();
+    // Needs refresh updates all data related to all SizePanels, including system list etc.
+    if (s_needs_refresh) {
+        s_needs_refresh = false;
+        s_needs_update = false;
+
+        // Note: RefreshInPreRender() also calls DoLayout(), but it also stores and restores the
+        // scroll bar and planet selection.
+        RefreshInPreRender();
+        return;
+    }
+
+    // Update updates the data for each planet tab in all SidePanels
+    if (s_needs_update) {
+        s_needs_update = false;
+
+        for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
+            (*it)->UpdateImpl();
+    }
+
+    // On a resize only DoLayout should be called.
+    DoLayout();
 }
+
 void SidePanel::Update() {
-    s_needs_prerender = true;
+    s_needs_update = true;
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->RequirePreRender();
 }
@@ -2765,6 +2778,12 @@ void SidePanel::UpdateImpl() {
 }
 
 void SidePanel::Refresh() {
+    s_needs_refresh = true;
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
+        (*it)->RequirePreRender();
+}
+
+void SidePanel::RefreshInPreRender() {
     // disconnect any existing system and fleet signals
     for (std::set<boost::signals2::connection>::iterator it = s_system_connections.begin(); it != s_system_connections.end(); ++it)
         it->disconnect();
