@@ -606,6 +606,8 @@ private:
                                 m_valid_selection_predicate;
 
     GG::Scroll*                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+
+    bool                        m_ignore_recursive_resize;
 };
 
 class RotatingPlanetControl : public GG::Control {
@@ -845,6 +847,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
     GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
     m_focus_drop->MoveTo(GG::Pt(GG::X1, GG::Y1));   // force auto-resize so height is correct for subsequent layout stuff
+    m_focus_drop->Resize(GG::Pt(MeterIconSize().x*4, MeterIconSize().y*3/2 + 4));
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
@@ -2262,7 +2265,8 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_planet_panels(),
     m_selected_planet_id(INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(GG::VERTICAL))
+    m_vscroll(new CUIScroll(GG::VERTICAL)),
+    m_ignore_recursive_resize(false)
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
@@ -2382,6 +2386,11 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
+    if (m_ignore_recursive_resize)
+        return;
+
+    GG::ScopedAssign<bool> prevent_inifinite_recursion(m_ignore_recursive_resize, true);
+
     GG::Y y = GG::Y0;
     GG::X x = GG::X0;
 

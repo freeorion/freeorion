@@ -96,6 +96,9 @@ void AccordionPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void AccordionPanel::SetCollapsed(bool collapsed) {
+    if (collapsed == m_collapsed)
+        return;
+
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     m_collapsed = collapsed;
