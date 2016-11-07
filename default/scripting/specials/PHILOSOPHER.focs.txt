@@ -35,6 +35,7 @@ Special
         EffectsGroup
             scope = And [
                 Planet
+                NOT Population high = 0
 //                Focus type = "FOCUS_RESEARCH" // Does not require focus
                 InSystem id = Source.SystemID
             ]
