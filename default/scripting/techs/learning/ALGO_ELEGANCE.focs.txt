@@ -13,7 +13,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[EARLY_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Max(6, Target.Population * 0.5 * [[RESEARCH_PER_POP]])
     ]
     graphic = "icons/tech/algorithmic_elegance.png"
 
