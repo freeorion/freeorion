@@ -5,11 +5,11 @@ Part
     damage = 3
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR(SR_WEAPON_1_1)]]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     effectsgroups =
-        [[WEAPON_BASE_UNOWNED_EFFECTS]]
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_1_1)]]
     icon = "icons/ship_parts/mass-driver.png"
 
 Part
@@ -20,11 +20,11 @@ Part
     shots = 3
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR(SR_WEAPON_0_1)]]
+    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
     effectsgroups =
-        [[WEAPON_BASE_UNOWNED_EFFECTS]]
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_0_1)]]
     icon = "icons/ship_parts/flak.png"
 
 Part
@@ -34,11 +34,11 @@ Part
     damage = 5
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR(SR_WEAPON_2_1)]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy empire = Source.Owner
     effectsgroups =
-        [[WEAPON_BASE_UNOWNED_EFFECTS]]
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_2_1)]]
     icon = "icons/ship_parts/laser.png"
 
 Part
@@ -48,11 +48,11 @@ Part
     damage = 9
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR(SR_WEAPON_3_1)]]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
     effectsgroups =
-        [[WEAPON_BASE_UNOWNED_EFFECTS]]
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_3_1)]]
     icon = "icons/ship_parts/plasma.png"
 
 Part
@@ -62,11 +62,11 @@ Part
     damage = 15
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR(SR_WEAPON_4_1)]]
+    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
     effectsgroups =
-        [[WEAPON_BASE_UNOWNED_EFFECTS]]
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_4_1)]]
     icon = "icons/ship_parts/death-ray.png"
 
 Part
