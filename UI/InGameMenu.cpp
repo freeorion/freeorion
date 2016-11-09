@@ -152,15 +152,11 @@ void InGameMenu::Save() {
 
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
-        if (app->SinglePlayerGame()) {
-            DebugLogger() << "... running save file dialog";
-            SaveFileDialog dlg(SAVE_GAME_EXTENSION);
-            dlg.Run();
-            filename = dlg.Result();
-        } else {
-            /// Multiplayer save. Talk to the server.
-            filename = app->SelectSaveFile();
-        }
+        DebugLogger() << "... running save file dialog";
+        SaveFileDialog dlg(app->SinglePlayerGame() ? SAVE_GAME_EXTENSION : MP_SAVE_FILE_EXTENSION);
+        dlg.Run();
+        filename = dlg.Result();
+
         if (!filename.empty()) {
             if (!app->CanSaveNow()) {
                 ErrorLogger() << "InGameMenu::Save aborting; Client app can't save now";

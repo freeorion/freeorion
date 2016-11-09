@@ -58,7 +58,6 @@ public:
     void                RequestSavePreviews(const std::string& directory, PreviewInformation& previews); ///< Requests the savegame previews for choosing one.
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
     std::string         SelectLoadFile();                               //< Lets the user select a multiplayer save to load.
-    std::string         SelectSaveFile();                               //< Lets the user select a multiplayer save to save to.
     void                InitAutoTurns(int auto_turns);                  ///< Initialize auto turn counter
     void                DecAutoTurns(int n = 1);                        ///< Decrease auto turn counter
 

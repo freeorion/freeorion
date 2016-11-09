@@ -1108,14 +1108,8 @@ void HumanClientApp::Autosave() {
     }
 }
 
-std::string HumanClientApp::SelectLoadFile(){
+std::string HumanClientApp::SelectLoadFile() {
     SaveFileDialog sfd(true);
-    sfd.Run();
-    return sfd.Result();
-}
-
-std::string HumanClientApp::SelectSaveFile() {
-    SaveFileDialog sfd(false);
     sfd.Run();
     return sfd.Result();
 }
