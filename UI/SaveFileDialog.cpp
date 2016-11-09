@@ -205,8 +205,9 @@ public:
         lines = font->DetermineLines(m_wide_as, fmt, max_width, text_elements);
         GG::Pt extent1 = font->TextExtent(lines);
 
-        text_elements = font->ExpensiveParseFromTextToTextElements(Title(), fmt);
-        lines = font->DetermineLines(Title(), fmt, max_width, text_elements);
+        std::string title(Title());
+        text_elements = font->ExpensiveParseFromTextToTextElements(title, fmt);
+        lines = font->DetermineLines(title, fmt, max_width, text_elements);
         GG::Pt extent2 = font->TextExtent(lines);
 
         return std::max(extent1.x, extent2.x) + GG::X(SAVE_FILE_CELL_MARGIN);
@@ -653,10 +654,11 @@ void SaveFileDialog::Init() {
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 1);
         m_layout->Add(m_remote_dir_dropdown, 0, 2 , 1, 2);
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+        std::string server_label(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL);
         std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
-            font->ExpensiveParseFromTextToTextElements(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL, fmt);
-        std::vector<GG::Font::LineData> lines = font->DetermineLines(
-            SERVER_LABEL+SERVER_LABEL+SERVER_LABEL, fmt, ClientWidth(), text_elements);
+            font->ExpensiveParseFromTextToTextElements(server_label, fmt);
+        std::vector<GG::Font::LineData> lines =
+            font->DetermineLines(server_label, fmt, ClientWidth(), text_elements);
         GG::X drop_width = font->TextExtent(lines).x;
         m_layout->SetMinimumColumnWidth(2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2));
         m_layout->SetMinimumColumnWidth(3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2));
@@ -673,19 +675,22 @@ void SaveFileDialog::Init() {
     m_layout->SetMinimumRowHeight(0, m_current_dir_edit->MinUsableSize().y);
     m_layout->SetRowStretch      (1, 1.0 );
     GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+    std::string cancel_text(cancel_btn->Text());
     std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
-        font->ExpensiveParseFromTextToTextElements(cancel_btn->Text(), fmt);
+    font->ExpensiveParseFromTextToTextElements(cancel_text, fmt);
     std::vector<GG::Font::LineData> lines = ClientUI::GetFont()->DetermineLines(
-        cancel_btn->Text(), fmt, GG::X(1 << 15), text_elements);
+        cancel_text, fmt, GG::X(1 << 15), text_elements);
     GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
     m_layout->SetMinimumRowHeight(3, extent.y);
 
-    text_elements = font->ExpensiveParseFromTextToTextElements(filename_label->Text(), fmt);
-    lines = font->DetermineLines(filename_label->Text(), fmt, ClientWidth(), text_elements);
+    std::string filename_label_text(filename_label->Text());
+    text_elements = font->ExpensiveParseFromTextToTextElements(filename_label_text, fmt);
+    lines = font->DetermineLines(filename_label_text, fmt, ClientWidth(), text_elements);
     GG::Pt extent1 = font->TextExtent(lines);
 
-    text_elements = font->ExpensiveParseFromTextToTextElements(directory_label->Text(), fmt);
-    lines = font->DetermineLines(directory_label->Text(), fmt, ClientWidth(), text_elements);
+    std::string dir_label_text(directory_label->Text());
+    text_elements = font->ExpensiveParseFromTextToTextElements(dir_label_text, fmt);
+    lines = font->DetermineLines(dir_label_text, fmt, ClientWidth(), text_elements);
     GG::Pt extent2 = font->TextExtent(lines);
 
     m_layout->SetMinimumColumnWidth(0, std::max(extent1.x, extent2.x));
