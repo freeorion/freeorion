@@ -3,7 +3,6 @@
   <CREDITS>
     <GROUP name="LEAD">
       <PERSON name="Geoff Topping"            nick="Geoff the Medio"  task="Programming, Design"/>
-      <PERSON name=""                         nick="Dilvish"          task="Programming, Design"/>
       <PERSON name=""                         nick="Vezzra"           task="Programming, Release Management"/>
     </GROUP>
     <GROUP name="LEAD EMERITUS">
@@ -15,6 +14,7 @@
       <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"           task="Graphics"/>
       <PERSON name="Kenneth Welch"            nick="LithiumMongoose"  task="Audio"/>
+      <PERSON name=""                         nick="Dilvish"          task="Programming, Design"/>
     </GROUP>
     <GROUP name="PROGRAMMING">
       <PERSON name="Joseph Bissonnette"       nick="Oceanmachine"     task="Programming, Game Design"/>
