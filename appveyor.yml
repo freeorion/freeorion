@@ -1,14 +1,20 @@
 os: Visual Studio 2015
 version: ci-{build}
-branches:
-  only:
-    - master
 init:
   - git config --global core.eol native
   - git config --global core.autocrlf true
 clone_depth: 50
+install:
+  # Remove the VS Xamarin targets to reduce AppVeyor specific noise in build
+  # logs.  See also http://help.appveyor.com/discussions/problems/4569
+  - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
+  - cd ..
+  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v0.4.6-1/FreeOrionSDK_0.4.6-1_MSVC-v140-xp.zip -FileName FreeOrionSDK.zip
+  - unzip -q FreeOrionSDK.zip
+  - cp bin/* freeorion/
+  - cd freeorion
+before_build:
+  - cd msvc2015
 build_script:
-    # Doing a noop for now to allow running appveyor with a good configuration
-    # without actually building anything.
-    - rem
+    - msbuild FreeOrion.sln /property:Configuration=Release-XP /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /verbosity:minimal
 test: off
