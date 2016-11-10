@@ -75,9 +75,11 @@ void SpecialsPanel::Update() {
         const Special* special = GetSpecial(it->first);
         StatisticIcon* graphic = 0;
         if (it->second.second > 0.0f)
-            graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()), it->second.second, 2, false);
+            graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()), it->second.second, 2, false,
+                                        GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
         else
-            graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()));
+            graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()),
+                                        GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
 
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 

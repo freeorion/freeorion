@@ -105,6 +105,7 @@ public:
     //!@}
 
     //! \name Mutators //!@{
+    virtual void    PreRender();
     virtual void    Render();
     virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);

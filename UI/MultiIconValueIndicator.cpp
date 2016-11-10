@@ -67,7 +67,8 @@ void MultiIconValueIndicator::Init() {
                     texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
-        m_icons.push_back(new StatisticIcon(texture, 0.0, 3, false));
+        m_icons.push_back(new StatisticIcon(texture, 0.0, 3, false,
+                                            GG::X0, GG::Y0, IconWidth(), IconHeight()));
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);

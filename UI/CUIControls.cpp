@@ -21,6 +21,7 @@
 #include <boost/regex.hpp>
 
 #include <limits>
+#include <iomanip>
 
 
 namespace {
@@ -52,8 +53,17 @@ namespace {
 ///////////////////////////////////////
 CUILabel::CUILabel(const std::string& str,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
-                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
-    TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
+                   GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
+    TextControl(x, y, w, h, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
+{}
+
+CUILabel::CUILabel(const std::string& str,
+                   const std::vector<boost::shared_ptr<GG::Font::TextElement> >& text_elements,
+                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
+                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
+                   GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
+    TextControl(x, y, w, h, str, text_elements, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
 void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -1187,8 +1197,10 @@ namespace {
     const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+                             GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
+                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+    GG::Control(x, y, w, h, GG::INTERACTIVE),
     m_num_values(0),
     m_values(),
     m_digits(),
@@ -1202,13 +1214,14 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture) :
 
     AttachChild(m_icon);
 
-    DoLayout();
-    Refresh();
+    RequirePreRender();
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
-                             double value, int digits, bool showsign) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+                             double value, int digits, bool showsign,
+                             GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
+                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+    GG::Control(x, y, w, h, GG::INTERACTIVE),
     m_num_values(1),
     m_values(std::vector<double>(1, value)),
     m_digits(std::vector<int>(1, digits)),
@@ -1217,21 +1230,20 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_text(0)
 {
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
-    m_text = new CUILabel("");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     AttachChild(m_icon);
-    AttachChild(m_text);
 
-    DoLayout();
-    Refresh();
+    RequirePreRender();
 }
 
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
-                             bool showsign0, bool showsign1) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+                             bool showsign0, bool showsign1,
+                             GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
+                             GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
+    GG::Control(x, y, w, h, GG::INTERACTIVE),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)),
     m_digits(std::vector<int>(2, 2)),
@@ -1241,7 +1253,6 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
 {
     SetName("StatisticIcon");
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
-    m_text = new CUILabel("");
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -1253,10 +1264,13 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
     AttachChild(m_icon);
-    AttachChild(m_text);
 
+    RequirePreRender();
+}
+
+void StatisticIcon::PreRender() {
+    GG::Wnd::PreRender();
     DoLayout();
-    Refresh();
 }
 
 double StatisticIcon::GetValue(int index) const {
@@ -1274,9 +1288,11 @@ void StatisticIcon::SetValue(double value, int index) {
         m_values.resize(m_num_values, 0.0);
         m_show_signs.resize(m_num_values, m_show_signs[0]);
         m_digits.resize(m_num_values, m_digits[0]);
+        RequirePreRender();
     }
+    if (value != m_values[index])
+        RequirePreRender();
     m_values[index] = value;
-    Refresh();
 }
 
 void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1285,7 +1301,7 @@ void StatisticIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Wnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 void StatisticIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -1313,40 +1329,46 @@ void StatisticIcon::DoLayout() {
     m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0),
                      GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
-    if (!m_text)
+    if (m_num_values <= 0)
         return;
 
+    // Precompute text elements
+    GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
+    text_elements.AddOpenTag(ValueColor(0))
+        .AddText(DoubleToString(m_values[0], m_digits[0], m_show_signs[0]))
+        .AddCloseTag("rgba");
+    if (m_num_values > 1)
+        text_elements
+            .AddText(" (")
+            .AddOpenTag(ValueColor(1))
+            .AddText("Pi"+DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) )
+            .AddCloseTag("rgba")
+            .AddText(")");
+
+    // Calculate location and format
+    GG::Flags<GG::TextFormat> format;
     GG::Pt text_ul;
     GG::Pt text_lr(Width(), Height());
 
     if (Width() >= Value(Height())) {
-        m_text->SetTextFormat(GG::FORMAT_LEFT);
+        format = GG::FORMAT_LEFT;
         text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
     } else {
-        m_text->SetTextFormat(GG::FORMAT_BOTTOM);
+        format = GG::FORMAT_BOTTOM;
         text_ul.y = GG::Y(icon_dim + STAT_ICON_PAD);
     }
 
-    m_text->SizeMove(text_ul, text_lr);
-}
-
-void StatisticIcon::Refresh() {
-    if (!m_text)
-        return;
-
-    std::string text = "";
-
-    // first value: always present
-    std::string clr_tag = GG::RgbaTag(ValueColor(0));
-    text += clr_tag + DoubleToString(m_values[0], m_digits[0], m_show_signs[0]) + "</rgba>";
-
-    // second value: may or may not be present
-    if (m_num_values > 1) {
-        clr_tag = GG::RgbaTag(ValueColor(1));
-        text += " (" + clr_tag + DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) + "</rgba>)";
+    if (!m_text) {
+        // Create new label in correct place.
+        m_text = new CUILabel(text_elements.Text(), text_elements.Elements(),
+                              format, GG::NO_WND_FLAGS,
+                              text_ul.x, text_ul.y, text_lr.x - text_ul.x, text_lr.y - text_ul.y);
+        AttachChild(m_text);
+    } else {
+        // Adjust text and place label.
+       m_text->SetText(text_elements.Text(), text_elements.Elements());
+       m_text->SizeMove(text_ul, text_lr);
     }
-
-    m_text->SetText(text);
 }
 
 GG::Clr StatisticIcon::ValueColor(int index) const {
@@ -1936,15 +1958,31 @@ void MultiTurnProgressBar::Render() {
 // FPSIndicator
 //////////////////////////////////////////////////
 FPSIndicator::FPSIndicator(void) :
-    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP)
+    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP), m_enabled(false), m_displayed_FPS(0)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
     UpdateEnabled();
+    RequirePreRender();
+}
+
+void FPSIndicator::PreRender() {
+    GG::Wnd::PreRender();
+    m_displayed_FPS = static_cast<int>(GG::GUI::GetGUI()->FPS());
+    if (m_enabled) {
+        SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % m_displayed_FPS));
+    }
 }
 
 void FPSIndicator::Render() {
     if (m_enabled) {
-        SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % static_cast<int>(GG::GUI::GetGUI()->FPS())));
+        int new_FPS = static_cast<int>(GG::GUI::GetGUI()->FPS());
+        if (m_displayed_FPS != new_FPS) {
+            m_displayed_FPS = new_FPS;
+            // Keep the ss width uniform (2) to prevent re-layout when size changes cause ChildSizeOrMinSizeOrMaxSizeChanged()
+            std::stringstream ss;
+            ss << std::setw(2) << std::right << boost::lexical_cast<std::string>(m_displayed_FPS);
+            ChangeTemplatedText(ss.str(), 0);
+        }
         TextControl::Render();
     }
 }

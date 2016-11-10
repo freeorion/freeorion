@@ -35,7 +35,13 @@ public:
     /** \name Structors */ //@{
     CUILabel(const std::string& str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
-             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
+             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
+             GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
+    CUILabel(const std::string& str,
+             const std::vector<boost::shared_ptr<GG::Font::TextElement> >& text_elements,
+             GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
+             GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
+             GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
     //@}
     /** \name Mutators */ //@{
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -356,18 +362,28 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row {
   * is an icon image, not text.
   * The icon may have one or two numerical values.  If one, just that number is
   * displayed.  If two, the first number is displayed followed by the second in
-  * brackets "()" */
+  * brackets "()"
+
+  * Sizing StatisticIcon correctly in the constructor saves time because resizing the value string
+  * is processor intensive.
+  */
 class StatisticIcon : public GG::Control {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(const boost::shared_ptr<GG::Texture> texture);///< initialized with no value (just an icon)
+    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+                  GG::X x = GG::X0, GG::Y y = GG::Y0,
+                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
     StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
-                  double value, int digits, bool showsign);     ///< initializes with one value
+                  double value, int digits, bool showsign,
+                  GG::X x = GG::X0, GG::Y y = GG::Y0,
+                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
 
     StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
-                  bool showsign0, bool showsign1);              ///< initializes with two values
+                  bool showsign0, bool showsign1,
+                  GG::X x = GG::X0, GG::Y y = GG::Y0,
+                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
 
     /** \name Accessors */ //@{
@@ -375,6 +391,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void    PreRender();
     virtual void    Render() {}
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
@@ -392,7 +409,6 @@ public:
 
 private:
     void            DoLayout();
-    void            Refresh();
     GG::Clr         ValueColor(int index) const;        ///< returns colour in which to draw value
 
     int                 m_num_values;
@@ -568,9 +584,11 @@ class FPSIndicator : public GG::Label {
 public:
     FPSIndicator();
     virtual void Render();
+    virtual void PreRender();
 private:
     void UpdateEnabled();
     bool m_enabled;
+    int m_displayed_FPS;
 };
 
 /** Functions like a StaticGraphic, except can have multiple textures rendered
