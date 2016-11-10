@@ -3195,6 +3195,11 @@
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-undefined",
+					dynamic_lookup,
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -3362,6 +3367,11 @@
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-undefined",
+					dynamic_lookup,
+				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
 			};
@@ -3498,6 +3508,11 @@
 					"$(inherited)",
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-undefined",
+					dynamic_lookup,
 				);
 				PRODUCT_NAME = freeorionparse;
 				ZERO_LINK = NO;
