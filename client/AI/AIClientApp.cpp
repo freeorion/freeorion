@@ -26,7 +26,7 @@ CombatLogManager&   GetCombatLogManager();
 
 // static member(s)
 AIClientApp::AIClientApp(const std::vector<std::string>& args) :
-    m_AI(0),
+    m_AI(),
     m_player_name(""),
     m_max_aggression(0)
 {

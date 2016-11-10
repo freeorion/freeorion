@@ -989,7 +989,7 @@ std::string ShipDesign::Dump() const {
     return retval; 
 }
 
-bool operator ==(const ShipDesign& first, const ShipDesign& second) {
+bool operator==(const ShipDesign& first, const ShipDesign& second) {
     if (first.Hull() != second.Hull())
         return false;
 

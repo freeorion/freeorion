@@ -275,38 +275,38 @@ namespace utf8
       }
       // the default "big three" are OK
       octet_iterator base () const { return it; }
-      uint32_t operator * () const
+      uint32_t operator*() const
       {
           octet_iterator temp = it;
           return next(temp, range_end);
       }
-      bool operator == (const iterator& rhs) const 
+      bool operator==(const iterator& rhs) const
       { 
           if (range_start != rhs.range_start || range_end != rhs.range_end)
               throw std::logic_error("Comparing utf-8 iterators defined with different ranges");
           return (it == rhs.it);
       }
-      bool operator != (const iterator& rhs) const
+      bool operator!=(const iterator& rhs) const
       {
-          return !(operator == (rhs));
+          return !(operator==(rhs));
       }
-      iterator& operator ++ () 
+      iterator& operator++()
       {
           next(it, range_end);
           return *this;
       }
-      iterator operator ++ (int)
+      iterator operator++(int)
       {
           iterator temp = *this;
           next(it, range_end);
           return temp;
       }  
-      iterator& operator -- ()
+      iterator& operator--()
       {
           prior(it, range_start);
           return *this;
       }
-      iterator operator -- (int)
+      iterator operator--(int)
       {
           iterator temp = *this;
           prior(it, range_start);
@@ -334,40 +334,40 @@ namespace utf8
         }
         // the default "big three" are OK
         octet_iterator base () const { return it; }
-        wchar_t operator * () const
+        wchar_t operator*() const
         {
             octet_iterator temp = it;
             uint32_t retval = next(temp, range_end);
             assert(retval <= WCHAR_MAX);
             return retval;
         }
-        bool operator == (const wchar_iterator& rhs) const 
+        bool operator==(const wchar_iterator& rhs) const
         { 
             if (range_start != rhs.range_start || range_end != rhs.range_end)
                 throw std::logic_error("Comparing utf-8 iterators defined with different ranges");
             return (it == rhs.it);
         }
-        bool operator != (const wchar_iterator& rhs) const
+        bool operator!=(const wchar_iterator& rhs) const
         {
-            return !(operator == (rhs));
+            return !(operator==(rhs));
         }
-        wchar_iterator& operator ++ () 
+        wchar_iterator& operator++()
         {
             next(it, range_end);
             return *this;
         }
-        wchar_iterator operator ++ (int)
+        wchar_iterator operator++(int)
         {
             wchar_iterator temp = *this;
             next(it, range_end);
             return temp;
         }  
-        wchar_iterator& operator -- ()
+        wchar_iterator& operator--()
         {
             prior(it, range_start);
             return *this;
         }
-        wchar_iterator operator -- (int)
+        wchar_iterator operator--(int)
         {
             wchar_iterator temp = *this;
             prior(it, range_start);

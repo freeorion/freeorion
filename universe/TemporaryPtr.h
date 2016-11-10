@@ -47,7 +47,7 @@ public:
     { BOOST_MPL_ASSERT((boost::is_convertible<const Y*, T*>)); }
 
     template<class Y>
-    TemporaryPtr<T>& operator =(const TemporaryPtr<Y>& rhs) 
+    TemporaryPtr<T>& operator=(const TemporaryPtr<Y>& rhs)
     { return internal_assign(rhs.m_ptr); }
     //@}
 
@@ -56,8 +56,8 @@ public:
     T*   get() const;
 
     operator bool() const { return get() != NULL; }
-    T* operator ->() const { return get(); }
-    T& operator *() const  { return *get(); }
+    T* operator->() const { return get(); }
+    T& operator*() const  { return *get(); }
     //@}
 
 private:
@@ -87,19 +87,19 @@ private:
     //@}
 
     template <class Y, class R>
-    friend bool operator ==(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second);
+    friend bool operator==(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second);
 
     template <class Y, class R>
-    friend bool operator ==(const TemporaryPtr<Y>& first, R* second);
+    friend bool operator==(const TemporaryPtr<Y>& first, R* second);
 
     template <class Y, class R>
-    friend bool operator <(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second);
+    friend bool operator<(const TemporaryPtr<Y>& first, const TemporaryPtr<R>& second);
 
     template <class Y, class R>
-    friend bool operator <(const TemporaryPtr<Y>& first, R* second);
+    friend bool operator<(const TemporaryPtr<Y>& first, R* second);
 
     template <class Y, class R>
-    friend bool operator <(Y* first, const TemporaryPtr<R>&  second);
+    friend bool operator<(Y* first, const TemporaryPtr<R>&  second);
 
     template <class Y, class R>
     friend TemporaryPtr<Y> boost::static_pointer_cast(TemporaryPtr<R> const & item);

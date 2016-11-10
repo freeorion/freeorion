@@ -13,6 +13,8 @@
 #include "../util/Export.h"
 #include "TemporaryPtr.h"
 
+#include "UniverseObject.h"
+
 struct UniverseObjectVisitor;
 
 class UniverseObject;
@@ -37,43 +39,43 @@ public:
             m_owner(owner)
         { Refresh(); }
 
-        TemporaryPtr<T> operator *() const
+        TemporaryPtr<T> operator*() const
         { return m_current_ptr; }
 
         // The result of this operator is not intended to be stored, so it's safe to
         // return a reference to an instance variable that's going to be soon overwritten.
-        TemporaryPtr<T>& operator ->() const
+        TemporaryPtr<T>& operator->() const
         { return m_current_ptr; }
 
-        iterator& operator ++() {
+        iterator& operator++() {
             std::map<int, boost::shared_ptr<T> >::iterator::operator++();
             Refresh();
             return *this;
         }
 
-        iterator operator ++(int) {
+        iterator operator++(int) {
             iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator++(0), m_owner);
             Refresh();
             return result;
         }
 
-        iterator& operator --() {
+        iterator& operator--() {
             std::map<int, boost::shared_ptr<T> >::iterator::operator--();
             Refresh();
             return *this;
         }
 
-        iterator operator --(int) {
+        iterator operator--(int) {
             iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator--(0), m_owner);
             Refresh();
             return result;
         }
 
-        bool operator ==(const iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::iterator::operator ==(other); }
+        bool operator==(const iterator& other) const
+        { return (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) == other); }
 
-        bool operator !=(const iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::iterator::operator !=(other); }
+        bool operator!=(const iterator& other) const
+        { return (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) != other);}
 
     private:
         // 
@@ -85,7 +87,7 @@ public:
         // return a "null" pointer.  We assume that we are dealing with valid
         // iterators in the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, boost::shared_ptr<T> >::iterator::operator ==(m_owner.Map<T>().end())) {
+            if (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) == (m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
                 m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::iterator::operator*().second);
@@ -100,43 +102,43 @@ public:
             m_owner(owner)
         { Refresh(); }
 
-        TemporaryPtr<const T> operator *() const
+        TemporaryPtr<const T> operator*() const
         { return m_current_ptr; }
         
         // The result of this operator is not intended to be stored, so it's safe to
         // return a reference to an instance variable that's going to be soon overwritten.
-        TemporaryPtr<const T>& operator ->() const
+        TemporaryPtr<const T>& operator->() const
         { return m_current_ptr; }
 
-        const_iterator& operator ++() {
+        const_iterator& operator++() {
             std::map<int, boost::shared_ptr<T> >::const_iterator::operator++();
             Refresh();
             return *this;
         }
 
-        const_iterator operator ++(int) {
+        const_iterator operator++(int) {
             const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
             Refresh();
             return result;
         }
 
-        const_iterator& operator --() {
+        const_iterator& operator--() {
             std::map<int, boost::shared_ptr<T> >::const_iterator::operator--();
             Refresh();
             return *this;
         }
 
-        const_iterator operator --(int) {
+        const_iterator operator--(int) {
             const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
             Refresh();
             return result;
         }
 
-        bool operator ==(const const_iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator ==(other); }
+        bool operator==(const const_iterator& other) const
+        { return (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) == other); }
 
-        bool operator !=(const const_iterator& other) const
-        { return std::map<int, boost::shared_ptr<T> >::const_iterator::operator !=(other); }
+        bool operator!=(const const_iterator& other) const
+        { return (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) != other); }
 
     private:
         // See iterator for comments.
@@ -147,7 +149,7 @@ public:
         // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
         // the range [begin(), end()].
         void Refresh() const {
-            if (std::map<int, boost::shared_ptr<T> >::const_iterator::operator ==(m_owner.Map<T>().end())) {
+            if (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) == (m_owner.Map<T>().end())) {
                 m_current_ptr = TemporaryPtr<T>();
             } else {
                 m_current_ptr = TemporaryPtr<T>(std::map<int, boost::shared_ptr<T> >::const_iterator::operator*().second);

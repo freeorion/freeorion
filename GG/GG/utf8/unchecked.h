@@ -186,36 +186,36 @@ namespace utf8
             explicit iterator (const octet_iterator& octet_it): it(octet_it) {}
             // the default "big three" are OK
             octet_iterator base () const { return it; }
-            uint32_t operator * () const
+            uint32_t operator*() const
             {
                 octet_iterator temp = it;
                 return next(temp);
             }
-            bool operator == (const iterator& rhs) const 
+            bool operator==(const iterator& rhs) const
             { 
                 return (it == rhs.it);
             }
-            bool operator != (const iterator& rhs) const
+            bool operator!=(const iterator& rhs) const
             {
-                return !(operator == (rhs));
+                return !(operator==(rhs));
             }
-            iterator& operator ++ () 
+            iterator& operator++()
             {
                 std::advance(it, internal::sequence_length(it));
                 return *this;
             }
-            iterator operator ++ (int)
+            iterator operator++(int)
             {
                 iterator temp = *this;
                 std::advance(it, internal::sequence_length(it));
                 return temp;
             }  
-            iterator& operator -- ()
+            iterator& operator--()
             {
                 prior(it);
                 return *this;
             }
-            iterator operator -- (int)
+            iterator operator--(int)
             {
                 iterator temp = *this;
                 prior(it);

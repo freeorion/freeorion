@@ -34,6 +34,12 @@ target_link_libraries(test_parsers_boost
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
 )
 
+set_target_properties(test_parsers_boost
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+)
+
 add_test(enum_parser                           ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)
 add_test(value_ref_double_parser               ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefDoubleParser)
 add_test(value_ref_int_parser                  ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
