@@ -2990,7 +2990,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden"
+				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3064,6 +3067,7 @@
 					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
@@ -3092,7 +3096,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -3109,7 +3116,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden"
+				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -3199,6 +3209,7 @@
 					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
@@ -3227,7 +3238,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -3244,7 +3258,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden"
+				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3261,7 +3278,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden"
+				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
@@ -3356,6 +3376,7 @@
 					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
@@ -3384,7 +3405,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden",
+				);
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -3401,7 +3425,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden"
+				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3418,7 +3445,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = "-fvisibility=hidden";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-fvisibility=hidden"
+				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
