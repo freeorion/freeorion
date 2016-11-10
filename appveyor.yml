@@ -1,0 +1,14 @@
+os: Visual Studio 2015
+version: ci-{build}
+branches:
+  only:
+    - master
+init:
+  - git config --global core.eol native
+  - git config --global core.autocrlf true
+clone_depth: 50
+build_script:
+    # Doing a noop for now to allow running appveyor with a good configuration
+    # without actually building anything.
+    - rem
+test: off
