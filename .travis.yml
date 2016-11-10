@@ -6,6 +6,7 @@ matrix:
         - docker
       env:
         - BUILD_APIDOC=true
+        - BUILD_CMAKE=true
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
     - os: linux
@@ -13,12 +14,21 @@ matrix:
         - docker
       env:
         - BUILD_UNITTEST=true
+        - BUILD_CMAKE=true
     - os: osx
       osx_image: xcode6.4
       compiler: clang
+      env:
+        - BUILD_CMAKE=false
+    - os: osx
+      osx_image: xcode6.4
+      compiler: clang
+      env:
+        - BUILD_CMAKE=true
   allow_failures:
     - env:
       - BUILD_APIDOC=true
+      - BUILD_CMAKE=true
       - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
 install:
   - >
@@ -44,9 +54,7 @@ before_script:
       echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      mkdir build
-      cd build
+    if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_CMAKE}" == "true" ]]; then
       # Add transparent cmake function to allow possible cross platform use of
       # build sections.
       function cmake {
@@ -54,7 +62,12 @@ before_script:
       }
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    if [[ "${BUILD_CMAKE}" == "true" ]]; then
+      mkdir build
+      cd build
+    fi
+  - >
+    if [[ "${TRAVIS_OS_NAME}" == "osx" && "${BUILD_CMAKE}" == "false" ]]; then
       cd Xcode
     fi
 script:
@@ -82,6 +95,11 @@ script:
       python -m compileall -q .
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    if [[ "${BUILD_CMAKE}" == "true" && "${TRAVIS_OS_NAME}" == "osx" && -z "${BUILD_APIDOC}" ]]; then
+      cmake -GXcode ..
+      cmake --build . --config Release -- -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}')
+    fi
+  - >
+    if [[ "${BUILD_CMAKE}" == "false" && "${TRAVIS_OS_NAME}" == "osx" ]]; then
       xcodebuild -parallelizeTargets -jobs $(sysctl hw.ncpu | awk '{print $2}') -project FreeOrion.xcodeproj -configuration Release -alltargets
     fi
