@@ -13,6 +13,9 @@ matrix:
       dist: trusty
       compiler: gcc
       sudo: required
+    - os: osx
+      osx_image: xcode6.4
+      compiler: clang
   allow_failures:
     - env:
       - BUILD_APIDOC=true
@@ -31,6 +34,13 @@ install:
       export CC=gcc-4.9
       export CXX=g++-4.9
     fi
+  - >
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      wget https://github.com/freeorion/freeorion-sdk/releases/download/v0.4.6-1/FreeOrionSDK_0.4.6-1_Clang-MacOSX-10.7-i386.dmg
+      hdiutil attach FreeOrionSDK_0.4.6-1_Clang-MacOSX-10.7-i386.dmg
+      tar -xjf /Volumes/FreeOrionSDK/dep.tar.bz2 -C Xcode
+      hdiutil detach /Volumes/FreeOrionSDK
+    fi
 before_script:
   # Configure git to use the identity of FreeOrion Build Bot and
   # load credentials
@@ -46,6 +56,10 @@ before_script:
       mkdir build
       cd build
     fi
+  - >
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      cd Xcode
+    fi
 script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
@@ -56,4 +70,8 @@ script:
     if [[ "${TRAVIS_OS_NAME}" == "linux" && -z "${BUILD_APIDOC}" ]]; then
       cmake ..
       cmake --build .
+    fi
+  - >
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      xcodebuild -project FreeOrion.xcodeproj -configuration Release -alltargets
     fi
