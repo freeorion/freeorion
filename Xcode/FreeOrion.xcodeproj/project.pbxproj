@@ -3037,8 +3037,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
+					"-std=c++11",
+					"-stdlib=libc++",
 					"-ftemplate-depth=1024",
 				);
+				OTHER_LDFLAGS = "-stdlib=libc++";
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = $SRCROOT/build;
@@ -3169,8 +3172,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
+					"-std=c++11",
+					"-stdlib=libc++",
 					"-ftemplate-depth=1024",
 				);
+				OTHER_LDFLAGS = "-stdlib=libc++";
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = $SRCROOT/build;
@@ -3341,8 +3347,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
+					"-std=c++11",
+					"-stdlib=libc++",
 					"-ftemplate-depth=1024",
 				);
+				OTHER_LDFLAGS = "-stdlib=libc++";
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = $SRCROOT/build;
