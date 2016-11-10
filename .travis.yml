@@ -1,14 +1,14 @@
 language: cpp
-sudo: required
-dist: trusty
-compiler: gcc
-env:
-  global:
-    # Auth token to push API documentation
-    - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
-  matrix:
-    - BUILD_APIDOC=true
 matrix:
+  include:
+    - os: linux
+      dist: trusty
+      compiler: gcc
+      sudo: required
+      env:
+        - BUILD_APIDOC=true
+        # Auth token to push API documentation
+        - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
   allow_failures:
     - env: BUILD_APIDOC=true
 branches:
@@ -27,7 +27,7 @@ before_script:
   - git config --global credential.helper "cache --timeout=300"
   # Load credentials
   - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
-script:
   - mkdir build
   - cd build
+script:
   - cmake .. && make apidoc-deploy
