@@ -14,20 +14,33 @@ matrix:
 branches:
   only:
   - master
+  - travis-with-osx
 install:
-  # Update system
-  - sudo apt-get update -qq
-  # Install dependencies
   - >
-    sudo apt-get install -qq cmake python doxygen python2.7-dev libfreetype6-dev libglew-dev libopenal-dev libogg-dev libvorbis-dev zlib1g-dev libsdl2-dev mesa-common-dev python libpng12-dev libboost1.54-dev libboost-thread1.54-dev libboost-system1.54-dev libboost-signals1.54-dev libboost-serialization1.54-dev libboost-regex1.54-dev libboost-python1.54-dev libboost-log1.54-dev libboost-iostreams1.54-dev libboost-locale1.54-dev libboost-filesystem1.54-dev libboost-date-time1.54-dev
+    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+      # Update system
+      sudo apt-get update -qq
+      # Install dependencies
+      sudo apt-get install -qq cmake python doxygen python2.7-dev libfreetype6-dev libglew-dev libopenal-dev libogg-dev libvorbis-dev zlib1g-dev libsdl2-dev mesa-common-dev python libpng12-dev libboost1.54-dev libboost-thread1.54-dev libboost-system1.54-dev libboost-signals1.54-dev libboost-serialization1.54-dev libboost-regex1.54-dev libboost-python1.54-dev libboost-log1.54-dev libboost-iostreams1.54-dev libboost-locale1.54-dev libboost-filesystem1.54-dev libboost-date-time1.54-dev
+    fi
 before_script:
-  # Configure git to use the identity of FreeOrion Build Bot
-  - git config --global user.email "freeorionorg@gmail.com"
-  - git config --global user.name "FreeOrion Build Bot"
-  - git config --global credential.helper "cache --timeout=300"
-  # Load credentials
-  - echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
-  - mkdir build
-  - cd build
+  # Configure git to use the identity of FreeOrion Build Bot and
+  # load credentials
+  - >
+    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+      git config --global user.email "freeorionorg@gmail.com"
+      git config --global user.name "FreeOrion Build Bot"
+      git config --global credential.helper "cache --timeout=300"
+      echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
+    fi
+  - >
+    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+      mkdir build
+      cd build
+    fi
 script:
-  - cmake .. && make apidoc-deploy
+  - >
+    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+      cmake ..
+      cmake --build . --target apidoc-deploy
+    fi
