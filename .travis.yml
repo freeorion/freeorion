@@ -40,7 +40,7 @@ before_script:
     fi
 script:
   - >
-    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+    if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
       cmake ..
       cmake --build . --target apidoc-deploy
     fi
