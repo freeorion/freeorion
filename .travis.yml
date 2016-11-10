@@ -9,6 +9,12 @@ matrix:
         - BUILD_APIDOC=true
         # Auth token to push API documentation
         - secure: "JKeXk8p65hodb12PVRST6A90swsNubc+46EbSJGSghldIxbFWLBAlwU+KLeOMO4V0veu6k4lnMa50V0UYFZmoUsS6W0aL5Ybo98SpzXHiNLOmOluoqJoF9TBsOTCCRFbWbccgJyVEtulgRcdml96naS51lq9Sw/VO/N3Z472304="
+    - os: linux
+      dist: trusty
+      compiler: gcc
+      sudo: required
+      env:
+        - BUILD_LINUX=true
   allow_failures:
     - env:
       - BUILD_APIDOC=true
@@ -16,10 +22,10 @@ matrix:
 branches:
   only:
   - master
-  - travis-with-osx
+  - travis-with-linux
 install:
   - >
-    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+    if [[ "${BUILD_LINUX}" == "true" || "${BUILD_APIDOC}" == "true" ]]; then
       # Update system
       sudo apt-get update -qq
       # Install dependencies
@@ -36,7 +42,7 @@ before_script:
       echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
     fi
   - >
-    if [[ "${BUILD_APIDOC}" == "true" ]]; then
+    if [[ "${BUILD_LINUX}" == "true" || "${BUILD_APIDOC}" == "true" ]]; then
       mkdir build
       cd build
     fi
@@ -45,4 +51,9 @@ script:
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
       cmake ..
       cmake --build . --target apidoc-deploy
+    fi
+  - >
+    if [[ "${BUILD_LINUX}" == "true" ]]; then
+      cmake ..
+      cmake --build .
     fi
