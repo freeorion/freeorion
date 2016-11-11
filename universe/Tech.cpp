@@ -173,10 +173,14 @@ namespace {
 float Tech::ResearchCost(int empire_id) const {
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_cost) {
         return 1.0;
-    } else {
-        if (m_research_cost->ConstantExpr())
-            return m_research_cost->Eval();
 
+    } else if (m_research_cost->ConstantExpr()) {
+        return m_research_cost->Eval();
+
+    } else if (empire_id == ALL_EMPIRES) {
+        return 999999.9f;
+
+    } else {
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_research_cost->SourceInvariant())
             return 999999.9f;
@@ -192,10 +196,14 @@ float Tech::PerTurnCost(int empire_id) const
 int Tech::ResearchTime(int empire_id) const {
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_turns) {
         return 1;
-    } else {
-        if (m_research_turns->ConstantExpr())
+
+    } else if (m_research_turns->ConstantExpr()) {
             return m_research_turns->Eval();
 
+    } else if (empire_id == ALL_EMPIRES) {
+        return 9999;
+
+    } else {
         TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_research_turns->SourceInvariant())
             return 9999;
