@@ -100,9 +100,7 @@
     <ClCompile Include="..\..\GG\src\Font.cpp" />
     <ClCompile Include="..\..\GG\src\GLClientAndServerBuffer.cpp" />
     <ClCompile Include="..\..\GG\src\GroupBox.cpp" />
-    <ClCompile Include="..\..\GG\src\GUI.cpp">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4251; 4244; 4099; 4275;4351</DisableSpecificWarnings>
-    </ClCompile>
+    <ClCompile Include="..\..\GG\src\GUI.cpp" />
     <ClCompile Include="..\..\GG\src\Layout.cpp" />
     <ClCompile Include="..\..\GG\src\ListBox.cpp" />
     <ClCompile Include="..\..\GG\src\Menu.cpp" />
@@ -119,9 +117,7 @@
     <ClCompile Include="..\..\GG\src\StyleFactory.cpp" />
     <ClCompile Include="..\..\GG\src\TabWnd.cpp" />
     <ClCompile Include="..\..\GG\src\TextControl.cpp" />
-    <ClCompile Include="..\..\GG\src\Texture.cpp">
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4251; 4244; 4099; 4275;4351</DisableSpecificWarnings>
-    </ClCompile>
+    <ClCompile Include="..\..\GG\src\Texture.cpp" />
     <ClCompile Include="..\..\GG\src\Timer.cpp" />
     <ClCompile Include="..\..\GG\src\UnicodeCharsets.cpp" />
     <ClCompile Include="..\..\GG\src\Wnd.cpp" />
@@ -158,6 +154,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
+    <Import Project="..\warnings.props" />
     <Import Project="..\win32.dependency.props" />
     <Import Project="..\boost.dependency.props" />
     <Import Project="..\libpng.dependency.props" />
@@ -185,7 +182,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
       <Optimization>Full</Optimization>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;GIGI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../include/GG;../../../include/;../../../include/GG;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -209,17 +205,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>../../GiGi.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGi_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ZLIB_BINARY=zlib.lib;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGi_EXPORTS;BOOST_ZLIB_BINARY=zlib.lib;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../include/;../../../include;../../GG/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -229,7 +223,6 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsCpp</CompileAs>
-      <DisableSpecificWarnings>4251; 4244; 4099; 4275</DisableSpecificWarnings>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
@@ -244,17 +237,15 @@
       </TreatLinkerWarningAsErrors>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-XP|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGi_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGi_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../include/;../../../include;../../GG/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -264,7 +255,6 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsCpp</CompileAs>
-      <DisableSpecificWarnings>4251; 4244; 4099; 4275</DisableSpecificWarnings>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
@@ -279,7 +269,6 @@
       </TreatLinkerWarningAsErrors>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
