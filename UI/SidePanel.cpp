@@ -1081,7 +1081,8 @@ namespace {
         return false;
     };
 
-    /** Parse content tags for a Ship, returning tags that potentially match with those of a Planet.
+    /** Content tags that note if a Ship should be auto-selected for bombarding a Planet.
+     *  These tags are determined from the TAG_BOMBARD_PREFIX tags of @a ship and potentially match those of a Planet.
      *  If the Ship contains the content tag defined in TAG_BOMBARD_ALWAYS, only that tag will be returned.
      */
     std::vector<std::string> BombardTagsForShip(TemporaryPtr<const Ship> ship) {
@@ -1344,8 +1345,8 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_
     return retval;
 }
 
-/** Returns valid Ship%s capable of bombarding a given planet.
- * @param target_planet_id ID of planet to potentially bombard
+/** Returns valid Ship%s capable of bombarding a given Planet.
+ * @param target_planet_id ID of Planet to potentially bombard
  */
 std::set<TemporaryPtr<const Ship> > AutomaticallyChosenBombardShips(int target_planet_id) {
     std::set<TemporaryPtr<const Ship> > retval;
@@ -1362,7 +1363,7 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenBombardShips(int target_p
     if (!system)
         return retval;
 
-    //Can't bombard owned-by-self planets; early exit
+    // Can't bombard owned-by-self planets; early exit
     if (target_planet->OwnedBy(empire_id))
         return retval;
 
