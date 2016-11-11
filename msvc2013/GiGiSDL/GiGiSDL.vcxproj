@@ -45,6 +45,7 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="..\win32.dependency.props" />
     <Import Project="..\boost.dependency.props" />
+    <Import Project="..\opengl.dependency.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -92,7 +93,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGiSDL.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GiGi.lib;SDL2.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -125,7 +126,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGiSDL.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GiGi.lib;SDL2.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
