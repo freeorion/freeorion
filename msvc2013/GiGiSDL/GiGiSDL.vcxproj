@@ -90,7 +90,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGiSDL.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib</AdditionalDependencies>
+      <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -123,7 +123,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGiSDL.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib</AdditionalDependencies>
+      <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
