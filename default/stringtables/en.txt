@@ -7606,7 +7606,7 @@ PC_TRADE
 Trade
 
 # Ship part classes
-PC_PRODICTION_LOCATION
+PC_PRODUCTION_LOCATION
 Production
 
 # Visibility levels
@@ -11516,6 +11516,12 @@ It seems [[tech SHP_ORG_HULL]]s are able collect photonic energy which can be re
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
 Increases strength of [[SR_WEAPON_2_1]] depending on the star.
+
+PR_MOBILE_ASSEMBLER
+Mobile Shipyard
+
+PR_MOBILE_ASSEMBLER_DESC
+Allows ships to be produced away from planets.
 
 RS_AUTOLAB
 Autolab
