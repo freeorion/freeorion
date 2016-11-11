@@ -2,9 +2,11 @@ Part
     name = "SP_VOID_SHADOW"
     description = "SP_VOID_SHADOW_DESC"
     class = Bombard
+    capacity = 1.0
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "CTRL_BOMBARD_PHOTOTROPHIC" ]
     location = All
     effectsgroups = [
         EffectsGroup    // players can order void shadow used on enemies

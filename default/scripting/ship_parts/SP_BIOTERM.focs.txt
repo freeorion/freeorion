@@ -2,9 +2,11 @@ Part
     name = "SP_BIOTERM"
     description = "SP_BIOTERM_DESC"
     class = Bombard
+    capacity = 1.0
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "CTRL_BOMBARD_ORGANIC" ]
     location = All
     effectsgroups = [
         EffectsGroup    // players can order terminators used on enemies
