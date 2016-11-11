@@ -44,6 +44,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
+    <Import Project="..\win32.dependency.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -64,7 +65,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0501;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -79,7 +80,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../include/;../../../include/AL/;../../../include/zlib/;../../../include/png/;../../../include/freetype/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
@@ -98,7 +99,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;Psapi.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
@@ -113,7 +114,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../include/;../../../include/AL/;../../../include/zlib/;../../../include/png/;../../../include/freetype/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
@@ -132,7 +133,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;Psapi.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>

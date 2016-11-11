@@ -43,6 +43,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
+    <Import Project="..\win32.dependency.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -71,7 +72,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>../../../include/;../../GG/;../../../include/SDL2/;../../../Boost/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_DLL;GiGiSDL_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK;BOOST_ZLIB_BINARY=zlib.lib;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGiSDL_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK;BOOST_ZLIB_BINARY=zlib.lib;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
@@ -104,7 +105,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>../../../include/;../../GG/;../../../include/SDL2/;../../../Boost/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_DLL;GiGiSDL_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;_DLL;GiGiSDL_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
