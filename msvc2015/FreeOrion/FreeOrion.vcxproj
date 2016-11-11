@@ -97,7 +97,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;Psapi.lib;User32.lib</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -131,7 +131,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;Psapi.lib;User32.lib</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
