@@ -206,7 +206,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         max_node_depth = std::max(max_node_depth, (*it)->GetDepth());
 
     //2. create placeholder nodes
-    DebugLogger() << "TechTreeLayout::DoLayout creaing place holder nodes...";
+    DebugLogger() << "TechTreeLayout::DoLayout creating placeholder nodes...";
     std::vector<Node*> raw_nodes = m_nodes; // just iterator over initial nodes, not also over the placeholders
     for (std::vector<Node*>::iterator it = raw_nodes.begin(); it != raw_nodes.end(); ++it)
         (*it)->CreatePlaceHolder(m_nodes);
