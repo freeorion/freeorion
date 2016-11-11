@@ -221,7 +221,7 @@ namespace parse {
             |   tok.Research_           [ _val = PC_RESEARCH ]
             |   tok.Industry_           [ _val = PC_INDUSTRY ]
             |   tok.Trade_              [ _val = PC_TRADE ]
-            |   tok.ProductionLocation_ [ _val = PC_PRODICTION_LOCATION ]
+            |   tok.ProductionLocation_ [ _val = PC_PRODUCTION_LOCATION ]
             ;
         static bool once = true;
         if (once) {

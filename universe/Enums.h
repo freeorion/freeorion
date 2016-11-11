@@ -247,7 +247,7 @@ GG_ENUM(ShipPartClass,
     PC_INDUSTRY,            ///< generates production points for owner at its location
     PC_RESEARCH,            ///< generates research points for owner
     PC_TRADE,               ///< generates trade points for owner
-    PC_PRODICTION_LOCATION, ///< allows production items to be produced at its location
+    PC_PRODUCTION_LOCATION, ///< allows production items to be produced at its location
     NUM_SHIP_PART_CLASSES
 )
 
