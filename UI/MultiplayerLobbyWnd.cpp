@@ -103,6 +103,9 @@ namespace {
             CUIDropDownList(6)
         {
             SetStyle(GG::LIST_NOSORT);
+            ManuallyManageColProps();
+            NormalizeRowsOnInsert(false);
+            SetNumCols(1);
             GG::Y type_row_height(std::max(GG::Y1, h - 8));
             Resize(GG::Pt(w, type_row_height));
 
@@ -419,6 +422,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    m_players_lb->ManuallyManageColProps();
+    m_players_lb->NormalizeRowsOnInsert(true);
+    m_players_lb->SetNumCols(5);
 
     m_start_game_bn = new CUIButton(UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
