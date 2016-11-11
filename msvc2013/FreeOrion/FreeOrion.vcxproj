@@ -48,6 +48,7 @@
     <Import Project="..\boost.dependency.props" />
     <Import Project="..\libpng.dependency.props" />
     <Import Project="..\zlib.dependency.props" />
+    <Import Project="..\freetype.dependency.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -84,7 +85,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../GG/;../include/;../../../include/AL/;../../../include/freetype/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../GG/;../include/;../../../include/AL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -101,7 +102,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../;../../../include/freetype/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -118,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../GG/;../include/;../../../include/AL/;../../../include/freetype/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../GG/;../include/;../../../include/AL/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -135,7 +136,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../;../../../include/freetype/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
