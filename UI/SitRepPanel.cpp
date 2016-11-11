@@ -454,10 +454,8 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (old_size != GG::Wnd::Size()) {
         DoLayout();
         Update();
-        if (!m_sitreps_lb->Empty()) {
-            m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
-            m_sitreps_lb->BringRowIntoView(boost::next(m_sitreps_lb->begin(), first_visible_queue_row));
-        }
+        if (!m_sitreps_lb->Empty())
+            m_sitreps_lb->SetFirstRowShown(boost::next(m_sitreps_lb->begin(), first_visible_queue_row));
     }
 }
 
