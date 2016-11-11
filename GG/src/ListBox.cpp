@@ -839,7 +839,8 @@ void ListBox::PreRender()
 
     // Ensure that data in occluded cells is not rendered
     // and that any re-layout during prerender is immediate.
-    iterator last_visible_row = LastVisibleRow();
+    Y visible_height(0);
+    Y max_visible_height = ClientSize().y;
     bool hide = true;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         if (it == m_first_row_shown)
@@ -850,10 +851,11 @@ void ListBox::PreRender()
         } else {
             (*it)->Show();
             GUI::PreRenderWindow(*it);
-        }
 
-        if (it == last_visible_row)
-            hide = true;
+            visible_height += (*it)->Height();
+            if (visible_height >= max_visible_height)
+                hide = true;
+        }
     }
 
     if (!m_header_row->empty())
