@@ -80,7 +80,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;BOOST_ZLIB_BINARY=zlib.lib;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../include/;../../../include/AL/;../../../include/zlib/;../../../include/png/;../../../include/freetype/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../include/;../../../include/AL/;../../../include/zlib/;../../../include/png/;../../../include/freetype/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -114,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_WIN32_WINNT=0x0501;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../include/;../../../include/AL/;../../../include/zlib/;../../../include/png/;../../../include/freetype/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../include/;../../../include/AL/;../../../include/zlib/;../../../include/png/;../../../include/freetype/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
