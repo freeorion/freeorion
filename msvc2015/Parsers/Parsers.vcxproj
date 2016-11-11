@@ -45,6 +45,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="..\win32.dependency.props" />
+    <Import Project="..\boost.dependency.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -80,8 +81,8 @@
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;BOOST_ZLIB_BINARY=zlib.lib;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;BOOST_ZLIB_BINARY=zlib.lib;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../GG/;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
@@ -101,7 +102,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>../../Parsers.dll</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
@@ -117,8 +118,8 @@
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/;../../GG/;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../GG/;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
@@ -138,7 +139,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>../../Parsers.dll</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
