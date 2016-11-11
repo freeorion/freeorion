@@ -1673,7 +1673,7 @@ namespace {
                     continue;
                 // an unarmed Monster will not trigger combat
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
-                      (fleet->HasArmedShips() || !fleet->Unowned())  )
+                      (fleet->HasArmedShips() || fleet->HasFighterShips() || !fleet->Unowned())  )
                 {
                     empires_with_aggressive_fleets_here.insert(empire_id);
                     break;
@@ -2267,7 +2267,7 @@ namespace {
                  fleet_it != fleets.end(); ++fleet_it)
             {
                 TemporaryPtr<const Fleet> fleet = *fleet_it;
-                if (fleet->Aggressive() && fleet->HasArmedShips())
+                if (fleet->Aggressive() && (fleet->HasArmedShips() || fleet->HasFighterShips()))
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -2968,7 +2968,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
             // before you, or be in cahoots with someone who did.
-            bool unrestricted = (fleet->ArrivalStarlane() == system->ID()) && fleet->Aggressive() && fleet->HasArmedShips() ;
+            bool unrestricted = (fleet->ArrivalStarlane() == system->ID()) && fleet->Aggressive() && (fleet->HasArmedShips() || fleet->HasFighterShips());
             if (fleet->Unowned()) {
                 if (unrestricted)
                     unrestricted_monsters_present = true;

@@ -392,7 +392,7 @@ std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(const std::vector< T
         hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips();
         hasTroopShips   = hasTroopShips   || fleet->HasTroopShips();
         hasMonsters     = hasMonsters     || fleet->HasMonsters();
-        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips();
+        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips() || fleet->HasFighterShips();
     }
 
     // get file name main part depending on type of fleet

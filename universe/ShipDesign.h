@@ -496,15 +496,16 @@ public:
     float                           TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
     float                           Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
 
-    float                           IndustryGeneration() const { return m_industry_generation; }///< returns the industry output from this ship design
-    float                           ResearchGeneration() const { return m_research_generation; }///< returns the research output from this ship design
-    float                           TradeGeneration() const    { return m_trade_generation; }   ///< returns the trade output from this ship design
-    bool                            IsProductionLocation() const { return m_is_production_location;}///< returns true if this ship design can be a production location
+    float                           IndustryGeneration() const  { return m_industry_generation; }   ///< returns the industry output from this ship design
+    float                           ResearchGeneration() const  { return m_research_generation; }   ///< returns the research output from this ship design
+    float                           TradeGeneration() const     { return m_trade_generation; }      ///< returns the trade output from this ship design
+    bool                            IsProductionLocation() const{ return m_is_production_location;} ///< returns true if this ship design can be a production location
 
     bool                            CanColonize() const;
     bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
     bool                            CanBombard() const      { return m_can_bombard; }
     bool                            IsArmed() const         { return m_is_armed; }
+    bool                            HasFighters() const     { return m_has_fighters; }
     bool                            IsMonster() const       { return m_is_monster; }
 
     float                           Attack() const;
@@ -571,6 +572,7 @@ private:
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
     bool    m_is_armed;
+    bool    m_has_fighters;
     bool    m_can_bombard;
     float   m_detection;
     float   m_colony_capacity;

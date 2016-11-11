@@ -261,7 +261,7 @@ void SupplyManager::Update() {
                 continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
             }
 
-            if (fleet->HasArmedShips() && fleet->Aggressive()) {
+            if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
                 if (fleet->OwnedBy(empire_id)) {
                     if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                         systems_containing_friendly_fleets.insert(system_id);

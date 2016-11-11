@@ -704,7 +704,7 @@ namespace {
 
     bool ObjectCanAttack(TemporaryPtr<const UniverseObject> obj) {
         if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
-            return ship->IsArmed(); // has direct fire weapons or fighter bays
+            return ship->IsArmed() || ship->HasFighters();
         } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
         } else if (TemporaryPtr<const Fighter> fighter = boost::dynamic_pointer_cast<const Fighter>(obj)) {

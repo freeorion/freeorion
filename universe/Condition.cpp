@@ -1693,7 +1693,7 @@ bool Armed::Match(const ScriptingContext& local_context) const {
     }
 
     if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
-        if (ship->IsArmed())
+        if (ship->IsArmed() || ship->HasFighters())
             return true;
 
     return false;

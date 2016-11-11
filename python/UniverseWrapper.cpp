@@ -410,6 +410,7 @@ namespace FreeOrionPython {
             .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
             .add_property("hasMonsters",                &Fleet::HasMonsters)
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
+            .add_property("hasFighterShips",            &Fleet::HasFighterShips)
             .add_property("hasColonyShips",             &Fleet::HasColonyShips)
             .add_property("hasOutpostShips",            &Fleet::HasOutpostShips)
             .add_property("hasTroopShips",              &Fleet::HasTroopShips)

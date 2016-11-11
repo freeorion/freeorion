@@ -2096,7 +2096,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         }
 
         //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
-        if (fleet->HasArmedShips() && fleet->Aggressive()) {
+        if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
@@ -3244,6 +3244,7 @@ void Empire::CheckProductionProgress() {
                 // create a single fleet for combat ships and individual
                 // fleets for non-combat ships
                 bool individual_fleets = !((*ships.begin())->IsArmed()
+                                           || (*ships.begin())->HasFighters()
                                            || (*ships.begin())->CanHaveTroops()
                                            || (*ships.begin())->CanBombard());
 
@@ -3280,7 +3281,7 @@ void Empire::CheckProductionProgress() {
                     fleet = *fleet_it;
                     // rename fleet, given its id and the ship that is in it
                     fleet->Rename(fleet->GenerateFleetName());
-                    fleet->SetAggressive(fleet->HasArmedShips());
+                    fleet->SetAggressive(fleet->HasArmedShips() || fleet->HasFighterShips());
 
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (GetSystem(rally_point_id)) {

@@ -35,6 +35,7 @@ public:
 
     bool                        IsMonster() const;
     bool                        IsArmed() const;
+    bool                        HasFighters() const;
     bool                        CanColonize() const;
     bool                        HasTroops() const;
     bool                        CanHaveTroops() const;

@@ -505,6 +505,7 @@ ShipDesign::ShipDesign() :
     m_3D_model(),
     m_name_desc_in_stringtable(false),
     m_is_armed(false),
+    m_has_fighters(false),
     m_can_bombard(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
@@ -538,6 +539,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable),
     m_is_armed(false),
+    m_has_fighters(false),
     m_can_bombard(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
@@ -908,10 +910,12 @@ void ShipDesign::BuildStatCaches() {
 
         switch (part->Class()) {
         case PC_DIRECT_WEAPON:
-        case PC_FIGHTER_BAY: {
             m_is_armed = true;
             break;
-        }
+        case PC_FIGHTER_BAY:
+        case PC_FIGHTER_HANGAR:
+            m_has_fighters = true;
+            break;
         case PC_COLONY:
             m_colony_capacity += part->Capacity();
             break;

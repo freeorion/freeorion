@@ -260,6 +260,14 @@ bool Ship::IsArmed() const {
         return false;
 }
 
+bool Ship::HasFighters() const {
+    const ShipDesign* design = Design();
+    if (design)
+        return design->HasFighters();
+    else
+        return false;
+}
+
 bool Ship::CanColonize() const {
     if (m_species_name.empty())
         return false;

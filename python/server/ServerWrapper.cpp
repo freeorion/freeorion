@@ -840,7 +840,7 @@ namespace {
         // add ship to fleet, this also moves the ship to the
         // fleets location and inserts it into the system
         fleet->AddShip(ship->ID());
-        fleet->SetAggressive(fleet->HasArmedShips());
+        fleet->SetAggressive(fleet->HasArmedShips() || fleet->HasFighterShips());
         ship->SetFleetID(fleet->ID());
 
         // set the meters of the ship to max values
