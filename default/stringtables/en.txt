@@ -3186,6 +3186,9 @@ Fleet Count - Equal to the total number of ships in the fleet.
 FW_FLEET_TROOP_SUMMARY
 Fleet Troops - Equal to the total number of troops in the fleet.
 
+FW_FLEET_COLONY_SUMMARY
+Fleet Colonists - Equal to the total colonization capacity of ships the fleet.
+
 FW_MERGE_SYSTEM_FLEETS
 Merge System Ships Into Fleet
 

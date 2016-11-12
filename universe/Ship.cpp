@@ -379,11 +379,6 @@ float Ship::NextTurnCurrentMeterValue(MeterType type) const {
         throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have: " + boost::lexical_cast<std::string>(type));
     float current_meter_value = meter->Current();
 
-    //if (type == METER_FUEL) {
-    //    // todo: consider fleet movement or being stationary, which may partly replenish fuel
-    //    // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
-    //}
-
     if (type == METER_SHIELD) {
         if (m_last_turn_active_in_combat >= CurrentTurn())
             return std::max(0.0f,   // battle just happened. shields limited to max shield, but don't regen
@@ -445,6 +440,21 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
     if (const Meter* meter = GetPartMeter(type, part_name))
         return meter->Initial();
     return 0.0f;
+}
+
+float Ship::FighterCount() const {
+    float retval = 0.0f;
+    for (PartMeterMap::const_iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
+        //std::map<std::pair<MeterType, std::string>, Meter>
+        if (it->first.first != METER_CAPACITY)
+            continue;
+        const PartType* part_type = GetPartType(it->first.second);
+        if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+            continue;
+        retval += it->second.Current();
+    }
+
+    return retval;
 }
 
 float Ship::TotalWeaponsDamage(float shield_DR, bool include_fighters) const {

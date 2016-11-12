@@ -69,6 +69,12 @@ namespace {
     boost::shared_ptr<GG::Texture> TroopIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "troops.png", true); }
 
+    boost::shared_ptr<GG::Texture> ColonyIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "colony.png", true); }
+
+    boost::shared_ptr<GG::Texture> FightersIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "fighters.png", true); }
+
     boost::shared_ptr<GG::Texture> FleetCountIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
 
@@ -144,7 +150,7 @@ namespace {
     bool ContainsArmedShips(const std::vector<int>& ship_ids) {
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
             if (TemporaryPtr<const Ship> ship = GetShip(*it))
-                if (ship->IsArmed())
+                if (ship->IsArmed() || ship->HasFighters())
                     return true;
         return false;
     }
@@ -939,10 +945,13 @@ double ShipDataPanel::StatValue(MeterType stat_name) const {
             return ship->TotalWeaponsDamage();
         else if (stat_name == METER_TROOPS)
             return ship->TroopCapacity();
-
-        if (ship->UniverseObject::GetMeter(stat_name)) {
+        else if (stat_name == METER_SECONDARY_STAT)
+            return ship->FighterCount();
+        else if (stat_name == METER_POPULATION)
+            return ship->ColonyCapacity();
+        else if (ship->UniverseObject::GetMeter(stat_name))
             return ship->InitialMeterValue(stat_name);
-        }
+
         ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
     }
     return 0.0;
@@ -1012,15 +1021,23 @@ void ShipDataPanel::Init() {
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-    bool show_troops = !ship->IsArmed() && ship->HasTroops();
-    if (!show_troops) {
+    if (ship->IsArmed()) {
         // damage stat icon
         StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false,
                                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
         m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
-    } else {
+    }
+    if (ship->HasFighters()) {
+        // fighters stat icon
+        StatisticIcon* icon = new StatisticIcon(FightersIcon(), 0, 0, false,
+                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
+        AttachChild(icon);
+        icon->SetBrowseModeTime(tooltip_delay);
+    }
+    if (ship->HasTroops()) {
         // troops stat icon
         StatisticIcon* icon = new StatisticIcon(TroopIcon(), 0, 0, false,
                                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -1143,7 +1160,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         icon->InstallEventFilter(this);
         AttachChild(icon);
 
-        if (fleet->HasArmedShips() || !fleet->HasTroopShips()) {
+        if (fleet->HasArmedShips()) {
             // stat icon for fleet damage
             icon = new StatisticIcon(DamageIcon(), 0, 0, false,
                                      GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -1151,13 +1168,32 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
             AttachChild(icon);
-        } else {
+        }
+        if (fleet->HasFighterShips()) {
+            // stat icon for fleet damage
+            icon = new StatisticIcon(FightersIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_FIGHTER_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->HasTroopShips()) {
             // stat icon for fleet troops
             icon = new StatisticIcon(TroopIcon(), 0, 0, false,
                                      GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->HasColonyShips()) {
+            // stat icon for colonist capacity
+            icon = new StatisticIcon(ColonyIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_POPULATION, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
             AttachChild(icon);
         }
 
@@ -1547,6 +1583,7 @@ void FleetDataPanel::Refresh() {
         boost::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
         m_fleet_icon = new GG::StaticGraphic(new_fleet_texture, DataPanelIconStyle());
         AttachChild(m_fleet_icon);
+
     } else if (TemporaryPtr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
@@ -1607,11 +1644,13 @@ void FleetDataPanel::SetStatIconValues() {
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
     float damage_tally =    0.0f;
+    float fighters_tally  = 0.0f;
     float structure_tally = 0.0f;
     float shield_tally =    0.0f;
     float min_fuel =        0.0f;
     float min_speed =       0.0f;
     float troops_tally =    0.0f;
+    float colony_tally =    0.0f;
     std::vector<float> fuels;
     std::vector<float> speeds;
 
@@ -1633,8 +1672,10 @@ void FleetDataPanel::SetStatIconValues() {
 
         if (ship->Design()) {
             ship_count++;
-            damage_tally += ship->TotalWeaponsDamage();
+            damage_tally += ship->TotalWeaponsDamage(0.0f, false);
+            fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity();
+            colony_tally += ship->ColonyCapacity();
             structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
             shield_tally += ship->InitialMeterValue(METER_SHIELD);
             fuels.push_back(ship->InitialMeterValue(METER_FUEL));
@@ -1659,6 +1700,10 @@ void FleetDataPanel::SetStatIconValues() {
             it->second->SetValue(structure_tally);
         else if (stat_name == METER_CAPACITY)
             it->second->SetValue(damage_tally);
+        else if (stat_name == METER_SECONDARY_STAT)
+            it->second->SetValue(fighters_tally);
+        else if (stat_name == METER_POPULATION)
+            it->second->SetValue(colony_tally);
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
         else if (stat_name == METER_TROOPS)
