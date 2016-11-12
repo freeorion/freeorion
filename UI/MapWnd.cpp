@@ -3848,6 +3848,11 @@ void MapWnd::ShowEmpire(int empire_id) {
     }
 }
 
+void MapWnd::ShowMeterTypeArticle(const std::string& meter_string) {
+    ShowPedia();
+    m_pedia_panel->SetMeterType(meter_string);
+}
+
 void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
     if (!m_pedia_panel->Visible())
         TogglePedia();

@@ -884,6 +884,11 @@ bool ClientUI::ZoomToEmpire(int empire_id) {
     return true;
 }
 
+bool ClientUI::ZoomToMeterTypeArticle(const std::string& meter_string) {
+    GetMapWnd()->ShowMeterTypeArticle(meter_string);
+    return true;
+}
+
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
     GetMapWnd()->ShowEncyclopediaEntry(str);
     return true;

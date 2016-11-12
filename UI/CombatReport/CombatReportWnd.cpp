@@ -102,6 +102,8 @@ public:
                 ClientUI::GetClientUI()->ZoomToBuildingType(data);
             } else if (link_type == VarText::FIELD_TYPE_TAG) {
                 ClientUI::GetClientUI()->ZoomToFieldType(data);
+            } else if (link_type == VarText::METER_TYPE_TAG) {
+                ClientUI::GetClientUI()->ZoomToMeterTypeArticle(data);
             } else if (link_type == VarText::SPECIAL_TAG) {
                 ClientUI::GetClientUI()->ZoomToSpecial(data);
             } else if (link_type == VarText::SHIP_HULL_TAG) {
