@@ -78,6 +78,15 @@ namespace {
     boost::shared_ptr<GG::Texture> FleetCountIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
 
+    boost::shared_ptr<GG::Texture> IndustryIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png"); }
+
+    boost::shared_ptr<GG::Texture> ResearchIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png"); }
+
+    boost::shared_ptr<GG::Texture> TradeIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "trade.png"); }
+
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
         TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
@@ -1210,6 +1219,33 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
             icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
             AttachChild(icon);
         }
+        if (fleet->ResourceOutput(RE_INDUSTRY) > 0.0f) {
+            // stat icon for industry output
+            icon = new StatisticIcon(IndustryIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_INDUSTRY, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_INDUSTRY_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->ResourceOutput(RE_RESEARCH) > 0.0f) {
+            // stat icon for research output
+            icon = new StatisticIcon(ResearchIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_RESEARCH, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_RESEARCH_SUMMARY"));
+            AttachChild(icon);
+        }
+        if (fleet->ResourceOutput(RE_TRADE) > 0.0f) {
+            // stat icon for research output
+            icon = new StatisticIcon(TradeIcon(), 0, 0, false,
+                                     GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(METER_TRADE, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_TRADE_SUMMARY"));
+            AttachChild(icon);
+        }
 
         // stat icon for fleet structure
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
@@ -1722,6 +1758,12 @@ void FleetDataPanel::SetStatIconValues() {
             it->second->SetValue(ship_count);
         else if (stat_name == METER_TROOPS)
             it->second->SetValue(troops_tally);
+        else if (stat_name == METER_INDUSTRY)
+            it->second->SetValue(fleet->ResourceOutput(RE_INDUSTRY));
+        else if (stat_name == METER_RESEARCH)
+            it->second->SetValue(fleet->ResourceOutput(RE_RESEARCH));
+        else if (stat_name == METER_TRADE)
+            it->second->SetValue(fleet->ResourceOutput(RE_TRADE));
     }
 }
 

@@ -734,9 +734,27 @@ bool Fleet::HasShipsWithoutScrapOrders() const {
     return false;
 }
 
-bool Fleet::UnknownRoute() const {
-    return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID;
+float Fleet::ResourceOutput(ResourceType type) const {
+    float output = 0.0f;
+    if (NumShips() < 1)
+        return output;
+    MeterType meter_type = ResourceToMeter(type);
+    if (meter_type == INVALID_METER_TYPE)
+        return output;
+
+    // determine resource output of each ship in this fleet
+    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
+    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
+         ship_it != ships.end(); ++ship_it)
+    {
+        TemporaryPtr<const Ship> ship = *ship_it;
+        output += ship->CurrentMeterValue(meter_type);
+    }
+    return output;
 }
+
+bool Fleet::UnknownRoute() const
+{ return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID; }
 
 TemporaryPtr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(boost::const_pointer_cast<Fleet>(boost::static_pointer_cast<const Fleet>(TemporaryFromThis()))); }
