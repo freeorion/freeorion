@@ -924,11 +924,25 @@ void ShipDataPanel::Refresh() {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipDamageBrowseWnd(
                 m_ship_id, it->first));
             it->second->SetBrowseInfoWnd(browse_wnd);
+
         } else if (it->first == METER_TROOPS) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
                 UserString("SHIP_TROOPS_STAT")));
             it->second->SetBrowseInfoWnd(browse_wnd);
+
+        } else if (it->first == METER_SECONDARY_STAT) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                FightersIcon(), UserString("SHIP_FIGHTERS_TITLE"),
+                UserString("SHIP_FIGHTERS_STAT")));
+            it->second->SetBrowseInfoWnd(browse_wnd);
+
+        } else if (it->first == METER_POPULATION) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
+                UserString("SHIP_COLONY_STAT")));
+            it->second->SetBrowseInfoWnd(browse_wnd);
+
         } else {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
                 m_ship_id, it->first, AssociatedMeterType(it->first)));

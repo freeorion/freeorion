@@ -3162,6 +3162,18 @@ Troops
 SHIP_TROOPS_STAT
 Total troop capacity of this ship.
 
+SHIP_FIGHTERS_TITLE
+Fighters
+
+SHIP_FIGHTERS_STAT
+Total fighters in this ship.
+
+SHIP_COLONY_TITLE
+Colonists
+
+SHIP_COLONY_STAT
+Colonization capacity of this ship.
+
 FW_FLEET_FUEL_SUMMARY
 Fleet Fuel - Equal to the minimum fuel of ships in the fleet.
 
