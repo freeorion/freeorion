@@ -50,9 +50,6 @@
     <None Include="..\..\cmake\make_versioncpp.py">
       <Filter>Source Files\cmake</Filter>
     </None>
-    <None Include="..\..\cmake\make_ogre_plugins.py">
-      <Filter>Source Files\cmake</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\network\Message.h">
