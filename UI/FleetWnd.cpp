@@ -956,7 +956,7 @@ void ShipDataPanel::Refresh() {
 double ShipDataPanel::StatValue(MeterType stat_name) const {
     if (TemporaryPtr<const Ship> ship = GetShip(m_ship_id)) {
         if (stat_name == METER_CAPACITY)
-            return ship->TotalWeaponsDamage();
+            return ship->TotalWeaponsDamage(0.0f, false);
         else if (stat_name == METER_TROOPS)
             return ship->TroopCapacity();
         else if (stat_name == METER_SECONDARY_STAT)
@@ -1184,7 +1184,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
             AttachChild(icon);
         }
         if (fleet->HasFighterShips()) {
-            // stat icon for fleet damage
+            // stat icon for fleet fighters
             icon = new StatisticIcon(FightersIcon(), 0, 0, false,
                                      GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
             m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
@@ -2847,6 +2847,14 @@ void FleetWnd::Init(int selected_fleet_id) {
     icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
     AttachChild(icon);
 
+    // stat icon for fleet flighters
+    icon = new StatisticIcon(FightersIcon(), 0, 0, false,
+                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+    m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(UserString("FW_FLEET_FIGHTER_SUMMARY"));
+    AttachChild(icon);
+
     // stat icon for fleet structure
     icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
                              GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
@@ -2869,6 +2877,14 @@ void FleetWnd::Init(int selected_fleet_id) {
     m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
+    AttachChild(icon);
+
+    // stat icon for colonist capacity
+    icon = new StatisticIcon(ColonyIcon(), 0, 0, false,
+                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+    m_stat_icons.push_back(std::make_pair(METER_POPULATION, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
     AttachChild(icon);
 
     // create fleet list box
@@ -2928,10 +2944,12 @@ void FleetWnd::SetStatIconValues() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
-    float damage_tally =    0.0;
-    float structure_tally = 0.0;
-    float shield_tally =    0.0;
-    float troop_tally =     0.0;
+    float damage_tally =    0.0f;
+    float fighters_tally  = 0.0f;
+    float structure_tally = 0.0f;
+    float shield_tally =    0.0f;
+    float troop_tally =     0.0f;
+    float colony_tally =    0.0f;
 
     std::vector<TemporaryPtr<const Fleet> > fleets = Objects().FindObjects<const Fleet>(m_fleet_ids);
     for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin();
@@ -2957,10 +2975,12 @@ void FleetWnd::SetStatIconValues() {
 
             if (ship->Design()) {
                 ship_count++;
-                damage_tally += ship->TotalWeaponsDamage();
+                damage_tally += ship->TotalWeaponsDamage(0.0f, false);
+                fighters_tally += ship->FighterCount();
                 structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
                 shield_tally += ship->InitialMeterValue(METER_SHIELD);
                 troop_tally += ship->TroopCapacity();
+                colony_tally += ship->ColonyCapacity();
             }
         }
     }
@@ -2975,6 +2995,10 @@ void FleetWnd::SetStatIconValues() {
             it->second->SetValue(structure_tally);
         else if (stat_name == METER_CAPACITY)
             it->second->SetValue(damage_tally);
+        else if (stat_name == METER_SECONDARY_STAT)
+            it->second->SetValue(fighters_tally);
+        else if (stat_name == METER_POPULATION)
+            it->second->SetValue(colony_tally);
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
         else if (stat_name == METER_TROOPS)
