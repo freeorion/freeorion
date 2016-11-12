@@ -209,7 +209,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>../../GiGi.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib;../../../Boost/lib/</AdditionalLibraryDirectories>
-      <LinkStatus>false</LinkStatus>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
@@ -241,8 +240,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGi.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/</AdditionalLibraryDirectories>
-      <LinkStatus>
-      </LinkStatus>
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
       <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;freetype255MT.lib;libpng16.lib;User32.lib</AdditionalDependencies>
@@ -279,8 +276,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../GiGi.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/</AdditionalLibraryDirectories>
-      <LinkStatus>
-      </LinkStatus>
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
       <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;freetype255MT.lib;libpng16.lib;User32.lib</AdditionalDependencies>

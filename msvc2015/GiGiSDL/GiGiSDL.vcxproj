@@ -99,8 +99,6 @@
       <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
-      <LinkStatus>
-      </LinkStatus>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
@@ -134,8 +132,6 @@
       <AdditionalDependencies>GiGi.lib;opengl32.lib;SDL2.lib;glu32.lib;glew32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
-      <LinkStatus>
-      </LinkStatus>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>

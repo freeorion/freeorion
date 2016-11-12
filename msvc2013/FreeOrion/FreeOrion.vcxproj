@@ -106,8 +106,6 @@
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/</AdditionalLibraryDirectories>
       <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;Psapi.lib;User32.lib</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
-      <LinkStatus>
-      </LinkStatus>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
@@ -142,8 +140,6 @@
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../;../../../include/freetype/</AdditionalLibraryDirectories>
       <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;GiGiSDL.lib;SDL2.lib;opengl32.lib;glu32.lib;libpng16.lib;glew32.lib;OpenAL32.lib;libvorbis.lib;libvorbisfile.lib;Psapi.lib;User32.lib</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
-      <LinkStatus>
-      </LinkStatus>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
