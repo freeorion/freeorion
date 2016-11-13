@@ -308,6 +308,9 @@ void DropDownList::Render()
     RenderDisplayedRow();
 }
 
+GG::X DropDownList::DisplayedRowWidth() const
+{ return ClientWidth(); }
+
 void DropDownList::RenderDisplayedRow()
 {
     // Draw the ListBox::Row of currently displayed item, if any.

@@ -110,6 +110,10 @@ public:
     virtual Pt      ClientUpperLeft() const;
     virtual Pt      ClientLowerRight() const;
 
+    /** Return the width of the displayed row.  Override this function if the displayed row is a
+        different width than the drop down rows.*/
+    virtual GG::X  DisplayedRowWidth() const;
+
     mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
     //@}
 
