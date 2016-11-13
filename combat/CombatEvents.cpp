@@ -646,11 +646,18 @@ std::string WeaponFireEvent::CombatLogDescription(int viewing_empire_id) const {
 std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_DETAILS");
 
-    return str(FlexibleFormat(template_str)
-               % ShipPartLink(weapon_name)
-               % power
-               % shield
-               % damage);
+    if (shield >= 0)
+        return str(FlexibleFormat(template_str)
+                   % ShipPartLink(weapon_name)
+                   % power
+                   % shield
+                   % damage);
+    else
+        return str(FlexibleFormat(template_str)
+                   % ShipPartLink(weapon_name)
+                   % power
+                   % UserString("ENC_COMBAT_SHIELD_PIERCED")
+                   % damage);
 }
 
 boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) const {
