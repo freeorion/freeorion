@@ -876,6 +876,10 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
+    m_focus_drop->SetNumCols(2);
+    m_focus_drop->SetColWidth(0, m_focus_drop->DisplayedRowWidth());
+    m_focus_drop->SetColStretch(0, 0.0);
+    m_focus_drop->SetColStretch(1, 1.0);
 
 
     // meter panels
