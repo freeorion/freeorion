@@ -4154,8 +4154,8 @@ The%1%planet %2% was incapacitated
 ENC_COMBAT_DESTROYED_STR
 The%1%ship %2% was destroyed
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
 %2% empire can not target:
 
@@ -4165,39 +4165,38 @@ ENC_COMBAT_INITIAL_STEALTH_LIST
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK
 %2% detects %1% during attack.
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of empire detecting declocking ship
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
 %2% detects
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of empire detecting decloaking ships
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
 %2% detects:
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of ship causing damage
 ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
 %2% damages
 
-# %1% FIXME
-# %2% FIXME
+# %1% number of targets damaged
+# %2% name of ship doing damage
 ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
 %2% damages %1% targets:
 
-# FIXME
 # %1 defender
 # %2 damage
 ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
 %1% for %2% damage
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of ship unable to do damage to other single ship in combat
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% could not damage
 
-# %1% FIXME
-# %2% FIXME
+# %1% number of targets 
+# %2% name of ship unable to damge targets
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% could not damage %1% targets:
 
