@@ -263,6 +263,22 @@ void DropDownList::InitBuffer()
     m_buffer.createServerBuffer();
 }
 
+void DropDownList::PreRender()
+{
+
+    // reset size of displayed drop list based on number of shown rows set.
+    // assumes that all rows have the same height.
+    // adds some magic padding for now to prevent the scroll bars showing up.
+    Pt drop_down_size(ClientWidth(), ClientHeight());
+    if (LB()->NumRows() > 0)
+        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
+
+    LB()->Resize(drop_down_size);
+
+    if (LB()->Visible())
+        GUI::GetGUI()->PreRenderWindow(LB());
+}
+
 void DropDownList::Render()
 {
     // draw beveled-down rectangle around client area
@@ -352,17 +368,11 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
     // adjust size to keep correct height based on row height, etc.
     GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
-    Pt drop_down_size(ClientWidth(), ClientHeight());
 
-    // reset size of displayed drop list based on number of shown rows set.
-    // assumes that all rows have the same height.
-    // adds some magic padding for now to prevent the scroll bars showing up.
-    if (LB()->NumRows() > 0)
-        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
-    LB()->SizeMove(Pt(X0, Height()), Pt(X0, Height()) + drop_down_size);
-
-    if (sz != Size())
+    if (sz != Size()) {
         InitBuffer();
+        RequirePreRender();
+    }
 }
 
 void DropDownList::SetColor(Clr c)

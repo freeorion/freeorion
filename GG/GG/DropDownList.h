@@ -118,6 +118,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
+    virtual void    PreRender();
     virtual void    Render();
     virtual void    SizeMove(const Pt& ul, const Pt& lr); ///< resizes the control, ensuring the proper height is maintained based on the list's row height
     virtual void    SetColor(Clr c);
