@@ -81,7 +81,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_SERVER;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ZLIB_BINARY=zlib.lib;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_SERVER;FREEORION_WIN32;GiGi_EXPORTS;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../../include/;../../GG/;../../../include/python2.7/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
