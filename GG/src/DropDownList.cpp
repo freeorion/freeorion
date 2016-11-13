@@ -454,9 +454,11 @@ void DropDownList::ManuallyManageColProps()
 void DropDownList::SetColAlignment(std::size_t n, Alignment align) 
 { LB()->SetColAlignment(n, align); }
 
-
-void DropDownList::SetRowAlignment(iterator it, Alignment align) 
+void DropDownList::SetRowAlignment(iterator it, Alignment align)
 { LB()->SetRowAlignment(it, align); }
+
+void DropDownList::SetColStretch(std::size_t n, double stretch)
+{ LB()->SetColStretch(n, stretch); }
 
 void DropDownList::NormalizeRowsOnInsert(bool enable /*= true*/)
 { LB()->NormalizeRowsOnInsert(enable); }

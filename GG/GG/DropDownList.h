@@ -178,6 +178,9 @@ public:
     void            SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
     void            SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
 
+    /** Sets the stretch of column \a n to \a stretch; not range-checked */
+    void            SetColStretch(std::size_t n, double stretch);
+
     /** Sets whether to normalize rows when inserted (true) or leave them as
       * they are. */
     void            NormalizeRowsOnInsert(bool enable = true);
