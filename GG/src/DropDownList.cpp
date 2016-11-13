@@ -317,6 +317,8 @@ void DropDownList::RenderDisplayedRow()
     if (CurrentItem() == LB()->end())
         return;
 
+    /** The following code possibly renders the selected row twice.  Once in the selected area and
+        also in the drop down list if it is visible.*/
     Row* current_item = *CurrentItem();
     bool sel_visible = current_item->Visible();
     bool lb_visible = LB()->Visible();
@@ -330,8 +332,6 @@ void DropDownList::RenderDisplayedRow()
         }
 
         current_item->Show();
-        const GG::Pt row_size(LB()->ClientWidth(), (*LB()->FirstRowShown())->Size().y);
-        current_item->Resize(row_size);
         GUI::GetGUI()->PreRenderWindow(current_item);
     }
 
