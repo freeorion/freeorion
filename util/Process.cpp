@@ -12,6 +12,7 @@
 #endif
 
 #ifdef FREEORION_WIN32
+#include <GG/utf8/checked.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
@@ -90,19 +91,22 @@ void Process::Free() {
 Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) :
     m_free(false)
 {
-    std::string args;
+    std::wstring wcmd;
+    std::wstring wargs;
+
+    utf8::utf8to16(wcmd.begin(), wcmd.end(), std::back_inserter(wcmd));
     for (unsigned int i = 0; i < argv.size(); ++i) {
-        args += argv[i];
+        utf8::utf8to16(argv[i].begin(), argv[i].end(), std::back_inserter(wargs));
         if (i + 1 < argv.size())
-            args += ' ';
+            wargs += ' ';
     }
 
     ZeroMemory(&m_startup_info, sizeof(STARTUPINFO));
     m_startup_info.cb = sizeof(STARTUPINFO);
     ZeroMemory(&m_process_info, sizeof(PROCESS_INFORMATION));
 
-    if (!CreateProcess(const_cast<char*>(cmd.c_str()), const_cast<char*>(args.c_str()), 0, 0, false, 
-        CREATE_NO_WINDOW, 0, 0, &m_startup_info, &m_process_info)) {
+    if (!CreateProcessW(wcmd.c_str(), const_cast<LPWSTR>(wargs.c_str()), 0, 0,
+        false, CREATE_NO_WINDOW, 0, 0, &m_startup_info, &m_process_info)) {
             std::string err_str;
             DWORD err = GetLastError();
             DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
