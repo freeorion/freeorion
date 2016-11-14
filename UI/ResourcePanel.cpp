@@ -63,6 +63,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     std::vector<std::pair<MeterType, MeterType> > meters;
 
     for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        it->second->InstallEventFilter(this);
         AttachChild(it->second);
         meters.push_back(std::make_pair(it->first, AssociatedMeterType(it->first)));
     }
@@ -95,6 +96,56 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 
     DoLayout();
 }
+
+bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (event.Type() != GG::WndEvent::RClick)
+        return false;
+    const GG::Pt& pt = event.Point();
+
+    MeterType meter_type = INVALID_METER_TYPE;
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator stat_it = m_meter_stats.begin();
+         stat_it != m_meter_stats.end(); ++stat_it)
+    {
+        if ((*stat_it).second == w) {
+            meter_type = (*stat_it).first;
+            break;
+        }
+    }
+
+    if (meter_type == INVALID_METER_TYPE)
+        return false;
+
+    std::string meter_string = EnumToString(meter_type);
+    std::string meter_title;
+    if (UserStringExists(meter_string))
+        meter_title = UserString(meter_string);
+    if (meter_title.empty())
+        return false;
+
+    GG::MenuItem menu_contents;
+
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
+    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
+
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+
+    bool retval = false;
+
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+            case 2: {
+                retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    return retval;
+}
+
+
 
 namespace {
     bool sortByMeterValue(std::pair<MeterType, StatisticIcon*> left, std::pair<MeterType, StatisticIcon*> right) {
