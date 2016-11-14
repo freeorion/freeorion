@@ -30,3 +30,19 @@ ULTIMATE_DETECTION
             scope = Source
             effects = SetDetection value = Value + 100
 '''
+
+# param 1: species
+COMMUNAL_VISION
+'''        EffectsGroup
+            description = "COMMUNAL_VISION_DESC"
+            scope = And [
+                Planet
+                Species name = "@1@"
+                Not OwnedBy empire = Source.Owner   // would be redundant to re-assign visbility to own planets
+            ]
+            activation = And [
+                Planet
+                Not Unowned
+            ]
+            effects = SetVisibility visibility = Full empire = Source.Owner
+'''
