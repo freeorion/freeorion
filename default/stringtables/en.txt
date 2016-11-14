@@ -4109,6 +4109,9 @@ ENC_COMBAT_ATTACK_STR
 ENC_COMBAT_ATTACK_DETAILS
 Weapon: %1%  Strength: %2%  Shields: %3%  Damage: %4%
 
+ENC_COMBAT_SHIELD_PIERCED
+pierced
+
 # %1% link to the attacking unit or empire.
 # %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
