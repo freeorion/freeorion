@@ -343,7 +343,7 @@ private:
 //////////////////////////////////////////////////
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
-ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
+ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_research_info_panel(0),
     m_queue_wnd(0),
@@ -357,7 +357,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_research_info_panel = new ProductionInfoPanel(UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
     m_queue_wnd = new ResearchQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
-    m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
+    m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ResearchWnd::QueueItemMoved,               this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal, &ResearchWnd::DeleteQueueItem,              this);

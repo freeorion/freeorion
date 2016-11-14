@@ -20,7 +20,10 @@ public:
     typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>    QueueAddTechsSignalType;
 
     /** \name Structors */ //@{
-    TechTreeWnd(GG::X w, GG::Y h);
+    /** TechTreeWnd contructor is usually called before client has
+        access to techs.  Attempting to show the tech tree takes a long
+        time and generates errors.*/
+    TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~TechTreeWnd();
     //@}
 
