@@ -604,7 +604,6 @@ ClientUI::ClientUI() :
     m_player_list_wnd = new PlayerListWnd(PLAYER_LIST_WND_NAME);
     InitializeWindows();
 
-    m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
 
@@ -646,7 +645,16 @@ ClientUI::~ClientUI() {
 }
 
 MapWnd* ClientUI::GetMapWnd()
-{ return m_map_wnd; }
+{
+    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != 0;
+    return m_map_wnd;
+}
+
+MapWnd const* ClientUI::GetMapWndConst() const
+{
+    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != 0;
+    return m_map_wnd;
+}
 
 MessageWnd* ClientUI::GetMessageWnd()
 { return m_message_wnd; }
@@ -657,11 +665,25 @@ PlayerListWnd* ClientUI::GetPlayerListWnd()
 IntroScreen* ClientUI::GetIntroScreen()
 { return m_intro_screen; }
 
+void ClientUI::ShowIntroScreen()
+{
+    if (m_map_wnd) {
+        HumanClientApp::GetApp()->Remove(m_map_wnd);
+        m_map_wnd->RemoveWindows();
+        m_map_wnd->Hide();
+    }
+
+    HumanClientApp::GetApp()->Register(m_intro_screen);
+    HumanClientApp::GetApp()->Remove(m_message_wnd);
+    HumanClientApp::GetApp()->Remove(m_player_list_wnd);
+    HumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
+}
+
 MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
-{ m_map_wnd->GetSaveGameUIData(data); }
+{ GetMapWndConst()->GetSaveGameUIData(data); }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
     const ObjectMap& objects = GetUniverse().Objects();
@@ -678,9 +700,9 @@ bool ClientUI::ZoomToObject(int id) {
 
 bool ClientUI::ZoomToPlanet(int id) {
     if (TemporaryPtr<const Planet> planet = GetPlanet(id)) {
-        m_map_wnd->CenterOnObject(planet->SystemID());
-        m_map_wnd->SelectSystem(planet->SystemID());
-        m_map_wnd->SelectPlanet(id);
+        GetMapWnd()->CenterOnObject(planet->SystemID());
+        GetMapWnd()->SelectSystem(planet->SystemID());
+        GetMapWnd()->SelectPlanet(id);
         return true;
     }        
     return false;
@@ -688,7 +710,7 @@ bool ClientUI::ZoomToPlanet(int id) {
 
 bool ClientUI::ZoomToPlanetPedia(int id) {
     if (GetPlanet(id))
-        m_map_wnd->ShowPlanet(id);
+        GetMapWnd()->ShowPlanet(id);
     return false;
 }
 
@@ -731,7 +753,7 @@ bool ClientUI::ZoomToField(int id) {
 
 bool ClientUI::ZoomToCombatLog(int id) {
     if (GetCombatLogManager().LogAvailable(id)) {
-        m_map_wnd->ShowCombatLog(id);
+        GetMapWnd()->ShowCombatLog(id);
         return true;
     }
     return false;
@@ -741,16 +763,16 @@ void ClientUI::ZoomToSystem(TemporaryPtr<const System> system) {
     if (!system)
         return;
 
-    m_map_wnd->CenterOnObject(system->ID());
-    m_map_wnd->SelectSystem(system->ID());
+    GetMapWnd()->CenterOnObject(system->ID());
+    GetMapWnd()->SelectSystem(system->ID());
 }
 
 void ClientUI::ZoomToFleet(TemporaryPtr<const Fleet> fleet) {
     if (!fleet)
         return;
 
-    m_map_wnd->CenterOnObject(fleet->ID());
-    m_map_wnd->SelectFleet(fleet->ID());
+    GetMapWnd()->CenterOnObject(fleet->ID());
+    GetMapWnd()->SelectFleet(fleet->ID());
     if (FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
         fleet_wnd->SelectFleet(fleet->ID());
 }
@@ -802,68 +824,68 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
 bool ClientUI::ZoomToTech(const std::string& tech_name) {
     if (!GetTech(tech_name))
         return false;
-    m_map_wnd->ShowTech(tech_name);
+    GetMapWnd()->ShowTech(tech_name);
     return true;
 }
 
 bool ClientUI::ZoomToBuildingType(const std::string& building_type_name) {
     if (!GetBuildingType(building_type_name))
         return false;
-    m_map_wnd->ShowBuildingType(building_type_name);
+    GetMapWnd()->ShowBuildingType(building_type_name);
     return true;
 }
 
 bool ClientUI::ZoomToSpecial(const std::string& special_name) {
     if (!GetSpecial(special_name))
         return false;
-    m_map_wnd->ShowSpecial(special_name);
+    GetMapWnd()->ShowSpecial(special_name);
     return true;
 }
 
 bool ClientUI::ZoomToShipHull(const std::string& hull_name) {
     if (!GetHullType(hull_name))
         return false;
-    m_map_wnd->ShowHullType(hull_name);
+    GetMapWnd()->ShowHullType(hull_name);
     return true;
 }
 
 bool ClientUI::ZoomToShipPart(const std::string& part_name) {
     if (!GetPartType(part_name))
         return false;
-    m_map_wnd->ShowPartType(part_name);
+    GetMapWnd()->ShowPartType(part_name);
     return true;
 }
 
 bool ClientUI::ZoomToSpecies(const std::string& species_name) {
     if (!GetSpecies(species_name))
         return false;
-    m_map_wnd->ShowSpecies(species_name);
+    GetMapWnd()->ShowSpecies(species_name);
     return true;
 }
 
 bool ClientUI::ZoomToFieldType(const std::string& field_type_name) {
     if (!GetFieldType(field_type_name))
         return false;
-    m_map_wnd->ShowFieldType(field_type_name);
+    GetMapWnd()->ShowFieldType(field_type_name);
     return true;
 }
 
 bool ClientUI::ZoomToShipDesign(int design_id) {
     if (!GetShipDesign(design_id))
         return false;
-    m_map_wnd->ShowShipDesign(design_id);
+    GetMapWnd()->ShowShipDesign(design_id);
     return true;
 }
 
 bool ClientUI::ZoomToEmpire(int empire_id) {
     if (!GetEmpire(empire_id))
         return false;
-    m_map_wnd->ShowEmpire(empire_id);
+    GetMapWnd()->ShowEmpire(empire_id);
     return true;
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
-    m_map_wnd->ShowEncyclopediaEntry(str);
+    GetMapWnd()->ShowEncyclopediaEntry(str);
     return true;
 }
 
@@ -945,7 +967,7 @@ std::vector<boost::shared_ptr<GG::Texture> > ClientUI::GetPrefixedTextures(const
 }
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
-{ m_map_wnd->RestoreFromSaveData(ui_data); }
+{ GetMapWnd()->RestoreFromSaveData(ui_data); }
 
 ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }
