@@ -608,8 +608,8 @@ WeaponFireEvent::WeaponFireEvent() :
 {}
 
 WeaponFireEvent::WeaponFireEvent(
-    int bout_, int round_, int attacker_id_, int target_id_, const std::string &weapon_name_
-    , float power_, float shield_, float damage_, int attacker_owner_id_) :
+    int bout_, int round_, int attacker_id_, int target_id_, const std::string &weapon_name_,
+    float power_, float shield_, float damage_, int attacker_owner_id_, int target_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_id(attacker_id_),
@@ -618,7 +618,8 @@ WeaponFireEvent::WeaponFireEvent(
     power(power_),
     shield(shield_),
     damage(damage_),
-    attacker_owner_id(attacker_owner_id_)
+    attacker_owner_id(attacker_owner_id_),
+    target_owner_id(target_owner_id_)
 { }
 
 std::string WeaponFireEvent::DebugString() const {
@@ -631,7 +632,7 @@ std::string WeaponFireEvent::DebugString() const {
 
 std::string WeaponFireEvent::CombatLogDescription(int viewing_empire_id) const {
     std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id);
-    std::string target_link = PublicNameLink(viewing_empire_id, target_id);
+    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_owner_id);
 
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_STR");
 
@@ -669,6 +670,7 @@ void WeaponFireEvent::serialize(Archive& ar, const unsigned int version) {
        & BOOST_SERIALIZATION_NVP(power)
        & BOOST_SERIALIZATION_NVP(shield)
        & BOOST_SERIALIZATION_NVP(damage)
+       & BOOST_SERIALIZATION_NVP(target_owner_id)
        & BOOST_SERIALIZATION_NVP(attacker_owner_id);
 
     if (version < 3) {
@@ -927,11 +929,12 @@ WeaponsPlatformEvent::WeaponsPlatformEvent(int bout_, int attacker_id_, int atta
 {}
 
 void WeaponsPlatformEvent::AddEvent(
-    int round_, int target_id_, std::string const & weapon_name_,
+    int round_, int target_id_, int target_owner_id_, std::string const & weapon_name_,
     float power_, float shield_, float damage_) {
     events[target_id_].push_back(
         boost::make_shared<WeaponFireEvent>(
-            bout, round_, attacker_id, target_id_, weapon_name_, power_, shield_, damage_, attacker_owner_id));
+            bout, round_, attacker_id, target_id_, weapon_name_, power_, shield_, damage_,
+            attacker_owner_id, target_owner_id_));
 }
 
 std::string WeaponsPlatformEvent::DebugString() const {
@@ -954,22 +957,33 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
     if (events.empty())
         return "";
 
-    std::map<int, double> damaged;
-    std::set<int> did_not_damage;
+    std::vector<std::string> damaged_target_links;
+    std::vector<std::string> undamaged_target_links;
 
     for (std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> >::const_iterator target_it = events.begin()
              ; target_it != events.end(); ++target_it)
     {
+        if (target_it->second.empty())
+            continue;
+
+        const WeaponFireEvent::WeaponFireEventPtr& fire_event(*target_it->second.begin());
+        std::string target_public_name(
+            FighterOrPublicNameLink(viewing_empire_id, target_it->first, fire_event->target_owner_id));
+
         double damage = 0.0f;
         for (std::vector<WeaponFireEvent::WeaponFireEventPtr>::const_iterator attack_it = target_it->second.begin();
              attack_it != target_it->second.end(); ++attack_it)
         {
             damage += (*attack_it)->damage;
         }
+
         if (damage <= 0.0f) {
-            did_not_damage.insert(target_it->first);
+            undamaged_target_links.push_back(target_public_name);
+
         } else {
-            damaged[target_it->first] = damage;
+            damaged_target_links.push_back(
+                str(FlexibleFormat(UserString("ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE"))
+                    % target_public_name % damage));
         }
     }
 
@@ -978,32 +992,18 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id) co
     const std::vector<std::string> attacker_link(
         1, FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id));
 
-    if (!damaged.empty() ) {
-        std::vector<std::string> target_links;
-        for (std::map<int, double>::iterator target_it = damaged.begin();
-             target_it != damaged.end(); ++target_it) {
-            target_links.push_back(
-                str(FlexibleFormat(UserString("ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE"))
-                    % PublicNameLink(viewing_empire_id, target_it->first) % target_it->second));
-        }
+    if (!damaged_target_links.empty() ) {
+        desc += FlexibleFormatList(attacker_link, damaged_target_links,
+                                   UserString("ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS"),
+                                   UserString("ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS")).str();
 
-        desc += FlexibleFormatList(attacker_link, target_links
-                                   , UserString("ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS")
-                                   , UserString("ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS")).str();
-
-        if (!did_not_damage.empty())
+        if (!undamaged_target_links.empty())
             desc += "\n";
     }
-    if (!did_not_damage.empty()) {
-        std::vector<std::string> target_links;
-        for (std::set<int>::iterator target_it = did_not_damage.begin();
-             target_it != did_not_damage.end(); ++target_it) {
-            target_links.push_back( PublicNameLink(viewing_empire_id, *target_it));
-        }
-
-        desc += FlexibleFormatList(attacker_link, target_links
-                                   , UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS")
-                                   , UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS")).str();
+    if (!undamaged_target_links.empty()) {
+        desc += FlexibleFormatList(attacker_link, undamaged_target_links,
+                                   UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS"),
+                                   UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS")).str();
     }
     return desc;
 }
