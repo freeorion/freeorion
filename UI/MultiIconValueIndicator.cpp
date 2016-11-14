@@ -136,41 +136,65 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         return false;
     const GG::Pt& pt = event.Point();
 
-    if (m_object_ids.size() != 1)
-        return false;
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin());
-    if (!obj)
-        return false;
-
-    TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
-    if (!pc)
-        return false;
-
-    const std::string& species_name = pc->SpeciesName();
-    if (species_name.empty())
-        return false;
-
+    MeterType meter_type = INVALID_METER_TYPE;
     for (unsigned int i = 0; i < m_icons.size(); ++i) {
-        if (m_icons.at(i) != w)
-            continue;
-        MeterType meter_type = m_meter_types.at(i).first;
-        if (meter_type != METER_POPULATION)
-            continue;
-
-        GG::MenuItem menu_contents;
-
-        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-        if (!popup.Run() || popup.MenuID() != 1) {
+        try {
+            if (m_icons.at(i) == w) {
+                meter_type = m_meter_types.at(i).first;
+                break;
+            }
+        } catch(std::out_of_range &e) {
+            ErrorLogger() << e.what();
             return false;
-            break;
         }
+    }
+    if (meter_type == INVALID_METER_TYPE)
+        return false;
 
-        ClientUI::GetClientUI()->ZoomToSpecies(species_name);
-        return true;
+    std::string meter_string = EnumToString(meter_type);
+    std::string meter_title;
+    if (UserStringExists(meter_string))
+        meter_title = UserString(meter_string);
+
+    GG::MenuItem menu_contents;
+    std::string species_name;
+
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin());
+    if (meter_type == METER_POPULATION && obj && m_object_ids.size() == 1) {
+        TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
+        if (pc) {
+            species_name = pc->SpeciesName();
+            if (!species_name.empty()) {
+                std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
+                menu_contents.next_level.push_back(GG::MenuItem(species_label, 1, false, false));
+            }
+        }
     }
 
-    return false;
+    if (!meter_title.empty()) {
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
+                                                                meter_title);
+        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
+    }
+
+    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+
+    bool retval = false;
+
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+            case 1: {
+                retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name);
+                break;
+            }
+            case 2: {
+                retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    return retval;
 }
