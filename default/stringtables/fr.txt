@@ -3162,26 +3162,53 @@ Infanterie
 SHIP_TROOPS_STAT
 Total des troupes d'Infanterie à bord de cet astronef.
 
+SHIP_FIGHTERS_TITLE
+Chasseurs
+
+SHIP_FIGHTERS_STAT
+Total des chasseurs à bord de cet astronef.
+
+SHIP_COLONY_TITLE
+Colons
+
+SHIP_COLONY_STAT
+Total des colons à bord de cet astronef.
+
 FW_FLEET_FUEL_SUMMARY
-Quantité globale de carburant dont dispose actuellement la Flotte (égale au moins bien fourni des astronefs composant la Flotte)
+Carburant Flotte - Égal au moins bien approvisionné des astronefs au sein de la Flotte.
 
 FW_FLEET_SPEED_SUMMARY
-Vitesse globale de la Flotte (égale au plus lent des astronefs composant la Flotte)
+Vitesse Flotte - Égal au plus lent des astronefs au sein de la Flotte.
 
 FW_FLEET_SHIELD_SUMMARY
-Bouclier global de la Flotte (moyenne des boucliers des astronefs composant la Flotte)
+Bouclier Flotte - Égal à la moyenne des boucliers des astronefs composant la Flotte.
 
 FW_FLEET_STRUCTURE_SUMMARY
-Résistance globale de la Flotte (somme des résistances des astronefs composant la Flotte)
+Résistance Flotte - Égal à la somme des résistances des astronefs composant la Flotte.
 
 FW_FLEET_DAMAGE_SUMMARY
-Dommage global de la Flotte (somme des dommages des astronefs composant la Flotte)
+Dommages Flotte - Égal à la somme des dommages directement infligés par les astronefs composant la Flotte.
+
+FW_FLEET_FIGHTER_SUMMARY
+Chasseurs Flotte - Égal au nombre total de chasseurs au sein de la Flotte.
 
 FW_FLEET_COUNT_SUMMARY
-Effectif de la Flotte (nombre des astronefs composant la Flotte)
+Effectif Flotte - Égal au nombre total d'astronefs composant la Flotte.
 
 FW_FLEET_TROOP_SUMMARY
-Infanterie globale de la Flotte (somme des troupes d'Infanterie à bord des astronefs composant la Flotte)
+Infanterie Flotte - Égal à la somme des troupes d'Infanterie à bord des astronefs composant la Flotte.
+
+FW_FLEET_COLONY_SUMMARY
+Colons Flotte - Égal à la somme des colons à bord des astronefs composant la Flotte.
+
+FW_FLEET_INDUSTRY_SUMMARY
+Industrie Flotte - Égal au total de capacité industrielle des astronefs composant la Flotte.
+
+FW_FLEET_RESEARCH_SUMMARY
+Recherche Flotte - Égal au total de capacité scientifique des astronefs composant la Flotte.
+
+FW_FLEET_TRADE_SUMMARY
+Commerce Flotte - Égal au total de capacité commerciale des astronefs composant la Flotte.
 
 FW_MERGE_SYSTEM_FLEETS
 Regrouper les astronefs du système en Flotte
@@ -4082,6 +4109,9 @@ ENC_COMBAT_ATTACK_STR
 ENC_COMBAT_ATTACK_DETAILS
 Armement: %1%  Puissance: %2%  Boucliers: %3%  Dommages: %4%
 
+ENC_COMBAT_SHIELD_PIERCED
+percés
+
 # %1% link to the attacking unit or empire.
 # %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
@@ -4127,8 +4157,8 @@ La planète %2% de l'empire %1% a été mise en déroute
 ENC_COMBAT_DESTROYED_STR
 Le vaisseau %2% de %1% a été détruit
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
 L'empire %2% ne peut pas cibler :
 
@@ -4138,39 +4168,38 @@ L'empire %2% ne peut pas cibler :
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK
 %2% détecte %1% durant l'attaque.
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of empire detecting declocking ship
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
 %2% détecte
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of empire detecting decloaking ships
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS
 %2% détecte :
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of ship causing damage
 ENC_COMBAT_PLATFORM_DAMAGE_1_EVENTS
 %2% endommage
 
-# %1% FIXME
-# %2% FIXME
+# %1% number of targets damaged
+# %2% name of ship doing damage
 ENC_COMBAT_PLATFORM_DAMAGE_MANY_EVENTS
 %2% endommage %1% cibles :
 
-# FIXME
 # %1 defender
 # %2 damage
 ENC_COMBAT_PLATFORM_TARGET_AND_DAMAGE
 %1% de %2% dommages
 
-# %1% FIXME
-# %2% FIXME
+# %1% unused
+# %2% name of ship unable to do damage to other single ship in combat
 ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% n'a pas pu endommagé
 
-# %1% FIXME
-# %2% FIXME
+# %1% number of targets 
+# %2% name of ship unable to damge targets
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% n'a pas pu endommagé %1% cibles :
 
@@ -4459,7 +4488,9 @@ Champ de Détection
 DETECTION_RANGE_TEXT
 '''L'indicateur 'Champ de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
+Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.
+
+Certains objets ou aptitudes permettent la vision de zones situées en dehors du Champ de Détection, telles les compétences spéciales des espèces [[species SP_TRITH]] ou [[species SP_GEORGE]], ou en raison des effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]].'''
 
 TROOP_TITLE
 Infanterie
@@ -6116,6 +6147,7 @@ SP_GEORGE_DESC
 
 Description:
 Les organismes constituant George sont des centipèdes de 2.5m de long et 0.5m de hauteur, à la peau très lisse et dotés d'un groupe de 6 tentacules/antennes à l'avant du corps, afin de manipuler des objets. Ces organismes ne peuvent ni penser ni agir de leur propre chef, l'esprit de George résultant de la focalisation de toutes les communications télépathiques (sur toute distance) des unités qui le composent.
+En raison de ses facultés télépathiques, George partage une vision commune avec tout autre George dans l'univers, quel que soit l'empire d'appartenance.
 '''
 
 SP_CRAY  # translated
@@ -7606,7 +7638,7 @@ PC_TRADE
 Commerce
 
 # Ship part classes
-PC_PRODICTION_LOCATION  # translated
+PC_PRODUCTION_LOCATION  # translated
 Production
 
 # Visibility levels
@@ -11320,7 +11352,7 @@ Grillage Défensif
 SH_DEFENSE_GRID_DESC
 '''Bouclier procurant une défense de base. Capable de neutraliser ou du moins de réduire substantiellement les [[encyclopedia DAMAGE_TITLE]] causés par les armes de faible puissance.
 
-Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
+Les [[encyclopedia SHIELDS_TITLE]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
 SH_DEFLECTOR
 Bouclier Déflecteur
@@ -11328,7 +11360,7 @@ Bouclier Déflecteur
 SH_DEFLECTOR_DESC
 '''Bouclier offrant une défense plus efficace que le [[shippart SH_DEFENSE_GRID]]. Capable de neutraliser ou du moins de réduire substantiellement les [[encyclopedia DAMAGE_TITLE]] causés par les armes de moyenne puissance.
 
-Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
+Les [[encyclopedia SHIELDS_TITLE]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
 SH_PLASMA
 Bouclier Plasma
@@ -11336,7 +11368,7 @@ Bouclier Plasma
 SH_PLASMA_DESC
 '''Puissant bouclier réduisant significativement les [[encyclopedia DAMAGE_TITLE]] causés par les armements avancés, et neutralisant toutes les armes de puissance inférieure.
 
-Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
+Les [[encyclopedia SHIELDS_TITLE]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
 SH_BLACK
 Bouclier Obscur
@@ -11516,6 +11548,12 @@ Il semble que les coques de type [[tech SHP_ORG_HULL]] soient capables de collec
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
 Augmente la puissance du [[SR_WEAPON_2_1]] selon l'étoile environnante.
+
+PR_MOBILE_ASSEMBLER
+Chantier Spatial Mobile
+
+PR_MOBILE_ASSEMBLER_DESC
+Permet la production d'astronefs en étant éloigné de toute planète.
 
 RS_AUTOLAB  # translated
 Autolab
@@ -12340,6 +12378,9 @@ LIGHT_SENSITIVE_DESC
 
 TELEPATHIC_DETECTION_DESC
 +	Détection Télépathique: peut percevoir les planètes habitées proches.
+
+COMMUNAL_VISION_DESC
+	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.
 
 
 ##
