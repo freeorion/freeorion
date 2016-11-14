@@ -6143,6 +6143,7 @@ SP_GEORGE_DESC
 
 Description:
 The units that make up George look like 2.5 meter long, 0.5 meter tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own. The mind of George is the sum of all the units communicating telepathically, over any distance.
+Due to their telepathic abilities, George share a communal vision with all other George in the universe, regardless of empire affiliation.
 '''
 
 SP_CRAY
@@ -12373,6 +12374,9 @@ LIGHT_SENSITIVE_DESC
 
 TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets.
+
+COMMUNAL_VISION_DESC
+	Communal Vision: shares visibility within the same species.
 
 
 ##
