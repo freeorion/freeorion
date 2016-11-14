@@ -94,7 +94,7 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
     std::wstring wcmd;
     std::wstring wargs;
 
-    utf8::utf8to16(wcmd.begin(), wcmd.end(), std::back_inserter(wcmd));
+    utf8::utf8to16(cmd.begin(), cmd.end(), std::back_inserter(wcmd));
     for (unsigned int i = 0; i < argv.size(); ++i) {
         utf8::utf8to16(argv[i].begin(), argv[i].end(), std::back_inserter(wargs));
         if (i + 1 < argv.size())
