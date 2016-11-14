@@ -351,7 +351,9 @@ void DropDownList::RenderDisplayedRow()
         GUI::GetGUI()->PreRenderWindow(current_item);
     }
 
-    Pt offset = ClientUpperLeft() - current_item->UpperLeft();
+    // Vertically center the selected row in the box.
+    Pt offset = GG::Pt(ClientUpperLeft().x - current_item->ClientUpperLeft().x,
+                       Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
     current_item->OffsetMove(offset);
 
     BeginClipping();
