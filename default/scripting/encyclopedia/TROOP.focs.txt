@@ -1,6 +1,0 @@
-Article
-    name = "TROOP_TITLE"
-    category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "METER_ARTICLE_SHORT_DESC"
-    description = "TROOP_TEXT"
-    icon = "icons/meter/troops.png"
