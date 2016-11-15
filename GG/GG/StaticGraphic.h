@@ -95,7 +95,6 @@ public:
     //@}
 
 private:
-    void     Init(const SubTexture& subtexture); ///< initializes a StaticGraphic from a SubTexture
     void     ValidateStyle();   ///< ensures that the style flags are consistent
 
     SubTexture          m_graphic;
