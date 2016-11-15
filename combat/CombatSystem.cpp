@@ -547,8 +547,10 @@ namespace {
                 DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
+        float pierced_shield_value(-1.0);
         CombatEventPtr attack_event = boost::make_shared<WeaponFireEvent>(
-            bout, round, attacker->ID(), target->ID(), weapon.part_type_name, power, -1.0f, damage,
+            bout, round, attacker->ID(), target->ID(), weapon.part_type_name,
+            boost::tie(power, pierced_shield_value, damage),
             attacker->Owner(), target->Owner());
         attacks_event->AddEvent(attack_event);
         target->SetLastTurnActiveInCombat(CurrentTurn());

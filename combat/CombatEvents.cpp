@@ -608,19 +608,20 @@ WeaponFireEvent::WeaponFireEvent() :
 {}
 
 WeaponFireEvent::WeaponFireEvent(
-    int bout_, int round_, int attacker_id_, int target_id_, const std::string &weapon_name_,
-    float power_, float shield_, float damage_, int attacker_owner_id_, int target_owner_id_) :
+    int bout_, int round_, int attacker_id_, int target_id_, const std::string& weapon_name_,
+    const boost::tuple<float, float, float>& power_shield_damage,
+    int attacker_owner_id_, int target_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_id(attacker_id_),
     target_id( target_id_),
     weapon_name(weapon_name_),
-    power(power_),
-    shield(shield_),
-    damage(damage_),
+    power(),
+    shield(),
+    damage(),
     attacker_owner_id(attacker_owner_id_),
     target_owner_id(target_owner_id_)
-{ }
+{ boost::tie(power, shield, damage) = power_shield_damage; }
 
 std::string WeaponFireEvent::DebugString() const {
     std::stringstream ss;
@@ -940,7 +941,8 @@ void WeaponsPlatformEvent::AddEvent(
     float power_, float shield_, float damage_) {
     events[target_id_].push_back(
         boost::make_shared<WeaponFireEvent>(
-            bout, round_, attacker_id, target_id_, weapon_name_, power_, shield_, damage_,
+            bout, round_, attacker_id, target_id_, weapon_name_,
+            boost::tie(power_, shield_, damage_),
             attacker_owner_id, target_owner_id_));
 }
 
