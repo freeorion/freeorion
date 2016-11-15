@@ -2,6 +2,7 @@
 #define COMBATEVENTS_H
 
 #include <set>
+#include <boost/tuple/tuple.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
@@ -185,9 +186,13 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
         weapon_name of \p power against \p shield doing \p damage.
 
         If \p shield is negative that implies the weapon is shield piercing.
+
+        The use of tuple in the constructor is to keep the number of parameters below 10 which
+        is the maximum that some compilers that emulate variadic templates support.
      */
     WeaponFireEvent(int bout, int round, int attacker_id, int target_id, const std::string &weapon_name,
-                    float power_, float shield_, float damage_, int attacker_owner_id_, int target_owner_id_);
+                    const boost::tuple<float, float, float> &power_shield_damage,
+                    int attacker_owner_id_, int target_owner_id_);
 
     virtual ~WeaponFireEvent() {}
 
