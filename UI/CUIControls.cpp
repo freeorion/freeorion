@@ -13,6 +13,7 @@
 #include "TextBrowseWnd.h"
 
 #include <GG/GUI.h>
+#include <GG/Layout.h>
 #include <GG/DrawUtil.h>
 #include <GG/dialogs/ColorDlg.h>
 
@@ -717,7 +718,6 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 CUIListBox::CUIListBox(void):
     ListBox(ClientUI::CtrlBorderColor(), ClientUI::CtrlColor())
 {
-    RecreateScrolls();
     GG::Connect(SelChangedSignal,   &PlayListSelectSound,   -1);
     GG::Connect(DroppedSignal,      &PlayItemDropSound,     -1);
 }
@@ -821,6 +821,16 @@ void CUIDropDownList::Render() {
     // Draw the ListBox::Row of currently displayed item, if any.
     RenderDisplayedRow();
 }
+
+GG::X CUIDropDownList::DisplayedRowWidth() const
+{
+    GG::Pt sz = Size();
+    int margin = 3;
+    int triangle_width = Value(sz.y - 4 * margin);
+    int outline_width = triangle_width + 3 * margin;
+    return GG::X(DropDownList::Width() - (m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0));
+}
+
 
 void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
@@ -1428,9 +1438,11 @@ namespace {
             GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
             species_name->Resize(GG::Pt(Width() - GG::X(Value(h)), h));
             push_back(species_name);
-            GG::X first_col_width(Value(h) - 10);
+            GG::X first_col_width(Value(h) - 2);
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
+            GetLayout()->SetColumnStretch(0, 0.0);
+            GetLayout()->SetColumnStretch(1, 1.0);
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
                 new IconTextBrowseWnd(ClientUI::SpeciesIcon(species->Name()),
@@ -1445,6 +1457,10 @@ namespace {
 SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     CUIDropDownList(6)
 {
+    ManuallyManageColProps();
+    NormalizeRowsOnInsert(false);
+    SetNumCols(2);
+
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)

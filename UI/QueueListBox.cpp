@@ -58,30 +58,15 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     GG::Connect(ClearedSignal,                      &QueueListBox::ShowPromptSlot,              this);
     GG::Connect(GG::ListBox::RightClickedSignal,    &QueueListBox::ItemRightClicked,            this);
 
-    // preinitialize listbox/row column widths, because what
-    // ListBox::Insert does on default is not suitable for this case
     SetNumCols(1);
-    SetColWidth(0, GG::X0);
-    LockColWidths();
+    ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
 
     ShowPromptSlot();
 }
 
 GG::X QueueListBox::RowWidth() const
-{ return Width() - ClientUI::ScrollWidth() - 5; }
-
-void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    const GG::Pt old_size = Size();
-    CUIListBox::SizeMove(ul, lr);
-
-    if (old_size != Size()) {
-        for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
-            GG::Pt old_row_sz = (*it)->Size();
-            (*it)->Resize(GG::Pt(Width() - ClientUI::ScrollWidth() - 5, old_row_sz.y));
-        }
-    }
-}
+{ return ClientWidth(); }
 
 void QueueListBox::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -154,6 +139,16 @@ void QueueListBox::Render() {
             lr.x = panel->Right();
         }
         GG::FlatRectangle(GG::Pt(ul.x, ul.y - 1), GG::Pt(lr.x, ul.y), GG::CLR_ZERO, GG::CLR_WHITE, 1);
+    }
+}
+
+void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    CUIListBox::SizeMove(ul, lr);
+    if (old_size != Size() && !Empty()) {
+        const GG::Pt row_size(RowWidth(), (*begin())->Height());
+        for (GG::ListBox::iterator it = begin(); it != end(); ++it)
+            (*it)->Resize(row_size);
     }
 }
 

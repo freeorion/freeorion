@@ -110,10 +110,15 @@ public:
     virtual Pt      ClientUpperLeft() const;
     virtual Pt      ClientLowerRight() const;
 
+    /** Return the width of the displayed row.  Override this function if the displayed row is a
+        different width than the drop down rows.*/
+    virtual GG::X  DisplayedRowWidth() const;
+
     mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
     //@}
 
     /** \name Mutators */ ///@{
+    virtual void    PreRender();
     virtual void    Render();
     virtual void    SizeMove(const Pt& ul, const Pt& lr); ///< resizes the control, ensuring the proper height is maintained based on the list's row height
     virtual void    SetColor(Clr c);
@@ -170,8 +175,20 @@ public:
         to an empty ListBox */
     void            UnLockColWidths();
 
+    /** Set ListBox to stop managing column widths and alignment.  The number of columns must be
+        set with SetColWidth(), but widths of individual rows columns or the header will not be
+        managed by ListBox. */
+    void            ManuallyManageColProps();
+
     void            SetColAlignment(std::size_t n, Alignment align); ///< sets the alignment of column \a n to \a align; not range-checked
     void            SetRowAlignment(iterator it, Alignment align);   ///< sets the alignment of the Row at row index \a n to \a align; not range-checked
+
+    /** Sets the stretch of column \a n to \a stretch; not range-checked */
+    void            SetColStretch(std::size_t n, double stretch);
+
+    /** Sets whether to normalize rows when inserted (true) or leave them as
+      * they are. */
+    void            NormalizeRowsOnInsert(bool enable = true);
     //@}
 
 protected:

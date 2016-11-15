@@ -13,6 +13,7 @@
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
@@ -34,10 +35,11 @@ namespace {
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
     public:
-        QueueTechPanel(GG::X w, const std::string& tech_name, double allocated_rp,
+        QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double allocated_rp,
                        int turns_left, double turns_completed, int empire_id, bool paused = false);
         virtual void Render();
-
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+        static GG::Y DefaultHeight();
     private:
         void Draw(GG::Clr clr, bool fill);
 
@@ -58,11 +60,16 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
-            GG::ListBox::Row(),
-            panel(0),
-            elem(queue_element)
+            GG::ListBox::Row(w, QueueTechPanel::DefaultHeight(), "RESEARCH_QUEUE_ROW"),
+            elem(queue_element),
+            panel(0)
         {
-            const Empire* empire = GetEmpire(queue_element.empire_id);
+            RequirePreRender();
+            Resize(GG::Pt(w, QueueTechPanel::DefaultHeight()));
+        }
+
+        void Init() {
+            const Empire* empire = GetEmpire(elem.empire_id);
 
             const Tech* tech = GetTech(elem.name);
             double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id) : 1;
@@ -72,10 +79,10 @@ namespace {
             else if (empire)
                 progress = empire->ResearchProgress(elem.name);
 
-            panel = new QueueTechPanel(w, elem.name, elem.allocated_rp,
+            panel = new QueueTechPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+                                       ClientWidth(), elem.name, elem.allocated_rp,
                                        elem.turns_left, progress / per_turn_cost,
-                                       elem.empire_id, elem.paused);
-            Resize(panel->Size());
+                                       elem.empire_id);
             push_back(panel);
 
             SetDragDropDataType("RESEARCH_QUEUE_ROW");
@@ -84,30 +91,47 @@ namespace {
             SetBrowseInfoWnd(TechPanelRowBrowseWnd(elem.name, elem.empire_id));
         }
 
-        QueueTechPanel*                 panel;
-        const ResearchQueue::Element    elem;
+        virtual void PreRender() {
+            GG::ListBox::Row::PreRender();
+
+            if (!panel)
+                Init();
+
+            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            panel->Resize(Size() - border);
+            GG::ListBox::Row::Resize(panel->Size() + border);
+        }
+
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            if (panel) {
+                GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+                panel->Resize(lr - ul - border);
+            }
+            GG::ListBox::Row::SizeMove(ul, lr);
+        }
+
+        const ResearchQueue::Element elem;
+        GG::Control* panel;
     };
 
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name, double turn_spending,
+    const int MARGIN = 2;
+
+    QueueTechPanel::QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double turn_spending,
                                    int turns_left, double turns_completed, int empire_id, bool paused) :
-        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::NO_WND_FLAGS),
+        GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),
         m_empire_id(empire_id),
         m_paused(paused)
     {
-        const int MARGIN = 2;
-
         const int FONT_PTS = ClientUI::Pts();
         const GG::Y METER_HEIGHT(FONT_PTS);
 
-        const GG::Y HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
-
-        const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+        const int GRAPHIC_SIZE = Value(DefaultHeight() - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
 
         const GG::X NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
         const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 4*MARGIN - 3;
@@ -117,15 +141,12 @@ namespace {
         if (tech)
             m_total_turns = tech->ResearchTime(m_empire_id);
 
-        Resize(GG::Pt(w, HEIGHT));
-
         GG::Clr clr = m_in_progress
                         ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
                         : ClientUI::ResearchableTechTextAndBorderColor();
 
         GG::Y top(MARGIN);
         GG::X left(MARGIN);
-
 
         m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
         m_icon->MoveTo(GG::Pt(left, top));
@@ -196,6 +217,36 @@ namespace {
         const int CORNER_RADIUS = 7;
         glColor(clr);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
+    }
+
+    void QueueTechPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        if (Size() != (lr - ul)) {
+            const int FONT_PTS = ClientUI::Pts();
+            const GG::Y METER_HEIGHT(FONT_PTS);
+
+            const int GRAPHIC_SIZE = Value(DefaultHeight() - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+
+            const GG::X NAME_WIDTH = Width() - GRAPHIC_SIZE - 2*MARGIN - 3;
+            const GG::X METER_WIDTH = Width() - GRAPHIC_SIZE - 4*MARGIN - 3;
+            const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2 - MARGIN;
+
+            m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
+            m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
+            m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
+            m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
+        }
+        GG::Control::SizeMove(ul, lr);
+    }
+
+    GG::Y QueueTechPanel::DefaultHeight() {
+        const int MARGIN = 2;
+
+        const int FONT_PTS = ClientUI::Pts();
+        const GG::Y METER_HEIGHT(FONT_PTS);
+
+        const GG::Y HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+
+        return HEIGHT;
     }
 }
 
@@ -578,11 +629,12 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (!m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
-        return;
-
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
+        QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
+        if (!queue_row)
+            return;
         ShowTech(queue_row->elem.name);
+    }
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {

@@ -492,7 +492,11 @@ PartsListBox::PartsListBox(void) :
     m_availabilities_shown(std::make_pair(false, false)),
     m_show_superfluous_parts(true),
     m_previous_num_columns(-1)
-{ SetStyle(GG::LIST_NOSEL); }
+{
+    ManuallyManageColProps();
+    NormalizeRowsOnInsert(false);
+    SetStyle(GG::LIST_NOSEL);
+}
 
 const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const
 { return m_part_classes_shown; }
@@ -1622,9 +1626,8 @@ GG::Pt BasesListBox::ListRowSize()
 void BasesListBox::InitRowSizes() {
     // preinitialize listbox/row column widths, because what
     // ListBox::Insert does on default is not suitable for this case
-    SetNumCols(1);
-    SetColWidth(0, GG::X0);
-    LockColWidths();
+    ManuallyManageColProps();
+    NormalizeRowsOnInsert(false);
 }
 
 void BasesListBox::PopulateWithEmptyHulls() {

@@ -27,6 +27,7 @@
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Scroll.h>
+#include <GG/Layout.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -262,6 +263,22 @@ void DropDownList::InitBuffer()
     m_buffer.createServerBuffer();
 }
 
+void DropDownList::PreRender()
+{
+
+    // reset size of displayed drop list based on number of shown rows set.
+    // assumes that all rows have the same height.
+    // adds some magic padding for now to prevent the scroll bars showing up.
+    Pt drop_down_size(ClientWidth(), ClientHeight());
+    if (LB()->NumRows() > 0)
+        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
+
+    LB()->Resize(drop_down_size);
+
+    if (LB()->Visible())
+        GUI::GetGUI()->PreRenderWindow(LB());
+}
+
 void DropDownList::Render()
 {
     // draw beveled-down rectangle around client area
@@ -307,23 +324,44 @@ void DropDownList::Render()
     RenderDisplayedRow();
 }
 
+GG::X DropDownList::DisplayedRowWidth() const
+{ return ClientWidth(); }
+
 void DropDownList::RenderDisplayedRow()
 {
     // Draw the ListBox::Row of currently displayed item, if any.
     if (CurrentItem() == LB()->end())
         return;
 
+    /** The following code possibly renders the selected row twice.  Once in the selected area and
+        also in the drop down list if it is visible.*/
     Row* current_item = *CurrentItem();
-    Pt offset = ClientUpperLeft() - current_item->UpperLeft();
-    bool visible = current_item->Visible();
-    current_item->OffsetMove(offset);
-    if (!visible)
+    bool sel_visible = current_item->Visible();
+    bool lb_visible = LB()->Visible();
+    if (!sel_visible) {
+        // The following is necessary because neither LB() nor the selected row may be visible and
+        // prerendered.
+        if (!lb_visible) {
+            LB()->Show();
+            GUI::GetGUI()->PreRenderWindow(LB());
+            LB()->Hide();
+        }
+
         current_item->Show();
+        GUI::GetGUI()->PreRenderWindow(current_item);
+    }
+
+    // Vertically center the selected row in the box.
+    Pt offset = GG::Pt(ClientUpperLeft().x - current_item->ClientUpperLeft().x,
+                       Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
+    current_item->OffsetMove(offset);
+
     BeginClipping();
     GUI::GetGUI()->RenderWindow(current_item);
     EndClipping();
+
     current_item->OffsetMove(-offset);
-    if (!visible)
+    if (!sel_visible)
         current_item->Hide();
 }
 
@@ -332,17 +370,11 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
     // adjust size to keep correct height based on row height, etc.
     GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
-    Pt drop_down_size(Width(), Height());
 
-    // reset size of displayed drop list based on number of shown rows set.
-    // assumes that all rows have the same height.
-    // adds some magic padding for now to prevent the scroll bars showing up.
-    if (LB()->NumRows() > 0)
-        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
-    LB()->SizeMove(Pt(X0, Height()), Pt(X0, Height()) + drop_down_size);
-
-    if (sz != Size())
+    if (sz != Size()) {
         InitBuffer();
+        RequirePreRender();
+    }
 }
 
 void DropDownList::SetColor(Clr c)
@@ -431,11 +463,20 @@ void DropDownList::LockColWidths()
 void DropDownList::UnLockColWidths()
 { LB()->UnLockColWidths(); }
 
+void DropDownList::ManuallyManageColProps()
+{ LB()->ManuallyManageColProps(); }
+
 void DropDownList::SetColAlignment(std::size_t n, Alignment align) 
 { LB()->SetColAlignment(n, align); }
 
-void DropDownList::SetRowAlignment(iterator it, Alignment align) 
+void DropDownList::SetRowAlignment(iterator it, Alignment align)
 { LB()->SetRowAlignment(it, align); }
+
+void DropDownList::SetColStretch(std::size_t n, double stretch)
+{ LB()->SetColStretch(n, stretch); }
+
+void DropDownList::NormalizeRowsOnInsert(bool enable /*= true*/)
+{ LB()->NormalizeRowsOnInsert(enable); }
 
 void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {

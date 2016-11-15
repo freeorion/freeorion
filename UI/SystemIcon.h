@@ -24,6 +24,7 @@ class OwnerColoredSystemName : public GG::Control {
 public:
     OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
     virtual void Render();
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 };
 
 /** A control that allows interaction with a star system.  This class allows

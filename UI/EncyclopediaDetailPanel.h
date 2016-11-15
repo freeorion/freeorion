@@ -87,6 +87,7 @@ protected:
 
 private:
     void            DoLayout();
+    void            RefreshImpl();
 
     virtual void    CloseClicked();
 
@@ -111,6 +112,7 @@ private:
     GG::Edit*           m_search_edit;      // box to type to search
 
     GraphControl*       m_graph;
+    bool                m_needs_refresh;    ///< Indicates that data is stale.
 };
 
 

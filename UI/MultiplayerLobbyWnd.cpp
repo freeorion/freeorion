@@ -67,8 +67,8 @@ namespace {
             {
                 push_back(new CUILabel(UserString("NO_PLAYER")));
             }
-            TypeRow(Networking::ClientType type_, bool show_add_drop = false) :
-                GG::DropDownList::Row(GG::X1, GG::Y1, "PlayerTypeSelectorRow"),
+            TypeRow(GG::X w, GG::Y h, Networking::ClientType type_, bool show_add_drop = false) :
+                GG::DropDownList::Row(w, h, "PlayerTypeSelectorRow"),
                 type(type_)
             {
                 switch (type) {
@@ -102,17 +102,22 @@ namespace {
         TypeSelector(GG::X w, GG::Y h, Networking::ClientType client_type, bool disabled) :
             CUIDropDownList(6)
         {
-            Resize(GG::Pt(w, std::max(GG::Y1, h - 8)));
             SetStyle(GG::LIST_NOSORT);
+            ManuallyManageColProps();
+            NormalizeRowsOnInsert(false);
+            SetNumCols(1);
+            GG::Y type_row_height(std::max(GG::Y1, h - 8));
+            Resize(GG::Pt(w, type_row_height));
+
             if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (disabled) {
                     // For AI players on non-hosts, have "AI" shown (disabled)
-                    Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER));      // static "AI" display
+                    Insert(new TypeRow(w, type_row_height, Networking::CLIENT_TYPE_AI_PLAYER));      // static "AI" display
                     Select(0);
                 } else {
                     // For AI players on host, have "AI" shown on droplist, with "Drop" shown as alternate selection to remove the AI
-                    Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER));      // "AI" display
-                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
+                    Insert(new TypeRow(w, type_row_height, Networking::CLIENT_TYPE_AI_PLAYER));      // "AI" display
+                    Insert(new TypeRow(w, type_row_height, Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
                     Select(0);
                 }
             } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
@@ -121,14 +126,14 @@ namespace {
             {
                 if (disabled) {
                     // For human players on other players non-host, have "AI" or "Observer" indicator (disabled)
-                    Insert(new TypeRow(client_type));
+                    Insert(new TypeRow(w, type_row_height, client_type));
                     Select(0);
                 } else {
                     // For human players on host, have "Player", "Observer", and "Drop" options.  TODO: have "Ban" option.
-                    Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
-                    Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
-                    Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
-                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
+                    Insert(new TypeRow(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
+                    Insert(new TypeRow(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
+                    Insert(new TypeRow(w, type_row_height, Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
+                    Insert(new TypeRow(w, type_row_height, Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
 
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
                         Select(0);
@@ -142,12 +147,12 @@ namespace {
             } else {
                 if (disabled) {
                     // For empty row on non-host, should probably have no row... could also put "None" (disabled)
-                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE));
+                    Insert(new TypeRow(w, type_row_height, Networking::INVALID_CLIENT_TYPE));
                     Select(0);
                 } else {
                     // For empty row on host, have "None" and "Add AI" options on droplist
-                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE));        // "None" display
-                    Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER, true));// "Add AI" option
+                    Insert(new TypeRow(w, type_row_height, Networking::INVALID_CLIENT_TYPE));        // "None" display
+                    Insert(new TypeRow(w, type_row_height, Networking::CLIENT_TYPE_AI_PLAYER, true));// "Add AI" option
 
                     Select(0);
                 }
@@ -417,6 +422,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    m_players_lb->ManuallyManageColProps();
+    m_players_lb->NormalizeRowsOnInsert(true);
+    m_players_lb->SetNumCols(5);
 
     m_start_game_bn = new CUIButton(UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));

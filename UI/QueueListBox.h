@@ -12,8 +12,6 @@ public:
 
     GG::X           RowWidth() const;
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-
     virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
     virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys);
@@ -26,6 +24,7 @@ public:
     void            Clear();
 
     virtual void    Render();
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;

@@ -12,13 +12,16 @@
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
 
 
 namespace {
-    GG::X ICON_RIGHT_MARGIN(3);
-    GG::Y ITEM_VERTICAL_PADDING(2);
+    const int sitrep_row_margin(1);
+    const int sitrep_edge_to_outline_spacing(2);
+    const int sitrep_edge_to_content_spacing(sitrep_edge_to_outline_spacing + 1 + 2);
+    const int sitrep_spacing(2);
 
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db) {
@@ -28,8 +31,8 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    GG::X GetIconSize()
-    { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-icon-size")); }
+    int GetIconSize()
+    { return GetOptionsDB().Get<int>("UI.sitrep-icon-size"); }
 
     std::map<std::string, std::string> label_display_map;
     std::map<int, std::set<std::string> > snoozed_sitreps;
@@ -218,42 +221,28 @@ namespace {
     //////////////////////////////////
     class SitRepDataPanel : public GG::Control {
     public:
-        SitRepDataPanel(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
-            Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+        SitRepDataPanel(GG::X left, GG::Y top, GG::X w, GG::Y h, const SitRepEntry& sitrep) :
+            Control(left, top, w, h, GG::NO_WND_FLAGS),
             m_initialized(false),
             m_sitrep_entry(sitrep),
             m_icon(0),
             m_link_text(0)
         {
             SetChildClippingMode(ClipToClient);
+            Init();
+            DoLayout(GG::Pt(left, top), w);
         }
 
         virtual void        Render() {
-            if (!m_initialized)
-                Init();
             GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
-            GG::FlatRectangle(UpperLeft(), LowerRight() - GG::Pt(GG::X0, GG::Y(2)), background_clr, ClientUI::WndOuterBorderColor(), 1u);
+            GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_outline_spacing), GG::Y(sitrep_edge_to_outline_spacing));
+            GG::FlatRectangle(UpperLeft() + spacer, LowerRight() - spacer,
+                              background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
 
         virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            Init();
-            const GG::Pt old_size = Size();
-            GG::Control::SizeMove(ul, lr);
-            if (old_size != Size()) {
-                DoLayout();
-            }
-            if (m_link_text) {
-                // establish sitrep panel's size; use icon or text size for panel height, whichever is larger
-                // DoLayout reflowed the text.
-                int text_size = Value((m_link_text->TextLowerRight() - m_link_text->TextUpperLeft()).y);
-                int icon_size = Value(GetIconSize());
-                int max_panel_size = std::max(text_size, icon_size);
-                max_panel_size += Value(2*ITEM_VERTICAL_PADDING);
-
-                GG::Pt panel_size = GG::Pt(GG::X(lr.x - ul.x), GG::Y(max_panel_size));
-                GG::Control::SizeMove(ul, ul + panel_size);
-                DoLayout();
-            }
+            if (ul != ClientUpperLeft() || (lr.x - ul.x) != Width())
+                DoLayout(ul, lr.x - ul.x);
         }
 
         const SitRepEntry&  GetSitRepEntry() const { return m_sitrep_entry; }
@@ -264,36 +253,51 @@ namespace {
         void            RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod) { RightClickedSignal(pt, mod); }
 
     private:
-        void            DoLayout() {
-            if (!m_initialized)
-                return;
-            GG::Y ICON_HEIGHT(Value(GetIconSize()));
+        void            DoLayout(const GG::Pt& ul, const GG::X& width) {
+            // Resize the text
+            GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_content_spacing), GG::Y(sitrep_edge_to_content_spacing));
+            GG::X icon_left(ul.x + spacer.x);
+            int icon_dim = GetIconSize();
+            GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
+            GG::X text_width(width - text_left - spacer.x);
+            m_link_text->SizeMove(GG::Pt(text_left, GG::Y0), GG::Pt(text_left, GG::Y0) + GG::Pt(text_width, GG::Y1));
 
-            GG::X left(GG::X0);
-            GG::Y bottom(ClientHeight() - ITEM_VERTICAL_PADDING);
+            // Choose height so that text always fits
+            GG::Y text_height = m_link_text->MinUsableSize().y;
+            GG::Y panel_height = std::max(text_height, GG::Y(icon_dim)) + 2 * spacer.y;
 
-            m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + GetIconSize(), bottom/2 + ICON_HEIGHT/2));
-            left += GetIconSize() + ICON_RIGHT_MARGIN;
+            // Move the elements into place.
+            GG::Y icon_top(ul.y + panel_height/2 - GG::Y(icon_dim)/2);
+            m_icon->MoveTo(GG::Pt(icon_left, icon_top));
 
-            m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth() - 3, bottom));
+            GG::Y text_top(ul.y + panel_height/2 - GG::Y(text_height)/2);
+            GG::Pt text_ul(text_left, text_top);
+            m_link_text->SizeMove(text_ul, text_ul + m_link_text->MinUsableSize());
+
+            //Resize control to fit
+            GG::Pt new_size = GG::Pt(width, panel_height);
+            GG::Control::SizeMove(ul, ul + new_size);
         }
 
         void            Init() {
-            if (m_initialized)
-                return;
             m_initialized = true;
 
+            int icon_dim = GetIconSize();
             std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
             boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
                 ClientUI::ArtDir() / icon_texture, true);
             m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
+            m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
-            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
+            GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_content_spacing), GG::Y(sitrep_edge_to_content_spacing));
+            GG::X icon_left(spacer.x);
+            GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
+            GG::X text_width(ClientWidth() - text_left - spacer.x);
+            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
                                              ClientUI::GetFont(),
-                                             GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK,
-                                             ClientUI::TextColor());
+                                             GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
 
@@ -301,13 +305,11 @@ namespace {
             GG::Connect(m_link_text->LinkDoubleClickedSignal, &HandleLinkClick);
             GG::Connect(m_link_text->LinkRightClickedSignal,  &HandleLinkClick);
             GG::Connect(m_link_text->RightClickedSignal,      &SitRepDataPanel::RClick,     this);
-
-            DoLayout();
         }
 
         bool                m_initialized;
 
-        SitRepEntry         m_sitrep_entry;
+        const SitRepEntry&  m_sitrep_entry;
         GG::StaticGraphic*  m_icon;
         SitRepLinkText*     m_link_text;
     };
@@ -320,30 +322,48 @@ namespace {
     public:
         SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             GG::ListBox::Row(w, h, ""),
-            m_panel(0)
+            m_panel(0),
+            m_sitrep(sitrep)
         {
             SetName("SitRepRow");
+            SetMargin(sitrep_row_margin);
             SetChildClippingMode(ClipToClient);
-            m_panel = new SitRepDataPanel(w, h, sitrep);
-            push_back(m_panel);
-            GG::Connect(m_panel->RightClickedSignal, &SitRepRow::RClick, this);
+            SetMinSize(GG::Pt(GG::X(2 * GetIconSize() + 2 * sitrep_edge_to_content_spacing),
+                              GG::Y(std::max(GetIconSize(), ClientUI::Pts() * 2) + 2 * sitrep_edge_to_content_spacing)));
+            RequirePreRender();
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            const GG::Pt old_size = Size();
-            GG::Pt new_size = lr - ul;
-            new_size.x -= 9; // Avoid allowing the scrollbar to hide the very rightmost pixels.
-            if (!empty() && m_panel && old_size != new_size) {
-                m_panel->Resize(new_size);
-                new_size = m_panel->Size();
-            }
-            GG::ListBox::Row::SizeMove(ul, ul + new_size);
+        virtual void        PreRender() {
+            GG::ListBox::Row::PreRender();
+
+            if (!m_panel)
+                Init();
+
+            // Resize to fit panel after text reflows
+            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
+            m_panel->Resize(Size() - border);
+            GG::ListBox::Row::Resize(m_panel->Size() + border);
+        }
+
+        virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            if (!m_panel || (Size() != (lr - ul)))
+                RequirePreRender();
+            GG::ListBox::Row::SizeMove(ul, lr);
+        }
+
+        void            Init() {
+            m_panel = new SitRepDataPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
+                                          ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
+                                          ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
+            push_back(m_panel);
+            GG::Connect(m_panel->RightClickedSignal, &SitRepRow::RClick, this);
         }
 
         const SitRepEntry&  GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
 
     private:
         SitRepDataPanel*    m_panel;
+        const SitRepEntry   m_sitrep;
     };
 }
 
@@ -365,6 +385,8 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_sitreps_lb = new CUIListBox();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
+    m_sitreps_lb->ManuallyManageColProps();
+    m_sitreps_lb->NormalizeRowsOnInsert(false);
     AttachChild(m_sitreps_lb);
 
     m_prev_turn_button = new CUIButton(UserString("BACK"));
@@ -432,10 +454,8 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (old_size != GG::Wnd::Size()) {
         DoLayout();
         Update();
-        if (!m_sitreps_lb->Empty()) {
-            m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
-            m_sitreps_lb->BringRowIntoView(boost::next(m_sitreps_lb->begin(), first_visible_queue_row));
-        }
+        if (!m_sitreps_lb->Empty())
+            m_sitreps_lb->SetFirstRowShown(boost::next(m_sitreps_lb->begin(), first_visible_queue_row));
     }
 }
 
@@ -715,6 +735,10 @@ void SitRepPanel::Update() {
 
     std::size_t first_visible_row = std::distance(m_sitreps_lb->begin(), m_sitreps_lb->FirstRowShown());
     m_sitreps_lb->Clear();
+    m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
+    m_sitreps_lb->ManuallyManageColProps();
+    m_sitreps_lb->NormalizeRowsOnInsert(false);
 
     // Get back to sane default
     if (m_showing_turn == INVALID_GAME_TURN)
@@ -763,7 +787,7 @@ void SitRepPanel::Update() {
     { orderedSitreps.push_back(*sitrep_it); }
 
     // create UI rows for all sitrps
-    GG::X width = m_sitreps_lb->Width() - ClientUI::ScrollWidth();
+    GG::X width = m_sitreps_lb->ClientWidth();
     for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin();
          sitrep_it != orderedSitreps.end(); ++sitrep_it)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }

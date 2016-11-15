@@ -265,6 +265,9 @@ public:
     explicit CUIDropDownList(size_t num_shown_elements); ///< basic ctor
     //@}
 
+    /** Return the width of the displayed row which excludes the DropArrow. */
+    virtual GG::X  DisplayedRowWidth() const;
+
     /** \name Mutators */ //@{
     virtual void    Render();
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);

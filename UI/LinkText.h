@@ -171,4 +171,10 @@ std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& 
 
 /// Helper for generating a link string with preset display text (not to be looked up in stringtable)
 std::string LinkTaggedPresetText(const std::string& tag, const std::string& stringtable_entry, const std::string& display_text);
+
+/// Free function to register link tags that TextLinker knows of.  This allows GG::Font to remove
+/// them so that they will not be rendered.  Must be called at least once before text with embedded
+/// XML tags is handled by GG::Font
+void RegisterLinkTags();
+
 #endif // _LinkText_h_
