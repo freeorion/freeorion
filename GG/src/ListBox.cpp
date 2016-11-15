@@ -743,13 +743,27 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     if (wnd_sel_it == m_selections.end())
         return;
 
-    Y vertical_offset = offset.y;
-
-    for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != wnd_sel_it; ++sel_it) {
-        vertical_offset += (**sel_it)->Height();
-    }
+    // Preserve the displayed row order in the dragged selections by finding the y offset of wnd
+    // and adjusting all the dragged rows relative to wnd.
+    std::map<GG::Y, SelectionSet::iterator> selections_Y_sorted;
     for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it) {
-        Wnd* row_wnd = **sel_it;
+        selections_Y_sorted.insert(std::make_pair((**sel_it)->Top(), sel_it));
+    }
+
+    Y vertical_offset = offset.y;
+    for (std::map<GG::Y, SelectionSet::iterator>::iterator sorted_sel_it = selections_Y_sorted.begin();
+         sorted_sel_it != selections_Y_sorted.end(); ++sorted_sel_it)
+    {
+        Wnd* row_wnd = **(sorted_sel_it->second);
+        if (row_wnd == wnd)
+            break;
+        vertical_offset += row_wnd->Height();
+    }
+
+    for (std::map<GG::Y, SelectionSet::iterator>::iterator sorted_sel_it = selections_Y_sorted.begin();
+         sorted_sel_it != selections_Y_sorted.end(); ++sorted_sel_it)
+    {
+        Wnd* row_wnd = **(sorted_sel_it->second);
         if (row_wnd != wnd) {
             GUI::GetGUI()->RegisterDragDropWnd(row_wnd, Pt(offset.x, vertical_offset), this);
             vertical_offset -= row_wnd->Height();
