@@ -917,10 +917,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             ast_val = 0
             if tech_is_complete("PRO_MICROGRAV_MAN"):
                 per_ast = 5
-            elif fo.currentTurn() > 40:
-                per_ast = 2.5
             else:
-                per_ast = 0.1
+                per_ast = 3
             if system:
                 for pid in system.planetIDs:
                     other_planet = universe.getPlanet(pid)
