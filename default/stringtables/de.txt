@@ -302,7 +302,7 @@ SD_SCOUT
 Kundschafter
 
 SD_SCOUT_DESC
-Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung. Weitere [[encyclopedia RESEARCH_TITLE]], welche die [[encyclopedia DETECTION_RANGE_TITLE]] verbessert, würde bessere Entwürfe ermöglichen. Dieses Schiff kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
+Kleines und billiges unbewaffnetes Schiff entworfen für Aufklärung und Erforschung. Weitere [[metertype METER_RESEARCH]], welche die [[metertype METER_DETECTION]] verbessert, würde bessere Entwürfe ermöglichen. Dieses Schiff kann nur auf Kolonien mit einem [[buildingtype BLD_SHIPYARD_BASE]] gebaut werden.
 
 SD_AST_SCOUT
 Asteroidenkundschafter
@@ -395,7 +395,7 @@ SD_TROOP_SHIP
 Truppentransporter
 
 SD_TROOP_SHIP_DESC
-Transportiert eine Brigade [[encyclopedia TROOP_TITLE]] mit Ausrüstung, welcher zur Einnahme eines Planeten genutzt werden können.
+Transportiert eine Brigade [[metertype METER_TROOPS]] mit Ausrüstung, welcher zur Einnahme eines Planeten genutzt werden können.
 
 SD_DRAGON_TOOTH
 Drachenzahn
@@ -553,22 +553,22 @@ SM_CLOUD
 Raumwolke
 
 SM_CLOUD_DESC
-Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
 
 SM_ASH
 Weltraumvulkan
 
 SM_ASH_DESC
-Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
 
 SM_DIM
 Dimensionswanderer
 
 SM_DIM_DESC
-Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
 
 SM_VOID_DESC
-Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
+Eine nebelartige Kreatur, welche [[metertype METER_STEALTH]] zu zufälligen Planeten hinzufügt.
 
 SM_SNAIL
 Asteroidenschnecke
@@ -2865,9 +2865,9 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Rumpf: %2%
 Teile: %3%
 
-Gesamter Angriffsschaden: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
-[[encyclopedia STARLANE_SPEED_TITLE]]: %13%    [[encyclopedia FUEL_TITLE]] Fassungsvermögen: %14%
-[[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
+Gesamter Angriffsschaden: %17%    [[metertype METER_STRUCTURE]]: %8%    [[metertype METER_SHIELD]]: %9%
+[[metertype METER_SPEED]]: %13%    [[metertype METER_FUEL]] Fassungsvermögen: %14%
+[[metertype METER_DETECTION]]: %10%    [[metertype METER_STEALTH]]: %11%
 Besiedlungsvermögen: %15%    Truppen: %16%
 
 Erwartete Kampfstärke (ohne Schilde): %19$.f (%20$.2f pro PP)
@@ -2960,74 +2960,89 @@ Bevölkerung
 ## Encyclopedia articles
 ##
 
+METER_INDUSTRY_VALUE_LABEL
+Industrie
+
+METER_RESEARCH_VALUE_LABEL
+Forschung
+
+METER_TRADE_VALUE_LABEL
+Handel
+
+METER_CONSTRUCTION_VALUE_LABEL
+Infrastruktur
+
+METER_CONSTRUCTION_VALUE_DESC
+Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.
+
+METER_HAPPINESS_VALUE_LABEL
+Zufriedenheit
+
+METER_FUEL_VALUE_LABEL
+Treibstoff
+
+METER_FUEL_VALUE_DESC
+Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[metertype METER_SUPPLY]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.
+
+METER_SHIELD_VALUE_LABEL
+Schild
+
+METER_STRUCTURE_VALUE_LABEL
+Struktur
+
+METER_DEFENSE_VALUE_LABEL
+Verteidigung
+
+METER_DEFENSE_VALUE_DESC
+Der Verteidigungswert eines Planeten stellt die Feuerkraft der installierten Boden-All-Waffen da. Er ist mit dem Angriffswert eines Schiffes vergleichbar.
+
+METER_SUPPLY_VALUE_LABEL
+Versorgung
+
+METER_TROOPS_VALUE_LABEL
+Truppen
+
+METER_TROOPS_VALUE_DESC
+'''Der Begriff Truppen umschreibt alle Formen militärischer Einsatzkräfte, denen es möglich ist, auf einer Planetenoberfläche zu operieren.
+
+Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationierten Einheiten wieder. Ein Angreifer muss mit einem höheren Truppenwert angreifen, wenn er einen Planeten erfolgreich erobern will.'''
+
+METER_DETECTION_VALUE_LABEL
+Erkennungsreichweite
+
+METER_DETECTION_VALUE_DESC
+'''Die Erkennungsreichweite sagt aus, wie weit die Sensoren reichen. Ein Imperium kann nur Objekte erkennen, deren  [[metertype METER_STEALTH]] kleiner oder gleich der [[encyclopedia DETECTION_TITLE]] sind und innerhalb der Erkennungsreichweite eines eigenen Raumschiffes oder Planeten liegt.
+
+Raumschiffe und Planeten haben einen Erkennungsreichweitenanzeiger. Es gibt im Optionsmenü die Möglichkeit, die Erkennungsreichweite für die Galaxiekarte anzuzeigen oder auszublenden.'''
+
+METER_STEALTH_VALUE_LABEL
+Tarnung
+
+METER_DETECTION_STRENGTH_VALUE_LABEL
+Erkennung Stärke
+
+METER_DETECTION_STRENGTH_VALUE_DESC
+'''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[metertype METER_STEALTH]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[metertype METER_DETECTION]] eines Raumschiffes oder Planeten befindet.
+
+Imperien haben eines Erkennungsstärke Mass.'''
+
 PEACE_TITLE
 Frieden
 
 PEACE_TEXT
-Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Parteien sich darauf einigen die Schiffe und Planeten des anderen nicht anzugreifen, nicht die [[encyclopedia SUPPLY_TITLE]]strecken zu behindern sowie die Besiedlung zu erschweren.
+Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Parteien sich darauf einigen die Schiffe und Planeten des anderen nicht anzugreifen, nicht die [[metertype METER_SUPPLY]]strecken zu behindern sowie die Besiedlung zu erschweren.
 
 OUTPOSTS_TITLE
 Außenposten
 
 OUTPOSTS_TEXT
-Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auch, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.
+Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[metertype METER_SUPPLY]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auch, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.
 
 FOCUS_TITLE
 Planetarer Fokus
 
 GROWTH_FOCUS_TITLE
 Wachstumsfokus
-
-INDUSTRY_TITLE
-Industrie
-
-RESEARCH_TITLE
-Forschung
-
-HAPPINESS_TITLE
-Zufriedenheit
-
-INFRASTRUCTURE_TITLE
-Infrastruktur
-
-INFRASTRUCTURE_TEXT
-Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.
-
-DEFENSE_TITLE
-Verteidigung
-
-DEFENSE_TEXT
-Der Verteidigungswert eines Planeten stellt die Feuerkraft der installierten Boden-All-Waffen da. Er ist mit dem Angriffswert eines Schiffes vergleichbar.
-
-SHIELDS_TITLE
-Schild
-
-STEALTH_TITLE
-Tarnung
-
-DETECTION_TITLE
-Erkennung Stärke
-
-DETECTION_TEXT
-'''Der Begriff Erkennung Stärke stellt das technologische Niveau der Sensoren eines Imperiums dar. Ein Imperium kann nur Objekte sehen, die einen [[encyclopedia STEALTH_TITLE]]s-Wert haben, der kleiner oder gleich groß ist, wie die, seiner eigenen Erkennung Stärke und sich innerhalb der [[encyclopedia DETECTION_RANGE_TITLE]] eines Raumschiffes oder Planeten befindet.
-
-Imperien haben eines Erkennungsstärke Mass.'''
-
-DETECTION_RANGE_TITLE
-Erkennungsreichweite
-
-DETECTION_RANGE_TEXT
-'''Die Erkennungsreichweite sagt aus, wie weit die Sensoren reichen. Ein Imperium kann nur Objekte erkennen, deren  [[encyclopedia STEALTH_TITLE]] kleiner oder gleich der [[encyclopedia DETECTION_TITLE]] sind und innerhalb der Erkennungsreichweite eines eigenen Raumschiffes oder Planeten liegt.
-
-Raumschiffe und Planeten haben einen Erkennungsreichweitenanzeiger. Es gibt im Optionsmenü die Möglichkeit, die Erkennungsreichweite für die Galaxiekarte anzuzeigen oder auszublenden.'''
-
-TROOP_TITLE
-Truppen
-
-TROOP_TEXT
-'''Der Begriff Truppen umschreibt alle Formen militärischer Einsatzkräfte, denen es möglich ist, auf einer Planetenoberfläche zu operieren.
-
-Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationierten Einheiten wieder. Ein Angreifer muss mit einem höheren Truppenwert angreifen, wenn er einen Planeten erfolgreich erobern will.'''
 
 ORGANIC_SPECIES_TITLE
 Organischer Stoffwechsel
@@ -3070,15 +3085,6 @@ XENOPHOBIC_SPECIES_TEXT
 '''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harrassing the alien species, has not been determined) resulting in a reduced maximum population.
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].'''
-
-FUEL_TITLE
-Treibstoff
-
-FUEL_TEXT
-Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[encyclopedia SUPPLY_TITLE]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.
-
-SUPPLY_TITLE
-Versorgung
 
 FLEET_UPKEEP_TITLE
 Flotten Unterhalt
@@ -3809,7 +3815,7 @@ ANCIENT_RUINS_SPECIAL
 Uralte Ruinen
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
+'''Increases [[metertype METER_RESEARCH]] on this planet by 1 per Population when Focus is set to Research.
 
 Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse. Das erster Imperium, welches die Technologie tech [[tech LRN_XENOARCH]] erforscht hat und diesen Planeten in Besitz nimmt erhält eine kostenlose fortgeschrittene Technologie oder entdeckt ein mächtiges Gebäude oder Schiff.'''
 
@@ -4927,7 +4933,7 @@ LRN_ALGO_ELEGANCE
 Algorithmische Eleganz
 
 LRN_ALGO_ELEGANCE_DESC
-'''Erhöht die [[encyclopedia RESEARCH_TITLE]] auf allen Planeten mit Forschungsfokus um 0.1 pro Einwohner.
+'''Erhöht die [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.1 pro Einwohner.
 
 Die steigende Komplexität der Probleme in der Datenanalyse überfordert herkömmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische Ansätze und Funktionen notwendig; die Eleganz der Lösung muss ästhetisch und metaphorisch optimiert werden.'''
 
@@ -4951,7 +4957,7 @@ LRN_ARTIF_MINDS
 Einsetzendes künstliches Bewusstsein
 
 LRN_ARTIF_MINDS_DESC
-'''Erhöht die [[encyclopedia RESEARCH_TITLE]] auf allen Planeten um 2.
+'''Erhöht die [[metertype METER_RESEARCH]] auf allen Planeten um 2.
 
 Während herkömmliche Computer nahezu unfassbare Intelligenz und Rechenfähigkeiten besitzen, fehlen ihnen entscheidende Qualitäten wie Selbsterkenntnis, Bewußtsein oder Gefühl. Auch wenn diese Züge schwer erfassbar bleiben, so können doch angemesse Nachbildungen hergestellt werden. Diese Erkenntnisse eröffnen ungeahnte Möglichkeiten in den kognitiven Wissenschaften und schaffen neue Metaparadigmen.
 
@@ -4986,7 +4992,7 @@ LRN_FORCE_FIELD
 Kraftfeldharmonik
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10 and unlocks basic ship shielding technology. [[encyclopedia SHIELDS_TITLE]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
+'''Increases max [[metertype METER_SHIELD]] on all planets by 10 and unlocks basic ship shielding technology. [[metertype METER_SHIELD]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
 
 Wie in der Fourieranalyse des Schalls können Elektromagnetismus, starke und schwache Kraft als harmonische Quantenwellen - Überlagerungen von kraftvermittelnden Partikeln ausgedrückt werden. Durch ausgewählte Verstärkung dieser Harmonik können Kräfte willkürlich kontrolliert werden, um abzuschirmen, anzugreifen, einzudämmen oder zu unterstützen.'''
 
@@ -5020,7 +5026,7 @@ LRN_QUANT_NET
 Quanten Netzwerk
 
 LRN_QUANT_NET_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
+'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0.5 per Population.
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of Sternstraßen. This advancement greatly facilitates research throughout the empire.
 
@@ -5108,7 +5114,7 @@ GRO_ENERGY_META
 Transmetabolismus
 
 GRO_ENERGY_META_DESC
-'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 5, den maximalen [[encyclopedia SHIELDS_TITLE]] auf allen Planeten um 5, die maximale [[encyclopedia INDUSTRY_TITLE]] auf allen Planeten mit Industriefokus um 0.2 pro Bevölkerung, sowie die maximale [[encyclopedia RESEARCH_TITLE]] auf allen Planeten mit Forschungsfokus um 0.5 pro Bevölkerung.
+'''Erhöht den Treibstofftank auf allen Schiffen um 2, die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 5, den maximalen [[metertype METER_SHIELD]] auf allen Planeten um 5, die maximale [[metertype METER_INDUSTRY]] auf allen Planeten mit Industriefokus um 0.2 pro Bevölkerung, sowie die maximale [[metertype METER_RESEARCH]] auf allen Planeten mit Forschungsfokus um 0.5 pro Bevölkerung.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -5118,7 +5124,7 @@ PRO_MICROGRAV_MAN
 Mikrogravitation
 
 PRO_MICROGRAV_MAN_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
+'''Increases [[metertype METER_INDUSTRY]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
@@ -5128,7 +5134,7 @@ PRO_ROBOTIC_PROD
 Automatisierung
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population.
+'''Increases target [[metertype METER_INDUSTRY]] on all planets with the Industry focus by 0.1 per Population.
 
 Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Siedlungen eingesetzt werden, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Siedlung erhält einen Standardsatz Exobots, welche die frühe Entwicklung der Siedlung maßgeblich beschleunigen.
 
@@ -5144,7 +5150,7 @@ PRO_FUSION_GEN
 Kernfusion
 
 PRO_FUSION_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.2 per Population.
+'''Increases target [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0.2 per Population.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -5168,7 +5174,7 @@ PRO_SENTIENT_AUTOMATION
 KI - Automatisierung
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5.
+'''Increases target [[metertype METER_INDUSTRY]] on all planets by 5.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -5245,7 +5251,7 @@ CON_CONTGRAV_ARCH
 Schwerkraft Architektur
 
 CON_CONTGRAV_ARCH_DESC
-'''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] auf allen Kolonien und Außenposten um 1.
+'''Erhöht die Reichweite der [[metertype METER_SUPPLY]] auf allen Kolonien und Außenposten um 1.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -5255,7 +5261,7 @@ CON_GAL_INFRA
 Galaktische Infrastruktur
 
 CON_GAL_INFRA_DESC
-'''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] auf allen Kolonien und Außenposten um 1.
+'''Erhöht die Reichweite der [[metertype METER_SUPPLY]] auf allen Kolonien und Außenposten um 1.
 
 The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
@@ -5372,7 +5378,7 @@ CON_ORBITAL_CON
 Orbitale Konstruktion
 
 CON_ORBITAL_CON_DESC
-'''Erhöht die Reichweite der [[encyclopedia SUPPLY_TITLE]] in allen Kolonien und Außenposten um 1.
+'''Erhöht die Reichweite der [[metertype METER_SUPPLY]] in allen Kolonien und Außenposten um 1.
 
 Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch"; bei Mikrogravitation dagegen ist diese beliebig. Dieser einfache Unterschied hat eine Vielzahl von Konsequenzen für die errichtbaren Gebäudetypen und wie sie den Raum, die Materialien und die Energie in ihrem jeweiligen Umfeld optimal ausnutzen. Außerdem muss die Inneneinrichtung von Räumen im Orbit neu durchdacht werden. Obwohl es attraktiv erscheint, ein vollkommen neues und vom planetaren Stil unabhängiges Innendesign zu entwerfen, werden diese Räume anfänglich hauptsächlich von Personen verwandt, die an die Oberfläche von Planeten gewohnt und angepasst sind. Ein stufenweiser Übergang vom alten zum neuen Innendesign ist daher wahrscheinlich effizienter als ein abrupter Wechsel.'''
 
@@ -5433,7 +5439,7 @@ LRN_DISTRIB_THOUGHT
 Hirnrechennetzwerk
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.1 per Population.
+'''Increases target [[metertype METER_RESEARCH]] on all planets with any focus by 0.1 per Population.
 
 Der Durchschnittsbürger verschwendet wortwörtlich sein Hirn, das eine der besten Rechenmaschinen des Universums darstellt. Indem sie sich durch einen simplen cybernetischen Transceiver in die untätigen Gehirne einer hinreichend großen Population einschalten, erhalten die Forschungszentren einer Welt Zugang zu günstiger, reichhaltiger Rechenleistung.'''
 
@@ -5441,7 +5447,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellartomographie
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
+'''Increases target [[metertype METER_RESEARCH]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
 
 Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im Inneren eines Sterns rekonstruieren. Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.'''
 
@@ -5472,7 +5478,7 @@ DEF_DEFENSE_NET_1
 Planetares Abwehrnetz 1
 
 DEF_DEFENSE_NET_1_DESC
-'''Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 5.
+'''Erhöht die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 5.
 
 Mit der galaktischen Erkundung steigt die Möglichkeit, neue Rassen zu treffen - und auch neue Feinde. Indem mehrere bewaffnete Kampfstationen in einer Umlaufbahn um den Planeten platziert werden, ist es möglich den Planeten auch ohne Schiffe zu verteidigen.'''
 
@@ -5480,19 +5486,19 @@ DEF_DEFENSE_NET_2
 Planetares Abwehrnetz 2
 
 DEF_DEFENSE_NET_2_DESC
-Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 15, zusätzlich zu [[tech DEF_DEFENSE_NET_1]].
+Erhöht die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 15, zusätzlich zu [[tech DEF_DEFENSE_NET_1]].
 
 DEF_DEFENSE_NET_3
 Planetares Abwehrnetz 3
 
 DEF_DEFENSE_NET_3_DESC
-Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um 25, zusätzlich zu allen vorhergehenden Abwehrnetzen.
+Erhöht die maximale [[metertype METER_DEFENSE]] auf allen Planeten um 25, zusätzlich zu allen vorhergehenden Abwehrnetzen.
 
 DEF_DEFENSE_NET_REGEN_1
 Abwehrnetz Regeneration 1
 
 DEF_DEFENSE_NET_REGEN_1_DESC
-'''Regeneriert jede Runde 10% des maximalen Wertes der planetaren [[encyclopedia DEFENSE_TITLE]].
+'''Regeneriert jede Runde 10% des maximalen Wertes der planetaren [[metertype METER_DEFENSE]].
 
 Die Erforschung regenerierender Abwehrnetze ermöglicht es einem Planeten, seine Verteidungseinrichtungen am Ende jeder Runde zu reparieren. Normalerweise können sich Abwehrnetze erst regenerieren, wenn in der Runde zuvor kein planetares Bombardement stattgefunden hat.'''
 
@@ -5500,37 +5506,37 @@ DEF_DEFENSE_NET_REGEN_2
 Abwehrnetz Regeneration 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-Regeneriert die planetare [[encyclopedia DEFENSE_TITLE]] jede Runde zusätzlich um 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
+Regeneriert die planetare [[metertype METER_DEFENSE]] jede Runde zusätzlich um 25% des Wertes der planetaren [[metertype METER_CONSTRUCTION]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Planetarer Schutzschild 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 30, zusätzlich zur [[tech LRN_FORCE_FIELD]] und regeneriert den Schild jede Runde um 1 plus 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
+Erhöht den maximalen [[metertype METER_SHIELD]] der Planeten um weitere 30, zusätzlich zur [[tech LRN_FORCE_FIELD]] und regeneriert den Schild jede Runde um 1 plus 25% des Wertes der planetaren [[metertype METER_CONSTRUCTION]].
 
 DEF_PLAN_BARRIER_SHLD_2
 Planetarer Schutzschild 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 60. Die Schildregeneration pro Runde erhöht sich auf 1 plus 100% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
+Erhöht den maximalen [[metertype METER_SHIELD]] der Planeten um weitere 60. Die Schildregeneration pro Runde erhöht sich auf 1 plus 100% des Wertes der planetaren [[metertype METER_CONSTRUCTION]].
 
 DEF_PLAN_BARRIER_SHLD_3
 Planetarer Schutzschild 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 90. Die Schildregeneration pro Runde erhöht sich auf 1 plus 200% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
+Erhöht den maximalen [[metertype METER_SHIELD]] der Planeten um weitere 90. Die Schildregeneration pro Runde erhöht sich auf 1 plus 200% des Wertes der planetaren [[metertype METER_CONSTRUCTION]].
 
 DEF_PLAN_BARRIER_SHLD_4
 Planetarer Schutzschild 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 250% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
+Erhöht den maximalen [[metertype METER_SHIELD]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 250% des Wertes der planetaren [[metertype METER_CONSTRUCTION]].
 
 DEF_PLAN_BARRIER_SHLD_5
 Planetarer Schutzschild 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 500% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
+Erhöht den maximalen [[metertype METER_SHIELD]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 500% des Wertes der planetaren [[metertype METER_CONSTRUCTION]].
 
 DEF_SYST_DEF_MINE_1
 Systemweites Minennetz 1
@@ -5558,7 +5564,7 @@ DEF_ROOT_DEFENSE
 Selbstverteidigung
 
 DEF_ROOT_DEFENSE_DESC
-'''Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 2.
+'''Erhöht das Maximum der [[metertype METER_TROOPS]] auf allen Planeten um 2.
 
 Das Konzept der 'Grundlegenden Verteidigung' ist die Basis vieler Möglichkeiten zu technologischem Fortschritt.'''
 
@@ -5566,28 +5572,28 @@ DEF_GARRISON_1
 Planetare Bunkeranlagen
 
 DEF_GARRISON_1_DESC
-Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 5.
+Erhöht das Maximum der [[metertype METER_TROOPS]] auf allen Planeten um 5.
 
 DEF_GARRISON_2
 Ausbildung Verteidigungsmilizen
 
 DEF_GARRISON_2_DESC
-Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 10.
+Erhöht das Maximum der [[metertype METER_TROOPS]] auf allen Planeten um 10.
 
 DEF_GARRISON_3
 Planetares Befestigungsnetzwerk
 
 DEF_GARRISON_3_DESC
-Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 15.
+Erhöht das Maximum der [[metertype METER_TROOPS]] auf allen Planeten um 15.
 
 DEF_GARRISON_4
 Planetare Schutzbrigaden
 
 DEF_GARRISON_4_DESC
-Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 20.
+Erhöht das Maximum der [[metertype METER_TROOPS]] auf allen Planeten um 20.
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within [[encyclopedia SUPPLY_TITLE]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
+Allows ships within [[metertype METER_SUPPLY]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
 SHP_ADV_DAM_CONT_DESC
 Repairs damaged ships by 25% of structure per turn-- not during battles.
@@ -5811,13 +5817,13 @@ PRO_INDUSTRY_CENTER_II
 Erweitertes Industriezentrum
 
 PRO_INDUSTRY_CENTER_II_DESC
-Ein verbesserte zentralisierte Verwaltung verstreuter Industrieprozesse erhöht die Reichweite und die Größe der industriellen Produktion. Der Bonus auf [[encyclopedia INDUSTRY_TITLE]] verdoppelt den Wert, welcher durch das einfache [[buildingtype BLD_INDUSTRY_CENTER]] erzeugt wird.
+Ein verbesserte zentralisierte Verwaltung verstreuter Industrieprozesse erhöht die Reichweite und die Größe der industriellen Produktion. Der Bonus auf [[metertype METER_INDUSTRY]] verdoppelt den Wert, welcher durch das einfache [[buildingtype BLD_INDUSTRY_CENTER]] erzeugt wird.
 
 PRO_INDUSTRY_CENTER_III
 Hochentwickeltes Industriezentrum
 
 PRO_INDUSTRY_CENTER_III_DESC
-Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Industrial Centers.
+Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion. The bonus to [[metertype METER_INDUSTRY]] will be triple that provided by basic Industrial Centers.
 
 
 ##
@@ -5843,7 +5849,7 @@ BLD_IMPERIAL_PALACE
 Imperialer Palast
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 3. Also sets the owner's Capital for the empire.
+'''Increases [[metertype METER_SUPPLY]] line range by 1, [[metertype METER_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 3. Also sets the owner's Capital for the empire.
 
 Der imperiale Palast spiegelt die Macht und das Ansehen eines Imperiums wider, und fungiert als Steuerzentrale über die Besitztümer des Imperiums.'''
 
@@ -5879,7 +5885,7 @@ BLD_INDUSTRY_CENTER
 Industriezentrum
 
 BLD_INDUSTRY_CENTER_DESC
-'''Gibt einen Bonus von 0.2 pro Bevölkerung auf [[encyclopedia INDUSTRY_TITLE]] für alle über [[encyclopedia SUPPLY_TITLE]] verbundenen Planeten mit Industrie.
+'''Gibt einen Bonus von 0.2 pro Bevölkerung auf [[metertype METER_INDUSTRY]] für alle über [[metertype METER_SUPPLY]] verbundenen Planeten mit Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Die [[tech PRO_INDUSTRY_CENTER_II]] Aufrüstung verdoppelt den Bonus.
@@ -5893,7 +5899,7 @@ BLD_SPACE_ELEVATOR
 Weltraumlift
 
 BLD_SPACE_ELEVATOR_DESC
-'''Doubles [[encyclopedia SUPPLY_TITLE]] line range on the planet on which it is built.
+'''Doubles [[metertype METER_SUPPLY]] line range on the planet on which it is built.
 
 Die Nanokonstruktion eröffnet die Möglichkeit Kabel zu erschaffen, welche zugfest genug sind, um über den geostationären Orbit zu reichen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und hochgefährlichen Raketenstarts überlegen. Ein enormes und nahezu unzerreissbares Kabel, das an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplattform befindet.'''
 
@@ -5914,7 +5920,7 @@ BLD_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Sternstraße travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
+'''Increases [[metertype METER_INDUSTRY]] on planets with the Industry focus by 0.5 per Population, and [[metertype METER_RESEARCH]] on Planets with the Research focus by 0.5 per Population. Sternstraße travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
 
 Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
 
@@ -5922,7 +5928,7 @@ BLD_ENCLAVE_VOID
 Enklave der Leere
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.75 per Population.
+'''Increases target [[metertype METER_RESEARCH]] on all planets with the Research focus by 0.75 per Population.
 
 Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmet sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler höherer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave können auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken.'''
 
@@ -5960,9 +5966,9 @@ Erstellt ein [[predefinedshipdesign SD_COLONY_BASE]], welches zur Besiedlung ein
 # %3% hull base starlane speed.
 # %4% hull base structure value.
 #HULL_DESC
-#'''[[encyclopedia STARLANE_SPEED_TITLE]]: %1%
-#[[encyclopedia FUEL_TITLE]]: %2%
-#[[encyclopedia STRUCTURE_TITLE]]: %4%'''
+#'''[[metertype METER_SPEED]]: %1%
+#[[metertype METER_FUEL]]: %2%
+#[[metertype METER_STRUCTURE]]: %4%'''
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -6059,7 +6065,7 @@ FU_BASIC_TANK
 Zusatz Treibstofftank
 
 FU_BASIC_TANK_DESC
-Erhöht die  [[encyclopedia FUEL_TITLE]]kapazität, was einen zusätzlichen Sprung erlaubt.
+Erhöht die  [[metertype METER_FUEL]]kapazität, was einen zusätzlichen Sprung erlaubt.
 
 FU_DEUTERIUM_TANK
 Deuterium-Tank
@@ -6082,31 +6088,31 @@ Elektromagnetische Dämpfung
 ST_CLOAK_1_DESC
 '''Weak Cloaking (+20)
 
-Verbessert die [[encyclopedia STEALTH_TITLE]] des Schiffes auf dem es installiert wurde, indem es die Elektromagnetische Abstrahlung der Schiffssysteme dämpft. Kann nur kleine Emissionsmengen kompensieren, und wird von vorhandenen Schiffsteilen die hohe Strahlungsmengen abgeben überladen. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
+Verbessert die [[metertype METER_STEALTH]] des Schiffes auf dem es installiert wurde, indem es die Elektromagnetische Abstrahlung der Schiffssysteme dämpft. Kann nur kleine Emissionsmengen kompensieren, und wird von vorhandenen Schiffsteilen die hohe Strahlungsmengen abgeben überladen. [[metertype METER_STEALTH]]-causing ship parts do not stack.'''
 
 AR_STD_PLATE
 Standardpanzerplatten
 
 AR_STD_PLATE_DESC
-Erhöht die [[encyclopedia STRUCTURE_TITLE]] der Schiffshülle. Standardpanzerplatten bieten nur mäßige Erweiterung zur Widerstandsfähigkeit eines Schiffsrumpfes.
+Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Standardpanzerplatten bieten nur mäßige Erweiterung zur Widerstandsfähigkeit eines Schiffsrumpfes.
 
 AR_ZORTRIUM_PLATE
 Zortrium Panzerplatten
 
 AR_ZORTRIUM_PLATE_DESC
-Erhöht die [[encyclopedia STRUCTURE_TITLE]] der Schiffshülle. Stärkere Abwehr als [[shippart AR_STD_PLATE]].
+Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Stärkere Abwehr als [[shippart AR_STD_PLATE]].
 
 AR_DIAMOND_PLATE
 Diamant Panzerplatten
 
 AR_DIAMOND_PLATE_DESC
-Erhöht die [[encyclopedia STRUCTURE_TITLE]] der Schiffshülle. Stärkere Abwehr als [[shippart AR_ZORTRIUM_PLATE]].
+Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Stärkere Abwehr als [[shippart AR_ZORTRIUM_PLATE]].
 
 AR_XENTRONIUM_PLATE
 Xentronium Panzerplatten
 
 AR_XENTRONIUM_PLATE_DESC
-Erhöht die [[encyclopedia STRUCTURE_TITLE]] der Schiffshülle. Äußerst starke und haltbare Panzerplatten.
+Erhöht die [[metertype METER_STRUCTURE]] der Schiffshülle. Äußerst starke und haltbare Panzerplatten.
 
 AR_ROCK_PLATE
 Gestein Panzerplatten
@@ -6146,7 +6152,7 @@ GT_TROOP_POD
 Bodentruppen Kapsel
 
 GT_TROOP_POD_DESC
-Trägt eine Brigade Boden[[encyclopedia TROOP_TITLE]], samt Ausrüstung, die auf einen Planeten eingesetzt werden kann.
+Trägt eine Brigade Boden[[metertype METER_TROOPS]], samt Ausrüstung, die auf einen Planeten eingesetzt werden kann.
 
 
 ##
@@ -6297,85 +6303,85 @@ Schwarzkrakenkörper
 ##
 
 NO_INDUSTRY_DESC
-−−−	Keine [[encyclopedia INDUSTRY_TITLE]]
+−−−	Keine [[metertype METER_INDUSTRY]]
 
 BAD_INDUSTRY_DESC
-−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: 75%
+−	Schlechte [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Mittelmässige [[encyclopedia INDUSTRY_TITLE]]: 100%'''
+'''	Mittelmässige [[metertype METER_INDUSTRY]]: 100%'''
 
 GOOD_INDUSTRY_DESC
-+	Gute [[encyclopedia INDUSTRY_TITLE]]: 150%
++	Gute [[metertype METER_INDUSTRY]]: 150%
 
 GREAT_INDUSTRY_DESC
-++	Hervorragende [[encyclopedia INDUSTRY_TITLE]]: 200%
+++	Hervorragende [[metertype METER_INDUSTRY]]: 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 300%
++++	Perfekte [[metertype METER_INDUSTRY]]: 300%
 
 NO_RESEARCH_DESC
-−−−	Keine [[encyclopedia RESEARCH_TITLE]]
+−−−	Keine [[metertype METER_RESEARCH]]
 
 BAD_RESEARCH_DESC
-−	Schlechte [[encyclopedia RESEARCH_TITLE]]: 75%
+−	Schlechte [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Mittelmässige [[encyclopedia RESEARCH_TITLE]]: 100%'''
+'''	Mittelmässige [[metertype METER_RESEARCH]]: 100%'''
 
 GOOD_RESEARCH_DESC
-+	Gute [[encyclopedia RESEARCH_TITLE]]: 150%
++	Gute [[metertype METER_RESEARCH]]: 150%
 
 GREAT_RESEARCH_DESC
-++	Hervorragende [[encyclopedia RESEARCH_TITLE]]: 200%
+++	Hervorragende [[metertype METER_RESEARCH]]: 200%
 
 ULTIMATE_RESEARCH_DESC
-+++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 300%
++++	Perfekte [[metertype METER_RESEARCH]]: 300%
 
 NO_DEFENSE_TROOPS_DESC
-−−−	Keine Boden[[encyclopedia TROOP_TITLE]]
+−−−	Keine Boden[[metertype METER_TROOPS]]
 
 BAD_DEFENSE_TROOPS_DESC
-−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: 50%
+−	Schlechte Boden[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Mittelmäßige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
+'''	Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.
++	Gute Boden[[metertype METER_TROOPS]]: 150%.
 
 GREAT_DEFENSE_TROOPS_DESC
-++	Hervorragende Boden[[encyclopedia TROOP_TITLE]]: 200%.
+++	Hervorragende Boden[[metertype METER_TROOPS]]: 200%.
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.
++++	Perfekte Boden[[metertype METER_TROOPS]]: 300%.
 
 BAD_DETECTION_DESC
-−	Schlechte [[encyclopedia DETECTION_RANGE_TITLE]]: −20 Malus.
+−	Schlechte [[metertype METER_DETECTION]]: −20 Malus.
 
 GOOD_DETECTION_DESC
-+	Gute [[encyclopedia DETECTION_RANGE_TITLE]]: +25 Bonus.
++	Gute [[metertype METER_DETECTION]]: +25 Bonus.
 
 GREAT_DETECTION_DESC
-++	Hervorragende [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.
+++	Hervorragende [[metertype METER_DETECTION]]: +50 Bonus.
 
 ULTIMATE_DETECTION_DESC
-+++	Perfekte [[encyclopedia DETECTION_RANGE_TITLE]]: +100 Bonus.
++++	Perfekte [[metertype METER_DETECTION]]: +100 Bonus.
 
 BAD_STEALTH_DESC
-−	Schlechte [[encyclopedia STEALTH_TITLE]]: −20 Malus.
+−	Schlechte [[metertype METER_STEALTH]]: −20 Malus.
 
 AVERAGE_STEALTH_DESC
-'''	Mittelmäßige [[encyclopedia STEALTH_TITLE]].'''
+'''	Mittelmäßige [[metertype METER_STEALTH]].'''
 
 GOOD_STEALTH_DESC
-+	Gute [[encyclopedia STEALTH_TITLE]]: +20 Bonus.
++	Gute [[metertype METER_STEALTH]]: +20 Bonus.
 
 GREAT_STEALTH_DESC
-++	Hervorragende [[encyclopedia STEALTH_TITLE]]: +40 Bonus.
+++	Hervorragende [[metertype METER_STEALTH]]: +40 Bonus.
 
 ULTIMATE_STEALTH_DESC
-+++	Perfekte [[encyclopedia STEALTH_TITLE]]: +60 Bonus.
++++	Perfekte [[metertype METER_STEALTH]]: +60 Bonus.
 
 BAD_POPULATION_DESC
 −	Niedrige Bevölkerung 75%
@@ -6393,7 +6399,7 @@ GOOD_POPULATION_DESC
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
-%1% Mittelmäßige [[encyclopedia INFRASTRUCTURE_TITLE]]
+%1% Mittelmäßige [[metertype METER_CONSTRUCTION]]
 
 # %1% FIXME
 GOOD_ENVIRONMENT_LABEL
