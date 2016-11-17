@@ -102,10 +102,44 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                DesignHasPart  name = "SR_WEAPON_2_1"
+                Or [
+                    DesignHasPart  name = "SR_WEAPON_2_1"
+                    DesignHasPart  name = "FT_HANGAR_1"
+                    DesignHasPart  name = "FT_HANGAR_2"
+                    DesignHasPart  name = "FT_HANGAR_3"
+                ]
             ]
             accountinglabel = "SR_WEAPON_2_2"
-            effects = SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + 2
+            effects = [
+                SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 2
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 3
+                ]
+ /*       EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_1"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_1" value = Value + 1
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_2"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_2" value = Value + 2
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_3"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_3" value = Value + 3 */
     graphic = "icons/ship_parts/laser-2.png"
 
 Tech
@@ -170,10 +204,44 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                DesignHasPart  name = "SR_WEAPON_3_1"
+                Or [
+                    DesignHasPart  name = "SR_WEAPON_3_1"
+                    DesignHasPart  name = "FT_HANGAR_1"
+                    DesignHasPart  name = "FT_HANGAR_2"
+                    DesignHasPart  name = "FT_HANGAR_3"
+                ]
             ]
             accountinglabel = "SR_WEAPON_3_2"
-            effects = SetMaxCapacity partname = "SR_WEAPON_3_1" value = Value + 3
+            effects = [
+                SetMaxCapacity partname = "SR_WEAPON_3_1" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 3
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 4
+                ]
+  /*      EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_1"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_1" value = Value + 1
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_2"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_2" value = Value + 3
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_3"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_3" value = Value + 4 */
     graphic = "icons/ship_parts/plasma-2.png"
 
 Tech
@@ -238,10 +306,44 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                DesignHasPart  name = "SR_WEAPON_4_1"
+                Or [
+                    DesignHasPart  name = "SR_WEAPON_4_1"
+                    DesignHasPart  name = "FT_HANGAR_1"
+                    DesignHasPart  name = "FT_HANGAR_2"
+                    DesignHasPart  name = "FT_HANGAR_3"
+                ]
             ]
             accountinglabel = "SR_WEAPON_4_2"
-            effects = SetMaxCapacity partname = "SR_WEAPON_4_1" value = Value + 5
+            effects = [
+                SetMaxCapacity partname = "SR_WEAPON_4_1" value = Value + 5
+                SetMaxSecondaryStat partname = "FT_HANGAR_1" value = Value + 1
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + 5
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + 7
+                ]
+   /*     EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_1"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_1" value = Value + 1
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_2"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_2" value = Value + 5
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart  name = "FT_HANGAR_3"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "FT_HANGAR_3" value = Value + 7 */
     graphic = "icons/ship_parts/death-ray-2.png"
 
 Tech
