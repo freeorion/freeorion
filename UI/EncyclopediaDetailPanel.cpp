@@ -379,25 +379,13 @@ namespace {
             }
 
         } else if (dir_name == "ENC_METER_TYPE") {
-            MeterTypeDirEntry(METER_POPULATION,     sorted_entries_list);
-            MeterTypeDirEntry(METER_INDUSTRY,       sorted_entries_list);
-            MeterTypeDirEntry(METER_RESEARCH,       sorted_entries_list);
-            MeterTypeDirEntry(METER_TRADE,          sorted_entries_list);
-            MeterTypeDirEntry(METER_CONSTRUCTION,   sorted_entries_list);
-            MeterTypeDirEntry(METER_HAPPINESS,      sorted_entries_list);
-            MeterTypeDirEntry(METER_CAPACITY,       sorted_entries_list);
-            MeterTypeDirEntry(METER_SECONDARY_STAT, sorted_entries_list);
-            MeterTypeDirEntry(METER_FUEL,           sorted_entries_list);
-            MeterTypeDirEntry(METER_SHIELD,         sorted_entries_list);
-            MeterTypeDirEntry(METER_STRUCTURE,      sorted_entries_list);
-            MeterTypeDirEntry(METER_DEFENSE,        sorted_entries_list);
-            MeterTypeDirEntry(METER_SUPPLY,         sorted_entries_list);
-            MeterTypeDirEntry(METER_TROOPS,         sorted_entries_list);
-            MeterTypeDirEntry(METER_REBEL_TROOPS,   sorted_entries_list);
-            MeterTypeDirEntry(METER_SIZE,           sorted_entries_list);
-            MeterTypeDirEntry(METER_STEALTH,        sorted_entries_list);
-            MeterTypeDirEntry(METER_DETECTION,      sorted_entries_list);
-            MeterTypeDirEntry(METER_SPEED,          sorted_entries_list);
+            for (MeterType meter_type = METER_POPULATION;
+                 meter_type != NUM_METER_TYPES;
+                 meter_type = static_cast<MeterType>(static_cast<int>(meter_type) + 1))
+            {
+                if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES)
+                    MeterTypeDirEntry(meter_type, sorted_entries_list);
+            }
         } else if (dir_name == "ENC_EMPIRE") {
             const EmpireManager& empire_manager = Empires();
             for (EmpireManager::const_iterator it = empire_manager.begin();
