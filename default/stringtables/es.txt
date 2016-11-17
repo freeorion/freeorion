@@ -90,7 +90,7 @@ SD_SCOUT
 Explorador
 
 SD_SCOUT_DESC
-Barata y pequeña nave desarmada para reconocimiento y exploración. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.
+Barata y pequeña nave desarmada para reconocimiento y exploración. Further research aimed at improving [[metertype METER_DETECTION]] would allow for better designs.
 
 SD_SCOUT_2
 Explorador II
