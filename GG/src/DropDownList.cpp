@@ -392,12 +392,13 @@ void DropDownList::RenderDisplayedRow()
 void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 {
     // adjust size to keep correct height based on row height, etc.
-    GG::Pt sz = Size();
+    GG::Pt old_ul = RelativeUpperLeft();
+    GG::Pt old_lr = RelativeLowerRight();
+
     Wnd::SizeMove(ul, lr);
 
-    if (sz != Size()) {
+    if ((old_ul != RelativeUpperLeft()) || (old_lr != RelativeLowerRight()))
         RequirePreRender();
-    }
 }
 
 void DropDownList::SetColor(Clr c)
