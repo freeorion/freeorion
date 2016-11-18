@@ -108,6 +108,11 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, ModalListPickerSelChangedEcho(*this));
+
+    if (m_relative_to_wnd)
+        m_lb_wnd->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
+
+    m_lb_wnd->Hide();
 }
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
@@ -117,6 +122,7 @@ void ModalListPicker::ModalInit()
 {
     if (m_relative_to_wnd)
         m_lb_wnd->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
+
     Show();
 }
 
