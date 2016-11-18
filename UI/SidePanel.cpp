@@ -36,6 +36,7 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
+#include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -572,6 +573,7 @@ public:
     void            SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
     void            ScrollTo(int pos);
 
+    virtual void    PreRender();
     void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
 
     virtual void    ShowScrollbar();
@@ -721,27 +723,40 @@ namespace {
     class SystemRow : public GG::ListBox::Row {
     public:
         SystemRow(int system_id) :
-            GG::ListBox::Row(),
+            GG::ListBox::Row(GG::X1, GG::Y(SystemNameFontSize()), "SystemRow"),
             m_system_id(system_id),
             m_initialized(false)
-        {
-            RequirePreRender();
-            SetDragDropDataType("SystemRow");
-        }
+        { RequirePreRender(); }
 
         virtual void Init() {
             m_initialized = true;
             OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
             push_back(name);
-            GG::ListBox::Row::Resize(name->Size());
-            GetLayout()->SetChildAlignment(name, GG::ALIGN_VCENTER | GG::ALIGN_CENTER);
-            GetLayout()->PreRender();
+
+            SetColAlignment(0, GG::ALIGN_CENTER);
         }
 
         virtual void PreRender() {
             if (!m_initialized)
                 Init();
-            GG::ListBox::Row::PreRender();
+
+            // Lock the row to the size of its drop box.
+            if (Parent())
+                SetColWidth(0, Parent()->ClientWidth());
+            GetLayout()->PreRender();
+        }
+
+        /** Lock the system row size to the size of the drop down list box. This makes sure that
+            the row is the correct width with the name centered  when the dropdown list steals the
+            selected row for rendering.*/
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            GG::Pt adjusted_lr(GG::X(Parent() ? ul.x + Parent()->ClientWidth() : lr.x), lr.y);
+            GG::Pt target_size(adjusted_lr - ul);
+            if ((ul == RelativeUpperLeft()) && (adjusted_lr == RelativeLowerRight()))
+                return;
+
+            GG::Wnd::SizeMove(ul, adjusted_lr);
+            RequirePreRender();
         }
 
         int SystemID() const { return m_system_id; }
@@ -885,19 +900,19 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // meter panels
     m_population_panel = new PopulationPanel(panel_width, m_planet_id);
     AttachChild(m_population_panel);
-    GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::RequirePreRender, this);
 
     m_resource_panel = new ResourcePanel(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
-    GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::RequirePreRender, this);
 
     m_military_panel = new MilitaryPanel(panel_width, m_planet_id);
     AttachChild(m_military_panel);
-    GG::Connect(m_military_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_military_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::RequirePreRender, this);
 
     m_buildings_panel = new BuildingsPanel(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
-    GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::RequirePreRender, this);
     GG::Connect(m_buildings_panel->BuildingRightClickedSignal,  BuildingRightClickedSignal);
 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
@@ -920,6 +935,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     SetChildClippingMode(ClipToWindow);
 
     Refresh();
+
+    RequirePreRender();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel() {
@@ -1455,7 +1472,7 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_specials_panel);
         delete m_specials_panel;        m_specials_panel = 0;
 
-        DoLayout();
+        RequirePreRender();
         return;
     }
 
@@ -2034,7 +2051,7 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG
 { ForwardEventToParent(); }
 
 void SidePanel::PlanetPanel::PreRender() {
-    GG::Wnd::PreRender();
+    GG::Control::PreRender();
     DoLayout();
 }
 
@@ -2381,7 +2398,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
     GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll, this);
-    DoLayout();
+    RequirePreRender();
 }
 
 SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
@@ -2482,7 +2499,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         GG::Connect(m_planet_panels.back()->LeftDoubleClickedSignal,    PlanetLeftDoubleClickedSignal);
         GG::Connect(m_planet_panels.back()->RightClickedSignal,         PlanetRightClickedSignal);
         GG::Connect(m_planet_panels.back()->BuildingRightClickedSignal, BuildingRightClickedSignal);
-        GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::DoPanelsLayout,       this);
+        GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::RequirePreRender,       this);
     }
 
     // disable non-selectable planet panels
@@ -2493,6 +2510,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     RefreshAllPlanetPanels();
 
     SelectPlanet(initial_selected_planet_panel);
+
+    RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
@@ -2534,7 +2553,14 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
         GG::Pt panel_ul(x, y);
         GG::Pt panel_lr(Width() - scroll_width, y + PANEL_HEIGHT);
         panel->SizeMove(panel_ul, panel_lr);
-        y += PANEL_HEIGHT + EDGE_PAD;
+
+        // Force planet panel container to render.  Since planet panel rendering
+        // is slow its absence is visible as a glitch.
+        GG::GUI::PreRenderWindow(panel);
+        y += panel->Height() + EDGE_PAD;
+
+        if (panel->Height() != PANEL_HEIGHT)
+            ErrorLogger() << "Panel height is " << panel->Height() << " not " << PANEL_HEIGHT << " as expected";
     }
 
     // hide scrollbar if all panels are visible and fit into the available height
@@ -2551,6 +2577,11 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     unsigned int page_size = Value(available_height);
     int scroll_max = Value(used_height);
     m_vscroll->SizeScroll(0, scroll_max, line_size, page_size);
+}
+
+void SidePanel::PlanetPanelContainer::PreRender() {
+    GG::Wnd::PreRender();
+    DoLayout();
 }
 
 void SidePanel::PlanetPanelContainer::DoLayout() {
@@ -2639,7 +2670,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
         pos_top -= extra;
     }
 
-    DoPanelsLayout();
+    RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
@@ -2648,7 +2679,7 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
 }
 
 void SidePanel::PlanetPanelContainer::ShowScrollbar()
-{ DoPanelsLayout(); }
+{ RequirePreRender(); }
 
 void SidePanel::PlanetPanelContainer::HideScrollbar()
 { DetachChild(m_vscroll); }
@@ -2659,7 +2690,7 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
     GG::Wnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/) {
@@ -2744,6 +2775,8 @@ SidePanel::SidePanel(const std::string& config_name) :
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));
 
+    s_needs_refresh = true;
+    s_needs_update  = true;
     RequirePreRender();
     Hide();
 
@@ -2846,29 +2879,37 @@ void SidePanel::InitBuffers() {
 }
 
 void SidePanel::PreRender() {
-    GG::Wnd::PreRender();
+    CUIWnd::PreRender();
+
+    // save initial scroll position so it can be restored after repopulating the planet panel container
+    const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
+
+    // save initial selected planet so it can be restored
+    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
-    if (s_needs_refresh) {
-        s_needs_refresh = false;
-        s_needs_update = false;
-
-        // Note: RefreshInPreRender() also calls DoLayout(), but it also stores and restores the
-        // scroll bar and planet selection.
+    if (s_needs_refresh)
         RefreshInPreRender();
-        return;
-    }
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
-        s_needs_update = false;
-
         for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
             (*it)->UpdateImpl();
     }
 
     // On a resize only DoLayout should be called.
     DoLayout();
+
+    if (s_needs_refresh || s_needs_update) {
+        // restore planet panel container scroll position from before clearing
+        m_planet_panel_container->ScrollTo(initial_scroll_pos);
+
+        // restore planet selection
+        m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
+    }
+
+    s_needs_refresh = false;
+    s_needs_update  = false;
 }
 
 void SidePanel::Update() {
@@ -2946,13 +2987,6 @@ void SidePanel::RefreshImpl() {
     ScopedTimer sidepanel_refresh_impl_timer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
 
-    // save initial scroll position so it can be restored after repopulating the planet panel container
-    const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
-
-    // save initial selected planet so it can be restored
-    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
-
-
     // clear out current contents
     m_planet_panel_container->Clear();
     m_system_name->Clear();
@@ -2969,33 +3003,30 @@ void SidePanel::RefreshImpl() {
 
 
     // populate droplist of system names
+    std::map<std::string, int> system_map; //alphabetize Systems here
+    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+         sys_it != Objects().const_end<System>(); ++sys_it)
     {
-        ScopedTimer droplist_population_timer("SidePanel::RefreshImpl droplist population", true);
-        std::map<std::string, int> system_map; //alphabetize Systems here
-        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-             sys_it != Objects().const_end<System>(); ++sys_it)
-        {
-            if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
-                system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
-        }
-        std::vector<GG::DropDownList::Row*> rows;
-        rows.reserve(system_map.size());
-        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
-        {
-            int sys_id = sys_it->second;
-            rows.push_back(new SystemRow(sys_id));
-        }
-        m_system_name->Insert(rows, false);
+        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
+            system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+    }
+    std::vector<GG::DropDownList::Row*> rows;
+    rows.reserve(system_map.size());
+    for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
+    {
+        int sys_id = sys_it->second;
+        rows.push_back(new SystemRow(sys_id));
+    }
+    m_system_name->Insert(rows, false);
 
-        // select in the list the currently-selected system
-        for (GG::DropDownList::iterator it = m_system_name->begin();
-             it != m_system_name->end(); ++it)
-        {
-            if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
-                if (s_system_id == row->SystemID()) {
-                    m_system_name->Select(it);
-                    break;
-                }
+    // select in the list the currently-selected system
+    for (GG::DropDownList::iterator it = m_system_name->begin();
+         it != m_system_name->end(); ++it)
+    {
+        if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+            if (s_system_id == row->SystemID()) {
+                m_system_name->Select(it);
+                break;
             }
         }
     }
@@ -3085,14 +3116,6 @@ void SidePanel::RefreshImpl() {
         AttachChild(m_system_resource_summary);
         m_system_resource_summary->Update();
     }
-
-    DoLayout();
-
-    // restore planet panel container scroll position from before clearing
-    m_planet_panel_container->ScrollTo(initial_scroll_pos);
-
-    // restore planet selection
-    m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
 }
 
 void SidePanel::DoLayout() {
@@ -3126,6 +3149,14 @@ void SidePanel::DoLayout() {
     ul = GG::Pt(BORDER_LEFT, PLANET_PANEL_TOP);
     lr = GG::Pt(ClientWidth() - 1, ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     m_planet_panel_container->SizeMove(ul, lr);
+
+    // Force system name, system summary and planet panel container to prerender
+    // immediately.  All three may have had data that affects layout, change
+    // after the PreRender() phase started, so they will not have been pre-rendered.  The
+    // SidePanel layout and rendering is slow enough that this appears as a visible glitch.
+    GG::GUI::PreRenderWindow(m_system_name);
+    GG::GUI::PreRenderWindow(m_system_resource_summary);
+    GG::GUI::PreRenderWindow(m_planet_panel_container);
 
     // hide scrollbar if there is no planets in the system
     TemporaryPtr<const System> system = GetSystem(s_system_id);

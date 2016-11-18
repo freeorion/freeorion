@@ -108,6 +108,11 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, ModalListPickerSelChangedEcho(*this));
+
+    if (m_relative_to_wnd)
+        m_lb_wnd->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
+
+    m_lb_wnd->Hide();
 }
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
@@ -117,6 +122,7 @@ void ModalListPicker::ModalInit()
 {
     if (m_relative_to_wnd)
         m_lb_wnd->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
+
     Show();
 }
 
@@ -154,7 +160,11 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, DropDownListSelChangedEcho(*this));
 
+    // InitBuffer here prevents a crash if DropDownList is constructed in
+    // the prerender phase.
     InitBuffer();
+
+    RequirePreRender();
 }
 
 DropDownList::~DropDownList() {
@@ -265,18 +275,38 @@ void DropDownList::InitBuffer()
 
 void DropDownList::PreRender()
 {
+    GG::Control::PreRender();
+
+    InitBuffer();
 
     // reset size of displayed drop list based on number of shown rows set.
     // assumes that all rows have the same height.
     // adds some magic padding for now to prevent the scroll bars showing up.
+
+    bool lb_visible = LB()->Visible();
+    if (!lb_visible)
+        LB()->Show();
+
+    LB()->MoveTo(Pt(Left(), Bottom()));
+
     Pt drop_down_size(ClientWidth(), ClientHeight());
-    if (LB()->NumRows() > 0)
-        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
 
-    LB()->Resize(drop_down_size);
-
-    if (LB()->Visible())
+    if (LB()->Empty()) {
+        LB()->Resize(drop_down_size);
+    } else {
+        // Resize the rows, once to pick up the correct height and a second
+        // time to use the height to size the drop down list
+        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
+        LB()->Resize(drop_down_size);
         GUI::GetGUI()->PreRenderWindow(LB());
+
+        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
+        LB()->Resize(drop_down_size);
+        GUI::GetGUI()->PreRenderWindow(LB());
+    }
+
+    if (!lb_visible)
+        LB()->Hide();
 }
 
 void DropDownList::Render()
@@ -346,9 +376,7 @@ void DropDownList::RenderDisplayedRow()
             GUI::GetGUI()->PreRenderWindow(LB());
             LB()->Hide();
         }
-
         current_item->Show();
-        GUI::GetGUI()->PreRenderWindow(current_item);
     }
 
     // Vertically center the selected row in the box.
@@ -356,11 +384,14 @@ void DropDownList::RenderDisplayedRow()
                        Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
     current_item->OffsetMove(offset);
 
+    GUI::GetGUI()->PreRenderWindow(current_item);
+
     BeginClipping();
     GUI::GetGUI()->RenderWindow(current_item);
     EndClipping();
 
     current_item->OffsetMove(-offset);
+
     if (!sel_visible)
         current_item->Hide();
 }
@@ -368,13 +399,13 @@ void DropDownList::RenderDisplayedRow()
 void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 {
     // adjust size to keep correct height based on row height, etc.
-    GG::Pt sz = Size();
+    GG::Pt old_ul = RelativeUpperLeft();
+    GG::Pt old_lr = RelativeLowerRight();
+
     Wnd::SizeMove(ul, lr);
 
-    if (sz != Size()) {
-        InitBuffer();
+    if ((old_ul != RelativeUpperLeft()) || (old_lr != RelativeLowerRight()))
         RequirePreRender();
-    }
 }
 
 void DropDownList::SetColor(Clr c)
@@ -385,6 +416,7 @@ DropDownList::iterator DropDownList::Insert(Row* row, iterator it, bool signal/*
     row->SetDragDropDataType("");
     DropDownList::iterator ret = LB()->Insert(row, it, signal);
     Resize(Size());
+    RequirePreRender();
     return ret;
 }
 
@@ -393,6 +425,7 @@ DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
     row->SetDragDropDataType("");
     DropDownList::iterator ret = LB()->Insert(row, signal);
     Resize(Size());
+    RequirePreRender();
     return ret;
 }
 
@@ -403,6 +436,7 @@ void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signa
     { (*rows_it)->SetDragDropDataType(""); }
     LB()->Insert(rows, it, signal);
     Resize(Size());
+    RequirePreRender();
 }
 
 void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
@@ -412,6 +446,7 @@ void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
     { (*rows_it)->SetDragDropDataType(""); }
     LB()->Insert(rows, signal);
     Resize(Size());
+    RequirePreRender();
 }
 
 DropDownList::Row* DropDownList::Erase(iterator it, bool signal/* = false*/)
