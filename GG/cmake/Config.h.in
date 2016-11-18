@@ -30,7 +30,6 @@
 #define _GG_Config_h_
 
 
-#define GG_HAVE_LIBJPEG @int_have_jpeg@
 #define GG_HAVE_LIBPNG @int_have_png@
 #define GG_HAVE_LIBTIFF @int_have_tiff@
 

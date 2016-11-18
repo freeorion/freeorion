@@ -76,17 +76,11 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesyst
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-set(int_have_jpeg 0)
 set(int_have_png 0)
 set(int_have_tiff 0)
-find_package(JPEG)
 find_package(PNG)
 find_package(TIFF)
 
-if (JPEG_FOUND)
-    include_directories(${JPEG_INCLUDE_DIR})
-    set(int_have_jpeg 1)
-endif ()
 if (PNG_FOUND)
     include_directories(${PNG_INCLUDE_DIR})
     set(int_have_png 1)

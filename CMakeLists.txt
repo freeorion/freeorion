@@ -418,7 +418,6 @@ if (WIN32)
         boost_system-vc90-mt-1_44.dll
         boost_thread-vc90-mt-1_44.dll
         glew32.dll
-        jpeg.dll
         libexpat.dll
         libogg.dll
         libpng13.dll

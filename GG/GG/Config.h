@@ -25,7 +25,6 @@
 #ifndef _GG_Config_h_
 #define _GG_Config_h_
 
-#define GG_HAVE_LIBJPEG 0
 #define GG_HAVE_LIBPNG 1
 #define GG_HAVE_LIBTIFF 0
 

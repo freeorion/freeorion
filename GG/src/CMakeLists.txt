@@ -2,9 +2,6 @@ message("-- Configuring GiGi")
 
 
 set(GiGi_LINK_LIBS ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES})
-if (JPEG_FOUND)
-    list(APPEND GiGi_LINK_LIBS ${JPEG_LIBRARIES})
-endif ()
 if (PNG_FOUND)
     list(APPEND GiGi_LINK_LIBS ${PNG_LIBRARIES})
 endif ()

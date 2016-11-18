@@ -38,9 +38,6 @@
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
 # pragma GCC diagnostic pop
 #endif
-#if GG_HAVE_LIBJPEG
-# include "GIL/extension/io/jpeg_dynamic_io.hpp"
-#endif
 #if GG_HAVE_LIBPNG
 # include "GIL/extension/io/png_dynamic_io.hpp"
 #endif
@@ -247,11 +244,6 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     try {
         // First attempt -- try just to read the file in one of the default
         // formats above.
-#if GG_HAVE_LIBJPEG
-        if (extension == ".jpg" || extension == ".jpe" || extension == ".jpeg")
-            gil::jpeg_read_image(filename, image);
-        else
-#endif
 #if GG_HAVE_LIBPNG
         if (extension == ".png")
             gil::png_read_image(path, image);
@@ -266,13 +258,6 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
     } catch (const std::ios_base::failure &) {
         // Second attempt -- If *_read_image() throws, see if we can convert
         // the image to RGBA.  This is needed for color-indexed images.
-#if GG_HAVE_LIBJPEG
-        if (extension == ".jpg" || extension == ".jpe" || extension == ".jpeg") {
-            gil::rgba8_image_t rgba_image;
-            gil::jpeg_read_and_convert_image(filename, rgba_image);
-            image.move_in(rgba_image);
-        }
-#endif
 #if GG_HAVE_LIBPNG
         if (extension == ".png") {
             gil::rgba8_image_t rgba_image;
