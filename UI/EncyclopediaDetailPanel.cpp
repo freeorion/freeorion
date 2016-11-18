@@ -75,7 +75,7 @@ namespace {
 
 namespace {
     /** Retreive a value label and general string representation for @a meter_type */
-    std::pair<std::string, std::string> MeterTypeName(const MeterType& meter_type) {
+    std::pair<std::string, std::string> MeterValueLabelAndString(const MeterType& meter_type) {
         std::pair<std::string, std::string> retval;
 
         retval.second = EnumToString(meter_type);
@@ -97,7 +97,7 @@ namespace {
                                          std::pair<std::string,
                                                    std::string> >& list)
     {
-        std::pair<std::string, std::string> meter_name = MeterTypeName(meter_type);
+        std::pair<std::string, std::string> meter_name = MeterValueLabelAndString(meter_type);
 
         if (meter_name.first.empty() || meter_name.second.empty())
             return;
@@ -2081,7 +2081,7 @@ namespace {
         texture = ClientUI::MeterIcon(meter_type);
         general_type = UserString("ENC_METER_TYPE");
 
-        std::pair<std::string, std::string> meter_name = MeterTypeName(meter_type);
+        std::pair<std::string, std::string> meter_name = MeterValueLabelAndString(meter_type);
 
         name = meter_name.first;
 
