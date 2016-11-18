@@ -2498,7 +2498,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         GG::Connect(m_planet_panels.back()->LeftDoubleClickedSignal,    PlanetLeftDoubleClickedSignal);
         GG::Connect(m_planet_panels.back()->RightClickedSignal,         PlanetRightClickedSignal);
         GG::Connect(m_planet_panels.back()->BuildingRightClickedSignal, BuildingRightClickedSignal);
-        GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::DoPanelsLayout,       this);
+        GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::RequirePreRender,       this);
     }
 
     // disable non-selectable planet panels
@@ -2509,6 +2509,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     RefreshAllPlanetPanels();
 
     SelectPlanet(initial_selected_planet_panel);
+
+    RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
@@ -2660,7 +2662,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
         pos_top -= extra;
     }
 
-    DoPanelsLayout();
+    RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
@@ -2669,7 +2671,7 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
 }
 
 void SidePanel::PlanetPanelContainer::ShowScrollbar()
-{ DoPanelsLayout(); }
+{ RequirePreRender(); }
 
 void SidePanel::PlanetPanelContainer::HideScrollbar()
 { DetachChild(m_vscroll); }
@@ -2680,7 +2682,7 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
     GG::Wnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
-        DoLayout();
+        RequirePreRender();
 }
 
 void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/) {
