@@ -899,19 +899,19 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // meter panels
     m_population_panel = new PopulationPanel(panel_width, m_planet_id);
     AttachChild(m_population_panel);
-    GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::RequirePreRender, this);
 
     m_resource_panel = new ResourcePanel(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
-    GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::RequirePreRender, this);
 
     m_military_panel = new MilitaryPanel(panel_width, m_planet_id);
     AttachChild(m_military_panel);
-    GG::Connect(m_military_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_military_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::RequirePreRender, this);
 
     m_buildings_panel = new BuildingsPanel(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
-    GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::RequirePreRender, this);
     GG::Connect(m_buildings_panel->BuildingRightClickedSignal,  BuildingRightClickedSignal);
 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
@@ -934,6 +934,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     SetChildClippingMode(ClipToWindow);
 
     Refresh();
+
+    RequirePreRender();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel() {
@@ -1469,7 +1471,7 @@ void SidePanel::PlanetPanel::Refresh() {
         DetachChild(m_specials_panel);
         delete m_specials_panel;        m_specials_panel = 0;
 
-        DoLayout();
+        RequirePreRender();
         return;
     }
 
@@ -2395,7 +2397,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
     GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll, this);
-    DoLayout();
+    RequirePreRender();
 }
 
 SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
