@@ -36,6 +36,7 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
+#include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -2552,7 +2553,14 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
         GG::Pt panel_ul(x, y);
         GG::Pt panel_lr(Width() - scroll_width, y + PANEL_HEIGHT);
         panel->SizeMove(panel_ul, panel_lr);
-        y += PANEL_HEIGHT + EDGE_PAD;
+
+        // Force planet panel container to render.  Since planet panel rendering
+        // is slow its absence is visible as a glitch.
+        GG::GUI::PreRenderWindow(panel);
+        y += panel->Height() + EDGE_PAD;
+
+        if (panel->Height() != PANEL_HEIGHT)
+            ErrorLogger() << "Panel height is " << panel->Height() << " not " << PANEL_HEIGHT << " as expected";
     }
 
     // hide scrollbar if all panels are visible and fit into the available height
