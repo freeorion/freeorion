@@ -173,7 +173,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                 sys_id = status['sysID']
                 if not list(universe.getSystem(sys_id).planetIDs):
                     continue
-                system_dict[sys_id] = system_dict.get(sys_id, 0) + status.get('rating', {}).get('overall', 0)
+                system_dict[sys_id] = system_dict.get(sys_id, 0) + status.get('rating', 0)
         ranked_systems = sorted([(val, sys_id) for sys_id, val in system_dict.items()])
         if ranked_systems:
             capital_sys_id = ranked_systems[-1][-1]
