@@ -154,7 +154,11 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, DropDownListSelChangedEcho(*this));
 
+    // InitBuffer here prevents a crash if DropDownList is constructed in
+    // the prerender phase.
     InitBuffer();
+
+    RequirePreRender();
 }
 
 DropDownList::~DropDownList() {
@@ -267,6 +271,8 @@ void DropDownList::PreRender()
 {
     GG::Control::PreRender();
 
+    InitBuffer();
+
     // reset size of displayed drop list based on number of shown rows set.
     // assumes that all rows have the same height.
     // adds some magic padding for now to prevent the scroll bars showing up.
@@ -373,7 +379,6 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
     Wnd::SizeMove(ul, lr);
 
     if (sz != Size()) {
-        InitBuffer();
         RequirePreRender();
     }
 }
