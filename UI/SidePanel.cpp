@@ -2879,6 +2879,12 @@ void SidePanel::InitBuffers() {
 void SidePanel::PreRender() {
     CUIWnd::PreRender();
 
+    // save initial scroll position so it can be restored after repopulating the planet panel container
+    const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
+
+    // save initial selected planet so it can be restored
+    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
+
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
         RefreshInPreRender();
@@ -2891,6 +2897,15 @@ void SidePanel::PreRender() {
 
     // On a resize only DoLayout should be called.
     DoLayout();
+
+    if (s_needs_refresh || s_needs_update) {
+        // restore planet panel container scroll position from before clearing
+        m_planet_panel_container->ScrollTo(initial_scroll_pos);
+
+        // restore planet selection
+        m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
+    }
+
     s_needs_refresh = false;
     s_needs_update  = false;
 }
@@ -2969,13 +2984,6 @@ void SidePanel::RefreshInPreRender() {
 void SidePanel::RefreshImpl() {
     ScopedTimer sidepanel_refresh_impl_timer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
-
-    // save initial scroll position so it can be restored after repopulating the planet panel container
-    const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
-
-    // save initial selected planet so it can be restored
-    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
-
 
     // clear out current contents
     m_planet_panel_container->Clear();
@@ -3106,14 +3114,6 @@ void SidePanel::RefreshImpl() {
         AttachChild(m_system_resource_summary);
         m_system_resource_summary->Update();
     }
-
-    DoLayout();
-
-    // restore planet panel container scroll position from before clearing
-    m_planet_panel_container->ScrollTo(initial_scroll_pos);
-
-    // restore planet selection
-    m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
 }
 
 void SidePanel::DoLayout() {
