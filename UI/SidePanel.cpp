@@ -2775,6 +2775,8 @@ SidePanel::SidePanel(const std::string& config_name) :
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));
 
+    s_needs_refresh = true;
+    s_needs_update  = true;
     RequirePreRender();
     Hide();
 
