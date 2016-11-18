@@ -572,6 +572,7 @@ public:
     void            SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
     void            ScrollTo(int pos);
 
+    virtual void    PreRender();
     void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
 
     virtual void    ShowScrollbar();
@@ -2564,6 +2565,11 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     unsigned int page_size = Value(available_height);
     int scroll_max = Value(used_height);
     m_vscroll->SizeScroll(0, scroll_max, line_size, page_size);
+}
+
+void SidePanel::PlanetPanelContainer::PreRender() {
+    GG::Wnd::PreRender();
+    DoLayout();
 }
 
 void SidePanel::PlanetPanelContainer::DoLayout() {
