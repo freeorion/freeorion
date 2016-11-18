@@ -370,9 +370,7 @@ void DropDownList::RenderDisplayedRow()
             GUI::GetGUI()->PreRenderWindow(LB());
             LB()->Hide();
         }
-
         current_item->Show();
-        GUI::GetGUI()->PreRenderWindow(current_item);
     }
 
     // Vertically center the selected row in the box.
@@ -380,11 +378,14 @@ void DropDownList::RenderDisplayedRow()
                        Top() + Height() / 2 - (current_item->Top() + current_item->Height() / 2));
     current_item->OffsetMove(offset);
 
+    GUI::GetGUI()->PreRenderWindow(current_item);
+
     BeginClipping();
     GUI::GetGUI()->RenderWindow(current_item);
     EndClipping();
 
     current_item->OffsetMove(-offset);
+
     if (!sel_visible)
         current_item->Hide();
 }
