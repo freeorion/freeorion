@@ -721,27 +721,40 @@ namespace {
     class SystemRow : public GG::ListBox::Row {
     public:
         SystemRow(int system_id) :
-            GG::ListBox::Row(),
+            GG::ListBox::Row(GG::X1, GG::Y(SystemNameFontSize()), "SystemRow"),
             m_system_id(system_id),
             m_initialized(false)
-        {
-            RequirePreRender();
-            SetDragDropDataType("SystemRow");
-        }
+        { RequirePreRender(); }
 
         virtual void Init() {
             m_initialized = true;
             OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
             push_back(name);
-            GG::ListBox::Row::Resize(name->Size());
-            GetLayout()->SetChildAlignment(name, GG::ALIGN_VCENTER | GG::ALIGN_CENTER);
-            GetLayout()->PreRender();
+
+            SetColAlignment(0, GG::ALIGN_CENTER);
         }
 
         virtual void PreRender() {
             if (!m_initialized)
                 Init();
-            GG::ListBox::Row::PreRender();
+
+            // Lock the row to the size of its drop box.
+            if (Parent())
+                SetColWidth(0, Parent()->ClientWidth());
+            GetLayout()->PreRender();
+        }
+
+        /** Lock the system row size to the size of the drop down list box. This makes sure that
+            the row is the correct width with the name centered  when the dropdown list steals the
+            selected row for rendering.*/
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            GG::Pt adjusted_lr(GG::X(Parent() ? ul.x + Parent()->ClientWidth() : lr.x), lr.y);
+            GG::Pt target_size(adjusted_lr - ul);
+            if ((ul == RelativeUpperLeft()) && (adjusted_lr == RelativeLowerRight()))
+                return;
+
+            GG::Wnd::SizeMove(ul, adjusted_lr);
+            RequirePreRender();
         }
 
         int SystemID() const { return m_system_id; }
