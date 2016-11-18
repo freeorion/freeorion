@@ -3150,6 +3150,14 @@ void SidePanel::DoLayout() {
     lr = GG::Pt(ClientWidth() - 1, ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     m_planet_panel_container->SizeMove(ul, lr);
 
+    // Force system name, system summary and planet panel container to prerender
+    // immediately.  All three may have had data that affects layout, change
+    // after the PreRender() phase started, so they will not have been pre-rendered.  The
+    // SidePanel layout and rendering is slow enough that this appears as a visible glitch.
+    GG::GUI::PreRenderWindow(m_system_name);
+    GG::GUI::PreRenderWindow(m_system_resource_summary);
+    GG::GUI::PreRenderWindow(m_planet_panel_container);
+
     // hide scrollbar if there is no planets in the system
     TemporaryPtr<const System> system = GetSystem(s_system_id);
     if (system) {
