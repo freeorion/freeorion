@@ -2880,26 +2880,19 @@ void SidePanel::PreRender() {
     CUIWnd::PreRender();
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
-    if (s_needs_refresh) {
-        s_needs_refresh = false;
-        s_needs_update = false;
-
-        // Note: RefreshInPreRender() also calls DoLayout(), but it also stores and restores the
-        // scroll bar and planet selection.
+    if (s_needs_refresh)
         RefreshInPreRender();
-        return;
-    }
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
-        s_needs_update = false;
-
         for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
             (*it)->UpdateImpl();
     }
 
     // On a resize only DoLayout should be called.
     DoLayout();
+    s_needs_refresh = false;
+    s_needs_update  = false;
 }
 
 void SidePanel::Update() {
