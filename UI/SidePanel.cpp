@@ -2969,33 +2969,30 @@ void SidePanel::RefreshImpl() {
 
 
     // populate droplist of system names
+    std::map<std::string, int> system_map; //alphabetize Systems here
+    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+         sys_it != Objects().const_end<System>(); ++sys_it)
     {
-        ScopedTimer droplist_population_timer("SidePanel::RefreshImpl droplist population", true);
-        std::map<std::string, int> system_map; //alphabetize Systems here
-        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-             sys_it != Objects().const_end<System>(); ++sys_it)
-        {
-            if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
-                system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
-        }
-        std::vector<GG::DropDownList::Row*> rows;
-        rows.reserve(system_map.size());
-        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
-        {
-            int sys_id = sys_it->second;
-            rows.push_back(new SystemRow(sys_id));
-        }
-        m_system_name->Insert(rows, false);
+        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
+            system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+    }
+    std::vector<GG::DropDownList::Row*> rows;
+    rows.reserve(system_map.size());
+    for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
+    {
+        int sys_id = sys_it->second;
+        rows.push_back(new SystemRow(sys_id));
+    }
+    m_system_name->Insert(rows, false);
 
-        // select in the list the currently-selected system
-        for (GG::DropDownList::iterator it = m_system_name->begin();
-             it != m_system_name->end(); ++it)
-        {
-            if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
-                if (s_system_id == row->SystemID()) {
-                    m_system_name->Select(it);
-                    break;
-                }
+    // select in the list the currently-selected system
+    for (GG::DropDownList::iterator it = m_system_name->begin();
+         it != m_system_name->end(); ++it)
+    {
+        if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+            if (s_system_id == row->SystemID()) {
+                m_system_name->Select(it);
+                break;
             }
         }
     }
