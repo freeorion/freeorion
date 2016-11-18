@@ -265,6 +265,7 @@ void DropDownList::InitBuffer()
 
 void DropDownList::PreRender()
 {
+    GG::Control::PreRender();
 
     // reset size of displayed drop list based on number of shown rows set.
     // assumes that all rows have the same height.

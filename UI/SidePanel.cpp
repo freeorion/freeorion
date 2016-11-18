@@ -2034,7 +2034,7 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG
 { ForwardEventToParent(); }
 
 void SidePanel::PlanetPanel::PreRender() {
-    GG::Wnd::PreRender();
+    GG::Control::PreRender();
     DoLayout();
 }
 
@@ -2846,7 +2846,7 @@ void SidePanel::InitBuffers() {
 }
 
 void SidePanel::PreRender() {
-    GG::Wnd::PreRender();
+    CUIWnd::PreRender();
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh) {
