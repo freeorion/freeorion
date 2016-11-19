@@ -60,7 +60,8 @@ public:
 
     DropDownList::iterator CurrentItem();
 
-    /** Select \p it  in m_lb_wnd is not none and return the new selected or none if no change.*/
+    /** If \p it is not none then select \p it in the LB().  Return the newly selected iterator or none if
+        the selection did not change.*/
     boost::optional<DropDownList::iterator> Select(boost::optional<DropDownList::iterator> it);
 
     /** Call SelChangedSignal if \p it is not none. */
