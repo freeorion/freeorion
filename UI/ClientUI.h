@@ -73,6 +73,7 @@ public:
 
     bool    ZoomToShipDesign(int design_id);                           //!< Opens the design screen and presents a description of the given ship design
     bool    ZoomToEmpire(int empire_id);                               //!< Opens the ??? screen and presents a description of the given empire
+    bool    ZoomToMeterTypeArticle(const std::string& meter_string);   //!< Opens the encyclopedia and presents the entry for MeterType @a meter_type
 
     bool    ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia window and presents the entry for the given term
 

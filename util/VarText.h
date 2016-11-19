@@ -73,6 +73,7 @@ public:
     static const std::string SHIP_PART_TAG;
     static const std::string SPECIES_TAG;
     static const std::string FIELD_TYPE_TAG;
+    static const std::string METER_TYPE_TAG;
 
 protected:
     /** Combines the template with the variables contained in object to

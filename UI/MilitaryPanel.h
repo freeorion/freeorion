@@ -26,6 +26,8 @@ public:
     /** expands or collapses panel to show details or just summary info */
     void ExpandCollapse(bool expanded);
 
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event);
+
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
     void Update();
     /** updates, redoes layout, resizes indicator */

@@ -129,6 +129,22 @@ namespace {
         return WithTags(empire->Name(), tag, data);
     }
 
+    std::string MeterTypeString(const std::string& data, const std::string& tag, bool& valid) {
+        std::string retval = UserString("ERROR");
+        // validate data
+        MeterType meter_type = INVALID_METER_TYPE;
+        std::istringstream data_ss(data);
+        data_ss >> meter_type;
+
+        if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES) {
+            retval = EnumToString(meter_type);
+            if (UserStringExists(retval))
+                retval = WithTags(UserString(retval), tag, retval);
+        }
+
+        return retval;
+    }
+
     /// Interprets value of data as a name.
     /// Returns translation of name, if Get says
     /// that a thing by that name exists, otherwise ERROR.
@@ -162,6 +178,7 @@ namespace {
         subs[VarText::SPECIAL_TAG] = NameString<Special, GetSpecial>;
         subs[VarText::SPECIES_TAG] = NameString<Species, GetSpecies>;
         subs[VarText::FIELD_TYPE_TAG] = NameString<FieldType, GetFieldType>;
+        subs[VarText::METER_TYPE_TAG] = MeterTypeString;
         subs[VarText::DESIGN_ID_TAG] = ShipDesignString;
         subs[VarText::PREDEFINED_DESIGN_TAG] = PredefinedShipDesignString;
         subs[VarText::EMPIRE_ID_TAG] = EmpireString;
@@ -268,6 +285,7 @@ const std::string VarText::SHIP_HULL_TAG = "shiphull";
 const std::string VarText::SHIP_PART_TAG = "shippart";
 const std::string VarText::SPECIES_TAG = "species";
 const std::string VarText::FIELD_TYPE_TAG = "fieldtype";
+const std::string VarText::METER_TYPE_TAG = "metertype";
 
 
 VarText::VarText() :

@@ -181,7 +181,7 @@ EffectsGroup
 //     activation = Source
 //     effects =
 //         GenerateSitRepMessage
-//             message = "There are defenseless natives at %planet%!  Go invade them with <encyclopedia TROOP_TITLE>Troops</encyclopedia>!"
+//             message = "There are defenseless natives at %planet%!  Go invade them with [[metertype METER_TROOPS]]!"
 //             label = "Custom_4"
 //             NoStringtableLookup
 //             icon = "icons/meter/troops.png"

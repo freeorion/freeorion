@@ -1,6 +1,0 @@
-Article
-    name = "STEALTH_TITLE"
-    category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "METER_ARTICLE_SHORT_DESC"
-    description = "STEALTH_TEXT"
-    icon = "icons/meter/stealth.png"

@@ -55,6 +55,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     std::vector<std::pair<MeterType, MeterType> > meters;
 
     for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        it->second->InstallEventFilter(this);
         AttachChild(it->second);
         meters.push_back(std::make_pair(it->first, AssociatedMeterType(it->first)));
     }
@@ -62,8 +63,6 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     // attach and show meter bars and large resource indicators
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
-
-    m_meter_stats[0].second->InstallEventFilter(this);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_popcenter_id);
@@ -95,28 +94,60 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         return false;
     const GG::Pt& pt = event.Point();
 
-    TemporaryPtr<const PopCenter> pc = GetPopCenter();
-    if (!pc)
+    MeterType meter_type = INVALID_METER_TYPE;
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator stat_it = m_meter_stats.begin();
+         stat_it != m_meter_stats.end(); ++stat_it)
+    {
+        if ((*stat_it).second == w) {
+            meter_type = (*stat_it).first;
+            break;
+        }
+    }
+    if (meter_type == INVALID_METER_TYPE)
         return false;
 
-    const std::string& species_name = pc->SpeciesName();
-    if (species_name.empty())
-        return false;
-
-    if (m_meter_stats[0].second != w)
-        return false;
+    std::string meter_string = EnumToString(meter_type);
+    std::string meter_title;
+    if (UserStringExists(meter_string))
+        meter_title = UserString(meter_string);
 
     GG::MenuItem menu_contents;
+    std::string species_name;
 
-    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
+    TemporaryPtr<const PopCenter> pc = GetPopCenter();
+    if (meter_type == METER_POPULATION && pc) {
+        species_name = pc->SpeciesName();
+        if (!species_name.empty()) {
+            std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
+            menu_contents.next_level.push_back(GG::MenuItem(species_label, 1, false, false));
+        }
+    }
+
+    if (!meter_title.empty()) {
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
+        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
+    }
+
     CUIPopupMenu popup(pt.x, pt.y, menu_contents);
 
-    if (!popup.Run() || popup.MenuID() != 1)
-        return false;
+    bool retval = false;
 
-    ClientUI::GetClientUI()->ZoomToSpecies(species_name);
-    return true;
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+            case 1: {
+                retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name);
+                break;
+            }
+            case 2: {
+                retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    return retval;
 }
 
 void PopulationPanel::Update() {

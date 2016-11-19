@@ -208,7 +208,7 @@ SD_TROOP_SHIP
 Nave Truppa
 
 SD_TROOP_SHIP_DESC
-Trasporta una brigata di terra [[encyclopedia TROOP_TITLE]] ed attrezzature che possono essere utilizzate per invadere un pianeta.
+Trasporta una brigata di terra [[metertype METER_TROOPS]] ed attrezzature che possono essere utilizzate per invadere un pianeta.
 
 SD_DRAGON_TOOTH_DESC
 Progetto antico di nave con armi avanzate e sistemi difensivi.
@@ -2043,9 +2043,9 @@ Parti: %3%
 
 Totale Danni Attacco: %17%
 Strutture: %8%
-[[encyclopedia SHIELDS_TITLE]]: %9%
-[[encyclopedia DETECTION_RANGE_TITLE]]: %10%
-[[encyclopedia STEALTH_TITLE]]: %11%
+[[metertype METER_SHIELD]]: %9%
+[[metertype METER_DETECTION]]: %10%
+[[metertype METER_STEALTH]]: %11%
 Capacità Carburante: %14%
 Capacità Colonizzazione: %15%
 Truppe: %16%
@@ -2126,17 +2126,110 @@ Popolazione
 ## Encyclopedia articles
 ##
 
+METER_INDUSTRY_VALUE_LABEL
+Industria
+
+METER_INDUSTRY_VALUE_DESC
+'''L'industria rappresenta la produzione e la modifica di beni fisici. È necessaria per la produzione di edifici, navi spaziali e altri progetti.
+
+L'industria di un pianeta può essere utilizzato per qualsiasi progetto di produzione di [[enciclopedia SUPPLY_TITLE]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
+
+Ogni progetto ha un numero minimo di turni necessari per essere costruito. Per esempio, se un progetto che è costato 15 PP, e ha avuto un tempo minimo di 3 giri, 5 PPS è il massimo che potrebbe essere messo verso il suo completamento per turno.
+Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rimanenti vengono poi dato al progetto successivo in coda, e se vi è ancora più attuale dalla prossima - e così via. È possibile modificare la priorità gli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
+'''
+
+METER_RESEARCH_VALUE_LABEL
+Ricerca
+
+METER_RESEARCH_VALUE_DESC
+'''La ricerca (o PR "Punti Ricerca") di tutti i pianeti dell'impero è combinata per la scoperta di nuove tecnologie. Qualsiasi punto ricerca che non possa essere speso per ricercare una tecnologia è perso ad ogni turno. Ogni tecnologia ha un numero minimo di turni richiesto per essere ricercato. Per esempio, se una tecnologia che costa 15 PR e riechiede un tempo minimo di 3 turni, 5 PR è il massimo per turno che può essere assegnato il suo completamento.
+Alla tecnologia in cima alla coda è assegnata la priorità di ricerca con il massimo numero di PR consentito.  Ogni PR restante è poi fornito alla prossima tecnologia in coda, stessa cosa dicasi per la tecnologia successiva - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
+
+La ricerca non richiede la connessione di linee[[metertype METER_SUPPLY]] per essere utilizzata.'''
+
+METER_TRADE_VALUE_LABEL
+Commercio
+
+METER_CONSTRUCTION_VALUE_LABEL
+Infrastrutture
+
+METER_CONSTRUCTION_VALUE_DESC
+Il termine infrastruttura si riferisce a strutture tecniche che supportano un pianeta colonizzato: servizi di energia, trasporti, telecomunicazioni e sociali per i cittadini.
+
+METER_HAPPINESS_VALUE_LABEL
+Felicità
+
+METER_HAPPINESS_VALUE_DESC
+La felicità non svolge ancora nessuna funzione.
+
+METER_FUEL_VALUE_LABEL
+Carburante
+
+METER_SHIELD_VALUE_LABEL
+Scudi
+
+METER_SHIELD_VALUE_DESC
+'''Il termine scudi combina tutti i tipi di campi di forza protettivi. Vengono rigenerati ad ogni turno e solitamente sono le prime protezioni che gli attacchi in arrivo devono superare. Ci sono due tipi distinti di scudi che funzionano in modo molto diverso: scudi nave e scudi barriera planetari.
+
+ Scudi nave: Riducono il danno sostenuto da ciascun colpo tramite la resistenza agli attacchi della parte di scudo. Un'arma può penetrare uno scudo solo se il valore del suo danno è superiore alla resistenza dello scudo.
+
+Scudi barriera planetari: Funzionano come una sorta di armatura planetaria. La loro forza è ridotta ad ogni colpo fino a quando non si esauriscono del tutto, ulteriori colpi potranno finalmente riuscire a superare le difese e danneggiare le strutture planetarie. Gli scudi barriera planetari rigenerano la loro forza ogni turno di un certo valore.
+
+Sia le navi spaziali che pianeti hanno un misuratore di Scudi.'''
+
+METER_DEFENSE_VALUE_LABEL
+Difesa
+
+METER_DEFENSE_VALUE_DESC
+Il misuratore difesa di un pianeta rappresenta il potere delle armi installate dalla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.
+
+METER_SUPPLY_VALUE_LABEL
+Rifornimenti
+
+METER_TROOPS_VALUE_LABEL
+Truppe
+
+METER_TROOPS_VALUE_DESC
+'''Il termine Truppe combina tutti i tipi di forze militari in grado di operare sulla superficie dei pianeti.
+
+Il misuratore delle truppe su un pianeta rappresenta il potere delle forze di terra che lo difendono. La forza d'invasione deve inviare una forza più potente (cioè un numero complessivamente superiore) per conquistare un pianeta.'''
+
+METER_DETECTION_VALUE_LABEL
+Raggio di Rilevamento
+
+METER_DETECTION_VALUE_DESC
+'''Il Raggio di Rilevamento rappresenta il numero di uu che isensori possono raggiungere. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua [[encyclopedia DETECTION_TITLE]] e si trova nel Raggio di Rilevamento controllato da una nave spaziale o pianeta.
+
+Navi spaziali e pianeti hanno un misuratore di Raggio di Rilevamento. C'è l'opzione per visualizzare i cerchi del Raggio di Rilevamento nella sezione Mappa Galassia del menu Opzioni.'''
+
+METER_STEALTH_VALUE_LABEL
+Occultamento
+
+METER_STEALTH_VALUE_DESC
+'''Il termine Occultamento rappresenta la capacità di un oggetto di non essere rilevato da tutti i tipi di sensori. Solo gli imperi con un'alta [[encyclopedia DETECTION_TITLE]] di o uguale al valore di occultamento dell'oggetto che si vuole rilevare.
+
+Navi spaziali, strutture, speciali, sistemi e pianeti hanno un misuratore di Occultamento.'''
+
+METER_DETECTION_STRENGTH_VALUE_LABEL
+Forza di Rlevamento
+
+METER_DETECTION_STRENGTH_VALUE_DESC
+'''Il termine Forza di Rilevamento rappresenta il livello tecnologico dei sensori di un impero. Un impero può vedere solo gli oggetti che hanno un valore di [[metertype METER_STEALTH]] inferiore o uguale alla sua Forza di Rlevamento e sono all'interno di un [[metertype METER_DETECTION]] controllato da una nave spaziale o un pianeta.
+
+Gli imperi hanno un misuratore di Forza di Rlevamento.'''
+
+
 PEACE_TITLE
 Pace
 
 PEACE_TEXT
-La pace è lo stato diplomatico tra imperi in cui reciprocamente si impegnano a non attaccare le rispettive navi o pianeti, non ostacolare le rispettive linee di [[encyclopedia SUPPLY_TITLE]], e di non ostacolare la colonizzazione.
+La pace è lo stato diplomatico tra imperi in cui reciprocamente si impegnano a non attaccare le rispettive navi o pianeti, non ostacolare le rispettive linee di [[metertype METER_SUPPLY]], e di non ostacolare la colonizzazione.
 
 OUTPOSTS_TITLE
 Avamposti
 
 OUTPOSTS_TEXT
-Gli avamposti sono stazioni non presidiate che possono essere fondati in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[encyclopedia SUPPLY_TITLE]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.
+Gli avamposti sono stazioni non presidiate che possono essere fondati in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[metertype METER_SUPPLY]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.
 
 GROWTH_FOCUS_TITLE
 Focus sulla Crescita
@@ -2154,90 +2247,7 @@ PROTECTION_FOCUS_TITLE
 Focus sulla Protezione
 
 PROTECTION_FOCUS_TEXT
-Il focus sulla protezione rappresenta un pianeta interamente dedicato sulla sua difesa.  [[encyclopedia TROOP_TITLE]], [[encyclopedia DEFENSE_TITLE]] planetaria e [[encyclopedia SHIELDS_TITLE]] planetari sono raddoppiati.
-
-INDUSTRY_TITLE
-Industria
-
-INDUSTRY_TEXT
-'''L'industria rappresenta la produzione e la modifica di beni fisici. È necessaria per la produzione di edifici, navi spaziali e altri progetti.
-
-L'industria di un pianeta può essere utilizzato per qualsiasi progetto di produzione di [[enciclopedia SUPPLY_TITLE]] linea pianeti collegati. La produzione di qualunque industria non in funzione viene sprecata ad ogni turno.
-
-Ogni progetto ha un numero minimo di turni necessari per essere costruito. Per esempio, se un progetto che è costato 15 PP, e ha avuto un tempo minimo di 3 giri, 5 PPS è il massimo che potrebbe essere messo verso il suo completamento per turno.
-Il progetto nella parte superiore della coda è dato PP prima. Qualunque PP rimanenti vengono poi dato al progetto successivo in coda, e se vi è ancora più attuale dalla prossima - e così via. È possibile modificare la priorità gli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
-'''
-
-RESEARCH_TITLE
-Ricerca
-
-RESEARCH_TEXT
-'''La ricerca (o PR "Punti Ricerca") di tutti i pianeti dell'impero è combinata per la scoperta di nuove tecnologie. Qualsiasi punto ricerca che non possa essere speso per ricercare una tecnologia è perso ad ogni turno. Ogni tecnologia ha un numero minimo di turni richiesto per essere ricercato. Per esempio, se una tecnologia che costa 15 PR e riechiede un tempo minimo di 3 turni, 5 PR è il massimo per turno che può essere assegnato il suo completamento.
-Alla tecnologia in cima alla coda è assegnata la priorità di ricerca con il massimo numero di PR consentito.  Ogni PR restante è poi fornito alla prossima tecnologia in coda, stessa cosa dicasi per la tecnologia successiva - e così via. È possibile modificare la priorità degli elementi della coda trascinando gli elementi più importanti più vicino alla cima.
-
-La ricerca non richiede la connessione di linee[[encyclopedia SUPPLY_TITLE]] per essere utilizzata.'''
-
-HAPPINESS_TITLE
-Felicità
-
-HAPPINESS_TEXT
-La felicità non svolge ancora nessuna funzione.
-
-INFRASTRUCTURE_TITLE
-Infrastrutture
-
-INFRASTRUCTURE_TEXT
-Il termine infrastruttura si riferisce a strutture tecniche che supportano un pianeta colonizzato: servizi di energia, trasporti, telecomunicazioni e sociali per i cittadini.
-
-DEFENSE_TITLE
-Difesa
-
-DEFENSE_TEXT
-Il misuratore difesa di un pianeta rappresenta il potere delle armi installate dalla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.
-
-SHIELDS_TITLE
-Scudi
-
-SHIELDS_TEXT
-'''Il termine scudi combina tutti i tipi di campi di forza protettivi. Vengono rigenerati ad ogni turno e solitamente sono le prime protezioni che gli attacchi in arrivo devono superare. Ci sono due tipi distinti di scudi che funzionano in modo molto diverso: scudi nave e scudi barriera planetari.
-
- Scudi nave: Riducono il danno sostenuto da ciascun colpo tramite la resistenza agli attacchi della parte di scudo. Un'arma può penetrare uno scudo solo se il valore del suo danno è superiore alla resistenza dello scudo.
-
-Scudi barriera planetari: Funzionano come una sorta di armatura planetaria. La loro forza è ridotta ad ogni colpo fino a quando non si esauriscono del tutto, ulteriori colpi potranno finalmente riuscire a superare le difese e danneggiare le strutture planetarie. Gli scudi barriera planetari rigenerano la loro forza ogni turno di un certo valore.
-
-Sia le navi spaziali che pianeti hanno un misuratore di Scudi.'''
-
-STEALTH_TITLE
-Occultamento
-
-STEALTH_TEXT
-'''Il termine Occultamento rappresenta la capacità di un oggetto di non essere rilevato da tutti i tipi di sensori. Solo gli imperi con un'alta [[encyclopedia DETECTION_TITLE]] di o uguale al valore di occultamento dell'oggetto che si vuole rilevare.
-
-Navi spaziali, strutture, speciali, sistemi e pianeti hanno un misuratore di Occultamento.'''
-
-DETECTION_TITLE
-Forza di Rlevamento
-
-DETECTION_TEXT
-'''Il termine Forza di Rilevamento rappresenta il livello tecnologico dei sensori di un impero. Un impero può vedere solo gli oggetti che hanno un valore di [[encyclopedia STEALTH_TITLE]] inferiore o uguale alla sua Forza di Rlevamento e sono all'interno di un [[encyclopedia DETECTION_RANGE_TITLE]] controllato da una nave spaziale o un pianeta.
-
-Gli imperi hanno un misuratore di Forza di Rlevamento.'''
-
-DETECTION_RANGE_TITLE
-Raggio di Rilevamento
-
-DETECTION_RANGE_TEXT
-'''Il Raggio di Rilevamento rappresenta il numero di uu che isensori possono raggiungere. Un impero può vedere solo gli oggetti che hanno un valore di [[encyclopedia STEALTH_TITLE]] inferiore o uguale alla sua [[encyclopedia DETECTION_TITLE]] e si trova nel Raggio di Rilevamento controllato da una nave spaziale o pianeta.
-
-Navi spaziali e pianeti hanno un misuratore di Raggio di Rilevamento. C'è l'opzione per visualizzare i cerchi del Raggio di Rilevamento nella sezione Mappa Galassia del menu Opzioni.'''
-
-TROOP_TITLE
-Truppe
-
-TROOP_TEXT
-'''Il termine Truppe combina tutti i tipi di forze militari in grado di operare sulla superficie dei pianeti.
-
-Il misuratore delle truppe su un pianeta rappresenta il potere delle forze di terra che lo difendono. La forza d'invasione deve inviare una forza più potente (cioè un numero complessivamente superiore) per conquistare un pianeta.'''
+Il focus sulla protezione rappresenta un pianeta interamente dedicato sulla sua difesa.  [[metertype METER_TROOPS]], [[metertype METER_DEFENSE]] planetaria e [[metertype METER_SHIELD]] planetari sono raddoppiati.
 
 ORGANIC_SPECIES_TITLE
 Metabolismo Organico
@@ -2259,12 +2269,6 @@ Metabolismo Auto-Sostenibile
 
 TELEPATHIC_TITLE
 Telepatia
-
-FUEL_TITLE
-Carburante
-
-SUPPLY_TITLE
-Rifornimenti
 
 FLEET_UPKEEP_TITLE
 Mantenimento della Flotta
@@ -3175,7 +3179,7 @@ LRN_FORCE_FIELD
 Campi di forza Armonici
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10 and unlocks basic ship shielding technology. [[encyclopedia SHIELDS_TITLE]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
+'''Increases max [[metertype METER_SHIELD]] on all planets by 10 and unlocks basic ship shielding technology. [[metertype METER_SHIELD]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
 
 Come nell'analisi di Fourier del suono, l'elettromagnetisco e le forze nucleari forti e deboli, possono essere espresse come armoniche quantiche di onde che si sovrapposizionano alle particelle portatrici di forze. Selettivamente amplificando queste armoniche, le forze possono essere controllate arbitrariamente per proteggere, attaccare, contenere o sostenere qualsiasi struttura.'''
 
@@ -3257,7 +3261,7 @@ PRO_ROBOTIC_PROD
 Produzione Robotica
 
 PRO_ROBOTIC_PROD_DESC
-'''Incrementa l'obiettivo [[encyclopedia INDUSTRY_TITLE]] su tutti i pianeti con focus industriale di 0.1 per popolazione.
+'''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.1 per popolazione.
 
 Gli Exobots, come diventano comunemente conosciuti, sono una meraviglia della forma unita alla funzione. Sono robot progettati per soddisfare quasi qualsiasi lavoro produttivo, in campi di ampia portata come l'elettronica per la costruzione su larga scala. Prodotti facilmente in massa, se ne trae maggior beneficio sulle colonie che danno la priorità  all'industria. Ogni pieneta che si concentra principalmente sul quel settore riceve una squadra di Exobots, aumentando notevolmente la sua produzione industriale.
 
@@ -3273,7 +3277,7 @@ PRO_FUSION_GEN
 Generatore di Fusione
 
 PRO_FUSION_GEN_DESC
-'''Incrementa l'obiettivo [[encyclopedia INDUSTRY_TITLE]] su tutti i pianeti con focus industriale di 0.2 per popolazione.
+'''Incrementa l'obiettivo [[metertype METER_INDUSTRY]] su tutti i pianeti con focus industriale di 0.2 per popolazione.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -3289,7 +3293,7 @@ PRO_SENTIENT_AUTOMATION
 Automazione Intelligente
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] su tutti i pianeti di 5.
+'''Increases target [[metertype METER_INDUSTRY]] su tutti i pianeti di 5.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -3397,7 +3401,7 @@ CON_ORBITAL_CON
 Costruzione Orbitale
 
 CON_ORBITAL_CON_DESC
-'''Accresce il raggio delle [[encyclopedia SUPPLY_TITLE]] di tutte le colonie ed avamposti di 1.
+'''Accresce il raggio delle [[metertype METER_SUPPLY]] di tutte le colonie ed avamposti di 1.
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
@@ -3511,7 +3515,7 @@ DEF_ROOT_DEFENSE
 Difesa Personale
 
 DEF_ROOT_DEFENSE_DESC
-'''Incrementa il limite delle [[encyclopedia TROOP_TITLE]] su tutti i pianeti di 2.
+'''Incrementa il limite delle [[metertype METER_TROOPS]] su tutti i pianeti di 2.
 
 Il concetto di 'difesa personale' è alla base di molti percorsi di progresso tecnologico.'''
 
@@ -3519,28 +3523,28 @@ DEF_GARRISON_1
 Presidio Planetario 1
 
 DEF_GARRISON_1_DESC
-Incrementa il numero massimo delle [[encyclopedia TROOP_TITLE]] su tutti i pianeti di 5.
+Incrementa il numero massimo delle [[metertype METER_TROOPS]] su tutti i pianeti di 5.
 
 DEF_GARRISON_2
 Presidio Planetario 2
 
 DEF_GARRISON_2_DESC
-Incrementa il numero massimo delle [[encyclopedia TROOP_TITLE]] su tutti i pianeti di 10.
+Incrementa il numero massimo delle [[metertype METER_TROOPS]] su tutti i pianeti di 10.
 
 DEF_GARRISON_3
 Presidio Planetario 3
 
 DEF_GARRISON_3_DESC
-Incrementa il numero massimo delle [[encyclopedia TROOP_TITLE]] su tutti i pianeti di 15.
+Incrementa il numero massimo delle [[metertype METER_TROOPS]] su tutti i pianeti di 15.
 
 DEF_GARRISON_4
 Presidio Planetario 4
 
 DEF_GARRISON_4_DESC
-Incrementa il numero massimo delle [[encyclopedia TROOP_TITLE]] su tutti i pianeti di 20.
+Incrementa il numero massimo delle [[metertype METER_TROOPS]] su tutti i pianeti di 20.
 
 SHP_FLEET_REPAIR_DESC
-Allows ships within [[encyclopedia SUPPLY_TITLE]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
+Allows ships within [[metertype METER_SUPPLY]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
 SHP_ADV_DAM_CONT
 Controllo Avanzato dei Danni
@@ -3585,7 +3589,7 @@ SPY_DETECT_2
 Radar Attivo
 
 SPY_DETECT_2_DESC
-'''Sblocca il componente per nave Radar Attivo e la struttura impianto di scansione, incrementa il [[encyclopedia DETECTION_RANGE_TITLE]] di tutti i pianeti a 75, ed incrementa la [[encyclopedia DETECTION_TITLE]] a 30.
+'''Sblocca il componente per nave Radar Attivo e la struttura impianto di scansione, incrementa il [[metertype METER_DETECTION]] di tutti i pianeti a 75, ed incrementa la [[encyclopedia DETECTION_TITLE]] a 30.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -3602,7 +3606,7 @@ SPY_STEALTH_1
 Smorzatore Elettromagnetico
 
 SPY_STEALTH_1_DESC
-Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
+Unlocks the Electromagnetic Damper ship part and increases the [[metertype METER_STEALTH]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
 
 SPY_STEALTH_2
 Campo di Assorbimento
@@ -3657,7 +3661,7 @@ BLD_SCANNING_FACILITY
 Impianto di Scansione
 
 BLD_SCANNING_FACILITY_DESC
-'''Incrementa la [[encyclopedia DETECTION_RANGE_TITLE]] del pianeta di 75.
+'''Incrementa la [[metertype METER_DETECTION]] del pianeta di 75.
 
 A combination of long-range scanning devices and great computing power to analyze the data allows a larger area of space to be scanned for any objects.'''
 
