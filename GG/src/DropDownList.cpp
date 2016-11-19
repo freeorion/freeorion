@@ -92,7 +92,7 @@ private:
 
     ListBox*    m_lb_wnd;
     const Wnd*  m_relative_to_wnd;
-    bool m_dropped;  ///< Is the drop down list open.
+    bool        m_dropped;  ///< Is the drop down list open.
 };
 
 namespace {
