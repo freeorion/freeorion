@@ -921,7 +921,7 @@ class ShipDesigner(object):
                     self.fighter_capacity = 0
                     self.fighter_damage = 0
                 else:
-                    self.fighter_capacity += capacity
+                    self.fighter_capacity += self._calculate_hangar_capacity(part)
                     self.fighter_damage = self._calculate_hangar_damage(part)
 
         self._apply_hardcoded_effects()
@@ -1532,61 +1532,56 @@ class ShipDesigner(object):
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
         # base damage
         weapon_name = weapon_part.name
-        base_damage = weapon_part.capacity
-
-        # tech modifiers
-        try:
-            upgrades = AIDependencies.WEAPON_UPGRADE_DICT[weapon_name]
-        except KeyError:
-            if weapon_name not in _raised_warnings:
-                _raised_warnings.add(weapon_name)
-                print_error(("WARNING: Encountered unknown weapon (%s): "
-                             "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                             "Please update AIDependencies.py and "
-                             "add the weapon with its upgrade techs to WEAPON_UPGRADE_DICT") % weapon_name,
-                            location="ShipDesignAI._calculate_weapon_strength()", trace=True)
-            return base_damage
-        total_tech_bonus = 0
-        for tech, dmg_bonus in upgrades:
-            total_tech_bonus += dmg_bonus if tech_is_complete(tech) else 0
-            # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
+        base = weapon_part.capacity
+        tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_UPGRADE_DICT, weapon_name)
         # species modifiers
         if not ignore_species:
             weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
             species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
-        return base_damage + total_tech_bonus + species_modifier
+        return base + tech_bonus + species_modifier
 
     def _calculate_weapon_shots(self, weapon_part, ignore_species=False):
         weapon_name = weapon_part.name
-        base_shots = weapon_part.secondaryStat
-        if not base_shots:
+        base = weapon_part.secondaryStat
+        if not base:
             print "WARNING: Queried weapon %s for number of shots but didn't return any." % weapon_name
-            base_shots = 1
+            base = 1
+        tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_ROF_UPGRADE_DICT, weapon_name)
         # species modifier
         if not ignore_species:
             weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
             species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
-
-        # tech modifier
-        tech_modifier = 0  # none implemented yet
-        return base_shots + species_modifier + tech_modifier
+        return base + species_modifier + tech_bonus
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
         hangar_name = hangar_part.name
-        base_damage = hangar_part.secondaryStat
+        base = hangar_part.secondaryStat
+        tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_DAMAGE_UPGRADE_DICT, hangar_name)
         # species modifier
         if not ignore_species:
             weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
-            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(hangar_name, 0)
+            species_modifier = AIDependencies.PILOT_FIGHTERDAMAGE_MODIFIER_DICT.get(weapons_grade,
+                                                                                    {}).get(hangar_name, 0)
         else:
             species_modifier = 0
-        # tech modifier
-        tech_modifier = 0
-        return base_damage + species_modifier + tech_modifier
+        return base + species_modifier + tech_bonus
+
+    def _calculate_hangar_capacity(self, hangar_part, ignore_species=False):
+        hangar_name = hangar_part.name
+        base = hangar_part.capacity
+        tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_CAPACITY_UPGRADE_DICT, hangar_name)
+        # species modifier
+        if not ignore_species:
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            species_modifier = AIDependencies.PILOT_FIGHTER_CAPACITY_MODIFIER_DICT.get(weapons_grade,
+                                                                                       {}).get(hangar_name, 0)
+        else:
+            species_modifier = 0
+        return base + species_modifier + tech_bonus
 
 
 class WarShipDesigner(ShipDesigner):
@@ -2349,3 +2344,21 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
                 dict_diff[key] = copy.deepcopy(value)
                 min_diff_level = 0
     return min_diff_level
+
+
+def _get_tech_bonus(upgrade_dict, part_name):
+    try:
+        upgrades = upgrade_dict[part_name]
+    except KeyError:
+        if part_name not in _raised_warnings:
+            _raised_warnings.add(part_name)
+            print_error(("WARNING: Encountered unknown part (%s): "
+                         "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
+                         "Please update AIDependencies.py") % part_name,
+                        location="ShipDesignAI._get_tech_bonus()", trace=True)
+        return 0
+    total_tech_bonus = 0
+    for tech, bonus in upgrades:
+        total_tech_bonus += bonus if tech_is_complete(tech) else 0
+        # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
+    return total_tech_bonus
