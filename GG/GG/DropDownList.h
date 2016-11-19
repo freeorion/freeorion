@@ -64,6 +64,9 @@ public:
     /** emitted when a new item is selected; will be end() when no item is
       * selected */
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
+
+    /** Signal \a true when drop down opens and false when it closes.*/
+    typedef boost::signals2::signal<void (bool)>       DropDownOpenedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -91,6 +94,7 @@ public:
     Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
 
     Y               DropHeight() const; ///< returns the height of the drop-down list
+    bool            Dropped() const;                ///< Return true if the drop down list is open.
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */
     Flags<ListBoxStyle> Style() const;
@@ -115,6 +119,8 @@ public:
     virtual GG::X  DisplayedRowWidth() const;
 
     mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
+
+    DropDownOpenedSignalType DropDownOpenedSignal;
     //@}
 
     /** \name Mutators */ ///@{
@@ -206,7 +212,6 @@ protected:
     //@}
 
 private:
-    void            SelectImpl(iterator it, bool signal);
     const ListBox*  LB() const;
 
     ModalListPicker*    m_modal_picker;

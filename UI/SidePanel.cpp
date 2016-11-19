@@ -522,6 +522,8 @@ private:
     void                    ClickBombard();                     ///< called if bombard button is pressed
 
     void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
+    /** Called when focus drop list opens/closes to inform that it now \p is_open. */
+    void                    FocusDropListOpened(bool is_open);
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
@@ -886,6 +888,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // focus-selection droplist
     m_focus_drop = new CUIDropDownList(6);
     AttachChild(m_focus_drop);
+    GG::Connect(m_focus_drop->DropDownOpenedSignal, &SidePanel::PlanetPanel::FocusDropListOpened,  this);
     GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
     GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -2336,7 +2339,20 @@ void SidePanel::PlanetPanel::ClickBombard() {
     }
 }
 
+void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
+    // Update when the focus drop closes.
+    if (is_open)
+        return;
+
+    FocusDropListSelectionChanged(m_focus_drop->CurrentItem());
+}
+
 void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
+    // Do not update the sidepanel while the focus drop is open.  Otherwise scrolling with the key
+    // press does not work because every up/down arrow press deletes and recreates the m_focus_drop.
+    if (m_focus_drop->Dropped())
+        return;
+
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator
     // parameter, does some safety checks, and disables UI sounds
