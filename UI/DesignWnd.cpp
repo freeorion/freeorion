@@ -1359,11 +1359,12 @@ BasesListBox::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
     m_graphic(0),
     m_name(0)
 {
+    SetChildClippingMode(ClipToClient);
     m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull),
                                       GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
     AttachChild(m_graphic);
-    m_name = new CUILabel(UserString(hull), GG::FORMAT_NOWRAP);
+    m_name = new CUILabel(UserString(hull), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
     AttachChild(m_name);
 }
 
@@ -1372,7 +1373,7 @@ void BasesListBox::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (m_graphic)
         m_graphic->Resize(Size());
     if (m_name)
-        m_name->Resize(GG::Pt(Width(), m_name->Height()));
+        m_name->Resize(Size());
 }
 
 BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const std::string& saved_design_name) :
@@ -1380,6 +1381,7 @@ BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const std::st
     m_graphic(0),
     m_name(0)
 {
+    SetChildClippingMode(ClipToClient);
     const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_name);
     if (design) {
         m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(design->Hull()),
@@ -1387,7 +1389,7 @@ BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const std::st
         m_graphic->Resize(GG::Pt(w, h));
         AttachChild(m_graphic);
 
-        m_name = new CUILabel(design->Name(), GG::FORMAT_NOWRAP);
+        m_name = new CUILabel(design->Name(), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
         AttachChild(m_name);
     }
 }
@@ -1397,7 +1399,7 @@ void BasesListBox::SavedDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr
     if (m_graphic)
         m_graphic->Resize(Size());
     if (m_name)
-        m_name->Resize(GG::Pt(Width(), m_name->Height()));
+        m_name->Resize(Size());
 }
 
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :

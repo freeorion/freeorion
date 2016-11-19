@@ -12,11 +12,12 @@ ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     m_graphic(0),
     m_name(0)
 {
+    SetChildClippingMode(ClipToClient);
     if (const ShipDesign* design = GetShipDesign(m_design_id)) {
         m_graphic = new GG::StaticGraphic(ClientUI::ShipDesignIcon(design_id), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         m_graphic->Resize(GG::Pt(w, h));
         AttachChild(m_graphic);
-        m_name = new CUILabel(design->Name(), GG::FORMAT_NOWRAP);
+        m_name = new CUILabel(design->Name(), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
         m_name->SetTextColor(GG::CLR_WHITE);
         AttachChild(m_name);
     }
@@ -27,7 +28,7 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (m_graphic)
         m_graphic->Resize(Size());
     if (m_name)
-        m_name->Resize(GG::Pt(Width(), m_name->Height()));
+        m_name->Resize(Size());
 }
 
 void ShipDesignPanel::Render()
