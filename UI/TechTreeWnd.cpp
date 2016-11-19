@@ -1908,7 +1908,8 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_tech_tree_controls(0),
     m_enc_detail_panel(0),
     m_layout_panel(0),
-    m_tech_list(0)
+    m_tech_list(0),
+    m_initially_hide_tree(initially_hidden)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -1959,10 +1960,10 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     // connect view type selector
     GG::Connect(m_tech_tree_controls->m_view_type_button->CheckedSignal, &TechTreeWnd::ToggleViewType, this);
 
-    //TechTreeWnd in typically constructed before theUI client has
+    //TechTreeWnd in typically constructed before the UI client has
     //accesss to the technologies so showing these categories takes a
     //long time and generates errors, but is never seen by the user.
-    if (!initially_hidden) {
+    if (!m_initially_hide_tree) {
         ShowAllCategories();
         ShowStatus(TS_RESEARCHABLE);
         ShowStatus(TS_HAS_RESEARCHED_PREREQ);
@@ -2024,6 +2025,22 @@ void TechTreeWnd::InitializeWindows() {
 
     m_enc_detail_panel->InitSizeMove(pedia_ul,  pedia_ul + pedia_wh);
     m_tech_tree_controls->InitSizeMove(controls_ul,  controls_ul + controls_wh);
+}
+
+void TechTreeWnd::Show(bool children) {
+    GG::Wnd::Show(children);
+
+    // When Show() is called for TechTree the ClientUI should now have
+    // access to the technologies so that parsing does not generate
+    // errors.
+    if (m_initially_hide_tree) {
+        m_initially_hide_tree = false;
+        ShowAllCategories();
+        ShowStatus(TS_RESEARCHABLE);
+        ShowStatus(TS_HAS_RESEARCHED_PREREQ);
+        ShowStatus(TS_COMPLETE);
+        // leave unresearchable hidden by default
+    }
 }
 
 void TechTreeWnd::ShowCategory(const std::string& category) {

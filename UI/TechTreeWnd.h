@@ -41,6 +41,7 @@ public:
     void            Reset();
     void            SetScale(double scale);
 
+    virtual void    Show(bool children = true);
     void            ShowCategory(const std::string& category);
     void            ShowAllCategories();
     void            HideCategory(const std::string& category);
@@ -87,6 +88,7 @@ private:
     EncyclopediaDetailPanel*    m_enc_detail_panel;
     LayoutPanel*                m_layout_panel;
     TechListBox*                m_tech_list;
+    bool                        m_initially_hide_tree;
 };
 
 #endif // _TechTreeWnd_h_
