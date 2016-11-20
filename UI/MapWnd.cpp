@@ -4006,24 +4006,15 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
 
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
-        //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
-        TemporaryPtr<System> system = GetSystem(fleet->SystemID());
-
-        // create fleetwnd to show fleet to be selected (actual selection occurs below).
-        if (system) {
-            fleet_wnd = manager.NewFleetWnd(system->ID(), fleet->Owner());
-        } else {
-            // get all (moving) fleets represented by fleet button for this fleet
-            boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
-            if (it == m_fleet_buttons.end()) {
-                ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
-                return;
-            }
-            const std::vector<int>& wnd_fleet_ids = it->second->Fleets();
-            // create new fleetwnd in which to show selected fleet
-            fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids);
+        // get all (moving) fleets represented by fleet button for this fleet
+        boost::unordered_map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
+        if (it == m_fleet_buttons.end()) {
+            ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
+            return;
         }
-
+        const std::vector<int>& wnd_fleet_ids = it->second->Fleets();
+        // create new fleetwnd in which to show selected fleet
+        fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids);
 
         // opened a new FleetWnd, so play sound
         FleetButton::PlayFleetButtonOpenSound();

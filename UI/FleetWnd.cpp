@@ -27,6 +27,8 @@
 #include <GG/Enum.h>
 
 #include <boost/cast.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 
 namespace {
@@ -526,29 +528,6 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
     m_fleet_wnds.insert(retval);
     GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,   this);
     GG::Connect(retval->ClickedSignal,              &FleetUIManager::FleetWndClicked,   this);
-    GG::Connect(retval->FleetRightClickedSignal,    FleetRightClickedSignal);
-    GG::Connect(retval->ShipRightClickedSignal,     ShipRightClickedSignal);
-
-    GG::GUI::GetGUI()->Register(retval);
-
-    return retval;
-}
-
-FleetWnd* FleetUIManager::NewFleetWnd(int system_id, int empire_id,
-                                      int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
-{
-    std::string config_name = "";
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
-        CloseAll();
-        // Only write to OptionsDB if in single fleet window mode.
-        config_name = FLEET_WND_NAME;
-    }
-    FleetWnd* retval = new FleetWnd(system_id, empire_id, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
-
-    m_fleet_wnds.insert(retval);
-    GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,           this);
-    GG::Connect(retval->ClickedSignal,              &FleetUIManager::FleetWndClicked,           this);
     GG::Connect(retval->FleetRightClickedSignal,    FleetRightClickedSignal);
     GG::Connect(retval->ShipRightClickedSignal,     ShipRightClickedSignal);
 
@@ -2840,7 +2819,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
          GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
          const std::string& config_name) :
-    MapWndPopup("", flags, config_name),
+    MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
@@ -2850,25 +2829,15 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_fleet_detail_panel(0),
     m_stat_icons()
 {
+    if (!fleet_ids.empty()) {
+        if (TemporaryPtr<const Fleet> fleet = GetFleet(*fleet_ids.begin()))
+            m_empire_id = fleet->Owner();
+    }
+
     for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
         m_fleet_ids.insert(*it);
     Init(selected_fleet_id);
 }
-
-FleetWnd::FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
-         int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
-         const std::string& config_name) :
-    MapWndPopup("", flags | GG::RESIZABLE, config_name),
-    m_fleet_ids(),
-    m_empire_id(empire_id),
-    m_system_id(system_id),
-    m_order_issuing_enabled(order_issuing_enabled),
-    m_fleets_lb(0),
-    m_new_fleet_drop_target(0),
-    m_fleet_detail_panel(0),
-    m_stat_icons()
-{ Init(selected_fleet_id); }
 
 FleetWnd::~FleetWnd() {
     ClientUI::GetClientUI()->GetMapWnd()->ClearProjectedFleetMovementLines();
@@ -2967,8 +2936,6 @@ void FleetWnd::Init(int selected_fleet_id) {
 
     RefreshStateChangedSignals();
 
-    SetName(TitleText());
-
     // verify that the selected fleet id is valid.
     if (selected_fleet_id != INVALID_OBJECT_ID &&
         m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
@@ -3012,7 +2979,7 @@ void FleetWnd::SetStatIconValues() {
     {
         TemporaryPtr<const Fleet> fleet = *fleet_it;
 
-        if ( !(m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) )
+        if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
             continue;
 
         std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
@@ -3077,22 +3044,93 @@ void FleetWnd::Refresh() {
     std::set<int> initially_selected_ships = this->SelectedShipIDs();
 
     // remove existing fleet rows
-    m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
     std::set<int> initial_fleet_ids = m_fleet_ids;
     m_fleet_ids.clear();
 
-    // skip nonexistant systems
-    if (m_system_id != INVALID_OBJECT_ID && (
-        this_client_known_destroyed_objects.find(m_system_id) != this_client_known_destroyed_objects.end() ||
-        this_client_stale_object_info.find(m_system_id) != this_client_stale_object_info.end()))
-    {
-        m_system_connection.disconnect();
-        m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
-        return;
+    boost::unordered_multimap<std::pair<int, GG::Pt>, int> fleet_locations_ids;
+    boost::unordered_multimap<std::pair<int, GG::Pt>, int> selected_fleet_locations_ids;
+
+    // Check all fleets in initial_fleet_ids and keep those that exist.
+    boost::unordered_set<int> fleets_that_exist;
+    for (std::set<int>::const_iterator it = initial_fleet_ids.begin(); it != initial_fleet_ids.end(); ++it) {
+        int fleet_id = *it;
+
+        // skip known destroyed and stale info objects
+        if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
+            continue;
+        if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
+            continue;
+
+        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+        if (!fleet)
+            continue;
+
+        fleets_that_exist.insert(fleet_id);
+        fleet_locations_ids.insert(
+            std::make_pair(std::make_pair(fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))),
+                           fleet_id));
+
     }
 
-    // repopulate m_fleet_ids according to FleetWnd settings
+    // Filter initially selected fleets according to existing fleets
+    for (std::set<int>::const_iterator it = initially_selected_fleets.begin();
+         it != initially_selected_fleets.end(); ++it)
+    {
+        int fleet_id =  *it;
+        if (!fleets_that_exist.count(fleet_id))
+            continue;
+
+        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+        if (!fleet)
+            continue;
+
+        selected_fleet_locations_ids.insert(
+            std::make_pair(std::make_pair(fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))),
+                           fleet_id));
+    }
+
+    // Determine FleetWnd location.
+
+    // Are all fleets in one location?  Use that location.
+    // Otherwise, are all selected fleets in one location?  Use that location.
+    // Otherwise, is the current location a system?  Use that location.
+    // Otherwise remove all fleets as all fleets have gone in separate directions.
+
+    std::pair<int, GG::Pt> location(std::make_pair(INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)));
+    if (!fleet_locations_ids.empty()
+        && (fleet_locations_ids.count(fleet_locations_ids.begin()->first) == fleet_locations_ids.size()))
+    {
+        location = fleet_locations_ids.begin()->first;
+
+    } else if (!selected_fleet_locations_ids.empty()
+             && (selected_fleet_locations_ids.count(selected_fleet_locations_ids.begin()->first)
+                 == selected_fleet_locations_ids.size()))
+    {
+        location = selected_fleet_locations_ids.begin()->first;
+
+    } else if (TemporaryPtr<System> system = GetSystem(m_system_id))
+        location = std::make_pair(m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y())));
+
+    else {
+        fleet_locations_ids.clear();
+        selected_fleet_locations_ids.clear();
+    }
+
+    // Use fleets that are at the determined location
+    boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator fleets_at_location_begin, fleets_at_location_end;
+    boost::tie(fleets_at_location_begin, fleets_at_location_end) = fleet_locations_ids.equal_range(location);
+
+    for (boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator it = fleets_at_location_begin;
+         it != fleets_at_location_end; ++it)
+    {
+        m_fleet_ids.insert(it->second);
+    }
+
+    m_system_id = location.first;
+
+    // If the location is a system add in any ships from m_empire_id that are in the system.
     if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
+        m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
         const ObjectMap& objects = Objects();
         std::vector<TemporaryPtr<const Fleet> > system_fleets = objects.FindObjects<Fleet>(system->FleetIDs());
@@ -3107,37 +3145,28 @@ void FleetWnd::Refresh() {
                 this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
             { continue; }
 
-            if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
+            if ( ((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id) )
                 m_fleet_ids.insert(fleet_id);
-                AddFleet(fleet_id);
-            }
-        }
-    } else {
-        // check all fleets whose IDs are in initial_fleet_ids, adding back those that still exist
-        for (std::set<int>::const_iterator it = initial_fleet_ids.begin(); it != initial_fleet_ids.end(); ++it) {
-            int fleet_id = *it;
-
-            // skip known destroyed and stale info objects
-            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
-                continue;
-            if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
-                continue;
-
-            if (GetFleet(fleet_id)) {
-                m_fleet_ids.insert(fleet_id);
-                AddFleet(fleet_id);
-            }
         }
     }
 
-    // filter initially selected fleets according to present fleets
+    // Add rows for the known good fleet_ids.
+    m_fleets_lb->Clear();
+    for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it)
+        AddFleet(*it);
+
+    // Use selected fleets that are at the determined location
     std::set<int> still_present_initially_selected_fleets;
-    for (std::set<int>::const_iterator it = initially_selected_fleets.begin();
-         it != initially_selected_fleets.end(); ++it)
+
+    boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator
+        selected_fleets_at_location_begin, selected_fleets_at_location_end;
+    boost::tie(selected_fleets_at_location_begin, selected_fleets_at_location_end) =
+        selected_fleet_locations_ids.equal_range(location);
+
+    for (boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator it = selected_fleets_at_location_begin;
+         it != selected_fleets_at_location_end; ++it)
     {
-        int fleet_id =  *it;
-        if (m_fleet_ids.find(fleet_id) != m_fleet_ids.end())
-            still_present_initially_selected_fleets.insert(fleet_id);
+        still_present_initially_selected_fleets.insert(it->second);
     }
 
     if (!still_present_initially_selected_fleets.empty()) {
@@ -3154,6 +3183,8 @@ void FleetWnd::Refresh() {
             this->SetSelectedFleets(fleet_id_set);
         }
     }
+
+    SetName(TitleText());
 
     SetStatIconValues();
 
@@ -3757,6 +3788,21 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
     return INVALID_OBJECT_ID;
 }
 
+namespace {
+    std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id) {
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
+        if (!fleet)
+            return "";
+
+        int nearest_system_id(GetUniverse().NearestSystemTo(fleet->X(), fleet->Y()));
+        if (TemporaryPtr<const System> system = GetSystem(nearest_system_id)) {
+            const std::string& sys_name = system->ApparentName(client_empire_id);
+            return sys_name;
+        }
+        return "";
+    }
+}
+
 std::string FleetWnd::TitleText() const {
     // if no fleets available, default to indicating no fleets
     if (m_fleet_ids.empty())
@@ -3766,24 +3812,30 @@ std::string FleetWnd::TitleText() const {
 
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
-    if (const Empire* empire = GetEmpire(m_empire_id)) {
-        if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
-            const std::string& sys_name = system->ApparentName(client_empire_id);
-            return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
-                                  empire->Name() % sys_name);
-        } else {
-            return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS")) %
-                                  empire->Name());
-        }
-    } else {
-        if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
-            const std::string& sys_name = system->ApparentName(client_empire_id);
-            return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
-                                  sys_name);
-        } else {
-            return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS")));
-        }
+    const Empire* empire = GetEmpire(m_empire_id);
+
+    if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
+        const std::string& sys_name = system->ApparentName(client_empire_id);
+        return (empire
+                ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
+                                 empire->Name() % sys_name)
+                : boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
+                                 sys_name));
     }
+
+    const std::string sys_name = SystemNameNearestToFleet(client_empire_id, *m_fleet_ids.begin());
+    if (!sys_name.empty()) {
+        return (empire
+                ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_NEAR_SYSTEM")) %
+                                 empire->Name() % sys_name)
+                : boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_NEAR_SYSTEM")) %
+                                 sys_name));
+    }
+
+    return (empire
+            ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS")) %
+                             empire->Name())
+            : boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS"))));
 }
 
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {

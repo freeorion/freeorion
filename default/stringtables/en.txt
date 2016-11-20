@@ -3101,6 +3101,11 @@ FW_NEW_FLEET_LABEL
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Fleets At %2%
 
+# %1% empire, which owns the fleets.
+# %2% system where those fleets hold.
+FW_EMPIRE_FLEETS_NEAR_SYSTEM
+%1% Fleets Near %2%
+
 # Fleet window title
 # %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
@@ -3114,6 +3119,11 @@ No Fleet
 # %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Fleets At %1%
+
+# Fleet window title
+# %1% system where those fleets hold.
+FW_GENERIC_FLEETS_NEAR_SYSTEM
+Fleets Near %1%
 
 # Fleet window title
 FW_GENERIC_FLEETS
