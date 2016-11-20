@@ -3259,12 +3259,8 @@ void SidePanel::FleetStateChanged()
 int SidePanel::SystemID()
 { return s_system_id; }
 
-int SidePanel::SelectedPlanetID() const {
-    if (m_planet_panel_container)
-        return m_planet_panel_container->SelectedPlanetID();
-    else
-        return INVALID_OBJECT_ID;
-}
+int SidePanel::SelectedPlanetID() const
+{ return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
 
 bool SidePanel::PlanetSelectable(int planet_id) const {
     if (!m_selection_enabled)
