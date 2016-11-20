@@ -3332,6 +3332,13 @@ void SidePanel::SelectPlanetImpl(int planet_id) {
 void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
+
+    TemporaryPtr<const System> system = GetSystem(system_id);
+    if (!system) {
+        s_system_id = INVALID_OBJECT_ID;
+        return;
+    }
+
     s_system_id = system_id;
 
     if (GetSystem(s_system_id))
