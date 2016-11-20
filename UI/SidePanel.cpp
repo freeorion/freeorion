@@ -2783,7 +2783,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChanged, this);
     GG::Connect(m_button_prev->LeftClickedSignal,                        &SidePanel::PrevButtonClicked,      this);
     GG::Connect(m_button_next->LeftClickedSignal,                        &SidePanel::NextButtonClicked,      this);
-    GG::Connect(m_planet_panel_container->PlanetSelectedSignal,          &SidePanel::PlanetSelected,         this);
+    GG::Connect(m_planet_panel_container->PlanetSelectedSignal,          &SidePanel::PlanetSelectedSlot,     this);
     GG::Connect(m_planet_panel_container->PlanetLeftDoubleClickedSignal, PlanetDoubleClickedSignal);
     GG::Connect(m_planet_panel_container->PlanetRightClickedSignal,      PlanetRightClickedSignal);
     GG::Connect(m_planet_panel_container->BuildingRightClickedSignal,    BuildingRightClickedSignal);
@@ -3222,10 +3222,9 @@ void SidePanel::NextButtonClicked() {
     SystemSelectionChanged(m_system_name->CurrentItem());
 }
 
-void SidePanel::PlanetSelected(int planet_id) {
-    //std::cout << "SidePanel::PlanetSelected(" << planet_id << ")" << std::endl;
-    if (SelectedPlanetID() != planet_id)
-        PlanetSelectedSignal(planet_id);
+void SidePanel::PlanetSelectedSlot(int planet_id) {
+    if (m_selection_enabled)
+        SelectPlanet(planet_id);
 }
 
 void SidePanel::FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets) {
