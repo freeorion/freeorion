@@ -22,7 +22,9 @@ public:
     /** \name Structors */ //@{
     /** TechTreeWnd contructor is usually called before client has
         access to techs.  Attempting to show the tech tree takes a long
-        time and generates errors.*/
+        time and generates errors.  If \p initially_hidden is true then the
+        tech categories are not parsed until the first time Show() is
+        called, speeding up the constructor and preventing spurious errors.*/
     TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden = true);
     ~TechTreeWnd();
     //@}
@@ -41,6 +43,7 @@ public:
     void            Reset();
     void            SetScale(double scale);
 
+    virtual void    Show(bool children = true);
     void            ShowCategory(const std::string& category);
     void            ShowAllCategories();
     void            HideCategory(const std::string& category);
@@ -87,6 +90,11 @@ private:
     EncyclopediaDetailPanel*    m_enc_detail_panel;
     LayoutPanel*                m_layout_panel;
     TechListBox*                m_tech_list;
+
+    /// If m_init_flag is true tech categories are not parsed until the
+    /// first time Show() is called.  TechTreeWnd is constructed before the
+    /// tech categories are available to be parsed.
+    bool                        m_init_flag;
 };
 
 #endif // _TechTreeWnd_h_
