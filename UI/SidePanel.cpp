@@ -2900,9 +2900,6 @@ void SidePanel::PreRender() {
     // save initial scroll position so it can be restored after repopulating the planet panel container
     const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
 
-    // save initial selected planet so it can be restored
-    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
-
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
         RefreshInPreRender();
@@ -2916,13 +2913,12 @@ void SidePanel::PreRender() {
     // On a resize only DoLayout should be called.
     DoLayout();
 
-    if (s_needs_refresh || s_needs_update) {
-        // restore planet panel container scroll position from before clearing
+    // restore planet panel container scroll position from before clearing
+    if (s_needs_refresh || s_needs_update)
         m_planet_panel_container->ScrollTo(initial_scroll_pos);
 
-        // restore planet selection
-        m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
-    }
+    // restore planet selection
+    m_planet_panel_container->SelectPlanet(s_planet_id);
 
     s_needs_refresh = false;
     s_needs_update  = false;
