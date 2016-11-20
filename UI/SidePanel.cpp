@@ -3310,14 +3310,9 @@ void SidePanel::SelectPlanet(int planet_id) {
     s_planet_id = planet_id;
 
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->SelectPlanetImpl(planet_id);
+        (*it)->RequirePreRender();
 
     PlanetSelectedSignal(s_planet_id);
-}
-
-void SidePanel::SelectPlanetImpl(int planet_id) {
-    //std::cout << "SidePanel::SelectPlanetImpl(" << planet_id << ")" << std::endl;
-    m_planet_panel_container->SelectPlanet(planet_id);
 }
 
 void SidePanel::SetSystem(int system_id) {

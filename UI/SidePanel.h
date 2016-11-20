@@ -112,7 +112,6 @@ private:
     void                RefreshInPreRender();
 
     void                RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
-    void                SelectPlanetImpl(int planet_id);///< sets selected planet in this sidepanel
 
     void                SystemSelectionChanged(GG::DropDownList::iterator it);  ///< responds to user selecting a system in the droplist.  may emit SystemSelectedSignal
 
