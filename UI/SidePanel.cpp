@@ -2721,6 +2721,7 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
 ////////////////////////////////////////////////
 // static(s)
 int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
+int                                        SidePanel::s_planet_id = INVALID_OBJECT_ID;
 bool                                       SidePanel::s_needs_update = false;
 bool                                       SidePanel::s_needs_refresh = false;
 std::set<SidePanel*>                       SidePanel::s_side_panels;
@@ -3299,8 +3300,29 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
 }
 
 void SidePanel::SelectPlanet(int planet_id) {
+    if (s_planet_id == planet_id)
+        return;
+
+    // Use the first sidepanel with selection enabled to determine if planet is selectable.
+    bool planet_selectable(false);
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it) {
+        if ((*it)->m_selection_enabled) {
+            planet_selectable = (*it)->PlanetSelectable(planet_id);
+            break;
+        }
+    }
+
+    s_planet_id = INVALID_OBJECT_ID;
+
+    if (!planet_selectable)
+        return;
+
+    s_planet_id = planet_id;
+
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->SelectPlanetImpl(planet_id);
+
+    PlanetSelectedSignal(s_planet_id);
 }
 
 void SidePanel::SelectPlanetImpl(int planet_id) {
