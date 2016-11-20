@@ -140,6 +140,25 @@ namespace {
         return dir_names;
     }
 
+    /** Find Encyclopedia article with given name
+     * @param[in] name name entry of the article
+     */
+    EncyclopediaArticle GetPediaArticle(const std::string& name) {
+        const std::map<std::string, std::vector<EncyclopediaArticle> >& articles = GetEncyclopedia().articles;
+        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it = articles.begin();
+             category_it != articles.end(); ++category_it)
+        {
+            for (std::vector<EncyclopediaArticle>::const_iterator article_it = category_it->second.begin();
+                 article_it != category_it->second.end(); ++article_it)
+            {
+                if (article_it->name == name) {
+                    return *article_it;
+                }
+            }
+        }
+        return EncyclopediaArticle("", "", "", "", "");
+    }
+
     /** Returns map from (Human-readable and thus sorted article category) to
         pair of (article link tag text, stringtable key for article category or
         subcategorization of it). Category is something like "ENC_TECH" and
@@ -223,6 +242,12 @@ namespace {
                  it = encyclopedia.articles.begin();
                  it != encyclopedia.articles.end(); ++it)
             {
+                // Do not add sub-categories
+                const EncyclopediaArticle& article = GetPediaArticle(it->first);
+                // No article found or specifically a top-level category
+                if (!(article.category.empty() || article.category == "ENC_INDEX"))
+                    continue;
+
                 sorted_entries_list.insert(std::make_pair(UserString(it->first),
                     std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, it->first) + "\n",
                                    it->first)));
@@ -534,25 +559,6 @@ namespace {
         { retval += it->second.first; }
 
         return retval;
-    }
-
-    /** Find Encyclopedia article with given name
-     * @param[in] name name entry of the article
-     */
-    EncyclopediaArticle GetPediaArticle(const std::string& name) {
-        const std::map<std::string, std::vector<EncyclopediaArticle> >& articles = GetEncyclopedia().articles;
-        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it = articles.begin();
-             category_it != articles.end(); ++category_it)
-        {
-            for (std::vector<EncyclopediaArticle>::const_iterator article_it = category_it->second.begin();
-                 article_it != category_it->second.end(); ++article_it)
-            {
-                if (article_it->name == name) {
-                    return *article_it;
-                }
-            }
-        }
-        return EncyclopediaArticle("", "", "", "", "");
     }
 }
 
@@ -1173,7 +1179,6 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color)
     {
-        detailed_description = PediaDirText(item_name);
         name = UserString(item_name);
 
         // special case for galaxy setup data: display info
@@ -1195,7 +1200,7 @@ namespace {
             return;
         }
 
-        // search for article in custom pedia entries. 
+        // search for article in custom pedia entries.
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
              category_it = encyclopedia.articles.begin();
@@ -1209,13 +1214,30 @@ namespace {
                     continue;
 
                 detailed_description = UserString(article_it->description);
-                general_type = UserString(article_it->category);
-                specific_type = UserString(article_it->short_description);
+
+                const std::string& article_cat = article_it->category;
+                if (!(article_cat == "ENC_INDEX" || article_cat.empty()))
+                    general_type = UserString(article_cat);
+
+                const std::string& article_brief = article_it->short_description;
+                if (!article_brief.empty())
+                    specific_type = UserString(article_brief);
+
                 texture = ClientUI::GetTexture(ClientUI::ArtDir() / article_it->icon, true);
 
-                return;
+                break;
             }
         }
+
+        // add listing of articles in this category
+        std::string dir_text = PediaDirText(item_name);
+        if (dir_text.empty())
+            return;
+
+        if (!detailed_description.empty())
+            detailed_description += "\n" + UserString("ENC_CATEGORY_HEADER") + "\n";
+
+        detailed_description += dir_text;
     }
 
     void RefreshDetailPanelShipPartTag(     const std::string& item_type, const std::string& item_name,
