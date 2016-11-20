@@ -117,7 +117,8 @@ private:
 
     void                PrevButtonClicked();            ///< responds to user clicking next system button
     void                NextButtonClicked();            ///< responts to user clicking previous system button
-    void                PlanetSelectedSlot(int planet_id);  ///< responds to user selection of a planet by emitting PlanetSelectedSignal
+    /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
+    void                PlanetClickedSlot(int planet_id);
 
     static void         FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets);    ///< responds to insertion fleets into system during a turn.  may update colonize buttons
     static void         FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);     ///< responds to removal fleets from system during a turn.  may update colonize buttons
