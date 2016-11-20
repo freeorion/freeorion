@@ -2473,7 +2473,6 @@ void SidePanel::PlanetPanelContainer::ScrollTo(int pos) {
 void SidePanel::PlanetPanelContainer::Clear() {
     m_planet_panels.clear();
     m_selected_planet_id = INVALID_OBJECT_ID;
-    PlanetSelectedSignal(m_selected_planet_id);
     DetachChild(m_vscroll);
     DeleteChildren();
     AttachChild(m_vscroll);
