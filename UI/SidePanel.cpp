@@ -3270,11 +3270,32 @@ int SidePanel::SelectedPlanetID() const {
         return INVALID_OBJECT_ID;
 }
 
-bool SidePanel::PlanetSelectable(int id) const {
-    if (!m_planet_panel_container)
+bool SidePanel::PlanetSelectable(int planet_id) const {
+    if (!m_selection_enabled)
         return false;
-    const std::set<int>& candidate_ids = m_planet_panel_container->SelectionCandidates();
-    return (candidate_ids.find(id) != candidate_ids.end());
+
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
+    if (!system)
+        return false;
+
+    const std::set<int>& planet_ids = system->PlanetIDs();
+    if (!planet_ids.count(planet_id))
+        return false;
+
+    TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
+    if (!planet)
+        return false;
+
+    // Find a selection visitor and apply it to planet
+    boost::shared_ptr<UniverseObjectVisitor> selectable_visitor;
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id != ALL_EMPIRES)
+        selectable_visitor = boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(empire_id));
+
+    if (!selectable_visitor)
+        return true;
+
+    return (planet->Accept(*selectable_visitor));
 }
 
 void SidePanel::SelectPlanet(int planet_id) {
