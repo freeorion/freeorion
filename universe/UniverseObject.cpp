@@ -290,10 +290,10 @@ void UniverseObject::AddMeter(MeterType meter_type) {
 }
 
 bool UniverseObject::Unowned() const
-{ return m_owner_empire_id == ALL_EMPIRES; }
+{ return Owner() == ALL_EMPIRES; }
 
 bool UniverseObject::OwnedBy(int empire) const
-{ return empire != ALL_EMPIRES && empire == m_owner_empire_id; }
+{ return empire != ALL_EMPIRES && empire == Owner(); }
 
 Visibility UniverseObject::GetVisibility(int empire_id) const
 { return GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id); }

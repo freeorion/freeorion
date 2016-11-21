@@ -124,7 +124,8 @@ private:
     static void         FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);     ///< responds to removal fleets from system during a turn.  may update colonize buttons
     static void         FleetStateChanged();            ///< responds to fleet state changes during a turn, which may include issueing or cancelling move orders.  may update colonize buttons
 
-    CUIDropDownList*            m_system_name;
+    class SystemNameDropDownList;
+    SystemNameDropDownList*     m_system_name;
     GG::TextControl*            m_star_type_text;
     GG::Button*                 m_button_prev;
     GG::Button*                 m_button_next;

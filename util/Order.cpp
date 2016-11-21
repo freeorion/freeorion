@@ -87,7 +87,9 @@ void RenameOrder::ExecuteImpl() const {
 
     // verify that empire specified in order owns specified object
     if (!obj->OwnedBy(EmpireID())) {
-        ErrorLogger() << "Empire specified in rename order does not own specified object.";
+        ErrorLogger() << "Empire (" << EmpireID()
+                      << ") specified in rename order does not own specified object which is owned by "
+                      << obj->Owner() << ".";
         return;
     }
 

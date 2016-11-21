@@ -320,6 +320,23 @@ bool System::HasWormholeTo(int id) const {
     return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
+int  System::Owner() const {
+    // Check if all of the owners are the same empire.
+    int first_owner_found(ALL_EMPIRES);
+    for (std::set<int>::const_iterator it = m_planets.begin(); it != m_planets.end(); ++it) {
+        if (TemporaryPtr<const Planet> planet = GetPlanet(*it)) {
+            const int owner(planet->Owner());
+            if (owner == ALL_EMPIRES)
+                continue;
+            if (first_owner_found == ALL_EMPIRES)
+                first_owner_found = owner;
+            if (first_owner_found != owner)
+                return ALL_EMPIRES;
+        }
+    }
+    return first_owner_found;
+}
+
 const std::set<int>& System::ContainedObjectIDs() const
 { return m_objects; }
 

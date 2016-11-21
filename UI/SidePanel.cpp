@@ -770,7 +770,64 @@ namespace {
         int m_system_id;
         bool m_initialized;
     };
+}
+/** A class to display all of the system names*/
+class SidePanel::SystemNameDropDownList : public CUIDropDownList {
+    public:
+    SystemNameDropDownList(size_t num_shown_elements) :
+        CUIDropDownList(num_shown_elements),
+        m_order_issuing_enabled(true)
+    { }
 
+    /** Enable/disable the ability to give orders that modify the system name.*/
+    void EnableOrderIssuing(bool enable = true)
+    { m_order_issuing_enabled = enable; }
+
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+        if (CurrentItem() == end())
+            return;
+
+        SystemRow* system_row(dynamic_cast<SystemRow*>(*CurrentItem()));
+        if (!system_row)
+            return;
+
+        TemporaryPtr<const System> system(GetSystem(system_row->SystemID()));
+        if (!system)
+            return;
+
+        GG::MenuItem menu_contents;
+        if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), 1, false, false));
+
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                            ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
+            case 1: // rename system
+                {
+                    const std::string& old_name(system->Name());
+                    CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
+                    edit_wnd.Run();
+                    const std::string& new_name(edit_wnd.Result());
+                    if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
+                        HumanClientApp::GetApp()->Orders().IssueOrder(
+                            OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name)));
+                        if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent()))
+                            side_panel->Refresh();
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    bool m_order_issuing_enabled;
+};
+
+namespace {
     const std::vector<boost::shared_ptr<GG::Texture> >& GetAsteroidTextures() {
         static std::vector<boost::shared_ptr<GG::Texture> > retval;
         if (retval.empty()) {
@@ -2760,7 +2817,7 @@ SidePanel::SidePanel(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));
 
-    m_system_name = new CUIDropDownList(6);
+    m_system_name = new SystemNameDropDownList(6);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
     m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
@@ -3302,6 +3359,7 @@ void SidePanel::SetSystem(int system_id) {
 void SidePanel::EnableSelection(bool enable/* = true*/)
 { m_selection_enabled = enable; }
 
-void SidePanel::EnableOrderIssuing(bool enable/* = true*/)
-{ m_planet_panel_container->EnableOrderIssuing(enable); }
-
+void SidePanel::EnableOrderIssuing(bool enable/* = true*/) {
+    m_system_name->EnableOrderIssuing(enable);
+    m_planet_panel_container->EnableOrderIssuing(enable);
+}

@@ -3015,6 +3015,12 @@ Unknown
 TT_SPECIES_POPULATION
 %1% [[METER_POPULATION]]
 
+SP_RENAME_SYSTEM
+Rename System
+
+SP_ENTER_NEW_SYSTEM_NAME
+Enter new system name
+
 SP_RENAME_PLANET
 Rename Planet
 
