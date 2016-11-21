@@ -67,7 +67,7 @@ void DeferredLayout::SetMinSize(const Pt& sz)
 
     m_ul_prerender = old_ul_prerender;
     m_lr_prerender = old_lr_prerender;
-    CorrectPositionOfSizeMove(m_ul_prerender, m_lr_prerender);
+    ClampRectWithMinAndMaxSize(m_ul_prerender, m_lr_prerender);
 }
 
 void DeferredLayout::SetMaxSize(const Pt& sz)
@@ -79,5 +79,5 @@ void DeferredLayout::SetMaxSize(const Pt& sz)
 
     m_ul_prerender = old_ul_prerender;
     m_lr_prerender = old_lr_prerender;
-    CorrectPositionOfSizeMove(m_ul_prerender, m_lr_prerender);
+    ClampRectWithMinAndMaxSize(m_ul_prerender, m_lr_prerender);
 }

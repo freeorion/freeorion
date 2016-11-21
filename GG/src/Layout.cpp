@@ -344,7 +344,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
     if (new_min_size != MinSize()) {
         ScopedAssign<bool> assignment(m_stop_resize_recursion, true);
         SetMinSize(new_min_size);
-        CorrectPositionOfSizeMove(ul, lr);
+        ClampRectWithMinAndMaxSize(ul, lr);
         size_or_min_size_changed = true;
     }
     Pt original_size = Size();
