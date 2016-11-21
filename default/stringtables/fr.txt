@@ -438,7 +438,7 @@ SD_ROBO_FLUX_SCOUT
 Éclaireur Flux
 
 SD_ROBO_FLUX_SCOUT_DESC
-Équipé d'une coque d'éclaireur rapide
+Éclaireur rapide doté de capacités furtives
 
 SD_ROBO_FLUX_TROOPS
 Transport Flux d'Infanterie
@@ -3015,6 +3015,12 @@ Inconnu
 TT_SPECIES_POPULATION  # translated
 %1% [[METER_POPULATION]]
 
+SP_RENAME_SYSTEM
+Renommer le système
+
+SP_ENTER_NEW_SYSTEM_NAME
+Entrer le nouveau nom du système
+
 SP_RENAME_PLANET
 Renommer la planète
 
@@ -3101,6 +3107,11 @@ FW_NEW_FLEET_LABEL
 FW_EMPIRE_FLEETS_AT_SYSTEM
 Flottes %1% dans %2%
 
+# %1% empire, which owns the fleets.
+# %2% system where those fleets hold.
+FW_EMPIRE_FLEETS_NEAR_SYSTEM
+Flottes %1% proches %2%
+
 # Fleet window title
 # %1% empire, which owns the fleets.
 FW_EMPIRE_FLEETS
@@ -3114,6 +3125,11 @@ Aucune Flotte
 # %1% system where those fleets hold.
 FW_GENERIC_FLEETS_AT_SYSTEM
 Flottes dans %1%
+
+# Fleet window title
+# %1% system where those fleets hold.
+FW_GENERIC_FLEETS_NEAR_SYSTEM
+Flottes proches %1%
 
 # Fleet window title
 FW_GENERIC_FLEETS
@@ -4022,7 +4038,7 @@ Coque : %2%
 Équipement : %3%
 
 Total [[encyclopedia DAMAGE_TITLE]] : %17%    [[metertype METER_STRUCTURE]] : %8%    [[metertype METER_SHIELD]] : %9%
-<metertype METER_SPEED>Vitesse</metertype> : %13%    Capacité [[metertype METER_FUEL]] : %14%
+[[metertype METER_SPEED]] : %13%    Capacité [[metertype METER_FUEL]] : %14%
 [[metertype METER_DETECTION]] : %10%    [[metertype METER_STEALTH]] : %11%
 Colons à bord : %15%    [[metertype METER_TROOPS]] à bord : %16%
 
@@ -4048,7 +4064,7 @@ ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 Pour espèce : %18%
 Total [[encyclopedia DAMAGE_TITLE]] : %17%    [[metertype METER_STRUCTURE]] : %8%    [[metertype METER_SHIELD]] : %9%
-<metertype METER_SPEED>Vitesse</metertype> : %13%    Capacité [[metertype METER_FUEL]] : %14%
+[[metertype METER_SPEED]] : %13%    Capacité [[metertype METER_FUEL]] : %14%
 [[metertype METER_DETECTION]] : %10%    [[metertype METER_STEALTH]] : %11%
 Colons à bord : %15%    [[metertype METER_TROOPS]] à bord : %16%
 Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
@@ -4203,6 +4219,9 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% n'a pas pu endommagé %1% cibles :
 
+ENC_METER_TYPE
+Type d'Indicateurs
+
 
 ##
 ## Combat report
@@ -4343,6 +4362,96 @@ Population
 ## Encyclopedia articles
 ##
 
+METER_TARGET_POPULATION_VALUE_LABEL
+[[METER_POPULATION_VALUE_LABEL]]
+
+METER_TARGET_POPULATION_VALUE_DESC
+[[METER_POPULATION_VALUE_DESC]]
+
+METER_TARGET_INDUSTRY_VALUE_LABEL
+[[METER_INDUSTRY_VALUE_LABEL]]
+
+METER_TARGET_INDUSTRY_VALUE_DESC
+[[METER_INDUSTRY_VALUE_DESC]]
+
+METER_TARGET_RESEARCH_VALUE_LABEL
+[[METER_RESEARCH_VALUE_LABEL]]
+
+METER_TARGET_RESEARCH_VALUE_DESC
+[[METER_RESEARCH_VALUE_DESC]]
+
+METER_TARGET_TRADE_VALUE_LABEL
+[[METER_TRADE_VALUE_LABEL]]
+
+METER_TARGET_TRADE_VALUE_DESC
+[[METER_TRADE_VALUE_DESC]]
+
+METER_TARGET_CONSTRUCTION_VALUE_LABEL
+[[METER_CONSTRUCTION_VALUE_LABEL]]
+
+METER_TARGET_CONSTRUCTION_VALUE_DESC
+[[METER_CONSTRUCTION_VALUE_DESC]]
+
+METER_TARGET_HAPPINESS_VALUE_LABEL
+[[METER_HAPPINESS_VALUE_LABEL]]
+
+METER_TARGET_HAPPINESS_VALUE_DESC
+[[METER_HAPPINESS_VALUE_DESC]]
+
+METER_MAX_CAPACITY_VALUE_LABEL
+[[METER_CAPACITY_VALUE_LABEL]]
+
+METER_MAX_CAPACITY_VALUE_DESC
+[[METER_CAPACITY_VALUE_DESC]]
+
+METER_MAX_SECONDARY_STAT_VALUE_LABEL
+[[METER_SECONDARY_STAT_VALUE_LABEL]]
+
+METER_MAX_SECONDARY_STAT_VALUE_DESC
+[[METER_SECONDARY_STAT_VALUE_DESC]]
+
+METER_MAX_FUEL_VALUE_LABEL
+[[METER_FUEL_VALUE_LABEL]]
+
+METER_MAX_FUEL_VALUE_DESC
+[[METER_FUEL_VALUE_DESC]]
+
+METER_MAX_SHIELD_VALUE_LABEL
+[[METER_SHIELD_VALUE_LABEL]]
+
+METER_MAX_SHIELD_VALUE_DESC
+[[METER_SHIELD_VALUE_DESC]]
+
+METER_MAX_STRUCTURE_VALUE_LABEL
+[[METER_STRUCTURE_VALUE_LABEL]]
+
+METER_MAX_STRUCTURE_VALUE_DESC
+[[METER_STRUCTURE_VALUE_DESC]]
+
+METER_MAX_DEFENSE_VALUE_LABEL
+[[METER_DEFENSE_VALUE_LABEL]]
+
+METER_MAX_DEFENSE_VALUE_DESC
+[[METER_DEFENSE_VALUE_DESC]]
+
+METER_MAX_SUPPLY_VALUE_LABEL
+[[METER_SUPPLY_VALUE_LABEL]]
+
+METER_MAX_SUPPLY_VALUE_DESC
+[[METER_SUPPLY_VALUE_DESC]]
+
+METER_MAX_TROOPS_VALUE_LABEL
+[[METER_TROOPS_VALUE_LABEL]]
+
+METER_MAX_TROOPS_VALUE_DESC
+[[METER_TROOPS_VALUE_DESC]]
+
+METER_POPULATION_VALUE_LABEL  # translated
+Population
+
+METER_POPULATION_VALUE_DESC
+Valeur abstraite représentant la taille d'une colonie, en fonction de l'espèce.
+
 METER_INDUSTRY_VALUE_LABEL
 Industrie
 
@@ -4369,6 +4478,9 @@ Les PR sont affectés aux technologies à acquérir selon leur position dans la 
 METER_TRADE_VALUE_LABEL
 Commerce
 
+METER_TRADE_VALUE_DESC
+[[MAP_TRADE_TEXT]]
+
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
 
@@ -4380,6 +4492,19 @@ Bonheur
 
 METER_HAPPINESS_VALUE_DESC
 Le Bonheur de la population d'une colonie est initialement faible suite au succès d'une colonisation ou d'une invasion, et peut également dépendre d'autres facteurs. Un Bonheur minimum de 5 est requis pour qu'une colonie puissent lancer la colonisation d'autres planètes.
+
+METER_CAPACITY_VALUE_LABEL
+Stat - Primaire
+
+# TODO make this into a listing of possible capacity types
+METER_CAPACITY_VALUE_DESC
+La statistique primaire d'un objet.
+
+METER_SECONDARY_STAT_VALUE_LABEL
+Stat - Secondaire
+
+METER_SECONDARY_STAT_VALUE_DESC
+La statistique secondaire d'un objet.
 
 METER_FUEL_VALUE_LABEL
 Carburant
@@ -4432,6 +4557,26 @@ METER_TROOPS_VALUE_DESC
 
 L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète. Les astronefs doivent être dotés d'équipements spécifiques permettant le transport de l'Infanterie, et les troupes en question ne peuvent envahir une planète tant que cette dernière dispose de [[metertype METER_SHIELD]] actifs.'''
 
+METER_REBEL_TROOPS_VALUE_LABEL
+Infanterie Rebelle
+
+METER_REBEL_TROOPS_VALUE_DESC
+Infanterie d'occupation étant hostile au propriétaire de l'objet.
+
+METER_SIZE_VALUE_LABEL
+Taille
+
+METER_SIZE_VALUE_DESC
+Valeur abstraite représentant la taille d'un objet, d'un groupe d'objets, ou d'une zone.
+
+METER_STEALTH_VALUE_LABEL
+Furtivité
+
+METER_STEALTH_VALUE_DESC
+'''L'indicateur 'Furtivité' représente la capacité d'un objet à déjouer toutes sortes de capteurs radars. Seuls les empires dotés d'une [[encyclopedia DETECTION_TITLE]] supérieure ou égale à la valeur de Furtivité peuvent voir cet objet.
+
+Les astronefs, les structures, les objets à particularité, les systèmes et planètes, ont un indicateur 'Furtivité'.'''
+
 METER_DETECTION_VALUE_LABEL
 Champ de Détection
 
@@ -4442,27 +4587,17 @@ Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le 
 
 Certains objets ou aptitudes permettent la vision de zones situées en dehors du Champ de Détection, telles les compétences spéciales des espèces [[species SP_TRITH]] ou [[species SP_GEORGE]], ou en raison des effets induits par la structure [[buildingtype BLD_SCRYING_SPHERE]].'''
 
-METER_STEALTH_VALUE_LABEL
-Furtivité
-
-METER_STEALTH_VALUE_DESC
-'''L'indicateur 'Furtivité' représente la capacité d'un objet à déjouer toutes sortes de capteurs radars. Seuls les empires dotés d'une [[encyclopedia DETECTION_TITLE]] supérieure ou égale à la valeur de Furtivité peuvent voir cet objet.
-
-Les astronefs, les structures, les objets à particularité, les systèmes et planètes, ont un indicateur 'Furtivité'.'''
-
 METER_SPEED_VALUE_LABEL
-Vitesse sur Voie spatiale
+Vitesse
 
 METER_SPEED_VALUE_DESC
 Vitesse sur la carte galactique  (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tour requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse sur Voie spatiale d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[metertype METER_FUEL]], quel que soit le nombre de tour requis.
 
 METER_DETECTION_STRENGTH_VALUE_LABEL
-Capacité de Détection
+[[DETECTION_TITLE]]
 
 METER_DETECTION_STRENGTH_VALUE_DESC
-'''L'indicateur 'Capacité de Détection' représente le niveau technologique des capteurs d'un empire. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] d'une valeur inférieure ou égale à sa propre [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le [[metertype METER_DETECTION]] d'un astronef ou d'une planète qu'il contrôle.
-
-Chaque empire présente un indicateur 'Capacité de détection'.'''
+[[DETECTION_TEXT]]
 
 PEACE_TITLE
 Paix
@@ -4532,6 +4667,14 @@ Niche
 
 SLOT_TEXT
 Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
+
+DETECTION_TITLE
+Capacité de Détection
+
+DETECTION_TEXT
+'''L'indicateur 'Capacité de Détection' représente le niveau technologique des capteurs d'un empire. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] d'une valeur inférieure ou égale à sa propre Capacité de Détection, et qui se trouvent dans le [[metertype METER_DETECTION]] d'un astronef ou d'une planète qu'il contrôle.
+
+Chaque empire présente un indicateur 'Capacité de Détection'.'''
 
 ENVIRONMENT_TITLE
 Environnement
@@ -7316,10 +7459,6 @@ METER_TARGET_POPULATION
 Population Optimale Locale
 
 # Meter types
-METER_TARGET_HEALTH
-Santé Optimale Locale
-
-# Meter types
 METER_TARGET_INDUSTRY
 Industrie Optimale Locale
 
@@ -7340,6 +7479,14 @@ METER_TARGET_HAPPINESS
 Bonheur Optimal Local
 
 # Meter types
+METER_MAX_CAPACITY
+Max Capacité
+
+# Meter types
+METER_MAX_SECONDARY_STAT
+Max Stat Secondaire
+
+# Meter types
 METER_MAX_FUEL
 Max Carburant
 
@@ -7356,36 +7503,16 @@ METER_MAX_DEFENSE
 Max Défense
 
 # Meter types
-METER_MAX_TROOPS
-Max Infanterie
-
-# Meter types
-METER_MAX_REBEL_TROOPS
-Max Rebelles
-
-# Meter types
 METER_MAX_SUPPLY
 Max Approvisionnement
 
 # Meter types
-METER_MAX_CAPACITY
-Max Capacité
-
-# Meter types
-METER_MAX_SECONDARY_STAT
-Max Stat Secondaire
+METER_MAX_TROOPS
+Max Infanterie
 
 # Meter types
 METER_POPULATION  # translated
 Population
-
-# Meter types
-METER_HEALTH
-Santé
-
-# Meter types
-METER_GROWTH
-Croissance
 
 # Meter types
 METER_INDUSTRY
@@ -7408,6 +7535,14 @@ METER_HAPPINESS
 Bonheur
 
 # Meter types
+METER_CAPACITY
+Capacité
+
+# Meter types
+METER_SECONDARY_STAT
+Stat Secondaire
+
+# Meter types
 METER_FUEL
 Carburant
 
@@ -7424,6 +7559,10 @@ METER_DEFENSE
 Défense
 
 # Meter types
+METER_SUPPLY
+Approvisionnement
+
+# Meter types
 METER_TROOPS
 Infanterie
 
@@ -7432,8 +7571,8 @@ METER_REBEL_TROOPS
 Rebelles
 
 # Meter types
-METER_SUPPLY
-Approvisionnement
+METER_SIZE
+Taille
 
 # Meter types
 METER_STEALTH
@@ -7448,20 +7587,8 @@ METER_SPEED
 Vitesse
 
 # Meter types
-METER_CAPACITY
-Capacité
-
-# Meter types
-METER_SECONDARY_STAT
-Stat Secondaire
-
-# Meter types
-METER_SIZE
-Taille
-
-# Meter types
 METER_DETECTION_STRENGTH  # translated
-[[encyclopedia DETECTION_TITLE]]
+[[DETECTION_TITLE]]
 
 ALIGN_MILITARISM
 Militarisme
@@ -7759,98 +7886,92 @@ valeur de fréquence des voies spatiales de la galaxie
 DESC_VAR_NON_OBJECT_REFERENCE
 une variable libre
 
-#DESC_VAR_TARGETPOPULATION
-#[[METER_TARGET_POPULATION]]
+DESC_VAR_TARGETPOPULATION
+[[METER_TARGET_POPULATION]]
 
-#DESC_VAR_TARGETHEALTH
-#[[METER_TARGET_HEALTH]]
+DESC_VAR_TARGETINDUSTRY
+[[METER_TARGET_INDUSTRY]]
 
-#DESC_VAR_TARGETINDUSTRY
-#[[METER_TARGET_INDUSTRY]]
+DESC_VAR_TARGETRESEARCH
+[[METER_TARGET_RESEARCH]]
 
-#DESC_VAR_TARGETRESEARCH
-#[[METER_TARGET_RESEARCH]]
+DESC_VAR_TARGETTRADE
+[[METER_TARGET_TRADE]]
 
-#DESC_VAR_TARGETTRADE
-#[[METER_TARGET_TRADE]]
+DESC_VAR_TARGETCONSTRUCTION
+[[METER_TARGET_CONSTRUCTION]]
 
-#DESC_VAR_TARGETCONSTRUCTION
-#[[METER_TARGET_CONSTRUCTION]]
+DESC_VAR_MAXFUEL
+[[METER_MAX_FUEL]]
 
-#DESC_VAR_MAXFUEL
-#[[METER_MAX_FUEL]]
+DESC_VAR_MAXSHIELD
+[[METER_MAX_SHIELD]]
 
-#DESC_VAR_MAXSHIELD
-#[[METER_MAX_SHIELD]]
+DESC_VAR_MAXSTRUCTURE
+[[METER_MAX_STRUCTURE]]
 
-#DESC_VAR_MAXSTRUCTURE
-#[[METER_MAX_STRUCTURE]]
+DESC_VAR_MAXDEFENSE
+[[METER_MAX_DEFENSE]]
 
-#DESC_VAR_MAXDEFENSE
-#[[METER_MAX_DEFENSE]]
+DESC_VAR_MAXTROOPS
+[[METER_MAX_TROOPS]]
 
-#DESC_VAR_MAXTROOPS
-#[[METER_MAX_TROOPS]]
+DESC_VAR_MAXCAPACITY
+[[METER_MAX_CAPACITY]]
 
-#DESC_VAR_MAXCAPACITY
-#[[METER_MAX_CAPACITY]]
+DESC_VAR_MAX_SECONDARY_STAT
+[[METER_MAX_SECONDARY_STAT]]
 
-#DESC_VAR_MAX_SECONDARY_STAT
-#[[METER_MAX_SECONDARY_STAT]]
+DESC_VAR_POPULATION
+[[METER_POPULATION]]
 
-#DESC_VAR_POPULATION
-#[[METER_POPULATION]]
+DESC_VAR_INDUSTRY
+[[METER_INDUSTRY]]
 
-#DESC_VAR_HEALTH
-#[[METER_HEALTH]]
+DESC_VAR_RESEARCH
+[[METER_RESEARCH]]
 
-#DESC_VAR_INDUSTRY
-#[[METER_INDUSTRY]]
+DESC_VAR_TRADE
+[[METER_TRADE]]
 
-#DESC_VAR_RESEARCH
-#[[METER_RESEARCH]]
+DESC_VAR_CONSTRUCTION
+[[METER_CONSTRUCTION]]
 
-#DESC_VAR_TRADE
-#[[METER_TRADE]]
+DESC_VAR_FUEL
+[[METER_FUEL]]
 
-#DESC_VAR_CONSTRUCTION
-#[[METER_CONSTRUCTION]]
+DESC_VAR_SHIELD
+[[METER_SHIELD]]
 
-#DESC_VAR_FUEL
-#[[METER_FUEL]]
+DESC_VAR_STRUCTURE
+[[METER_STRUCTURE]]
 
-#DESC_VAR_SHIELD
-#[[METER_SHIELD]]
+DESC_VAR_DEFENSE
+[[METER_DEFENSE]]
 
-#DESC_VAR_STRUCTURE
-#[[METER_STRUCTURE]]
+DESC_VAR_TROOPS
+[[METER_TROOPS]]
 
-#DESC_VAR_DEFENSE
-#[[METER_DEFENSE]]
+DESC_VAR_SUPPLY
+[[METER_SUPPLY]]
 
-#DESC_VAR_TROOPS
-#[[METER_TROOPS]]
+DESC_VAR_STEALTH
+[[METER_STEALTH]]
 
-#DESC_VAR_SUPPLY
-#[[METER_SUPPLY]]
+DESC_VAR_DETECTION
+[[METER_DETECTION]]
 
-#DESC_VAR_STEALTH
-#[[METER_STEALTH]]
+DESC_VAR_SPEED
+[[METER_SPEED]]
 
-#DESC_VAR_DETECTION
-#[[METER_DETECTION]]
+DESC_VAR_CAPACITY
+[[METER_CAPACITY]]
 
-#DESC_VAR_SPEED
-#[[METER_SPEED]]
+DESC_VAR_SECONDARY_STAT
+[[METER_SECONDARY_STAT]]
 
-#DESC_VAR_CAPACITY
-#[[METER_CAPACITY]]
-
-#DESC_VAR_SECONDARY_STAT
-#[[METER_SECONDARY_STAT]]
-
-#DESC_VAR_SIZE
-#[[METER_SIZE]]
+DESC_VAR_SIZE
+[[METER_SIZE]]
 
 DESC_VAR_TRADESTOCKPILE
 stock commercial
@@ -9137,7 +9258,7 @@ SHP_SPACE_FLUX_DRIVE
 Propulsion Flux Spatial
 
 SHP_SPACE_FLUX_DRIVE_DESC
-D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants.
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles.
 
 SHP_CONTGRAV_MAINT
 Maintenance Anti-Gravitationnelle
@@ -11597,7 +11718,9 @@ Coque Flux Spatial
 SH_SPATIAL_FLUX_DESC
 '''Cette minuscule coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de la puissance fournie par la technologie de [[tech SHP_SPACE_FLUX_DRIVE]]. Elle ne dispose cependant que de deux niches externes et sa [[metertype METER_STRUCTURE]] max est faible.
  
-Sa [[metertype METER_STEALTH]] est élevée, mais s'avère tributaire d'une pénalité importante de [[metertype METER_STEALTH]] lors d'un déplacement sur la carte galactique ou en combat. Son [[metertype METER_DETECTION]] est standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
+Sa [[metertype METER_STEALTH]] débute à 15, augmente de 10 si l'astronef est réglé sur '[[FW_PASSIVE]]', mais diminue de 30 pour tout déplacement durant un tour. Les avancées permises par les technologies telles que l'[[tech SPY_STEALTH_PART_1]] permettent à l'équipage d'accroître de 10 la Furtivité de l'astronef pour chaque recherche effectuée dans cette branche.
+
+Son [[metertype METER_DETECTION]] est standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 
 En complément d'un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] est requise autour de la planète où la coque sera produite.'''
 
@@ -12679,6 +12802,11 @@ Interaction Propulsion Transpatiale - Camouflage
 BASE_FUEL_REGEN_LABEL
 Récupération Stationnaire Carburant
 
+SPATIAL_FLUX_MALUS
+Interférence Flux
+
+SPATIAL_FLUX_BONUS
+Bonus Propulsion Flux
 
 ##
 ## Tags
