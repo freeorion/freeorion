@@ -158,8 +158,11 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t n
 
 
 bool ModalListPicker::Run() {
+    DropDownList::iterator old_current_item = CurrentItem();
     bool retval = Wnd::Run();
     m_dropped = false;
+    if (old_current_item != CurrentItem())
+        SignalChanged(CurrentItem());
     return retval;
 }
 

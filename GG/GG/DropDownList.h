@@ -120,7 +120,10 @@ public:
         different width than the drop down rows.*/
     virtual GG::X  DisplayedRowWidth() const;
 
-    mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
+    /** The selection change signal while not running the modal drop down box.
+        This will also signal an event when the drop list closes if the selection changed.
+     */
+    mutable SelChangedSignalType SelChangedSignal;
 
     DropDownOpenedSignalType DropDownOpenedSignal;
     //@}
