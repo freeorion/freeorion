@@ -726,39 +726,25 @@ namespace {
     public:
         SystemRow(int system_id) :
             GG::ListBox::Row(GG::X1, GG::Y(SystemNameFontSize()), "SystemRow"),
-            m_system_id(system_id),
-            m_initialized(false)
-        { RequirePreRender(); }
-
-        virtual void Init() {
-            m_initialized = true;
-            OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
-            push_back(name);
-
-            SetColAlignment(0, GG::ALIGN_CENTER);
+            m_system_id(system_id)
+        {
+            SetName("SystemRow");
+            RequirePreRender();
         }
 
-        virtual void PreRender() {
-            if (!m_initialized)
-                Init();
-
-            // Lock the row to the size of its drop box.
-            if (Parent())
-                SetColWidth(0, Parent()->ClientWidth());
+        void Init() {
+            OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
+            push_back(name);
+            SetColAlignment(0, GG::ALIGN_CENTER);
             GetLayout()->PreRender();
         }
 
-        /** Lock the system row size to the size of the drop down list box. This makes sure that
-            the row is the correct width with the name centered  when the dropdown list steals the
-            selected row for rendering.*/
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            GG::Pt adjusted_lr(GG::X(Parent() ? ul.x + Parent()->ClientWidth() : lr.x), lr.y);
-            GG::Pt target_size(adjusted_lr - ul);
-            if ((ul == RelativeUpperLeft()) && (adjusted_lr == RelativeLowerRight()))
-                return;
+        virtual void PreRender() {
+            // If there is no control add it.
+            if (!size())
+                Init();
 
-            GG::Wnd::SizeMove(ul, adjusted_lr);
-            RequirePreRender();
+            GG::ListBox::Row::PreRender();
         }
 
         int SystemID() const { return m_system_id; }
@@ -768,7 +754,6 @@ namespace {
 
     private:
         int m_system_id;
-        bool m_initialized;
     };
 }
 /** A class to display all of the system names*/
