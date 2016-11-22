@@ -3037,53 +3037,66 @@ void SidePanel::RefreshInPreRender() {
     s_system_connections.insert(GG::Connect(system->FleetsRemovedSignal,    &SidePanel::FleetsRemoved));
 }
 
+void SidePanel::RefreshSystemNames() {
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
+    // if no system object, there is nothing to populate with.  early abort.
+    if (!system)
+        return;
+
+    // Repopulate the system with all of the names of known systems, if it is closed.
+    // If it is open do not change the system names because it runs in a seperate ModalEventPump
+    // from the main UI.
+    if (!m_system_name->Dropped()) {
+        m_system_name->Clear();
+
+        // populate droplist of system names
+        std::map<std::string, int> system_map; //alphabetize Systems here
+        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+             sys_it != Objects().const_end<System>(); ++sys_it)
+        {
+            if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
+                system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+        }
+        std::vector<GG::DropDownList::Row*> rows;
+        rows.reserve(system_map.size());
+        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
+        {
+            int sys_id = sys_it->second;
+            rows.push_back(new SystemRow(sys_id));
+        }
+        m_system_name->Insert(rows, false);
+
+        // select in the list the currently-selected system
+        for (GG::DropDownList::iterator it = m_system_name->begin();
+             it != m_system_name->end(); ++it)
+        {
+            if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+                if (s_system_id == row->SystemID()) {
+                    m_system_name->Select(it);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void SidePanel::RefreshImpl() {
     ScopedTimer sidepanel_refresh_impl_timer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
 
     // clear out current contents
     m_planet_panel_container->Clear();
-    m_system_name->Clear();
     m_star_type_text->SetText("");
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
 
-    // get info with which to repopulate
+    RefreshSystemNames();
+
     TemporaryPtr<const System> system = GetSystem(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
-
-
-    // populate droplist of system names
-    std::map<std::string, int> system_map; //alphabetize Systems here
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
-    {
-        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
-            system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
-    }
-    std::vector<GG::DropDownList::Row*> rows;
-    rows.reserve(system_map.size());
-    for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
-    {
-        int sys_id = sys_it->second;
-        rows.push_back(new SystemRow(sys_id));
-    }
-    m_system_name->Insert(rows, false);
-
-    // select in the list the currently-selected system
-    for (GG::DropDownList::iterator it = m_system_name->begin();
-         it != m_system_name->end(); ++it)
-    {
-        if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
-            if (s_system_id == row->SystemID()) {
-                m_system_name->Select(it);
-                break;
-            }
-        }
-    }
 
     // (re)create top right star graphic
     boost::shared_ptr<GG::Texture> graphic =

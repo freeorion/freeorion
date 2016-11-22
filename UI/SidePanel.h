@@ -114,6 +114,8 @@ private:
     void                RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
     void                SelectPlanetImpl(int planet_id);///< sets selected planet in this sidepanel
 
+    /**  Insert all known systems into the SystemName drop down list.*/
+    void                RefreshSystemNames();
     /**  Handle the user selecting a system in the droplist while the list is closed, using keys.
          It may emit SystemSelectedSignal. */
     void                SystemSelectionChangedSlot(GG::DropDownList::iterator it);
