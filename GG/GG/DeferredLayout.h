@@ -29,8 +29,6 @@ public:
     /** \name Mutators */ ///@{
     virtual void SizeMove(const Pt& ul, const Pt& lr);
     virtual void PreRender();
-    virtual void SetMinSize(const Pt& sz);
-    virtual void SetMaxSize(const Pt& sz);
     //@}
 
 protected:

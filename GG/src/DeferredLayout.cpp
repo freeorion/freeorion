@@ -62,27 +62,3 @@ void DeferredLayout::PreRender()
 
 void DeferredLayout::RedoLayout()
 { RequirePreRender(); }
-
-void DeferredLayout::SetMinSize(const Pt& sz)
-{
-    Pt old_ul_prerender = m_ul_prerender;
-    Pt old_lr_prerender = m_lr_prerender;
-
-    Layout::SetMinSize(sz);
-
-    m_ul_prerender = old_ul_prerender;
-    m_lr_prerender = old_lr_prerender;
-    ClampRectWithMinAndMaxSize(m_ul_prerender, m_lr_prerender);
-}
-
-void DeferredLayout::SetMaxSize(const Pt& sz)
-{
-    Pt old_ul_prerender = m_ul_prerender;
-    Pt old_lr_prerender = m_lr_prerender;
-
-    Layout::SetMaxSize(sz);
-
-    m_ul_prerender = old_ul_prerender;
-    m_lr_prerender = old_lr_prerender;
-    ClampRectWithMinAndMaxSize(m_ul_prerender, m_lr_prerender);
-}
