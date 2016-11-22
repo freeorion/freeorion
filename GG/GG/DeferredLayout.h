@@ -41,7 +41,7 @@ protected:
 private:
     Pt   m_ul_prerender;
     Pt   m_lr_prerender;
-    bool m_stop_deferred_resize_recursion;
+    bool m_make_resize_immediate_during_prerender;
 };
 
 } // namespace GG
