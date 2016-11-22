@@ -116,6 +116,9 @@ private:
 
     /**  Insert all known systems into the SystemName drop down list.*/
     void                RefreshSystemNames();
+    /**  Refresh the system name list when it closes, in case the known systems changed while it
+         was open. */
+    void                SystemNameDropListOpenedSlot(bool is_open);
     /**  Handle the user selecting a system in the droplist while the list is closed, using keys.
          It may emit SystemSelectedSignal. */
     void                SystemSelectionChangedSlot(GG::DropDownList::iterator it);

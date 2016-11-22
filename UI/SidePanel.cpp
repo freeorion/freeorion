@@ -2817,6 +2817,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
+    GG::Connect(m_system_name->DropDownOpenedSignal,                     &SidePanel::SystemNameDropListOpenedSlot,  this);
     GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChangedSlot,    this);
     GG::Connect(m_system_name->SelChangedWhileDroppedSignal,             &SidePanel::SystemSelectionChangedSlot,    this);
     GG::Connect(m_button_prev->LeftClickedSignal,                        &SidePanel::PrevButtonClicked,      this);
@@ -3249,6 +3250,13 @@ void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     if (old_size != GG::Wnd::Size())
         RequirePreRender();
+}
+
+void SidePanel::SystemNameDropListOpenedSlot(bool is_open) {
+    // Refresh the system names when the drop list closes.
+    if (is_open)
+        return;
+    RefreshSystemNames();
 }
 
 void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
