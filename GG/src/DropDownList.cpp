@@ -44,6 +44,7 @@ public:
     ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t m_num_shown_rows);
 
     virtual bool   Run();
+    virtual void   EndRun();
     bool           Dropped() const;
     virtual void   Render() {};
 
@@ -157,11 +158,22 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t n
 
 
 bool ModalListPicker::Run() {
-    m_dropped = true;
-    CorrectListSize();
     bool retval = Wnd::Run();
     m_dropped = false;
     return retval;
+}
+
+void ModalListPicker::ModalInit()
+{
+    m_dropped = true;
+    m_lb_wnd->Hide(); // to enable CorrectListSize() to work
+    CorrectListSize();
+    Show();
+}
+
+void ModalListPicker::EndRun() {
+    Wnd::EndRun();
+    m_lb_wnd->Hide();
 }
 
 bool ModalListPicker::Dropped() const
@@ -306,14 +318,6 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
 
 void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 { EndRun(); }
-
-void ModalListPicker::ModalInit()
-{
-    if (m_relative_to_wnd)
-        m_lb_wnd->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
-
-    Show();
-}
 
 void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
 {
