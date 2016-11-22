@@ -545,16 +545,17 @@ void DropDownList::RenderDisplayedRow()
     Row* current_item = *CurrentItem();
     bool sel_visible = current_item->Visible();
     bool lb_visible = LB()->Visible();
-    if (!sel_visible) {
-        // The following is necessary because neither LB() nor the selected row may be visible and
-        // prerendered.
-        if (!lb_visible) {
-            LB()->Show();
-            GUI::GetGUI()->PreRenderWindow(LB());
-            LB()->Hide();
-        }
+
+    // The following is necessary because neither LB() nor the selected row may be visible and
+    // prerendered.
+    if (!lb_visible)
+        LB()->Show();
+    GUI::GetGUI()->PreRenderWindow(LB());
+    if (!lb_visible)
+        LB()->Hide();
+
+    if (!sel_visible)
         current_item->Show();
-    }
 
     // Vertically center the selected row in the box.
     Pt offset = GG::Pt(ClientUpperLeft().x - current_item->ClientUpperLeft().x,
