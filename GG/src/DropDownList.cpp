@@ -634,6 +634,7 @@ void DropDownList::Clear()
 {
     m_modal_picker->EndRun();
     LB()->Clear();
+    RequirePreRender();
 }
 
 DropDownList::iterator DropDownList::begin()
