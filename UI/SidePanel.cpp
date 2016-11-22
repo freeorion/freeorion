@@ -2817,7 +2817,8 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
-    GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChanged, this);
+    GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChangedSlot,    this);
+    GG::Connect(m_system_name->SelChangedWhileDroppedSignal,             &SidePanel::SystemSelectionChangedSlot,    this);
     GG::Connect(m_button_prev->LeftClickedSignal,                        &SidePanel::PrevButtonClicked,      this);
     GG::Connect(m_button_next->LeftClickedSignal,                        &SidePanel::NextButtonClicked,      this);
     GG::Connect(m_planet_panel_container->PlanetSelectedSignal,          &SidePanel::PlanetSelected,         this);
@@ -3237,7 +3238,10 @@ void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         RequirePreRender();
 }
 
-void SidePanel::SystemSelectionChanged(GG::DropDownList::iterator it) {
+void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
+    /** This handles cases when the list is dropped and not dropped in the
+        same way. Refresh should not update the list of systems if the list
+        is open. */
     int system_id = INVALID_OBJECT_ID;
     if (it != m_system_name->end())
         system_id = boost::polymorphic_downcast<const SystemRow*>(*it)->SystemID();
@@ -3251,7 +3255,7 @@ void SidePanel::PrevButtonClicked() {
     if (selected == m_system_name->begin())
         selected = m_system_name->end();
     m_system_name->Select(--selected);
-    SystemSelectionChanged(m_system_name->CurrentItem());
+    SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
 void SidePanel::NextButtonClicked() {
@@ -3260,7 +3264,7 @@ void SidePanel::NextButtonClicked() {
     if (++selected == m_system_name->end())
         selected = m_system_name->begin();
     m_system_name->Select(selected);
-    SystemSelectionChanged(m_system_name->CurrentItem());
+    SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
 void SidePanel::PlanetSelected(int planet_id) {
