@@ -219,7 +219,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     AttachChild(text);
     GG::Pt text_size(text->TextLowerRight() - text->TextUpperLeft());
     text->SizeMove(GG::Pt(GG::X0, GG::Y0), text_size);
-    SizeMove(UpperLeft(), UpperLeft() + text_size);
+    Resize(text_size);
 }
 
 void OwnerColoredSystemName::Render()
