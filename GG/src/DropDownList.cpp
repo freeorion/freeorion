@@ -61,7 +61,10 @@ public:
     const ListBox* LB() const
     { return m_lb_wnd; }
 
-    mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
+    /** The selection change signal while not running the modal drop down box.*/
+    mutable SelChangedSignalType SelChangedSignal;
+    /** The selection change signal while running the modal drop down box.*/
+    mutable SelChangedSignalType SelChangedWhileDroppedSignal;
 
     DropDownList::iterator CurrentItem();
 
@@ -202,7 +205,12 @@ boost::optional<DropDownList::iterator>  ModalListPicker::Select(boost::optional
 
 void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
 {
-    if (it)
+    if (!it)
+        return;
+
+    if (Dropped())
+        SelChangedWhileDroppedSignal(*it);
+    else
         SelChangedSignal(*it);
 }
 
@@ -325,10 +333,10 @@ void ModalListPicker::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
 {
     if (rows.empty()) {
-        SelChangedSignal(m_lb_wnd->end());
+        SignalChanged(m_lb_wnd->end());
     } else {
         ListBox::iterator sel_it = *rows.begin();
-        SelChangedSignal(sel_it);
+        SignalChanged(sel_it);
     }
 }
 
@@ -355,6 +363,7 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     SetStyle(LIST_SINGLESEL);
 
     Connect(m_modal_picker->SelChangedSignal, SelChangedSignal);
+    Connect(m_modal_picker->SelChangedWhileDroppedSignal, SelChangedWhileDroppedSignal);
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, DropDownListSelChangedEcho(*this));
