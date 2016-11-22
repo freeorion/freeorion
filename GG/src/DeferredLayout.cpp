@@ -38,10 +38,12 @@ void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
     if (m_stop_deferred_resize_recursion)
         return;
 
-    RequirePreRender();
+    if ((ul != RelativeUpperLeft()) || (lr != RelativeLowerRight())) {
+        RequirePreRender();
 
-    m_ul_prerender = ul;
-    m_lr_prerender = lr;
+        m_ul_prerender = ul;
+        m_lr_prerender = lr;
+    }
 
     // Note: m_upperleft and m_lowerright will be updated when DoLayout() is called in PreRender().
 }
