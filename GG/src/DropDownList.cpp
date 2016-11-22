@@ -41,11 +41,15 @@ public:
     typedef ListBox::iterator iterator;
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
-    ModalListPicker(Clr color, const Wnd* relative_to_wnd);
+    ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t m_num_shown_rows);
 
     virtual bool   Run();
     bool           Dropped() const;
     virtual void   Render() {};
+
+    /** Adjust the m_lb_wnd size so that there are no more than m_num_shown_rows shown. It will
+        not adjust a visible window, or if there is no relative to window. */
+    void CorrectListSize();
 
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void ModalInit();
@@ -90,9 +94,10 @@ private:
 
     void LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
-    ListBox*    m_lb_wnd;
-    const Wnd*  m_relative_to_wnd;
-    bool        m_dropped;  ///< Is the drop down list open.
+    ListBox*     m_lb_wnd;
+    const size_t m_num_shown_rows;
+    const Wnd*   m_relative_to_wnd;
+    bool         m_dropped;  ///< Is the drop down list open.
 };
 
 namespace {
@@ -130,9 +135,10 @@ namespace {
 ////////////////////////////////////////////////
 // ModalListPicker
 ////////////////////////////////////////////////
-ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
+ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
+    m_num_shown_rows(num_rows),
     m_relative_to_wnd(relative_to_wnd),
     m_dropped(false)
 {
@@ -152,6 +158,7 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd) :
 
 bool ModalListPicker::Run() {
     m_dropped = true;
+    CorrectListSize();
     bool retval = Wnd::Run();
     m_dropped = false;
     return retval;
@@ -182,6 +189,40 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
 {
     if (it)
         SelChangedSignal(*it);
+}
+
+void ModalListPicker::CorrectListSize() {
+    // reset size of displayed drop list based on number of shown rows set.
+    // assumes that all rows have the same height.
+    // adds some magic padding for now to prevent the scroll bars showing up.
+
+    if (!m_relative_to_wnd)
+        return;
+
+    if (LB()->Visible())
+        return;
+
+    LB()->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
+
+    Pt drop_down_size(m_relative_to_wnd->ClientWidth(), m_relative_to_wnd->ClientHeight());
+
+    if (LB()->Empty()) {
+        LB()->Resize(drop_down_size);
+    } else {
+        LB()->Show();
+
+        // Resize the rows, once to pick up the correct height and a second
+        // time to use the height to size the drop down list
+        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
+        LB()->Resize(drop_down_size);
+        GUI::GetGUI()->PreRenderWindow(LB());
+
+        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
+        LB()->Resize(drop_down_size);
+        GUI::GetGUI()->PreRenderWindow(LB());
+
+        LB()->Hide();
+    }
 }
 
 boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
@@ -302,8 +343,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
-    m_modal_picker(new ModalListPicker(color, this)),
-    m_num_shown_elements(num_shown_elements)
+    m_modal_picker(new ModalListPicker(color, this, num_shown_elements))
 {
     SetStyle(LIST_SINGLESEL);
 
@@ -427,34 +467,7 @@ void DropDownList::PreRender()
 
     InitBuffer();
 
-    // reset size of displayed drop list based on number of shown rows set.
-    // assumes that all rows have the same height.
-    // adds some magic padding for now to prevent the scroll bars showing up.
-
-    bool lb_visible = LB()->Visible();
-    if (!lb_visible)
-        LB()->Show();
-
-    LB()->MoveTo(Pt(Left(), Bottom()));
-
-    Pt drop_down_size(ClientWidth(), ClientHeight());
-
-    if (LB()->Empty()) {
-        LB()->Resize(drop_down_size);
-    } else {
-        // Resize the rows, once to pick up the correct height and a second
-        // time to use the height to size the drop down list
-        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
-        LB()->Resize(drop_down_size);
-        GUI::GetGUI()->PreRenderWindow(LB());
-
-        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
-        LB()->Resize(drop_down_size);
-        GUI::GetGUI()->PreRenderWindow(LB());
-    }
-
-    if (!lb_visible)
-        LB()->Hide();
+    m_modal_picker->CorrectListSize();
 }
 
 void DropDownList::Render()

@@ -218,7 +218,6 @@ private:
 
     // TODO use C++11 unique_ptr
     boost::scoped_ptr<ModalListPicker> const    m_modal_picker;
-    size_t              m_num_shown_elements;
 };
 
 } // namespace GG
