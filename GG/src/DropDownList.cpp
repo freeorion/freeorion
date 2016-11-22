@@ -322,8 +322,6 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
 DropDownList::~DropDownList() {
     if (m_modal_picker)
         m_modal_picker->EndRun();
-    DetachChild(m_modal_picker);
-    delete m_modal_picker;
 
     m_buffer.clear();
 }
