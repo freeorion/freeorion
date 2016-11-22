@@ -521,7 +521,7 @@ private:
     void                    ClickInvade();                      ///< called if invade button is pressed
     void                    ClickBombard();                     ///< called if bombard button is pressed
 
-    void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
+    void                    FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
     /** Called when focus drop list opens/closes to inform that it now \p is_open. */
     void                    FocusDropListOpened(bool is_open);
 
@@ -930,9 +930,9 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // focus-selection droplist
     m_focus_drop = new CUIDropDownList(6);
     AttachChild(m_focus_drop);
-    GG::Connect(m_focus_drop->DropDownOpenedSignal, &SidePanel::PlanetPanel::FocusDropListOpened,  this);
-    GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
-    GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
+    GG::Connect(m_focus_drop->DropDownOpenedSignal,             &SidePanel::PlanetPanel::FocusDropListOpened,  this);
+    GG::Connect(m_focus_drop->SelChangedSignal,                 &SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot,  this);
+    GG::Connect(this->FocusChangedSignal,                       &SidePanel::PlanetPanel::SetFocus, this);
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
@@ -2386,10 +2386,10 @@ void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
     if (is_open)
         return;
 
-    FocusDropListSelectionChanged(m_focus_drop->CurrentItem());
+    FocusDropListSelectionChangedSlot(m_focus_drop->CurrentItem());
 }
 
-void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
+void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected) {
     // Do not update the sidepanel while the focus drop is open.  Otherwise scrolling with the key
     // press does not work because every up/down arrow press deletes and recreates the m_focus_drop.
     if (m_focus_drop->Dropped())
