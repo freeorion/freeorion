@@ -2390,11 +2390,6 @@ void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
 }
 
 void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected) {
-    // Do not update the sidepanel while the focus drop is open.  Otherwise scrolling with the key
-    // press does not work because every up/down arrow press deletes and recreates the m_focus_drop.
-    if (m_focus_drop->Dropped())
-        return;
-
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator
     // parameter, does some safety checks, and disables UI sounds
