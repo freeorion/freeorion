@@ -1006,8 +1006,8 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_selector->ShowPediaSignal,        &BuildDesignatorWnd::ShowPedia,          this);
     GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
 
-    GG::Connect(m_side_panel->PlanetSelectedSignal, PlanetSelectedSignal);
-    GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
+    GG::Connect(SidePanel::PlanetSelectedSignal, PlanetSelectedSignal);
+    GG::Connect(SidePanel::SystemSelectedSignal, SystemSelectedSignal);
 
     // connect build type button clicks to update display
     GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
