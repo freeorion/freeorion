@@ -243,6 +243,7 @@ Cannot be produced
 POPUP_MENU_PEDIA_PREFIX
 '''Help: '''
 
+
 ##
 ## Major errors
 ##
@@ -324,97 +325,97 @@ SD_SCOUT
 Scout
 
 SD_SCOUT_DESC
-Small and cheap unarmed vessel designed for recon and exploration. Further [[metertype METER_RESEARCH]] aimed at improving [[metertype METER_DETECTION]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap unarmed vessel designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_AST_SCOUT
 Asteroid Scout
 
 SD_AST_SCOUT_DESC
-Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further [[metertype METER_RESEARCH]] aimed at improving [[metertype METER_DETECTION]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
+Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_SCOUT_2
 Radar Scout
 
 SD_SCOUT_2_DESC
-Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_3
 Scanner Scout
 
 SD_SCOUT_3_DESC
-Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_4
 Sensor Scout
 
 SD_SCOUT_4_DESC
-Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
 Energy Scout
 
 SD_ENG_SCOUT_DESC
-Small and fast unarmed vessel designed for recon and exploration. Further [[metertype METER_RESEARCH]] aimed at improving [[metertype METER_DETECTION]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
+Small and fast unarmed vessel designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_SMALL_MARK_1
 Corvette (M)
 
 SD_SMALL_MARK1_DESC
-Small and cheap mass-driver ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap mass-driver ship. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SMALL_MARK_2
 Corvette (L)
 
 SD_SMALL_MARK2_DESC
-Small and cheap laser ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Small and cheap laser ship. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_1
 Frigate (M1)
 
 SD_MARK1_DESC
-Basic mass-driver frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Basic mass-driver frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_2
 Frigate (M2)
 
 SD_MARK2_DESC
-Improved mass-driver frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Improved mass-driver frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_3
 Frigate (L1)
 
 SD_MARK3_DESC
-Basic laser frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Basic laser frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_4
 Frigate (L2)
 
 SD_MARK4_DESC
-Improved laser frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Improved laser frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_1
 Destroyer (M1)
 
 SD_LARGE_MARK1_DESC
-Basic mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Basic mass-driver fighter. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
 Destroyer (M2)
 
 SD_LARGE_MARK2_DESC
-Improved mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Improved mass-driver fighter. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
 Cruiser (L1)
 
 SD_LARGE_MARK3_DESC
-Improved fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Improved fighter with lasers. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_4
 Cruiser (L2)
 
 SD_LARGE_MARK4_DESC
-Improved fighter with heavy lasers and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Improved fighter with heavy lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
 Robotic Outpost
@@ -456,19 +457,19 @@ SD_ROBOTIC1
 Robocruiser (M1)
 
 SD_ROBOTIC1_DESC
-Robotic mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Robotic mass-driver fighter. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2
 Robocruiser (M2)
 
 SD_ROBOTIC2_DESC
-Robotic fighter heavy armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Robotic fighter heavy armor. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
 Robocruiser (L)
 
 SD_ROBOTIC3_DESC
-Improved robotic fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Improved robotic fighter with lasers. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_NANOROBOTIC1
 Nanobot Battlecruiser
@@ -480,175 +481,175 @@ SD_GRAVITATING1
 Gravitic Battleship (P)
 
 SD_GRAVITATING1_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
 Gravitic Battleship (D)
 
 SD_GRAVITATING2_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_ROBO_TITAN1
 Dreadnaught
 
 SD_ROBO_TITAN1_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_ORGANIC1
 Organic Frigate (M1)
 
 SD_ORGANIC1_DESC
-Organic fighter with preliminary weaponry and defence technology. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Organic fighter with preliminary weaponry and defence technology. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_ORGANIC2
 Organic Frigate (M2)
 
 SD_ORGANIC2_DESC
-Organic fighter with improved armour. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Organic fighter with improved armour. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_ORGANIC3
 Organic Frigate (L)
 
 SD_ORGANIC3_DESC
-Organic fighter with heavy lasers and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Organic fighter with heavy lasers and armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_SHIELD_BUG_1
 Organic Heavy Frigate (M)
 
 SD_SHIELD_BUG_1_DESC
-Organic fighter with [[metertype METER_SHIELD]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Organic fighter with [[metertype METER_SHIELD]]. Effective against enemies with poor weapons. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_SHIELD_BUG_2
 Organic Heavy Frigate (L)
 
 SD_SHIELD_BUG_2_DESC
-Organic fighter with [[metertype METER_SHIELD]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Organic fighter with [[metertype METER_SHIELD]]. Effective against enemies with poor weapons. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_AST_1
 Rock Destroyer (L)
 
 SD_AST_1_DESC
-A hollowed-out asteroid armed with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
+A hollowed-out asteroid armed with lasers. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_AST_2
 Rock Destroyer (P1)
 
 SD_AST_2_DESC
-A hollowed-out asteroid armed with plasma cannons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
+A hollowed-out asteroid armed with plasma cannons. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_AST_3
 Rock Destroyer (P2)
 
 SD_AST_3_DESC
-A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
+A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM]]
 
 SD_HEAVY_AST_1
 Rock Battleship (L)
 
 SD_HEAVY_AST_1_DESC
-A large hollowed-out asteroid armed with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
+A large hollowed-out asteroid armed with lasers. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_HEAVY_AST_2
 Rock Battleship (P)
 
 SD_HEAVY_AST_2_DESC
-A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
+A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM]]
 
 SD_CRYSTAL
 Crystal Destroyer (P)
 
 SD_CRYSTAL_DESC
-A crystallized asteroid armed with heavy plasma cannons and crystal rock armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
+A crystallized asteroid armed with heavy plasma cannons and crystal rock armor. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]
 
 SD_ENDO_1
 Endomorphic Cruiser (L)
 
 SD_ENDO_1_DESC
-Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Advanced endomorphic fighter with heavy weaponry and armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
 
 SD_ENDO_2
 Endomorphic Cruiser (P1)
 
 SD_ENDO_2_DESC
-Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Advanced endomorphic fighter with heavy weaponry and armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
 
 SD_ENDO_3
 Endomorphic Cruiser (P2)
 
 SD_ENDO_3_DESC
-Advanced endomorphic fighter with heavy weaponry and diamond armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+Advanced endomorphic fighter with heavy weaponry and diamond armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
 
 SD_FRACTAL_1
 Fractal Battleship (P)
 
 SD_FRACTAL_1_DESC
-An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
+An exotic warship made of fractal energy. [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]
 
 SD_FRACTAL_2
 Fractal Battleship (D)
 
 SD_FRACTAL_2_DESC
-An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
+An exotic warship made of fractal energy. [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]
 
 SD_COLONY_SHIP
 Colony Ship
 
 SD_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]].
+Unarmed vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
 Organic Colony Ship
 
 SD_ORG_COLONY_SHIP_DESC
-Unarmed organic vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Unarmed organic vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]].
+Unarmed vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
 Organic Cryonic Colony Ship
 
 SD_ORG_CRYOCOL_SHIP_DESC
-Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Unarmed organic vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
 Cryonic Colony Asteroid
 
 SD_AST_CRYOCOL_SHIP_DESC
-Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]], in a system with an [[buildingtype BLD_SHIPYARD_AST]].
+Unarmed asteroid vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]], in a system with an asteroid belt and an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Outpost Ship
 
 SD_OUTPOST_SHIP_DESC
-Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Unarmed vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ORG_OUTPOST_SHIP
 Organic Outpost Ship
 
 SD_ORG_OUTPOST_SHIP_DESC
-Unarmed organic vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Unarmed organic vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_COLONY_BASE
 Colony Base
 
 SD_COLONY_BASE_DESC
-Unarmed vessel capable of creating a colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
+Unarmed vessel capable of creating a [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Cryonic Colony Base
 
 SD_CRYONIC_COLONY_BASE_DESC
-Unarmed vessel capable of creating a large colony on a habitable planet in the system where it is produced. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
+Unarmed vessel capable of creating a large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Outpost Base
 
 SD_OUTPOST_BASE_DESC
-Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
+Unarmed vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]] in the system where it is produced. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_BASE_DECOY
 Comsat
@@ -660,55 +661,55 @@ SD_TROOP_DROP
 Troop Drop
 
 SD_TROOP_DROP_DESC
-Carries a brigade of ground [[metertype METER_TROOPS]] and equipment that can be used to invade a planet in the same system.
+Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]] in the same system.
 
 SD_TROOP_DROP_HVY
 Heavy Troop Drop
 
 SD_TROOP_DROP_HVY_DESC
-Carries a brigade of ground advanced [[metertype METER_TROOPS]] and equipment that can be used to invade a planet in the same system.
+Carries a brigade of ground advanced [[SHIPDESIGN_PLANET_INVASION]] in the same system.
 
 SD_SMALL_TROOP_SHIP
 Small Troop Ship
 
 SD_SMALL_TROOP_SHIP_DESC
-Carries a brigade of ground [[metertype METER_TROOPS]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_TROOP_SHIP
 Troop Ship
 
 SD_TROOP_SHIP_DESC
-Carries 3 brigades of ground [[metertype METER_TROOPS]] and equipment that can be used to invade a planet. can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Carries 3 brigades of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ORG_TROOP_SHIP
 Organic Troop Ship
 
 SD_ORG_TROOP_SHIP_DESC
-Carries 4 brigades of ground [[metertype METER_TROOPS]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Carries 4 brigades of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_ENG_TROOP_SHIP
 Energy Troop Ship
 
 SD_ENG_TROOP_SHIP_DESC
-Carries a brigade of ground [[metertype METER_TROOPS]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
+Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_ENG1
 Energy Corvette (L)
 
 SD_ENG1_DESC
-Small fast combat vessel. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
+Small fast combat vessel. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_ENG2
 Energy Corvette (P)
 
 SD_ENG2_DESC
-Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star types.
+Small fast combat vessel, with improved weaponry. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_DRAGON_TOOTH
 Dragon Tooth
 
 SD_DRAGON_TOOTH_DESC
-Ancient ship design with advanced weaponry and defensive systems. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Ancient ship design with advanced weaponry and defensive systems. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
 ##
@@ -722,25 +723,25 @@ SM_KRILL_1
 Small Krill Swarm
 
 SM_KRILL_1_DESC
-Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation and block resupply. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
+[[SM_KRILL_MACRO_1]]. Though normally not aggressive, their numbers, even low, become a hazard for navigation and block resupply. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_2
 Medium Krill Swarm
 
 SM_KRILL_2_DESC
-Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation and block resupply. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
+[[SM_KRILL_MACRO_1]]. Though normally not aggressive, their growing numbers become a hazard for navigation and block resupply. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_3
 Large Krill Swarm
 
 SM_KRILL_3_DESC
-Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become aggressive towards ships. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
+[[SM_KRILL_MACRO_1]]. When in large enough numbers, they begin to become aggressive towards ships. [[SM_KRILL_MACRO_2]]
 
 SM_KRILL_4
 Plague of Krill
 
 SM_KRILL_4_DESC
-Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
+[[SM_KRILL_MACRO_1]]. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. [[SM_KRILL_MACRO_2]]
 
 SM_TREE
 Dyson Forest
@@ -782,19 +783,19 @@ SM_GUARD_1
 Sentry
 
 SM_GUARD_1_DESC
-A small unmanned guard ship programmed by the Precursors to defend the system against intruders.
+A small unmanned guard ship [[SM_GUARD_MACRO]].
 
 SM_GUARD_2
 Sentinel
 
 SM_GUARD_2_DESC
-An unmanned guard ship programmed by the Precursors to defend the system against intruders.
+An unmanned guard ship [[SM_GUARD_MACRO]].
 
 SM_GUARD_3
 Warden
 
 SM_GUARD_3_DESC
-A powerful unmanned guard ship programmed by the Precursors to defend the system against intruders.
+A powerful unmanned guard ship [[SM_GUARD_MACRO]].
 
 SM_KRAKEN_1
 Larval Kraken
@@ -802,7 +803,7 @@ Larval Kraken
 SM_KRAKEN_1_DESC
 '''In the larval form, a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarm. A well-fed larval kraken may grow into a larger and more dangerous adult form.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of [[PT_GASGIANT]] planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
+[[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_2
 Kraken
@@ -810,7 +811,7 @@ Kraken
 SM_KRAKEN_2_DESC
 '''A formidable medium-weight space monster. Its natural prey is the krill swarm. A well-fed kraken may grow into an even larger and more dangerous form.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
+[[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_3
 Great Kraken
@@ -818,7 +819,7 @@ Great Kraken
 SM_KRAKEN_3_DESC
 '''A formidable and very tough space monster.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of [[PT_GASGIANT]] planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
+[[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_WHITE_KRAKEN
 White Kraken
@@ -840,7 +841,7 @@ Small Snowflake
 SM_SNOWFLAKE_1_DESC
 '''A small and harmless space monster with exceptional vision.
 
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.'''
+[[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_2
 Snowflake
@@ -848,7 +849,7 @@ Snowflake
 SM_SNOWFLAKE_2_DESC
 '''A light-weight space monster with exceptional vision.
 
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.'''
+[[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_3
 Large Snowflake
@@ -856,7 +857,7 @@ Large Snowflake
 SM_SNOWFLAKE_3_DESC
 '''A formidable light-weight space monster.
 
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.'''
+[[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_PSIONIC_SNOWFLAKE
 Psionic Snowflake
@@ -872,7 +873,7 @@ Small Juggernaut
 SM_JUGGERNAUT_1_DESC
 '''A formidable heavy-weight space monster with some protective shielding.
 
-Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
+[[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_2
 Juggernaut
@@ -880,7 +881,7 @@ Juggernaut
 SM_JUGGERNAUT_2_DESC
 '''A formidable heavy-weight space monster with moderate protective shielding.
 
-Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
+[[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_3
 Large Juggernaut
@@ -888,7 +889,7 @@ Large Juggernaut
 SM_JUGGERNAUT_3_DESC
 '''A formidable heavy-weight space monster with powerful protective shielding.
 
-Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
+[[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_BLOATED_JUGGERNAUT
 Bloated Juggernaut
@@ -1266,7 +1267,7 @@ OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
 The sound file played when the turn button is clicked.
 
 OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE
-Toggle to play a sound on the start of a new turn
+Toggle to play a sound on the start of a new turn.
 
 OPTIONS_DB_UI_SOUND_NEWTURN_FILE
 The sound file played at start of a new turn, if enabled.
@@ -4185,7 +4186,7 @@ ENC_COMBAT_STEALTH_DECLOAK_ATTACK
 %2% detects %1% during attack.
 
 # %1% unused
-# %2% name of empire detecting declocking ship
+# %2% name of empire detecting decloacking ship
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
 %2% detects
 
@@ -4215,7 +4216,7 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS
 %2% could not damage
 
 # %1% number of targets 
-# %2% name of ship unable to damge targets
+# %2% name of ship unable to damage targets
 ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 %2% could not damage %1% targets:
 
@@ -5993,6 +5994,7 @@ BEGINNER_HINT_21
 BEGINNER_HINT_22
 22: Selecting a system and pressing ALT-C gives a range circle for the system, zoom in or out to compare the distance by looking at the size of the distance meter.
 
+
 ##
 ## Species
 ##
@@ -6235,7 +6237,7 @@ SP_LEMBALALAM
 Lembala'Lam
 SP_LEMBALALAM_GAMEPLAY_DESC
 '''Egocentric, degenerated ancient reptiles that no longer reproduce.
-Prefer Desert Planets.
+Prefer [[PT_DESERT]] Planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 Owning the Lembala grants the technologies: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]]. 
 '''
@@ -6800,7 +6802,7 @@ Will self-destruct when conquered, leaving an outpost owned by the conqueror beh
 '''
 
 SP_ANCIENT_GUARDIANS_DESC
-'''Constructed by precusor technology, these ancient machines can adapt to and fight in any kind of environment. With unwavering loyalty and commitment, they have protected the planet from any invaders, never wasting time to repair and improve the fortifications. Upon being captured, every Guardian Robot will automatically self-destruct.
+'''Constructed by precursor technology, these ancient machines can adapt to and fight in any kind of environment. With unwavering loyalty and commitment, they have protected the planet from any invaders, never wasting time to repair and improve the fortifications. Upon being captured, every Guardian Robot will automatically self-destruct.
 '''
 
 SP_EXPERIMENTOR
@@ -9649,7 +9651,7 @@ LRN_PSY_DOM
 Psychogenic Domination
 
 LRN_PSY_DOM_DESC
-'''Has a 10% chance of taking control of enemy ships with non-telepathic crews in the same system as a planet with domination focus, unless the enemy empire also knows the [[tech LRN_PSY_DOM]]. 
+'''Has a 10% chance of taking control of enemy ships with non-telepathic crews in the same system as a planet with domination focus, unless the enemy empire also knows the [[tech LRN_PSY_DOM]].
 Protects against [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]s taking over your ships.
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
@@ -10270,13 +10272,13 @@ SHP_BIOINTERCEPTOR
 Biointerceptors
 
 SHP_BIOINTERCEPTOR_DESC
-Living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
+Living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. [[BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM]]
 
 SHP_BIOBOMBER
 Biobombers
 
 SHP_BIOBOMBER_DESC
-Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+Living bombers designed to target ships and planets. Far more effective than regular bombers. [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
 
 SHP_NOVA_BOMB
 Nova Bomb
@@ -10288,55 +10290,55 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the [[shippart SP_DEATH_SPORE]] ship part, which allows ships to reduce the Organic population of enemy planets.
+Unlocks the [[shippart SP_DEATH_SPORE]] ship part, [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
 
 SHP_BIOTERM
 Bio-Terminators
 
 SHP_BIOTERM_DESC
-Unlocks the [[shippart SP_BIOTERM]] ship part, which allows ships to greatly reduce the Organic population of enemy planets.
+Unlocks the [[shippart SP_BIOTERM]] ship part, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
 
 SHP_EMP
 EMP Generator
 
 SHP_EMP_DESC
-Unlocks the [[shippart SP_EMP]] ship part, which allows ships to reduce the Robotic populations of enemy planets.
+Unlocks the [[shippart SP_EMP]] ship part, [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
 
 SHP_EMO
 EMO Generator
 
 SHP_EMO_DESC
-Unlocks the [[shippart SP_EMO]] ship part, which allows ships to greatly reduce the Robotic population of enemy planets.
+Unlocks the [[shippart SP_EMO]] ship part, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
 
 SHP_SONIC
 Sonic Shockwave
 
 SHP_SONIC_DESC
-Unlocks the [[shippart SP_SONIC]] ship part, which allows ships to reduce the Lithic population of enemy planets.
+Unlocks the [[shippart SP_SONIC]] ship part, [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
 
 SHP_GRV
 Graviton Pulse
 
 SHP_GRV_DESC
-Unlocks the [[shippart SP_GRV]] ship part, which allows ships to greatly reduce the Lithic populations of enemy planets.
+Unlocks the [[shippart SP_GRV]] ship part, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
 
 SHP_DARK_RAY
 Dark Ray
 
 SHP_DARK_RAY_DESC
-Unlocks the [[shippart SP_DARK_RAY]] ship part, which allows ships to reduce the Phototrophic populations of enemy planets.
+Unlocks the [[shippart SP_DARK_RAY]] ship part, [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
 
 SHP_VOID_SHADOW
 Void Shadow
 
 SHP_VOID_SHADOW_DESC
-Unlocks the [[shippart SP_VOID_SHADOW]] ship part, which allows ships to greatly reduce the Phototrophic populations of enemy planets.
+Unlocks the [[shippart SP_VOID_SHADOW]] ship part, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
 
 SHP_CHAOS_WAVE
 Chaos Wave
 
 SHP_CHAOS_WAVE_DESC
-Unlocks the [[shippart SP_CHAOS_WAVE]] ship part, which allows ships to greatly reduce the population of enemy planets.
+Unlocks the [[shippart SP_CHAOS_WAVE]] ship part, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].
 
 SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
@@ -10471,9 +10473,9 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. It may be built at an [[encyclopedia OUTPOSTS_TITLE]].
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. This building can only be built on an asteroid belt, which also can be an [[encyclopedia OUTPOSTS_TITLE]].
 
-A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a [[buildingtype BLD_SHIPYARD_BASE]] in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
+A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a [[buildingtype BLD_SHIPYARD_BASE]] in the same system, where they are turned into the final hull.'''
 
 BLD_SHIPYARD_AST_REF
 Asteroid Reformation Processor
@@ -10535,7 +10537,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Decreases the [[metertype METER_STEALTH]] of all objects in the same system by 30 and increases the [[metertype METER_SPEED]] of friendly ships that start the turn within 50uu by 20 for that turn. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
+Decreases the [[metertype METER_STEALTH]] of all objects in the same system by 30 and increases the [[metertype METER_SPEED]] of friendly ships that start the turn within 50uu by 20 for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Scanning Facility
@@ -10659,7 +10661,7 @@ BLD_SOL_ORB_GEN_DESC
 * [[STAR_RED]] (x0.1)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
-A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
+A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_CLONING_CENTER
 Cloning Center
@@ -10687,16 +10689,13 @@ Remote Terraforming
 BLD_REMOTE_TERRAFORM_DESC
 Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
-MACRO_NEUTRONIUM_BUILDINGS
-To use neutronium an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a [[STAR_NEUTRON]] star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used
-
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
 
 BLD_NEUTRONIUM_EXTRACTOR_DESC
 '''Makes Neutronium available to the owning empire.  Neutronium may be used at a [[buildingtype BLD_NEUTRONIUM_FORGE]] to enable construction of ships with Neutronium ship parts, like the [[shippart AR_NEUTRONIUM_PLATE]].
 
-Before parts can be built using Neutronium, it must be extracted from a [[STAR_NEUTRON]] star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
+Before parts can be built using Neutronium, it must be extracted from a [[STAR_NEUTRON]] star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_NEUTRONIUM_FORGE
 Neutronium Forge
@@ -10704,7 +10703,7 @@ Neutronium Forge
 BLD_NEUTRONIUM_FORGE_DESC
 '''This building is required at the same location as a [[buildingtype BLD_SHIPYARD_BASE]] to enable building ships with neutronium parts.
 
-The industrial processing of neutronium requires an extensive specialized facility, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]].'''
+The industrial processing of neutronium requires an extensive specialized facility, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]]'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutronium Synthesizer
@@ -10735,13 +10734,13 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 '''Increases [[metertype METER_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by 1 per Population.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a [[STAR_BLACK]] system.'''
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]], but must be in a [[STAR_BLACK]] system.'''
 
 BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but cannot be used unless the planet is colonised.
+'''Allows a planet to move between star systems. An [[buildingtype BLD_LIGHTHOUSE]] is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but cannot be used unless the planet is colonised.
 
 Due to a lack of UI targeting, either a [[buildingtype BLD_PLANET_BEACON]] or a ship equipped with a [[shippart SP_PLANET_BEACON]] currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
@@ -10751,25 +10750,25 @@ BLD_PLANET_BEACON
 Planetary Beacon
 
 BLD_PLANET_BEACON_DESC
-Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].
+Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
 BLD_ART_PLANET
 Artificial Planet
 
 BLD_ART_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_FACTORY_PLANET
 Artificial Factory World
 
 BLD_ART_FACTORY_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_PARADISE_PLANET
 Artificial Paradise World
 
 BLD_ART_PARADISE_PLANET_DESC
-Forms an artificial paradise planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it in stages to eventually perfectly suit its inhabitants. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+Forms an artificial paradise planet from an asteroid belt or a gas giant. [[PT_ASTEROIDS]] become [[SZ_TINY]] [[PT_BARREN]] planets and [[PT_GASGIANT]]s become [[SZ_HUGE]] [[PT_BARREN]] planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it in stages to eventually perfectly suit its inhabitants. [[ARTIFICIAL_PLANET_PROCESS_LOCATION]]
 
 BLD_ART_MOON
 Artificial Moon
@@ -10867,15 +10866,6 @@ Scrying Sphere
 
 BLD_SCRYING_SPHERE_DESC
 Grants visibility to all other planets that have a Scrying Sphere.
-
-BLD_COL_PART_1
-This building can only build at an [[encyclopedia OUTPOSTS_TITLE]], and will upgrade that outpost to a new
-
-BLD_COL_PART_2
-Minimum build time depends on the total starlane distance to the nearest
-
-BLD_COL_PART_3
-owned by the empire, and will increase the farther away it is; the increase will be reduced by researching techs that enable faster colony ships such as engine parts and faster hulls
 
 BLD_COL_ABADDONI
 Abaddoni Colony
@@ -11264,13 +11254,13 @@ FI_BIOINTERCEPTOR
 Bio-Interceptor
 
 FI_BIOINTERCEPTOR_DESC
-Thirty-six living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
+Thirty-six living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. [[BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM]]
 
 FI_BIOBOMBER
 Bio-Bomber
 
 FI_BIOBOMBER_DESC
-Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers. [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
 
 LR_NUCLEAR_MISSILE
 Nuclear Missile
@@ -11300,13 +11290,13 @@ LR_ANTIMATTER_TORPEDO
 Antimatter Torpedo
 
 LR_ANTIMATTER_TORPEDO_DESC
-A fast, long-range missile powered by the [[tech SHP_SPACE_FLUX_DRIVE]] and armed with a powerful anti-matter warhead. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] somewhere in the empire or an ally's empire.
+A fast, long-range missile powered by the [[tech SHP_SPACE_FLUX_DRIVE]] and armed with a powerful anti-matter warhead. [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
 
 LR_PLASMA_TORPEDO
 Plasma Torpedo
 
 LR_PLASMA_TORPEDO_DESC
-A fast, long-range missile with excellent [[metertype METER_STEALTH]], powered by the [[tech SHP_TRANSSPACE_DRIVE]] and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] somewhere in the empire or an ally's empire.
+A fast, long-range missile with excellent [[metertype METER_STEALTH]], powered by the [[tech SHP_TRANSSPACE_DRIVE]] and armed with a devastatingly powerful plasma warhead. [[BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM]]
 
 DT_DETECTOR_1
 Optical Scanner
@@ -11396,7 +11386,7 @@ Electromagnetic Damper
 ST_CLOAK_1_DESC
 '''Weak Cloaking (+20)
 
-Improves [[metertype METER_STEALTH]] of ship on which it is mounted by damping electromagnetic emissions from ship systems. Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present. [[metertype METER_STEALTH]]-causing ship parts do not stack.'''
+Improves [[metertype METER_STEALTH]] of ship on which it is mounted by damping electromagnetic emissions from ship systems. Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 ST_CLOAK_2
 Absorption Field
@@ -11404,7 +11394,7 @@ Absorption Field
 ST_CLOAK_2_DESC
 '''Moderate Cloaking (+40)
 
-Improves [[metertype METER_STEALTH]] of ship on which it is mounted by creating an absorption field around the ship, effectively transforming it into a perfect blackbody. [[metertype METER_STEALTH]]-causing ship parts do not stack.'''
+Improves [[metertype METER_STEALTH]] of ship on which it is mounted by creating an absorption field around the ship, effectively transforming it into a perfect blackbody. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 ST_CLOAK_3
 Dimensional Cloak
@@ -11412,7 +11402,7 @@ Dimensional Cloak
 ST_CLOAK_3_DESC
 '''Strong Cloaking (+60)
 
-Hides this ship within a dimensional rift, greatly increasing [[metertype METER_STEALTH]]. [[metertype METER_STEALTH]]-causing ship parts do not stack.'''
+Hides this ship within a dimensional rift, greatly increasing [[metertype METER_STEALTH]]. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 ST_CLOAK_4
 Phasing Cloak
@@ -11420,7 +11410,7 @@ Phasing Cloak
 ST_CLOAK_4_DESC
 '''Very Strong Cloaking (+80)
 
-Improves [[metertype METER_STEALTH]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[metertype METER_STEALTH]]-causing ship parts do not stack.'''
+Improves [[metertype METER_STEALTH]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
 AR_STD_PLATE
 Standard Armor Plating
@@ -11450,19 +11440,19 @@ AR_ROCK_PLATE
 Rock Armor Plating
 
 AR_ROCK_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+Increases ship's hull [[metertype METER_STRUCTURE]]. A strong, cheap alternative to alloys. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
 AR_CRYSTAL_PLATE
 Crystal Armor Plating
 
 AR_CRYSTAL_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+Increases ship's hull [[metertype METER_STRUCTURE]]. An incredibly strong armor produced with advanced crystallization techniques. [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT]]
 
 AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-Increases ship's hull [[metertype METER_STRUCTURE]]. Strongest, most durable armor plating. Admirable defense. [[MACRO_NEUTRONIUM_BUILDINGS]].
+Increases ship's hull [[metertype METER_STRUCTURE]]. Strongest, most durable armor plating. Admirable defense. [[MACRO_NEUTRONIUM_BUILDINGS]]
 
 AR_PRECURSOR_PLATE
 Precursor Armor Plating
@@ -11476,7 +11466,7 @@ Defense Grid
 SH_DEFENSE_GRID_DESC
 '''Provides basic shield defense. Capable of completely negating or at least substantially reducing [[encyclopedia DAMAGE_TITLE]] from hits by low powered weapons.
 
-[[metertype METER_SHIELD]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
 SH_DEFLECTOR
 Deflector Shield
@@ -11484,7 +11474,7 @@ Deflector Shield
 SH_DEFLECTOR_DESC
 '''Provides advanced shield defense. Can absorb or at least substantially reduce [[encyclopedia DAMAGE_TITLE]] dealt by moderately powered weapons.
 
-[[metertype METER_SHIELD]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
 SH_PLASMA
 Plasma Shield
@@ -11492,7 +11482,7 @@ Plasma Shield
 SH_PLASMA_DESC
 '''Powerful shield that significantly reduces [[encyclopedia DAMAGE_TITLE]] suffered from hits even by advanced weapons, and completely absorbs anything less.
 
-[[metertype METER_SHIELD]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
 SH_BLACK
 Blackshield
@@ -11500,7 +11490,7 @@ Blackshield
 SH_BLACK_DESC
 '''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build.
 
-[[metertype METER_SHIELD]] reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
 SH_MULTISPEC
 Multi-Spectral Shield
@@ -11508,7 +11498,7 @@ Multi-Spectral Shield
 SH_MULTISPEC_DESC
 '''Powerful [[metertype METER_SHIELD]] capable of protecting a ship within a star. Provides a high [[metertype METER_STEALTH]] bonus on the galaxy map when the ship is in a star other than a [[STAR_BLACK]] or a [[STAR_NEUTRON]] star and allows the ship to enter a star in combat.
 
-Shields reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[NO_STACK_SHIELDS_SHIP_PARTS]]'''
 
 SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
@@ -11525,7 +11515,7 @@ Colony Pod
 CO_COLONY_POD_DESC
 '''Basic facilities for colonists to survive journey to a new planet. Allows ship to colonize new worlds.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
+[[COLONY_SHIP_PARTS_MIN_POP]] [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
 CO_SUSPEND_ANIM_POD
 Cryonic Colony Pod
@@ -11533,13 +11523,15 @@ Cryonic Colony Pod
 CO_SUSPEND_ANIM_POD_DESC
 '''Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
 
-All Colony class ship parts require the planet at which they are built to have a population of at least three. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
+[[COLONY_SHIP_PARTS_MIN_POP]] [[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
 CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-[[encyclopedia OUTPOSTS_TITLE]] modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.
+'''[[encyclopedia OUTPOSTS_TITLE]] modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[metertype METER_SUPPLY]] lines when the right tech is researched. Outposts can be upgraded to colonies.
+
+[[COLONY_SHIP_PARTS_UPKEEP_COST]]'''
 
 GT_TROOP_POD
 Ground Troop Pod
@@ -11547,8 +11539,7 @@ Ground Troop Pod
 GT_TROOP_POD_DESC
 '''Carries 2 units of ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 2 defensive Troops.
 
-  * The troops can only be used for one invasion.
-  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+[[TROOP_POD_OPERATION_TEXT]]'''
 
 GT_TROOP_POD_2
 Advanced Ground Troop Pod
@@ -11556,8 +11547,7 @@ Advanced Ground Troop Pod
 GT_TROOP_POD_2_DESC
 '''Carries 4 units of cybernetically advanced ground [[metertype METER_TROOPS]] and equipment that can be deployed onto a planet. Can only be built on a production location with at least 4 defensive Troops.
 
-  * The troops can only be used for one invasion.
-  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+[[TROOP_POD_OPERATION_TEXT]]'''
 
 SP_PLANET_BEACON
 Mobile Planetary Beacon
@@ -11587,55 +11577,55 @@ SP_DEATH_SPORE
 Death Spores
 
 SP_DEATH_SPORE_DESC
-A biological weapon which gradually reduces the Organic population of enemy planets.
+A biological weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
 
 SP_BIOTERM
 Bio-Terminators
 
 SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the Organic population of enemy planets.
+A powerful biological weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ORGANIC_POP]].
 
 SP_EMP
 Electromagnetic Pulse Generator
 
 SP_EMP_DESC
-An electronic weapon which gradually reduces the Robotic population of enemy planets.
+An electronic weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
 
 SP_EMO
 Electromagnetic Overcharge Generator
 
 SP_EMO_DESC
-A powerful electronic weapon which quickly reduces the Robotic population of enemy planets.
+A powerful electronic weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ROBOTIC_POP]].
 
 SP_SONIC
 Sonic Shockwave
 
 SP_SONIC_DESC
-A vibration weapon which gradually shatters the Lithic population of enemy planets.
+A vibration weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
 
 SP_GRV
 Gravitic Pulse Generator
 
 SP_GRV_DESC
-A powerful vibration weapon which quickly shatters the Lithic population of enemy planets.
+A powerful vibration weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_LITHIC_POP]].
 
 SP_DARK_RAY
 Dark Ray
 
 SP_DARK_RAY_DESC
-A negative energy weapon which gradually reduces the Phototrophic population of enemy planets.
+A negative energy weapon [[SHIP_WEAPON_GRADUALLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
 
 SP_VOID_SHADOW
 Void Shadow
 
 SP_VOID_SHADOW_DESC
-A powerful negative energy weapon which quickly reduces the Phototrophic population of enemy planets.
+A powerful negative energy weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_PHOTOTROPHIC_POP]].
 
 SP_CHAOS_WAVE
 Chaos Wave
 
 SP_CHAOS_WAVE_DESC
-A powerful weapon which quickly reduces any population.  WARNING: Also kills [[special GAIA_SPECIAL]] specials.
+A powerful weapon [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].  WARNING: Also kills [[special GAIA_SPECIAL]] specials.
 
 SP_NOVA_BOMB
 Nova Bomb
@@ -11710,7 +11700,7 @@ SH_ROBOTIC_DESC
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
 SH_SPATIAL_FLUX
 Spatial Flux Hull
@@ -11722,7 +11712,7 @@ SH_SPATIAL_FLUX_DESC
 
 [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
@@ -11732,7 +11722,7 @@ SH_SELF_GRAVITATING_DESC
 
 [[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] is required at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]'''
 
 SH_NANOROBOTIC
 Nano-Robotic Hull
@@ -11742,7 +11732,7 @@ SH_NANOROBOTIC_DESC
 
 [[metertype METER_STEALTH]] and is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] unit at the planet where it is constructed.'''
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]].'''
 
 SH_TITANIC
 Titanic Hull
@@ -11752,7 +11742,7 @@ SH_TITANIC_DESC
 
 [[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]'''
 
 SH_TRANSSPATIAL
 Trans-Spatial Hull
@@ -11762,7 +11752,7 @@ SH_TRANSSPATIAL_DESC
 
 [[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
 
 SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
@@ -11772,7 +11762,7 @@ SH_LOGISTICS_FACILITATOR_DESC
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
 
 SH_ASTEROID
 Asteroid Hull
@@ -11782,7 +11772,7 @@ SH_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
 SH_SMALL_ASTEROID
 Small Asteroid Hull
@@ -11792,7 +11782,7 @@ SH_SMALL_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
 SH_HEAVY_ASTEROID
 Heavy Asteroid Hull
@@ -11802,7 +11792,7 @@ SH_HEAVY_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
 SH_CAMOUFLAGE_ASTEROID
 Camouflage Asteroid Hull
@@ -11812,7 +11802,7 @@ SH_CAMOUFLAGE_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is high and the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
 SH_SMALL_CAMOUFLAGE_ASTEROID
 Small Camouflage Asteroid Hull
@@ -11822,7 +11812,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is very high and the hull gets a bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
 SH_AGREGATE_ASTEROID
 Aggregate Asteroid Hull
@@ -11832,7 +11822,7 @@ SH_AGREGATE_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
 
 SH_MINIASTEROID_SWARM
 Mini-Asteroid Swarm
@@ -11842,7 +11832,7 @@ SH_MINIASTEROID_SWARM_DESC
 
 [[metertype METER_STEALTH]] is very high and the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
 
 SH_SCATTERED_ASTEROID
 Scattered Asteroid Hull
@@ -11852,7 +11842,7 @@ SH_SCATTERED_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
 
 SH_CRYSTALLIZED_ASTEROID
 Crystallized Asteroid Hull
@@ -11862,7 +11852,7 @@ SH_CRYSTALLIZED_ASTEROID_DESC
 
 [[metertype METER_STEALTH]] is medium but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
+[[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]'''
 
 SH_ORGANIC
 Organic Hull
@@ -11873,9 +11863,11 @@ Organic Growth: starts with 5 [[metertype METER_STRUCTURE]], but grows an additi
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is low and [[metertype METER_SPEED]] is high.
 
-Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology develops. Low detection makes it poorly suited in a scouting role but it can make a capable warship. Living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
+Cheap and versatile hull able to carry out many fleet roles but likely to become obsolete as technology develops. Low detection makes it poorly suited in a scouting role but it can make a capable warship.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
+[[LIVING_HULL_AUTO_REGEN]]
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]'''
 
 SH_STATIC_MULTICELLULAR
 Static Multicellular Hull
@@ -11887,7 +11879,7 @@ SH_STATIC_MULTICELLULAR_DESC
 
 Cheap and versatile hull able to fill many fleet roles without excelling at any. This hull regenerates neither [[metertype METER_STRUCTURE]] nor [[metertype METER_FUEL]] between combats.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and a [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]'''
 
 SH_ENDOMORPHIC
 Endomorphic Hull
@@ -11902,7 +11894,7 @@ Potentially a capable warship.
 
 This hull regenerates neither [[metertype METER_STRUCTURE]] nor [[metertype METER_FUEL]] between combats.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]'''
 
 SH_SYMBIOTIC
 Symbiotic Hull
@@ -11915,9 +11907,9 @@ Organic Growth: starts with 10 [[metertype METER_STRUCTURE]], but grows an addit
 
 Less external slots makes this hull unsuited for a frontline combat role, but the internal slots, detection range and stealth give it potential as a scout or commerce raider.
 
-Living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
+[[LIVING_HULL_AUTO_REGEN]]
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and a [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]'''
 
 SH_PROTOPLASMIC
 Protoplasmic Hull
@@ -11930,7 +11922,7 @@ Organic Growth: starts with 5 [[metertype METER_STRUCTURE]], gains an additional
 
 Less external slots makes this hull unsuited for a frontline combat role, but the internal slots, detection range and stealth give it potential as a scout or commerce raider.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
 
 SH_ENDOSYMBIOTIC
 Endosymbiotic Hull
@@ -11943,9 +11935,11 @@ The base hull is born with 5 [[metertype METER_STRUCTURE]], but grows an additio
 
 [[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
-Living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats. Potentially a powerful warship, commerce raider or armed scout.
+[[LIVING_HULL_AUTO_REGEN]]
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.
+Potentially a powerful warship, commerce raider or armed scout.
+
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]
 '''
 
 SH_RAVENOUS
@@ -11962,7 +11956,7 @@ Potentially a powerful and fast warship.
 
 This hull has no bonuses to [[metertype METER_STRUCTURE]] or [[metertype METER_FUEL]] regeneration.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
 '''
 
 SH_BIOADAPTIVE
@@ -11978,7 +11972,7 @@ Potentially a powerful and fast commerce raider, stealth attacker or scout.
 
 This living hull regenerates [[metertype METER_STRUCTURE]] quickly when out of combat, gaining its current structure every turn it isn't involved in a fight or blockade, meaning if it is at half strength or greater it will be fully repaired in one turn. In addition, it regains 0.2 [[metertype METER_FUEL]] per turn.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]
 '''
 
 SH_SENTIENT
@@ -11990,9 +11984,9 @@ Organic Growth: Starts with 12 [[metertype METER_STRUCTURE]], grows an additiona
 
 [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 
-This hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
+[[LIVING_HULL_AUTO_REGEN]]
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
 
 SH_COMPRESSED_ENERGY
 Compressed Energy Hull
@@ -12002,7 +11996,7 @@ SH_COMPRESSED_ENERGY_DESC
 
 [[metertype METER_STRUCTURE]] is low, [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
 
-This hull requires a great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+[[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
 
 SH_ENERGY_FRIGATE
 Energy Frigate
@@ -12012,7 +12006,7 @@ SH_ENERGY_FRIGATE_DESC
 
 [[metertype METER_STRUCTURE]] and [[metertype METER_STEALTH]] are medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
 
-This hull requires a great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+[[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
 
 SH_FRACTAL_ENERGY
 Fractal Energy Hull
@@ -12022,7 +12016,7 @@ SH_FRACTAL_ENERGY_DESC
 
 [[metertype METER_STRUCTURE]] is moderate, [[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
 
-This hull requires a very great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+[[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]'''
 
 SH_QUANTUM_ENERGY
 Quantum Energy Hull
@@ -12032,7 +12026,7 @@ SH_QUANTUM_ENERGY_DESC
 
 [[metertype METER_STRUCTURE]] is moderate, [[metertype METER_STEALTH]] is low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high.
 
-This hull requires a very great deal of energy to construct and therefore can only be built at a system with a [[STAR_BLUE]] or [[STAR_BLACK]] star type, and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+[[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]'''
 
 SH_SOLAR
 Solar Hull
@@ -12042,7 +12036,7 @@ SH_SOLAR_DESC
 
 [[metertype METER_STRUCTURE]] is extremely high, [[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[metertype METER_STEALTH]] on the galaxy map when it is in a system with a star of type other than [[STAR_BLACK]] or [[STAR_NEUTRON]], and in combat, when it is hiding inside such a star.
 
-This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a [[STAR_BLACK]] in its formation. It requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
+This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a [[STAR_BLACK]] in its formation. It can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]].'''
 
 SH_BASIC_SMALL
 Basic Small Hull
@@ -12052,7 +12046,7 @@ SH_BASIC_SMALL_DESC
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
 SH_BASIC_MEDIUM
 Basic Medium Hull
@@ -12062,7 +12056,7 @@ SH_BASIC_MEDIUM_DESC
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
 SH_STANDARD
 Basic Large Hull
@@ -12072,7 +12066,7 @@ SH_STANDARD_DESC
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is low.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is constructed.'''
+[[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
 SHP_XENTRONIUM_HULL
 Xentronium Armored Hull
@@ -12272,11 +12266,186 @@ A cosmic cloud of high energetic particles.
 
 
 ##
+## Monsters Macros
+##
+
+SM_KRILL_MACRO_1
+Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories
+
+SM_KRILL_MACRO_2
+The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
+
+SM_GUARD_MACRO
+programmed by the Precursors to defend the system against intruders
+
+SM_KRAKEN_ENVIRONMENT
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of [[PT_GASGIANT]] planets, and Kraken can mature into larger forms in systems with Gas Giants.
+
+SM_SNOWFLAKE_ENVIRONMENT
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.
+
+SM_JUGGERNAUT_ENVIRONMENT
+Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.
+
+
+##
 ## Buildings macros
 ##
 
+BUILDING_AVAILABLE_ON_OUTPOSTS
+This building can be built at an [[encyclopedia OUTPOSTS_TITLE]]
+
 NO_STACK_SUPPLY_CONNECTION_TEXT
 More than one in the same [[metertype METER_SUPPLY]] connected Resource Group do not stack and add no extra bonus.
+
+MACRO_NEUTRONIUM_BUILDINGS
+To use neutronium, an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a [[STAR_NEUTRON]] star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used.
+
+ARTIFICIAL_PLANET_PROCESS_LOCATION
+This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
+
+BLD_COL_PART_1
+This building can only build at an [[encyclopedia OUTPOSTS_TITLE]], and will upgrade that outpost to a new
+
+BLD_COL_PART_2
+Minimum build time depends on the total starlane distance to the nearest
+
+BLD_COL_PART_3
+owned by the empire, and will increase the farther away it is; the increase will be reduced by researching techs that enable faster colony ships such as engine parts and faster hulls
+
+
+# Macro keys formatting for ship designs, hulls or parts:
+# BLD_SHIPYARD_TYPE1_TYPE2_REQUIRED (required building type(s) owned by
+#                                    empire only in the same system)
+# ANY_SYSTEM (building owned in any system by empire or ally)
+# Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
+
+##
+## Ship design/hull macros
+##
+
+# Keys used in Predefined Ship Designs and Ship Hulls sections
+
+BLD_SHIPYARD_BASE_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]].
+
+BLD_SHIPYARD_BASE_AST_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an asteroid belt and an [[buildingtype BLD_SHIPYARD_AST]].
+
+BLD_SHIPYARD_AST_REF_REQUIRED
+An [[buildingtype BLD_SHIPYARD_AST_REF]] owned by the empire is also required in the same system.
+
+BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM
+An [[buildingtype BLD_SHIPYARD_AST_REF]] owned by the empire or by an ally is also required in any system.
+
+BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED
+Requiring a great deal of energy to construct, it can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type, and at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]].
+
+BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED
+Requiring a very great deal of energy to construct, it can only be built at a system with a [[STAR_BLUE]] or [[STAR_BLACK]] star type, and at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]].
+
+BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+
+BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+
+LIVING_HULL_AUTO_REGEN
+Living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
+
+MIN_POPULATION_THREE_REQUIRED
+Can only be built at a location with a population of at least three
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
+
+BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
+
+# Other than Requirements
+
+SHIPDESIGN_DETECTION_RESEARCH_TIPS
+Further [[metertype METER_RESEARCH]] aimed at improving [[metertype METER_DETECTION]] would allow for better designs.
+
+SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY
+capable of delivering millions of citizens safely to new colony sites
+
+SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY
+capable of delivering many millions of citizens safely to new colony sites
+
+SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM
+colony on a habitable planet in the system where it is produced
+
+SHIPDESIGN_OUTPOSTS_CAPACITY
+capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world
+
+SHIPDESIGN_NO_TRAVEL
+This vessel cannot travel through star lanes.
+
+SHIPDESIGN_PLANET_INVASION
+[[metertype METER_TROOPS]] and equipment that can be used to invade a planet
+
+
+##
+## Ship part/tech application macros
+##
+
+# Keys used in Ship Parts and Technology Application sections
+
+BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
+This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
+
+BLD_BIONEURAL_REQUIRED_ANY_SYSTEM
+This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+
+BLD_SHIPYARD_CON_ADV_ENGINE_REQUIRED_ANY_SYSTEM
+This part can only be built if there is an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] somewhere in the empire or an ally's empire.
+
+NO_STACK_STEALTH_SHIP_PARTS
+[[metertype METER_STEALTH]]-causing ship parts do not stack.
+
+BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM_SHIP_PARTS_TEXT
+This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+
+NO_STACK_SHIELDS_SHIP_PARTS
+[[metertype METER_SHIELD]] reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.
+
+COLONY_SHIP_PARTS_MIN_POP
+All Colony class ship parts require the planet at which they are built to have a population of at least three.
+
+COLONY_SHIP_PARTS_UPKEEP_COST
+The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.
+
+TROOP_POD_OPERATION_TEXT
+'''  * The troops can only be used for one invasion.
+  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+
+SHIP_WEAPON_GRADUALLY_REDUCE
+which allows ships to gradually reduce
+
+SHIP_WEAPON_QUICKLY_REDUCE
+which allows ships to quickly reduce
+
+ENEMY_PLANET_ORGANIC_POP
+the Organic population of enemy planets
+
+ENEMY_PLANET_ROBOTIC_POP
+the Robotic population of enemy planets
+
+ENEMY_PLANET_LITHIC_POP
+the Lithic population of enemy planets
+
+ENEMY_PLANET_PHOTOTROPHIC_POP
+the Phototrophic population of enemy planets
+
+ENEMY_PLANET_ANY_POP
+any population of enemy planets
 
 
 ##
@@ -12807,6 +12976,7 @@ Flux Interference
 
 SPATIAL_FLUX_BONUS
 Flux Drive Bonus
+
 
 ##
 ## Tags
