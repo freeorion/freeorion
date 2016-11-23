@@ -30,18 +30,23 @@ DeferredLayout::DeferredLayout(X x, Y y, X w, Y h, std::size_t rows, std::size_t
     Layout(x, y, w, h, rows, columns, border_margin, cell_margin),
     m_ul_prerender(Pt(x, y)),
     m_lr_prerender(Pt(x + w, y + h)),
-    m_stop_deferred_resize_recursion(false)
+    m_make_resize_immediate_during_prerender(false)
 {}
 
 void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
 {
-    if (m_stop_deferred_resize_recursion)
+    if (m_make_resize_immediate_during_prerender) {
+        if (ul != m_ul_prerender || lr != m_lr_prerender)
+            DoLayout(ul, lr);
         return;
+    }
 
-    RequirePreRender();
+    if ((ul != RelativeUpperLeft()) || (lr != RelativeLowerRight())) {
+        RequirePreRender();
 
-    m_ul_prerender = ul;
-    m_lr_prerender = lr;
+        m_ul_prerender = ul;
+        m_lr_prerender = lr;
+    }
 
     // Note: m_upperleft and m_lowerright will be updated when DoLayout() is called in PreRender().
 }
@@ -49,7 +54,7 @@ void DeferredLayout::SizeMove(const Pt& ul, const Pt& lr)
 void DeferredLayout::PreRender()
 {
     Layout::PreRender();
-    ScopedAssign<bool> assignment(m_stop_deferred_resize_recursion, true);
+    ScopedAssign<bool> assignment(m_make_resize_immediate_during_prerender, true);
     DoLayout(m_ul_prerender, m_lr_prerender);
     m_ul_prerender = RelativeUpperLeft();
     m_lr_prerender = RelativeLowerRight();
@@ -57,27 +62,3 @@ void DeferredLayout::PreRender()
 
 void DeferredLayout::RedoLayout()
 { RequirePreRender(); }
-
-void DeferredLayout::SetMinSize(const Pt& sz)
-{
-    Pt old_ul_prerender = m_ul_prerender;
-    Pt old_lr_prerender = m_lr_prerender;
-
-    Layout::SetMinSize(sz);
-
-    m_ul_prerender = old_ul_prerender;
-    m_lr_prerender = old_lr_prerender;
-    ClampRectWithMinAndMaxSize(m_ul_prerender, m_lr_prerender);
-}
-
-void DeferredLayout::SetMaxSize(const Pt& sz)
-{
-    Pt old_ul_prerender = m_ul_prerender;
-    Pt old_lr_prerender = m_lr_prerender;
-
-    Layout::SetMaxSize(sz);
-
-    m_ul_prerender = old_ul_prerender;
-    m_lr_prerender = old_lr_prerender;
-    ClampRectWithMinAndMaxSize(m_ul_prerender, m_lr_prerender);
-}

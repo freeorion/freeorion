@@ -649,7 +649,7 @@ public:
     virtual bool Run();
 
     /** Ends the current execution of Run(), if any. */
-    void EndRun();
+    virtual void EndRun();
 
     /** Sets the time cutoff (in milliseconds) for a browse info mode.  If \a
         mode is not less than the current number of modes, extra modes will be

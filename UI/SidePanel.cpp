@@ -521,7 +521,7 @@ private:
     void                    ClickInvade();                      ///< called if invade button is pressed
     void                    ClickBombard();                     ///< called if bombard button is pressed
 
-    void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
+    void                    FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
     /** Called when focus drop list opens/closes to inform that it now \p is_open. */
     void                    FocusDropListOpened(bool is_open);
 
@@ -726,39 +726,25 @@ namespace {
     public:
         SystemRow(int system_id) :
             GG::ListBox::Row(GG::X1, GG::Y(SystemNameFontSize()), "SystemRow"),
-            m_system_id(system_id),
-            m_initialized(false)
-        { RequirePreRender(); }
-
-        virtual void Init() {
-            m_initialized = true;
-            OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
-            push_back(name);
-
-            SetColAlignment(0, GG::ALIGN_CENTER);
+            m_system_id(system_id)
+        {
+            SetName("SystemRow");
+            RequirePreRender();
         }
 
-        virtual void PreRender() {
-            if (!m_initialized)
-                Init();
-
-            // Lock the row to the size of its drop box.
-            if (Parent())
-                SetColWidth(0, Parent()->ClientWidth());
+        void Init() {
+            OwnerColoredSystemName *name(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
+            push_back(name);
+            SetColAlignment(0, GG::ALIGN_CENTER);
             GetLayout()->PreRender();
         }
 
-        /** Lock the system row size to the size of the drop down list box. This makes sure that
-            the row is the correct width with the name centered  when the dropdown list steals the
-            selected row for rendering.*/
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            GG::Pt adjusted_lr(GG::X(Parent() ? ul.x + Parent()->ClientWidth() : lr.x), lr.y);
-            GG::Pt target_size(adjusted_lr - ul);
-            if ((ul == RelativeUpperLeft()) && (adjusted_lr == RelativeLowerRight()))
-                return;
+        virtual void PreRender() {
+            // If there is no control add it.
+            if (!size())
+                Init();
 
-            GG::Wnd::SizeMove(ul, adjusted_lr);
-            RequirePreRender();
+            GG::ListBox::Row::PreRender();
         }
 
         int SystemID() const { return m_system_id; }
@@ -768,7 +754,6 @@ namespace {
 
     private:
         int m_system_id;
-        bool m_initialized;
     };
 }
 /** A class to display all of the system names*/
@@ -945,9 +930,9 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     // focus-selection droplist
     m_focus_drop = new CUIDropDownList(6);
     AttachChild(m_focus_drop);
-    GG::Connect(m_focus_drop->DropDownOpenedSignal, &SidePanel::PlanetPanel::FocusDropListOpened,  this);
-    GG::Connect(m_focus_drop->SelChangedSignal,     &SidePanel::PlanetPanel::FocusDropListSelectionChanged,  this);
-    GG::Connect(this->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
+    GG::Connect(m_focus_drop->DropDownOpenedSignal,             &SidePanel::PlanetPanel::FocusDropListOpened,  this);
+    GG::Connect(m_focus_drop->SelChangedSignal,                 &SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot,  this);
+    GG::Connect(this->FocusChangedSignal,                       &SidePanel::PlanetPanel::SetFocus, this);
     m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
@@ -2401,15 +2386,10 @@ void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
     if (is_open)
         return;
 
-    FocusDropListSelectionChanged(m_focus_drop->CurrentItem());
+    FocusDropListSelectionChangedSlot(m_focus_drop->CurrentItem());
 }
 
-void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
-    // Do not update the sidepanel while the focus drop is open.  Otherwise scrolling with the key
-    // press does not work because every up/down arrow press deletes and recreates the m_focus_drop.
-    if (m_focus_drop->Dropped())
-        return;
-
+void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected) {
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator
     // parameter, does some safety checks, and disables UI sounds
@@ -2837,7 +2817,9 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
-    GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChanged, this);
+    GG::Connect(m_system_name->DropDownOpenedSignal,                     &SidePanel::SystemNameDropListOpenedSlot,  this);
+    GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChangedSlot,    this);
+    GG::Connect(m_system_name->SelChangedWhileDroppedSignal,             &SidePanel::SystemSelectionChangedSlot,    this);
     GG::Connect(m_button_prev->LeftClickedSignal,                        &SidePanel::PrevButtonClicked,      this);
     GG::Connect(m_button_next->LeftClickedSignal,                        &SidePanel::NextButtonClicked,      this);
     GG::Connect(m_planet_panel_container->PlanetSelectedSignal,          &SidePanel::PlanetSelected,         this);
@@ -3056,53 +3038,66 @@ void SidePanel::RefreshInPreRender() {
     s_system_connections.insert(GG::Connect(system->FleetsRemovedSignal,    &SidePanel::FleetsRemoved));
 }
 
+void SidePanel::RefreshSystemNames() {
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
+    // if no system object, there is nothing to populate with.  early abort.
+    if (!system)
+        return;
+
+    // Repopulate the system with all of the names of known systems, if it is closed.
+    // If it is open do not change the system names because it runs in a seperate ModalEventPump
+    // from the main UI.
+    if (!m_system_name->Dropped()) {
+        m_system_name->Clear();
+
+        // populate droplist of system names
+        std::map<std::string, int> system_map; //alphabetize Systems here
+        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+             sys_it != Objects().const_end<System>(); ++sys_it)
+        {
+            if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
+                system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+        }
+        std::vector<GG::DropDownList::Row*> rows;
+        rows.reserve(system_map.size());
+        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
+        {
+            int sys_id = sys_it->second;
+            rows.push_back(new SystemRow(sys_id));
+        }
+        m_system_name->Insert(rows, false);
+
+        // select in the list the currently-selected system
+        for (GG::DropDownList::iterator it = m_system_name->begin();
+             it != m_system_name->end(); ++it)
+        {
+            if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+                if (s_system_id == row->SystemID()) {
+                    m_system_name->Select(it);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void SidePanel::RefreshImpl() {
     ScopedTimer sidepanel_refresh_impl_timer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
 
     // clear out current contents
     m_planet_panel_container->Clear();
-    m_system_name->Clear();
     m_star_type_text->SetText("");
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
 
-    // get info with which to repopulate
+    RefreshSystemNames();
+
     TemporaryPtr<const System> system = GetSystem(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
-
-
-    // populate droplist of system names
-    std::map<std::string, int> system_map; //alphabetize Systems here
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
-    {
-        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
-            system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
-    }
-    std::vector<GG::DropDownList::Row*> rows;
-    rows.reserve(system_map.size());
-    for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
-    {
-        int sys_id = sys_it->second;
-        rows.push_back(new SystemRow(sys_id));
-    }
-    m_system_name->Insert(rows, false);
-
-    // select in the list the currently-selected system
-    for (GG::DropDownList::iterator it = m_system_name->begin();
-         it != m_system_name->end(); ++it)
-    {
-        if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
-            if (s_system_id == row->SystemID()) {
-                m_system_name->Select(it);
-                break;
-            }
-        }
-    }
 
     // (re)create top right star graphic
     boost::shared_ptr<GG::Texture> graphic =
@@ -3257,7 +3252,17 @@ void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         RequirePreRender();
 }
 
-void SidePanel::SystemSelectionChanged(GG::DropDownList::iterator it) {
+void SidePanel::SystemNameDropListOpenedSlot(bool is_open) {
+    // Refresh the system names when the drop list closes.
+    if (is_open)
+        return;
+    RefreshSystemNames();
+}
+
+void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
+    /** This handles cases when the list is dropped and not dropped in the
+        same way. Refresh should not update the list of systems if the list
+        is open. */
     int system_id = INVALID_OBJECT_ID;
     if (it != m_system_name->end())
         system_id = boost::polymorphic_downcast<const SystemRow*>(*it)->SystemID();
@@ -3271,7 +3276,7 @@ void SidePanel::PrevButtonClicked() {
     if (selected == m_system_name->begin())
         selected = m_system_name->end();
     m_system_name->Select(--selected);
-    SystemSelectionChanged(m_system_name->CurrentItem());
+    SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
 void SidePanel::NextButtonClicked() {
@@ -3280,7 +3285,7 @@ void SidePanel::NextButtonClicked() {
     if (++selected == m_system_name->end())
         selected = m_system_name->begin();
     m_system_name->Select(selected);
-    SystemSelectionChanged(m_system_name->CurrentItem());
+    SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
 void SidePanel::PlanetSelected(int planet_id) {

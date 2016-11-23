@@ -34,6 +34,8 @@
 #include <GG/ListBox.h>
 #include <GG/GLClientAndServerBuffer.h>
 
+#include <boost/scoped_ptr.hpp>
+
 class ModalListPicker;
 
 namespace GG {
@@ -50,7 +52,16 @@ namespace GG {
     DropDownList.  Though you can still set the alignment, etc. of individual
     rows, as in ListBox, the currently-selected row will have the same
     alignment, etc. when displayed in the control in its unopened state.  Note
-    that this may look quite ugly. */
+    that this may look quite ugly.
+
+    On selection DropDownList emits one of two signals, SelChangedSignal or
+    SelChangedWhileDroppedSignal.  SelChangedWhileDroppedSignal is emitted
+    when the selection changes while running a ModalEventPump to display the
+    drop down list and handle its events.
+
+    SelChangedSignal will also be emitted when the drop down list closes if
+    the selected item changed.
+*/
 class GG_API DropDownList : public Control
 {
 public:
@@ -118,7 +129,12 @@ public:
         different width than the drop down rows.*/
     virtual GG::X  DisplayedRowWidth() const;
 
-    mutable SelChangedSignalType SelChangedSignal; ///< the selection change signal object for this DropDownList
+    /** The selection change signal while not running the modal drop down box.
+        This will also signal an event when the drop list closes if the selection changed.
+     */
+    mutable SelChangedSignalType SelChangedSignal;
+    /** The selection change signal while running the modal drop down box.*/
+    mutable SelChangedSignalType SelChangedWhileDroppedSignal;
 
     DropDownOpenedSignalType DropDownOpenedSignal;
     //@}
@@ -214,8 +230,8 @@ protected:
 private:
     const ListBox*  LB() const;
 
-    ModalListPicker*    m_modal_picker;
-    size_t              m_num_shown_elements;
+    // TODO use C++11 unique_ptr
+    boost::scoped_ptr<ModalListPicker> const    m_modal_picker;
 };
 
 } // namespace GG
