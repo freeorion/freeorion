@@ -525,7 +525,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_lclick_row(m_rows.end()),
     m_rclick_row(m_rows.end()),
     m_last_row_browsed(m_rows.end()),
-    m_first_row_offset(Pt(X0, Y0)),
+    m_first_row_offset(Pt(X(BORDER_THICK), Y(BORDER_THICK))),
     m_first_row_shown(m_rows.end()),
     m_first_col_shown(0),
     m_num_cols(1),
@@ -861,7 +861,7 @@ void ListBox::PreRender()
 
     // Ensure that data in occluded cells is not rendered
     // and that any re-layout during prerender is immediate.
-    Y visible_height(0);
+    Y visible_height(BORDER_THICK);
     Y max_visible_height = ClientSize().y;
     bool hide = true;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
@@ -1002,7 +1002,7 @@ void ListBox::Clear()
     DetachChild(m_header_row);
     DeleteChildren();
     AttachChild(m_header_row);
-    m_first_row_offset = Pt(X0, Y0);
+    m_first_row_offset = Pt(X(BORDER_THICK), Y(BORDER_THICK));
     m_first_row_shown = m_rows.end();
     m_first_col_shown = 0;
     m_selections.clear();
@@ -1139,7 +1139,8 @@ void ListBox::BringRowIntoView(iterator it)
     // Find the y offsets of the first and last shown rows and 'it'.
     bool first_row_found(false), last_row_found(false), it_found(false);
 
-    Y y_offset(Y0), it_y_offset(Y0), first_row_y_offset(Y0), last_row_y_offset(Y0);
+    Y y_offset(BORDER_THICK), it_y_offset(BORDER_THICK);
+    Y first_row_y_offset(BORDER_THICK), last_row_y_offset(BORDER_THICK);
     iterator it2 = m_rows.begin();
     while ((it2 != m_rows.end()) && (!first_row_found || !last_row_found || !it_found)) {
         if (it2 == m_first_row_shown) {
@@ -2249,7 +2250,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
-    Y position(0);
+    Y position(BORDER_THICK);
 
     // scan through list of rows until the tab position is less than one of the rows' centres
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
@@ -2280,8 +2281,8 @@ void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_col_shown = 0;
-    X accum(0);
-    X position(0);
+    X accum(BORDER_THICK);
+    X position(BORDER_THICK);
     for (std::size_t i = 0; i < m_col_widths.size(); ++i) {
         X col_width = m_col_widths[i];
         if (tab_low < accum + col_width / 2) {
