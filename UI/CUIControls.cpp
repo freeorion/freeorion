@@ -1552,12 +1552,12 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 }
 
 GG::Clr EmpireColorSelector::CurrentColor() const
-{ return (**CurrentItem())[0]->Color(); }
+{ return !(**CurrentItem()).empty() ? (**CurrentItem()).at(0)->Color() : GG::CLR_RED; }
 
 void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
     for (iterator list_it = begin(); list_it != end(); ++list_it) {
         const GG::ListBox::Row* row = *list_it;
-        if (row && !row->empty() && (*row)[0]->Color() == clr) {
+        if (row && !row->empty() && row->at(0)->Color() == clr) {
             Select(list_it);
             return;
         }
@@ -1568,7 +1568,7 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
 void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
     const GG::ListBox::Row* row = *it;
     if (row && !row->empty())
-        ColorChangedSignal((*row)[0]->Color());
+        ColorChangedSignal(!row->empty() ? row->at(0)->Color() : GG::CLR_RED);
     else
         ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
 }

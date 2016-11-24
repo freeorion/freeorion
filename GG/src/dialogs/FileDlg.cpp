@@ -452,7 +452,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
     std::string all_files;
     bool dir_selected = false;
     for (ListBox::SelectionSet::const_iterator it = files.begin(); it != files.end(); ++it) {
-        std::string filename = boost::polymorphic_downcast<TextControl*>((***it)[0])->Text();
+        std::string filename = !(***it).empty() ? boost::polymorphic_downcast<TextControl*>((***it).at(0))->Text() : "";
         if (filename[0] != '[') {
             if (!all_files.empty())
                 all_files += " ";
@@ -690,7 +690,7 @@ void FileDlg::OpenDirectory()
         return;
 
     std::string directory;
-    directory = boost::polymorphic_downcast<TextControl*>((***sels.begin())[0])->Text();
+    directory = !(***sels.begin()).empty() ? boost::polymorphic_downcast<TextControl*>((***sels.begin()).at(0))->Text() : "";
 
     if (directory.size() < 2 || directory[0] != '[')
         return;

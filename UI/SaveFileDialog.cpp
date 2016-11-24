@@ -925,7 +925,7 @@ void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
 void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selection) {
     GG::DropDownList::Row& row = **selection;
     if (row.size() > 0) {
-        GG::Label* control = dynamic_cast<GG::Label*>(row[0]);
+        GG::Label* control = dynamic_cast<GG::Label*>(row.at(0));
         if (control) {
             UpdateDirectory(control->Text());
         }

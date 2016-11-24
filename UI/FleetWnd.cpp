@@ -2072,7 +2072,7 @@ public:
         assert(drop_target_row);
         assert(!drop_target_row->empty());
 
-        GG::Control* control = (*drop_target_row)[0];
+        GG::Control* control = !drop_target_row->empty() ? drop_target_row->at(0) : 0;
         assert(control);
 
         FleetDataPanel* drop_target_data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
@@ -2228,7 +2228,7 @@ private:
         GG::ListBox::Row* selected_row = *row_it;
         assert(selected_row);
         assert(!selected_row->empty());
-        GG::Control* control = (*selected_row)[0];
+        GG::Control* control = !selected_row->empty() ? selected_row->at(0) : 0;
         FleetDataPanel* data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
         assert(data_panel);
 
@@ -2279,7 +2279,7 @@ private:
             return;
         }
 
-        GG::Control* control = (*selected_row)[0];
+        GG::Control* control = !selected_row->empty() ? selected_row->at(0) : 0;;
         if (!control) {
             ErrorLogger() << "FleetsListBox::ClearHighlighting : null control in selected row!";
             return;
@@ -2658,7 +2658,7 @@ void FleetDetailPanel::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> 
 void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         try {
-            ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((**it)[0]);
+            ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(!(**it).empty() ? (**it).at(0) : 0);
             ship_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
@@ -3413,8 +3413,8 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         try {
-            FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>((**it)[0]);
-            fleet_panel->Select(rows.find(it) != rows.end());
+            if (FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(!(**it).empty() ? (**it).at(0) : 0))
+                fleet_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
             continue;

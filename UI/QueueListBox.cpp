@@ -134,7 +134,7 @@ void QueueListBox::Render() {
         if (m_drop_point == end())
             ul.y = lr.y;
         if (!row->empty()) {
-            GG::Control* panel = (*row)[0];
+            GG::Control* panel =  row->at(0);
             ul.x = panel->Left();
             lr.x = panel->Right();
         }

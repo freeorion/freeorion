@@ -239,9 +239,6 @@ std::size_t ListBox::Row::size() const
 bool ListBox::Row::empty() const
 { return m_cells.empty(); }
 
-Control* ListBox::Row::operator[](std::size_t n) const
-{ return m_cells[n]; }
-
 Control* ListBox::Row::at(std::size_t n) const
 { return m_cells.at(n); }
 

@@ -146,7 +146,6 @@ public:
         std::size_t         size() const;                       ///< returns the number of Controls in this Row
         bool                empty() const;                      ///< returns true iff there are 0 Controls in this Row
 
-        virtual Control*    operator[](std::size_t n) const;    ///< returns the Control in the \a nth cell of this Row; not range checked
         virtual Control*    at(std::size_t n) const;            ///< returns the Control in the \a nth cell of this Row \throw std::range_error throws when size() <= \a n
 
         Alignment    RowAlignment() const;              ///< returns the vertical alignment of this Row
