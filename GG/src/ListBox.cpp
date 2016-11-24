@@ -1153,11 +1153,13 @@ void ListBox::BringRowIntoView(iterator it)
             it_found = true;
         }
 
-        if (first_row_found && !last_row_found)
-            last_row_y_offset = y_offset;
-
-        if ((y_offset - first_row_y_offset) >= ClientHeight())
+        if (first_row_found && !last_row_found
+            && ((y_offset - first_row_y_offset) >= ClientHeight()))
+        {
             last_row_found = true;
+            if (it2 != m_rows.begin())
+                last_row_y_offset = y_offset - (*boost::prior(it2))->Height();
+        }
 
         y_offset += (*it2)->Height();
         ++it2;
@@ -1166,15 +1168,13 @@ void ListBox::BringRowIntoView(iterator it)
     if (!it_found)
         return;
 
-    RequirePreRender();
-
     if (y_offset <= ClientHeight())
         SetFirstRowShown(begin());
 
     // Shift the view if 'it' is outside of [first_row .. last_row]
     if (it_y_offset < first_row_y_offset)
         SetFirstRowShown(it);
-    else if (it_y_offset > last_row_y_offset)
+    else if (it_y_offset >= last_row_y_offset)
         SetFirstRowShown(FirstRowShownWhenBottomIs(it, ClientHeight()));
 }
 
@@ -2389,7 +2389,7 @@ void ListBox::NormalizeRow(Row* row)
 
 ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
 {
-    Y available_space = client_height;
+    Y available_space = client_height - (*bottom_row)->Height();
     iterator it = bottom_row;
     while (it != m_rows.begin() && (*boost::prior(it))->Height() <= available_space) {
         available_space -= (*--it)->Height();
