@@ -863,26 +863,7 @@ void ListBox::PreRender()
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it)
         (*it)->Resize(Pt(row_width, (*it)->Height()));
 
-    // Ensure that data in occluded cells is not rendered
-    // and that any re-layout during prerender is immediate.
-    Y visible_height(BORDER_THICK);
-    Y max_visible_height = ClientSize().y;
-    bool hide = true;
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        if (it == m_first_row_shown)
-            hide = false;
-
-        if (hide) {
-            (*it)->Hide();
-        } else {
-            (*it)->Show();
-            GUI::PreRenderWindow(*it);
-
-            visible_height += (*it)->Height();
-            if (visible_height >= max_visible_height)
-                hide = true;
-        }
-    }
+    ShowVisibleRows(true);
 
     if (!m_header_row->empty())
         GUI::PreRenderWindow(m_header_row);
@@ -966,6 +947,32 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
         RequirePreRender();
 }
 
+void ListBox::ShowVisibleRows(bool do_prerender)
+{
+    // Ensure that data in occluded cells is not rendered
+    // and that any re-layout during prerender is immediate.
+    Y visible_height(BORDER_THICK);
+    Y max_visible_height = ClientSize().y;
+    bool hide = true;
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        if (it == m_first_row_shown)
+            hide = false;
+
+        if (hide) {
+            (*it)->Hide();
+        } else {
+            (*it)->Show();
+            if (do_prerender)
+                GUI::PreRenderWindow(*it);
+
+            visible_height += (*it)->Height();
+            if (visible_height >= max_visible_height)
+                hide = true;
+        }
+    }
+
+}
+
 void ListBox::Show(bool show_children /* = true*/)
 {
     Control::Show(false);
@@ -981,24 +988,8 @@ void ListBox::Show(bool show_children /* = true*/)
             (*it)->Show(show_children);
     }
 
-    // Show rows that will be visible when rendered
-    Y visible_height(BORDER_THICK);
-    Y max_visible_height = ClientSize().y;
-    bool hide = true;
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        if (it == m_first_row_shown)
-            hide = false;
-
-        if (hide) {
-            (*it)->Hide();
-        } else {
-            (*it)->Show();
-
-            visible_height += (*it)->Height();
-            if (visible_height >= max_visible_height)
-                hide = true;
-        }
-    }
+    // Show rows that will be visible when rendered but don't prerender them.
+    ShowVisibleRows(false);
 
     RequirePreRender();
 }
