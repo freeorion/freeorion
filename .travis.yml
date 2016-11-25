@@ -13,8 +13,6 @@ matrix:
       dist: trusty
       compiler: gcc
       sudo: required
-      env:
-        - BUILD_LINUX=true
   allow_failures:
     - env:
       - BUILD_APIDOC=true
@@ -25,7 +23,7 @@ branches:
   - travis-with-linux
 install:
   - >
-    if [[ "${BUILD_LINUX}" == "true" || "${BUILD_APIDOC}" == "true" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       # Update system
       sudo apt-get update -qq
       # Install dependencies
@@ -42,7 +40,7 @@ before_script:
       echo -e "url=https://freeorion-bot:${FreeOrion_AUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git\n" | git credential approve
     fi
   - >
-    if [[ "${BUILD_LINUX}" == "true" || "${BUILD_APIDOC}" == "true" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       mkdir build
       cd build
     fi
@@ -53,7 +51,7 @@ script:
       cmake --build . --target apidoc-deploy
     fi
   - >
-    if [[ "${BUILD_LINUX}" == "true" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       cmake ..
       cmake --build .
     fi
