@@ -961,6 +961,43 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
         RequirePreRender();
 }
 
+void ListBox::Show(bool show_children /* = true*/)
+{
+    Control::Show(false);
+
+    if (!show_children)
+        return;
+
+    // Deal with non row children normally
+    for (std::list<Wnd*>::const_iterator it = Children().begin();
+         it != Children().end(); ++it)
+    {
+        if (!dynamic_cast<Row*>(*it))
+            (*it)->Show(show_children);
+    }
+
+    // Show rows that will be visible when rendered
+    Y visible_height(BORDER_THICK);
+    Y max_visible_height = ClientSize().y;
+    bool hide = true;
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        if (it == m_first_row_shown)
+            hide = false;
+
+        if (hide) {
+            (*it)->Hide();
+        } else {
+            (*it)->Show();
+
+            visible_height += (*it)->Height();
+            if (visible_height >= max_visible_height)
+                hide = true;
+        }
+    }
+
+    RequirePreRender();
+}
+
 void ListBox::Disable(bool b/* = true*/)
 {
     Control::Disable(b);
