@@ -2,19 +2,27 @@
 Character represents the personalization of the AI.
 
 Character is composed of orthogonal elements called Behavior.  Behavior
-elements are orthogonal, which means that they do no interact and can be
+elements are orthogonal, which means that they do not interact and can be
 freely mixed and matched to create a Character.  Orthogonality means
 that they can be tested independently and combined with simple
 combiners.
 
 Character creates big changes in the behavior of the AI that are visible
-to the player as personality.  At key points the AI checks the character
+to the player as personality.  At key/tap points the AI checks the character
 for permission 'may_<do something>' or preference of a series of
 alternative actions 'prefer_<somethings>'.  Preference could be expanded
 to look at all of the options and remove those that the behavior
 forbids.
 
-Character should be invoked by other modules at key behavioral points to
+Permission type taps are named may_<do something>(information needed to decide).
+The behavior examines the information and returns true if that action is permitted.
+
+Preference type taps are named prefer_<somethings>(alternatives, extra info).
+Alternatives is a list of all possible actions.  The behavior examines all
+the alternatives and returns a possibly empty list of the permissible
+actions.
+
+Character should be invoked by other modules at key behavioral tap points to
 provide direction not optimization.  For example which empire/species do
 I love/hate enough to attack.
 
@@ -29,68 +37,55 @@ player into the narrative structure of the particular game that they are playing
 Each AI will get the mandatory behavior (probably Difficulty/Challenge)
 and a selection of the optional behaviors.
 
-The initial implementation was to pull aggression and empire.id modulo 2
-or 3 optional portions of the code into two behaviors: Aggression and
-EmpireID.  These are merely refactoring of existing code and are not
-examples of ideal implementation.
-
-Aggression implements two different behaviors as one: difficulty and
-aggression.  It creates too many decision points not clearly related to
-either concept.  Aggression should be broken into two behaviors:
-difficulty/challenge and aggression.
-
-EmpireID selects based on empire.id with is an implementation detail and
-not a "visible" game mechanic.  EmpireID is also used to select between
-coefficient options, which look like programmer experiments.  EmpireID
-should be removed as a behavior.
-
-Some ideas for future behavior modules are:
-challenge/difficulty    -- to replace the difficulty related portions of
-                           aggression.
-
-research bent -- models an obsession/focus/repulsion by a particular
-area of research. i.e. Shields are for grues.
-
-nemesis/single-minded -- model a focus on a single opponent, perhaps
-the first one to attack the AI.  This plays well with CharacterStrings
-which can be used to inform all players who care that "I will hunt the
-Dominion to the ends of the galaxy."  Humans and eventually AIs could
-use this to modify their risk assessment of this AI.
-
-deceitful/trustworthy -- Only useful after treaties are implemented to
-determine if this AI will abide by the treaty
-
-friendly and loyal -- Even without treaties this AI will assist their
-friends.
-
-vengeful -- An eye for eye.  AI generally counter attacks until things
-are made right or even.
-
-risk averse/gambler -- How much overkill does the AI require?  How risky
-a research strategy will it attempt?  How many redundant buildings does
-the AI build?
-
-warlike/peaceful -- Will the AI prefer colonization to war?
-
-cooperative/loner -- Once cooperative treaties (joint attack, sharing
-system) are implemented, will the AI use them?
-
-taciturn/chatty -- How often does the AI chat?
-
-genocidal -- Will the AI research and use Concentration Camps/bombard
-weapons/planet and star destroying weapons?  Is the AI horrified by the
-use of such weapons?  Will the AI band together with other like minded
-empires to protect the galaxy?
-
-per playable species -- There is no need for per species behavior.  Each
-playable species can be assigned some additional mandatory behavior(s).
-For example the Trith and a mandatory Genocidal behavior.  Perhaps add
-a probabilty distribution of behavior components to the FOCS description
-of a playable species.
+There is no need for per species behavior.  Each playable species can be
+assigned some additional mandatory behavior(s).  For example the Trith and
+a mandatory Genocidal behavior.  Perhaps add a probabilty distribution of
+behavior components to the FOCS description of a playable species.
 """
 
+
+# Some ideas for future behavior modules are:
+# TODO: challenge/difficulty -- to replace the difficulty related portions
+#                                of aggression.
+#
+# TODO: research bent -- models an obsession/focus/repulsion by a particular
+# area of research. i.e. Shields are for grues.
+#
+# TODO: nemesis/single-minded -- model a focus on a single opponent, perhaps
+# the first one to attack the AI.  This plays well with CharacterStrings
+# which can be used to inform all players who care that "I will hunt the
+# Dominion to the ends of the galaxy."  Humans and eventually AIs could
+# use this to modify their risk assessment of this AI.
+#
+# TODO: deceitful/trustworthy -- Only useful after treaties are implemented to
+# determine if this AI will abide by the treaty
+#
+# TODO: friendly and loyal -- Even without treaties this AI will assist their
+# friends.
+#
+# TODO: vengeful -- An eye for eye.  AI generally counter attacks until things
+# are made right or even.
+#
+# TODO: risk averse/gambler -- How much overkill does the AI require?  How risky
+# a research strategy will it attempt?  How many redundant buildings does
+# the AI build?
+#
+# TODO: warlike/peaceful -- Will the AI prefer colonization to war?
+#
+# TODO: cooperative/loner -- Once cooperative treaties (joint attack, sharing
+# system) are implemented, will the AI use them?
+#
+# TODO: taciturn/chatty -- How often does the AI chat?
+#
+# TODO: genocidal -- Will the AI research and use Concentration Camps/bombard
+# weapons/planet and star destroying weapons?  Is the AI horrified by the
+# use of such weapons?  Will the AI band together with other like minded
+# empires to protect the galaxy?
+#
+
+
 import abc
-from collections import defaultdict, Counter
+from collections import Counter
 import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -103,7 +98,23 @@ class Behavior(object):
     Behaviors do not help the AI make optimal decisions, they determine whether
     certain actions are permissible or preferable.
 
-    The initial behavior is aggression which models both aggression and level of difficulty.
+    Behaviors are combined to form a single Character.
+
+    Behaviors have taps which the AI calls to determine it behavior with
+    respect to a single action.  There are two types of taps: permission
+    taps which permit/forbid an action and preference taps which indicate
+    which of several alternatives are permissible.
+
+    Permission type taps are named may_<do something>(information needed to decide).
+    The behavior examines the information and returns true if that action is
+    permitted.
+
+    Preference type taps are named prefer_<somethings>(alternatives, extra info).
+    Alternatives is a list of all possible actions.  The behavior examines all of
+    the alternatives and returns a possibly empty list of the permissible actions.
+
+    Any given Behavior class should not implement all the taps, only those
+    it needs to override to cause the relevant behavior.
     """
     __metaclass__ = abc.ABCMeta
 
@@ -113,15 +124,32 @@ class Behavior(object):
     # @abc.abstractproperty
     @property
     def key(self):  # pylint: disable=no-self-use,unused-argument
-        """Return an key for look up tables."""
+        """Return a key to be used as an index into look up tables.
+
+        For example, a string table of 6 diplomatic responses bases on aggression might look like:
+
+        table_x = {fo.aggression.beginner: "DIPLO_X_BEGINNER",
+                   fo.aggression.turtle: "DIPLO_X_TURTLE",
+                   fo.aggression.cautious: "DIPLO_X_CAUTIOUS",
+                   fo.aggression.typical: "DIPLO_X_TYPICAL",
+                   fo.aggression.aggressive: "DIPLO_X_AGGRESSIVE",
+                   fo.aggression.maniacal: "DIPLO_X_MANIACAL"}
+
+        Using the key to fetch a single string from that table_x looks like:
+
+        used_string_x = table_x[character.get_behavior(Character.Behavior.Aggression).key]
+
+        See CharacterStrings.py for the details of this actual example.
+
+        """
         return None
 
     def may_explore_system(self, monster_threat):  # pylint: disable=no-self-use,unused-argument
-        """Return True if permitted to explore system given monster threat."""
+        """Return True if permitted to explore system with the given monster threat."""
         return True
 
     def may_surge_industry(self, totalPP, totalRP):  # pylint: disable=no-self-use,unused-argument
-        """Return True if permitted to surge industry."""
+        """Return True if permitted to surge industry as used in PriorityAI.py"""
         return True
 
     def may_maximize_research(self):  # pylint: disable=no-self-use,unused-argument
@@ -129,7 +157,8 @@ class Behavior(object):
         return True
 
     def preferred_research_cutoff(self, alternatives):  # pylint: disable=no-self-use,unused-argument
-        """Return preferred research cutoff."""
+        """Return preferred research cutoff from the list of alternatives."""
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
         return None
 
     def max_number_colonies(self):  # pylint: disable=no-self-use,unused-argument
@@ -151,19 +180,26 @@ class Behavior(object):
         return 1.0
 
     def preferred_colonization_portion(self, alternatives):  # pylint: disable=no-self-use,unused-argument
-        """Select a fraction less than 1"""
+        """Select from the fractions in alternatives the fraction of PP to be spend on colonization."""
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
         return None
 
     def preferred_outpost_portion(self, alternatives):  # pylint: disable=no-self-use,unused-argument
-        """Select a fraction less than 1"""
+        """Select from the fractions in alternatives the fraction of PP to be spend on outposts."""
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
         return None
 
     def preferred_building_ratio(self, alternatives):  # pylint: disable=no-self-use,unused-argument
-        """Select a fraction less than 1 at maximum ratio of PP for buildings"""
+        """Select a fraction less than 1 from alternatives as the maximum ratio of PP for buildings"""
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
         return None
 
     def preferred_discount_multiplier(self, alternatives):  # pylint: disable=no-self-use,unused-argument
-        """Select a discount multiplier for use in evaluate planet"""
+        """Select a discount multiplier from the alternatives provided for
+        use in evaluate planet in Colonisation.py to scale pilot rating and
+        a long list of technologies.
+        """
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
         return None
 
     def max_defense_portion(self):  # pylint: disable=no-self-use,unused-argument
@@ -171,11 +207,11 @@ class Behavior(object):
         return 1.0
 
     def check_orbital_production(self):  # pylint: disable=no-self-use,unused-argument
-        """Return if orbital production is checked this turn"""
+        """Return true if orbital defense production should be checked this turn in ProductionAI.py"""
         return False
 
     def target_number_of_orbitals(self):  # pylint: disable=no-self-use,unused-argument
-        """Return target number of orbitals"""
+        """Return target number of orbitals defenses to be built."""
         return 0
 
     def may_build_building(self, building):  # pylint: disable=no-self-use,unused-argument
@@ -187,7 +223,9 @@ class Behavior(object):
         return True
 
     def military_safety_factor(self):  # pylint: disable=no-self-use,unused-argument
-        """Return military safety factor"""
+        """Return military safety factor, the ratio of
+        (enemy strength) / (own strength) that the AI considers acceptable risk.
+        """
         return 0.0
 
     def may_dither_focus_to_gain_research(self):  # pylint: disable=no-self-use,unused-argument
@@ -200,14 +238,17 @@ class Behavior(object):
 
     def may_travel_beyond_supply(self, distance):  # pylint: disable=no-self-use,unused-argument
         """Return True if able to travel distance hops beyond empire supply"""
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
         return True
 
     def get_research_index(self):  # pylint: disable=no-self-use,unused-argument
-        """Deprecated"""
+        """Deprecated.  Only used with old style research."""
+        # TODO Remove this tap when old style research is removed.
         return None
 
     def may_research_xeno_genetics_variances(self):  # pylint: disable=no-self-use,unused-argument
-        """Return True if able to vary xeno genetics research"""
+        """Return True if AI if allowed to research xeno genetics research 'Dep.GRO_XENO_GENETICS'."""
+        # TODO remove this as overly specific
         return True
 
     def prefer_research_defensive(self):  # pylint: disable=no-self-use,unused-argument
@@ -219,11 +260,12 @@ class Behavior(object):
         return True
 
     def may_research_tech(self, tech):  # pylint: disable=no-self-use,unused-argument
-        """Return True if permitted to research ''tech''"""
+        """Return True if permitted to research ''tech''. This is only called by the new research algorithm."""
         return True
 
     def may_research_tech_classic(self, tech):  # pylint: disable=no-self-use,unused-argument
-        """Return True if permitted to research ''tech'' in the classic algorithm"""
+        """Return True if permitted to research ''tech''.  This is called in the classic research algorithm."""
+        # TODO remove this tap when the classic research algorithm is removed.
         return True
 
     def attitude_to_empire(self, other_empire_id, diplomatic_logs):  # pylint: disable=no-self-use,unused-argument
@@ -233,7 +275,17 @@ class Behavior(object):
 
 class Aggression(Behavior):
     """A behavior that models level of difficulty and aggression."""
-    # TODO copy all aggression decisions into this class
+
+    # The initial implementation was to pull aggression dependent code from
+    # the main body of code into this behavior Aggression.  These are merely
+    # refactoring of existing code and is not an example of ideal
+    # implementation.
+
+    # Aggression implements two different behaviors as one: difficulty and
+    # aggression.  It creates too many decision points not clearly related to
+    # either concept.  Aggression should be broken into two behaviors:
+    # difficulty/challenge and aggression.
+
     # TODO break this class into two behaviors: level of difficulty and aggression
 
     def __init__(self, aggression):
@@ -255,7 +307,7 @@ class Aggression(Behavior):
 
     def max_number_colonies(self):
         # significant growth barrier for low aggression, negligible for high aggression
-        return 2 + ((0.5+self.aggression)**2)*fo.currentTurn()/50.0
+        return 2 + ((0.5 + self.aggression) ** 2) * fo.currentTurn() / 50.0
 
     def may_invade(self):
         return (self.aggression > fo.aggression.turtle
@@ -268,7 +320,8 @@ class Aggression(Behavior):
         return 0.5 if self.aggression == fo.aggression.beginner else 1.0
 
     def military_priority_scaling(self):
-        return 1.0 if self.aggression > fo.aggression.typical else ((1.0 + self.aggression) / (1.0 + fo.aggression.typical))
+        return (1.0 if self.aggression > fo.aggression.typical
+                else ((1.0 + self.aggression) / (1.0 + fo.aggression.typical)))
 
     def max_defense_portion(self):
         return [0.7, 0.4, 0.3, 0.2, 0.1, 0.0][self.aggression]
@@ -279,9 +332,10 @@ class Aggression(Behavior):
 
     def target_number_of_orbitals(self):
         aggression_index = max(1, self.aggression)
-        return min(int(((fo.currentTurn() + 4) / (8.0 * aggression_index**1.5))**0.8), fo.aggression.maniacal - aggression_index)
+        return min(int(((fo.currentTurn() + 4) / (8.0 * aggression_index ** 1.5)) ** 0.8),
+                   fo.aggression.maniacal - aggression_index)
 
-    building_table_static = {"BLD_SHIPYARD_AST": fo.aggression.beginner,
+    BUILDING_TABLE_STATIC = {"BLD_SHIPYARD_AST": fo.aggression.beginner,
                              "BLD_GAS_GIANT_GEN": fo.aggression.beginner,
                              "BLD_SOL_ORB_GEN": fo.aggression.turtle,
                              "BLD_ART_BLACK_HOLE": fo.aggression.typical,
@@ -300,7 +354,7 @@ class Aggression(Behavior):
 
     @property
     def building_table(self):
-        return type(self).building_table_static
+        return type(self).BUILDING_TABLE_STATIC
 
     def may_build_building(self, building):
         return self.aggression > self.building_table.get(building, fo.aggression.beginner)
@@ -332,12 +386,12 @@ class Aggression(Behavior):
     def may_research_tech(self, tech):
         return type(self).tech_lower_threshold_static.get(tech, fo.aggression.beginner) <= self.aggression
 
-    tech_upper_threshold_classic_static = {"DEF_DEFENSE_NET_1": fo.aggression.cautious,
+    TECH_UPPER_THRESHOLD_CLASSIC_STATIC = {"DEF_DEFENSE_NET_1": fo.aggression.cautious,
                                            "DEF_GARRISON_1": fo.aggression.cautious,
                                            "GRO_XENO_GENETICS": fo.aggression.cautious,
                                            "GRO_GENETIC_ENG": fo.aggression.cautious}
 
-    tech_lower_threshold_classic_static = {"SHP_DEFLECTOR_SHIELD": fo.aggression.aggressive,
+    TECH_LOWER_THRESHOLD_CLASSIC_STATIC = {"SHP_DEFLECTOR_SHIELD": fo.aggression.aggressive,
                                            "CON_ARCH_PSYCH": fo.aggression.aggressive,
                                            "CON_CONC_CAMP": fo.aggression.aggressive,
                                            "LRN_XENOARCH": fo.aggression.typical,
@@ -350,10 +404,9 @@ class Aggression(Behavior):
                                            "LRN_TRANSCEND": fo.aggression.typical}
 
     def may_research_tech_classic(self, tech):
-        return (type(self).tech_lower_threshold_classic_static.get(tech, fo.aggression.beginner)
+        return (type(self).TECH_LOWER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.beginner)
                 <= self.aggression <=
-                type(self).tech_upper_threshold_classic_static.get(tech, fo.aggression.maniacal))
-
+                type(self).TECH_UPPER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.maniacal))
 
     def attitude_to_empire(self, other_empire_id, diplomatic_logs):
         # TODO: In other behaviors consider proximity, competitive
@@ -378,7 +431,18 @@ class Aggression(Behavior):
 class EmpireIDBehavior(Behavior):
     """A behavior that models empire id influence.
     Mostly some modulo 2 effects."""
-    # TODO: Stop using modulo empire id as a character component.
+
+    # The initial implementation was to pull empire.id modulo 2 or 3 optional
+    # portions of the code into this behavior EmpireIDBehavior.  This was
+    # merely a refactoring of existing code and is not an example of ideal
+    # implementation.
+
+    # EmpireID selects based on empire.id with is an implementation detail and
+    # not a "visible" game mechanic.  EmpireID is also used to select between
+    # coefficient options, which look like programmer experiments.  EmpireID
+    # should be removed as a behavior.
+
+    # TODO: Remove EmpireIDBehavior.
     # Empire id is a game mechanic.  It is not something that a player
     # can describe, "Look the 'Continuum' is behaving like a 1 modulo 2 character."
 
@@ -463,14 +527,16 @@ def _make_single_function_combiner(funcnamei, f_combo):
 
 # Create combiners for behaviors that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
-                 "may-invade_with_bases", "may_build_building", "may_produce_troops", "may_dither_focus_to_gain_research",
-                 "may_research_heavily", "may_travel_beyond_supply", "may_research_xeno_genetics_variances",
+                 "may-invade_with_bases", "may_build_building", "may_produce_troops",
+                 "may_dither_focus_to_gain_research", "may_research_heavily",
+                 "may_travel_beyond_supply", "may_research_xeno_genetics_variances",
                  "prefer_research_defensive", "prefer_research_low_aggression", "may_research_tech",
                  "may_research_tech_classic"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, all))
 
 # Create combiners for behaviors that take min result
-for funcname in ["max_number_colonies", "invasion_priority_scaling", "military_priority_scaling", "max_defense_portion"]:
+for funcname in ["max_number_colonies", "invasion_priority_scaling",
+                 "military_priority_scaling", "max_defense_portion"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, min))
 
 # Create combiners for behaviors that take max result
@@ -481,10 +547,11 @@ for funcname in ["target_number_of_orbitals", "military_safety_factor", "get_res
 for funcname in ["check_orbital_production"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, any))
 
+
 # Create combiners for behaviors that averages all not None results
 def average_not_none(llin):
     ll = [x for x in llin if x]
-    return sum(ll)/len(ll)
+    return sum(ll) / len(ll)
 
 for funcname in ["attitude_to_empire"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
