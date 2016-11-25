@@ -858,6 +858,11 @@ void ListBox::PreRender()
     // Reset require prerender after call to adjust scrolls
     Control::PreRender();
 
+    // Resize rows to fit client area.
+    X row_width(std::max(ClientWidth(), X(1)));
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it)
+        (*it)->Resize(Pt(row_width, (*it)->Height()));
+
     // Ensure that data in occluded cells is not rendered
     // and that any re-layout during prerender is immediate.
     Y visible_height(BORDER_THICK);
