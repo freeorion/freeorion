@@ -51,7 +51,7 @@ script:
       cmake --build . --target apidoc-deploy
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    if [[ "${TRAVIS_OS_NAME}" == "linux" && -z "${BUILD_APIDOC}" ]]; then
       cmake ..
       cmake --build .
     fi
