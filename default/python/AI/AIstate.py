@@ -92,37 +92,7 @@ class AIstate(object):
         self.qualifyingTroopBaseTargets = {}
         self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)  # TODO: track on a per-empire basis
         self.empire_standard_enemy_rating = 0  # TODO: track on a per-empire basis
-
-        # Check the optionsDB for the behavior bypass values and create
-        # the character.
-        def get_behavior_bypass_value(name, default, sentinel):
-            """Fetch the bypassed behavior value or return the default"""
-
-            force_option = "AI.config.behavior.%s.force" % (name,)
-            if not fo.getOptionsDBOptionBool(force_option):
-                return default
-
-            per_id_option = "AI.config.behavior.%s.%s" % (name, fo.playerName())
-            all_id_option = "AI.config.behavior.%s.all" % (name,)
-
-            behavior = fo.getOptionsDBOptionInt(per_id_option)
-            if behavior is None or behavior == sentinel:
-                behavior = fo.getOptionsDBOptionInt(all_id_option)
-            # print 'NOT picv = ', per_id_option , ' bev = ', behavior
-            if behavior is None or behavior == sentinel:
-                print ("Bypass of %s behavior failed. Returning default value %s." % (name, str(default)))
-                print "To force %s behavior set %s to 1" % (name, force_option,)
-                print "Set %s to a value to force just %s's behavior." % (per_id_option, fo.playerName())
-                print "Set  %s to a value to force the behavior of all AIs not individually specified." % (all_id_option,)
-                behavior = default
-            print "%s behavior bypassed and set to %s for %s" % (name, repr(behavior), fo.playerName())
-            return behavior
-
-        no_value = -1
-        _behavior_aggression = get_behavior_bypass_value("aggression", aggression, no_value)
-        _behavior_id = get_behavior_bypass_value("empire-id", self.empireID, no_value)
-
-        self.character = create_character(_behavior_aggression, _behavior_id)
+        self.character = create_character(aggression, self.empireID)
 
     def generate_uid(self, first=False):
         """

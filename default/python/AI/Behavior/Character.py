@@ -514,4 +514,93 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
     """Create a character."""
     # TODO add the mandatory (Difficulty) and optional/random (everything
     # else) interface to Character creation.
-    return Character([Aggression(aggression), EmpireIDBehavior(empire_id, aggression)])
+
+    # Check the optionsDB for the behavior bypass values and create
+    # the character.
+    NO_VALUE = -1
+    bypassed_aggression = get_behavior_bypass_value("aggression", aggression, NO_VALUE)
+    bypassed_empire_id = get_behavior_bypass_value("empire-id", empire_id, NO_VALUE)
+
+    return Character([Aggression(bypassed_aggression), EmpireIDBehavior(bypassed_empire_id, bypassed_aggression)])
+
+
+def get_behavior_bypass_value(name, default, sentinel):
+    """Fetch a bypassed behavior value or return the default from OptionsDB.
+
+    In OptionsDB a section AI.config.behavior can contain default behavior
+    values for all of the AIs or specific AIs which will override the
+    default value passed into this function.
+
+    If there is an XML element in config.xml/persistent_config.xml
+    AI.config.behavior.<name of behavior here>.force
+    with a non zero value
+
+    ,then the value of AI.config.behavior.<name of behavior here>.<AI ID number here>
+
+    will be checked.  If it is not the sentinel value (typically -1) the it
+    will be returned as the behavior's value.
+
+    Otherwise the value of
+    AI.config.behavior.<name of behavior here>.all
+    is checked.  Again if it is not the sentinel value it will ovverride
+    the returned value for behavior.
+
+    If behavior is not overriden by one of the above values, then the
+    default is used.
+
+    Here is an example section providing override values aggression and the
+    empire-id behavior.
+
+    <mAI>
+      <config>
+        <behavior>
+          <aggression>
+            <force>1</force>
+            <all>4</all>
+            <AI_0>5</AI_0>
+            <AI_1>4</AI_1>
+            <AI_2>3</AI_2>
+            <AI_3>2</AI_3>
+            <AI_4>1</AI_4>
+            <AI_5>0</AI_5>
+          </aggression>
+          <empire-id>
+            <force>1</force>
+            <AI_0>5</AI_0>
+            <AI_1>4</AI_1>
+            <AI_2>3</AI_2>
+            <AI_3>2</AI_3>
+            <AI_4>1</AI_4>
+            <AI_5>0</AI_5>
+          </empire-id>
+        </behavior>
+      </config>
+    </mAI>
+
+    :param name: Name of the behavior.
+    :type name: string
+    :param default: Default value of the behavior.
+    :type default: int
+    :param sentinel: A value indicating no valid value.
+    :type sentinel: int
+    :return: The behavior
+    :rtype: Behavior
+
+    """
+
+    force_option = "AI.config.behavior.%s.force" % (name,)
+    if not fo.getOptionsDBOptionBool(force_option):
+        return default
+
+    per_id_option = "AI.config.behavior.%s.%s" % (name, fo.playerName())
+    all_id_option = "AI.config.behavior.%s.all" % (name,)
+
+    behavior = fo.getOptionsDBOptionInt(per_id_option)
+    if behavior is None or behavior == sentinel:
+        behavior = fo.getOptionsDBOptionInt(all_id_option)
+
+    if behavior is None or behavior == sentinel:
+        behavior = default
+    else:
+        print "%s behavior bypassed and set to %s for %s" % (name, repr(behavior), fo.playerName())
+    return behavior
