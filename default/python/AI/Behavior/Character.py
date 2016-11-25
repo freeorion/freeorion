@@ -391,20 +391,21 @@ class EmpireIDBehavior(Behavior):
     def key(self):
         return self.id % 2
 
-    def preferred_research_cutoff(self, alternatives):
+    def _modulo_two_choice(self, alternatives):
         if not alternatives:
             return None
-        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+        if len(alternatives) == 1:
+            return alternatives[0]
+        return alternatives[self.id % 2]
+
+    def preferred_research_cutoff(self, alternatives):
+        return self._modulo_two_choice(alternatives)
 
     def preferred_colonization_portion(self, alternatives):
-        if not alternatives:
-            return None
-        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+        return self._modulo_two_choice(alternatives)
 
     def preferred_outpost_portion(self, alternatives):
-        if not alternatives:
-            return None
-        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+        return self._modulo_two_choice(alternatives)
 
     def preferred_building_ratio(self, alternatives):
         if not alternatives:
@@ -412,9 +413,7 @@ class EmpireIDBehavior(Behavior):
         return alternatives[self.id % 3] if len(alternatives) >= 3 else alternatives[self.id % len(alternatives)]
 
     def preferred_discount_multiplier(self, alternatives):
-        if not alternatives:
-            return None
-        return alternatives[self.id % 2] if len(alternatives) >= 2 else alternatives[0]
+        return self._modulo_two_choice(alternatives)
 
     def may_travel_beyond_supply(self, distance):
         return (distance < 2
