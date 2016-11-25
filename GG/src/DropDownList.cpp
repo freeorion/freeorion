@@ -271,42 +271,56 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
 {
     switch (key) {
     case GGK_UP: // arrow-up (not numpad arrow)
-        if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin())
-            return boost::prior(CurrentItem());
+        if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin()) {
+            DropDownList::iterator prev_it(boost::prior(CurrentItem()));
+            LB()->BringRowIntoView(prev_it);
+            return prev_it;
+        }
         break;
     case GGK_DOWN: // arrow-down (not numpad arrow)
-        if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end())
-            return boost::next(CurrentItem());
+        if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end()) {
+            DropDownList::iterator next_it(boost::next(CurrentItem()));
+            LB()->BringRowIntoView(next_it);
+            return next_it;
+        }
         break;
     case GGK_PAGEUP: // page up key (not numpad key)
         if (LB()->NumRows() && CurrentItem() != LB()->end()) {
-            std::size_t i = 10;
+            std::size_t i = std::max(1ul, m_num_shown_rows - 1u);
             DropDownList::iterator it = CurrentItem();
             while (i && it != LB()->begin()) {
                 --it;
                 --i;
             }
+            LB()->BringRowIntoView(it);
             return it;
         }
         break;
     case GGK_PAGEDOWN: // page down key (not numpad key)
         if (LB()->NumRows()) {
-            std::size_t i = 10;
+            std::size_t i = std::max(1ul, m_num_shown_rows - 1u);
             DropDownList::iterator it = CurrentItem();
             while (i && it != --LB()->end()) {
                 ++it;
-                ++i;
+                --i;
             }
+            LB()->BringRowIntoView(it);
             return it;
         }
         break;
     case GGK_HOME: // home key (not numpad)
-        if (LB()->NumRows())
-            return LB()->begin();
+        if (LB()->NumRows()) {
+            DropDownList::iterator it(LB()->begin());
+            LB()->BringRowIntoView(it);
+            return it;
+        }
         break;
     case GGK_END: // end key (not numpad)
-        if (LB()->NumRows() && !LB()->Empty())
-            return --LB()->end();
+        if (LB()->NumRows() && !LB()->Empty()) {
+            DropDownList::iterator it(--LB()->end());
+            LB()->BringRowIntoView(it);
+            return it;
+        }
         break;
     case GGK_RETURN:
     case GGK_KP_ENTER:
