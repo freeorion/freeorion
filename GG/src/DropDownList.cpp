@@ -357,7 +357,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 // GG::DropDownList
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
-    Control(X0, Y0, X1, Y1, INTERACTIVE),
+    Control(X0, Y0, X(1 + 2 * BORDER_THICK), Y(1 + 2 * BORDER_THICK), INTERACTIVE),
     m_modal_picker(new ModalListPicker(color, this, num_shown_elements))
 {
     SetStyle(LIST_SINGLESEL);
@@ -371,6 +371,9 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     // InitBuffer here prevents a crash if DropDownList is constructed in
     // the prerender phase.
     InitBuffer();
+
+    // Set a non zero client min size.
+    SetMinSize(Pt(X(1 + 2 * BORDER_THICK), Y(1 + 2 * BORDER_THICK)));
 
     RequirePreRender();
 }
