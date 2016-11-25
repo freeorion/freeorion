@@ -8,7 +8,6 @@ AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= fals
     m_expand_button(0),
     m_collapsed(true),
     m_is_left(is_button_on_left),
-    //m_stop_dolayout_recursion(false),
     m_interior_color(ClientUI::WndColor()),
     m_border_margin(0)
 {
@@ -53,12 +52,6 @@ void AccordionPanel::SetInteriorColor(GG::Clr c)
 void AccordionPanel::SetBorderMargin(unsigned int margin)
 { m_border_margin = margin; }
 
-void AccordionPanel::PreRender() {
-    GG::Wnd::PreRender();
-    DoLayout();
-    InitBuffer();
-}
-
 void AccordionPanel::Render() {
     if (Height() < 1 || Width() < 1)
         return;
@@ -91,8 +84,10 @@ void AccordionPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     GG::Wnd::SizeMove(ul, lr);
 
-    if (old_size != GG::Wnd::Size())
-        RequirePreRender();
+    if (old_size != GG::Wnd::Size()) {
+        DoLayout();
+        InitBuffer();
+    }
 }
 
 void AccordionPanel::SetCollapsed(bool collapsed) {
