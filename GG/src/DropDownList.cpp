@@ -271,13 +271,19 @@ void ModalListPicker::CorrectListSize() {
         LB()->Show();
 
         // Resize the rows, once to pick up the correct height and a second
-        // time to use the height to size the drop down list
+        // time to use the height to size the drop down list.
+        // Only prerender the list box to avoid prerendering rows that the list box will
+        // subsequently scroll off screen.
         drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
         LB()->Resize(drop_down_size);
+        if (!LB()->Selections().empty())
+            LB()->BringRowIntoView(*(LB()->Selections().begin()));
         GUI::GetGUI()->PreRenderWindow(LB());
 
         drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
         LB()->Resize(drop_down_size);
+        if (!LB()->Selections().empty())
+            LB()->BringRowIntoView(*(LB()->Selections().begin()));
         GUI::GetGUI()->PreRenderWindow(LB());
 
         LB()->Hide();
