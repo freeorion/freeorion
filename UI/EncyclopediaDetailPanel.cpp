@@ -143,7 +143,7 @@ namespace {
     /** Find Encyclopedia article with given name
      * @param[in] name name entry of the article
      */
-    EncyclopediaArticle GetPediaArticle(const std::string& name) {
+    const EncyclopediaArticle& GetPediaArticle(const std::string& name) {
         const std::map<std::string, std::vector<EncyclopediaArticle> >& articles = GetEncyclopedia().articles;
         for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it = articles.begin();
              category_it != articles.end(); ++category_it)
@@ -156,7 +156,7 @@ namespace {
                 }
             }
         }
-        return EncyclopediaArticle("", "", "", "", "");
+        return GetEncyclopedia().empty_article;
     }
 
     /** Returns map from (Human-readable and thus sorted article category) to

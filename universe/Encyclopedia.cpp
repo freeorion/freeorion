@@ -11,7 +11,8 @@ const Encyclopedia& GetEncyclopedia() {
 }
 
 Encyclopedia::Encyclopedia() :
-    articles()
+    articles(),
+    empty_article()
 {
     try {
         parse::encyclopedia_articles(*this);

@@ -8,6 +8,14 @@
 #include "../util/Export.h"
 
 struct FO_COMMON_API EncyclopediaArticle {
+    /** Default ctor */
+    EncyclopediaArticle() :
+        name(""),
+        category(""),
+        short_description(""),
+        description(""),
+        icon("")
+    {}
     EncyclopediaArticle(const std::string& name_, const std::string& category_,
                         const std::string& short_description_, const std::string& description_,
                         const std::string& icon_) :
@@ -27,6 +35,7 @@ struct FO_COMMON_API EncyclopediaArticle {
 struct FO_COMMON_API Encyclopedia {
     Encyclopedia();
     std::map<std::string, std::vector<EncyclopediaArticle> >   articles;
+    const EncyclopediaArticle                                  empty_article;
 };
 
 FO_COMMON_API const Encyclopedia& GetEncyclopedia();
