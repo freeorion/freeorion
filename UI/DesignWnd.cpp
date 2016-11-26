@@ -1872,9 +1872,9 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
                 if (result != "" && result != design->Name()) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
-                    ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(
-                        !design_row->empty() ? design_row->at(0) : 0);
-                    design_panel->Update();
+                    if (!design_row->empty())
+                        if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
+                            design_panel->Update();
                 }
                 break;
             }

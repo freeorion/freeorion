@@ -363,7 +363,7 @@ void ListBox::Row::SetCell(std::size_t n, Control* c)
 
 Control* ListBox::Row::RemoveCell(std::size_t n)
 {
-    if (m_cells.size() < (n+1))
+    if (m_cells.size() <= n)
         return 0;
     Layout* layout = GetLayout();
     Control* retval = m_cells[n];

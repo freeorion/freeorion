@@ -335,7 +335,7 @@ public:
 
     /** Show the  list box.  If \p show_children is true then show the rows that are within the
         boundaries of the list box.*/
-    virtual void Show(bool show_children = true);
+    virtual void    Show(bool show_children = true);
 
     virtual void    Disable(bool b = true);
     virtual void    SetColor(Clr c);

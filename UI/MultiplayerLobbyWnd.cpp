@@ -332,7 +332,7 @@ namespace {
             m_color_selector->SelectColor(m_player_data.m_empire_color);
 
             // set previous player name indication
-            if (size() >=5)
+            if (size() >= 5)
                 boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(it->second.m_player_name);
 
             DataChangedSignal();
