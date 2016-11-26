@@ -272,6 +272,10 @@ class Behavior(object):
         """Return a value from [-10 .. 10] representing attitude towards other empire."""
         return None
 
+    def warship_adjusted_production_cost_exponent(self):  # pylint: disable=no-self-use,unused-argument
+        """Return an exponent to scale the production cost of a warship in ShipDesignAI."""
+        return None
+
 
 class Aggression(Behavior):
     """A behavior that models level of difficulty and aggression."""
@@ -427,6 +431,17 @@ class Aggression(Behavior):
         attitude = 10 * random.random() - irritation
         return min(10, max(-10, attitude))
 
+    def warship_adjusted_production_cost_exponent(self):  # pylint: disable=no-self-use,unused-argument
+        # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
+        # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
+        if self.aggression == fo.aggression.maniacal:
+            exponent = 2.0
+        elif self.aggression == fo.aggression.aggressive:
+            exponent = 1.5
+        else:
+            exponent = 1.0
+        return exponent
+
 
 class EmpireIDBehavior(Behavior):
     """A behavior that models empire id influence.
@@ -553,7 +568,7 @@ def average_not_none(llin):
     ll = [x for x in llin if x]
     return sum(ll) / len(ll)
 
-for funcname in ["attitude_to_empire"]:
+for funcname in ["attitude_to_empire", "warship_adjusted_production_cost_exponent"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
 
 
