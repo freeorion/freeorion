@@ -750,7 +750,7 @@ namespace {
         int SystemID() const { return m_system_id; }
 
         virtual SortKeyType SortKey(std::size_t column) const
-        { return GetSystem(m_system_id)->Name(); }
+        { return GetSystem(m_system_id)->Name() + boost::lexical_cast<std::string>(m_system_id); }
 
     private:
         int m_system_id;
@@ -3061,20 +3061,20 @@ void SidePanel::RefreshSystemNames() {
     // entire vector into the ListBox.  If the approach switches to
     // maintaing the list by incrementally inserting/deleting system
     // names, then this approach should also be dropped.
-    std::map<std::string, int> system_map;
+    std::set<std::pair<std::string, int> > sorted_systems;
     for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
          sys_it != Objects().const_end<System>(); ++sys_it)
     {
         // Skip rows for systems that aren't known to this client, except the selected system
         if (!sys_it->Name().empty() || sys_it->ID() == s_system_id)
-            system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+            sorted_systems.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
     }
 
     // Make a vector of sorted rows and insert them in a single operation.
     std::vector<GG::DropDownList::Row*> rows;
-    rows.reserve(system_map.size());
-    for (std::map< std::string, int>::iterator sys_it = system_map.begin();
-         sys_it != system_map.end(); ++sys_it)
+    rows.reserve(sorted_systems.size());
+    for (std::set<std::pair<std::string, int> >::const_iterator sys_it = sorted_systems.begin();
+         sys_it != sorted_systems.end(); ++sys_it)
     {
         int sys_id = sys_it->second;
         SystemRow* sysrow = new SystemRow(sys_id);
