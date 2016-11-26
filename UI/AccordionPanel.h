@@ -19,7 +19,6 @@ public:
     virtual GG::Pt ClientLowerRight() const;
 
     /** \name Mutators */ //@{
-    virtual void PreRender();
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
