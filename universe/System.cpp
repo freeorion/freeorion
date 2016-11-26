@@ -86,7 +86,7 @@ System* System::Clone(int empire_id) const {
 }
 
 void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     TemporaryPtr<const System> copied_system = boost::dynamic_pointer_cast<const System>(copied_object);
     if (!copied_system) {

@@ -9,12 +9,12 @@
 #include <map>
 
 #include "Export.h"
+#include "../universe/TemporaryPtr.h"
 
 class OrderSet;
 class PathingEngine;
 class Universe;
 class UniverseObject;
-template <class T> class TemporaryPtr;
 
 typedef boost::archive::binary_iarchive freeorion_bin_iarchive;
 typedef boost::archive::binary_oarchive freeorion_bin_oarchive;

@@ -565,7 +565,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, const Condition::ConditionBase* ref_part_loc) {
     //const Condition::ConditionBase* check_part_loc = check_part->Location();
     //const Condition::ConditionBase* ref_part_loc = ref_part->Location();
-    if (boost::dynamic_pointer_cast<const Condition::All>(ref_part_loc))
+    if (dynamic_cast<const Condition::All*>(ref_part_loc))
         return true;
     if (!check_part_loc || !ref_part_loc)
         return false;

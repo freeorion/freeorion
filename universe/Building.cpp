@@ -53,7 +53,7 @@ Building* Building::Clone(int empire_id) const {
 }
 
 void Building::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     TemporaryPtr<const Building> copied_building = boost::dynamic_pointer_cast<const Building>(copied_object);
     if (!copied_building) {

@@ -3333,7 +3333,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     if (!selectable_visitor)
         return true;
 
-    return (planet->Accept(*selectable_visitor));
+    return planet->Accept(*selectable_visitor).use_count();
 }
 
 void SidePanel::SelectPlanet(int planet_id) {

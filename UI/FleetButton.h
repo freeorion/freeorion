@@ -3,8 +3,9 @@
 
 #include <GG/Button.h>
 
+#include "../universe/TemporaryPtr.h"
+
 class Fleet;
-template <class T> class TemporaryPtr;
 class RotatingGraphic;
 class ScanlineControl;
 

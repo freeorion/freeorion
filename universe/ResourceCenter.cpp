@@ -35,7 +35,7 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
 {}
 
 void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     if (!copied_object) {
         ErrorLogger() << "ResourceCenter::Copy passed a null object";

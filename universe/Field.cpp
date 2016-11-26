@@ -75,7 +75,7 @@ Field* Field::Clone(int empire_id) const {
 }
 
 void Field::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     TemporaryPtr<const Field> copied_field = boost::dynamic_pointer_cast<const Field>(copied_object);
     if (!copied_field) {

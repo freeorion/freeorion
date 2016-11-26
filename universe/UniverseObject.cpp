@@ -56,7 +56,7 @@ UniverseObject::~UniverseObject()
 void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visibility vis,
                           const std::set<std::string>& visible_specials)
 {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     if (!copied_object) {
         ErrorLogger() << "UniverseObject::Copy passed a null object";

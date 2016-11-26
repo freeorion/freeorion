@@ -5,6 +5,7 @@
 
 #include "CUIWnd.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/TemporaryPtr.h"
 
 class Planet;
 class Tech;
@@ -18,7 +19,6 @@ class UniverseObject;
 class Empire;
 class ShipDesign;
 class GraphControl;
-template <class T> class TemporaryPtr;
 
 
 /** UI class that displays in-game encyclopedic information about game

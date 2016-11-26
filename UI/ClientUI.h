@@ -5,6 +5,7 @@
 #include <GG/GGFwd.h>
 
 #include "../universe/EnumsFwd.h"
+#include "../universe/TemporaryPtr.h"
 #include "../util/Random.h"
 
 #include <map>
@@ -17,7 +18,6 @@ class PlayerListWnd;
 class MultiPlayerLobbyWnd;
 struct SaveGameUIData;
 class System;
-template <class T> class TemporaryPtr;
 
 
 //! \brief ClientUI Main Module

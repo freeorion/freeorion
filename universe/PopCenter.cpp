@@ -28,7 +28,7 @@ PopCenter::~PopCenter()
 {}
 
 void PopCenter::Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     if (!copied_object) {
         ErrorLogger() << "PopCenter::Copy passed a null object";

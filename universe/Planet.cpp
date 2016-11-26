@@ -115,7 +115,7 @@ Planet* Planet::Clone(int empire_id) const {
 }
 
 void Planet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     TemporaryPtr<const Planet> copied_planet = boost::dynamic_pointer_cast<const Planet>(copied_object);
     if (!copied_planet) {

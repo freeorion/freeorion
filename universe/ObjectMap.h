@@ -570,7 +570,7 @@ template <class T>
 void ObjectMap::Insert(TemporaryPtr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;
-    Insert(boost::dynamic_pointer_cast<UniverseObject>(item.m_ptr), empire_id);
+    Insert(boost::dynamic_pointer_cast<UniverseObject>(item), empire_id);
 }
 
 // template specializations

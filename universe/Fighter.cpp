@@ -64,7 +64,7 @@ Fighter* Fighter::Clone(int empire_id) const {
 }
 
 void Fighter::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
-    if (copied_object == this)
+    if (copied_object.get() == this)
         return;
     TemporaryPtr<const Fighter> copied_fighter = boost::dynamic_pointer_cast<const Fighter>(copied_object);
     if (!copied_fighter) {
