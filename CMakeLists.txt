@@ -60,7 +60,15 @@ if(WIN32)
     target_dependencies_add_search_path("${CMAKE_PREFIX_PATH}/bin")
     set(CMAKE_INSTALL_BINDIR ".")
     set(FreeOrion_INSTALL_LIBDIR ".")
-else()
+endif()
+
+if(APPLE)
+    # Location of the FreeOrionSDK root
+    set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/")
+    set(CMAKE_FRAMEWORK_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/Frameworks")
+endif()
+
+if(UNIX AND NOT APPLE)
     set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
 endif()
 
