@@ -9,10 +9,11 @@
 #include <sstream>
 
 #include "../util/i18n.h"
+#include "../util/Logger.h"
+#include "../util/AppInterface.h"
 #include "../util/VarText.h"
 #include "../UI/LinkText.h"
 #include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
 
 namespace {
     //TODO: Move this code into a common non UI linked location, so that
