@@ -306,9 +306,9 @@ WEAPON_ROF_UPGRADE_DICT = {
 
 FIGHTER_DAMAGE_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
-    "FT_HANGAR_1": (),
-    "FT_HANGAR_2": (),
-    "FT_HANGAR_3": (),
+    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1)),
+    "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 5)),
+    "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 4), ("SHP_FIGHTERS_4", 7)),
     "FT_HANGAR_4": (),
 }
 
