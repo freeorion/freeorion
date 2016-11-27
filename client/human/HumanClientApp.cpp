@@ -721,7 +721,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         ExtractMessageData(response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
     }else{
-        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << EnumToString(response.Type());
+        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response.Type();
     }
 }
 

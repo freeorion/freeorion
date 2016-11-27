@@ -1,5 +1,4 @@
 #include "TechTreeLayout.h"
-//#include "../util/i18n.h" // needed for debug UserString calls...
 #include "../util/Logger.h"
 #include <algorithm>
 #include <cmath>
@@ -646,7 +645,7 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
         }
 
 
-        //DebugLogger() << "Dummy nodes from " << UserString(this->m_tech) << " to child: " << UserString(child->GetTech());
+        //DebugLogger() << "Dummy nodes from " << this->m_tech << " to child: " << child->GetTech();
         //int dummy_nodes_added = 0;
         while (current_parent_node->m_depth + 1 < child->m_depth) {
             // there is at least one column gap beween the horizontal positions
@@ -665,7 +664,7 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
         }
         //DebugLogger() << "done adding dummy nodes.  current_parent node depth + 1: " << current_parent_node->m_depth + 1 << "  child depth: " << child->m_depth;
         //if (dummy_nodes_added > 0) {
-        //    DebugLogger() << "added " << dummy_nodes_added << " dummy nodes for from tech " << UserString(m_tech);
+        //    DebugLogger() << "added " << dummy_nodes_added << " dummy nodes for from tech " << m_tech;
         //}
 
         //DebugLogger() << " node now has " << m_children.size() << " children:";

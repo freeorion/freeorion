@@ -223,7 +223,7 @@ std::string UniverseObject::Dump() const {
         os << "(" << it->first << ", " << it->second.first << ", " << it->second.second << ") ";
     os << "  Meters: ";
     for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-        os << UserString(EnumToString(it->first))
+        os << it->first
            << ": " << it->second.Dump() << "  ";
     return os.str();
 }

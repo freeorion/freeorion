@@ -233,8 +233,8 @@ std::string Ship::Dump() const {
         MeterType meter_type = it->first.first;
         const Meter& meter = it->second;
         ++it;
-        os << UserString(part_name) << " "
-           << UserString(EnumToString(meter_type))
+        os << part_name << " "
+           << meter_type
            << ": " << meter.Current() << "  ";
     }
     }

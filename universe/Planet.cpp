@@ -183,9 +183,9 @@ std::string Planet::Dump() const {
     os << UniverseObject::Dump();
     os << PopCenter::Dump();
     os << ResourceCenter::Dump();
-    os << " type: " << UserString(EnumToString(m_type))
-       << " original type: " << UserString(EnumToString(m_original_type))
-       << " size: " << UserString(EnumToString(m_size))
+    os << " type: " << m_type
+       << " original type: " << m_original_type
+       << " size: " << m_size
        << " rot period: " << m_rotational_period
        << " axis tilt: " << m_axial_tilt
        << " buildings: ";
