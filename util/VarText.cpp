@@ -137,7 +137,7 @@ namespace {
         data_ss >> meter_type;
 
         if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES) {
-            retval = EnumToString(meter_type);
+            retval = boost::lexical_cast<std::string>(meter_type);
             if (UserStringExists(retval))
                 retval = WithTags(UserString(retval), tag, retval);
         }

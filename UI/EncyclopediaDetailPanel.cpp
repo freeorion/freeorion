@@ -78,7 +78,7 @@ namespace {
     std::pair<std::string, std::string> MeterValueLabelAndString(const MeterType& meter_type) {
         std::pair<std::string, std::string> retval;
 
-        retval.second = EnumToString(meter_type);
+        retval.second = boost::lexical_cast<std::string>(meter_type);
 
         retval.first = retval.second + "_VALUE_LABEL";
         if (UserStringExists(retval.first)) {
@@ -3073,7 +3073,7 @@ void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
 { SetDesign(design ? design->ID() : ShipDesign::INVALID_DESIGN_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const MeterType& meter_type)
-{ SetMeterType(EnumToString(meter_type)); }
+{ SetMeterType(boost::lexical_cast<std::string>(meter_type)); }
 
 void EncyclopediaDetailPanel::OnIndex()
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX"); }

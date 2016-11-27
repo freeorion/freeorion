@@ -106,7 +106,7 @@ bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (meter_type == INVALID_METER_TYPE)
         return false;
 
-    std::string meter_string = EnumToString(meter_type);
+    std::string meter_string = boost::lexical_cast<std::string>(meter_type);
     std::string meter_title;
     if (UserStringExists(meter_string))
         meter_title = UserString(meter_string);

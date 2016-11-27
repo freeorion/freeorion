@@ -85,7 +85,7 @@ namespace GG {
     }
 
 /** An enum macro for use inside classes.
-  * Enables <<, >>, and EnumToString for your enum,
+  * Enables << and >> for your enum,
   * all of which will exist in whatever namespace this
   * macro is used. */
 #define GG_CLASS_ENUM(EnumName, ...)                                                    \
@@ -112,17 +112,9 @@ namespace GG {
         const std::string& name = map[value];                                           \
         return os << name;                                                              \
     }                                                                                   \
-                                                                                        \
-    friend inline const std::string& EnumToString(EnumName value) {              \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
-        if (map.size() == 0)                                                            \
-            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
-                                                                                        \
-        return map[value];                                                              \
-    }
 
 /** An enum macro for use outside of classes.
-  * Enables <<, >>, and EnumToString for your enum,
+  * Enables << and >> for your enum,
   * all of which will exist in whatever namespace this
   * macro is used. */
 #define GG_ENUM(EnumName, ...)                                                          \
@@ -149,14 +141,6 @@ namespace GG {
         const std::string& name = map[value];                                           \
         return os << name;                                                              \
     }                                                                                   \
-                                                                                        \
-    inline const std::string& EnumToString(EnumName value) {                     \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
-        if (map.size() == 0)                                                            \
-            ::GG::BuildEnumMap(map, #EnumName, #__VA_ARGS__);                           \
-                                                                                        \
-        return map[value];                                                              \
-    }
 
       /////////////
      // EnumMap //

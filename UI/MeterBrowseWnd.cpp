@@ -81,7 +81,7 @@ void MeterBrowseWnd::Render() {
 
 namespace {
     const std::string& MeterToUserString(MeterType meter_type) {
-        return UserString(EnumToString(meter_type));
+        return UserString(boost::lexical_cast<std::string>(meter_type));
     }
 }
 

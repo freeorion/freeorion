@@ -1025,7 +1025,7 @@ private:
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
-            label = new CUIButton(" " + UserString(EnumToString(uot)) + " ");
+            label = new CUIButton(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
             m_filters_layout->Add(label, 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(label->LeftClickedSignal,
                         boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
