@@ -350,6 +350,8 @@ void ModalListPicker::KeyPress(Key key, boost::uint32_t key_code_point, Flags<Mo
 
 void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
+    if (!LB()->InWindow(pt))
+        return;
     SignalChanged(Select(MouseWheelCommon(pt, move, mod_keys)));
 }
 
