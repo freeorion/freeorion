@@ -46,7 +46,7 @@ public:
     virtual bool   Run();
     virtual void   EndRun();
     bool           Dropped() const;
-    virtual void   Render() {};
+    virtual void   Render() {}
 
     /** Adjust the m_lb_wnd size so that there are no more than m_num_shown_rows shown. It will
         not adjust a visible window, or if there is no relative to window. */
@@ -98,10 +98,18 @@ private:
 
     void LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
+    /** Close the drop down if the app resizes, to prevent the modal drop down
+        list location not tracking the anchor.*/
+    void WindowResizedSlot(GG::X x, GG::Y y);
+
     ListBox*     m_lb_wnd;
     const size_t m_num_shown_rows;
     const Wnd*   m_relative_to_wnd;
     bool         m_dropped;  ///< Is the drop down list open.
+
+    /** The connection to the GUI resized signal which is connected while
+        the drop down list is dropped.*/
+    boost::signals2::connection m_resized_connection;
 };
 
 namespace {
@@ -144,7 +152,8 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t n
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(num_rows),
     m_relative_to_wnd(relative_to_wnd),
-    m_dropped(false)
+    m_dropped(false),
+    m_resized_connection()
 {
     Connect(m_lb_wnd->SelChangedSignal,     &ModalListPicker::LBSelChangedSlot, this);
     Connect(m_lb_wnd->LeftClickedSignal,    &ModalListPicker::LBLeftClickSlot,  this);
@@ -174,12 +183,21 @@ void ModalListPicker::ModalInit()
     m_dropped = true;
     m_lb_wnd->Hide(); // to enable CorrectListSize() to work
     CorrectListSize();
+    m_resized_connection = Connect(GG::GUI::GetGUI()->WindowResizedSignal,
+                                     boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     Show();
 }
 
-void ModalListPicker::EndRun() {
+void ModalListPicker::EndRun()
+{
     Wnd::EndRun();
     m_lb_wnd->Hide();
+}
+
+void ModalListPicker::WindowResizedSlot(GG::X x, GG::Y y)
+{
+    m_resized_connection.disconnect();
+    EndRun();
 }
 
 bool ModalListPicker::Dropped() const
