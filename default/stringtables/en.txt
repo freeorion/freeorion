@@ -9592,6 +9592,36 @@ Bombardment
 SHP_BOMBARD_DESC
 Allows development of planetary bombardment weapons.
 
+##Fighter explanation, needs improving and a Pedia article writing
+SHP_FIGHTERS_1
+Fighters and Launch Bays
+
+SHP_FIGHTERS_1_DESC
+'''Enables your empire to build ships using Fighter Hangers and Launch Bays. A ship can only have one type of Fighter Hanger on it but can have as many as you have slots for. Each Hanger has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research). 
+
+A Launch Bay can launch a number of fighters in each combat round, these fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, a single hit from any source will destroy a fighter, fighter damage ignores shields on warships (they fire from within the shields).
+
+At the end of combat, carriers will collect any fighters that have survived, if a carrier is in supply immediately after movement is resolved it will refill hangers to maximum.'''
+
+SHP_FIGHTERS_2
+Laser Fighters
+
+SHP_FIGHTERS_2_DESC
+'''Upgrades the fighters of all carriers within Supply to have laser weaponry. Damage from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3'''
+
+
+SHP_FIGHTERS_3
+Plasma Fighters
+
+SHP_FIGHTERS_3_DESC
+'''Upgrades the fighters of all carriers within Supply to have plasma weaponry. Damage from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4'''
+
+SHP_FIGHTERS_4
+Death Ray Fighters
+
+SHP_FIGHTERS_4_DESC
+'''Upgrades the fighters of all carriers within Supply to have death ray weaponry. Damage from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7'''
+
 SHP_WEAPON_1_2
 Mass Driver 2
 
