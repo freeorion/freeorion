@@ -245,7 +245,7 @@ namespace {
                 // Do not add sub-categories
                 const EncyclopediaArticle& article = GetPediaArticle(it->first);
                 // No article found or specifically a top-level category
-                if (!(article.category.empty() || article.category == "ENC_INDEX"))
+                if (!article.category.empty() && article.category != "ENC_INDEX")
                     continue;
 
                 sorted_entries_list.insert(std::make_pair(UserString(it->first),
@@ -1216,7 +1216,7 @@ namespace {
                 detailed_description = UserString(article_it->description);
 
                 const std::string& article_cat = article_it->category;
-                if (!(article_cat == "ENC_INDEX" || article_cat.empty()))
+                if (article_cat != "ENC_INDEX" && !article_cat.empty())
                     general_type = UserString(article_cat);
 
                 const std::string& article_brief = article_it->short_description;
