@@ -76,7 +76,7 @@ Tech
 
 Tech
     name = "SHP_FIGHTERS_4"
-    description = "SHP_FIGHERS_4_DESC"
+    description = "SHP_FIGHTERS_4_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
