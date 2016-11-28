@@ -749,7 +749,7 @@ namespace {
         int SystemID() const { return m_system_id; }
 
         virtual SortKeyType SortKey(std::size_t column) const
-        { return GetSystem(m_system_id)->Name(); }
+        { return GetSystem(m_system_id)->Name() + boost::lexical_cast<std::string>(m_system_id); }
 
     private:
         int m_system_id;
@@ -2791,19 +2791,19 @@ SidePanel::SidePanel(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));
 
+    Sound::TempUISoundDisabler sound_disabler;
+
     m_system_name = new SystemNameDropDownList(6);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
-    m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
-
-    Sound::TempUISoundDisabler sound_disabler;
-
+    m_system_name->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_system_name->DisableDropArrow();
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
     m_system_name->ManuallyManageColProps();
     m_system_name->SetNumCols(1);
     AttachChild(m_system_name);
 
+    m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_star_type_text);
     AttachChild(m_button_prev);
     AttachChild(m_button_next);
@@ -3030,42 +3030,56 @@ void SidePanel::RefreshInPreRender() {
 
 void SidePanel::RefreshSystemNames() {
     TemporaryPtr<const System> system = GetSystem(s_system_id);
-    // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
 
     // Repopulate the system with all of the names of known systems, if it is closed.
     // If it is open do not change the system names because it runs in a seperate ModalEventPump
     // from the main UI.
-    if (!m_system_name->Dropped()) {
-        m_system_name->Clear();
+    if (m_system_name->Dropped())
+        return;
 
-        // populate droplist of system names
-        std::map<std::string, int> system_map; //alphabetize Systems here
-        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-             sys_it != Objects().const_end<System>(); ++sys_it)
-        {
-            if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
-                system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
-        }
-        std::vector<GG::DropDownList::Row*> rows;
-        rows.reserve(system_map.size());
-        for (std::map< std::string, int>::iterator sys_it = system_map.begin(); sys_it != system_map.end(); ++sys_it)
-        {
-            int sys_id = sys_it->second;
-            rows.push_back(new SystemRow(sys_id));
-        }
-        m_system_name->Insert(rows, false);
+    m_system_name->Clear();
 
-        // select in the list the currently-selected system
-        for (GG::DropDownList::iterator it = m_system_name->begin();
-             it != m_system_name->end(); ++it)
-        {
-            if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
-                if (s_system_id == row->SystemID()) {
-                    m_system_name->Select(it);
-                    break;
-                }
+    //Sort the names
+
+    // The system names are manually sorted here and not automatically in
+    // the vectorized insert because the ListBox is currently never
+    // resorted, inserted or deleted so this was faster when profiled.  If
+    // the performance of the std::stable_sort used in ListBox improves to
+    // N logN when switching to C++11 then this should simply insert the
+    // entire vector into the ListBox.  If the approach switches to
+    // maintaing the list by incrementally inserting/deleting system
+    // names, then this approach should also be dropped.
+    std::set<std::pair<std::string, int> > sorted_systems;
+    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
+         sys_it != Objects().const_end<System>(); ++sys_it)
+    {
+        // Skip rows for systems that aren't known to this client, except the selected system
+        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id)
+            sorted_systems.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+    }
+
+    // Make a vector of sorted rows and insert them in a single operation.
+    std::vector<GG::DropDownList::Row*> rows;
+    rows.reserve(sorted_systems.size());
+    for (std::set<std::pair<std::string, int> >::const_iterator sys_it = sorted_systems.begin();
+         sys_it != sorted_systems.end(); ++sys_it)
+    {
+        int sys_id = sys_it->second;
+        SystemRow* sysrow = new SystemRow(sys_id);
+        rows.push_back(sysrow);
+    }
+    m_system_name->Insert(rows, false);
+
+    // Select in the ListBox the currently-selected system.
+    for (GG::DropDownList::iterator it = m_system_name->begin();
+         it != m_system_name->end(); ++it)
+    {
+        if (const SystemRow* row = dynamic_cast<const SystemRow*>(*it)) {
+            if (s_system_id == row->SystemID()) {
+                m_system_name->Select(it);
+                break;
             }
         }
     }
