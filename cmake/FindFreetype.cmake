@@ -105,6 +105,7 @@ find_path(
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
   PATH_SUFFIXES
     freetype2
+    freetype
 )
 
 if(EXISTS "${_FREETYPE_INCLUDE_DIR}")
