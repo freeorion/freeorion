@@ -29,7 +29,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_PACKAGING "Build the installer/binary package" OFF)
-option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." OFF)
+option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." ${APPLE})
 
 
 if(BUILD_TESTING)
@@ -126,6 +126,13 @@ if(WIN32 AND MSVC)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 endif()
 
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+    set(CMAKE_ARCHIVE_LINKER_FLAGS "${CMAKE_ARCHIVE_LINKER_FLAGS} -stdlib=libc++")
+endif()
+
 if(UNIX AND NOT APPLE)
     add_definitions(-DENABLE_BINRELOC)
 endif()
@@ -168,6 +175,11 @@ find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
+if(APPLE)
+    find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+    find_library(ICONV_LIBRARY iconv)
+endif()
+
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
@@ -202,7 +214,6 @@ set_property(DIRECTORY APPEND
         # implementation.  Boost upstream tracks this bug as #12349
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.60>:BOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL>
 )
-
 
 link_directories(
     ${Boost_LIBRARY_DIRS}
@@ -270,6 +281,7 @@ target_link_libraries(freeorioncommon
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     ${ZLIB_LIBRARIES}
+    ${CORE_FOUNDATION_LIBRARY}
 )
 
 add_dependencies(freeorioncommon freeorionversion)
@@ -455,6 +467,7 @@ target_link_libraries(freeorion
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${Boost_LOCALE_LIBRARY}
+    ${ICONV_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
