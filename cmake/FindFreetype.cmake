@@ -11,10 +11,7 @@
 #   FREETYPE_LIBRARIES, the library to link against
 #   FREETYPE_FOUND, if false, do not try to link to FREETYPE
 #   FREETYPE_INCLUDE_DIRS, where to find headers.
-#   FREETYPE_VERSION_STRING, the version of freetype found (since CMake 2.8.8)
-#   This is the concatenation of the paths:
-#   FREETYPE_INCLUDE_DIR_ft2build
-#   FREETYPE_INCLUDE_DIR_freetype2
+#   FREETYPE_VERSION, the version of freetype found (since CMake 2.8.8)
 #
 #
 #
@@ -98,89 +95,62 @@
 # I'm going to attempt to cut out the middleman and hope
 # everything still works.
 find_path(
-  FREETYPE_INCLUDE_DIR_ft2build
-  ft2build.h
+  FREETYPE_INCLUDE_DIR
+    ft2build.h
   HINTS
     ENV FREETYPE_DIR
   PATHS
-    /usr/X11R6
-    /usr/local/X11R6
-    /usr/local/X11
-    /usr/freeware
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
   PATH_SUFFIXES
-    include/freetype2
-    include
     freetype2
 )
 
-find_path(
-  FREETYPE_INCLUDE_DIR_freetype2
-  NAMES
-    freetype/config/ftheader.h
-    config/ftheader.h
-  HINTS
-    ENV FREETYPE_DIR
-  PATHS
-    /usr/X11R6
-    /usr/local/X11R6
-    /usr/local/X11
-    /usr/freeware
-    ENV GTKMM_BASEPATH
-    [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
-    [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
-  PATH_SUFFIXES
-    include/freetype2
-    include
-    freetype2
-)
-
-# set the user variables
-if(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
-  set(FREETYPE_INCLUDE_DIRS "${FREETYPE_INCLUDE_DIR_ft2build};${FREETYPE_INCLUDE_DIR_freetype2}")
-  list(REMOVE_DUPLICATES FREETYPE_INCLUDE_DIRS)
+if(EXISTS "${_FREETYPE_INCLUDE_DIR}")
+    file(STRINGS "${FREETYPE_INCLUDE_DIR}/ft2build.h" _FREETYPE_INCLUDE_ftheader_h
+        REGEX "^#[\t ]*include[\t ]+<\(.*/ftheader\\.h\)>[\t ]*$")
+    string(REGEX MATCHALL "^#[\t ]*include[\t ]+<\(.*ftheader\\.h\)>[\t ]*$"
+           _FREETYPE_INCLUDE_ftheader_h "${_FREETYPE_INCLUDE_ftheader_h}")
+    set(_FREETYPE_INCLUDE_ftheader_h "${FREETYPE_INCLUDE_DIR}/${CMAKE_MATCH_1}")
 endif()
 
-if(EXISTS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype/freetype.h")
-  set(FREETYPE_H "${FREETYPE_INCLUDE_DIR_freetype2}/freetype/freetype.h")
-elseif(EXISTS "${FREETYPE_INCLUDE_DIR_freetype2}/freetype.h")
-  set(FREETYPE_H "${FREETYPE_INCLUDE_DIR_freetype2}/freetype.h")
+if(EXISTS "${_FREETYPE_INCLUDE_ftheader_h}")
+    file(STRINGS "${_FREETYPE_INCLUDE_ftheader_h}" _FREETYPE_INCLUDE_freetype_h
+        REGEX "^#[\t ]*define[\t ]+FT_FREETYPE_H[\t ]+<\(.*\)>[\t ]*$")
+    string(REGEX MATCHALL "^#[\t ]*define[\t ]+FT_FREETYPE_H[\t ]+<\(.*\)>[\t ]*$"
+           _FREETYPE_INCLUDE_freetype_h "${_FREETYPE_INCLUDE_freetype_h}")
+    set(_FREETYPE_INCLUDE_freetype_h "${FREETYPE_INCLUDE_DIR}/${CMAKE_MATCH_1}")
 endif()
 
-if(FREETYPE_INCLUDE_DIR_freetype2 AND FREETYPE_H)
-  file(STRINGS "${FREETYPE_H}" freetype_version_str
+if(EXISTS "${_FREETYPE_INCLUDE_freetype_h}")
+  file(STRINGS "${_FREETYPE_INCLUDE_freetype_h}" freetype_version_str
        REGEX "^#[\t ]*define[\t ]+FREETYPE_(MAJOR|MINOR|PATCH)[\t ]+[0-9]+$")
 
-  unset(FREETYPE_VERSION_STRING)
-  unset(FREETYPE_FILE_VERSION_STRING)
+  unset(FREETYPE_VERSION)
+  unset(FREETYPE_FILE_VERSION)
   foreach(VPART MAJOR MINOR PATCH)
     foreach(VLINE ${freetype_version_str})
       if(VLINE MATCHES "^#[\t ]*define[\t ]+FREETYPE_${VPART}[\t ]+([0-9]+)$")
         set(FREETYPE_VERSION_PART "${CMAKE_MATCH_1}")
-        if(FREETYPE_VERSION_STRING)
-          set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_STRING}.${FREETYPE_VERSION_PART}")
+        if(FREETYPE_VERSION)
+          set(FREETYPE_VERSION "${FREETYPE_VERSION}.${FREETYPE_VERSION_PART}")
         else()
-          set(FREETYPE_VERSION_STRING "${FREETYPE_VERSION_PART}")
+          set(FREETYPE_VERSION "${FREETYPE_VERSION_PART}")
         endif()
-                set(FREETYPE_FILE_VERSION_STRING "${FREETYPE_FILE_VERSION_STRING}${FREETYPE_VERSION_PART}")
+        set(FREETYPE_FILE_VERSION "${FREETYPE_FILE_VERSION}${FREETYPE_VERSION_PART}")
         unset(FREETYPE_VERSION_PART)
       endif()
     endforeach()
   endforeach()
+
 endif()
 
 find_library(FREETYPE_LIBRARY
   NAMES freetype libfreetype "freetype${FREETYPE_FILE_VERSION_STRING}" "freetype${FREETYPE_FILE_VERSION_STRING}MT"
   HINTS
     ENV FREETYPE_DIR
-  PATH_SUFFIXES lib
   PATHS
-    /usr/X11R6
-    /usr/local/X11R6
-    /usr/local/X11
-    /usr/freeware
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
@@ -188,6 +158,7 @@ find_library(FREETYPE_LIBRARY
 
 unset(FREETYPE_FILE_VERSION_STRING)
 
+set(FREETYPE_INCLUDE_DIRS "${FREETYPE_INCLUDE_DIR}")
 set(FREETYPE_LIBRARIES "${FREETYPE_LIBRARY}")
 
 # handle the QUIETLY and REQUIRED arguments and set FREETYPE_FOUND to TRUE if
@@ -197,14 +168,14 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   Freetype
   REQUIRED_VARS
-    FREETYPE_LIBRARY
+    FREETYPE_LIBRARIES
     FREETYPE_INCLUDE_DIRS
   VERSION_VAR
-    FREETYPE_VERSION_STRING
+    FREETYPE_VERSION
 )
 
 mark_as_advanced(
-  FREETYPE_LIBRARY
-  FREETYPE_INCLUDE_DIR_freetype2
-  FREETYPE_INCLUDE_DIR_ft2build
+  FREETYPE_LIBRARIES
+  FREETYPE_INCLUDE_DIRS
+  FREETYPE_VERSION
 )
