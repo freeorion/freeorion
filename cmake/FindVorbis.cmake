@@ -67,7 +67,13 @@ foreach(search ${_VORBIS_SEARCHES})
   find_path(VORBIS_INCLUDE_DIR NAMES codec.h ${${search}} PATH_SUFFIXES vorbis)
 endforeach()
 
-foreach(_component VORBIS VORBISENC VORBISFILE)
+if(${VORBIS_INCLUDE_DIR} MATCHES ".framework")
+    set(_components VORBIS)
+else()
+    set(_components VORBIS VORBISENC VORBISFILE)
+endif()
+
+foreach(_component ${_components})
   # Allow ${_component}_LIBRARY to be set manually, as the location of the
   # corresponding library
   if(NOT ${_component}_LIBRARY)
@@ -80,6 +86,13 @@ foreach(_component VORBIS VORBISENC VORBISFILE)
     select_library_configurations(${_component})
   endif()
 endforeach()
+
+if(${VORBIS_INCLUDE_DIR} MATCHES ".framework" AND VORBIS_FOUND)
+    set(VORBISENC_FOUND TRUE)
+    set(VORBISENC_LIBRARY ${VORBIS_LIBRARY})
+    set(VORBISFILE_FOUND TRUE)
+    set(VORBISFILE_LIBRARY ${VORBIS_LIBRARY})
+endif()
 
 unset(VORBIS_NAMES)
 unset(VORBIS_NAMES_DEBUG)
