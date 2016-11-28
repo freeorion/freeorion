@@ -4832,6 +4832,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
             ToggleProduction();
         CenterOnObject(planet->SystemID());
         m_production_wnd->SelectSystem(planet->SystemID());
+        m_production_wnd->SelectPlanet(planet_id);
     }
 }
 

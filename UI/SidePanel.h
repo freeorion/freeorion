@@ -40,7 +40,7 @@ public:
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
-    bool                PlanetSelectable(int id) const;
+    bool                PlanetSelectable(int planet_id) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -112,7 +112,6 @@ private:
     void                RefreshInPreRender();
 
     void                RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
-    void                SelectPlanetImpl(int planet_id);///< sets selected planet in this sidepanel
 
     /**  Insert all known systems into the SystemName drop down list.*/
     void                RefreshSystemNames();
@@ -125,7 +124,8 @@ private:
 
     void                PrevButtonClicked();            ///< responds to user clicking next system button
     void                NextButtonClicked();            ///< responts to user clicking previous system button
-    void                PlanetSelected(int planet_id);  ///< responds to user selection of a planet by emitting PlanetSelectedSignal
+    /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
+    void                PlanetClickedSlot(int planet_id);
 
     static void         FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets);    ///< responds to insertion fleets into system during a turn.  may update colonize buttons
     static void         FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);     ///< responds to removal fleets from system during a turn.  may update colonize buttons
@@ -149,6 +149,9 @@ private:
     static bool                 s_needs_refresh;
 
     static int                  s_system_id;
+
+    /** The id of the currently-selected planet, or INVALID_OBJECT_ID if no planet is selected. */
+    static int                  s_planet_id;
 
     static std::set<SidePanel*> s_side_panels;
 

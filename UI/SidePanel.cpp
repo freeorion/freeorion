@@ -588,7 +588,7 @@ public:
     //@}
 
     /** emitted when an enabled planet panel is clicked by the user */
-    mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
+    mutable boost::signals2::signal<void (int)> PlanetClickedSignal;
 
     /** emitted when a planet panel is left-double-clicked*/
     mutable boost::signals2::signal<void (int)> PlanetLeftDoubleClickedSignal;
@@ -601,7 +601,6 @@ public:
 private:
     void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
 
-    void            PlanetLeftClicked(int planet_id);   //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
     void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
     void            DoLayout();
 
@@ -2510,7 +2509,6 @@ void SidePanel::PlanetPanelContainer::ScrollTo(int pos) {
 void SidePanel::PlanetPanelContainer::Clear() {
     m_planet_panels.clear();
     m_selected_planet_id = INVALID_OBJECT_ID;
-    PlanetSelectedSignal(m_selected_planet_id);
     DetachChild(m_vscroll);
     DeleteChildren();
     AttachChild(m_vscroll);
@@ -2548,7 +2546,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), it->second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
-        GG::Connect(m_planet_panels.back()->LeftClickedSignal,          &SidePanel::PlanetPanelContainer::PlanetLeftClicked,   this);
+        GG::Connect(m_planet_panels.back()->LeftClickedSignal,          PlanetClickedSignal);
         GG::Connect(m_planet_panels.back()->LeftDoubleClickedSignal,    PlanetLeftDoubleClickedSignal);
         GG::Connect(m_planet_panels.back()->RightClickedSignal,         PlanetRightClickedSignal);
         GG::Connect(m_planet_panels.back()->BuildingRightClickedSignal, BuildingRightClickedSignal);
@@ -2711,11 +2709,6 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     }
 }
 
-void SidePanel::PlanetPanelContainer::PlanetLeftClicked(int planet_id) {
-    //DebugLogger() << "SidePanel::PlanetPanelContainer::PlanetLeftClicked(" << planet_id << ")";
-    PlanetSelectedSignal(planet_id);
-}
-
 void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int range_min, int range_max) {
     if (pos_bottom > range_max) {
         // prevent scrolling beyond allowed max
@@ -2758,6 +2751,7 @@ void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
 ////////////////////////////////////////////////
 // static(s)
 int                                        SidePanel::s_system_id = INVALID_OBJECT_ID;
+int                                        SidePanel::s_planet_id = INVALID_OBJECT_ID;
 bool                                       SidePanel::s_needs_update = false;
 bool                                       SidePanel::s_needs_refresh = false;
 std::set<SidePanel*>                       SidePanel::s_side_panels;
@@ -2822,7 +2816,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     GG::Connect(m_system_name->SelChangedWhileDroppedSignal,             &SidePanel::SystemSelectionChangedSlot,    this);
     GG::Connect(m_button_prev->LeftClickedSignal,                        &SidePanel::PrevButtonClicked,      this);
     GG::Connect(m_button_next->LeftClickedSignal,                        &SidePanel::NextButtonClicked,      this);
-    GG::Connect(m_planet_panel_container->PlanetSelectedSignal,          &SidePanel::PlanetSelected,         this);
+    GG::Connect(m_planet_panel_container->PlanetClickedSignal,           &SidePanel::PlanetClickedSlot,      this);
     GG::Connect(m_planet_panel_container->PlanetLeftDoubleClickedSignal, PlanetDoubleClickedSignal);
     GG::Connect(m_planet_panel_container->PlanetRightClickedSignal,      PlanetRightClickedSignal);
     GG::Connect(m_planet_panel_container->BuildingRightClickedSignal,    BuildingRightClickedSignal);
@@ -2939,9 +2933,6 @@ void SidePanel::PreRender() {
     // save initial scroll position so it can be restored after repopulating the planet panel container
     const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
 
-    // save initial selected planet so it can be restored
-    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
-
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
         RefreshInPreRender();
@@ -2955,13 +2946,12 @@ void SidePanel::PreRender() {
     // On a resize only DoLayout should be called.
     DoLayout();
 
-    if (s_needs_refresh || s_needs_update) {
-        // restore planet panel container scroll position from before clearing
+    // restore planet panel container scroll position from before clearing
+    if (s_needs_refresh || s_needs_update)
         m_planet_panel_container->ScrollTo(initial_scroll_pos);
 
-        // restore planet selection
-        m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
-    }
+    // restore planet selection
+    m_planet_panel_container->SelectPlanet(s_planet_id);
 
     s_needs_refresh = false;
     s_needs_update  = false;
@@ -3288,10 +3278,9 @@ void SidePanel::NextButtonClicked() {
     SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
-void SidePanel::PlanetSelected(int planet_id) {
-    //std::cout << "SidePanel::PlanetSelected(" << planet_id << ")" << std::endl;
-    if (SelectedPlanetID() != planet_id)
-        PlanetSelectedSignal(planet_id);
+void SidePanel::PlanetClickedSlot(int planet_id) {
+    if (m_selection_enabled)
+        SelectPlanet(planet_id);
 }
 
 void SidePanel::FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets) {
@@ -3325,33 +3314,73 @@ void SidePanel::FleetStateChanged()
 int SidePanel::SystemID()
 { return s_system_id; }
 
-int SidePanel::SelectedPlanetID() const {
-    if (m_planet_panel_container)
-        return m_planet_panel_container->SelectedPlanetID();
-    else
-        return INVALID_OBJECT_ID;
-}
+int SidePanel::SelectedPlanetID() const
+{ return (m_selection_enabled ? s_planet_id : INVALID_OBJECT_ID); }
 
-bool SidePanel::PlanetSelectable(int id) const {
-    if (!m_planet_panel_container)
+bool SidePanel::PlanetSelectable(int planet_id) const {
+    if (!m_selection_enabled)
         return false;
-    const std::set<int>& candidate_ids = m_planet_panel_container->SelectionCandidates();
-    return (candidate_ids.find(id) != candidate_ids.end());
+
+    TemporaryPtr<const System> system = GetSystem(s_system_id);
+    if (!system)
+        return false;
+
+    const std::set<int>& planet_ids = system->PlanetIDs();
+    if (!planet_ids.count(planet_id))
+        return false;
+
+    TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
+    if (!planet)
+        return false;
+
+    // Find a selection visitor and apply it to planet
+    boost::shared_ptr<UniverseObjectVisitor> selectable_visitor;
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id != ALL_EMPIRES)
+        selectable_visitor = boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(empire_id));
+
+    if (!selectable_visitor)
+        return true;
+
+    return (planet->Accept(*selectable_visitor));
 }
 
 void SidePanel::SelectPlanet(int planet_id) {
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->SelectPlanetImpl(planet_id);
-}
+    if (s_planet_id == planet_id)
+        return;
 
-void SidePanel::SelectPlanetImpl(int planet_id) {
-    //std::cout << "SidePanel::SelectPlanetImpl(" << planet_id << ")" << std::endl;
-    m_planet_panel_container->SelectPlanet(planet_id);
+    // Use the first sidepanel with selection enabled to determine if planet is selectable.
+    bool planet_selectable(false);
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it) {
+        if ((*it)->m_selection_enabled) {
+            planet_selectable = (*it)->PlanetSelectable(planet_id);
+            break;
+        }
+    }
+
+    s_planet_id = INVALID_OBJECT_ID;
+
+    if (!planet_selectable)
+        return;
+
+    s_planet_id = planet_id;
+
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
+        (*it)->RequirePreRender();
+
+    PlanetSelectedSignal(s_planet_id);
 }
 
 void SidePanel::SetSystem(int system_id) {
     if (s_system_id == system_id)
         return;
+
+    TemporaryPtr<const System> system = GetSystem(system_id);
+    if (!system) {
+        s_system_id = INVALID_OBJECT_ID;
+        return;
+    }
+
     s_system_id = system_id;
 
     if (GetSystem(s_system_id))
