@@ -350,6 +350,8 @@ void ModalListPicker::KeyPress(Key key, boost::uint32_t key_code_point, Flags<Mo
 
 void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
+    if (!LB()->InWindow(pt))
+        return;
     SignalChanged(Select(MouseWheelCommon(pt, move, mod_keys)));
 }
 
@@ -730,7 +732,7 @@ void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKe
 void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        m_modal_picker->SignalChanged(m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, move, mod_keys)));
+        m_modal_picker->SignalChanged(m_modal_picker->Select(m_modal_picker->MouseWheelCommon(pt, -move, mod_keys)));
     } else {
         Control::MouseWheel(pt, move, mod_keys);
     }
