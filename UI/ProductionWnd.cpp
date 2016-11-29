@@ -573,9 +573,7 @@ namespace {
         }
         if (m_block_size_selector) {
             m_block_size_selector->MoveTo(GG::Pt(left, GG::Y(MARGIN)));
-            if (m_quantity_selector) {
-                left += m_quantity_selector->Width();
-            }
+            left += m_block_size_selector->Width();
         }
 
         const GG::X NAME_WIDTH = Width() - left - MARGIN;
