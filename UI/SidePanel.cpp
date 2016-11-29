@@ -723,8 +723,8 @@ namespace {
 
     class SystemRow : public GG::ListBox::Row {
     public:
-        SystemRow(int system_id) :
-            GG::ListBox::Row(GG::X1, GG::Y(SystemNameFontSize()), "SystemRow"),
+        SystemRow(int system_id, GG::Y h) :
+            GG::ListBox::Row(GG::X1, h, "SystemRow"),
             m_system_id(system_id)
         {
             SetName("SystemRow");
@@ -3060,6 +3060,9 @@ void SidePanel::RefreshSystemNames() {
             sorted_systems.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
     }
 
+    boost::shared_ptr<GG::Font> system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
+    GG::Y system_name_height(system_name_font->Lineskip() + 4);
+
     // Make a vector of sorted rows and insert them in a single operation.
     std::vector<GG::DropDownList::Row*> rows;
     rows.reserve(sorted_systems.size());
@@ -3067,8 +3070,7 @@ void SidePanel::RefreshSystemNames() {
          sys_it != sorted_systems.end(); ++sys_it)
     {
         int sys_id = sys_it->second;
-        SystemRow* sysrow = new SystemRow(sys_id);
-        rows.push_back(sysrow);
+        rows.push_back(new SystemRow(sys_id, system_name_height));
     }
     m_system_name->Insert(rows, false);
 
