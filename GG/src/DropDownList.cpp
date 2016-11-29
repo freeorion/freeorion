@@ -270,6 +270,25 @@ void ModalListPicker::CorrectListSize() {
 boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
+    bool numlock_on = mod_keys & MOD_KEY_NUM;
+    if (!numlock_on) {
+        // convert keypad keys into corresponding non-number keys
+        switch (key) {
+        case GGK_KP0:       key = GGK_INSERT;   break;
+        case GGK_KP1:       key = GGK_END;      break;
+        case GGK_KP2:       key = GGK_DOWN;     break;
+        case GGK_KP3:       key = GGK_PAGEDOWN; break;
+        case GGK_KP4:       key = GGK_LEFT;     break;
+        case GGK_KP5:                           break;
+        case GGK_KP6:       key = GGK_RIGHT;    break;
+        case GGK_KP7:       key = GGK_HOME;     break;
+        case GGK_KP8:       key = GGK_UP;       break;
+        case GGK_KP9:       key = GGK_PAGEUP;   break;
+        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
+        default:                                break;
+        }
+    }
+
     switch (key) {
     case GGK_UP: // arrow-up (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin()) {
