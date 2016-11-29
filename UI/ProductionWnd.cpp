@@ -585,9 +585,10 @@ namespace {
             }
         }
 
-        const GG::X NAME_WIDTH = Width() - left - MARGIN;
+        const GG::X NAME_WIDTH = Width() - left - MARGIN - 3;
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
+        m_name_text->SetChildClippingMode(ClipToClient);
 
         m_location_text->MoveTo(GG::Pt(left, top));
         m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
