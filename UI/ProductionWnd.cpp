@@ -336,10 +336,7 @@ namespace {
             panel(0),
             queue_index(queue_index_),
             elem(elem)
-        {
-            RequirePreRender();
-            Resize(GG::Pt(w, QueueProductionItemPanel::DefaultHeight()));
-        }
+        { RequirePreRender(); }
 
         void Init() {
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
@@ -353,12 +350,15 @@ namespace {
             if (progress == -1.0f)
                 progress = 0.0f;
 
-            panel = new QueueProductionItemPanel(GG::X(GetLayout()->BorderMargin()), GG::Y(GetLayout()->BorderMargin()),
-                                                   Width() - MARGIN - MARGIN - GG::X(2 * GetLayout()->BorderMargin()),
-                                                   elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                   static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
-                                                   std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
+            panel = new QueueProductionItemPanel(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
+                                                 elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
+                                                 static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
+                                                 std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
             push_back(panel);
+
+            // Since this is only called during PreRender force panel to PreRender()
+            GG::GUI::PreRenderWindow(panel);
+            GetLayout()->PreRender();
 
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
@@ -374,16 +374,6 @@ namespace {
 
             if (!panel)
                 Init();
-
-            GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
-            panel->Resize(Size() - border);
-            GG::ListBox::Row::Resize(panel->Size() + border);
-        }
-
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            if (!panel || (Size() != (lr - ul)))
-                RequirePreRender();
-            GG::ListBox::Row::SizeMove(ul, lr);
         }
 
         virtual void Disable(bool b) {
@@ -416,7 +406,7 @@ namespace {
     QueueProductionItemPanel::QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
                                                        double turn_spending, double total_cost, int turns, int number,
                                                        int turns_completed, double partially_complete_turn) :
-        GG::Control(x, y, w, GG::Y(10), GG::NO_WND_FLAGS),
+        GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         elem(build),
         m_name_text(0),
         m_location_text(0),
@@ -436,8 +426,6 @@ namespace {
     {
         SetChildClippingMode(ClipToClient);
         RequirePreRender();
-
-        Resize(GG::Pt(w, DefaultHeight()));
     }
 
     GG::Y QueueProductionItemPanel::DefaultHeight() {
@@ -547,6 +535,10 @@ namespace {
             GG::Connect(m_quantity_selector->QuantChangedSignal,    &QueueProductionItemPanel::ItemQuantityChanged, this);
         if (m_block_size_selector)
             GG::Connect(m_block_size_selector->QuantChangedSignal,  &QueueProductionItemPanel::ItemBlocksizeChanged, this);
+
+        // Since this is only called during PreRender force quantity indicators to PreRender()
+        GG::GUI::PreRenderWindow(m_quantity_selector);
+        GG::GUI::PreRenderWindow(m_block_size_selector);
     }
 
     void QueueProductionItemPanel::PreRender() {
