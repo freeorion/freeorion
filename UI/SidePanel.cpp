@@ -3340,7 +3340,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
         return false;
 
     const std::set<int>& planet_ids = system->PlanetIDs();
-    if (!planet_ids.count(planet_id))
+    if (planet_ids.count(planet_id) == 0)
         return false;
 
     TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
