@@ -70,19 +70,12 @@ namespace {
         QuantRow(int quantity, int designID, GG::X nwidth, GG::Y h,
                  bool inProgress, bool amBlockType) :
             GG::ListBox::Row(),
-            width(0),
             m_quant(quantity)
         {
             QuantLabel* newLabel = new QuantLabel(m_quant, designID, nwidth, h, inProgress, amBlockType);
-            width = newLabel->Width();
-            height = newLabel->Height();
             push_back(newLabel);
-            Resize(GG::Pt(nwidth, height-GG::Y0));//might subtract more; assessing aesthetics
-            //OffsetMove(GG::Pt(GG::X0, GG::Y(-2))); // didn't appear to have an effect
+            Resize(GG::Pt(nwidth, newLabel->Height()-GG::Y0));//might subtract more; assessing aesthetics
         }
-
-        GG::X width;
-        GG::Y height;
 
         int Quant() const { return m_quant; }
 
