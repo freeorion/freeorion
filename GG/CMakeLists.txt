@@ -47,6 +47,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 set(MINIMUM_BOOST_VERSION 1.47.0)
 
 option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies static libraries." ON)
+option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
+option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
 
 cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
 
@@ -97,26 +99,6 @@ include_directories(
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex signals system thread log REQUIRED)
 
-set(int_have_png 0)
-set(int_have_tiff 0)
-find_package(PNG)
-find_package(TIFF)
-
-if (PNG_FOUND)
-    include_directories(
-        SYSTEM
-        ${PNG_INCLUDE_DIR}
-    )
-    set(int_have_png 1)
-endif ()
-if (TIFF_FOUND)
-    include_directories(
-        SYSTEM
-        ${TIFF_INCLUDE_DIR}
-    )
-    set(int_have_tiff 1)
-endif ()
-
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
@@ -125,12 +107,28 @@ if (NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
 endif ()
 
+if(ENABLE_PNG_TEXTURES)
+    find_package(PNG REQUIRED)
+    set(int_have_png 1)
+else()
+    set(int_have_png 0)
+endif()
+
+if(ENABLE_TIFF_TEXTURES)
+    find_package(TIFF REQUIRED)
+    set(int_have_tiff 1)
+else()
+    set(int_have_tiff 0)
+endif()
+
 include_directories(
     SYSTEM
     ${Boost_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
+    ${PNG_INCLUDE_DIR}
+    ${TIFF_INCLUDE_DIR}
 )
 
 ########################################
