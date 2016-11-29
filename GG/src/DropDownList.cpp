@@ -181,6 +181,7 @@ bool ModalListPicker::Run() {
 void ModalListPicker::ModalInit()
 {
     m_dropped = true;
+    m_lb_wnd->BringRowIntoView(CurrentItem());
     m_lb_wnd->Hide(); // to enable CorrectListSize() to work
     CorrectListSize();
     m_resized_connection = Connect(GG::GUI::GetGUI()->WindowResizedSignal,
