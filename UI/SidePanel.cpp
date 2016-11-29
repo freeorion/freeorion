@@ -2794,8 +2794,6 @@ SidePanel::SidePanel(const std::string& config_name) :
     Sound::TempUISoundDisabler sound_disabler;
 
     m_system_name = new SystemNameDropDownList(6);
-    m_system_name->SetColor(GG::CLR_ZERO);
-    m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
     m_system_name->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_system_name->DisableDropArrow();
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
