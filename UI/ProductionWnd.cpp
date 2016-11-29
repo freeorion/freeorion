@@ -638,7 +638,8 @@ namespace {
     void QueueProductionItemPanel::Draw(GG::Clr clr, bool fill) {
         const int CORNER_RADIUS = 7;
         glColor(clr);
-        PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
+        GG::Pt LINE_WIDTH(GG::X(3), GG::Y0);
+        PartlyRoundedRect(UpperLeft(), LowerRight() - LINE_WIDTH, CORNER_RADIUS, true, false, true, false, fill);
     }
 
     void QueueProductionItemPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
