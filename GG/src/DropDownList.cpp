@@ -306,7 +306,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
         break;
     case GGK_PAGEUP: // page up key (not numpad key)
         if (!LB()->Empty() && CurrentItem() != LB()->end()) {
-            std::size_t i = std::max(1ul, m_num_shown_rows - 1u);
+            std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
             DropDownList::iterator it = CurrentItem();
             while (i && it != LB()->begin()) {
                 --it;
@@ -318,7 +318,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
         break;
     case GGK_PAGEDOWN: // page down key (not numpad key)
         if (!LB()->Empty()) {
-            std::size_t i = std::max(1ul, m_num_shown_rows - 1u);
+            std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
             DropDownList::iterator it = CurrentItem();
             while (i && it != --LB()->end()) {
                 ++it;
