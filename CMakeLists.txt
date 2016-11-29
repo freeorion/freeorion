@@ -259,6 +259,13 @@ target_compile_options(freeorioncommon
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
 
+if(APPLE)
+    set_target_properties(freeorioncommon
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup"
+    )
+endif()
+
 target_compile_definitions(freeorioncommon
     PRIVATE
     -DFREEORION_BUILD_COMMON
@@ -334,6 +341,13 @@ target_compile_options(freeorionparse
         $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
         $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
+
+if(APPLE)
+    set_target_properties(freeorionparse
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup"
+    )
+endif()
 
 
 add_executable(freeoriond "")
