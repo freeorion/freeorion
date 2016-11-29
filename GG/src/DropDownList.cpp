@@ -181,7 +181,24 @@ bool ModalListPicker::Run() {
 void ModalListPicker::ModalInit()
 {
     m_dropped = true;
-    m_lb_wnd->BringRowIntoView(CurrentItem());
+
+    // Try to center the current item unless within half the number of
+    // shown rows from the top or bottom
+    if (CurrentItem() != m_lb_wnd->end() && !m_lb_wnd->Empty()) {
+        std::size_t current_ii(std::distance(m_lb_wnd->begin(), CurrentItem()));
+        std::size_t half_shown((m_num_shown_rows / 2));
+        std::size_t even_extra_one((m_num_shown_rows % 2 == 0) ? 1 : 0);
+
+        m_lb_wnd->SetFirstRowShown(m_lb_wnd->begin());
+        if (current_ii >= (m_lb_wnd->NumRows() - 1 - half_shown)) {
+            m_lb_wnd->BringRowIntoView(--m_lb_wnd->end());
+        } else if (current_ii >= half_shown) {
+            m_lb_wnd->SetFirstRowShown(
+                boost::next(m_lb_wnd->begin(),
+                            current_ii - half_shown + even_extra_one));
+        }
+    }
+
     m_lb_wnd->Hide(); // to enable CorrectListSize() to work
     CorrectListSize();
     m_resized_connection = Connect(GG::GUI::GetGUI()->WindowResizedSignal,
