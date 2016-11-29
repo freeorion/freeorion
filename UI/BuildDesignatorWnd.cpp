@@ -842,7 +842,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
                 design_ids.push_back(it->first);
 
-        // craete and insert rows...
+        // create and insert rows...
         std::vector<GG::ListBox::Row*> rows;
         rows.reserve(design_ids.size());
         for (std::vector<int>::const_iterator it = design_ids.begin(); it != design_ids.end(); ++it, ++i) {
