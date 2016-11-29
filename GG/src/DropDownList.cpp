@@ -184,7 +184,7 @@ void ModalListPicker::ModalInit()
     m_lb_wnd->Hide(); // to enable CorrectListSize() to work
     CorrectListSize();
     m_resized_connection = Connect(GG::GUI::GetGUI()->WindowResizedSignal,
-                                     boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
+                                   boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     Show();
 }
 
