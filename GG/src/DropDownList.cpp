@@ -150,7 +150,7 @@ namespace {
 ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
-    m_num_shown_rows(num_rows),
+    m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
     m_relative_to_wnd(relative_to_wnd),
     m_dropped(false),
     m_resized_connection()
