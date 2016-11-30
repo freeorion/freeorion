@@ -100,16 +100,12 @@ private:
 
     /** Close the drop down if the app resizes, to prevent the modal drop down
         list location not tracking the anchor.*/
-    void WindowResizedSlot(GG::X x, GG::Y y);
+    void WindowResizedSlot(X x, Y y);
 
     ListBox*     m_lb_wnd;
     const size_t m_num_shown_rows;
     const Wnd*   m_relative_to_wnd;
     bool         m_dropped;  ///< Is the drop down list open.
-
-    /** The connection to the GUI resized signal which is connected while
-        the drop down list is dropped.*/
-    boost::signals2::connection m_resized_connection;
 };
 
 namespace {
@@ -152,11 +148,12 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t n
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
     m_relative_to_wnd(relative_to_wnd),
-    m_dropped(false),
-    m_resized_connection()
+    m_dropped(false)
 {
     Connect(m_lb_wnd->SelChangedSignal,     &ModalListPicker::LBSelChangedSlot, this);
     Connect(m_lb_wnd->LeftClickedSignal,    &ModalListPicker::LBLeftClickSlot,  this);
+    Connect(GUI::GetGUI()->WindowResizedSignal,
+            boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     AttachChild(m_lb_wnd);
 
     if (INSTRUMENT_ALL_SIGNALS)
@@ -201,8 +198,6 @@ void ModalListPicker::ModalInit()
 
     m_lb_wnd->Hide(); // to enable CorrectListSize() to work
     CorrectListSize();
-    m_resized_connection = Connect(GG::GUI::GetGUI()->WindowResizedSignal,
-                                   boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     Show();
 }
 
@@ -212,10 +207,13 @@ void ModalListPicker::EndRun()
     m_lb_wnd->Hide();
 }
 
-void ModalListPicker::WindowResizedSlot(GG::X x, GG::Y y)
+void ModalListPicker::WindowResizedSlot(X x, Y y)
 {
-    m_resized_connection.disconnect();
-    EndRun();
+    // Keep the ModalListPicker full app sized so that the drop down list
+    // can be placed anywhere.
+    Control::Resize(Pt(x, y));
+    if (m_dropped)
+        EndRun();
 }
 
 bool ModalListPicker::Dropped() const
