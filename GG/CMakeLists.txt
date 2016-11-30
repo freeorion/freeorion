@@ -65,7 +65,10 @@ if (MSVC)
     set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 endif ()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 
 ########################################
@@ -74,19 +77,23 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex signals system thread log REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIRS})
-
 set(int_have_png 0)
 set(int_have_tiff 0)
 find_package(PNG)
 find_package(TIFF)
 
 if (PNG_FOUND)
-    include_directories(${PNG_INCLUDE_DIR})
+    include_directories(
+        SYSTEM
+        ${PNG_INCLUDE_DIR}
+    )
     set(int_have_png 1)
 endif ()
 if (TIFF_FOUND)
-    include_directories(${TIFF_INCLUDE_DIR})
+    include_directories(
+        SYSTEM
+        ${TIFF_INCLUDE_DIR}
+    )
     set(int_have_tiff 1)
 endif ()
 
@@ -98,6 +105,8 @@ if (NOT OPENGL_GLU_FOUND)
 endif ()
 
 include_directories(
+    SYSTEM
+    ${Boost_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
 )

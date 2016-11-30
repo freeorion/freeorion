@@ -11,6 +11,7 @@ find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
 include_directories(
+    SYSTEM
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}

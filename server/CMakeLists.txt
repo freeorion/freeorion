@@ -1,4 +1,5 @@
 include_directories(
+    SYSTEM
     ${PYTHON_INCLUDE_PATH}
 )
 

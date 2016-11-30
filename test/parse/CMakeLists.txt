@@ -13,9 +13,13 @@ target_link_libraries(test_parsers
 
 find_package (Boost REQUIRED COMPONENTS unit_test_framework)
 
-include_directories (
-    ${Boost_UNIT_TEST_FRAMEWORK_INCLUDES}
+include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../
+)
+
+include_directories(
+    SYSTEM
+    ${Boost_UNIT_TEST_FRAMEWORK_INCLUDES}
 )
 
 add_executable(test_parsers_boost

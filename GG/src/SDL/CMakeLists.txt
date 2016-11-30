@@ -5,7 +5,10 @@ set(SDL_BUILDING_LIBRARY true)
 
 find_package(SDL2 REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIR})
+include_directories(
+    SYSTEM
+    ${SDL2_INCLUDE_DIR}
+)
 
 set(GiGiSDL_LINK_LIBS GiGi ${SDL2_LIBRARY})
 add_library(GiGiSDL SDLGUI.cpp)

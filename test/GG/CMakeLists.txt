@@ -2,6 +2,7 @@ message("-- Configuring GG Tests")
 
 find_package(GLEW REQUIRED)
 include_directories(
+    SYSTEM
     ${OPENGL_INCLUDE_DIR}
 )
 
