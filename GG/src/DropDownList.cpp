@@ -150,7 +150,7 @@ namespace {
 ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
-    m_num_shown_rows(num_rows),
+    m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
     m_relative_to_wnd(relative_to_wnd),
     m_dropped(false),
     m_resized_connection()
@@ -181,6 +181,24 @@ bool ModalListPicker::Run() {
 void ModalListPicker::ModalInit()
 {
     m_dropped = true;
+
+    // Try to center the current item unless within half the number of
+    // shown rows from the top or bottom
+    if (CurrentItem() != m_lb_wnd->end() && !m_lb_wnd->Empty()) {
+        std::size_t current_ii(std::distance(m_lb_wnd->begin(), CurrentItem()));
+        std::size_t half_shown((m_num_shown_rows / 2));
+        std::size_t even_extra_one((m_num_shown_rows % 2 == 0) ? 1 : 0);
+
+        m_lb_wnd->SetFirstRowShown(m_lb_wnd->begin());
+        if (current_ii >= (m_lb_wnd->NumRows() - 1 - half_shown)) {
+            m_lb_wnd->BringRowIntoView(--m_lb_wnd->end());
+        } else if (current_ii >= half_shown) {
+            m_lb_wnd->SetFirstRowShown(
+                boost::next(m_lb_wnd->begin(),
+                            current_ii - half_shown + even_extra_one));
+        }
+    }
+
     m_lb_wnd->Hide(); // to enable CorrectListSize() to work
     CorrectListSize();
     m_resized_connection = Connect(GG::GUI::GetGUI()->WindowResizedSignal,
@@ -269,44 +287,77 @@ void ModalListPicker::CorrectListSize() {
 boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
+    bool numlock_on = mod_keys & MOD_KEY_NUM;
+    if (!numlock_on) {
+        // convert keypad keys into corresponding non-number keys
+        switch (key) {
+        case GGK_KP0:       key = GGK_INSERT;   break;
+        case GGK_KP1:       key = GGK_END;      break;
+        case GGK_KP2:       key = GGK_DOWN;     break;
+        case GGK_KP3:       key = GGK_PAGEDOWN; break;
+        case GGK_KP4:       key = GGK_LEFT;     break;
+        case GGK_KP5:                           break;
+        case GGK_KP6:       key = GGK_RIGHT;    break;
+        case GGK_KP7:       key = GGK_HOME;     break;
+        case GGK_KP8:       key = GGK_UP;       break;
+        case GGK_KP9:       key = GGK_PAGEUP;   break;
+        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
+        default:                                break;
+        }
+    }
+
     switch (key) {
     case GGK_UP: // arrow-up (not numpad arrow)
-        if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin())
-            return boost::prior(CurrentItem());
+        if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin()) {
+            DropDownList::iterator prev_it(boost::prior(CurrentItem()));
+            LB()->BringRowIntoView(prev_it);
+            return prev_it;
+        }
         break;
     case GGK_DOWN: // arrow-down (not numpad arrow)
-        if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end())
-            return boost::next(CurrentItem());
+        if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end()) {
+            DropDownList::iterator next_it(boost::next(CurrentItem()));
+            LB()->BringRowIntoView(next_it);
+            return next_it;
+        }
         break;
     case GGK_PAGEUP: // page up key (not numpad key)
-        if (LB()->NumRows() && CurrentItem() != LB()->end()) {
-            std::size_t i = 10;
+        if (!LB()->Empty() && CurrentItem() != LB()->end()) {
+            std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
             DropDownList::iterator it = CurrentItem();
             while (i && it != LB()->begin()) {
                 --it;
                 --i;
             }
+            LB()->BringRowIntoView(it);
             return it;
         }
         break;
     case GGK_PAGEDOWN: // page down key (not numpad key)
-        if (LB()->NumRows()) {
-            std::size_t i = 10;
+        if (!LB()->Empty()) {
+            std::size_t i = std::max<std::size_t>(1, m_num_shown_rows - 1);
             DropDownList::iterator it = CurrentItem();
             while (i && it != --LB()->end()) {
                 ++it;
-                ++i;
+                --i;
             }
+            LB()->BringRowIntoView(it);
             return it;
         }
         break;
     case GGK_HOME: // home key (not numpad)
-        if (LB()->NumRows())
-            return LB()->begin();
+        if (!LB()->Empty()) {
+            DropDownList::iterator it(LB()->begin());
+            LB()->BringRowIntoView(it);
+            return it;
+        }
         break;
     case GGK_END: // end key (not numpad)
-        if (LB()->NumRows() && !LB()->Empty())
-            return --LB()->end();
+        if (!LB()->Empty()) {
+            DropDownList::iterator it(--LB()->end());
+            LB()->BringRowIntoView(it);
+            return it;
+        }
         break;
     case GGK_RETURN:
     case GGK_KP_ENTER:
