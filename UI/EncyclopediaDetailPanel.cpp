@@ -1235,7 +1235,7 @@ namespace {
             return;
 
         if (!detailed_description.empty())
-            detailed_description += "\n" + UserString("ENC_CATEGORY_HEADER") + "\n";
+            detailed_description += "\n\n";
 
         detailed_description += dir_text;
     }

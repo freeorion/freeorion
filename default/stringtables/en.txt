@@ -4223,11 +4223,6 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 ENC_METER_TYPE
 Meter Type
 
-ENC_CATEGORY_HEADER
-'''
-<center>Articles in this category</center>
-<center>---</center>'''
-
 
 ##
 ## Combat report
