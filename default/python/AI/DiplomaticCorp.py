@@ -3,8 +3,8 @@
 import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-from Behavior.Character import Aggression
-from Behavior.CharacterStrings import aggression_greetings
+from Trait.Character import Aggression
+from Trait.CharacterStrings import aggression_greetings
 from freeorion_tools import UserStringList, chat_on_error
 
 

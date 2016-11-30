@@ -137,7 +137,7 @@ class Behavior(object):
 
         Using the key to fetch a single string from that table_x looks like:
 
-        used_string_x = table_x[character.get_behavior(Character.Behavior.Aggression).key]
+        used_string_x = table_x[character.get_behavior(Character.Trait.Aggression).key]
 
         See CharacterStrings.py for the details of this actual example.
 

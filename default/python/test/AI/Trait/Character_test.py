@@ -1,5 +1,5 @@
 import pytest
-from Behavior.Character import Behavior, Character
+from Trait.Character import Behavior, Character
 
 class LeftBehavior(Behavior):
     """A test behavior"""
