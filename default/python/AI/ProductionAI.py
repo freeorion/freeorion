@@ -1506,7 +1506,7 @@ def find_automatic_historic_analyzer_candidates():
         fo.aggression.maniacal: (25, 50, 100)
     }
 
-    min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.character.get_behavior(Aggression).key,
+    min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.character.get_trait(Aggression).key,
                                                                  (ARB_LARGE_NUMBER, ARB_LARGE_NUMBER, ARB_LARGE_NUMBER))
     # If we can colonize good planets instead, do not build this.
     num_colony_targets = 0

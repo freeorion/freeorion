@@ -74,7 +74,7 @@ def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=inval
     global foAIstate
     print "Initializing foAIstate..."
     foAIstate = AIstate.AIstate(_aggression)
-    aggression = foAIstate.character.get_behavior(Aggression)
+    aggression = foAIstate.character.get_trait(Aggression)
     print "New game started, AI Aggression level %d (%s)" % (
         aggression.key, aggression_name[foAIstate.character])
     foAIstate.session_start_cleanup()
@@ -113,7 +113,7 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate.session_start_cleanup()
         print_error("Fail to load aiState form saved game: %s" % e)
 
-    aggression = foAIstate.character.get_behavior(Aggression)
+    aggression = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp

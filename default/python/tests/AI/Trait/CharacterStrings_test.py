@@ -1,4 +1,4 @@
-from Trait.Character import Behavior, Character, Aggression
+from Trait.Character import Trait, Character, Aggression
 from Trait.CharacterStrings import make_aggression_table
 
 
@@ -14,7 +14,7 @@ def test_make_aggression_table():
     character = Character([Aggression(5)])
     assert table[character] == "post_proc_prefix_MANIACAL"
 
-    character = Character([Behavior()])
+    character = Character([Trait()])
     assert table[character] == "post_proc_UNKNOWN_VALUE_SYMBOL"
 
     assert len(table) == 7

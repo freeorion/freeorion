@@ -1,4 +1,4 @@
-# Fake fo for testing Behavior purposes
+# Fake fo for testing Trait purposes
 
 # TODO Find a better way to import the static portions of fo without the test chaos, overhead and random state of fo.
 

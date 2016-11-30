@@ -1,50 +1,50 @@
 """
 Character represents the personalization of the AI.
 
-Character is composed of orthogonal elements called Behavior.  Behavior
+Character is composed of orthogonal elements called Trait.  Trait
 elements are orthogonal, which means that they do not interact and can be
 freely mixed and matched to create a Character.  Orthogonality means
 that they can be tested independently and combined with simple
 combiners.
 
-Character creates big changes in the behavior of the AI that are visible
+Character creates big changes in the trait of the AI that are visible
 to the player as personality.  At key/tap points the AI checks the character
 for permission 'may_<do something>' or preference of a series of
 alternative actions 'prefer_<somethings>'.  Preference could be expanded
-to look at all of the options and remove those that the behavior
+to look at all of the options and remove those that the trait
 forbids.
 
 Permission type taps are named may_<do something>(information needed to decide).
-The behavior examines the information and returns true if that action is permitted.
+The trait examines the information and returns true if that action is permitted.
 
 Preference type taps are named prefer_<somethings>(alternatives, extra info).
-Alternatives is a list of all possible actions.  The behavior examines all
+Alternatives is a list of all possible actions.  The trait examines all
 the alternatives and returns a possibly empty list of the permissible
 actions.
 
-Character should be invoked by other modules at key behavioral tap points to
+Character should be invoked by other modules at key trait tap points to
 provide direction not optimization.  For example which empire/species do
 I love/hate enough to attack.
 
-The gated behaviors should be big user discernable changes, not small
+The gated traits should be big user discernable changes, not small
 coefficient optimizations better handled with a local optimization
-routine. If there are setup options to the behavior they should fall
+routine. If there are setup options to the trait they should fall
 into 2 (on/off) or 3 settings.  For example,
 deceitful/typical/trustworthy.  The idea is not to create deep, subtle,
 nuanced personalities, but writ large Shakespearean characters that draw the
 player into the narrative structure of the particular game that they are playing.
 
-Each AI will get the mandatory behavior (probably Difficulty/Challenge)
-and a selection of the optional behaviors.
+Each AI will get the mandatory trait (probably Difficulty/Challenge)
+and a selection of the optional traits.
 
-There is no need for per species behavior.  Each playable species can be
-assigned some additional mandatory behavior(s).  For example the Trith and
-a mandatory Genocidal behavior.  Perhaps add a probabilty distribution of
-behavior components to the FOCS description of a playable species.
+There is no need for per species trait.  Each playable species can be
+assigned some additional mandatory trait(s).  For example the Trith and
+a mandatory Genocidal trait.  Perhaps add a probabilty distribution of
+trait components to the FOCS description of a playable species.
 """
 
 
-# Some ideas for future behavior modules are:
+# Some ideas for future trait modules are:
 # TODO: challenge/difficulty -- to replace the difficulty related portions
 #                                of aggression.
 #
@@ -91,35 +91,35 @@ import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
-class Behavior(object):
-    """An abstract class representing a type of behavior of the AI.
+class Trait(object):
+    """An abstract class representing a type of trait of the AI.
 
-    Behaviors give the AI personality along some dimension.
-    Behaviors do not help the AI make optimal decisions, they determine whether
+    Traits give the AI personality along some dimension.
+    Traits do not help the AI make optimal decisions, they determine whether
     certain actions are permissible or preferable.
 
-    Behaviors are combined to form a single Character.
+    Traits are combined to form a single Character.
 
-    Behaviors have taps which the AI calls to determine it behavior with
+    Traits have taps which the AI calls to determine it trait with
     respect to a single action.  There are two types of taps: permission
     taps which permit/forbid an action and preference taps which indicate
     which of several alternatives are permissible.
 
     Permission type taps are named may_<do something>(information needed to decide).
-    The behavior examines the information and returns true if that action is
+    The trait examines the information and returns true if that action is
     permitted.
 
     Preference type taps are named prefer_<somethings>(alternatives, extra info).
-    Alternatives is a list of all possible actions.  The behavior examines all of
+    Alternatives is a list of all possible actions.  The trait examines all of
     the alternatives and returns a possibly empty list of the permissible actions.
 
-    Any given Behavior class should not implement all the taps, only those
-    it needs to override to cause the relevant behavior.
+    Any given Trait class should not implement all the taps, only those
+    it needs to override to cause the relevant trait.
     """
     __metaclass__ = abc.ABCMeta
 
     def __repr__(self):
-        return "Behavior"
+        return "Trait"
 
     # @abc.abstractproperty
     @property
@@ -137,7 +137,7 @@ class Behavior(object):
 
         Using the key to fetch a single string from that table_x looks like:
 
-        used_string_x = table_x[character.get_behavior(Character.Trait.Aggression).key]
+        used_string_x = table_x[character.get_trait(Character.Trait.Aggression).key]
 
         See CharacterStrings.py for the details of this actual example.
 
@@ -158,7 +158,7 @@ class Behavior(object):
 
     def preferred_research_cutoff(self, alternatives):  # pylint: disable=no-self-use,unused-argument
         """Return preferred research cutoff from the list of alternatives."""
-        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
         return None
 
     def max_number_colonies(self):  # pylint: disable=no-self-use,unused-argument
@@ -181,17 +181,17 @@ class Behavior(object):
 
     def preferred_colonization_portion(self, alternatives):  # pylint: disable=no-self-use,unused-argument
         """Select from the fractions in alternatives the fraction of PP to be spend on colonization."""
-        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
         return None
 
     def preferred_outpost_portion(self, alternatives):  # pylint: disable=no-self-use,unused-argument
         """Select from the fractions in alternatives the fraction of PP to be spend on outposts."""
-        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
         return None
 
     def preferred_building_ratio(self, alternatives):  # pylint: disable=no-self-use,unused-argument
         """Select a fraction less than 1 from alternatives as the maximum ratio of PP for buildings"""
-        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
         return None
 
     def preferred_discount_multiplier(self, alternatives):  # pylint: disable=no-self-use,unused-argument
@@ -199,7 +199,7 @@ class Behavior(object):
         use in evaluate planet in Colonisation.py to scale pilot rating and
         a long list of technologies.
         """
-        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
         return None
 
     def max_defense_portion(self):  # pylint: disable=no-self-use,unused-argument
@@ -238,7 +238,7 @@ class Behavior(object):
 
     def may_travel_beyond_supply(self, distance):  # pylint: disable=no-self-use,unused-argument
         """Return True if able to travel distance hops beyond empire supply"""
-        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDBehavior.
+        # TODO Remove this tap it is one of the empire id dependent taps. See EmpireIDTrait.
         return True
 
     def get_research_index(self):  # pylint: disable=no-self-use,unused-argument
@@ -277,20 +277,20 @@ class Behavior(object):
         return None
 
 
-class Aggression(Behavior):
-    """A behavior that models level of difficulty and aggression."""
+class Aggression(Trait):
+    """A trait that models level of difficulty and aggression."""
 
     # The initial implementation was to pull aggression dependent code from
-    # the main body of code into this behavior Aggression.  These are merely
+    # the main body of code into this trait Aggression.  These are merely
     # refactoring of existing code and is not an example of ideal
     # implementation.
 
-    # Aggression implements two different behaviors as one: difficulty and
+    # Aggression implements two different traits as one: difficulty and
     # aggression.  It creates too many decision points not clearly related to
-    # either concept.  Aggression should be broken into two behaviors:
+    # either concept.  Aggression should be broken into two traits:
     # difficulty/challenge and aggression.
 
-    # TODO break this class into two behaviors: level of difficulty and aggression
+    # TODO break this class into two traits: level of difficulty and aggression
 
     def __init__(self, aggression):
         self.aggression = aggression
@@ -413,11 +413,11 @@ class Aggression(Behavior):
                 type(self).TECH_UPPER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.maniacal))
 
     def attitude_to_empire(self, other_empire_id, diplomatic_logs):
-        # TODO: In other behaviors consider proximity, competitive
+        # TODO: In other traits consider proximity, competitive
         # needs, relations with other empires, past history with this
         # empire, etc.
         # in the meantime, somewhat random
-        # TODO: Move the diplomatic log portion of this behavior back
+        # TODO: Move the diplomatic log portion of this trait back
         # into diplomacy where it belongs.
         if self.aggression == fo.aggression.maniacal:
             return -9
@@ -443,26 +443,26 @@ class Aggression(Behavior):
         return exponent
 
 
-class EmpireIDBehavior(Behavior):
-    """A behavior that models empire id influence.
+class EmpireIDTrait(Trait):
+    """A trait that models empire id influence.
     Mostly some modulo 2 effects."""
 
     # The initial implementation was to pull empire.id modulo 2 or 3 optional
-    # portions of the code into this behavior EmpireIDBehavior.  This was
+    # portions of the code into this trait EmpireIDTrait.  This was
     # merely a refactoring of existing code and is not an example of ideal
     # implementation.
 
     # EmpireID selects based on empire.id with is an implementation detail and
     # not a "visible" game mechanic.  EmpireID is also used to select between
     # coefficient options, which look like programmer experiments.  EmpireID
-    # should be removed as a behavior.
+    # should be removed as a trait.
 
-    # TODO: Remove EmpireIDBehavior.
+    # TODO: Remove EmpireIDTrait.
     # Empire id is a game mechanic.  It is not something that a player
     # can describe, "Look the 'Continuum' is behaving like a 1 modulo 2 character."
 
     def __init__(self, empire_id, aggression):
-        print "EmpireIDBehavior initialized."
+        print "EmpireIDTrait initialized."
         self.id = empire_id
         self.aggression = aggression  # TODO remove when old research style get_research_index is removed
 
@@ -510,37 +510,37 @@ class EmpireIDBehavior(Behavior):
         return research_index
 
 
-class Character(Behavior):
+class Character(Trait):
     """
     A collection of behaviours.
 
-    For each query that Behavior supports a Character queries
-    all of its own behaviors to determine if an action is permissible or prefered.
+    For each query that Trait supports a Character queries
+    all of its own traits to determine if an action is permissible or prefered.
     """
 
-    def __init__(self, behaviors):
-        self.behaviors = behaviors
-        if not all([isinstance(x, Behavior) for x in behaviors]):
-            raise TypeError("All behaviors must be sub-classes of Behavior")
+    def __init__(self, traits):
+        self.traits = traits
+        if not all([isinstance(x, Trait) for x in traits]):
+            raise TypeError("All traits must be sub-classes of Trait")
 
-    def get_behavior(self, type_of_behavior):
-        """Return the requested behavior or None"""
-        behavior = [x for x in self.behaviors if isinstance(x, type_of_behavior)]
-        return behavior[0] if behavior else Behavior()
+    def get_trait(self, type_of_trait):
+        """Return the requested trait or None"""
+        trait = [x for x in self.traits if isinstance(x, type_of_trait)]
+        return trait[0] if trait else Trait()
 
 
 # Complete the Character class by adding all of the combiners to combine the outputs of the
-# individual behaviors.  Character tries to combine results in the way most limiting to the AI
+# individual traits.  Character tries to combine results in the way most limiting to the AI
 
 def _make_single_function_combiner(funcnamei, f_combo):
-    """Make a combiner that collects the results of funcname from each behavior
+    """Make a combiner that collects the results of funcname from each trait
     and applies f_combo to the results"""
     def func(self, *args, **kwargs):
-        """Apply funcnamei to each behavior and combine them with ''f_combo''"""
-        return f_combo([getattr(x, funcnamei)(*args, **kwargs) for x in self.behaviors])
+        """Apply funcnamei to each trait and combine them with ''f_combo''"""
+        return f_combo([getattr(x, funcnamei)(*args, **kwargs) for x in self.traits])
     return func
 
-# Create combiners for behaviors that all must be true
+# Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
                  "may-invade_with_bases", "may_build_building", "may_produce_troops",
                  "may_dither_focus_to_gain_research", "may_research_heavily",
@@ -549,21 +549,21 @@ for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_resea
                  "may_research_tech_classic"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, all))
 
-# Create combiners for behaviors that take min result
+# Create combiners for traits that take min result
 for funcname in ["max_number_colonies", "invasion_priority_scaling",
                  "military_priority_scaling", "max_defense_portion"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, min))
 
-# Create combiners for behaviors that take max result
+# Create combiners for traits that take max result
 for funcname in ["target_number_of_orbitals", "military_safety_factor", "get_research_index"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, max))
 
-# Create combiners for behaviors that take any result
+# Create combiners for traits that take any result
 for funcname in ["check_orbital_production"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, any))
 
 
-# Create combiners for behaviors that averages all not None results
+# Create combiners for traits that averages all not None results
 def average_not_none(llin):
     ll = [x for x in llin if x]
     return sum(ll) / len(ll)
@@ -573,11 +573,11 @@ for funcname in ["attitude_to_empire", "warship_adjusted_production_cost_exponen
 
 
 def _make_most_preferred_combiner(funcnamei):
-    """Make a combiner that runs the preference function for each behavior and
-    returns the result most preferred by all the behaviors."""
+    """Make a combiner that runs the preference function for each trait and
+    returns the result most preferred by all the traits."""
     def _most_preferred(self, alternatives):
-        """Applies funcnamei from each behavior to the alternatives and return the most preferred."""
-        prefs = [y for y in [getattr(x, funcnamei)(alternatives) for x in self.behaviors] if y is not None]
+        """Applies funcnamei from each trait to the alternatives and return the most preferred."""
+        prefs = [y for y in [getattr(x, funcnamei)(alternatives) for x in self.traits] if y is not None]
         if not prefs:
             return None
         if len(prefs) == 1:
@@ -585,7 +585,7 @@ def _make_most_preferred_combiner(funcnamei):
         return Counter.most_common(Counter(prefs), 1)[0][0]
     return _most_preferred
 
-# Create combiners for behaviors deal with preference
+# Create combiners for traits deal with preference
 for funcname in ["preferred_research_cutoff", "preferred_colonization_portion",
                  "preferred_outpost_portion", "preferred_building_ratio", "preferred_discount_multiplier"]:
     setattr(Character, funcname, _make_most_preferred_combiner(funcname))
@@ -602,7 +602,7 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
     bypassed_aggression = get_trait_bypass_value("aggression", aggression, NO_VALUE)
     bypassed_empire_id = get_trait_bypass_value("empire-id", empire_id, NO_VALUE)
 
-    return Character([Aggression(bypassed_aggression), EmpireIDBehavior(bypassed_empire_id, bypassed_aggression)])
+    return Character([Aggression(bypassed_aggression), EmpireIDTrait(bypassed_empire_id, bypassed_aggression)])
 
 
 def get_trait_bypass_value(name, default, sentinel):

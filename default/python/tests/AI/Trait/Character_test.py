@@ -1,11 +1,11 @@
 import pytest
-from Trait.Character import Behavior, Character
+from Trait.Character import Trait, Character
 
-class LeftBehavior(Behavior):
-    """A test behavior"""
+class LeftTrait(Trait):
+    """A test trait"""
 
-class RightBehavior(Behavior):
-    """A test Behavior that injects values to be found by combiners"""
+class RightTrait(Trait):
+    """A test Trait that injects values to be found by combiners"""
 
     def may_explore_system(self, monster_threat):  # pylint: disable=no-self-use,unused-argument
         """Always reject. 1 parameter"""
@@ -27,28 +27,28 @@ class RightBehavior(Behavior):
         """Use for max combiner"""
         return 10
 
-class OtherBehavior(Behavior):
-    """A test behavior"""
+class OtherTrait(Trait):
+    """A test trait"""
 
 
-left_behavior = LeftBehavior()
-right_behavior = RightBehavior()
-other_behavior = OtherBehavior()
+left_trait = LeftTrait()
+right_trait = RightTrait()
+other_trait = OtherTrait()
 
-rejection_character = Character([left_behavior, right_behavior])
-permissive_character = Character([left_behavior, other_behavior])
+rejection_character = Character([left_trait, right_trait])
+permissive_character = Character([left_trait, other_trait])
 
 class TestCharacter(object):
-    """Test the Character class which combines behaviors
+    """Test the Character class which combines traits
     Each combiner test checks that the combiner generates the expected output.
     """
 
-    def test_get_behavior(self):
-        assert rejection_character.get_behavior(LeftBehavior) == left_behavior
-        assert rejection_character.get_behavior(RightBehavior) == right_behavior
-        assert rejection_character.get_behavior(OtherBehavior) != left_behavior
-        assert rejection_character.get_behavior(OtherBehavior) != right_behavior
-        assert isinstance(rejection_character.get_behavior(OtherBehavior), Behavior)
+    def test_get_trait(self):
+        assert rejection_character.get_trait(LeftTrait) == left_trait
+        assert rejection_character.get_trait(RightTrait) == right_trait
+        assert rejection_character.get_trait(OtherTrait) != left_trait
+        assert rejection_character.get_trait(OtherTrait) != right_trait
+        assert isinstance(rejection_character.get_trait(OtherTrait), Trait)
 
     def test_all_combiner(self):
         assert permissive_character.may_maximize_research()
@@ -70,7 +70,7 @@ class TestCharacter(object):
         assert permissive_character.preferred_research_cutoff([10, 11, 12]) == None
         assert rejection_character.preferred_research_cutoff([10, 11, 12]) == 11
 
-    def test_character_must_be_composed_of_behaviors(self):
+    def test_character_must_be_composed_of_traits(self):
         with pytest.raises(TypeError):
-            not_a_behavior = int(1)
-            bad_character = Character([LeftBehavior, not_a_behavior])
+            not_a_trait = int(1)
+            bad_character = Character([LeftTrait, not_a_trait])
