@@ -596,45 +596,45 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
     # TODO add the mandatory (Difficulty) and optional/random (everything
     # else) interface to Character creation.
 
-    # Check the optionsDB for the behavior bypass values and create
+    # Check the optionsDB for the trait bypass values and create
     # the character.
     NO_VALUE = -1
-    bypassed_aggression = get_behavior_bypass_value("aggression", aggression, NO_VALUE)
-    bypassed_empire_id = get_behavior_bypass_value("empire-id", empire_id, NO_VALUE)
+    bypassed_aggression = get_trait_bypass_value("aggression", aggression, NO_VALUE)
+    bypassed_empire_id = get_trait_bypass_value("empire-id", empire_id, NO_VALUE)
 
     return Character([Aggression(bypassed_aggression), EmpireIDBehavior(bypassed_empire_id, bypassed_aggression)])
 
 
-def get_behavior_bypass_value(name, default, sentinel):
-    """Fetch a bypassed behavior value or return the default from OptionsDB.
+def get_trait_bypass_value(name, default, sentinel):
+    """Fetch a bypassed trait value or return the default from OptionsDB.
 
-    In OptionsDB a section AI.config.behavior can contain default behavior
+    In OptionsDB a section AI.config.trait can contain default trait
     values for all of the AIs or specific AIs which will override the
     default value passed into this function.
 
     If there is an XML element in config.xml/persistent_config.xml
-    AI.config.behavior.<name of behavior here>.force
+    AI.config.trait.<name of trait here>.force
     with a non zero value
 
-    ,then the value of AI.config.behavior.<name of behavior here>.<AI ID number here>
+    ,then the value of AI.config.trait.<name of trait here>.<AI ID number here>
 
     will be checked.  If it is not the sentinel value (typically -1) the it
-    will be returned as the behavior's value.
+    will be returned as the trait's value.
 
     Otherwise the value of
-    AI.config.behavior.<name of behavior here>.all
+    AI.config.trait.<name of trait here>.all
     is checked.  Again if it is not the sentinel value it will ovverride
-    the returned value for behavior.
+    the returned value for trait.
 
-    If behavior is not overriden by one of the above values, then the
+    If trait is not overriden by one of the above values, then the
     default is used.
 
     Here is an example section providing override values aggression and the
-    empire-id behavior.
+    empire-id trait.
 
     <mAI>
       <config>
-        <behavior>
+        <trait>
           <aggression>
             <force>1</force>
             <all>4</all>
@@ -654,34 +654,34 @@ def get_behavior_bypass_value(name, default, sentinel):
             <AI_4>1</AI_4>
             <AI_5>0</AI_5>
           </empire-id>
-        </behavior>
+        </trait>
       </config>
     </mAI>
 
-    :param name: Name of the behavior.
+    :param name: Name of the trait.
     :type name: string
-    :param default: Default value of the behavior.
+    :param default: Default value of the trait.
     :type default: int
     :param sentinel: A value indicating no valid value.
     :type sentinel: int
-    :return: The behavior
-    :rtype: Behavior
+    :return: The trait
+    :rtype: Trait
 
     """
 
-    force_option = "AI.config.behavior.%s.force" % (name,)
+    force_option = "AI.config.trait.%s.force" % (name,)
     if not fo.getOptionsDBOptionBool(force_option):
         return default
 
-    per_id_option = "AI.config.behavior.%s.%s" % (name, fo.playerName())
-    all_id_option = "AI.config.behavior.%s.all" % (name,)
+    per_id_option = "AI.config.trait.%s.%s" % (name, fo.playerName())
+    all_id_option = "AI.config.trait.%s.all" % (name,)
 
-    behavior = fo.getOptionsDBOptionInt(per_id_option)
-    if behavior is None or behavior == sentinel:
-        behavior = fo.getOptionsDBOptionInt(all_id_option)
+    trait = fo.getOptionsDBOptionInt(per_id_option)
+    if trait is None or trait == sentinel:
+        trait = fo.getOptionsDBOptionInt(all_id_option)
 
-    if behavior is None or behavior == sentinel:
-        behavior = default
+    if trait is None or trait == sentinel:
+        trait = default
     else:
-        print "%s behavior bypassed and set to %s for %s" % (name, repr(behavior), fo.playerName())
-    return behavior
+        print "%s trait bypassed and set to %s for %s" % (name, repr(trait), fo.playerName())
+    return trait

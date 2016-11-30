@@ -1429,17 +1429,17 @@ Sets the path for the directory containing the AI script files, for current exec
 OPTIONS_DB_AI_CONFIG
 Is available to the AI via the freeorioninterface, is set for current execution only.  Current expected use is to name an optional AI config file within the AI script folder; default is the empty string.  Intended to facilitate AI testing.
 
-OPTIONS_DB_AI_CONFIG_BEHAVIOR_AGGRESSION_FORCED
-Boolean for AI testing which indicates it all AIs are forced to have the same Aggression Behavior
+OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED
+Boolean for AI testing which indicates it all AIs are forced to have the same Aggression Trait
 
-OPTIONS_DB_AI_CONFIG_BEHAVIOR_AGGRESSION_FORCED_VALUE
-Forced value of the Aggression Behavior.  A value from 0 to 5.
+OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED_VALUE
+Forced value of the Aggression Trait.  A value from 0 to 5.
 
-OPTIONS_DB_AI_CONFIG_BEHAVIOR_EMPIREID_FORCED
-Boolean for AI testing which indicates it all AIs are forced to have the same EmpireID Behavior
+OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED
+Boolean for AI testing which indicates it all AIs are forced to have the same EmpireID Trait
 
-OPTIONS_DB_AI_CONFIG_BEHAVIOR_EMPIREID_FORCED_VALUE
-Forced value of the EmpireID Behavior.  A value from 0 to 39.
+OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
+Forced value of the EmpireID Trait.  A value from 0 to 39.
 
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
