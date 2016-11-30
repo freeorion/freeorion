@@ -778,30 +778,19 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     if (!empire)
         return;
 
-    // keep track of first shown row and the scroll position, in order to
-    // restore the first shown row, or the scroll position if the first row
-    // shown isn't in the repopulated list.
-    GG::ListBox::iterator initial_first_row_shown_it = m_buildable_items->FirstRowShown();
-    std::string initial_first_row_name;
-    if (initial_first_row_shown_it != m_buildable_items->end())
-        initial_first_row_name = (*initial_first_row_shown_it)->DragDropDataType();
-    std::size_t initial_scroll_pos = std::distance(m_buildable_items->begin(), initial_first_row_shown_it);
-
+    // Capture the list scroll state
+    // Try to preserve the same queue context with completely new queue items
+    std::size_t initial_offset_from_begin = std::distance(m_buildable_items->begin(), m_buildable_items->FirstRowShown());
+    std::size_t initial_offset_to_end = std::distance(m_buildable_items->FirstRowShown(), m_buildable_items->end());
+    bool initial_last_visible_row_is_end(m_buildable_items->LastVisibleRow() == m_buildable_items->end());
 
     m_buildable_items->Clear(); // the list of items to be populated
-
 
     boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
-    // may be set while populating - used to reselect previously selected row
-    // after populating
-    //GG::ListBox::iterator row_to_select_it = m_buildable_items->end();
-    // may be set while populating - used to rescroll the list after populating
-    GG::ListBox::iterator new_first_row_it = m_buildable_items->end();
     // counter that keeps track of how many rows have been added so far
     int i = 0;
-
 
     // populate list with building types
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
@@ -824,8 +813,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
             it != m_buildable_items->end(); ++it)
         {
-            if ((*it)->DragDropDataType() == initial_first_row_name)
-                new_first_row_it = it;
             (*it)->Resize(row_size);
         }
     }
@@ -862,21 +849,27 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
             it != m_buildable_items->end(); ++it)
         {
-            if ((*it)->DragDropDataType() == initial_first_row_name)
-                new_first_row_it = it;
             (*it)->Resize(row_size);
         }
     }
 
-    if (new_first_row_it != m_buildable_items->end()) {
-        m_buildable_items->BringRowIntoView(new_first_row_it);
-    } else {
-        if (!m_buildable_items->Empty())
-            m_buildable_items->BringRowIntoView(--m_buildable_items->end());
-        if (initial_scroll_pos < m_buildable_items->NumRows())
-            m_buildable_items->BringRowIntoView(boost::next(m_buildable_items->begin(), initial_scroll_pos));
-    }
-    //DebugLogger() << "Done";
+    // Restore the list scroll state
+    // If we were at the top stay at the top
+    if (initial_offset_from_begin == 0)
+        m_buildable_items->SetFirstRowShown(m_buildable_items->begin());
+
+    // If we were not at the bottom then keep the same first row position
+    else if (!initial_last_visible_row_is_end && initial_offset_from_begin < m_buildable_items->NumRows())
+        m_buildable_items->SetFirstRowShown(
+            boost::next(m_buildable_items->begin(), initial_offset_from_begin));
+
+    // otherwise keep the same relative position from the bottom to
+    // preserve the end of list dead space
+    else if (initial_offset_to_end < m_buildable_items->NumRows())
+        m_buildable_items->SetFirstRowShown(
+            boost::next(m_buildable_items->begin(), m_buildable_items->NumRows() -  initial_offset_to_end));
+    else
+        m_buildable_items->SetFirstRowShown(m_buildable_items->begin());
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,

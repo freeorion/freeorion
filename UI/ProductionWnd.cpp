@@ -985,9 +985,14 @@ void ProductionWnd::UpdateQueue() {
     ScopedTimer timer("ProductionWnd::UpdateQueue");
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
-
     QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
-    std::size_t first_visible_queue_row = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
+
+    // Capture the list scroll state
+    // Try to preserve the same queue context with completely new queue items
+    std::size_t initial_offset_from_begin = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
+    std::size_t initial_offset_to_end = std::distance(queue_lb->FirstRowShown(), queue_lb->end());
+    bool initial_last_visible_row_is_end(queue_lb->LastVisibleRow() == queue_lb->end());
+
     queue_lb->Clear();
 
     const Empire* empire = GetEmpire(m_empire_shown_id);
@@ -1003,10 +1008,21 @@ void ProductionWnd::UpdateQueue() {
         queue_lb->Insert(row);
     }
 
-    if (!queue_lb->Empty())
-        queue_lb->BringRowIntoView(--queue_lb->end());
-    if (first_visible_queue_row < queue_lb->NumRows())
-        queue_lb->BringRowIntoView(boost::next(queue_lb->begin(), first_visible_queue_row));
+    // Restore the list scroll state
+    // If we were at the top stay at the top
+    if (initial_offset_from_begin == 0)
+        queue_lb->SetFirstRowShown(queue_lb->begin());
+
+    // If we were not at the bottom then keep the same first row position
+    else if (!initial_last_visible_row_is_end && initial_offset_from_begin < queue_lb->NumRows())
+        queue_lb->SetFirstRowShown(boost::next(queue_lb->begin(), initial_offset_from_begin));
+
+    // otherwise keep the same relative position from the bottom to
+    // preserve the end of list dead space
+    else if (initial_offset_to_end < queue_lb->NumRows())
+        queue_lb->SetFirstRowShown(boost::next(queue_lb->begin(), queue_lb->NumRows() -  initial_offset_to_end));
+    else
+        queue_lb->SetFirstRowShown(queue_lb->begin());
 }
 
 void ProductionWnd::UpdateInfoPanel() {
