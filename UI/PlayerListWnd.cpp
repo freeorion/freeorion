@@ -673,7 +673,7 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged got empty row";
             continue;
         }
-        GG::Control* control = (*row)[0];
+        GG::Control* control = !row->empty() ? row->at(0) : 0;
         if (!control) {
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get control from row";
             continue;

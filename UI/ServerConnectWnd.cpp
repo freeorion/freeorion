@@ -197,10 +197,9 @@ void ServerConnectWnd::OkClicked()
         m_result.second = "HOST GAME SELECTED";
     } else {
         m_result.second = *m_IP_address_edit;
-        if (m_result.second == "") {
+        if (m_result.second == "" && !(***m_servers_lb->Selections().begin()).empty()) {
             m_result.second =
-                boost::polymorphic_downcast<GG::Label*>(
-                    (***m_servers_lb->Selections().begin())[0])->Text();
+                boost::polymorphic_downcast<GG::Label*>((***m_servers_lb->Selections().begin()).at(0))->Text() ;
         }
     }
     CUIWnd::CloseClicked();

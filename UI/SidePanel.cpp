@@ -740,7 +740,7 @@ namespace {
 
         virtual void PreRender() {
             // If there is no control add it.
-            if (!size())
+            if (GetLayout()->Children().empty())
                 Init();
 
             GG::ListBox::Row::PreRender();
@@ -2798,6 +2798,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_name->DisableDropArrow();
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
     m_system_name->ManuallyManageColProps();
+    m_system_name->NormalizeRowsOnInsert(false);
     m_system_name->SetNumCols(1);
     AttachChild(m_system_name);
 

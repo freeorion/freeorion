@@ -1680,11 +1680,11 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
         return;
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((*this)[2]))
+    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((size() >= 3) ? at(2) : 0))
         tc->SetText(cost_str);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((*this)[3]))
+    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((size() >= 4) ? at(3) : 0))
         tc->SetText(time_str);
 }
 

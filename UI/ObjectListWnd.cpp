@@ -2352,7 +2352,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged got empty row";
             continue;
         }
-        GG::Control* control = (*row)[0];
+        GG::Control* control = !row->empty() ? row->at(0) : 0;
         if (!control) {
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get control from row";
             continue;

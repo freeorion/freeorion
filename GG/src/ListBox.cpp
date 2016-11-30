@@ -239,9 +239,6 @@ std::size_t ListBox::Row::size() const
 bool ListBox::Row::empty() const
 { return m_cells.empty(); }
 
-Control* ListBox::Row::operator[](std::size_t n) const
-{ return m_cells[n]; }
-
 Control* ListBox::Row::at(std::size_t n) const
 { return m_cells.at(n); }
 
@@ -366,6 +363,8 @@ void ListBox::Row::SetCell(std::size_t n, Control* c)
 
 Control* ListBox::Row::RemoveCell(std::size_t n)
 {
+    if (m_cells.size() <= n)
+        return 0;
     Layout* layout = GetLayout();
     Control* retval = m_cells[n];
     layout->Remove(retval);
@@ -859,26 +858,12 @@ void ListBox::PreRender()
     // Reset require prerender after call to adjust scrolls
     Control::PreRender();
 
-    // Ensure that data in occluded cells is not rendered
-    // and that any re-layout during prerender is immediate.
-    Y visible_height(BORDER_THICK);
-    Y max_visible_height = ClientSize().y;
-    bool hide = true;
-    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        if (it == m_first_row_shown)
-            hide = false;
+    // Resize rows to fit client area.
+    X row_width(std::max(ClientWidth(), X(1)));
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it)
+        (*it)->Resize(Pt(row_width, (*it)->Height()));
 
-        if (hide) {
-            (*it)->Hide();
-        } else {
-            (*it)->Show();
-            GUI::PreRenderWindow(*it);
-
-            visible_height += (*it)->Height();
-            if (visible_height >= max_visible_height)
-                hide = true;
-        }
-    }
+    ShowVisibleRows(true);
 
     if (!m_header_row->empty())
         GUI::PreRenderWindow(m_header_row);
@@ -960,6 +945,53 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
     AdjustScrolls(true);
     if (old_size != Size())
         RequirePreRender();
+}
+
+void ListBox::ShowVisibleRows(bool do_prerender)
+{
+    // Ensure that data in occluded cells is not rendered
+    // and that any re-layout during prerender is immediate.
+    Y visible_height(BORDER_THICK);
+    Y max_visible_height = ClientSize().y;
+    bool hide = true;
+    for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        if (it == m_first_row_shown)
+            hide = false;
+
+        if (hide) {
+            (*it)->Hide();
+        } else {
+            (*it)->Show();
+            if (do_prerender)
+                GUI::PreRenderWindow(*it);
+
+            visible_height += (*it)->Height();
+            if (visible_height >= max_visible_height)
+                hide = true;
+        }
+    }
+
+}
+
+void ListBox::Show(bool show_children /* = true*/)
+{
+    Control::Show(false);
+
+    if (!show_children)
+        return;
+
+    // Deal with non row children normally
+    for (std::list<Wnd*>::const_iterator it = Children().begin();
+         it != Children().end(); ++it)
+    {
+        if (!dynamic_cast<Row*>(*it))
+            (*it)->Show(show_children);
+    }
+
+    // Show rows that will be visible when rendered but don't prerender them.
+    ShowVisibleRows(false);
+
+    RequirePreRender();
 }
 
 void ListBox::Disable(bool b/* = true*/)

@@ -268,14 +268,32 @@ void ModalListPicker::CorrectListSize() {
     } else {
         LB()->Show();
 
-        // Resize the rows, once to pick up the correct height and a second
-        // time to use the height to size the drop down list
+        // The purpose of this code is to produce a drop down list that
+        // will be exactly m_num_shown_rows high and make sure that the
+        // selected row is prerendered in the same way when the drop down
+        // list is open or closed.
+
+        // The list needs to be resized twice.  The first resize with an
+        // estimated row height will add any list box chrome, like scroll
+        // bars to the list and may change the height of the row.  The
+        // second resize uses the corrected row height to finalize the drop
+        // down list size.
+
+        // Note:  Placing a tighter constraint on valid DropDownList rows
+        // of always returning the same fixed height regardless of status
+        // (width, prerender etc.) would mean this code could be reduced to
+        // check height and resize list just once.
+
         drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
         LB()->Resize(drop_down_size);
+        if (!LB()->Selections().empty())
+            LB()->BringRowIntoView(*(LB()->Selections().begin()));
         GUI::GetGUI()->PreRenderWindow(LB());
 
         drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
         LB()->Resize(drop_down_size);
+        if (!LB()->Selections().empty())
+            LB()->BringRowIntoView(*(LB()->Selections().begin()));
         GUI::GetGUI()->PreRenderWindow(LB());
 
         LB()->Hide();

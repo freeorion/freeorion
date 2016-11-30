@@ -458,7 +458,7 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     // find control in row
     unsigned int i = -1;
     for (i = 0; i < size(); ++i) {
-        dragged_control = (*this)[i];
+        dragged_control = !empty() ? at(i) : 0;
         if (dragged_control == control)
             break;
         else
@@ -1872,8 +1872,9 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
                 if (result != "" && result != design->Name()) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
-                    ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>((*design_row)[0]);
-                    design_panel->Update();
+                    if (!design_row->empty())
+                        if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
+                            design_panel->Update();
                 }
                 break;
             }

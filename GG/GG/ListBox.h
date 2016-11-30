@@ -146,7 +146,6 @@ public:
         std::size_t         size() const;                       ///< returns the number of Controls in this Row
         bool                empty() const;                      ///< returns true iff there are 0 Controls in this Row
 
-        virtual Control*    operator[](std::size_t n) const;    ///< returns the Control in the \a nth cell of this Row; not range checked
         virtual Control*    at(std::size_t n) const;            ///< returns the Control in the \a nth cell of this Row \throw std::range_error throws when size() <= \a n
 
         Alignment    RowAlignment() const;              ///< returns the vertical alignment of this Row
@@ -333,6 +332,10 @@ public:
     virtual void    Render();
 
     virtual void    SizeMove(const Pt& ul, const Pt& lr);  ///< resizes the control, then resizes the scrollbars as needed
+
+    /** Show the  list box.  If \p show_children is true then show the rows that are within the
+        boundaries of the list box.*/
+    virtual void    Show(bool show_children = true);
 
     virtual void    Disable(bool b = true);
     virtual void    SetColor(Clr c);
@@ -535,6 +538,9 @@ protected:
     void            HandleRowRightClicked(const Pt& pt, Flags<ModKey> mod);
 
 private:
+    /** Show only rows that are within the visible list box area and hide all others.  If
+        \p do_prerender is true then prerender the visible rows.*/
+    void            ShowVisibleRows(bool do_prerender);
     void            ConnectSignals();
     void            ValidateStyle();                                        ///< reconciles inconsistencies in the style flags
     void            VScrolled(int tab_low, int tab_high, int low, int high);///< signals from the vertical scroll bar are caught here
