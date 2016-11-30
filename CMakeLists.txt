@@ -177,10 +177,14 @@ if(${Boost_VERSION} EQUAL "106100" OR ${Boost_VERSION} GREATER "106100")
 endif()
 
 include_directories(
+    SYSTEM
     ${Boost_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
+)
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}
     GG
 )
 
