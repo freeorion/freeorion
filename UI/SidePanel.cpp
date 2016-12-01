@@ -1069,6 +1069,11 @@ void SidePanel::PlanetPanel::DoLayout() {
 
     Resize(GG::Pt(Width(), std::max(y, min_height)));
 
+    // DoLayout() is only called during prerender so prerender the specials panel
+    // in case it has pending changes.
+    if (m_specials_panel)
+        GG::GUI::PreRenderWindow(m_specials_panel);
+
     ResizedSignal();
 }
 
