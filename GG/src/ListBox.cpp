@@ -942,7 +942,7 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
 {
     const GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);
-    AdjustScrolls(true);
+    AdjustScrolls(old_size.x != Size().x);
     if (old_size != Size())
         RequirePreRender();
 }
@@ -1282,8 +1282,6 @@ void ListBox::SetColHeaders(Row* r)
             m_col_alignments.resize(m_header_row->size(), AlignmentFromStyle(m_style));
             m_col_stretches.resize(m_header_row->size(), 0.0);
         }
-        if (m_normalize_rows_on_insert)
-            NormalizeRow(m_header_row);
         m_header_row->MoveTo(Pt(X0, -m_header_row->Height()));
         AttachChild(m_header_row);
     } else {
@@ -1921,6 +1919,8 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
 
     row->Hide();
 
+    row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
+
     if (signal)
         AfterInsertSignal(it);
 
@@ -1953,6 +1953,7 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
         Row* row = *row_it;
         row->InstallEventFilter(this);
         row->Hide();
+        row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
     }
 
     // add row at requested location (or default end position)
@@ -2272,7 +2273,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
     }
 
     // Resize rows to fit client area.
-    if (vscroll_added_or_removed) {
+    if (vscroll_added_or_removed || adjust_for_resize) {
         RequirePreRender();
         X row_width(std::max(ClientWidth(), X(1)));
         for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
@@ -2417,6 +2418,9 @@ void ListBox::NormalizeRow(Row* row)
     row->SetColAlignments(m_col_alignments);
     row->SetColStretches(m_col_stretches);
     row->Resize(Pt(ClientWidth(), row->Height()));
+
+    // Normalize row is only called during prerender.
+    GUI::PreRenderWindow(row);
 }
 
 ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
