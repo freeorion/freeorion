@@ -1282,8 +1282,6 @@ void ListBox::SetColHeaders(Row* r)
             m_col_alignments.resize(m_header_row->size(), AlignmentFromStyle(m_style));
             m_col_stretches.resize(m_header_row->size(), 0.0);
         }
-        if (m_normalize_rows_on_insert)
-            NormalizeRow(m_header_row);
         m_header_row->MoveTo(Pt(X0, -m_header_row->Height()));
         AttachChild(m_header_row);
     } else {
@@ -2417,6 +2415,9 @@ void ListBox::NormalizeRow(Row* row)
     row->SetColAlignments(m_col_alignments);
     row->SetColStretches(m_col_stretches);
     row->Resize(Pt(ClientWidth(), row->Height()));
+
+    // Normalize row is only called during prerender.
+    GUI::PreRenderWindow(row);
 }
 
 ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
