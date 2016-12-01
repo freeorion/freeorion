@@ -521,7 +521,7 @@ void ShipDamageBrowseWnd::UpdateSummary() {
         return;
 
     // unpaired meter total for breakdown summary
-    float breakdown_total = ship->TotalWeaponsDamage();
+    float breakdown_total = ship->TotalWeaponsDamage(0.0f, false);
     std::string breakdown_meter_name = UserString("SHIP_DAMAGE_STAT_TITLE");
 
 
