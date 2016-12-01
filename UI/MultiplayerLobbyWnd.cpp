@@ -323,7 +323,10 @@ namespace {
             DataChangedSignal();
         }
         void EmpireChanged(GG::DropDownList::iterator selected_it) {
-            assert(selected_it != m_empire_list->end());
+            if (selected_it == m_empire_list->end()) {
+                ErrorLogger() << "Empire changed to no empire.  Ignoring change.";
+                return;
+            }
             std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
             std::advance(it, m_empire_list->IteratorToIndex(selected_it));
             m_player_data.m_empire_name =           it->second.m_empire_name;

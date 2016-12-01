@@ -1567,10 +1567,11 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
 
 void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
     const GG::ListBox::Row* row = *it;
-    if (row && !row->empty())
-        ColorChangedSignal(!row->empty() ? row->at(0)->Color() : GG::CLR_RED);
-    else
-        ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
+    bool error(it == end() || !row || row->empty());
+    if (error)
+        ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row.  Using CLR_RED";
+
+    ColorChangedSignal(!error ? row->at(0)->Color() : GG::CLR_RED);
 }
 
 
