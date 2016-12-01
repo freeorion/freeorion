@@ -219,18 +219,6 @@ namespace {
         OptionsWnd::StringValidator m_string_validator;
     };
 
-    struct DropListIndexSetOptionFunctor {
-        DropListIndexSetOptionFunctor(const std::string& option_name, GG::DropDownList* drop_list) :
-            m_option_name(option_name), m_drop_list(drop_list)
-        {}
-        void operator()(GG::DropDownList::iterator it) {
-            assert(it != m_drop_list->end());
-            GetOptionsDB().Set<std::string>(m_option_name, (*it)->Name());
-        }
-        const std::string m_option_name;
-        GG::DropDownList* m_drop_list;
-    };
-
     struct ResolutionDropListIndexSetOptionFunctor {
         ResolutionDropListIndexSetOptionFunctor(GG::DropDownList* drop_list) :
             m_drop_list(drop_list)
