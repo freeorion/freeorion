@@ -32,7 +32,6 @@
 #include <GG/Base.h>
 
 #include <list>
-#include <set>
 
 
 namespace GG {
@@ -74,8 +73,6 @@ public:
 private:
     Wnd*     PickWithinWindow(const Pt& pt, Wnd* wnd, const std::set<Wnd*>* ignore) const; ///< Returns pointer to the window under the point pt; constrains pick to wnd and its decendents, and ignores \a ignore if nonzero.
     iterator FirstNonOnTop();              ///< Returns iterator to first window in list that is non-on-top (returns end() if none found).
-
-    std::set<Wnd*> m_contents; ///< The contents of this list, fast-searchable.
 };
 
 } // namespace GG

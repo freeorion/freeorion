@@ -57,15 +57,9 @@ Wnd* ZList::Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore/* = 0*/)
 
 void ZList::Add(Wnd* wnd)
 {
-    if (m_contents.find(wnd) == m_contents.end()) {
+    if (end() == std::find(begin(), end(), wnd)) {
         // add wnd to the end of the list...
-        if (empty()) { // list empty
-            // by default, add first element
-            insert(begin(), wnd);
-        } else { // list not empty
-            insert(end(), wnd);
-        }
-        m_contents.insert(wnd);
+        insert(end(), wnd);
         // then move it up to its proper place
         MoveUp(wnd);
     }
@@ -74,11 +68,9 @@ void ZList::Add(Wnd* wnd)
 bool ZList::Remove(Wnd* wnd)
 {
     bool retval = false;
-    if (m_contents.find(wnd) != m_contents.end()) {
-        iterator it = std::find(begin(), end(), wnd);
-        if (it != end())
-            erase(it);
-        m_contents.erase(wnd);
+    iterator it = std::find(begin(), end(), wnd);
+    if (it != end()) {
+        erase(it);
         retval = true;
     }
     return retval;
