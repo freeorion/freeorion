@@ -177,7 +177,6 @@ boost::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 Wnd::Wnd() :
     m_done(false),
     m_parent(0),
-    m_zorder(0),
     m_visible(true),
     m_child_clipping_mode(DontClip),
     m_non_client_child(false),
@@ -194,7 +193,6 @@ Wnd::Wnd() :
 Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags/* = INTERACTIVE | DRAGABLE*/) :
     m_done(false),
     m_parent(0),
-    m_zorder(0),
     m_visible(true),
     m_child_clipping_mode(DontClip),
     m_non_client_child(false),
@@ -319,9 +317,6 @@ X Wnd::Width() const
 
 Y Wnd::Height() const
 { return m_lowerright.y - m_upperleft.y; }
-
-int Wnd::ZOrder() const
-{ return m_zorder; }
 
 Pt Wnd::Size() const
 { return Pt(m_lowerright.x - m_upperleft.x, m_lowerright.y - m_upperleft.y); }

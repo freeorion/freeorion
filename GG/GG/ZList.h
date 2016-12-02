@@ -57,10 +57,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    /** Add() places \a wnd in the list in front of the first entry with
-        z-value <= wnd->ZOrder(), or at the end of the list, whichever comes
-        first. If wnd->ZOrder() == 0, Add() inserts \a wnd at the front of the
-        list, and updates \a wnd's z-value. */
+    /** Add() places \a wnd in front of the list. */
     void Add(Wnd* wnd);
 
     bool Remove(Wnd* wnd);   ///< Removes \a wnd from z-order.
@@ -76,8 +73,6 @@ public:
 
 private:
     Wnd*     PickWithinWindow(const Pt& pt, Wnd* wnd, const std::set<Wnd*>* ignore) const; ///< Returns pointer to the window under the point pt; constrains pick to wnd and its decendents, and ignores \a ignore if nonzero.
-    bool     NeedsRealignment() const;     ///< Determines whether list needs rearranging.
-    void     Realign();                    ///< Rearranges z-values of windows in list to compact range of z-values and maintain DESIRED_GAP_SIZE separation.
     iterator FirstNonOnTop();              ///< Returns iterator to first window in list that is non-on-top (returns end() if none found).
 
     std::set<Wnd*> m_contents; ///< The contents of this list, fast-searchable.

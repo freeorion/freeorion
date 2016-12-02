@@ -379,10 +379,6 @@ public:
     X Width() const;  ///< Returns width of window.
     Y Height() const; ///< Returns height of window.
 
-    /** Returns the position of this window in the z-order (root (non-child)
-        windows only). */
-    int ZOrder() const;
-
     /** Returns a \a Pt packed with width in \a x and height in \a y. */
     Pt Size() const;
 
@@ -952,7 +948,6 @@ private:
     Wnd*              m_parent;        ///< Ptr to this window's parent; may be 0
     std::string       m_name;          ///< A user-significant name for this Wnd
     std::list<Wnd*>   m_children;      ///< List of ptrs to child windows kept in order of decreasing area
-    int               m_zorder;        ///< Where this window is in the z-order (root (non-child) windows only)
     bool              m_visible;
     bool              m_needs_prerender; ///< Indicates if Wnd needs a PreRender();
     std::string       m_drag_drop_data_type; ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
@@ -988,10 +983,10 @@ private:
         m_browse_mode_times during Wnd contruction */
     static boost::shared_ptr<BrowseInfoWnd> s_default_browse_info_wnd;
 
-    friend class GUI;   ///< GUI needs access to \a m_zorder, m_children, etc.
+    friend class GUI;   ///< GUI needs access to \a m_children, etc.
     friend struct GUIImpl;
     friend class Timer; ///< Timer needs to be able to call HandleEvent
-    friend class ZList; ///< ZList needs access to \a m_zorder in order to order windows
+    friend class ZList; ///< ZList needs access to \a m_children in order to order windows
 };
 
 } // namespace GG
