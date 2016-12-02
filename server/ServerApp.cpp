@@ -2954,7 +2954,7 @@ void ServerApp::ProcessCombats() {
 void ServerApp::UpdateMonsterTravelRestrictions() {
     //std::vector<Fleet*> all_fleets =  m_universe.Objects().FindObjects<Fleet>;
     for (ObjectMap::const_iterator<System> sys_it = m_universe.Objects().const_begin<System>();
-         sys_it != m_universe.Objects().const_begin<System>(); ++sys_it)
+         sys_it != m_universe.Objects().const_end<System>(); ++sys_it)
     {
         TemporaryPtr<const System> system = *sys_it;
         bool unrestricted_monsters_present = false;
