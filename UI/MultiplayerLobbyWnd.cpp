@@ -30,8 +30,12 @@
 #include <boost/serialization/vector.hpp>
 
 namespace {
-    const GG::Y PLAYER_ROW_HEIGHT(22);
-    const GG::Y ROW_HEIGHT_PAD(6);
+    GG::Y PlayerRowHeight() {
+        int drop_row_and_list_row_margins = 6 + 6;
+        return (ClientUI::GetFont(ClientUI::Pts())->Height()
+                + drop_row_and_list_row_margins);
+    }
+
     const GG::X EMPIRE_NAME_WIDTH(150);
     const GG::X BROWSE_BTN_WIDTH(50);
 
@@ -42,10 +46,12 @@ namespace {
     // players or the host.
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
             m_player_data(),
             m_player_id(Networking::INVALID_PLAYER_ID)
         {}
         PlayerRow(const PlayerSetupData& player_data, int player_id) :
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
             m_player_data(player_data),
             m_player_id(player_id)
         {}
@@ -186,7 +192,7 @@ namespace {
             PlayerRow(player_data, player_id)
         {
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
@@ -217,7 +223,7 @@ namespace {
                 GG::Connect(edit->FocusUpdateSignal,                &NewGamePlayerRow::EmpireNameChanged,   this);
 
             // empire colour selector
-            EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
+            EmpireColorSelector* color_selector = new EmpireColorSelector(PlayerRowHeight());
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
             if (disabled)
@@ -226,7 +232,7 @@ namespace {
                 GG::Connect(color_selector->ColorChangedSignal,     &NewGamePlayerRow::ColorChanged,        this);
 
             // species selector
-            SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT);
+            SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PlayerRowHeight());
             species_selector->SelectSpecies(m_player_data.m_starting_species_name);
             push_back(species_selector);
             if (disabled)
@@ -262,7 +268,7 @@ namespace {
             m_save_game_empire_data(save_game_empire_data)
         {
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
@@ -274,7 +280,7 @@ namespace {
 
             // droplist to select empire
             m_empire_list = new CUIDropDownList(6);
-            m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT));
+            m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PlayerRowHeight()));
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
             for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
@@ -302,7 +308,7 @@ namespace {
             push_back(m_empire_list);
 
             // empire colour selector (disabled, so acts as colour indicator)
-            m_color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
+            m_color_selector = new EmpireColorSelector(PlayerRowHeight());
             m_color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(m_color_selector);
 
@@ -351,7 +357,7 @@ namespace {
         EmptyPlayerRow() :
             PlayerRow()
         {
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, Networking::INVALID_CLIENT_TYPE, false);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             GG::Connect(type_drop->TypeChangedSignal,       &EmptyPlayerRow::PlayerTypeChanged,   this);
             // extra entries to make layout consistent
