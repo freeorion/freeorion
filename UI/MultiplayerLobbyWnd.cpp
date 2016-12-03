@@ -64,6 +64,12 @@ namespace {
     // indicates and allows manipulation of player type
     class TypeSelector : public CUIDropDownList {
     private:
+        class Spacer: public GG::Control {
+            public:
+            Spacer() {};
+            virtual void Render() {};
+        };
+
         // fills player type selection droplist in player row
         class TypeRow : public GG::DropDownList::Row {
         public:
@@ -99,6 +105,8 @@ namespace {
                     else
                         push_back(new CUILabel(UserString("NO_PLAYER")));
                 }
+
+                push_back(new Spacer());
             }
 
             Networking::ClientType type;
@@ -111,9 +119,13 @@ namespace {
             SetStyle(GG::LIST_NOSORT);
             ManuallyManageColProps();
             NormalizeRowsOnInsert(false);
-            SetNumCols(1);
+            SetNumCols(2);
+            SetColStretch(0, 0.0);
+            SetColStretch(1, 1.0);
+            SetColAlignment(0, GG::ALIGN_CENTER);
             GG::Y type_row_height(std::max(GG::Y1, h - 8));
             Resize(GG::Pt(w, type_row_height));
+            SetColWidth(0, CUIDropDownList::DisplayedRowWidth());
 
             if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (disabled) {
@@ -165,6 +177,13 @@ namespace {
             }
 
             GG::Connect(SelChangedSignal, &TypeSelector::SelectionChanged, this);
+        }
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            GG::Pt old_size(Size());
+            CUIDropDownList::SizeMove(ul, lr);
+            if (old_size != Size())
+                SetColWidth(0, CUIDropDownList::DisplayedRowWidth());
         }
 
         void SelectionChanged(GG::DropDownList::iterator it)
