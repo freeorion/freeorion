@@ -32,6 +32,7 @@
 #include <GG/Base.h>
 
 #include <list>
+#include <set>
 
 
 namespace GG {
