@@ -42,6 +42,7 @@ public:
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
     ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t m_num_shown_rows);
+    ~ModalListPicker();
 
     virtual bool   Run();
     virtual void   EndRun();
@@ -165,6 +166,11 @@ ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t n
     m_lb_wnd->Hide();
 }
 
+ModalListPicker::~ModalListPicker()
+{
+    // Shut down the ModalEventPump
+    EndRun();
+}
 
 bool ModalListPicker::Run() {
     DropDownList::iterator old_current_item = CurrentItem();
