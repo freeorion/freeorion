@@ -990,8 +990,6 @@ void ListBox::Show(bool show_children /* = true*/)
 
     // Show rows that will be visible when rendered but don't prerender them.
     ShowVisibleRows(false);
-
-    RequirePreRender();
 }
 
 void ListBox::Disable(bool b/* = true*/)
