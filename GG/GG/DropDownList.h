@@ -126,8 +126,12 @@ public:
     virtual Pt      ClientLowerRight() const;
 
     /** Return the width of the displayed row.  Override this function if the displayed row is a
-        different width than the drop down rows.*/
+        different width than the client width.*/
     virtual GG::X  DisplayedRowWidth() const;
+
+    /** Return the width of the dropped row.  Override this function if the dropped row is a
+        different width than the client width.*/
+    virtual GG::X  DroppedRowWidth() const;
 
     /** The selection change signal while not running the modal drop down box.
         This will also signal an event when the drop list closes if the selection changed.

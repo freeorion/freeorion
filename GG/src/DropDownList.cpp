@@ -41,7 +41,7 @@ public:
     typedef ListBox::iterator iterator;
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
-    ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t m_num_shown_rows);
+    ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t m_num_shown_rows);
     ~ModalListPicker();
 
     virtual bool   Run();
@@ -103,10 +103,10 @@ private:
         list location not tracking the anchor.*/
     void WindowResizedSlot(X x, Y y);
 
-    ListBox*     m_lb_wnd;
-    const size_t m_num_shown_rows;
-    const Wnd*   m_relative_to_wnd;
-    bool         m_dropped;  ///< Is the drop down list open.
+    ListBox*            m_lb_wnd;
+    const size_t        m_num_shown_rows;
+    const DropDownList* m_relative_to_wnd;
+    bool                m_dropped; ///< Is the drop down list open.
 };
 
 namespace {
@@ -142,7 +142,7 @@ namespace {
 ////////////////////////////////////////////////
 // ModalListPicker
 ////////////////////////////////////////////////
-ModalListPicker::ModalListPicker(Clr color, const Wnd* relative_to_wnd, size_t num_rows) :
+ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
@@ -265,7 +265,7 @@ void ModalListPicker::CorrectListSize() {
 
     LB()->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
 
-    Pt drop_down_size(m_relative_to_wnd->ClientWidth(), m_relative_to_wnd->ClientHeight());
+    Pt drop_down_size(m_relative_to_wnd->DroppedRowWidth(), m_relative_to_wnd->ClientHeight());
 
     if (LB()->Empty()) {
         LB()->Resize(drop_down_size);
@@ -624,6 +624,9 @@ void DropDownList::Render()
 
     RenderDisplayedRow();
 }
+
+GG::X DropDownList::DroppedRowWidth() const
+{ return ClientWidth(); }
 
 GG::X DropDownList::DisplayedRowWidth() const
 { return ClientWidth(); }
