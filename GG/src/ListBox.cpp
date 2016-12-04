@@ -38,6 +38,12 @@
 
 using namespace GG;
 
+// static(s)
+const int ListBox::DEFAULT_MARGIN(2);
+const X ListBox::DEFAULT_ROW_WIDTH(50);
+const Y ListBox::DEFAULT_ROW_HEIGHT(22);
+const unsigned int ListBox::BORDER_THICK = 2;
+
 namespace {
     struct ListSignalEcho
     {
@@ -74,8 +80,6 @@ namespace {
     };
 
     const int SCROLL_WIDTH = 14;
-    const X DEFAULT_ROW_WIDTH(50);
-    const Y DEFAULT_ROW_HEIGHT(22);
 
     class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
     {
@@ -192,13 +196,13 @@ namespace {
 // GG::ListBox::Row
 ////////////////////////////////////////////////
 ListBox::Row::Row() :
-    Control(X0, Y0, DEFAULT_ROW_WIDTH, DEFAULT_ROW_HEIGHT),
+    Control(X0, Y0, ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT),
     m_cells(),
     m_row_alignment(ALIGN_VCENTER),
     m_col_alignments(),
     m_col_widths(),
     m_col_stretches(),
-    m_margin(2),
+    m_margin(ListBox::DEFAULT_MARGIN),
     m_ignore_adjust_layout(false),
     m_is_normalized(false)
 { SetLayout(new DeferredLayout(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
@@ -506,8 +510,6 @@ bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const
 ////////////////////////////////////////////////
 // GG::ListBox
 ////////////////////////////////////////////////
-// static(s)
-const unsigned int ListBox::BORDER_THICK = 2;
 
 ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
@@ -531,7 +533,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_col_widths(),
     m_col_alignments(),
     m_col_stretches(),
-    m_cell_margin(2),
+    m_cell_margin(DEFAULT_MARGIN),
     m_int_color(interior),
     m_hilite_color(CLR_SHADOW),
     m_style(LIST_NONE),
