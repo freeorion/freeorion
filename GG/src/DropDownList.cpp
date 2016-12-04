@@ -137,8 +137,6 @@ namespace {
         }
         ModalListPicker& m_picker;
     };
-
-    const int BORDER_THICK = 2; // should be the same as the BORDER_THICK value in GGListBox.h
 }
 
 ////////////////////////////////////////////////
@@ -450,7 +448,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 // GG::DropDownList
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
-    Control(X0, Y0, X(1 + 2 * BORDER_THICK), Y(1 + 2 * BORDER_THICK), INTERACTIVE),
+    Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
     m_modal_picker(new ModalListPicker(color, this, num_shown_elements))
 {
     SetStyle(LIST_SINGLESEL);
@@ -466,7 +464,7 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     InitBuffer();
 
     // Set a non zero client min size.
-    SetMinSize(Pt(X(1 + 2 * BORDER_THICK), Y(1 + 2 * BORDER_THICK)));
+    SetMinSize(Pt(X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK)));
 
     RequirePreRender();
 }
@@ -539,17 +537,17 @@ Alignment DropDownList::RowAlignment(iterator it) const
 { return LB()->RowAlignment(it); }
 
 Pt DropDownList::ClientUpperLeft() const
-{ return UpperLeft() + Pt(X(BORDER_THICK), Y(BORDER_THICK)); }
+{ return UpperLeft() + Pt(X(ListBox::BORDER_THICK), Y(ListBox::BORDER_THICK)); }
 
 Pt DropDownList::ClientLowerRight() const
-{ return LowerRight() - Pt(X(BORDER_THICK), Y(BORDER_THICK)); }
+{ return LowerRight() - Pt(X(ListBox::BORDER_THICK), Y(ListBox::BORDER_THICK)); }
 
 void DropDownList::InitBuffer()
 {
     m_buffer.clear();
 
     GG::Pt lr = Size();
-    GG::Pt inner_ul = GG::Pt(GG::X(BORDER_THICK), GG::Y(BORDER_THICK));
+    GG::Pt inner_ul = GG::Pt(GG::X(ListBox::BORDER_THICK), GG::Y(ListBox::BORDER_THICK));
     GG::Pt inner_lr = lr - inner_ul;
 
     // outer border
@@ -609,7 +607,7 @@ void DropDownList::Render()
     }
 
     // draw beveled edges
-    if (BORDER_THICK && (border_color1 != CLR_ZERO || border_color2 != CLR_ZERO)) {
+    if (ListBox::BORDER_THICK && (border_color1 != CLR_ZERO || border_color2 != CLR_ZERO)) {
         // top left shadowed bevel
         glColor(border_color1);
         glDrawArrays(GL_QUAD_STRIP,     4, 6);
