@@ -30,11 +30,13 @@
 #include <boost/serialization/vector.hpp>
 
 namespace {
-    GG::Y PlayerRowHeight() {
-        int drop_row_and_list_row_margins = 6 + 6;
-        return (ClientUI::GetFont(ClientUI::Pts())->Height()
-                + drop_row_and_list_row_margins);
-    }
+    // Margin between text and row edge.
+    GG::Y PlayerRowMargin()
+    { return GG::Y(6); }
+    GG::Y PlayerFontHeight()
+    { return ClientUI::GetFont(ClientUI::Pts())->Height(); }
+    GG::Y PlayerRowHeight()
+    { return PlayerFontHeight() + 2 * PlayerRowMargin(); }
 
     const GG::X EMPIRE_NAME_WIDTH(150);
     const GG::X BROWSE_BTN_WIDTH(50);
@@ -242,7 +244,7 @@ namespace {
                 GG::Connect(edit->FocusUpdateSignal,                &NewGamePlayerRow::EmpireNameChanged,   this);
 
             // empire colour selector
-            EmpireColorSelector* color_selector = new EmpireColorSelector(PlayerRowHeight());
+            EmpireColorSelector* color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
             if (disabled)
@@ -327,7 +329,7 @@ namespace {
             push_back(m_empire_list);
 
             // empire colour selector (disabled, so acts as colour indicator)
-            m_color_selector = new EmpireColorSelector(PlayerRowHeight());
+            m_color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
             m_color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(m_color_selector);
 
