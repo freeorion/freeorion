@@ -822,15 +822,18 @@ void CUIDropDownList::Render() {
     RenderDisplayedRow();
 }
 
-GG::X CUIDropDownList::DisplayedRowWidth() const
+GG::Pt CUIDropDownList::ClientLowerRight() const
 {
     GG::Pt sz = Size();
     int margin = 3;
     int triangle_width = Value(sz.y - 4 * margin);
-    int outline_width = triangle_width + 3 * margin;
-    return GG::X(DropDownList::Width() - (m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0));
+    int outline_width = triangle_width + 4 * margin;
+    return (DropDownList::ClientLowerRight()
+            - GG::Pt((m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0), GG::Y0));
 }
 
+GG::X CUIDropDownList::DroppedRowWidth() const
+{ return (DropDownList::ClientLowerRight().x - DropDownList::ClientUpperLeft().x); }
 
 void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
