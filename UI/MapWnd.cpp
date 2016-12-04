@@ -1402,7 +1402,6 @@ bool MapWnd::AutoEndTurnEnabled() const
 { return m_auto_end_turn; }
 
 void MapWnd::PreRender() {
-    GG::Wnd::PreRender();
     // Save CPU / GPU activity by skipping rendering when it's not needed
     // As of this writing, the design and research screens have fully opaque backgrounds.
     if (m_design_wnd->Visible())
@@ -1410,6 +1409,7 @@ void MapWnd::PreRender() {
     if (m_research_wnd->Visible())
         return;
 
+    GG::Wnd::PreRender();
     DeferredRefreshFleetButtons();
 }
 
