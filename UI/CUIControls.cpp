@@ -1463,6 +1463,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
     SetNumCols(2);
+    SetChildClippingMode(ClipToClient);
 
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
