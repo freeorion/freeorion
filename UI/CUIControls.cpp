@@ -1527,6 +1527,7 @@ namespace {
                 GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::NO_WND_FLAGS)
             {
                 SetColor(color);
+                SetMinSize(GG::Pt(COLOR_SELECTOR_WIDTH - 40, GG::Y(1)));
             }
             virtual void Render() {
                 GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0);
@@ -1537,6 +1538,13 @@ namespace {
         {
             push_back(new ColorSquare(color, h));
         }
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+        {
+            // Prevent the width from changing
+            GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
+        }
+
     };
 }
 
