@@ -1435,13 +1435,13 @@ namespace {
             if (!species)
                 return;
             GG::Wnd::SetName(species->Name());
-            GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC);
-            icon->Resize(GG::Pt(GG::X(Value(h) - 6), h - 6));
+            GG::StaticGraphic* icon = new GG::StaticGraphic(
+                ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            icon->Resize(GG::Pt(GG::X(Value(h - 5)), h - 5));
             push_back(icon);
-            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
-            species_name->Resize(GG::Pt(Width() - GG::X(Value(h)), h));
+            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_name);
-            GG::X first_col_width(Value(h) - 2);
+            GG::X first_col_width(Value(h));
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
             GetLayout()->SetColumnStretch(0, 0.0);
