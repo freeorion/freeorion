@@ -5,6 +5,7 @@
 #include "../util/Export.h"
 #include "../universe/Meter.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/UniverseObject.h"
 
 #include <GG/Clr.h>
 
@@ -316,6 +317,14 @@ public:
     int                     CapitalID() const;                          ///< Returns the numeric ID of the empire's capital
     int                     StockpileID(ResourceType res) const;        ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
+    /** Return an object id that is owned by the empire or
+        INVALID_OBJECT_ID. SourceID() is safe to call with a null this
+        pointer. */
+    int                     SourceID() const;
+    /** Return an object that is owned by the empire or null.  Source() is
+        safe to call with a null this pointer. */
+    std::shared_ptr<const UniverseObject> Source() const;
+
     std::string             Dump() const;
 
     const std::set<std::string>&    AvailableTechs() const;             ///< Returns the set of all available techs.
@@ -625,6 +634,10 @@ private:
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id;               ///< the ID of the empire's capital planet
+
+    /** The source id is the id of any object owned by the empire.  It is
+        mutable so that Source() can be const and still cache its result. */
+    mutable int                     m_source_id;
 
     bool                            m_eliminated;               ///< Whether the empire has lost
     std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
