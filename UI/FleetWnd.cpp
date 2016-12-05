@@ -1521,7 +1521,6 @@ void FleetDataPanel::Refresh() {
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
-            // TODO: load fleetwnd scanline color from optionsDB
             m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
                                                      GetOptionsDB().Get<StreamableColor>("UI.fleet-wnd-scanline-clr").ToClr());
             AttachChild(m_scanline_control);
