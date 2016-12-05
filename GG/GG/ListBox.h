@@ -517,6 +517,7 @@ protected:
     virtual void    DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
     virtual void    DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
     virtual void    DragDropLeave();
+    virtual void    CancellingChildDragDrop(const std::vector<const Wnd*>& wnds);
     virtual void    TimerFiring(unsigned int ticks, Timer* timer);
 
     virtual bool    EventFilter(Wnd* w, const WndEvent& event);

@@ -1619,6 +1619,9 @@ void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_a
 void ListBox::DragDropLeave()
 { ResetAutoScrollVars(); }
 
+void ListBox::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
+{ ResetAutoScrollVars(); }
+
 void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
 {
     if (timer == &m_auto_scroll_timer && !m_rows.empty()) {
