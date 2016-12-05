@@ -1537,17 +1537,17 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
             break;
 
         // horizontal scrolling keys
-        case GGK_LEFT: // left key (not numpad key)
+        case GGK_LEFT:{ // left key (not numpad key)
             if (m_first_col_shown == 0)
                 break;
 
             --m_first_col_shown;
-            m_hscroll->ScrollTo(
-                Value((*boost::next((*m_first_row_shown)->GetLayout()->Children().begin(),
-                                    m_first_col_shown))->UpperLeft().x
-                      - UpperLeft().x - GG::X(BORDER_THICK)));
+            std::list<GG::Wnd*>::const_iterator first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
+            GG::Wnd* first_shown_cell(*boost::next(first_row_first_child, m_first_col_shown));
+            GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
+            m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
-            break;
+            break;}
         case GGK_RIGHT:{ // right key (not numpad)
             std::size_t num_cols((*m_first_row_shown)->GetLayout()->Children().size());
             if (num_cols <= 1)
@@ -1556,10 +1556,10 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
                 break;
 
             ++m_first_col_shown;
-            m_hscroll->ScrollTo(
-                Value((*boost::next((*m_first_row_shown)->GetLayout()->Children().begin(),
-                                    m_first_col_shown))->UpperLeft().x
-                      - UpperLeft().x - GG::X(BORDER_THICK)));
+            std::list<GG::Wnd*>::const_iterator first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
+            GG::Wnd* first_shown_cell(*boost::next(first_row_first_child, m_first_col_shown));
+            GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
+            m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
             break;}
 
