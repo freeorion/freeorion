@@ -108,6 +108,9 @@ public:
     /** Draw scanlines in the square area bounded by \p ul and \p lr.*/
     void RenderRectangle(const GG::Pt& ul, const GG::Pt& lr);
 
+    /** Changes the color used to draw the scanlines. Set color before calling StartUsing()*/
+    void SetColor(GG::Clr clr);
+
     /** Start using ScanlineRenderer to draw arbitrary shapes with the scanline
         shader program.*/
     void StartUsing();

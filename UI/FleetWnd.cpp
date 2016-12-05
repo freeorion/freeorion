@@ -440,7 +440,9 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
+        db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),       INVALID_FLEET_AGGRESSION,                   Validator<NewFleetAggression>());
+        db.Add("UI.fleet-wnd-scanline-clr", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"),  StreamableColor(GG::Clr(24, 24, 24, 192)),  Validator<StreamableColor>());
+        
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -851,7 +853,8 @@ void ShipDataPanel::SetShipIcon() {
     if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
         && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
-        m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true);
+        m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
+                                                 GetOptionsDB().Get<StreamableColor>("UI.fleet-wnd-scanline-clr").ToClr());
         AttachChild(m_scanline_control);
     }
 }
@@ -1518,7 +1521,9 @@ void FleetDataPanel::Refresh() {
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
-            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true);
+            // TODO: load fleetwnd scanline color from optionsDB
+            m_scanline_control = new ScanlineControl(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
+                                                     GetOptionsDB().Get<StreamableColor>("UI.fleet-wnd-scanline-clr").ToClr());
             AttachChild(m_scanline_control);
         }
 

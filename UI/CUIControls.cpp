@@ -2232,12 +2232,14 @@ namespace {
     ScanlineRenderer scanline_shader;
 }
 
-ScanlineControl::ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square /*= false*/) :
+ScanlineControl::ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square, GG::Clr clr):
     Control(x, y, w, h, GG::NO_WND_FLAGS),
-    m_square(square)
+    m_square(square),
+    m_color(clr)
 {}
 
 void ScanlineControl::Render() {
+    scanline_shader.SetColor(m_color);
     if (m_square)
         scanline_shader.RenderRectangle(UpperLeft(), LowerRight());
     else

@@ -1401,6 +1401,15 @@ Toggles whether to render fog of war scan-line shading over system icons.
 OPTIONS_DB_UI_SYSTEM_FOG_SPACING
 Sets spacing (in pixels) between fog of war scan-lines.
 
+OPTIONS_DB_UI_SYSTEM_FOG_CLR
+Sets the color of the scan-line shading over system icons.
+
+OPTIONS_DB_UI_FIELD_FOG_CLR
+Sets the color of the scan-line shading over field icons.
+
+OPTIONS_DB_UI_PLANET_FOG_CLR
+Sets the color of the scan-line shading over planet graphics on the sidepanel.
+
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Toggles whether to draw circles around systems.
 
@@ -1424,6 +1433,9 @@ Sets minimum zoom level at which tiny fleet icons are shown on the galaxy map. A
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Sets size of fleet selection indicator, relative to fleet icon size.
+
+OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR
+Sets the color of the scan-line shading over ship/fleet graphics on the fleet window.
 
 OPTIONS_DB_SHOW_FLEET_ETA
 Show fleet ETA (for moving fleets) in Fleet Window

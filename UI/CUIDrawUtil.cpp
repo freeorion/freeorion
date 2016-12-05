@@ -390,7 +390,7 @@ class ScanlineRenderer::ScanlineRendererImpl {
 public:
     ScanlineRendererImpl() :
         m_scanline_shader(), m_failed_init(false)
-    {}
+    { m_color = GG::CLR_BLACK; }
 
     void StartUsing() {
         if (m_failed_init)
@@ -413,6 +413,11 @@ public:
         float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
         m_scanline_shader->Use();
         m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+        m_scanline_shader->Bind("line_color", m_color.r * (1.f / 255.f), m_color.g * (1.f / 255.f), m_color.b * (1.f / 255.f), m_color.a * (1.f / 255.f));
+    }
+
+    void SetColor(GG::Clr clr) {
+        m_color = clr;
     }
 
     void StopUsing()
@@ -432,6 +437,7 @@ public:
 
     boost::shared_ptr<ShaderProgram> m_scanline_shader;
     bool m_failed_init;
+    GG::Clr m_color;
 };
 
 
@@ -451,6 +457,9 @@ void ScanlineRenderer::RenderRectangle(const GG::Pt& ul, const GG::Pt& lr)
 
 void ScanlineRenderer::StartUsing()
 { pimpl->StartUsing(); }
+
+void ScanlineRenderer::SetColor(GG::Clr clr)
+{ pimpl->SetColor(clr); }
 
 void ScanlineRenderer::StopUsing()
 { pimpl->StopUsing(); }

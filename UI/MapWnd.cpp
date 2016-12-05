@@ -125,6 +125,8 @@ namespace {
 
         db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
+        db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  StreamableColor(GG::Clr(36, 36, 36, 192)),      Validator<StreamableColor>());
+        db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   StreamableColor(GG::Clr(0, 0, 0, 64)),          Validator<StreamableColor>());
 
         db.Add("UI.system-icon-size",               UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
 
@@ -1585,6 +1587,7 @@ void MapWnd::RenderFields() {
         glBindTexture(GL_TEXTURE_2D, 0);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+        m_scanline_shader.SetColor(GetOptionsDB().Get<StreamableColor>("UI.field-fog-of-war-clr").ToClr()); 
         m_scanline_shader.StartUsing();
 
         glDrawArrays(GL_TRIANGLES, 0, m_field_scanline_circles.size());
@@ -1743,6 +1746,7 @@ void MapWnd::RenderSystems() {
             if (fog_scanlines
                 && (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY))
             {
+                m_scanline_shader.SetColor(GetOptionsDB().Get<StreamableColor>("UI.system-fog-of-war-clr").ToClr());
                 m_scanline_shader.RenderCircle(circle_ul, circle_lr);
             }
 
