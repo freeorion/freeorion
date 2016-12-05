@@ -144,31 +144,6 @@ std::string Tech::Dump() const {
     return retval;
 }
 
-namespace {
-    std::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire) {
-            DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return nullptr;
-        }
-        // get a source object, which is owned by the empire with the passed-in
-        // empire id.  this is used in conditions to reference which empire is
-        // doing the building.  Ideally this will be the capital, but any object
-        // owned by the empire will work.
-        std::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
-        // no capital?  scan through all objects to find one owned by this empire
-        if (!source) {
-            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
-                if (obj->OwnedBy(empire_id)) {
-                    source = obj;
-                    break;
-                }
-            }
-        }
-        return source;
-    }
-}
-
 float Tech::ResearchCost(int empire_id) const {
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_cost) {
         return 1.0;
@@ -180,7 +155,7 @@ float Tech::ResearchCost(int empire_id) const {
         return 999999.9f;
 
     } else {
-        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
         if (!source && !m_research_cost->SourceInvariant())
             return 999999.9f;
 
@@ -203,7 +178,7 @@ int Tech::ResearchTime(int empire_id) const {
         return 9999;
 
     } else {
-        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
         if (!source && !m_research_turns->SourceInvariant())
             return 9999;
 

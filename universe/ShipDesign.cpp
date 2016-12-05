@@ -156,33 +156,6 @@ PartTypeManager::iterator PartTypeManager::end() const
 { return m_parts.end(); }
 
 
-namespace {
-    // Looks like there are at least 3 SourceForEmpire functions lying around - one in ShipDesign, one in Tech, and one in Building
-    // TODO: Eliminate duplication
-    std::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire) {
-            DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return nullptr;
-        }
-        // get a source object, which is owned by the empire with the passed-in
-        // empire id.  this is used in conditions to reference which empire is
-        // doing the building.  Ideally this will be the capital, but any object
-        // owned by the empire will work.
-        std::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
-        // no capital?  scan through all objects to find one owned by this empire
-        if (!source) {
-            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
-                if (obj->OwnedBy(empire_id)) {
-                    source = obj;
-                    break;
-                }
-            }
-        }
-        return source;
-    }
-}
-
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
@@ -361,7 +334,7 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -382,7 +355,7 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
         if (!location)
             return 9999;    // arbitrary large number
 
-        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
         if (!source && !m_production_time->SourceInvariant())
             return 9999;
 
@@ -452,7 +425,7 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -473,7 +446,7 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
         if (!location)
             return 9999;    // arbitrary large number
 
-        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
         if (!source && !m_production_time->SourceInvariant())
             return 999999;
 
