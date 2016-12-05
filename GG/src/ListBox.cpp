@@ -942,7 +942,7 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
 {
     const GG::Pt old_size = Size();
     Wnd::SizeMove(ul, lr);
-    AdjustScrolls(old_size.x != Size().x);
+    AdjustScrolls(old_size != Size());
     if (old_size != Size())
         RequirePreRender();
 }
