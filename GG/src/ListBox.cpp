@@ -681,17 +681,22 @@ ListBox::iterator ListBox::LastVisibleRow() const
 
 std::size_t ListBox::LastVisibleCol() const
 {
-    X visible_pixels = ClientSize().x;
-    X acc(0);
-    std::size_t i = m_first_col_shown;
-    for (; i < m_col_widths.size(); ++i) {
-        acc += m_col_widths[i];
-        if (visible_pixels <= acc)
+    if (m_first_row_shown == m_rows.end())
+        return 0;
+
+    // Find the last column that is entirely left of the rightmost pixel.
+    X rightmost_pixel = ClientLowerRight().x;
+    std::size_t ii_last_visible(0);
+    for (std::list<Wnd*>::const_iterator it = (*m_first_row_shown)->GetLayout()->Children().begin();
+         it != (*m_first_row_shown)->GetLayout()->Children().end(); ++it, ++ii_last_visible)
+    {
+        if ((*it)->UpperLeft().x >= rightmost_pixel)
             break;
+        if (((*it)->UpperLeft().x < rightmost_pixel) && ((*it)->LowerRight().x >= rightmost_pixel))
+            return ii_last_visible;
     }
-    if (m_col_widths.size() <= i)
-        i = m_col_widths.size() - 1;
-    return i;
+
+    return (ii_last_visible ? (ii_last_visible - 1) : 0);
 }
 
 std::size_t ListBox::NumRows() const
