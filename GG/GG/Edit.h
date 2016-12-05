@@ -141,6 +141,10 @@ public:
     virtual void AcceptPastedText(const std::string& text);
     //@}
 
+    /** The number of pixels to leave between the text and the control's
+        frame. */
+    static const int PIXEL_MARGIN;
+
 protected:
     /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters selected. */
@@ -215,10 +219,6 @@ protected:
         called in LClick() and LButtonUp() overrides. */
     void ClearDoubleButtonDownMode();
     //@}
-
-    /** The number of pixels to leave between the text and the control's
-        frame. */
-    static const int PIXEL_MARGIN;
 
     /** If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is
