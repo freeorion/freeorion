@@ -1538,25 +1538,29 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
 
         // horizontal scrolling keys
         case GGK_LEFT: // left key (not numpad key)
-            if (m_first_col_shown) {
-                --m_first_col_shown;
-                m_hscroll->ScrollTo(
-                    Value(std::accumulate(m_col_widths.begin(), m_col_widths.begin() + m_first_col_shown, X0)));
-                SignalScroll(*m_hscroll, true);
-            }
+            if (m_first_col_shown == 0)
+                break;
+
+            --m_first_col_shown;
+            m_hscroll->ScrollTo(
+                Value((*boost::next((*m_first_row_shown)->GetLayout()->Children().begin(),
+                                    m_first_col_shown))->UpperLeft().x
+                      - UpperLeft().x - GG::X(BORDER_THICK)));
+            SignalScroll(*m_hscroll, true);
             break;
         case GGK_RIGHT:{ // right key (not numpad)
-            std::size_t last_fully_visible_col = LastVisibleCol();
-            if (std::accumulate(m_col_widths.begin(), m_col_widths.begin() + last_fully_visible_col, X0) >
-                ClientSize().x) {
-                --last_fully_visible_col;
-            }
-            if (last_fully_visible_col < m_col_widths.size() - 1) {
-                ++m_first_col_shown;
-                m_hscroll->ScrollTo(
-                    Value(std::accumulate(m_col_widths.begin(), m_col_widths.begin() + m_first_col_shown, X0)));
-                SignalScroll(*m_hscroll, true);
-            }
+            std::size_t num_cols((*m_first_row_shown)->GetLayout()->Children().size());
+            if (num_cols <= 1)
+                break;
+            if (LastVisibleCol() >= (num_cols - 1))
+                break;
+
+            ++m_first_col_shown;
+            m_hscroll->ScrollTo(
+                Value((*boost::next((*m_first_row_shown)->GetLayout()->Children().begin(),
+                                    m_first_col_shown))->UpperLeft().x
+                      - UpperLeft().x - GG::X(BORDER_THICK)));
+            SignalScroll(*m_hscroll, true);
             break;}
 
         // any other key gets passed along to the parent
