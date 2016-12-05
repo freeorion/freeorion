@@ -681,17 +681,22 @@ ListBox::iterator ListBox::LastVisibleRow() const
 
 std::size_t ListBox::LastVisibleCol() const
 {
-    X visible_pixels = ClientSize().x;
-    X acc(0);
-    std::size_t i = m_first_col_shown;
-    for (; i < m_col_widths.size(); ++i) {
-        acc += m_col_widths[i];
-        if (visible_pixels <= acc)
+    if (m_first_row_shown == m_rows.end())
+        return 0;
+
+    // Find the last column that is entirely left of the rightmost pixel.
+    X rightmost_pixel = ClientLowerRight().x;
+    std::size_t ii_last_visible(0);
+    for (std::list<Wnd*>::const_iterator it = (*m_first_row_shown)->GetLayout()->Children().begin();
+         it != (*m_first_row_shown)->GetLayout()->Children().end(); ++it, ++ii_last_visible)
+    {
+        if ((*it)->UpperLeft().x >= rightmost_pixel)
             break;
+        if (((*it)->UpperLeft().x < rightmost_pixel) && ((*it)->LowerRight().x >= rightmost_pixel))
+            return ii_last_visible;
     }
-    if (m_col_widths.size() <= i)
-        i = m_col_widths.size() - 1;
-    return i;
+
+    return (ii_last_visible ? (ii_last_visible - 1) : 0);
 }
 
 std::size_t ListBox::NumRows() const
@@ -1532,26 +1537,30 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
             break;
 
         // horizontal scrolling keys
-        case GGK_LEFT: // left key (not numpad key)
-            if (m_first_col_shown) {
-                --m_first_col_shown;
-                m_hscroll->ScrollTo(
-                    Value(std::accumulate(m_col_widths.begin(), m_col_widths.begin() + m_first_col_shown, X0)));
-                SignalScroll(*m_hscroll, true);
-            }
-            break;
+        case GGK_LEFT:{ // left key (not numpad key)
+            if (m_first_col_shown == 0)
+                break;
+
+            --m_first_col_shown;
+            std::list<GG::Wnd*>::const_iterator first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
+            GG::Wnd* first_shown_cell(*boost::next(first_row_first_child, m_first_col_shown));
+            GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
+            m_hscroll->ScrollTo(Value(new_scroll_offset));
+            SignalScroll(*m_hscroll, true);
+            break;}
         case GGK_RIGHT:{ // right key (not numpad)
-            std::size_t last_fully_visible_col = LastVisibleCol();
-            if (std::accumulate(m_col_widths.begin(), m_col_widths.begin() + last_fully_visible_col, X0) >
-                ClientSize().x) {
-                --last_fully_visible_col;
-            }
-            if (last_fully_visible_col < m_col_widths.size() - 1) {
-                ++m_first_col_shown;
-                m_hscroll->ScrollTo(
-                    Value(std::accumulate(m_col_widths.begin(), m_col_widths.begin() + m_first_col_shown, X0)));
-                SignalScroll(*m_hscroll, true);
-            }
+            std::size_t num_cols((*m_first_row_shown)->GetLayout()->Children().size());
+            if (num_cols <= 1)
+                break;
+            if (LastVisibleCol() >= (num_cols - 1))
+                break;
+
+            ++m_first_col_shown;
+            std::list<GG::Wnd*>::const_iterator first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
+            GG::Wnd* first_shown_cell(*boost::next(first_row_first_child, m_first_col_shown));
+            GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
+            m_hscroll->ScrollTo(Value(new_scroll_offset));
+            SignalScroll(*m_hscroll, true);
             break;}
 
         // any other key gets passed along to the parent
