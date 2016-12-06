@@ -4877,6 +4877,12 @@ Régions Interstellaires
 FIELDS_TEXT
 Il existe plus d'un [[encyclopedia ENC_FIELD_TYPE]] interstellaires, ayant chacune une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
 
+METABOLISM_TITLE
+Métabolisme
+
+METABOLISM_TEXT
+'''Les différents types de métabolisme des espèces peuplant la galaxie sont listés ci-dessous.'''
+
 
 ##
 ## Guides
