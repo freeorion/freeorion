@@ -23,17 +23,6 @@ option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies stat
 
 cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
 
-if (BUILD_DEBUG)
-    set(BUILD_RELEASE OFF)
-else ()
-    set(BUILD_RELEASE ON)
-endif ()
-
-if (DEFINED BUILD_STATIC OR DEFINED BUILD_SHARED)
-    message(FATAL "BUILD_STATIC and BUILD_SHARED are removed in favour of BUILD_SHARED_LIBS.")
-    return()
-endif ()
-
 include(Util)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

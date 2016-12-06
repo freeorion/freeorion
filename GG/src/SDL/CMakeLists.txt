@@ -1,6 +1,3 @@
-project(GiGiSDL)
-message("-- Configuring GiGiSDL")
-
 set(SDL_BUILDING_LIBRARY true)
 
 find_package(SDL2 REQUIRED)
