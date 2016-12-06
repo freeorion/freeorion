@@ -7,6 +7,7 @@ import FreeOrionAI as foAI
 import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
+import CombatRatingsAI
 from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
 
@@ -130,7 +131,8 @@ class AIFleetMission(object):
             if fleet_role not in COMPATIBLE_ROLES_MAP[main_fleet_role]:
                 continue
             fleet = universe.getFleet(fid)
-            if not fleet or fleet.systemID != system_id:
+
+            if not fleet or fleet.systemID != system_id or len(fleet.shipIDs) == 0:
                 continue
             if not (fleet.speed > 0 or main_fleet.speed == 0):  # TODO(Cjkjvfnby) Check this condition
                 continue
@@ -159,8 +161,8 @@ class AIFleetMission(object):
                             # consider 'borrowing' for work in neighbor system  # TODO check condition
                             need_left = 1.5 * sum(foAI.foAIstate.systemStatus.get(nid, {}).get('fleetThreat', 0)
                                                   for nid in neighbors if nid != target_id)
-                            fb_rating = foAI.foAIstate.get_rating(fid)
-                            if (need_left < fb_rating.get('overall', 0)) and fb_rating.get('nships', 0) > 1:
+                            fleet_rating = CombatRatingsAI.get_fleet_rating(fid)
+                            if need_left < fleet_rating:
                                 do_merge = True
             if do_merge:
                 FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id, need_left,
@@ -286,17 +288,13 @@ class AIFleetMission(object):
         new_fleets = FleetUtilsAI.split_fleet(fleet_id)
         self.clear_target()  # TODO: clear from foAIstate
         self.clear_fleet_orders()
-        # pods_needed = max(0, math.ceil((target_troops - 2 * (FleetUtilsAI.count_parts_fleetwide(fleet_id, ["GT_TROOP_POD"])) + 0.05) / 2.0))
         troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fleet_id))
-        found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': troops_needed}
         target_stats = {'rating': 10, 'troopCapacity': troops_needed}
         found_fleets = []
         # TODO check if next statement does not mutate any global states and can be removed
-        _ = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats, "",
-                                                systems_to_check=[fleet.systemID], systems_checked=[],
-                                                fleet_pool_set=set(new_fleets), fleet_list=found_fleets,
-                                                verbose=False)
+        _ = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, {}, starting_system=fleet.systemID,
+                                                fleet_pool_set=set(new_fleets), fleet_list=found_fleets)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)
         target = Planet(target_id)
@@ -463,7 +461,9 @@ class AIFleetMission(object):
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
                 if repair_fleet_order and repair_fleet_order.is_valid():
                     self.orders.append(repair_fleet_order)
-            if fleet.fuel < fleet.maxFuel and self.get_location_target().id not in fleet_supplyable_system_ids:
+            cur_fighter_capacity, max_fighter_capacity = FleetUtilsAI.get_fighter_capacity_of_fleet(fleet_id)
+            if (fleet.fuel < fleet.maxFuel or cur_fighter_capacity < max_fighter_capacity
+                    and self.get_location_target().id not in fleet_supplyable_system_ids):
                 resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.fleet, self.get_location_target())
                 if resupply_fleet_order.is_valid():
                     self.orders.append(resupply_fleet_order)
@@ -543,6 +543,5 @@ class AIFleetMission(object):
         return "%-25s [%-11s] ships: %2d; total rating: %4d; target: %s" % (fleet,
                                                                             "NONE" if self.type is None else self.type,
                                                                             (fleet and len(fleet.shipIDs)) or 0,
-                                                                            foAI.foAIstate.get_rating(fleet_id).get(
-                                                                                'overall', 0),
+                                                                            CombatRatingsAI.get_fleet_rating(fleet_id),
                                                                             self.target or 'no target')

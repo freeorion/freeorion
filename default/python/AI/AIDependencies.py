@@ -73,6 +73,7 @@ SPECIES_POPULATION_MODIFIER = {'BAD': 0.75, 'GOOD': 1.25}
 SPECIES_SUPPLY_MODIFIER = {'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
 
 # <editor-fold desc="Piloting traits">
+# TODO (Morlic): Consider using only 1 dict with tuple for (Capacity, SecondaryStat) effects
 PILOT_DAMAGE_MODIFIER_DICT = {
     # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
     "NO":       {},
@@ -80,6 +81,15 @@ PILOT_DAMAGE_MODIFIER_DICT = {
     "GOOD":     {"SR_WEAPON_1_1":  1, "SR_WEAPON_2_1":  2, "SR_WEAPON_3_1":  3, "SR_WEAPON_4_1": 5},
     "GREAT":    {"SR_WEAPON_1_1":  2, "SR_WEAPON_2_1":  4, "SR_WEAPON_3_1":  6, "SR_WEAPON_4_1": 10},
     "ULTIMATE": {"SR_WEAPON_1_1":  3, "SR_WEAPON_2_1":  6, "SR_WEAPON_3_1":  9, "SR_WEAPON_4_1": 15, "SR_WEAPON_0_1": 1},
+}
+
+PILOT_ROF_MODIFIER_DICT = {
+    # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_0_1": -1},
+    "GOOD":     {"SR_WEAPON_0_1": 1},
+    "GREAT":    {"SR_WEAPON_0_1": 2},
+    "ULTIMATE": {"SR_WEAPON_0_1": 3},
 }
 
 PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
@@ -91,13 +101,13 @@ PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
     "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
 }
 
-PILOT_ROF_MODIFIER_DICT = {
-    # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
+PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
+    # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
     "NO":       {},
-    "BAD":      {"SR_WEAPON_0_1": -1},
-    "GOOD":     {"SR_WEAPON_0_1": 1},
-    "GREAT":    {"SR_WEAPON_0_1": 2},
-    "ULTIMATE": {"SR_WEAPON_0_1": 3},
+    "BAD":      {},
+    "GOOD":     {},
+    "GREAT":    {},
+    "ULTIMATE": {},
 }
 # </editor-fold>
 # </editor-fold>
@@ -273,14 +283,41 @@ DEFENSE_SHIELDS_TECHS = [
 # </editor-fold>
 
 # <editor-fold desc="Weapon techs">
+# TODO (Morlic): Consider using only 1 dict with (capacity, secondaryStat) tuple as entries
 WEAPON_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
+    "SR_WEAPON_0_1": (),
     "SR_WEAPON_1_1": tuple(("SHP_WEAPON_1_%d" % i, 1) for i in [2, 3, 4]),
     "SR_WEAPON_2_1": tuple(("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]),
     "SR_WEAPON_3_1": tuple(("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]),
     "SR_WEAPON_4_1": tuple(("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]),
-    "SR_WEAPON_0_1": (),
     "SR_SPINAL_ANTIMATTER": (),
+}
+
+WEAPON_ROF_UPGRADE_DICT = {
+    # "PARTNAME": tuple((tech_name, rof_upgrade), (tech_name2, rof_upgrade2), ...)
+    "SR_WEAPON_0_1": (),
+    "SR_WEAPON_1_1": (),
+    "SR_WEAPON_2_1": (),
+    "SR_WEAPON_3_1": (),
+    "SR_WEAPON_4_1": (),
+    "SR_SPINAL_ANTIMATTER": (),
+}
+
+FIGHTER_DAMAGE_UPGRADE_DICT = {
+    # "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
+    "FT_HANGAR_1": (("SHP_FIGHTERS_2", 1), ("SHP_FIGHTERS_3", 1), ("SHP_FIGHTERS_4", 1)),
+    "FT_HANGAR_2": (("SHP_FIGHTERS_2", 2), ("SHP_FIGHTERS_3", 3), ("SHP_FIGHTERS_4", 5)),
+    "FT_HANGAR_3": (("SHP_FIGHTERS_2", 3), ("SHP_FIGHTERS_3", 4), ("SHP_FIGHTERS_4", 7)),
+    "FT_HANGAR_4": (),
+}
+
+FIGHTER_CAPACITY_UPGRADE_DICT = {
+    # "PARTNAME": tuple((tech_name, capacity_upgrade), (tech_name2, capacity_upgrade2), ...)
+    "FT_HANGAR_1": (),
+    "FT_HANGAR_2": (),
+    "FT_HANGAR_3": (),
+    "FT_HANGAR_4": (),
 }
 
 # DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!

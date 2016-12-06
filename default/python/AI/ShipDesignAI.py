@@ -12,6 +12,7 @@ best_military_designs = myDesign.optimize_design()  # best designs per planet: (
 
 Available ship classes:
 - MilitaryShipDesigner: basic military ship
+- CarrierShipDesigner: military ship that includes fighter-related parts such as hangars and launch bays
 - OrbitalTroopShipDesigner: Troop ships for invasion in the same system
 - StandardTroopShipDesigner: Troop ships for invasion of other systems
 - OrbitalColonisationShipDesigner: Ships for colonization in the same system
@@ -24,6 +25,7 @@ Internal use only:
 Classes:
 - ShipDesignCache: caches information used in this module. Only use the defined instance (variable name "Cache")
 - ShipDesigner: base class for all designs. Provides basic and general functionalities
+- WarShipDesigner: base class for all military-related ships.
 - ColonisationShipDesignerBaseClass: base class for all colonisation ships which provides common functionalities
 - OutpostShipDesignerBaseClass: same but for outpost ships
 - TroopShipDesignerBaseClass: same but for troop ships
@@ -48,12 +50,13 @@ import copy
 import traceback
 import math
 import AIstate
+import CombatRatingsAI
 from collections import Counter, defaultdict
 
 from EnumsAI import ShipDesignTypes
 from freeorion_tools import print_error, UserString, tech_is_complete
 
-# Define meta classes for the ship parts
+# Define meta classes for the ship parts  TODO storing as set may not be needed anymore
 ARMOUR = frozenset({fo.shipPartClass.armour})
 SHIELDS = frozenset({fo.shipPartClass.shields})
 DETECTION = frozenset({fo.shipPartClass.detection})
@@ -64,6 +67,8 @@ ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
 WEAPONS = frozenset({fo.shipPartClass.shortRange})
 GENERAL = frozenset({fo.shipPartClass.general})
+FIGHTER_BAY = frozenset({fo.shipPartClass.fighterBay})
+FIGHTER_HANGAR = frozenset({fo.shipPartClass.fighterHangar})
 ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
                               COLONISATION, ENGINES, TROOPS, GENERAL})
 
@@ -611,8 +616,10 @@ class AdditionalSpecifications(object):
         self.minimum_fuel = 0
         self.minimum_speed = 0
         self.minimum_structure = 1
-        self.enemy_shields = 0
-        self.enemy_weapon_strength = 0
+        self.minimum_fighter_launch_rate = 0
+        self.enemy_shields = 1  # to avoid spamming flak cannons
+        self.max_enemy_weapon_strength = 0
+        self.avg_enemy_weapon_strength = 0
         self.expected_turns_till_fight = 2
         current_turn = fo.currentTurn()
         if current_turn < 50:
@@ -623,19 +630,26 @@ class AdditionalSpecifications(object):
             self.enemy_mine_dmg = 6
         else:
             self.enemy_mine_dmg = 14
-        self.update_enemy(foAI.foAIstate.empire_standard_enemy)
+        self.update_enemy(foAI.foAIstate.get_standard_enemy())
 
     def update_enemy(self, enemy):
         """Read out the enemies stats and save them.
 
-        :param enemy: enemy as defined in AIstate
+        :param enemy:
+        :type enemy: CombatRatingsAI.ShipCombatStats
         """
-        self.enemy_shields = enemy[2]
-        enemy_attack_stats = enemy[1]
-        self.enemy_weapon_strength = 0
-        for stat in enemy_attack_stats:
-            if stat[0] > self.enemy_weapon_strength:
-                self.enemy_weapon_strength = stat[0]
+        enemy_attack_stats, enemy_structure, self.enemy_shields = enemy.get_basic_stats()
+        self.enemy_shields += 1  # add bias against weak weapons to account to allow weapons to stay longer relevant.
+        if enemy_attack_stats:
+            self.max_enemy_weapon_strength = max(enemy_attack_stats.keys())
+            n = 0
+            d = 0
+            for dmg, count in enemy_attack_stats.iteritems():
+                d += dmg*count
+                n += count
+            self.avg_enemy_weapon_strength = d/n
+
+        print enemy_attack_stats, self.max_enemy_weapon_strength
 
     def convert_to_tuple(self):
         """Create a tuple of this class' attributes (e.g. to use as key in dict).
@@ -643,7 +657,7 @@ class AdditionalSpecifications(object):
         :returns: tuple (minFuel,minSpeed,enemyDmg,enemyShield,enemyMineDmg)
         """
         return ("minFuel: %s" % self.minimum_fuel, "minSpeed: %s" % self.minimum_speed,
-                "enemyDmg: %s" % self.enemy_weapon_strength, "enemyShields: %s" % self.enemy_shields,
+                "enemyDmg: %s" % self.max_enemy_weapon_strength, "enemyShields: %s" % self.enemy_shields,
                 "enemyMineDmg: %s" % self.enemy_mine_dmg)
 
 
@@ -656,7 +670,7 @@ class ShipDesigner(object):
     evaluate(): Returns a rating for the design as of the current state
     update_hull(hullname): sets the hull used in the design
     update_parts(partname_list): sets the parts used in the design
-    update_species(speciesname): sets the piloting species
+    update_species(species): sets the piloting species
     update_stats(): calculates the stats of the design based on hull+parts+species
     add_design(): Adds the shipdesign in the C++ part of the game
 
@@ -684,6 +698,7 @@ class ShipDesigner(object):
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
+        self.species = None         # name of the piloting species (string)
         self.hull = None            # hull object (not hullname!)
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
@@ -708,10 +723,9 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
-        # species modifiers
-        self.weapons_grade = ""
-        self.shields_grade = ""
-        self.troops_grade = ""
+        self.fighter_capacity = 0
+        self.fighter_launch_rate = 0
+        self.fighter_damage = 0
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -730,6 +744,7 @@ class ShipDesigner(object):
         min_fuel = self._minimum_fuel()
         min_speed = self._minimum_speed()
         min_structure = self._minimum_structure()
+        min_fighter_launch_rate = self._minimum_fighter_launch_rate()
         if self.fuel < min_fuel:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.fuel)
         if self.speed < min_speed:
@@ -738,6 +753,8 @@ class ShipDesigner(object):
                                self.organic_growth * self.additional_specifications.expected_turns_till_fight)
         if estimated_structure < min_structure:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
+        if self.fighter_launch_rate < min_fighter_launch_rate:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launch_rate - self.fighter_launch_rate)
         if rating < 0:
             return rating
         else:
@@ -751,6 +768,9 @@ class ShipDesigner(object):
 
     def _minimum_structure(self):
         return self.additional_specifications.minimum_structure
+
+    def _minimum_fighter_launch_rate(self):
+        return self.additional_specifications.minimum_fighter_launch_rate
 
     def _rating_function(self):
         """Rate the design according to current hull/part combo.
@@ -781,6 +801,9 @@ class ShipDesigner(object):
         self.repair_per_turn = 0
         self.asteroid_stealth = 0
         self.solar_stealth = 0
+        self.fighter_capacity = 0
+        self.fighter_launch_rate = 0
+        self.fighter_damage = 0
 
     def update_hull(self, hullname):
         """Set hull of the design.
@@ -804,7 +827,7 @@ class ShipDesigner(object):
         :param species:
         :type species: str
         """
-        self.weapons_grade, self.shields_grade, self.troops_grade = foAI.foAIstate.get_piloting_grades(species)
+        self.species = species
 
     def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
@@ -841,17 +864,19 @@ class ShipDesigner(object):
         self.asteroid_stealth = 0
         self.solar_stealth = 0
 
+        self.fighter_capacity = 0
+        self.fighter_launch_rate = 0
+        self.fighter_damage = 0
+
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = 0  # to deal with Non-stacking parts
+        hangar_parts = set()
         for part in self.parts:
             self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.empireID(), self.pid))
             self.production_time = max(self.production_time,
                                        local_time_cache.get(part.name, part.productionTime(fo.empireID(), self.pid)))
             partclass = part.partClass
-            if partclass in WEAPONS:
-                capacity = self._calculate_weapon_strength(part, ignore_species=ignore_species)
-            else:  # TODO Hangar part modifiers
-                capacity = part.capacity
+            capacity = part.capacity if partclass not in WEAPONS else self._calculate_weapon_strength(part)
             if partclass in FUEL:
                 self.fuel += capacity
             elif partclass in ENGINES:
@@ -871,7 +896,7 @@ class ShipDesigner(object):
             elif partclass in ARMOUR:
                 self.structure += capacity
             elif partclass in WEAPONS:
-                shots = self._calculate_weapon_shots(part, ignore_species=ignore_species)
+                shots = self._calculate_weapon_shots(part)
                 self.attacks[capacity] = self.attacks.get(capacity, 0) + shots
             elif partclass in SHIELDS:
                 shield_counter += 1
@@ -887,13 +912,26 @@ class ShipDesigner(object):
                     self.stealth += capacity
                 else:
                     self.stealth = 0
+            elif partclass in FIGHTER_BAY:
+                self.fighter_launch_rate += capacity
+            elif partclass in FIGHTER_HANGAR:
+                hangar_parts.add(part.name)
+                if len(hangar_parts) > 1:
+                    # enforce only one hangar part per design
+                    self.fighter_capacity = 0
+                    self.fighter_damage = 0
+                else:
+                    self.fighter_capacity += self._calculate_hangar_capacity(part)
+                    self.fighter_damage = self._calculate_hangar_damage(part)
 
         self._apply_hardcoded_effects()
 
-        if not ignore_species:
-            self.shields = foAI.foAIstate.weight_shields(self.shields, self.shields_grade)
+        if self.species and not ignore_species:
+            shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
+            self.shields = CombatRatingsAI.weight_shields(self.shields, shields_grade)
             if self.troops:
-                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, self.troops_grade)
+                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
+                self.troops = CombatRatingsAI.weight_attack_troops(self.troops, troops_grade)
 
     def _apply_hardcoded_effects(self):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1095,11 +1133,14 @@ class ShipDesigner(object):
             # The same is true for the canProduceShips trait which simply means no hull can be built.
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
-                relevant_grades.append("WEAPON: %s" % self.weapons_grade)
+                weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+                relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
-                relevant_grades.append("SHIELDS: %s" % self.shields_grade)
+                shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
+                relevant_grades.append("SHIELDS: %s" % shields_grade)
             if TROOPS & self.useful_part_classes:
-                relevant_grades.append("TROOPS: %s" % self.troops_grade)
+                troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
+                relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
             design_cache_species = design_cache_tech.setdefault(species_tuple, {})
 
@@ -1189,8 +1230,10 @@ class ShipDesigner(object):
         if self.filter_inefficient_parts:
             local_cost_cache = Cache.production_cost[self.pid]
             # TODO: Check for redundance of weapons with new tech upgrade system
+            # TODO: Check for redundance of hangars
+            # TODO Remember to use secondaryStat as well for weapons/hangars
             check_for_redundance = (ARMOUR | ENGINES | FUEL | SHIELDS
-                                    | STEALTH | DETECTION | TROOPS) & self.useful_part_classes
+                                    | STEALTH | DETECTION | TROOPS | FIGHTER_BAY) & self.useful_part_classes
             for slottype in part_dict:
                 partclass_dict = defaultdict(list)
                 for tup in part_dict[slottype]:
@@ -1347,7 +1390,7 @@ class ShipDesigner(object):
         rating = self.evaluate()
         return rating, partlist
 
-    def _filling_algorithm(self, available_parts):
+    def _filling_algorithm(self, available_parts, verbose=False):
         """Fill the slots of the design using some optimizing algorithm.
 
         Default algorithm is _combinatorial_filling().
@@ -1438,11 +1481,43 @@ class ShipDesigner(object):
         else:
             return self.production_cost / (1 + foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)  # base cost
 
+    def _shield_factor(self):
+        """Calculate the effective factor by which structure is increased by shields.
+
+        :rtype: float
+        """
+        enemy_dmg = self.additional_specifications.max_enemy_weapon_strength
+        return max(enemy_dmg / max(0.01, enemy_dmg - self.shields), 1)
+
     def _effective_fuel(self):
-        """Return the number of turns the ship can move without refueling."""
+        """Return the number of turns the ship can move without refueling.
+
+        :rtype: float
+        """
         return min(self.fuel / max(1 - self.fuel_per_turn, 0.001), 10)
 
+    def _expected_organic_growth(self):
+        """Get expected organic growth defined by growth rate and expected numbers till fight.
+
+        :return: Expected organic growth
+        :rtype: float
+        """
+        return min(self.additional_specifications.expected_turns_till_fight * self.organic_growth,
+                   self.maximum_organic_growth)
+
+    def _remaining_growth(self):
+        """Get growth potential after _expected_organic_growth() took place.
+
+        :return: Remaining growth after _expected_organic_growth()
+        :rtype: float
+        """
+        return self.maximum_organic_growth - self._expected_organic_growth()
+
     def _effective_mine_damage(self):
+        """Return enemy mine damage corrected by self-repair-rate.
+
+        :rtype: float
+        """
         return self.additional_specifications.enemy_mine_dmg - self.repair_per_turn
 
     def _partclass_in_design(self, partclass):
@@ -1455,64 +1530,91 @@ class ShipDesigner(object):
         return any(part.partClass in partclass for part in self.parts)
 
     def _calculate_weapon_strength(self, weapon_part, ignore_species=False):
+        # base damage
         weapon_name = weapon_part.name
-        base_damage = weapon_part.capacity
-
-        # tech modifiers
-        try:
-            upgrades = AIDependencies.WEAPON_UPGRADE_DICT[weapon_name]
-        except KeyError:
-            if weapon_name not in _raised_warnings:
-                _raised_warnings.add(weapon_name)
-                print_error(("WARNING: Encountered unknown weapon (%s): "
-                             "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
-                             "Please update AIDependencies.py and "
-                             "add the weapon with its upgrade techs to WEAPON_UPGRADE_DICT") % weapon_name,
-                            location="ShipDesignAI._calculate_weapon_strength()", trace=True)
-            return base_damage
-        total_tech_bonus = 0
-        for tech, dmg_bonus in upgrades:
-            total_tech_bonus += dmg_bonus if tech_is_complete(tech) else 0
-            # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
-
+        base = weapon_part.capacity
+        tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_UPGRADE_DICT, weapon_name)
         # species modifiers
         if not ignore_species:
-            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(self.weapons_grade, {}).get(weapon_name, 0)
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
-        return base_damage + total_tech_bonus + species_modifier
+        return base + tech_bonus + species_modifier
 
     def _calculate_weapon_shots(self, weapon_part, ignore_species=False):
         weapon_name = weapon_part.name
-        base_shots = weapon_part.secondaryStat
-        if not base_shots:
+        base = weapon_part.secondaryStat
+        if not base:
             print "WARNING: Queried weapon %s for number of shots but didn't return any." % weapon_name
-            base_shots = 1
-
+            base = 1
+        tech_bonus = _get_tech_bonus(AIDependencies.WEAPON_ROF_UPGRADE_DICT, weapon_name)
         # species modifier
         if not ignore_species:
-            species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(self.weapons_grade, {}).get(weapon_name, 0)
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            species_modifier = AIDependencies.PILOT_ROF_MODIFIER_DICT.get(weapons_grade, {}).get(weapon_name, 0)
         else:
             species_modifier = 0
-
-        # tech modifier
-        tech_modifier = 0  # none implemented yet
-        return base_shots + species_modifier + tech_modifier
+        return base + species_modifier + tech_bonus
 
     def _calculate_hangar_damage(self, hangar_part, ignore_species=False):
         hangar_name = hangar_part.name
-        base_damage = hangar_part.secondaryStat
+        base = hangar_part.secondaryStat
+        tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_DAMAGE_UPGRADE_DICT, hangar_name)
         # species modifier
         if not ignore_species:
-            species_modifier = AIDependencies.PILOT_DAMAGE_MODIFIER_DICT.get(self.weapons_grade, {}).get(hangar_name, 0)
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            species_modifier = AIDependencies.PILOT_FIGHTERDAMAGE_MODIFIER_DICT.get(weapons_grade,
+                                                                                    {}).get(hangar_name, 0)
         else:
             species_modifier = 0
-        # tech modifier
-        tech_modifier = 0
-        return base_damage + species_modifier + tech_modifier
+        return base + species_modifier + tech_bonus
+
+    def _calculate_hangar_capacity(self, hangar_part, ignore_species=False):
+        hangar_name = hangar_part.name
+        base = hangar_part.capacity
+        tech_bonus = _get_tech_bonus(AIDependencies.FIGHTER_CAPACITY_UPGRADE_DICT, hangar_name)
+        # species modifier
+        if not ignore_species:
+            weapons_grade = CombatRatingsAI.get_pilot_weapons_grade(self.species)
+            species_modifier = AIDependencies.PILOT_FIGHTER_CAPACITY_MODIFIER_DICT.get(weapons_grade,
+                                                                                       {}).get(hangar_name, 0)
+        else:
+            species_modifier = 0
+        return base + species_modifier + tech_bonus
 
 
-class MilitaryShipDesigner(ShipDesigner):
+class WarShipDesigner(ShipDesigner):
+    basename = "Warship (do not build me)"
+    description = "Military Ship"
+
+    def __init__(self):
+        super(WarShipDesigner, self).__init__()
+
+    def _adjusted_production_cost(self):
+        # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
+        # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
+        if foAI.foAIstate.aggression == fo.aggression.maniacal:
+            exponent = 2
+        elif foAI.foAIstate.aggression == fo.aggression.aggressive:
+            exponent = 1.5
+        else:
+            exponent = 1
+        return super(WarShipDesigner, self)._adjusted_production_cost()**exponent
+
+    def _effective_structure(self):
+        effective_structure = self.structure + self._expected_organic_growth() + self._remaining_growth() / 5
+        effective_structure *= self._shield_factor()
+        return effective_structure
+
+    def _speed_factor(self):
+        return 1 + 0.005*(self.speed - 85)
+
+    def _fuel_factor(self):
+        return 1 + 0.03 * (self._effective_fuel() - self._minimum_fuel()) ** 0.5
+
+
+class MilitaryShipDesigner(WarShipDesigner):
     """Class that implements military designs.
 
     Extends __init__()
@@ -1550,14 +1652,9 @@ class MilitaryShipDesigner(ShipDesigner):
         total_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
         if total_dmg <= 0:
             return INVALID_DESIGN_RATING
-        enemy_dmg = self.additional_specifications.enemy_weapon_strength
-        shield_factor = max(enemy_dmg / max(0.01, enemy_dmg - self.shields), 1)
-        expected_growth = min(self.additional_specifications.expected_turns_till_fight * self.organic_growth,
-                              self.maximum_organic_growth)
-        remaining_growth = self.maximum_organic_growth - expected_growth
-        effective_structure = (self.structure + expected_growth + remaining_growth/5) * shield_factor
-        speed_factor = 1 + 0.005*(self.speed - 85)
-        fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
+        effective_structure = self._effective_structure()
+        speed_factor = self._speed_factor()
+        fuel_factor = self._fuel_factor()
         return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
@@ -1615,6 +1712,98 @@ class MilitaryShipDesigner(ShipDesigner):
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
         return self.structure*self._total_dmg()*(1+self.shields/10)
+
+
+class CarrierShipDesigner(WarShipDesigner):
+    """Class that implements military designs with fighter parts.
+
+    Extends __init__()
+    Extends _filling_algorithm()
+    Overrides _rating_function()
+    Overrides _calc_rating_for_name()
+    """
+    basename = "Carrier"
+    description = "Carrier"
+    useful_part_classes = WEAPONS | ARMOUR | SHIELDS | FUEL | ENGINES | FIGHTER_HANGAR | FIGHTER_BAY
+    filter_useful_parts = True
+    filter_inefficient_parts = True
+
+    NAMETABLE = "AI_SHIPDESIGN_NAME_MILITARY"
+    NAME_THRESHOLDS = sorted([0, 1000])
+
+    def __init__(self):
+        ShipDesigner.__init__(self)
+        self.additional_specifications.minimum_fuel = 1
+        self.additional_specifications.minimum_speed = 30
+        self.additional_specifications.expected_turns_till_fight = 10 if fo.currentTurn() < 50 else 5
+        self.additional_specifications.minimum_fighter_launch_rate = 1
+
+    def _rating_function(self):
+        if self.fighter_capacity < 1:
+            return INVALID_DESIGN_RATING
+        # first, calculate "normal" weapon stuff
+        weapon_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
+        effective_structure = self._effective_structure()
+
+        # now, consider offensive potential of our fighters
+        enemy_dmg_avg = self.additional_specifications.avg_enemy_weapon_strength
+        launched_1st_bout = min(self.fighter_capacity, self.fighter_launch_rate)
+        launched_2nd_bout = min(self.fighter_capacity - launched_1st_bout, self.fighter_launch_rate)
+        survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
+        total_fighter_damage = self.fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
+        fighter_damage_per_bout = total_fighter_damage / 3
+
+        # now, consider the defensive potential of our fighters!
+        fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
+        damage_prevented = fighters_shot_down * enemy_dmg_avg  # TODO: Some shields calculations...
+
+        total_dmg = weapon_dmg + fighter_damage_per_bout
+        effective_structure += damage_prevented
+
+        speed_factor = self._speed_factor()
+        fuel_factor = self._fuel_factor()
+        return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
+
+    # TODO Implement _starting_guess() for faster convergence
+
+    def _filling_algorithm(self, available_parts, verbose=True):
+        # Currently, only one type of hangar part is allowed due to game mechanics.
+        # However, in the generic _filling_algorithm(), only one part is exchanged per time.
+        # Therefore, after using (multiple) entries of one hangar part, the algorithm won't consider different parts.
+        # Workaround: Do multiple passes with only one hangar part each and choose the best rated one.
+
+        print "Calling _filling_algorithm() for Carrier-Style ships!"
+        print "Available parts: ", available_parts
+        # first, get all available hangar parts.
+        hangar_parts = set()
+        for partlist in available_parts.values():
+            for partname in partlist:
+                part = get_part_type(partname)
+                if part.partClass == fo.shipPartClass.fighterHangar:
+                    hangar_parts.add(partname)
+        if verbose:
+            print "Found the following hangar parts: ", hangar_parts
+
+        # now, call the standard-algorithm with only one hangar part at a time and choose the best rated one.
+        best_rating = INVALID_DESIGN_RATING
+        best_partlist = [""] * len(self.hull.slots)
+        for this_hangar_part in hangar_parts:
+            current_available_parts = {}
+            forbidden_hangar_parts = {part for part in hangar_parts if part != this_hangar_part}
+            for slot, partlist in available_parts.iteritems():
+                current_available_parts[slot] = [part for part in partlist if part not in forbidden_hangar_parts]
+            this_rating, this_partlist = ShipDesigner._filling_algorithm(self, current_available_parts)
+            if verbose:
+                print "Best rating for part %s is %.2f with partlist %s" % (this_hangar_part, this_rating, this_partlist)
+            if this_rating > best_rating:
+                best_rating = this_rating
+                best_partlist = this_partlist
+        return best_rating, best_partlist
+
+    def _calc_rating_for_name(self):
+        base_rating = self.structure*self._total_dmg()*(1+self.shields/10)
+        fighter_rating = self.fighter_capacity * self.fighter_launch_rate * (.1+self.fighter_damage)
+        return base_rating + fighter_rating
 
 
 class TroopShipDesignerBaseClass(ShipDesigner):
@@ -2155,3 +2344,21 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
                 dict_diff[key] = copy.deepcopy(value)
                 min_diff_level = 0
     return min_diff_level
+
+
+def _get_tech_bonus(upgrade_dict, part_name):
+    try:
+        upgrades = upgrade_dict[part_name]
+    except KeyError:
+        if part_name not in _raised_warnings:
+            _raised_warnings.add(part_name)
+            print_error(("WARNING: Encountered unknown part (%s): "
+                         "The AI can play on but its damage estimates may be incorrect leading to worse decision-making. "
+                         "Please update AIDependencies.py") % part_name,
+                        location="ShipDesignAI._get_tech_bonus()", trace=True)
+        return 0
+    total_tech_bonus = 0
+    for tech, bonus in upgrades:
+        total_tech_bonus += bonus if tech_is_complete(tech) else 0
+        # TODO: Error checking if tech is actually a valid tech (tech_is_complete simply returns false)
+    return total_tech_bonus

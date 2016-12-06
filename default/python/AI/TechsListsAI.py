@@ -118,6 +118,7 @@ class TechGroup1(TechGroup):
         ])
         self.weapon.extend([
             "SHP_WEAPON_1_2",
+            "SHP_FIGHTERS_1",
             "SHP_WEAPON_1_3",
             "SHP_WEAPON_1_4",
         ])
@@ -220,6 +221,7 @@ class TechGroup2(TechGroup):
         self.weapon.extend([
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",  # enables the building of laser based ships in ShipDesigner algorithm
+            "SHP_FIGHTERS_2",
             "SHP_WEAPON_2_3",
             "SHP_WEAPON_2_4",
         ])
@@ -360,6 +362,7 @@ class TechGroup3(TechGroup):
         self.weapon.extend([
             "SHP_WEAPON_3_1",
             "SHP_WEAPON_3_2",
+            "SHP_FIGHTERS_3",
             "SHP_WEAPON_3_3",
             "SHP_WEAPON_3_4",
         ])
@@ -539,6 +542,7 @@ class TechGroup5(TechGroup):
             "GRO_ENERGY_META",
             "SHP_WEAPON_4_1",
             "SHP_WEAPON_4_2",
+            "SHP_FIGHTERS_4",
             "SHP_WEAPON_4_3",
             "SHP_WEAPON_4_4",
             "PRO_INDUSTRY_CENTER_III",

@@ -15,6 +15,7 @@ import ProductionAI
 import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
+import CombatRatingsAI
 from freeorion_tools import tech_is_complete, Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
@@ -111,8 +112,8 @@ def get_invasion_fleets():
                 continue
             # TODO: have TroopShipDesigner give the expected number of troops including species effects directly
             troops_per_ship = best_base_trooper_here.troopCapacity
-            _, _, species_troop_grade = foAI.foAIstate.get_piloting_grades(loc_planet.speciesName)
-            troops_per_ship = foAI.foAIstate.weight_attack_troops(troops_per_ship, species_troop_grade)
+            species_troop_grade = CombatRatingsAI.get_species_troops_grade(loc_planet.speciesName)
+            troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
             if not troops_per_ship:
                 print "The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet
                 continue
@@ -399,10 +400,9 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
         target_stats = {'rating': 10, 'troopCapacity': ptroops+1}
-        these_fleets = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats, "",
-                                                           systems_to_check=[sys_id], systems_checked=[],
-                                                           fleet_pool_set=invasion_fleet_pool, fleet_list=found_fleets,
-                                                           verbose=False)
+        these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
+                                                           starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
+                                                           fleet_list=found_fleets)
         if not these_fleets:
             if not FleetUtilsAI.stats_meet_reqs(found_stats, min_stats):
                 print "Insufficient invasion troop allocation for system %d ( %s ) -- requested %s , found %s" % (
@@ -467,10 +467,9 @@ def assign_invasion_fleets_to_invade():
             min_stats = {'rating': 0, 'troopCapacity': troops_needed}
             target_stats = {'rating': 10, 'troopCapacity': troops_needed}
 
-            FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats, "",
-                                                systems_to_check=[sys_id], systems_checked=[],
-                                                fleet_pool_set=local_base_troops, fleet_list=found_fleets,
-                                                verbose=False)
+            FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
+                                                starting_system=sys_id, fleet_pool_set=local_base_troops,
+                                                fleet_list=found_fleets)
             for fid2 in found_fleets:
                 FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
                 available_troopbase_fleet_ids.discard(fid2)
