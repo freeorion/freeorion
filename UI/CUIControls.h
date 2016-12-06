@@ -658,10 +658,15 @@ private:
 /** Renders scanlines over its area. */
 class ScanlineControl : public GG::Control {
 public:
-    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false);
+    ScanlineControl(GG::X x, GG::Y y, GG::X w, GG::Y h, bool square = false, GG::Clr clr = GG::CLR_BLACK);
+
+    /** Changes the color used to draw the scanlines. */
+    void SetColor(GG::Clr clr) { m_color = clr; };
     virtual void Render();
+
 private:
     bool m_square;
+    GG::Clr m_color;
 };
 
 /** Consistently rendered popup menu */
