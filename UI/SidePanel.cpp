@@ -603,6 +603,8 @@ private:
     void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
 
     void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
+    /** Resize the panels and \p use_vscroll if requested.  Return the total height.*/
+    GG::Y           ResizePanelsForVScroll(bool use_vscroll);
     void            DoLayout();
 
     void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
@@ -2579,51 +2581,49 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
 
     GG::ScopedAssign<bool> prevent_inifinite_recursion(m_ignore_recursive_resize, true);
 
+    // Determine if scroll bar is required for height or expected because it is already present.
+    GG::Y available_height = Height();
+    GG::Y initially_used_height = GG::Y(0);
+    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+        initially_used_height += (*it)->Height() + EDGE_PAD;
+    }
+
+    bool vscroll_expected((initially_used_height > available_height)
+                          || ((m_vscroll->Parent() == this)
+                              && (m_vscroll->PosnRange().first > 0)) );
+
+    // Size panels accounting for the expected vscroll
+    GG::Y actual_used_height = ResizePanelsForVScroll(vscroll_expected);
+
+    // Check that the expected height and the actual height are consistent with
+    // the choice of vscroll.  Some planet panels can result in an unstable
+    // situation where narrowing the panel for the vscroll results in a
+    // **shorter** panel, which would not require a vscroll.  In those
+    // situations always use the vscroll.
+    bool vscroll_required(vscroll_expected);
+    if (!vscroll_expected && (actual_used_height > available_height)) {
+        vscroll_required = true;
+
+        // Size panels accounting for the required vscroll
+        ResizePanelsForVScroll(vscroll_required);
+    }
+
     GG::Y y = GG::Y0;
-    GG::X x = GG::X0;
 
     // if scrollbar present, start placing panels above the top of this
     // container by a distances determined by the scrollbar position
-    if (m_vscroll && m_vscroll->Parent() == this)
+    if (vscroll_required && m_vscroll->Parent() == this)
         y = GG::Y(-m_vscroll->PosnRange().first);
-
-    GG::Y starting_y = y;
-
-    // how much vertical space will be consumed and how much is available?
-    GG::Y available_height = Height();
-    GG::Y used_height = GG::Y(0);
-
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin();
-        it != m_planet_panels.end(); ++it)
-    {
-        PlanetPanel* panel = *it;
-        used_height += panel->Height() + EDGE_PAD; // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
-    }
-
-    // reserve width for scroll bar if it is visible
-    GG::X scroll_width = m_vscroll->Width();
-    if (Value(starting_y) >= 0 && available_height >= used_height)
-        scroll_width = GG::X(0);
 
     // place panels in sequence from the top, each below the previous
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         PlanetPanel* panel = *it;
-        const GG::Y PANEL_HEIGHT = panel->Height(); // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
-        GG::Pt panel_ul(x, y);
-        GG::Pt panel_lr(Width() - scroll_width, y + PANEL_HEIGHT);
-        panel->SizeMove(panel_ul, panel_lr);
-
-        // Force planet panel container to render.  Since planet panel rendering
-        // is slow its absence is visible as a glitch.
-        GG::GUI::PreRenderWindow(panel);
+        panel->MoveTo(GG::Pt(GG::X0, y));
         y += panel->Height() + EDGE_PAD;
-
-        if (panel->Height() != PANEL_HEIGHT)
-            ErrorLogger() << "Panel height is " << panel->Height() << " not " << PANEL_HEIGHT << " as expected";
     }
 
-    // hide scrollbar if all panels are visible and fit into the available height
-    if (Value(starting_y) >= 0 && available_height >= used_height) {
+    // Hide the scroll bar if not required.
+    if (!vscroll_required) {
         DetachChild(m_vscroll);
         return;
     }
@@ -2634,8 +2634,24 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
 
     unsigned int line_size = MaxPlanetDiameter();
     unsigned int page_size = Value(available_height);
-    int scroll_max = Value(used_height);
+    int scroll_max = Value(actual_used_height);
     m_vscroll->SizeScroll(0, scroll_max, line_size, page_size);
+}
+
+GG::Y SidePanel::PlanetPanelContainer::ResizePanelsForVScroll(bool use_vscroll) {
+    // Size panels accounting for the expected vscroll
+    GG::X expected_width(Width() - (use_vscroll ? m_vscroll->Width() : GG::X0));
+    GG::Y used_height(GG::Y0);
+    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+        PlanetPanel* panel = *it;
+        panel->Resize(GG::Pt(expected_width, panel->Height()));
+
+        // Force planet panel container to render.  Since planet panel rendering
+        // is slow its absence is visible as a glitch.
+        GG::GUI::PreRenderWindow(panel);
+        used_height += panel->Height() + EDGE_PAD;
+    }
+    return used_height;
 }
 
 void SidePanel::PlanetPanelContainer::PreRender() {
