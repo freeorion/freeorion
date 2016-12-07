@@ -821,7 +821,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     Refresh();
 
     // This PreRender forces an 'extra' prerender to make the nested
-    // dropdown lists to prerender after  their rows have
+    // dropdown lists to prerender after their rows have
     // prerendered.  Ideally, Layout would deal with the recursion on its
     // own.
     GG::GUI::PreRenderWindow(m_players_lb);
