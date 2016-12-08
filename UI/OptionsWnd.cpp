@@ -226,7 +226,7 @@ namespace {
 
         void operator()(GG::ListBox::iterator it) {
             const GG::ListBox::Row* row = *it;
-            if (!row) {
+            if (!m_drop_list || it == m_drop_list->end() || !row) {
                 ErrorLogger() << "ResolutionDropListIndexSetOptionFunctor couldn't get row from passed ListBox iterator";
                 return;
             }

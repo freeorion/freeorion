@@ -242,6 +242,13 @@ public:
     typedef RowSignalType      BrowsedSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
     //@}
 
+    /** \name Constants */ ///@{
+    static const int DEFAULT_MARGIN;
+    static const X DEFAULT_ROW_WIDTH;
+    static const Y DEFAULT_ROW_HEIGHT;
+    static const unsigned int BORDER_THICK; ///< the thickness with which to render the border of the control
+    //@}
+
     /** \name Structors */ ///@{
     /** basic ctor */
     ListBox(Clr color, Clr interior = CLR_ZERO);
@@ -479,8 +486,6 @@ public:
         /** Returns true iff lhs.SortKey( \a column ) < rhs.SortKey( \a column ). */
         bool operator()(const Row& lhs, const Row& rhs, std::size_t column) const;
     };
-
-    static const unsigned int BORDER_THICK; ///< the thickness with which to render the border of the control
 
     /** \name Exceptions */ ///@{
     /** The base class for ListBox exceptions. */

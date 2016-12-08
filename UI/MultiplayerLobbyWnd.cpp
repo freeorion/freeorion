@@ -30,8 +30,14 @@
 #include <boost/serialization/vector.hpp>
 
 namespace {
-    const GG::Y PLAYER_ROW_HEIGHT(22);
-    const GG::Y ROW_HEIGHT_PAD(6);
+    // Margin between text and row edge.
+    GG::Y PlayerRowMargin()
+    { return GG::Y(GG::ListBox::DEFAULT_MARGIN + std::max(CUIEdit::PIXEL_MARGIN, GG::ListBox::DEFAULT_MARGIN)); }
+    GG::Y PlayerFontHeight()
+    { return ClientUI::GetFont(ClientUI::Pts())->Height(); }
+    GG::Y PlayerRowHeight()
+    { return PlayerFontHeight() + 2 * PlayerRowMargin(); }
+
     const GG::X EMPIRE_NAME_WIDTH(150);
     const GG::X BROWSE_BTN_WIDTH(50);
 
@@ -42,10 +48,12 @@ namespace {
     // players or the host.
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
             m_player_data(),
             m_player_id(Networking::INVALID_PLAYER_ID)
         {}
         PlayerRow(const PlayerSetupData& player_data, int player_id) :
+            GG::ListBox::Row(GG::X(90), PlayerRowHeight(), ""),
             m_player_data(player_data),
             m_player_id(player_id)
         {}
@@ -58,6 +66,12 @@ namespace {
     // indicates and allows manipulation of player type
     class TypeSelector : public CUIDropDownList {
     private:
+        class Spacer: public GG::Control {
+            public:
+            Spacer() {};
+            virtual void Render() {};
+        };
+
         // fills player type selection droplist in player row
         class TypeRow : public GG::DropDownList::Row {
         public:
@@ -93,6 +107,8 @@ namespace {
                     else
                         push_back(new CUILabel(UserString("NO_PLAYER")));
                 }
+
+                push_back(new Spacer());
             }
 
             Networking::ClientType type;
@@ -105,9 +121,13 @@ namespace {
             SetStyle(GG::LIST_NOSORT);
             ManuallyManageColProps();
             NormalizeRowsOnInsert(false);
-            SetNumCols(1);
+            SetNumCols(2);
+            SetColStretch(0, 0.0);
+            SetColStretch(1, 1.0);
+            SetColAlignment(0, GG::ALIGN_CENTER);
             GG::Y type_row_height(std::max(GG::Y1, h - 8));
             Resize(GG::Pt(w, type_row_height));
+            SetColWidth(0, CUIDropDownList::DisplayedRowWidth());
 
             if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (disabled) {
@@ -161,6 +181,13 @@ namespace {
             GG::Connect(SelChangedSignal, &TypeSelector::SelectionChanged, this);
         }
 
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            GG::Pt old_size(Size());
+            CUIDropDownList::SizeMove(ul, lr);
+            if (old_size != Size())
+                SetColWidth(0, CUIDropDownList::DisplayedRowWidth());
+        }
+
         void SelectionChanged(GG::DropDownList::iterator it)
         {
             const GG::ListBox::Row* row = 0;
@@ -186,7 +213,7 @@ namespace {
             PlayerRow(player_data, player_id)
         {
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
@@ -217,7 +244,7 @@ namespace {
                 GG::Connect(edit->FocusUpdateSignal,                &NewGamePlayerRow::EmpireNameChanged,   this);
 
             // empire colour selector
-            EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
+            EmpireColorSelector* color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
             if (disabled)
@@ -226,7 +253,7 @@ namespace {
                 GG::Connect(color_selector->ColorChangedSignal,     &NewGamePlayerRow::ColorChanged,        this);
 
             // species selector
-            SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT);
+            SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PlayerRowHeight());
             species_selector->SelectSpecies(m_player_data.m_starting_species_name);
             push_back(species_selector);
             if (disabled)
@@ -262,7 +289,7 @@ namespace {
             m_save_game_empire_data(save_game_empire_data)
         {
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
@@ -274,7 +301,7 @@ namespace {
 
             // droplist to select empire
             m_empire_list = new CUIDropDownList(6);
-            m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT));
+            m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PlayerRowHeight()));
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
             for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
@@ -302,7 +329,7 @@ namespace {
             push_back(m_empire_list);
 
             // empire colour selector (disabled, so acts as colour indicator)
-            m_color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
+            m_color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
             m_color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(m_color_selector);
 
@@ -323,7 +350,10 @@ namespace {
             DataChangedSignal();
         }
         void EmpireChanged(GG::DropDownList::iterator selected_it) {
-            assert(selected_it != m_empire_list->end());
+            if (selected_it == m_empire_list->end()) {
+                ErrorLogger() << "Empire changed to no empire.  Ignoring change.";
+                return;
+            }
             std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
             std::advance(it, m_empire_list->IteratorToIndex(selected_it));
             m_player_data.m_empire_name =           it->second.m_empire_name;
@@ -348,7 +378,7 @@ namespace {
         EmptyPlayerRow() :
             PlayerRow()
         {
-            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, Networking::INVALID_CLIENT_TYPE, false);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             GG::Connect(type_drop->TypeChangedSignal,       &EmptyPlayerRow::PlayerTypeChanged,   this);
             // extra entries to make layout consistent
@@ -789,6 +819,12 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
 
 
     Refresh();
+
+    // This PreRender forces an 'extra' prerender to make the nested
+    // dropdown lists to prerender after their rows have
+    // prerendered.  Ideally, Layout would deal with the recursion on its
+    // own.
+    GG::GUI::PreRenderWindow(m_players_lb);
 
     return send_update_back_retval;
 }

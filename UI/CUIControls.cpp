@@ -822,15 +822,18 @@ void CUIDropDownList::Render() {
     RenderDisplayedRow();
 }
 
-GG::X CUIDropDownList::DisplayedRowWidth() const
+GG::Pt CUIDropDownList::ClientLowerRight() const
 {
     GG::Pt sz = Size();
     int margin = 3;
     int triangle_width = Value(sz.y - 4 * margin);
-    int outline_width = triangle_width + 3 * margin;
-    return GG::X(DropDownList::Width() - (m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0));
+    int outline_width = triangle_width + 4 * margin;
+    return (DropDownList::ClientLowerRight()
+            - GG::Pt((m_render_drop_arrow ? GG::X(outline_width + 2 * margin) : GG::X0), GG::Y0));
 }
 
+GG::X CUIDropDownList::DroppedRowWidth() const
+{ return (DropDownList::ClientLowerRight().x - DropDownList::ClientUpperLeft().x); }
 
 void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
@@ -1432,13 +1435,13 @@ namespace {
             if (!species)
                 return;
             GG::Wnd::SetName(species->Name());
-            GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC);
-            icon->Resize(GG::Pt(GG::X(Value(h) - 6), h - 6));
+            GG::StaticGraphic* icon = new GG::StaticGraphic(
+                ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            icon->Resize(GG::Pt(GG::X(Value(h - 5)), h - 5));
             push_back(icon);
-            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
-            species_name->Resize(GG::Pt(Width() - GG::X(Value(h)), h));
+            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             push_back(species_name);
-            GG::X first_col_width(Value(h) - 2);
+            GG::X first_col_width(Value(h));
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
             GetLayout()->SetColumnStretch(0, 0.0);
@@ -1460,6 +1463,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
     SetNumCols(2);
+    SetChildClippingMode(ClipToClient);
 
     Resize(GG::Pt(w, h - 8));
     const SpeciesManager& sm = GetSpeciesManager();
@@ -1527,6 +1531,7 @@ namespace {
                 GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::NO_WND_FLAGS)
             {
                 SetColor(color);
+                SetMinSize(GG::Pt(COLOR_SELECTOR_WIDTH - 40, GG::Y(1)));
             }
             virtual void Render() {
                 GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0);
@@ -1537,6 +1542,13 @@ namespace {
         {
             push_back(new ColorSquare(color, h));
         }
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+        {
+            // Prevent the width from changing
+            GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
+        }
+
     };
 }
 
@@ -1567,10 +1579,11 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
 
 void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
     const GG::ListBox::Row* row = *it;
-    if (row && !row->empty())
-        ColorChangedSignal(!row->empty() ? row->at(0)->Color() : GG::CLR_RED);
-    else
-        ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
+    bool error(it == end() || !row || row->empty());
+    if (error)
+        ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row.  Using CLR_RED";
+
+    ColorChangedSignal(!error ? row->at(0)->Color() : GG::CLR_RED);
 }
 
 
