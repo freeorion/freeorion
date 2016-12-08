@@ -2583,7 +2583,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
 
     // Determine if scroll bar is required for height or expected because it is already present.
     GG::Y available_height = Height();
-    GG::Y initially_used_height = GG::Y(0);
+    GG::Y initially_used_height = GG::Y0;
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         initially_used_height += (*it)->Height() + EDGE_PAD;
     }
