@@ -935,7 +935,9 @@ void Fleet::MovementPhase() {
             if (fleet->m_travel_route.front() == system->ID()) {
                 m_travel_route.erase(m_travel_route.begin());
             } else {
-                ErrorLogger() << "Fleet::MovementPahse: Encountered a system not on route.";
+                ErrorLogger() << "Fleet::MovementPahse: Encountered a system not on route."
+                              << " Expected system id is " << system->ID()
+                              << " but front of route is " << fleet->m_travel_route.front();
                 // TODO: Notify the suer with a sitrep?
             }
 
