@@ -4331,7 +4331,10 @@ void MapWnd::DeferredRefreshFleetButtons() {
             // DebugLogger() << fleet->Name() << " is on the move." ;
             moving_fleets[std::make_pair(std::make_pair(fleet->X(), fleet->Y()), fleet->Owner())].push_back(fleet->ID());
         } else {
-            ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit.";
+            ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit."
+                          << " final dest id is " << fleet->FinalDestinationID()
+                          << " travel routes is of length = " << fleet->TravelRoute().size()
+                          << " system id is "<< fleet->SystemID();
         }
     }
 
