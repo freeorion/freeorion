@@ -181,6 +181,12 @@ void Button::RClick(const Pt& pt, Flags<ModKey> mod_keys)
     }
 }
 
+void Button::MouseEnter(const Pt& pt, Flags<ModKey> mod_keys)
+{
+    if (!Disabled())
+        m_state = BN_ROLLOVER;
+}
+
 void Button::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled())

@@ -108,6 +108,7 @@ protected:
     virtual void   RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
     virtual void   RButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   RClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void   MouseEnter(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void   MouseLeave();
 
