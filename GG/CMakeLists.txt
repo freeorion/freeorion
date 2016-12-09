@@ -4,7 +4,6 @@ if(POLICY CMP0044)
     cmake_policy(SET CMP0044 OLD)
 endif()
 
-enable_testing()
 include(CMakeDependentOption)
 include(GNUInstallDirs)
 
@@ -35,6 +34,9 @@ option(BUILD_SDL_DRIVER
        ON)
 option(GiGi_BUILD_DOC
        "Builds HTML documentation (requires Doxygen)."
+       OFF)
+option(GiGi_BUILD_TEST
+       "Builds test (requires Boost.Test)."
        OFF)
 option(BUILD_DEVEL_PACKAGE
        "Install development files."
@@ -130,6 +132,10 @@ endif ()
 add_subdirectory(src)
 if(GiGi_BUILD_DOC)
     add_subdirectory(doc)
+endif()
+if(GiGi_BUILD_TEST)
+    enable_testing()
+    add_subdirectory(test)
 endif()
 
 
