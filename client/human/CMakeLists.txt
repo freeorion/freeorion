@@ -1,5 +1,4 @@
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 
 if (NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
@@ -13,7 +12,6 @@ find_package(Vorbis REQUIRED)
 include_directories(
     SYSTEM
     ${OPENGL_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
@@ -168,7 +166,6 @@ set(freeorion_LINK_LIBS
     GiGiSDL
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
-    ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
     ${SDL2_LIBRARY}
     ${OGG_LIBRARY}

@@ -87,6 +87,7 @@ if (TIFF_FOUND)
 endif ()
 
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
 
 if (NOT OPENGL_GLU_FOUND)
@@ -97,6 +98,7 @@ include_directories(
     SYSTEM
     ${Boost_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
 )
 

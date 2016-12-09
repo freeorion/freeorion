@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include "SidePanel.h"
 
 #include "CUIWnd.h"

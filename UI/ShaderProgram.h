@@ -1,14 +1,7 @@
 #ifndef _ShaderProgram_h_
 #define _ShaderProgram_h_
 
-// include OpenGL headers
-#if defined(__APPLE__) && defined(__MACH__)
-# include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
-#else
-# include <GL/gl.h>
-# include <GL/glu.h>
-#endif
+#include <GG/Base.h>
 
 #include <boost/filesystem/operations.hpp>
 
