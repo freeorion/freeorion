@@ -1026,39 +1026,26 @@ void ShipDataPanel::Init() {
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-    if (ship->IsArmed()) {
-        // damage stat icon
-        StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false,
-                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
-        AttachChild(icon);
-        icon->SetBrowseModeTime(tooltip_delay);
-    }
-    if (ship->HasFighters()) {
-        // fighters stat icon
-        StatisticIcon* icon = new StatisticIcon(FightersIcon(), 0, 0, false,
-                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
-        AttachChild(icon);
-        icon->SetBrowseModeTime(tooltip_delay);
-    }
-    if (ship->HasTroops()) {
-        // troops stat icon
-        StatisticIcon* icon = new StatisticIcon(TroopIcon(), 0, 0, false,
-                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
-        AttachChild(icon);
-        icon->SetBrowseModeTime(tooltip_delay);
-    }
+    std::vector<std::pair<MeterType, boost::shared_ptr<GG::Texture> > > meters_icons;
+    meters_icons.push_back(std::make_pair(METER_STRUCTURE,  ClientUI::MeterIcon(METER_STRUCTURE)));
+    if (ship->IsArmed())
+        meters_icons.push_back(std::make_pair(METER_CAPACITY,       DamageIcon()));
+    if (ship->HasFighters())
+        meters_icons.push_back(std::make_pair(METER_SECONDARY_STAT, FightersIcon()));
+    if (ship->HasTroops())
+        meters_icons.push_back(std::make_pair(METER_TROOPS,         TroopIcon()));
 
-    // meter stat icons
-    std::vector<MeterType> meters;
-    meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD);     meters.push_back(METER_FUEL);
-    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);    meters.push_back(METER_SPEED);
-    for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-        StatisticIcon* icon = new StatisticIcon(ClientUI::MeterIcon(*it), 0, 0, false,
-                                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(*it, icon));
+    meters_icons.push_back(std::make_pair(METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)));
+    meters_icons.push_back(std::make_pair(METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)));
+    meters_icons.push_back(std::make_pair(METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)));
+    meters_icons.push_back(std::make_pair(METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)));
+    meters_icons.push_back(std::make_pair(METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)));
+
+    for (std::vector<std::pair<MeterType, boost::shared_ptr<GG::Texture> > >::const_iterator it = meters_icons.begin();
+         it != meters_icons.end(); ++it)
+    {
+        StatisticIcon* icon = new StatisticIcon(it->second, 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(it->first, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     }
