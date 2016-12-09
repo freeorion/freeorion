@@ -72,8 +72,14 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
     m_disconnected_callback(disconnected_callback)
 {}
 
-PlayerConnection::~PlayerConnection()
-{ m_socket.close(); }
+PlayerConnection::~PlayerConnection() {
+    boost::system::error_code ec;
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+    if (ec) {
+        ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error \"" << ec << "\"";
+    }
+    m_socket.close();
+}
 
 bool PlayerConnection::EstablishedPlayer() const
 { return m_ID != INVALID_PLAYER_ID; }
@@ -260,7 +266,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
             boost::asio::async_read(
                 m_socket,
                 boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
-                boost::bind(&PlayerConnection::HandleMessageBodyRead, this,
+                boost::bind(&PlayerConnection::HandleMessageBodyRead, shared_from_this(),
                             boost::asio::placeholders::error,
                             boost::asio::placeholders::bytes_transferred));
         }
@@ -269,7 +275,8 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
 
 void PlayerConnection::AsyncReadMessage() {
     boost::asio::async_read(m_socket, boost::asio::buffer(m_incoming_header_buffer),
-                            boost::bind(&PlayerConnection::HandleMessageHeaderRead, this,
+                            boost::bind(&PlayerConnection::HandleMessageHeaderRead, 
+                                        shared_from_this(),
                                         boost::asio::placeholders::error,
                                         boost::asio::placeholders::bytes_transferred));
 }

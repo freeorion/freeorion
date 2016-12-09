@@ -167,7 +167,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    /** Returns true iff EstablishPlayer() has been called on this
+    /** Returns true if EstablishPlayer() successfully has been called on this
         connection. */
     bool EstablishedPlayer() const;
 
