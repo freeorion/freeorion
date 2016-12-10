@@ -55,6 +55,7 @@ add_coverage(gg_unittest
 )
 
 set(GiGi_TESTS
+    TestButton
 )
 
 foreach (_TEST ${GiGi_TESTS})
