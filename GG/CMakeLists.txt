@@ -22,6 +22,7 @@ option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies stat
 
 cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
 
+include(UseCodeCoverage)
 include(Util)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -135,6 +136,7 @@ if(GiGi_BUILD_DOC)
 endif()
 if(GiGi_BUILD_TEST)
     enable_testing()
+    enable_coverage()
     add_subdirectory(test)
 endif()
 
