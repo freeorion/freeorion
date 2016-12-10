@@ -987,12 +987,14 @@ void ListBox::Show(bool show_children /* = true*/)
     if (!show_children)
         return;
 
-    // Deal with non row children normally
+    // Deal with the header row and non row children normally
     for (std::list<Wnd*>::const_iterator it = Children().begin();
          it != Children().end(); ++it)
     {
-        if (!dynamic_cast<Row*>(*it))
-            (*it)->Show(show_children);
+        const Row* row(dynamic_cast<Row*>(*it));
+        bool is_regular_row(row && row != m_header_row);
+        if (!is_regular_row)
+            (*it)->Show(true);
     }
 
     // Show rows that will be visible when rendered but don't prerender them.
