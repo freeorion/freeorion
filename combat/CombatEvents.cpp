@@ -66,9 +66,6 @@ namespace {
         // Hardcoded default color becauses not linked with UI code.
         const Empire* empire = GetEmpire(empire_id);
         GG::Clr c = (empire ? empire->Color() : GG::Clr(80,255,128,255));
-        if (!empire) {
-            ErrorLogger() << "EmpireColorWrappedText expected an empire id and received " << empire_id;
-        }
         return WrapColorTag(text, c);
     }
 
