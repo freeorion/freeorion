@@ -1029,13 +1029,22 @@ void ShipDataPanel::Init() {
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     std::vector<std::pair<MeterType, boost::shared_ptr<GG::Texture> > > meters_icons;
-    meters_icons.push_back(std::make_pair(METER_STRUCTURE,  ClientUI::MeterIcon(METER_STRUCTURE)));
+    meters_icons.push_back(std::make_pair(METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)));
     if (ship->IsArmed())
         meters_icons.push_back(std::make_pair(METER_CAPACITY,       DamageIcon()));
     if (ship->HasFighters())
         meters_icons.push_back(std::make_pair(METER_SECONDARY_STAT, FightersIcon()));
     if (ship->HasTroops())
         meters_icons.push_back(std::make_pair(METER_TROOPS,         TroopIcon()));
+    if (ship->CanColonize())
+        meters_icons.push_back(std::make_pair(METER_POPULATION,     ColonyIcon()));
+    if (ship->CurrentMeterValue(METER_INDUSTRY) > 0.0f)
+        meters_icons.push_back(std::make_pair(METER_INDUSTRY,       IndustryIcon()));
+    if (ship->CurrentMeterValue(METER_RESEARCH) > 0.0f)
+        meters_icons.push_back(std::make_pair(METER_RESEARCH,       ResearchIcon()));
+    if (ship->CurrentMeterValue(METER_TRADE) > 0.0f)
+        meters_icons.push_back(std::make_pair(METER_TRADE,          TradeIcon()));
+
     meters_icons.push_back(std::make_pair(METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)));
     meters_icons.push_back(std::make_pair(METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)));
     meters_icons.push_back(std::make_pair(METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)));
