@@ -30,8 +30,8 @@ import TechsListsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
-from character.Character import Aggression
-from character.CharacterStrings import trait_name_aggression, possible_capitals
+from character.character_module import Aggression
+from character.character_strings_module import trait_name_aggression, possible_capitals
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)

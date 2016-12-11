@@ -140,7 +140,7 @@ class Trait(object):
 
         used_string_x = table_x[character.get_trait(Character.Trait.Aggression).key]
 
-        See CharacterStrings.py for the details of this actual example.
+        See character_strings_module.py for the details of this actual example.
 
         """
         return None

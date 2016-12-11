@@ -5,7 +5,7 @@ Do not modify output because charting code is relay on it.
 import freeOrionAIInterface as fo
 from PlanetUtilsAI import get_capital
 from ResearchAI import get_research_index
-from character.CharacterStrings import trait_name_aggression
+from character.character_strings_module import trait_name_aggression
 
 def charting_text():
     import FreeOrionAI as foAI  # avoid circular imports
