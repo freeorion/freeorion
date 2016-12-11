@@ -76,7 +76,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     foAIstate = AIstate.AIstate(aggression_input)
     aggression_trait = foAIstate.character.get_trait(Aggression)
     print "New game started, AI Aggression level %d (%s)" % (
-        aggression_trait.key, trait_name_aggression[foAIstate.character])
+        aggression_trait.key, trait_name_aggression(foAIstate.character))
     foAIstate.session_start_cleanup()
     print "Initialization of foAIstate complete!"
     print "Trying to rename our homeworld..."
@@ -84,7 +84,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
-        new_name = " ".join([random.choice(possible_capitals[foAIstate.character]).strip(), planet.name])
+        new_name = " ".join([random.choice(possible_capitals(foAIstate.character)).strip(), planet.name])
         print "    Renaming to %s..." % new_name
         res = fo.issueRenameOrder(planet_id, new_name)
         print "    Result: %d; Planet is now named %s" % (res, planet.name)
@@ -219,7 +219,7 @@ def generateOrders():  # pylint: disable=invalid-name
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, trait_name_aggression[foAIstate.character], greet))
+        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, trait_name_aggression(foAIstate.character), greet))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()

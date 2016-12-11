@@ -73,7 +73,7 @@ class DiplomaticCorp(object):
 
     @staticmethod
     def get_first_turn_greet_message():
-        greets = possible_greetings[foAI.foAIstate.character]
+        greets = possible_greetings(foAI.foAIstate.character)
         # no such entry
         if len(greets) == 1 and greets[0] == '?':
             greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")

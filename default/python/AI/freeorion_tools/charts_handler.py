@@ -15,7 +15,7 @@ def charting_text():
     planet = None
     if planet_id is not None:
         planet = universe.getPlanet(planet_id)
-    aggression_name_local = trait_name_aggression[foAI.foAIstate.character]
+    aggression_name_local = trait_name_aggressio(foAI.foAIstate.character)
 
     print ("Generating Orders")
     print ("EmpireID: {empire.empireID}"
