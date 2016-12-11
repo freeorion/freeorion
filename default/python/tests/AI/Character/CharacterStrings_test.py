@@ -1,5 +1,5 @@
-from Trait.Character import Trait, Character, Aggression
-from Trait.CharacterStrings import make_aggression_table
+from Character.Character import Trait, Character, Aggression
+from Character.CharacterStrings import make_aggression_table
 
 
 def test_make_aggression_table():

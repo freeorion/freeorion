@@ -16,7 +16,7 @@ import PlanetUtilsAI
 from freeorion_tools import dict_from_map
 from universe_object import System
 from AIDependencies import INVALID_ID
-from Trait.Character import create_character
+from Character.Character import create_character
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module

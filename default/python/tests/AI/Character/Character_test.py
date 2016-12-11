@@ -1,5 +1,5 @@
 import pytest
-from Trait.Character import Trait, Character
+from Character.Character import Trait, Character
 
 class LeftTrait(Trait):
     """A test trait"""

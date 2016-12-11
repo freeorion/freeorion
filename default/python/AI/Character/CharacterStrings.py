@@ -2,7 +2,7 @@
 CharacterStrings.py contains tables of strings indexed by the AI character
 """
 
-import Trait.Character
+import Character.Character
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
@@ -44,7 +44,7 @@ def make_aggression_table(prefix, post_process_func=None):
     """Make an aggression CharacterTable"""
     table = {key: "%s%s" % (prefix, suffix) for (key, suffix) in _aggression_label_suffix.items()}
     table[None] = "UNKNOWN_VALUE_SYMBOL"
-    return CharacterTable(Trait.Character.Aggression, table, post_process_func)
+    return CharacterTable(Character.Character.Aggression, table, post_process_func)
 
 aggression_name = make_aggression_table("GSETUP", fo.userString)
 aggression_capitals = make_aggression_table("AI_CAPITOL_NAMES", fo.userStringList)

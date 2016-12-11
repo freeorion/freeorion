@@ -4,7 +4,7 @@ import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 import AIstate
-from Trait.Character import Aggression
+from Character.Character import Aggression
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
