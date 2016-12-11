@@ -84,6 +84,7 @@ trait components to the FOCS description of a playable species.
 #
 
 
+import sys
 import abc
 from collections import Counter
 import math
@@ -567,20 +568,24 @@ for funcname in ["check_orbital_production"]:
 
 # Create combiners for traits that averages all not None results
 def average_not_none(llin):
-    ll = [x for x in llin if x != None]
+    ll = [x for x in llin if x is not None]
     if not ll:
         return 0
-    return sum(ll) / len(ll)
+    return sum(ll) / float(len(ll))
 
 for funcname in ["attitude_to_empire"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
 
 # Create combiners for traits that use the geometic mean of all not None results
 def geometric_mean_not_none(llin):
-    ll = [x for x in llin if x != None]
+    ll_not_none = [x for x in llin if x is not None]
+    ll = [x for x in ll_not_none if x > 0]
+    if len(ll_not_none) != len(ll):
+        print >> sys.stderr, ("In AI Character calculating the geometric mean of ", ll_not_none,
+                              " contains negative numbers which will be ignored.")
     if not ll:
         return 1
-    return math.exp( sum(map(math.log, ll)) / len(ll))
+    return math.exp(sum(map(math.log, ll)) / float(len(ll)))
 
 for funcname in ["warship_adjusted_production_cost_exponent"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, geometric_mean_not_none))
