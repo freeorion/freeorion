@@ -31,7 +31,7 @@ from AIDependencies import INVALID_ID
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
 from Character.Character import Aggression
-from Character.CharacterStrings import aggression_name, aggression_capitals
+from Character.CharacterStrings import trait_name_aggression, possible_capitals
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
@@ -60,7 +60,7 @@ diplomatic_corp = None
 
 
 @chat_on_error
-def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name
+def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
@@ -73,10 +73,10 @@ def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=inval
     # initialize AIstate
     global foAIstate
     print "Initializing foAIstate..."
-    foAIstate = AIstate.AIstate(_aggression)
-    aggression = foAIstate.character.get_trait(Aggression)
+    foAIstate = AIstate.AIstate(aggression_input)
+    aggression_trait = foAIstate.character.get_trait(Aggression)
     print "New game started, AI Aggression level %d (%s)" % (
-        aggression.key, aggression_name[foAIstate.character])
+        aggression_trait.key, trait_name_aggression[foAIstate.character])
     foAIstate.session_start_cleanup()
     print "Initialization of foAIstate complete!"
     print "Trying to rename our homeworld..."
@@ -84,8 +84,7 @@ def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=inval
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
-        possible_capitals = aggression_capitals[foAIstate.character]
-        new_name = " ".join([random.choice(possible_capitals).strip(), planet.name])
+        new_name = " ".join([random.choice(possible_capitals[foAIstate.character]).strip(), planet.name])
         print "    Renaming to %s..." % new_name
         res = fo.issueRenameOrder(planet_id, new_name)
         print "    Result: %d; Planet is now named %s" % (res, planet.name)
@@ -93,8 +92,7 @@ def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=inval
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(aggression.key, DiplomaticCorp.DiplomaticCorp)()
-
+    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
 
 @chat_on_error
@@ -114,11 +112,11 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate.session_start_cleanup()
         print_error("Fail to load aiState form saved game: %s" % e)
 
-    aggression = foAIstate.character.get_trait(Aggression)
+    aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(aggression.key, DiplomaticCorp.DiplomaticCorp)()
+    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
 
 
@@ -221,7 +219,7 @@ def generateOrders():  # pylint: disable=invalid-name
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, aggression_name[foAIstate.character], greet))
+        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, trait_name_aggression[foAIstate.character], greet))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()

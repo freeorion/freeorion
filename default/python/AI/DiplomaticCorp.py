@@ -4,7 +4,7 @@ import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from Character.Character import Aggression
-from Character.CharacterStrings import aggression_greetings
+from Character.CharacterStrings import possible_greetings
 from freeorion_tools import UserStringList, chat_on_error
 
 
@@ -73,7 +73,7 @@ class DiplomaticCorp(object):
 
     @staticmethod
     def get_first_turn_greet_message():
-        greets = aggression_greetings[foAI.foAIstate.character]
+        greets = possible_greetings[foAI.foAIstate.character]
         # no such entry
         if len(greets) == 1 and greets[0] == '?':
             greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
