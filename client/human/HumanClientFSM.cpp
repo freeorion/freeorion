@@ -115,6 +115,9 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
 
     ErrorLogger() << "WaitingForSPHostAck::react(const Error& msg) error: " << problem;
 
+    //Note: transit<> frees this pointer so Client() must be called before.
+    HumanClientApp& client = Client();
+
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
@@ -122,7 +125,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
 
     if (fatal) {
         ClientUI::MessageBox(UserString(problem), true);
-        Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        client.GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
 
     return retval;
@@ -156,6 +159,9 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
 
     ErrorLogger() << "WaitingForMPHostAck::react(const Error& msg) error: " << problem;
 
+    //Note: transit<> frees this pointer so Client() must be called before.
+    HumanClientApp& client = Client();
+
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
@@ -163,7 +169,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
 
     if (fatal) {
         ClientUI::MessageBox(UserString(problem), true);
-        Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        client.GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
 
     return retval;
@@ -196,6 +202,9 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
 
     ErrorLogger() << "WaitingForMPJoinAck::react(const Error& msg) error: " << problem;
 
+    //Note: transit<> frees this pointer so Client() must be called before.
+    HumanClientApp& client = Client();
+
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
@@ -203,7 +212,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
 
     if (fatal) {
         ClientUI::MessageBox(UserString(problem), true);
-        Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        client.GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
 
     return retval;
@@ -453,6 +462,9 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" <<(fatal ? "":"non-")<<" fatal";
 
+    //Note: transit<> frees this pointer so Client() must be called before.
+    HumanClientApp& client = Client();
+
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
@@ -461,7 +473,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
 
     if (fatal) {
         ClientUI::MessageBox(UserString(problem), true);
-        Client().EndGame(true);
+        client.EndGame(true);
     }
     return retval;
 }
