@@ -1689,10 +1689,13 @@ class MilitaryShipDesigner(WarShipDesigner):
                 h = self.hull.structure
                 ch = Cache.production_cost[self.pid].get(self.hull.name,
                                                          self.hull.productionCost(fo.empireID(), self.pid))
-                p1 = a*s*ca + a*ch
-                p2 = math.sqrt(a * (ca*s + ch) * (a*s*cw+a*ch+h*cw-h*ca))
-                p3 = a*(ca-cw)
-                n = max((p1+p2)/p3, (p1-p2)/p3)
+                if ca == cw:
+                    n = (s+h/a)/2
+                else:
+                    p1 = a*s*ca + a*ch
+                    p2 = math.sqrt(a * (ca*s + ch) * (a*s*cw+a*ch+h*cw-h*ca))
+                    p3 = a*(ca-cw)
+                    n = max((p1+p2)/p3, (p1-p2)/p3)
                 n = int(round(n))
                 n = max(n, 1)
                 n = min(n, s)
