@@ -567,7 +567,9 @@ for funcname in ["check_orbital_production"]:
 
 # Create combiners for traits that averages all not None results
 def average_not_none(llin):
-    ll = [x for x in llin if x]
+    ll = [x for x in llin if x != None]
+    if not ll:
+        return 0
     return sum(ll) / len(ll)
 
 for funcname in ["attitude_to_empire"]:
@@ -575,7 +577,7 @@ for funcname in ["attitude_to_empire"]:
 
 # Create combiners for traits that use the geometic mean of all not None results
 def geometric_mean_not_none(llin):
-    ll = [x for x in llin if x]
+    ll = [x for x in llin if x != None]
     if not ll:
         return 1
     return math.exp( sum(map(math.log, ll)) / len(ll))
