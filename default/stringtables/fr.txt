@@ -1327,67 +1327,67 @@ OPTIONS_DB_UI_TITLE_FONT_SIZE
 Fixe la taille des caractères des titres de l'interface utilisateur.
 
 OPTIONS_DB_UI_WND_COLOR
-Fixe la couleur des fenêtres de l'interface utilisateur.
+Définit la couleur des fenêtres de l'interface utilisateur.
 
 OPTIONS_DB_UI_TEXT_COLOR
-Fixe la couleur du texte de l'interface utilisateur.
+Définit la couleur du texte de l'interface utilisateur.
 
 OPTIONS_DB_UI_DEFAULT_LINK_COLOR
-Fixe la couleur des liens de l'interface utilisateur.
+Définit la couleur des liens de l'interface utilisateur.
 
 OPTIONS_DB_UI_ROLLOVER_LINK_COLOR
-Fixe la couleur des liens de l'interface utilisateur lorsque survolés par le curseur.
+Définit la couleur des liens de l'interface utilisateur lorsque survolés par le curseur.
 
 OPTIONS_DB_UI_CTRL_COLOR
-Fixe la couleur des contrôles de l'interface utilisateur.
+Définit la couleur des contrôles de l'interface utilisateur.
 
 OPTIONS_DB_UI_CTRL_BORDER_COLOR
-Fixee la couleur des bords des contrôles de l'interface utilisateur.
+Définit la couleur des bords des contrôles de l'interface utilisateur.
 
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
-Fixe la couleur des boutons d'état de l'interface utilisateur.
+Définit la couleur des boutons d'état de l'interface utilisateur.
 
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
-Fixe la couleur de la flèche de liste déroulante de l'interface utilisateur.
+Définit la couleur de la flèche de liste déroulante de l'interface utilisateur.
 
 OPTIONS_DB_UI_EDIT_HILITE
-Fixe la couleur des contrôles d'édition de l'interface mis en surbrillance.
+Définit la couleur des contrôles d'édition de l'interface mis en surbrillance.
 
 OPTIONS_DB_UI_STAT_INCREASE_COLOR
-Fixe la couleur des indicateurs positifs de l'interface utilisateur.
+Définit la couleur des indicateurs positifs de l'interface utilisateur.
 
 OPTIONS_DB_UI_STAT_DECREASE_COLOR
-Fixe la couleur des indicateurs négatifs de l'interface utilisateur.
+Définit la couleur des indicateurs négatifs de l'interface utilisateur.
 
 OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
-Fixe la couleur de la bordure extérieure de la fenêtre de l'interface utilisateur.
+Définit la couleur de la bordure extérieure de la fenêtre de l'interface utilisateur.
 
 OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
-Fixe la couleur de la bordure intérieure de la fenêtre de l'interface utilisateur.
+Définit la couleur de la bordure intérieure de la fenêtre de l'interface utilisateur.
 
 OPTIONS_DB_UI_KNOWN_TECH
-Fixe, dans l'arbre des technologies, la couleur de fond des technologies connues de l'empire.
+Définit, dans l'arbre des technologies, la couleur de fond des technologies connues de l'empire.
 
 OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Fixe, dans l'arbre des technologies, la couleur du texte et de la bordure des technologies connues de l'empire.
+Définit, dans l'arbre des technologies, la couleur du texte et de la bordure des technologies connues de l'empire.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH
-Fixe, dans l'arbre des technologies, la couleur de fond des technologies accessibles à la recherche.
+Définit, dans l'arbre des technologies, la couleur de fond des technologies accessibles à la recherche.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
-Fixe, dans l'arbre des technologies, la couleur du texte et de la bordure des technologies accessibles à la recherche.
+Définit, dans l'arbre des technologies, la couleur du texte et de la bordure des technologies accessibles à la recherche.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH
-Fixe, dans l'arbre des technologies, la couleur de fond des technologies encore inaccessibles à la recherche.
+Définit, dans l'arbre des technologies, la couleur de fond des technologies encore inaccessibles à la recherche.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
-Fixe, dans l'arbre des technologies, la couleur du texte et de la bordure des technologies encore inaccessibles à la recherche.
+Définit, dans l'arbre des technologies, la couleur du texte et de la bordure des technologies encore inaccessibles à la recherche.
 
 OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
-Fixe la couleur de fond des barres de progression dans l'arbre des technologies.
+Définit la couleur de fond des barres de progression dans l'arbre des technologies.
 
 OPTIONS_DB_UI_TECH_PROGRESS
-Fixe la couleur des barres de progression dans l'arbre des technologies.
+Définit la couleur des barres de progression dans l'arbre des technologies.
 
 OPTIONS_DB_UI_SCROLL_WIDTH
 Fixe la largeur du défilement de l'interface.
@@ -1399,7 +1399,16 @@ OPTIONS_DB_UI_SYSTEM_FOG
 Affiche/Cache sur la carte galactique le brouillard de guerre (rayures horizontales) sur les icônes des systèmes stellaires hors de portée des détecteurs de l'empire.
 
 OPTIONS_DB_UI_SYSTEM_FOG_SPACING
-Fixe l'espacement, en pixels, des rayures horizontales sur les icônes de système de la carte galactique.
+Fixe l'espacement, en pixels, des rayures horizontales (brouillard de guerre) sur les icônes de systèmes non-visibles.
+
+OPTIONS_DB_UI_SYSTEM_FOG_CLR
+Définit la couleur des rayures horizontales (brouillard de guerre) sur les icônes de systèmes non-visibles.
+
+OPTIONS_DB_UI_FIELD_FOG_CLR
+Définit la couleur des rayures horizontales (brouillard de guerre) sur les icônes de régions non-visibles.
+
+OPTIONS_DB_UI_PLANET_FOG_CLR
+Définit la couleur des rayures horizontales (brouillard de guerre) sur les planètes non-visibles dans le panneau latéral.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Affiche/Cache sur la carte galactique les cercles entourant les icônes de systèmes stellaires.
@@ -1411,7 +1420,7 @@ OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
 Affiche un calque différent de survol de souris pour les systèmes encore non-explorés par l'empire du joueur.
 
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
-Fixe la couleur sur la carte galactique des noms des systèmes stellaires qu'aucun empire ne contrôle.
+Définit la couleur sur la carte galactique des noms des systèmes stellaires qu'aucun empire ne contrôle.
 
 OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Fixe le niveau minimal de zoom auquel les icônes des flottes moyennes apparaissent sur la carte galactique.
@@ -1424,6 +1433,9 @@ Fixe le niveau minimal de zoom auquel les icônes des flottes minuscules apparai
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de flottes sélectionnées, relativement à celle de ces dernières.
+
+OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR
+Définit la couleur des rayures horizontales (brouillard de guerre) sur les astronefs/flottes non-visibles dans la Fenêtre Flottes.
 
 OPTIONS_DB_SHOW_FLEET_ETA
 Afficher l'ETA d'une flotte (pour les flottes en mouvement) dans la Fenêtre Flottes.
@@ -9853,6 +9865,36 @@ Bombardement
 SHP_BOMBARD_DESC
 Permet le développement d'armes de bombardement planétaire.
 
+##Fighter explanation, needs improving and a Pedia article writing
+SHP_FIGHTERS_1
+Chasseurs et Rampes de Lancement
+
+SHP_FIGHTERS_1_DESC
+'''Permet à l'empire de produire des astronefs intégrant des Hangars à Chasseurs et des Rampes de Lancement. Un astronef ne peut abriter qu'un seul type de Hangar, mais cependant autant que le permet le nombre de [[encyclopedia SLOT_TITLE]]s disponibles. Chaque Hangar dispose d'une capacité maximale de chasseurs et ces derniers auront tous la même Puissance (pouvant être modifiée selon l'espèce les contrôlant et en procédant à des recherches plus avancées dans le domaine). 
+
+Une Rampe de Lancement peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat, ces chasseurs devenant des cibles valides mais pouvant attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier, tandis que les [[encyclopedia DAMAGE_TITLE]] infligés par un chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs font feu une fois à l'intérieur de la zone de protection d'un bouclier).
+
+Au terme d'un combat, les astronefs transporteurs récupèreront automatiquement les chasseurs non-détruits. Si un transporteur est stationnaire dans une zone d'[[metertype METER_SUPPLY]], ses hangars seront rééquipés à leur capacité maximale.'''
+
+SHP_FIGHTERS_2
+Chasseurs Laser
+
+SHP_FIGHTERS_2_DESC
+'''Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 2 pour un [[shippart FT_HANGAR_2]] et de 3 pour un [[shippart FT_HANGAR_3]]'''
+
+
+SHP_FIGHTERS_3
+Chasseurs Plasma
+
+SHP_FIGHTERS_3_DESC
+'''Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 3 pour un [[shippart FT_HANGAR_2]] et de 4 pour un [[shippart FT_HANGAR_3]]'''
+
+SHP_FIGHTERS_4
+Chasseurs Gamma
+
+SHP_FIGHTERS_4_DESC
+'''Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 5 pour un [[shippart FT_HANGAR_2]] et de 7 pour un [[shippart FT_HANGAR_3]]'''
+
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
 
@@ -11113,19 +11155,19 @@ FT_HANGAR_0_DESC
 Système de stockage pour vaisseau leurre non-armé.
 
 FT_HANGAR_1
-Hangar 1
+Hangar Intercepteur
 
 FT_HANGAR_1_DESC
 Système de stockage pour chasseurs faiblement armés.
 
 FT_HANGAR_2
-Hangar 2
+Hangar Chasseur
 
 FT_HANGAR_2_DESC
 Système de stockage pour chasseurs moyennement armés.
 
 FT_HANGAR_3
-Hangar 3
+Hangar Bombardier
 
 FT_HANGAR_3_DESC
 Système de stockage pour chasseurs correctement armés.
