@@ -1409,7 +1409,7 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
     empire = fo.getEmpire()
     total_pp = empire.productionPoints
     __, prereq_bldg, this_cost, time = AIDependencies.SHIP_FACILITIES.get(bld_name, (None, '', -1, -1))
-    if foAI.foAIstate.character.may_build_building(bld_name):
+    if not foAI.foAIstate.character.may_build_building(bld_name):
         return
     bld_type = fo.getBuildingType(bld_name)
     if not empire.buildingTypeAvailable(bld_name):

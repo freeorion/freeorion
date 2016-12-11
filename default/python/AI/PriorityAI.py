@@ -285,13 +285,14 @@ def _calculate_outpost_priority():
         return 0.0
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
 
-    not_sparce, enemy_unseen = 0, 0
-    is_sparce, enemy_seen = 1, 1
-    allotted_portion = {(not_sparce, enemy_unseen): (0.6, 0.8),
-                        (not_sparce, enemy_seen): (0.3, 0.4),
-                        (is_sparce, enemy_unseen): (0.8, 0.9),
-                        (is_sparce, enemy_seen): (0.3, 0.4), }[
-        (galaxy_is_sparse, any(enemies_sighted))]
+    not_sparse, enemy_unseen = 0, 0
+    is_sparse, enemy_seen = 1, 1
+    allotted_portion = {
+        (not_sparse, enemy_unseen): (0.6, 0.8),
+        (not_sparse, enemy_seen): (0.3, 0.4),
+        (is_sparse, enemy_unseen): (0.8, 0.9),
+        (is_sparse, enemy_seen): (0.3, 0.4),
+    }[(galaxy_is_sparse, any(enemies_sighted))]
     allotted_portion = foAI.foAIstate.character.preferred_outpost_portion(allotted_portion)
     if mil_prio < 100:
         allotted_portion *= 2

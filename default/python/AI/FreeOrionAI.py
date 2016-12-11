@@ -95,6 +95,7 @@ def startNewGame(_aggression=fo.aggression.aggressive):  # pylint: disable=inval
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(aggression.key, DiplomaticCorp.DiplomaticCorp)()
 
+    TechsListsAI.test_tech_integrity()
 
 @chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name

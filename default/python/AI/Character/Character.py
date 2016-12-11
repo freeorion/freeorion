@@ -512,12 +512,12 @@ class EmpireIDTrait(Trait):
 
 class Character(Trait):
     """
-    A collection of behaviours.
+    A collection of traits.
 
     For each query that Trait supports a Character queries
     all of its own traits to determine if an action is permissible or prefered.
     """
-
+    # See Note below: Algorithmic Completion of Character class.
     def __init__(self, traits):
         self.traits = traits
         if not all([isinstance(x, Trait) for x in traits]):
@@ -529,6 +529,7 @@ class Character(Trait):
         return trait[0] if trait else Trait()
 
 
+# Note: Algorithmic Completion of Character class.
 # Complete the Character class by adding all of the combiners to combine the outputs of the
 # individual traits.  Character tries to combine results in the way most limiting to the AI
 
