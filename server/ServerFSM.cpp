@@ -356,7 +356,7 @@ MPLobby::MPLobby(my_context c) :
     PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
     player_setup_data.m_player_name =           player_connection->PlayerName();
-    player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(m_lobby_data->m_players);
     player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
     // leaving save game empire id as default
@@ -478,7 +478,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     PlayerSetupData player_setup_data;
     player_setup_data.m_player_name =           player_name;
     player_setup_data.m_client_type =           client_type;
-    player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_name =           (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(m_lobby_data->m_players);
     player_setup_data.m_empire_color =          GetUnusedEmpireColour(m_lobby_data->m_players);
     if (m_lobby_data->m_seed!="")
         player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
@@ -646,7 +646,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_player_name.empty())
                 psd.m_player_name = UserString("PLAYER") + "_" + boost::lexical_cast<std::string>(nameless_player_count++);
             if (psd.m_empire_name.empty())
-                psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
+                psd.m_empire_name = psd.m_player_name;
             if (psd.m_starting_species_name.empty())
                 psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
         }
