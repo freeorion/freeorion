@@ -86,6 +86,7 @@ trait components to the FOCS description of a playable species.
 
 import abc
 from collections import Counter
+import math
 import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -569,9 +570,18 @@ def average_not_none(llin):
     ll = [x for x in llin if x]
     return sum(ll) / len(ll)
 
-for funcname in ["attitude_to_empire", "warship_adjusted_production_cost_exponent"]:
+for funcname in ["attitude_to_empire"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
 
+# Create combiners for traits that use the geometic mean of all not None results
+def geometric_mean_not_none(llin):
+    ll = [x for x in llin if x]
+    if not ll:
+        return 1
+    return math.exp( sum(map(math.log, ll)) / len(ll))
+
+for funcname in ["warship_adjusted_production_cost_exponent"]:
+    setattr(Character, funcname, _make_single_function_combiner(funcname, geometric_mean_not_none))
 
 def _make_most_preferred_combiner(funcnamei):
     """Make a combiner that runs the preference function for each trait and
