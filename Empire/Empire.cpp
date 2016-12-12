@@ -86,23 +86,23 @@ namespace {
 
         item_cost *= queue_element.blocksize;
         build_turns = std::max(build_turns, 1);
-        float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards producing  next item
-        float element_total_cost = item_cost * queue_element.remaining;                        // total PP to produce all items in this element
-        float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce all items in this element
-        float additional_pp_to_complete_item = item_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce the current item of this element
+        float element_accumulated_PP = queue_element.progress*item_cost;                        // effective PP accumulated by this element towards producing next item. progress is a fraction between 0 and 1.
+        float element_total_cost = item_cost * queue_element.remaining;                         // total PP to produce all items in this element
+        float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP;  // additional PP, beyond already-accumulated PP, to produce all items in this element
+        float additional_pp_to_complete_item = item_cost - element_accumulated_PP;              // additional PP, beyond already-accumulated PP, to produce the current item of this element
         float basic_element_per_turn_limit = item_cost / build_turns;
         // the extra constraints on frontload and topping up amounts ensure that won't let complete in less than build_turns (so long as costs do not decrease)
         float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) * basic_element_per_turn_limit  - 2 * EPSILON;
         float topping_up_limit = basic_element_per_turn_limit + std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
         float topping_up = (additional_pp_to_complete_item < topping_up_limit) ? additional_pp_to_complete_item : basic_element_per_turn_limit;
-        float returnval = std::min(additional_pp_to_complete_element, std::max(basic_element_per_turn_limit, std::max(frontload, topping_up)));
+        float retval = std::min(additional_pp_to_complete_element, std::max(basic_element_per_turn_limit, std::max(frontload, topping_up)));
         //DebugLogger() << "CalculateProductionPerTurnLimit for item " << queue_element.item.build_type << " " << queue_element.item.name 
         //              << " " << queue_element.item.design_id << " :  accumPP: " << element_accumulated_PP << " pp_to_complete_elem: "
         //              << additional_pp_to_complete_element << " pp_to_complete_item: " << additional_pp_to_complete_item 
         //              <<  " basic_element_per_turn_limit: " << basic_element_per_turn_limit << " frontload: " << frontload
-        //              << " topping_up_limit: " << topping_up_limit << " topping_up: " << topping_up << " returnval: " << returnval;
+        //              << " topping_up_limit: " << topping_up_limit << " topping_up: " << topping_up << " retval: " << retval;
 
-        return returnval;
+        return retval;
     }
 
 
@@ -142,8 +142,9 @@ namespace {
 
             if (researchable && !elem.paused) {
                 std::map<std::string, float>::const_iterator progress_it = research_progress.find(elem.name);
-                float progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
-                float RPs_needed = tech->ResearchCost(empire_id) - progress;
+                float tech_cost = tech->ResearchCost(empire_id);
+                float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
+                float RPs_needed = tech->ResearchCost(empire_id) - progress*tech_cost;
                 float RPs_per_turn_limit = tech->PerTurnCost(empire_id);
                 float RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
 
@@ -461,49 +462,50 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         }
     }
 
-    int dpturns = 0;
+    int dp_turns = 0;
     //pp_still_available[turn-1] gives the RP still available in this resource pool at turn "turn"
     std::vector<float> rp_still_available(DP_TURNS, RPs);  // initialize to the  full RP allocation for every turn
 
-    while ((dpturns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
-        ++dpturns;
+    while ((dp_turns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
+        ++dp_turns;
         std::map<int, bool> already_processed;
         for (int tech_id : dp_researchable_techs) {
             already_processed[tech_id] = false;
         }
         std::set<int>::iterator cur_tech_it = dp_researchable_techs.begin();
-        while ((rp_still_available[dpturns-1] > EPSILON)) { // try to use up this turns RPs
+        while ((rp_still_available[dp_turns-1] > EPSILON)) { // try to use up this turns RPs
             if (cur_tech_it == dp_researchable_techs.end()) {
                 break; //will be wasting some RP this turn
             }
-            int curTech = *cur_tech_it;
-            if (already_processed[curTech]) {
+            int cur_tech = *cur_tech_it;
+            if (already_processed[cur_tech]) {
                 ++cur_tech_it;
                 continue;
             }
-            already_processed[curTech] = true;
-            const std::string& tech_name = m_queue[curTech].name;
+            already_processed[cur_tech] = true;
+            const std::string& tech_name = m_queue[cur_tech].name;
             const Tech* tech = GetTech(tech_name);
-            float progress = dpsim_research_progress[curTech];
-            float RPs_needed = tech ? tech->ResearchCost(m_empire_id) - progress : 0.0f;
+            float progress = dpsim_research_progress[cur_tech];
+            float tech_cost = tech->ResearchCost(m_empire_id);
+            float RPs_needed = tech ? tech_cost * (1.0f - std::min(progress, 1.0f)) : 0.0f;
             float RPs_per_turn_limit = tech ? tech->PerTurnCost(m_empire_id) : 1.0f;
-            float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dpturns-1]);
-            progress += RPs_to_spend;
-            dpsim_research_progress[curTech] = progress;
-            rp_still_available[dpturns-1] -= RPs_to_spend;
-            std::set<int>::iterator nextResTechIt = cur_tech_it;
+            float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dp_turns-1]);
+            progress += RPs_to_spend / std::max(EPSILON, tech_cost);
+            dpsim_research_progress[cur_tech] = progress;
+            rp_still_available[dp_turns-1] -= RPs_to_spend;
+            std::set<int>::iterator next_res_tech_it = cur_tech_it;
             int next_res_tech_idx;
-            if (++nextResTechIt == dp_researchable_techs.end()) {
+            if (++next_res_tech_it == dp_researchable_techs.end()) {
                 next_res_tech_idx = m_queue.size()+1;
             } else {
-                next_res_tech_idx = *(nextResTechIt);
+                next_res_tech_idx = *(next_res_tech_it);
             }
-            float tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0f;
-            if (tech_cost - EPSILON <= progress) {
+
+            if (tech_cost - EPSILON <= progress * tech_cost) {
                 dpsim_tech_status_map[tech_name] = TS_COMPLETE;
-                dpsimulation_results[curTech] = dpturns;
+                dpsimulation_results[cur_tech] = dp_turns;
 #ifndef ORIG_RES_SIMULATOR
-                m_queue[curTech].turns_left = dpturns;
+                m_queue[cur_tech].turns_left = dp_turns;
 #endif
                 dp_researchable_techs.erase(cur_tech_it);
                 std::set<std::string> unlocked_techs;
@@ -515,12 +517,12 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                         std::set<std::string> &these_prereqs = prereq_tech_it->second;
                         std::set<std::string>::iterator just_finished_it = these_prereqs.find(tech_name);
                         if (just_finished_it != these_prereqs.end() ) {  //should always find it
-                            these_prereqs.erase( just_finished_it );
+                            these_prereqs.erase(just_finished_it);
                             if (these_prereqs.empty()) { // tech now fully unlocked
                                 int this_tech_idx = orig_queue_order[u_tech_name];
                                 dp_researchable_techs.insert(this_tech_idx);
                                 waiting_for_prereqs.erase(prereq_tech_it);
-                                already_processed[ this_tech_idx ] = true;//doesn't get any allocation on current turn
+                                already_processed[this_tech_idx] = true;    //doesn't get any allocation on current turn
                                 if (this_tech_idx < next_res_tech_idx ) {
                                     next_res_tech_idx = this_tech_idx;
                                 }
@@ -532,12 +534,12 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                       //  DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
                       //}
                 }
-            }// if (tech->ResearchCost() - EPSILON <= progress)
+            }// if (tech->ResearchCost() - EPSILON <= progress * tech_cost)
             cur_tech_it = dp_researchable_techs.find(next_res_tech_idx);
-        }//while ((rp_still_available[dpturns-1]> EPSILON))
+        }//while ((rp_still_available[dp_turns-1]> EPSILON))
         //dp_time = dpsim_queue_timer.elapsed() * 1000;
         // DebugLogger() << "ProductionQueue::Update queue dynamic programming sim time: " << dpsim_queue_timer.elapsed() * 1000.0;
-    } // while ((dpturns < DP_TURNS ) && !(dp_researchable_techs.empty() ) )
+    } // while ((dp_turns < DP_TURNS ) && !(dp_researchable_techs.empty() ) )
 
     ResearchQueueChangedSignal();
 }
@@ -773,9 +775,9 @@ ProductionQueue::Element::Element() :
     blocksize(1),
     remaining(0),
     location(INVALID_OBJECT_ID),
-    allocated_pp(0.0),
-    progress(0.0),
-    progress_memory(0.0),
+    allocated_pp(0.0f),
+    progress(0.0f),
+    progress_memory(0.0f),
     blocksize_memory(1),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1),
@@ -1157,8 +1159,8 @@ void ProductionQueue::Update() {
             boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             float total_item_cost = item_cost * element.blocksize;
 
-            float additional_pp_to_complete_element = total_item_cost * element.remaining - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
-            //DebugLogger()  << " element total cost: "<<element_total_cost<<"; progress: "<<element.progress;
+            float additional_pp_to_complete_element = total_item_cost * element.remaining - element.progress*total_item_cost; // additional PP, beyond already-accumulated PP, to build all items in this element
+            //DebugLogger()  << " element total cost: " << element_total_cost << "; progress: " << element.progress;
             if (additional_pp_to_complete_element < EPSILON) {
                 //DebugLogger()  << "     will complete next turn";
                 m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = 1;
@@ -1188,10 +1190,10 @@ void ProductionQueue::Update() {
                 //DebugLogger()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<pp_still_available[first_turn_pp_available+j-1];
                 element_this_turn_limit = CalculateProductionPerTurnLimit(element, item_cost, build_turns);
                 allocation = std::max(0.0f, std::min(element_this_turn_limit, pp_still_available[first_turn_pp_available+j-1]));
-                element.progress += allocation;   // add turn's allocation
+                element.progress += allocation / std::max(EPSILON, total_item_cost);    // add turn's allocation
                 additional_pp_to_complete_element -= allocation;
-                float item_cost_remaining = total_item_cost - element.progress;
-                //DebugLogger()  << "     allocation: " << allocation << "; new progress: "<< element.progress<< " with " << item_cost_remaining <<" remaining";
+                float item_cost_remaining = total_item_cost - element.progress*total_item_cost;
+                //DebugLogger()  << "     allocation: " << allocation << "; new progress: "<< element.progress << " with " << item_cost_remaining << " remaining";
                 pp_still_available[first_turn_pp_available+j-1] -= allocation;
                 if (pp_still_available[first_turn_pp_available+j-1] <= 0 ) {
                     pp_still_available[first_turn_pp_available+j-1] = 0;
@@ -1205,7 +1207,7 @@ void ProductionQueue::Update() {
                     // deduct cost of one item from accumulated PP.  don't set
                     // accumulation to zero, as this would eliminate any partial
                     // completion of the next item
-                    element.progress = std::max(0.0f, element.progress-total_item_cost);
+                    element.progress = std::max(0.0f, (element.progress*total_item_cost - total_item_cost) / std::max(EPSILON, total_item_cost));
                     --element.remaining;  //pretty sure this just effects the dp version & should do even if also doing ORIG_SIMULATOR
 
                     //DebugLogger() << "ProductionQueue::Recording DP sim results for item " << element.item.name;
@@ -2318,7 +2320,7 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
         return; // can't affect already-researched tech
 
     // set progress
-    float clamped_progress = std::min(tech->ResearchCost(m_id), std::max(EPSILON, progress));
+    float clamped_progress = std::min(1.0f, std::max(0.0f, progress));
     m_research_progress[name] = clamped_progress;
 
     // if tech is complete, ensure it is on the queue, so it will be researched next turn
@@ -2514,9 +2516,9 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
                 } else if (result == CR_CAPTURE) {
                     if (to_empire) {
                         // item removed from current queue, added to conquerer's queue
-                        ProductionQueue::Element build(item, empire_id, elem.ordered, elem.remaining, location_id);
-                        build.progress=elem.progress;
-                        to_empire->m_production_queue.push_back(build);
+                        ProductionQueue::Element new_elem(item, empire_id, elem.ordered, elem.remaining, location_id);
+                        new_elem.progress = elem.progress;
+                        to_empire->m_production_queue.push_back(new_elem);
 
                         queue_it = queue.erase(queue_it);
                     } else {
@@ -2810,8 +2812,9 @@ void Empire::CheckResearchProgress() {
             continue;
         }
         float& progress = m_research_progress[elem.name];
-        progress += elem.allocated_rp;
-        if (tech->ResearchCost(m_id) - EPSILON <= progress)
+        float tech_cost = tech->ResearchCost(m_id);
+        progress += elem.allocated_rp / std::max(EPSILON, tech_cost);
+        if (tech->ResearchCost(m_id) - EPSILON <= progress * tech_cost)
             AddTech(elem.name);
         if (GetTechStatus(elem.name) == TS_COMPLETE) {
             m_research_progress.erase(elem.name);
@@ -2883,7 +2886,7 @@ void Empire::CheckProductionProgress() {
         }
 
         item_cost *= elem.blocksize;
-        elem.progress += elem.allocated_pp;   // add allocated PP to queue item
+        elem.progress += elem.allocated_pp / std::max(EPSILON, item_cost);  // add progress for allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
 
@@ -2924,7 +2927,7 @@ void Empire::CheckProductionProgress() {
 
 
         // only if accumulated PP is sufficient, the item can be completed
-        if (item_cost - EPSILON > elem.progress)
+        if (item_cost - EPSILON > elem.progress*item_cost)
             continue;
 
 
@@ -2960,11 +2963,15 @@ void Empire::CheckProductionProgress() {
             continue;
 
 
-        // deduct cost of complete item from progress, so that next
-        // repetition can continue accumulating PP, but don't set progress
-        // to 0, as this way overflow PP allocated this turn can be used
-        // for the next repetition of the item.
-        elem.progress -= item_cost;
+        // deduct progress for complete item from accumulated progress, so that next
+        // repetition can continue accumulating PP, but don't set progress to 0, as
+        // this way overflow progress / PP allocated this turn can be used for the
+        // next repetition of the item.
+        elem.progress -= 1.0f;
+        if (elem.progress < 0.0f) {
+            ErrorLogger() << "Somehow got negative progress after deducting progress for completed item...";
+            elem.progress = 0.0f;
+        }
 
         elem.progress_memory = elem.progress;
         DebugLogger() << "Completed an item: " << elem.item.name;
