@@ -31,7 +31,7 @@ from AIDependencies import INVALID_ID
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
-from character.character_strings_module import trait_name_aggression, possible_capitals
+from character.character_strings_module import get_trait_name_aggression, possible_capitals
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
@@ -76,7 +76,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     foAIstate = AIstate.AIstate(aggression_input)
     aggression_trait = foAIstate.character.get_trait(Aggression)
     print "New game started, AI Aggression level %d (%s)" % (
-        aggression_trait.key, trait_name_aggression(foAIstate.character))
+        aggression_trait.key, get_trait_name_aggression(foAIstate.character))
     foAIstate.session_start_cleanup()
     print "Initialization of foAIstate complete!"
     print "Trying to rename our homeworld..."
@@ -219,7 +219,7 @@ def generateOrders():  # pylint: disable=invalid-name
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, trait_name_aggression(foAIstate.character), greet))
+        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()

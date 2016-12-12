@@ -49,6 +49,6 @@ def make_aggression_based_table(prefix, post_process_func=None):
     table[None] = "UNKNOWN_VALUE_SYMBOL"
     return CharacterTableFunction(character_package.character_module.Aggression, table, post_process_func)
 
-trait_name_aggression = make_aggression_based_table("GSETUP", fo.userString)
+get_trait_name_aggression = make_aggression_based_table("GSETUP", fo.userString)
 possible_capitals = make_aggression_based_table("AI_CAPITOL_NAMES", fo.userStringList)
 possible_greetings = make_aggression_based_table("AI_FIRST_TURN_GREETING_LIST", fo.userStringList)

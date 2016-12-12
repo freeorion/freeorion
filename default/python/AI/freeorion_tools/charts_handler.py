@@ -5,7 +5,7 @@ Do not modify output because charting code is relay on it.
 import freeOrionAIInterface as fo
 from PlanetUtilsAI import get_capital
 from ResearchAI import get_research_index
-from character.character_strings_module import trait_name_aggression
+from character.character_strings_module import get_trait_name_aggression
 
 def charting_text():
     import FreeOrionAI as foAI  # avoid circular imports
@@ -15,7 +15,7 @@ def charting_text():
     planet = None
     if planet_id is not None:
         planet = universe.getPlanet(planet_id)
-    aggression_name_local = trait_name_aggressio(foAI.foAIstate.character)
+    aggression_name_local = get_trait_name_aggression(foAI.foAIstate.character)
 
     print ("Generating Orders")
     print ("EmpireID: {empire.empireID}"
