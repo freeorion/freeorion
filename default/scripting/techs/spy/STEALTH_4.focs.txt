@@ -14,10 +14,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy empire = Source.Owner
-                Or [
-                    Planet
-                    System
-                ]
+                Planet
             ]
             effects = [
                 AddSpecial name = "VOID_SLAVE_SPECIAL"

@@ -10,10 +10,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy empire = Source.Owner
-                Or [
-                    Planet
-                    System
-                ]
+                Planet
             ]
             activation = Not OwnerHasTech name = "SPY_STEALTH_4"
             effects = [
