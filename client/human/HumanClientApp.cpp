@@ -802,8 +802,7 @@ float HumanClientApp::GLVersion() const
 void HumanClientApp::StartTurn() {
     DebugLogger() << "HumanClientApp::StartTurn";
 
-    const Empire *empire = GetEmpire(EmpireID());
-    if (empire) {
+    if (const Empire* empire = GetEmpire(EmpireID())) {
         double RP = empire->ResourceOutput(RE_RESEARCH);
         double PP = empire->ResourceOutput(RE_INDUSTRY);
         int turn_number = CurrentTurn();

@@ -259,7 +259,7 @@ bool BuildingType::ProductionCostTimeLocationInvariant() const {
 
 float BuildingType::ProductionCost(int empire_id, int location_id) const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION || !m_production_cost) {
-        return 1.0;
+        return 1.0f;
     } else {
         if (m_production_cost && m_production_cost->ConstantExpr())
             return m_production_cost->Eval();
