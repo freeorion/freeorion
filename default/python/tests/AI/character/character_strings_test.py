@@ -1,5 +1,5 @@
 from character.character_module import Trait, Character, Aggression
-from character.character_strings_module import make_aggression_based_table
+from character.character_strings_module import make_aggression_based_table, get_trait_name_aggression
 
 
 def test_make_aggression_based_table():
@@ -24,3 +24,15 @@ def test_make_aggression_based_table_no_post_func():
 
     character = Character([Aggression(0)])
     assert table(character) == "prefix_BEGINNER"
+
+class UnknownTrait(Trait):
+    pass
+
+def test_get_trait_name_aggression():
+    """Check that asking for an unknown trait returns None"""
+
+    character = Character([Aggression(1)])
+    assert get_trait_name_aggression(character) == "UserString GSETUP_TURTLE"
+
+    nonaggressive_character = Character([UnknownTrait()])
+    assert get_trait_name_aggression(nonaggressive_character) == "UserString UNKNOWN_VALUE_SYMBOL"
