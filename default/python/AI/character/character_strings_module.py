@@ -1,5 +1,25 @@
 """
-character_strings_module.py contains tables of strings indexed by the AI character
+character_strings_module.py produces strings and lists of strings based on
+Character for communicating with players and devs.
+
+There are two types of public functions: functions that provide a readable name
+of the level/type of a trait and functions that provide a list of strings to be
+used as responses in the UI.
+
+The functions of the type get_trait_name_X(character) return a user string
+describing the nature of the trait X if the character has that trait or None if
+the character does not have that trait.
+
+For example:
+get_trait_name_aggression(Character([Aggression(1), EmpireID(0,0)]])) returns "Turtle"
+while
+get_trait_name_aggression(Character([EmpireID(0,0)])) returns None
+
+The functions of the type possible_X(character) return a list of strings based
+on character suitable for the UI.
+
+For example:
+possible_capitals(Character([Aggression(0)])) returns ['Royal', 'Imperial'].
 """
 
 import character as character_package
