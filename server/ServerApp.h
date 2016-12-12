@@ -171,6 +171,9 @@ public:
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
 
+    /** Send the requested combat logs to the client.*/
+    void UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection);
+
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
     Universe&                   GetUniverse();    ///< returns server's copy of Universe
     EmpireManager&              Empires();        ///< returns the server's copy of the Empires

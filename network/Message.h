@@ -85,7 +85,9 @@ public:
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
         SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
         REQUEST_SAVE_PREVIEWS,  ///< sent by client to request previews of available savegames
-        DISPATCH_SAVE_PREVIEWS  ///< sent by host to client to provide the savegame previews
+        DISPATCH_SAVE_PREVIEWS,  ///< sent by host to client to provide the savegame previews
+        REQUEST_COMBAT_LOGS,  ///< sent by client to request combat logs
+        DISPATCH_COMBAT_LOGS  ///< sent by host to client to provide combat logs
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -314,6 +316,12 @@ FO_COMMON_API Message RequestSavePreviewsMessage(int sender, std::string directo
 /** returns the savegame previews to the client */
 FO_COMMON_API Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& preview);
 
+/** requests combat logs from server */
+FO_COMMON_API Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids);
+
+/** returns combat logs to the client */
+FO_COMMON_API Message DispatchCombatLogsMessage(int receiver);
+
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
@@ -395,5 +403,7 @@ FO_COMMON_API void ExtractRequestSavePreviewsMessageData(const Message& msg, std
 FO_COMMON_API void ExtractDispatchSavePreviewsMessageData(const Message& msg, PreviewInformation& previews);
 
 FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, std::string& save_filename, int& bytes_written);
+
+FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::vector<int>& ids);
 
 #endif // _Message_h_

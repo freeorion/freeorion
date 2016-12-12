@@ -199,6 +199,18 @@ void CombatLogManager::GetLogsToSerialize(std::map<int, CombatLog>& logs, int en
 void CombatLogManager::SetLog(int log_id, const CombatLog& log)
 { m_logs[log_id] = log; }
 
+
+bool CombatLogManager::HasIncompleteLogs() const
+{
+    return true;
+}
+
+std::vector<int> CombatLogManager::IncompleteLogIDs() const
+{
+    return std::vector<int>(1,19);
+}
+
+
 CombatLogManager& CombatLogManager::GetCombatLogManager() {
     static CombatLogManager manager;
     return manager;

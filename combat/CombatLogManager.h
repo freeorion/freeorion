@@ -48,6 +48,12 @@ public:
     std::map<int, CombatLog>::const_iterator    find(int log_id) const;
     bool                                        LogAvailable(int log_id) const; // returns whether a log with the indicated id is available
     const CombatLog&                            GetLog(int log_id) const;       // returns requested combat log, or an empty default log if no log with the requested id exists
+
+    /** Return true if there are partial logs.*/
+    bool HasIncompleteLogs() const;
+
+    /** Return the ids of all incomplete logs.*/
+    std::vector<int> IncompleteLogIDs() const;
     //@}
 
     /** \name Mutators */ //@{

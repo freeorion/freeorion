@@ -611,6 +611,17 @@ Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& prev
     return Message(Message::DISPATCH_SAVE_PREVIEWS, Networking::INVALID_PLAYER_ID, receiver, os.str(), true);
 }
 
+Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids) {
+    std::ostringstream os;
+    freeorion_xml_oarchive oa(os);
+    oa << BOOST_SERIALIZATION_NVP(ids);
+    return Message(Message::REQUEST_COMBAT_LOGS, sender, Networking::INVALID_PLAYER_ID, os.str());
+}
+
+Message DispatchCombatLogsMessage(int receiver) {
+    return Message(Message::DISPATCH_COMBAT_LOGS, Networking::INVALID_PLAYER_ID, receiver, "fake logs", true);
+}
+
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
@@ -1044,6 +1055,19 @@ FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, 
 
     } catch(const std::exception& err) {
         ErrorLogger() << "ExtractServerSaveGameCompleteServerSaveGameCompleteMessageData(const Message& msg, std::string& save_filename, int& bytes_written) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
+FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::vector<int>& ids) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(ids);
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractRequestCombatLogMessageData(const Message& msg, std::vector<int>& ids) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

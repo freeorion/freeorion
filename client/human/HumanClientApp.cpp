@@ -977,6 +977,11 @@ void HumanClientApp::StartGame() {
 
 void HumanClientApp::HandleTurnUpdate() {
 
+    if (GetCombatLogManager().HasIncompleteLogs() && m_networking.Connected()) {
+        m_networking.SendMessage(
+            RequestCombatLogsMessage(EmpireID(),
+                                     GetCombatLogManager().IncompleteLogIDs()));
+    }
 }
 
 namespace {

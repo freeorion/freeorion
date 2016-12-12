@@ -406,6 +406,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
+    case Message::REQUEST_COMBAT_LOGS:      UpdateCombatLogs(msg, player_connection); break;
 
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
@@ -825,6 +826,15 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
     player_connection->SendMessage(DispatchSavePreviewsMessage(player_connection->PlayerID(), preview_information));
     DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
+}
+
+void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection){
+    DebugLogger() << "ServerApp::UpdateCombatLogs() entered";
+
+    std::vector<int> ids;
+    ExtractRequestCombatLogsMessageData(msg, ids);
+
+    DebugLogger() << "ServerApp::UpdateCombatLogs() ids requested  first one is " << ids[0];
 }
 
 namespace {
