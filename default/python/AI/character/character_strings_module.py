@@ -6,7 +6,7 @@ import character as character_package
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
-class CharacterTableFunction(object):
+class _CharacterTableFunction(object):
     """A table indexed by a particular trait of a Character that is used like a
     function.
 
@@ -43,12 +43,16 @@ _aggression_label_suffix = {fo.aggression.beginner: "_BEGINNER",
                             fo.aggression.maniacal: "_MANIACAL"}
 
 
-def make_aggression_based_table(prefix, post_process_func=None):
-    """Make an aggression CharacterTableFunction"""
+def _make_aggression_based_function(prefix, post_process_func=None):
+    """Make an aggression _CharacterTableFunction"""
     table = {key: "%s%s" % (prefix, suffix) for (key, suffix) in _aggression_label_suffix.items()}
     table[None] = "UNKNOWN_VALUE_SYMBOL"
-    return CharacterTableFunction(character_package.character_module.Aggression, table, post_process_func)
+    return _CharacterTableFunction(character_package.character_module.Aggression, table, post_process_func)
 
-get_trait_name_aggression = make_aggression_based_table("GSETUP", fo.userString)
-possible_capitals = make_aggression_based_table("AI_CAPITOL_NAMES", fo.userStringList)
-possible_greetings = make_aggression_based_table("AI_FIRST_TURN_GREETING_LIST", fo.userStringList)
+
+# Human readable trait name functions for debugging
+get_trait_name_aggression = _make_aggression_based_function("GSETUP", fo.userString)
+
+# Lists of strings for the UI based on character
+possible_capitals = _make_aggression_based_function("AI_CAPITOL_NAMES", fo.userStringList)
+possible_greetings = _make_aggression_based_function("AI_FIRST_TURN_GREETING_LIST", fo.userStringList)

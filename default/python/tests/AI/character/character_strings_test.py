@@ -1,12 +1,12 @@
 from character.character_module import Trait, Character, Aggression
-from character.character_strings_module import make_aggression_based_table, get_trait_name_aggression
+from character.character_strings_module import _make_aggression_based_function, get_trait_name_aggression
 
 
-def test_make_aggression_based_table():
+def test_make_aggression_based_function():
     """Check that the table adds the correct prefixes, suffixes, runs the postfix function,
     has the UNKNOWN value entry and is the correct length.
     """
-    table = make_aggression_based_table("prefix", lambda x: "post_proc_%s" % x)
+    table = _make_aggression_based_function("prefix", lambda x: "post_proc_%s" % x)
 
     character = Character([Aggression(0)])
     assert table(character) == "post_proc_prefix_BEGINNER"
@@ -18,9 +18,9 @@ def test_make_aggression_based_table():
     assert table(character) == "post_proc_UNKNOWN_VALUE_SYMBOL"
 
 
-def test_make_aggression_based_table_no_post_func():
+def test_make_aggression_based_function_no_post_func():
     """Check that the table doesn't run the post function if it doesn't exist"""
-    table = make_aggression_based_table("prefix")
+    table = _make_aggression_based_function("prefix")
 
     character = Character([Aggression(0)])
     assert table(character) == "prefix_BEGINNER"
