@@ -39,8 +39,6 @@ class _CharacterTableFunction(object):
         """Store trait type, table and post processing function."""
         self.trait_class = trait_class
         self.table = table
-        if None not in self.table:
-            table[None] = "UNKNOWN_VALUE_SYMBOL"
         self.post_process = post_process_func
 
     def __repr__(self):
@@ -48,7 +46,10 @@ class _CharacterTableFunction(object):
 
     def __call__(self, character):
         """Return the indexed and post-processed string. Get the key from the correct trait in the character."""
-        elem = self.table[character.get_trait(self.trait_class).key]
+        trait = character.get_trait(self.trait_class)
+        if trait is None and None not in self.table:
+            return None
+        elem = self.table[trait.key] if trait is not None else self.table[None]
         if self.post_process:
             elem = self.post_process(elem)
         print "CharacterTable returns ", elem

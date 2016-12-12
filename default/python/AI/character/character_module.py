@@ -528,7 +528,7 @@ class Character(Trait):
     def get_trait(self, type_of_trait):
         """Return the requested trait or None"""
         trait = [x for x in self.traits if isinstance(x, type_of_trait)]
-        return trait[0] if trait else Trait()
+        return trait[0] if trait else None
 
 
 # Note: Algorithmic Completion of Character class.

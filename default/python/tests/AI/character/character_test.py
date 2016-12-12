@@ -48,7 +48,7 @@ class TestCharacter(object):
         assert rejection_character.get_trait(RightTrait) == right_trait
         assert rejection_character.get_trait(OtherTrait) != left_trait
         assert rejection_character.get_trait(OtherTrait) != right_trait
-        assert isinstance(rejection_character.get_trait(OtherTrait), Trait)
+        assert rejection_character.get_trait(OtherTrait) is None
 
     def test_all_combiner(self):
         assert permissive_character.may_maximize_research()
