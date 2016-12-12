@@ -20,10 +20,16 @@ matrix:
 install:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      # Install repository providing GCC/G++ 4.9 toolchain with complete C++11
+      # support
+      sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
       # Update system
       sudo apt-get update -qq
       # Install dependencies
-      sudo apt-get install -qq cmake python doxygen python2.7-dev libfreetype6-dev libglew-dev libopenal-dev libogg-dev libvorbis-dev zlib1g-dev libsdl2-dev mesa-common-dev python libpng12-dev libboost1.54-dev libboost-thread1.54-dev libboost-system1.54-dev libboost-signals1.54-dev libboost-serialization1.54-dev libboost-regex1.54-dev libboost-python1.54-dev libboost-log1.54-dev libboost-iostreams1.54-dev libboost-locale1.54-dev libboost-filesystem1.54-dev libboost-date-time1.54-dev
+      sudo apt-get install -qq gcc-4.9 g++-4.9 cmake python doxygen python2.7-dev libfreetype6-dev libglew-dev libopenal-dev libogg-dev libvorbis-dev zlib1g-dev libsdl2-dev mesa-common-dev python libpng12-dev libboost1.54-dev libboost-thread1.54-dev libboost-system1.54-dev libboost-signals1.54-dev libboost-serialization1.54-dev libboost-regex1.54-dev libboost-python1.54-dev libboost-log1.54-dev libboost-iostreams1.54-dev libboost-locale1.54-dev libboost-filesystem1.54-dev libboost-date-time1.54-dev
+      # Use GCC/G++ 4.9 as default compiler
+      export CC=gcc-4.9
+      export CXX=g++-4.9
     fi
 before_script:
   # Configure git to use the identity of FreeOrion Build Bot and
