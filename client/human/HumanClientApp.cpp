@@ -975,6 +975,10 @@ void HumanClientApp::StartGame() {
         map_wnd->ResetEmpireShown();
 }
 
+void HumanClientApp::HandleTurnUpdate() {
+
+}
+
 namespace {
     void RemoveOldestFiles(int files_limit, boost::filesystem::path& p) {
         using namespace boost::filesystem;

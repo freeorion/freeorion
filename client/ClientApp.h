@@ -206,6 +206,10 @@ public:
      */
     void SetCurrentTurn(int turn);
 
+    /** @brief Handle the turn update.
+     */
+    virtual void HandleTurnUpdate() {}
+
     /** @brief Set whether the current game is a single player game or not
      *
      * @param single_player Set true if the game is a single player game,
