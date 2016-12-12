@@ -1513,7 +1513,13 @@ const ResearchQueue& Empire::GetResearchQueue() const
 
 float Empire::ResearchProgress(const std::string& name) const {
     std::map<std::string, float>::const_iterator it = m_research_progress.find(name);
-    return (it == m_research_progress.end()) ? 0.0 : it->second;
+    if (it == m_research_progress.end())
+        return 0.0f;
+    const Tech* tech = GetTech(it->first);
+    if (!tech)
+        return 0.0f;
+    float tech_cost = tech->ResearchCost(m_id);
+    return it->second * tech_cost;
 }
 
 const std::set<std::string>& Empire::AvailableTechs() const
@@ -1723,8 +1729,15 @@ bool Empire::ShipHullAvailable(const std::string& name) const
 const ProductionQueue& Empire::GetProductionQueue() const
 { return m_production_queue; }
 
-float Empire::ProductionStatus(int i) const
-{ return (0 <= i && i < static_cast<int>(m_production_queue.size())) ? m_production_queue[i].progress : -1.0; }
+float Empire::ProductionStatus(int i) const {
+    if (0 > i || i >= static_cast<int>(m_production_queue.size()))
+        return -1.0f;
+    float item_progress = m_production_queue[i].progress;
+    float item_cost;
+    int item_time;
+    boost::tie(item_cost, item_time) = this->ProductionCostAndTime(m_production_queue[i]);
+    return item_progress * item_cost;
+}
 
 std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Element& element) const
 { return ProductionCostAndTime(element.item, element.location); }
