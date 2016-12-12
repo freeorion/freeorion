@@ -43,11 +43,8 @@ BOOST_CLASS_VERSION ( CombatLog, 1 );
 class FO_COMMON_API CombatLogManager {
 public:
     /** \name Accessors */ //@{
-    std::map<int, CombatLog>::const_iterator    begin() const;
-    std::map<int, CombatLog>::const_iterator    end() const;
-    std::map<int, CombatLog>::const_iterator    find(int log_id) const;
-    bool                                        LogAvailable(int log_id) const; // returns whether a log with the indicated id is available
-    const CombatLog&                            GetLog(int log_id) const;       // returns requested combat log, or an empty default log if no log with the requested id exists
+    bool              LogAvailable(int log_id) const; // returns whether a log with the indicated id is available
+    const CombatLog&  GetLog(int log_id) const;       // returns requested combat log, or an empty default log if no log with the requested id exists
 
     /** Return true if there are partial logs.*/
     bool HasIncompleteLogs() const;
@@ -58,7 +55,6 @@ public:
 
     /** \name Mutators */ //@{
     int     AddLog(const CombatLog& log);   // adds log, returns unique log id
-    void    RemoveLog(int log_id);
     void    Clear();
     //@}
 

@@ -157,15 +157,6 @@ CombatLogManager::CombatLogManager() :
     m_latest_log_id(-1)
 {}
 
-std::map<int, CombatLog>::const_iterator CombatLogManager::begin() const
-{ return m_logs.begin(); }
-
-std::map<int, CombatLog>::const_iterator CombatLogManager::end() const
-{ return m_logs.end(); }
-
-std::map<int, CombatLog>::const_iterator CombatLogManager::find(int log_id) const
-{ return m_logs.find(log_id); }
-
 bool CombatLogManager::LogAvailable(int log_id) const
 { return m_logs.begin() != m_logs.end(); }
 
@@ -182,9 +173,6 @@ int CombatLogManager::AddLog(const CombatLog& log) {
     m_logs[new_log_id] = log;
     return new_log_id;
 }
-
-void CombatLogManager::RemoveLog(int log_id)
-{ m_logs.erase(log_id); }
 
 void CombatLogManager::Clear()
 { m_logs.clear(); }
