@@ -25,21 +25,21 @@ namespace {
 
             if (GetOptionsDB().Get<bool>("verbose-logging")) {
                 DebugLogger() << "Specials:";
-                for (std::map<std::string, Special*>::iterator it = m_specials.begin();
-                    it != m_specials.end(); ++it)
-                { DebugLogger() << " ... " << it->first; }
+                for (const std::map<std::string, Special*>::value_type& entry : m_specials) {
+                    DebugLogger() << " ... " << entry.first;
+                }
             }
         }
         ~SpecialManager() {
-            for (std::map<std::string, Special*>::iterator it = m_specials.begin();
-                it != m_specials.end(); ++it)
-            { delete it->second; }
+            for (std::map<std::string, Special*>::value_type& entry : m_specials) {
+                delete entry.second;
+            }
         }
         std::vector<std::string> SpecialNames() const {
             std::vector<std::string> retval;
-            for (std::map<std::string, Special*>::const_iterator it = m_specials.begin();
-                it != m_specials.end(); ++it)
-            { retval.push_back(it->first); }
+            for (const std::map<std::string, Special*>::value_type& entry : m_specials) {
+                retval.push_back(entry.first);
+            }
             return retval;
         }
         const Special* GetSpecial(const std::string& name) const {
@@ -69,10 +69,8 @@ std::string Special::Description() const {
 
     result << UserString(m_description) << "\n";
 
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = m_effects.begin();
-         m_effects.end() != it; ++it)
-    {
-        const std::string& description = (*it)->GetDescription();
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        const std::string& description = effect->GetDescription();
 
         if (!description.empty()) {
             result << "\n" << UserString(description) << "\n";
@@ -85,9 +83,9 @@ std::string Special::Description() const {
 void Special::Init() {
     if (m_stealth)
         m_stealth->SetTopLevelContent(m_name);
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
-         it != m_effects.end(); ++it)
-    { (*it)->SetTopLevelContent(m_name); }
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        effect->SetTopLevelContent(m_name);
+    }
     if (m_initial_capacity)
         m_initial_capacity->SetTopLevelContent(m_name);
     if (m_location)
@@ -128,8 +126,8 @@ std::string Special::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_effects.size(); ++i) {
-            retval += m_effects[i]->Dump();
+        for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
