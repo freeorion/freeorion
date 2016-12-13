@@ -155,9 +155,8 @@ namespace Delauney {
 
         // extract systems positions, and store in vector.  Can't use actual systems data since
         // systems have position limitations which would interfere with algorithm
-        theSize = static_cast<int>(systems.size());
-        for (n = 0; n < theSize; n++) {
-            points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));
+        for (TemporaryPtr<System> system : systems) {
+            points.push_back(Delauney::DTPoint(system->X(), system->Y()));
         }
 
         // add points for covering triangle.  the point positions should be big enough to form a triangle
@@ -311,14 +310,14 @@ namespace {
 
 #ifdef OUTPUT_PLANS_LIST
         DebugLogger() << "Starting Fleet Plans:";
-        for (iterator it = begin(); it != end(); ++it)
-            DebugLogger() << " ... " << (*it)->Name();
+        for (FleetPlan* plan : m_plans)
+            DebugLogger() << " ... " << plan->Name();
 #endif
     }
 
     FleetPlanManager::~FleetPlanManager() {
-        for (std::vector<FleetPlan*>::iterator it = m_plans.begin(); it != m_plans.end(); ++it)
-            delete *it;
+        for (FleetPlan* plan : m_plans)
+            delete plan;
         m_plans.clear();
     }
 };
@@ -362,15 +361,15 @@ namespace {
 
 //#ifdef OUTPUT_PLANS_LIST
         DebugLogger() << "Starting Monster Fleet Plans:";
-        for (iterator it = begin(); it != end(); ++it)
-            DebugLogger() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate()
-                          << " spawn limit: " << (*it)->SpawnLimit();
+        for (const MonsterFleetPlan* plan : m_plans)
+            DebugLogger() << " ... " << plan->Name() << " spawn rate: " << plan->SpawnRate()
+                          << " spawn limit: " << plan->SpawnLimit();
 //#endif
     }
 
     MonsterFleetPlanManager::~MonsterFleetPlanManager() {
-        for (std::vector<MonsterFleetPlan*>::iterator it = m_plans.begin(); it != m_plans.end(); ++it)
-            delete *it;
+        for (MonsterFleetPlan* plan : m_plans)
+            delete plan;
         m_plans.clear();
     }
 
@@ -753,13 +752,7 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     Delauney::DTTriangle tri;
     // initialize arrays...
     potential_lane_set_array.resize(num_systems);
-    for (n = 0; n < num_systems; n++) {
-        potential_lane_set_array[n].clear();
-    }
     laneSetArray.resize(num_systems);
-    for (n = 0; n < num_systems; n++) {
-        laneSetArray[n].clear();
-    }
 
     // extract triangles from list, add edges to sets of potential starlanes for each star (in array)
     while (!triangle_list->empty()) {
@@ -828,9 +821,8 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 
     // add the starlane to the stars
     for (n = 0; n < num_systems; ++n) {
-        const std::set<int>& lanes = laneSetArray[n];
-        for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
-            sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID
+        for (int system_idx : laneSetArray[n])
+            sys_vec[n]->AddStarlane(sys_vec[system_idx]->ID()); // System::AddStarlane() expects a system ID
     }
 
     DebugLogger() << "Initializing System Graph";
@@ -854,20 +846,20 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
-    for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-        for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
-            if (Meter* meter = it->GetMeter(meter_it->first))
-                if (Meter* targetmax_meter = it->GetMeter(meter_it->second))
+    for (TemporaryPtr<UniverseObject> object : object_map) {
+        for (std::map<MeterType, MeterType>::value_type& entry : meters)
+            if (Meter* meter = object->GetMeter(entry.first))
+                if (Meter* targetmax_meter = object->GetMeter(entry.second))
                     meter->SetCurrent(targetmax_meter->Current());
     }
 }
 
 void SetNativePopulationValues(ObjectMap& object_map) {
-    for (ObjectMap::iterator<> it = object_map.begin(); it != object_map.end(); ++it) {
-        Meter* meter = it->GetMeter(METER_POPULATION);
-        Meter* targetmax_meter = it->GetMeter(METER_TARGET_POPULATION);
+    for (TemporaryPtr<UniverseObject> object : object_map) {
+        Meter* meter = object->GetMeter(METER_POPULATION);
+        Meter* targetmax_meter = object->GetMeter(METER_TARGET_POPULATION);
         // only applies to unowned planets
-        if (meter && targetmax_meter && it->Unowned()) {
+        if (meter && targetmax_meter && object->Unowned()) {
             double r = RandZeroToOne();
             double factor = (0.1 < r) ? r : 0.1;
             meter->SetCurrent(targetmax_meter->Current() * factor);
@@ -903,8 +895,8 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
         // invert map from planet type to environments to map from
         // environments to type, sorted by environment
         std::map<PlanetEnvironment, PlanetType> sept;
-        for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
-            sept[it->second] = it->first;
+        for (const std::map<PlanetType, PlanetEnvironment>::value_type& entry : spte)
+            sept[entry.second] = entry.first;
         // assuming enum values are ordered in increasing goodness...
         PlanetType preferred_planet_type = sept.rbegin()->second;
 
@@ -936,19 +928,17 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
     std::vector<GG::Clr> colors = EmpireColors();
 
     // create empire objects and do some basic initilization for each player
-    int player_i = 0;
-    for (std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
-         setup_data_it != player_setup_data.end(); ++setup_data_it, ++player_i)
+    for (const std::map<int, PlayerSetupData>::value_type& entry : player_setup_data)
     {
-        int         player_id =     setup_data_it->first;
+        int         player_id =     entry.first;
         if (player_id == Networking::INVALID_PLAYER_ID)
             ErrorLogger() << "InitEmpires player id (" << player_id << ") is invalid";
 
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
         int         empire_id =     player_id;
-        std::string player_name =   setup_data_it->second.m_player_name;
-        GG::Clr     empire_colour = setup_data_it->second.m_empire_color;
+        std::string player_name =   entry.second.m_player_name;
+        GG::Clr     empire_colour = entry.second.m_empire_color;
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
