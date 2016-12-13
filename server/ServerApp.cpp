@@ -1831,7 +1831,7 @@ namespace {
 
         for (const CombatInfo& combat_info : combats) {
             // add combat log entry
-            int log_id = log_manager.AddLog(CombatLog(combat_info));
+            int log_id = log_manager.AddNewLog(CombatLog(combat_info));
 
             // basic "combat occured" sitreps
             const std::set<int>& empire_ids = combat_info.empire_ids;
