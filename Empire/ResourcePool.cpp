@@ -29,6 +29,9 @@ const std::vector<int>& ResourcePool::ObjectIDs() const
 int ResourcePool::StockpileObjectID() const
 { return m_stockpile_object_id; }
 
+float ResourcePool::StockpileAssigned() const
+{ return m_stockpile_assigned; }
+
 float ResourcePool::Stockpile() const
 { return m_stockpile; }
 
@@ -81,11 +84,20 @@ float ResourcePool::TotalAvailable() const {
     return retval;
 }
 
+
 std::map<std::set<int>, float> ResourcePool::Available() const {
     std::map<std::set<int>, float> retval = m_connected_object_groups_resource_output;
 
     if (INVALID_OBJECT_ID == m_stockpile_object_id)
         return retval;  // early exit for no stockpile
+
+    if (IMPERIAL_OBJECT_ID == m_stockpile_object_id) {
+        // maybe use for_each here??
+        for (std::map<std::set<int>, float>::iterator map_it = retval.begin(); map_it != retval.end(); ++map_it) {
+            map_it->second += m_stockpile;
+        }
+        return retval;
+    }
 
     // find group that contains the stockpile, and add the stockpile to that group's production to give its availability
     for (std::map<std::set<int>, float>::value_type& entry : retval) {
@@ -141,11 +153,15 @@ void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& conn
 void ResourcePool::SetStockpileObject(int stockpile_object_id)
 { m_stockpile_object_id = stockpile_object_id; }
 
+void ResourcePool::SetStockpileAssigned(float d)
+{ m_stockpile_assigned = d; }
+
+
 void ResourcePool::SetStockpile(float d)
 { m_stockpile = d; }
 
 void ResourcePool::Update() {
-    //DebugLogger() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
+    DebugLogger() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
     MeterType target_meter_type = ResourceToTargetMeter(m_type);

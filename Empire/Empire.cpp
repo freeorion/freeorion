@@ -217,6 +217,15 @@ namespace {
         }
 
 
+        float imperial_pp_available = 0.0f;
+        if (empire->GetResourcePool(RE_INDUSTRY)) {
+            imperial_pp_available = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
+            empire->GetResourcePool(RE_INDUSTRY)->SetStockpileAssigned(0.0f);
+        }
+        else {
+            ErrorLogger() << "Couldn't find imperial industry reserve.";
+        }
+
         int i = 0;
         for (ProductionQueue::Element& queue_element : queue) {
             if (queue_element.paused) {
@@ -245,10 +254,9 @@ namespace {
 
             float& group_pp_available = available_pp_it->second;
 
-
             // if group has no pp available, can't produce anything this turn
-            if (group_pp_available <= 0.0f) {
-                //DebugLogger() << "no pp available in group";
+            if (group_pp_available <= 0.0f && imperial_pp_available <= 0.0f) {
+                DebugLogger() << "no pp available in group or imperial reserve";
                 queue_element.allocated_pp = 0.0f;
                 ++i;
                 continue;
@@ -280,7 +288,8 @@ namespace {
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group
-            float allocation = std::max(0.0f, std::min(element_this_turn_limit, group_pp_available));
+            float group_allocation = std::max(0.0f, std::min(element_this_turn_limit, group_pp_available));
+            float imperial_allocation = std::max(0.0f, std::min(element_this_turn_limit - group_allocation, imperial_pp_available));
 
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -288,20 +297,29 @@ namespace {
             //DebugLogger() << "... allocating " << allocation;
 
             // allocate pp
-            queue_element.allocated_pp = std::max(allocation, EPSILON);
+            queue_element.allocated_pp = std::max(group_allocation + imperial_allocation, EPSILON);
 
             // record alloation in group, if group is not empty
-            allocated_pp[group] += allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
-            group_pp_available -= allocation;
+            allocated_pp[group] += group_allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
+            group_pp_available -= group_allocation;
             group_pp_available = std::max(group_pp_available, 0.0f);    // safety clamp
 
             //DebugLogger() << "... leaving " << group_pp_available << " PP available to group";
+            // allocated_pp[group] += imperial_allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
+            imperial_pp_available -= imperial_allocation;
+            imperial_pp_available = std::max(imperial_pp_available, 0.0f);    // safety clamp
+            // TODO probably this is bad and doesnt work:
+//            empire->GetResourcePool(RE_INDUSTRY)->SetStockpile(empire->GetResourcePool(RE_INDUSTRY)->Stockpile() - imperial_allocation);
+            empire->GetResourcePool(RE_INDUSTRY)->SetStockpileAssigned(empire->GetResourcePool(RE_INDUSTRY)->StockpileAssigned() + imperial_allocation);
 
-            if (allocation > 0.0f)
+            DebugLogger() << "... leaving " << imperial_pp_available << " PP available in imperial reserve";
+
+            if (group_allocation > 0.0f || imperial_allocation > 0.0f )
                 ++projects_in_progress;
 
             ++i;
         }
+        DebugLogger() << "========= XXX After SetProdQueueElementSpending stockpile is " << empire->GetResourcePool(RE_INDUSTRY)->StockpileAssigned() << " PP) ========";
     }
 }
 
@@ -873,6 +891,9 @@ float ProductionQueue::TotalPPsSpent() const {
     float retval = 0.0f;
     for (const std::map<std::set<int>, float>::value_type& entry : m_object_group_allocated_pp)
     { retval += entry.second; }
+    ErrorLogger() << "XXX ProductionQueue::TotalPPsSpent()";
+    // I need to get also the allocated stockpile //XXX null checks?
+    retval += GetEmpire(EmpireID())->GetResourcePool(RE_INDUSTRY)->StockpileAssigned();
     return retval;
 }
 
@@ -1014,7 +1035,7 @@ void ProductionQueue::Update() {
     // allocated pp for each group of resource sharing objects
     SetProdQueueElementSpending(available_pp, queue_element_groups, m_queue,
                                 m_object_group_allocated_pp, m_projects_in_progress, m_empire_id);
-
+    
 
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
@@ -1423,6 +1444,11 @@ void Empire::Init() {
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 
+    if (m_resource_pools[RE_INDUSTRY]->Stockpile() < 100) {
+        DebugLogger() << "========= Setting 500 PP to RE_INDUSTRY stockpile : " << EmpireID() << " (was " << m_resource_pools[RE_INDUSTRY]->Stockpile() << " PP) ========";
+        m_resource_pools[RE_INDUSTRY]->SetStockpile(500);
+    }
+
     m_eliminated = false;
 
     //// Add alignment meters to empire
@@ -1461,6 +1487,8 @@ int Empire::StockpileID(ResourceType res) const {
         return m_capital_id;
         break;
     case RE_INDUSTRY:
+        return IMPERIAL_OBJECT_ID;
+        break;
     case RE_RESEARCH:
     default:
         return INVALID_OBJECT_ID;
@@ -2898,7 +2926,23 @@ void Empire::CheckProductionProgress() {
     //for (std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>::value_type& entry : queue_item_costs_and_times)
     //{ DebugLogger() << entry.first.first.design_id << " : " << entry.second.first; }
 
-
+    // update stockpile
+    float stockpile_before = GetResourcePool(RE_INDUSTRY)->Stockpile();
+    float stockpile_assigned = GetResourcePool(RE_INDUSTRY)->StockpileAssigned();
+    float stockpile_difference = GetResourcePool(RE_INDUSTRY)->TotalAvailable() - m_production_queue.TotalPPsSpent() - stockpile_before;
+    float stockpile_now;
+    if (stockpile_difference > 0.0f) {
+        stockpile_now = stockpile_before + (stockpile_difference * 0.8f); // 20% overhead
+        DebugLogger() << "Had " << stockpile_difference << " PP overproduction. Adding " << (stockpile_difference * 0.8f) << " PP to stockpile.";
+    } else {
+        stockpile_now = stockpile_before - stockpile_assigned;
+    }
+    if (true || stockpile_now < 0.0f) {
+        DebugLogger() << "Warning: calculated negative stockpile  " << stockpile_before << "-" << stockpile_assigned << " == " << stockpile_now << "  ";
+    }
+    GetResourcePool(RE_INDUSTRY)->SetStockpile(std::max(0.0f, stockpile_now));
+    GetResourcePool(RE_INDUSTRY)->SetStockpileAssigned(0.0f);
+    
     // go through queue, updating production progress.  If a production item is
     // completed, create the produced object or take whatever other action is
     // appropriate, and record that queue item as complete, so it can be erased

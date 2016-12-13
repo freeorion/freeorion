@@ -30,6 +30,10 @@ FO_COMMON_API extern const int INVALID_OBJECT_ID;
 // The ID number assigned to temporary universe objects
 FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
 
+// The ID number assigned instead of the system which represents the whole imperium
+// Used for industrial stockpile
+FO_COMMON_API extern const int IMPERIAL_OBJECT_ID;
+
 /** The abstract base class for all objects in the universe
   * The UniverseObject class itself has an ID number, a name, a position, an ID
   * of the system in which it is, a list of zero or more owners, and other
