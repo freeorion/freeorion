@@ -1675,11 +1675,9 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return retval;
-        for (TechManager::iterator tech_it = GetTechManager().begin();
-             tech_it != GetTechManager().end(); ++tech_it)
-        {
-            if (empire->TechResearched((*tech_it)->Name()))
-                retval.push_back((*tech_it)->Name());
+        for (const Tech* tech : GetTechManager()) {
+            if (empire->TechResearched(tech->Name()))
+                retval.push_back(tech->Name());
         }
         return retval;
     }
@@ -1689,11 +1687,9 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return retval;
-        for (TechManager::iterator tech_it = GetTechManager().begin();
-             tech_it != GetTechManager().end(); ++tech_it)
-        {
-            if (empire->ResearchableTech((*tech_it)->Name()))
-                retval.push_back((*tech_it)->Name());
+        for (const Tech* tech : GetTechManager()) {
+            if (empire->ResearchableTech(tech->Name()))
+                retval.push_back(tech->Name());
         }
         return retval;
     }

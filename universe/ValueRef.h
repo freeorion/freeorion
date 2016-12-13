@@ -705,9 +705,9 @@ void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
     if (m_value_ref) {
         // evaluate ValueRef with each condition match as the LocalCandidate
         // TODO: Can / should this be paralleized?
-        for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-            T property_value = m_value_ref->Eval(ScriptingContext(context, *it));
-            object_property_values[*it] = property_value;
+        for (TemporaryPtr<const UniverseObject> object : objects) {
+            T property_value = m_value_ref->Eval(ScriptingContext(context, object));
+            object_property_values[object] = property_value;
         }
     }
 }
@@ -809,10 +809,8 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
     typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-         it != object_property_values.end(); ++it)
-    {
-        const T& property_value = it->second;
+    for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+        const T& property_value = entry.second;
 
         typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
         if (hist_it == histogram.end())
@@ -853,9 +851,9 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
         case UNIQUE_COUNT: {
             std::set<T> observed_values;
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { observed_values.insert(it->second); }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                observed_values.insert(entry.second);
+            }
             return T(observed_values.size());
             break;
         }
@@ -867,27 +865,27 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
         case SUM: {
             T accumulator(0);
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { accumulator += it->second; }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                accumulator += entry.second;
+            }
             return accumulator;
             break;
         }
 
         case MEAN: {
             T accumulator(0);
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { accumulator += it->second; }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                accumulator += entry.second;
+            }
             return accumulator / static_cast<T>(object_property_values.size());
             break;
         }
 
         case RMS: {
             T accumulator(0);
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { accumulator += (it->second * it->second); }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                accumulator += (entry.second * entry.second);
+            }
             accumulator /= static_cast<T>(object_property_values.size());
 
             double retval = std::sqrt(static_cast<double>(accumulator));
@@ -901,10 +899,8 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
             typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
             unsigned int max_seen(0);
 
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            {
-                const T& property_value = it->second;
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                const T& property_value = entry.second;
 
                 typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
                 if (hist_it == histogram.end())
@@ -981,16 +977,16 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
 
             // find sample mean
             T accumulator(0);
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { accumulator += it->second; }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                accumulator += entry.second;
+            }
             const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
 
             // find average of squared deviations from sample mean
             accumulator = T(0);
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { accumulator += (it->second - MEAN) * (it->second - MEAN); }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                accumulator += (entry.second - MEAN) * (entry.second - MEAN);
+            }
             const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
             double retval = std::sqrt(static_cast<double>(MEAN_DEV2));
             return static_cast<T>(retval);
@@ -999,9 +995,9 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
 
         case PRODUCT: {
             T accumulator(1);
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
-                 it != object_property_values.end(); ++it)
-            { accumulator *= it->second; }
+            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+                accumulator *= entry.second;
+            }
             return accumulator;
             break;
         }
@@ -1493,9 +1489,9 @@ Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& ope
 template <class T>
 Operation<T>::~Operation()
 {
-    for (typename std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    { delete *it; }
+    for (ValueRefBase<T>* operand : m_operands) {
+        delete operand;
+    }
     m_operands.clear();
 }
 
@@ -1559,10 +1555,7 @@ T Operation<T>::Eval(const ScriptingContext& context) const
         case MINIMUM: {
             // evaluate all operands, return smallest
             std::set<T> vals;
-            for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-                 it != m_operands.end(); ++it)
-            {
-                ValueRefBase<T>* vr = *it;
+            for (ValueRefBase<T>* vr : m_operands) {
                 if (vr)
                     vals.insert(vr->Eval(context));
             }
@@ -1609,10 +1602,8 @@ bool Operation<T>::RootCandidateInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (*it && !(*it)->RootCandidateInvariant())
+    for (ValueRefBase<T>* operand : m_operands) {
+        if (operand && !operand->RootCandidateInvariant())
             return false;
     }
     return true;
@@ -1623,10 +1614,8 @@ bool Operation<T>::LocalCandidateInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (*it && !(*it)->LocalCandidateInvariant())
+    for (ValueRefBase<T>* operand : m_operands) {
+        if (operand && !operand->LocalCandidateInvariant())
             return false;
     }
     return true;
@@ -1637,10 +1626,8 @@ bool Operation<T>::TargetInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (*it && !(*it)->TargetInvariant())
+    for (ValueRefBase<T>* operand : m_operands) {
+        if (operand && !operand->TargetInvariant())
             return false;
     }
     return true;
@@ -1651,10 +1638,8 @@ bool Operation<T>::SourceInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (*it && !(*it)->SourceInvariant())
+    for (ValueRefBase<T>* operand : m_operands) {
+        if (operand && !operand->SourceInvariant())
             return false;
     }
     return true;
@@ -1665,10 +1650,8 @@ bool Operation<T>::ConstantExpr() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (*it && !(*it)->ConstantExpr())
+    for (ValueRefBase<T>* operand : m_operands) {
+        if (operand && !operand->ConstantExpr())
             return false;
     }
     return true;
@@ -1922,11 +1905,9 @@ std::string Operation<T>::Dump() const
 
 template <class T>
 void Operation<T>::SetTopLevelContent(const std::string& content_name) {
-    for (typename std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRefBase<T>* operand : m_operands) {
+        if (operand)
+            operand->SetTopLevelContent(content_name);
     }
 }
 
