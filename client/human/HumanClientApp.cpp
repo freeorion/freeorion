@@ -976,12 +976,9 @@ void HumanClientApp::StartGame() {
 }
 
 void HumanClientApp::HandleTurnUpdate() {
-
-    if (GetCombatLogManager().HasIncompleteLogs() && m_networking.Connected()) {
-        m_networking.SendMessage(
-            RequestCombatLogsMessage(EmpireID(),
-                                     GetCombatLogManager().IncompleteLogIDs()));
-    }
+    boost::optional<std::vector<int> > incompleteIDs(GetCombatLogManager().IncompleteLogIDs());
+    if (incompleteIDs)
+        m_networking.SendMessage(RequestCombatLogsMessage(EmpireID(), *incompleteIDs));
 }
 
 namespace {

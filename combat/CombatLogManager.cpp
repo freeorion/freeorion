@@ -163,11 +163,8 @@ class CombatLogManager::CombatLogManagerImpl
     /** Return the requested combat log or boost::none.*/
     boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
-    /** Return true if there are partial logs.*/
-    bool HasIncompleteLogs() const;
-
-    /** Return the ids of all incomplete logs.*/
-    std::vector<int> IncompleteLogIDs() const;
+    /** Return the ids of all incomplete logs or none.*/
+    boost::optional<std::vector<int> > IncompleteLogIDs() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -219,12 +216,7 @@ void CombatLogManager::CombatLogManagerImpl::SetLog(int log_id, const CombatLog&
 { m_logs[log_id] = log; }
 
 
-bool CombatLogManager::CombatLogManagerImpl::HasIncompleteLogs() const
-{
-    return true;
-}
-
-std::vector<int> CombatLogManager::CombatLogManagerImpl::IncompleteLogIDs() const
+boost::optional<std::vector<int> > CombatLogManager::CombatLogManagerImpl::IncompleteLogIDs() const
 {
     return std::vector<int>(1,19);
 }
@@ -268,10 +260,7 @@ int CombatLogManager::AddLog(const CombatLog& log)
 void CombatLogManager::Clear()
 { return pimpl->Clear(); }
 
-bool CombatLogManager::HasIncompleteLogs() const
-{ return pimpl->HasIncompleteLogs(); }
-
-std::vector<int> CombatLogManager::IncompleteLogIDs() const
+boost::optional<std::vector<int> > CombatLogManager::IncompleteLogIDs() const
 { return pimpl->IncompleteLogIDs(); }
 
 CombatLogManager& CombatLogManager::GetCombatLogManager() {

@@ -49,11 +49,8 @@ public:
     /** Return the requested combat log or boost::none.*/
     boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
-    /** Return true if there are partial logs.*/
-    bool HasIncompleteLogs() const;
-
-    /** Return the ids of all incomplete logs.*/
-    std::vector<int> IncompleteLogIDs() const;
+    /** Return the ids of all incomplete logs or boost::none if they are all complete.*/
+    boost::optional<std::vector<int> > IncompleteLogIDs() const;
     //@}
 
     /** \name Mutators */ //@{
