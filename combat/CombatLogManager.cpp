@@ -149,59 +149,88 @@ template
 void CombatLog::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 
+
 ////////////////////////////////////////////////
-// CombatLogManager
+// CombatLogManagerImpl
 ////////////////////////////////////////////////
-CombatLogManager::CombatLogManager() :
+
+class CombatLogManager::CombatLogManagerImpl
+{
+    public:
+    CombatLogManagerImpl();
+
+      /** \name Accessors */ //@{
+    /** Return the requested combat log or boost::none.*/
+    boost::optional<const CombatLog&>  GetLog(int log_id) const;
+
+    /** Return true if there are partial logs.*/
+    bool HasIncompleteLogs() const;
+
+    /** Return the ids of all incomplete logs.*/
+    std::vector<int> IncompleteLogIDs() const;
+    //@}
+
+    /** \name Mutators */ //@{
+    int     AddLog(const CombatLog& log);   // adds log, returns unique log id
+    void    Clear();
+    //@}
+
+    void GetLogsToSerialize(std::map<int, CombatLog>& logs, int encoding_empire) const;
+    void SetLog(int log_id, const CombatLog& log);
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+
+    private:
+    std::map<int, CombatLog>    m_logs;
+    int                         m_latest_log_id;
+};
+
+CombatLogManager::CombatLogManagerImpl::CombatLogManagerImpl() :
     m_logs(),
     m_latest_log_id(-1)
 {}
 
-boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const {
+boost::optional<const CombatLog&> CombatLogManager::CombatLogManagerImpl::GetLog(int log_id) const {
     std::map<int, CombatLog>::const_iterator it = m_logs.find(log_id);
     if (it != m_logs.end())
         return it->second;
     return boost::none;
 }
 
-int CombatLogManager::AddLog(const CombatLog& log) {
+int CombatLogManager::CombatLogManagerImpl::AddLog(const CombatLog& log) {
     int new_log_id = ++m_latest_log_id;
     m_logs[new_log_id] = log;
     return new_log_id;
 }
 
-void CombatLogManager::Clear()
+void CombatLogManager::CombatLogManagerImpl::Clear()
 { m_logs.clear(); }
 
-void CombatLogManager::GetLogsToSerialize(std::map<int, CombatLog>& logs, int encoding_empire) const {
+void CombatLogManager::CombatLogManagerImpl::GetLogsToSerialize(std::map<int, CombatLog>& logs, int encoding_empire) const {
     if (&logs == &m_logs)
         return;
     // TODO: filter logs by who should have access to them
     logs = m_logs;
 }
 
-void CombatLogManager::SetLog(int log_id, const CombatLog& log)
+void CombatLogManager::CombatLogManagerImpl::SetLog(int log_id, const CombatLog& log)
 { m_logs[log_id] = log; }
 
 
-bool CombatLogManager::HasIncompleteLogs() const
+bool CombatLogManager::CombatLogManagerImpl::HasIncompleteLogs() const
 {
     return true;
 }
 
-std::vector<int> CombatLogManager::IncompleteLogIDs() const
+std::vector<int> CombatLogManager::CombatLogManagerImpl::IncompleteLogIDs() const
 {
     return std::vector<int>(1,19);
 }
 
-
-CombatLogManager& CombatLogManager::GetCombatLogManager() {
-    static CombatLogManager manager;
-    return manager;
-}
-
 template <class Archive>
-void CombatLogManager::serialize(Archive& ar, const unsigned int version)
+void CombatLogManager::CombatLogManagerImpl::serialize(Archive& ar, const unsigned int version)
 {
     std::map<int, CombatLog> logs;
 
@@ -215,9 +244,44 @@ void CombatLogManager::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_loading::value) {
         // copy new logs, but don't erase old ones
         for (auto& log : logs)
-            this->SetLog(log.first, log.second);
+           SetLog(log.first, log.second);
     }
 }
+
+
+////////////////////////////////////////////////
+// CombatLogManager
+////////////////////////////////////////////////
+CombatLogManager::CombatLogManager() :
+    pimpl(new CombatLogManagerImpl)
+{}
+
+// Require here because CombatLogManagerImpl is defined in this file.
+CombatLogManager::~CombatLogManager() {}
+
+boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const
+{ return pimpl->GetLog(log_id); }
+
+int CombatLogManager::AddLog(const CombatLog& log)
+{ return pimpl->AddLog(log); }
+
+void CombatLogManager::Clear()
+{ return pimpl->Clear(); }
+
+bool CombatLogManager::HasIncompleteLogs() const
+{ return pimpl->HasIncompleteLogs(); }
+
+std::vector<int> CombatLogManager::IncompleteLogIDs() const
+{ return pimpl->IncompleteLogIDs(); }
+
+CombatLogManager& CombatLogManager::GetCombatLogManager() {
+    static CombatLogManager manager;
+    return manager;
+}
+
+template <class Archive>
+void CombatLogManager::serialize(Archive& ar, const unsigned int version)
+{ pimpl->serialize(ar, version); }
 
 template
 void CombatLogManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
