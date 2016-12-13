@@ -159,9 +159,9 @@ void BuildingType::Init() {
         m_location->SetTopLevelContent(m_name);
     if (m_enqueue_location)
         m_enqueue_location->SetTopLevelContent(m_name);
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
-         it != m_effects.end(); ++it)
-    { (*it)->SetTopLevelContent(m_name); }
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        effect->SetTopLevelContent(m_name);
+    }
 }
 
 std::string BuildingType::Dump() const {
@@ -183,9 +183,9 @@ std::string BuildingType::Dump() const {
             retval += DumpIndent() + "tags = \"" + *m_tags.begin() + "\"\n";
         } else {
             retval += DumpIndent() + "tags = [ ";
-            for (std::set<std::string>::const_iterator tag_it = m_tags.begin();
-                 tag_it != m_tags.end(); ++tag_it)
-            { retval += "\"" + *tag_it + "\" "; }
+            for (const std::string& tag : m_tags) {
+               retval += "\"" + tag + "\" ";
+            }
             retval += " ]\n";
         }
     }
@@ -211,8 +211,8 @@ std::string BuildingType::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_effects.size(); ++i) {
-            retval += m_effects[i]->Dump();
+        for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -357,16 +357,16 @@ BuildingTypeManager::BuildingTypeManager() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Building Types:";
-        for (iterator it = begin(); it != end(); ++it) {
-            DebugLogger() << " ... " << it->first;
+        for (const std::map<const std::string, BuildingType*>::value_type& entry : m_building_types) {
+            DebugLogger() << " ... " << entry.first;
         }
     }
 }
 
 BuildingTypeManager::~BuildingTypeManager() {
-    for (std::map<std::string, BuildingType*>::iterator it = m_building_types.begin();
-         it != m_building_types.end(); ++it)
-    { delete it->second; }
+    for (std::map<std::string, BuildingType*>::value_type& entry : m_building_types) {
+        delete entry.second;
+    }
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {

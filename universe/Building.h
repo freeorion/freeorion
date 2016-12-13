@@ -117,8 +117,8 @@ public:
         m_icon(icon)
     {
         Init();
-        for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); ++tag_it)
-            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        for (const std::string& tag : common_params.tags)
+            m_tags.insert(boost::to_upper_copy<std::string>(tag));
     }
 
     ~BuildingType();
