@@ -239,11 +239,9 @@ MeterType NameToMeter(const std::string& name) {
 }
 
 std::string MeterToName(MeterType meter) {
-    for (std::map<std::string, MeterType>::const_iterator it = GetMeterNameMap().begin();
-         it != GetMeterNameMap().end(); ++it)
-    {
-        if (it->second == meter)
-            return it->first;
+    for (const std::map<std::string, MeterType>::value_type& entry : GetMeterNameMap()) {
+        if (entry.second == meter)
+            return entry.first;
     }
     return "";
 }
@@ -263,10 +261,10 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     }
 
     if (ref_type != EFFECT_TARGET_VALUE_REFERENCE) {
-        for (std::size_t i = 0; i < property_name.size(); ++i) {
+        for (const std::string& property_name_part : property_name) {
             if (!retval.empty())
                 retval += '.';
-            retval += property_name[i].c_str();
+            retval += property_name_part.c_str();
         }
     }
     return retval;
@@ -403,8 +401,8 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
     int num_references = property_names.size();
     if (ref_type == NON_OBJECT_REFERENCE)
         num_references--;
-    for (unsigned int i = 0; i < property_names.size(); ++i)
-        if (property_names[i].empty())
+    for (const std::string& property_name_part : property_names)
+        if (property_name_part.empty())
              num_references--;
     num_references = std::max(0, num_references);
     std::string format_string;
@@ -431,16 +429,11 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
     default:                                            formatter % "???";                                  break;
     }
 
-    for (unsigned int i = 0; i < property_names.size(); ++i) {
-        if (property_names[i].empty())  // apparently is empty for a EFFECT_TARGET_VALUE_REFERENCE
+    for (const std::string& property_name_part : property_names) {
+        if (property_name_part.empty())  // apparently is empty for a EFFECT_TARGET_VALUE_REFERENCE
             continue;
-        std::string property_string_temp(std::string(property_names[i].c_str()));
-        std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_string_temp));
+        std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_name_part));
         formatter % UserString(stringtable_key);
-        //std::string blag = property_string_temp + "  " +
-        //                   stringtable_key + "  " +
-        //                   UserString(stringtable_key);
-        //std::cerr << blag << std::endl << std::endl;
     }
 
     std::string retval = boost::io::str(formatter);
@@ -1093,10 +1086,8 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
     std::map<std::string, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (std::map<TemporaryPtr<const UniverseObject>, std::string>::const_iterator it = object_property_values.begin();
-         it != object_property_values.end(); ++it)
-    {
-        const std::string& property_value = it->second;
+    for (const std::map<TemporaryPtr<const UniverseObject>, std::string>::value_type& entry : object_property_values) {
+        const std::string& property_value = entry.second;
 
         std::map<std::string, unsigned int>::iterator hist_it = histogram.find(property_value);
         if (hist_it == histogram.end())
@@ -1342,8 +1333,8 @@ namespace {
         }
 
         // all empires summed
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            const std::map<std::string, int>& map = GetEmpireStringIntMap(it->first, parsed_property_name);
+        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+            const std::map<std::string, int>& map = GetEmpireStringIntMap(entry.first, parsed_property_name);
             std::map<std::string, int>::const_iterator map_it = map.find(map_key);
             if (map_it != map.end())
                 sum += map_it->second;
@@ -1358,17 +1349,15 @@ namespace {
         // single empire
         if (empire_id != ALL_EMPIRES) {
             // sum of all key entries for this empire
-            const std::map<std::string, int>& map = GetEmpireStringIntMap(empire_id, parsed_property_name);
-            for (std::map<std::string, int>::const_iterator it = map.begin(); it != map.end(); ++it)
-                sum += it->second;
+            for (const std::map<std::string, int>::value_type& entry : GetEmpireStringIntMap(empire_id, parsed_property_name))
+                sum += entry.second;
             return sum;
         }
 
         // all empires summed
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            const std::map<std::string, int>& map = GetEmpireStringIntMap(it->first, parsed_property_name);
-            for (std::map<std::string, int>::const_iterator it = map.begin(); it != map.end(); ++it)
-                sum += it->second;
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            for (const std::map<std::string, int>::value_type& property_entry : GetEmpireStringIntMap(empire_entry.first, parsed_property_name))
+                sum += property_entry.second;
         }
         return sum;
     }
@@ -1389,8 +1378,8 @@ namespace {
         }
 
         // all empires summed
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            const std::map<int, int>& map = GetEmpireIntIntMap(it->first, parsed_property_name);
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            const std::map<int, int>& map = GetEmpireIntIntMap(empire_entry.first, parsed_property_name);
             std::map<int, int>::const_iterator map_it = map.find(map_key);
             if (map_it != map.end())
                 sum += map_it->second;
@@ -1405,17 +1394,15 @@ namespace {
         // single empire
         if (empire_id != ALL_EMPIRES) {
             // sum of all key entries for this empire
-            const std::map<int, int>& map = GetEmpireIntIntMap(empire_id, parsed_property_name);
-            for (std::map<int, int>::const_iterator it = map.begin(); it != map.end(); ++it)
-                sum += it->second;
+            for (const std::map<int, int>::value_type& property_entry : GetEmpireIntIntMap(empire_id, parsed_property_name))
+                sum += property_entry.second;
             return sum;
         }
 
         // all empires summed
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            const std::map<int, int>& map = GetEmpireIntIntMap(it->first, parsed_property_name);
-            for (std::map<int, int>::const_iterator it = map.begin(); it != map.end(); ++it)
-                sum += it->second;
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            for (const std::map<int, int>::value_type& property_entry : GetEmpireIntIntMap(empire_entry.first, parsed_property_name))
+                sum += property_entry.second;
         }
         return sum;
     }
@@ -1445,8 +1432,8 @@ namespace {
         }
 
         // all empires summed
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
-            sum += GetEmpirePropertyNoKeyImpl(it->first, parsed_property_name);
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+            sum += GetEmpirePropertyNoKeyImpl(empire_entry.first, parsed_property_name);
         return sum;
     }
 }
@@ -1564,11 +1551,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
 
         int count = 0;
-        const std::vector<std::string>& parts = design->Parts();
-        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-            if (part_type_name.empty() && !it->empty())
+        for (const std::string& part : design->Parts()) {
+            if (part_type_name.empty() && !part.empty())
                 count++;
-            else if (!part_type_name.empty() && part_type_name == *it)
+            else if (!part_type_name.empty() && part_type_name == part)
                 count ++;
         }
         return count;
@@ -1601,11 +1587,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         int count = 0;
-        const std::vector<std::string>& parts = design->Parts();
-        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-            if (it->empty())
+        for (const std::string& part_name : design->Parts()) {
+            if (part_name.empty())
                 continue;
-            const PartType* part = GetPartType(*it);
+            const PartType* part = GetPartType(part_name);
             if (!part)
                 continue;
             if (part->Class() == part_class)
@@ -1938,16 +1923,14 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
         std::string retval;
         float highest_cost = 0.0f;
-        for (std::vector<std::string>::const_iterator tech_it = sendable_techs.begin();
-             tech_it != sendable_techs.end(); ++tech_it)
-        {
-            const Tech* tech = GetTech(*tech_it);
+        for (const std::string& tech_name : sendable_techs) {
+            const Tech* tech = GetTech(tech_name);
             if (!tech)
                 continue;
             float rc = tech->ResearchCost(empire2_id);
             if (rc > highest_cost) {
                 highest_cost = rc;
-                retval = *tech_it;
+                retval = tech_name;
             }
         }
         return retval;
@@ -1979,15 +1962,13 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
         // search queue to find which transferrable tech is at the top of the list
         const ResearchQueue& queue = empire2->GetResearchQueue();
-        for (std::vector<std::string>::const_iterator tech_it = sendable_techs.begin();
-             tech_it != sendable_techs.end(); ++tech_it)
-        {
-            ResearchQueue::const_iterator queue_it = queue.find(*tech_it);
+        for (const std::string& tech : sendable_techs) {
+            ResearchQueue::const_iterator queue_it = queue.find(tech);
             if (queue_it == queue.end())
                 continue;
             int queue_pos = std::distance(queue.begin(), queue_it);
             if (queue_pos < position_of_top_found_tech) {
-                retval = *tech_it;
+                retval = tech;
                 position_of_top_found_tech = queue_pos;
             }
         }
@@ -2277,10 +2258,7 @@ std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     } else if (m_op_type == MINIMUM || m_op_type == MAXIMUM) {
         // evaluate all operands, return sorted first/last
         std::set<std::string> vals;
-        for (std::vector<ValueRefBase<std::string>*>::const_iterator it = m_operands.begin();
-             it != m_operands.end(); ++it)
-        {
-            ValueRefBase<std::string>* vr = *it;
+        for (ValueRefBase<std::string>* vr : m_operands) {
             if (vr)
                 vals.insert(vr->Eval(context));
         }
