@@ -498,14 +498,11 @@ std::string Planet::CardinalSuffix() const {
         int num_planets_lteq = 0;  // number of planets at this orbit or smaller
         int num_planets_total = 0;
         bool prior_current_planet = true;
-        const std::vector<int>& sys_orbits = cur_system->PlanetIDsByOrbit();
-        for (std::vector<int>::const_iterator it = sys_orbits.begin();
-             it != sys_orbits.end(); ++it)
-        {
-            if (*it == INVALID_OBJECT_ID)
+        for (int sys_orbit : cur_system->PlanetIDsByOrbit()) {
+            if (sys_orbit == INVALID_OBJECT_ID)
                 continue;
 
-            PlanetType other_planet_type = GetPlanet(*it)->Type();
+            PlanetType other_planet_type = GetPlanet(sys_orbit)->Type();
             if (other_planet_type == INVALID_PLANET_TYPE)
                 continue;
 
@@ -523,7 +520,7 @@ std::string Planet::CardinalSuffix() const {
                 }
             }
 
-            if (*it == ID())
+            if (sys_orbit == ID())
                 prior_current_planet =false;
         }
         // For asteroids: If no other asteroids in this system, suffix does not receive a number
@@ -554,9 +551,7 @@ std::vector<std::string> Planet::AvailableFoci() const {
         return retval;
     ScriptingContext context(this_planet);
     if (const Species* species = GetSpecies(this_planet->SpeciesName())) {
-        const std::vector<FocusType>& foci = species->Foci();
-        for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
-            const FocusType& focus_type = *it;
+        for (const FocusType& focus_type : species->Foci()) {
             if (const Condition::ConditionBase* location = focus_type.Location()) {
                 if (location->Eval(context, this_planet))
                     retval.push_back(focus_type.Name());
@@ -569,9 +564,7 @@ std::vector<std::string> Planet::AvailableFoci() const {
 
 const std::string& Planet::FocusIcon(const std::string& focus_name) const {
     if (const Species* species = GetSpecies(this->SpeciesName())) {
-        const std::vector<FocusType>& foci = species->Foci();
-        for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
-            const FocusType& focus_type = *it;
+        for (const FocusType& focus_type : species->Foci()) {
             if (focus_type.Name() == focus_name)
                 return focus_type.Graphic();
         }
@@ -645,8 +638,8 @@ void Planet::Reset() {
     GetMeter(METER_REBEL_TROOPS)->Reset();
 
     if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
-        for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-            if (TemporaryPtr<Building> building = GetBuilding(*it))
+        for (int building_id : m_buildings)
+            if (TemporaryPtr<Building> building = GetBuilding(building_id))
                 building->Reset();
     }
 
@@ -675,11 +668,7 @@ void Planet::Conquer(int conquerer) {
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
 
     // deal with UniverseObjects (eg. buildings) located on this planet
-    std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>(m_buildings);
-    for (std::vector<TemporaryPtr<Building> >::iterator it = buildings.begin();
-         it != buildings.end(); ++it)
-    {
-        TemporaryPtr<Building> building = *it;
+    for (TemporaryPtr<Building> building : Objects().FindObjects<Building>(m_buildings)) {
         const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
         // determine what to do with building of this type...
@@ -744,8 +733,8 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         Reset();
     } else {
         PopCenter::Reset();
-        for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-            if (TemporaryPtr<Building> building = GetBuilding(*it))
+        for (int building_id : m_buildings)
+            if (TemporaryPtr<Building> building = GetBuilding(building_id))
                 building->Reset();
         m_just_conquered = false;
         m_is_about_to_be_colonized = false;
@@ -764,11 +753,9 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     std::vector<std::string> available_foci = AvailableFoci();
     if (species && !available_foci.empty()) {
         bool found_preference = false;
-        for (std::vector<std::string>::const_iterator it = available_foci.begin();
-             it != available_foci.end(); ++it)
-        {
-            if (!it->empty() && *it == species->PreferredFocus()) {
-                SetFocus(*it);
+        for (const std::string& focus : available_foci) {
+            if (!focus.empty() && focus == species->PreferredFocus()) {
+                SetFocus(focus);
                 found_preference = true;
                 break;
             }
@@ -790,10 +777,8 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     SetOwner(empire_id);
 
     // if there are buildings on the planet, set the specified empire as their owner too
-    std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>(BuildingIDs());
-    for (std::vector<TemporaryPtr<Building> >::iterator building_it = buildings.begin();
-         building_it != buildings.end(); ++building_it)
-    { (*building_it)->SetOwner(empire_id); }
+    for (TemporaryPtr<Building> building : Objects().FindObjects<Building>(BuildingIDs()))
+    { building->SetOwner(empire_id); }
 
     return true;
 }
