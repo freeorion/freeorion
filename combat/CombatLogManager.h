@@ -5,6 +5,8 @@
 
 #include "../util/Export.h"
 
+#include <boost/optional/optional.hpp>
+
 // A snapshot of the state of a participant of the combat
 // at it's end
 struct FO_COMMON_API CombatParticipantState {
@@ -43,8 +45,8 @@ BOOST_CLASS_VERSION ( CombatLog, 1 );
 class FO_COMMON_API CombatLogManager {
 public:
     /** \name Accessors */ //@{
-    bool              LogAvailable(int log_id) const; // returns whether a log with the indicated id is available
-    const CombatLog&  GetLog(int log_id) const;       // returns requested combat log, or an empty default log if no log with the requested id exists
+    /** Return the requested combat log or boost::none.*/
+    boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
     /** Return true if there are partial logs.*/
     bool HasIncompleteLogs() const;
@@ -79,10 +81,7 @@ FO_COMMON_API CombatLogManager&   GetCombatLogManager();
 
 /** Returns the CombatLog with the indicated id, or an empty log if there
   * is no avaiable log with that id. */
-FO_COMMON_API const CombatLog&    GetCombatLog(int log_id);
-
-/** Returns true if a CombatLog with the indicated id is available. */
-FO_COMMON_API bool                CombatLogAvailable(int log_id);
+FO_COMMON_API boost::optional<const CombatLog&> GetCombatLog(int log_id);
 
 template <class Archive>
 void CombatLogManager::serialize(Archive& ar, const unsigned int version)

@@ -157,15 +157,11 @@ CombatLogManager::CombatLogManager() :
     m_latest_log_id(-1)
 {}
 
-bool CombatLogManager::LogAvailable(int log_id) const
-{ return m_logs.begin() != m_logs.end(); }
-
-const CombatLog& CombatLogManager::GetLog(int log_id) const {
+boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const {
     std::map<int, CombatLog>::const_iterator it = m_logs.find(log_id);
     if (it != m_logs.end())
         return it->second;
-    static CombatLog EMPTY_LOG;
-    return EMPTY_LOG;
+    return boost::none;
 }
 
 int CombatLogManager::AddLog(const CombatLog& log) {
@@ -210,8 +206,5 @@ CombatLogManager& CombatLogManager::GetCombatLogManager() {
 CombatLogManager& GetCombatLogManager()
 { return CombatLogManager::GetCombatLogManager(); }
 
-const CombatLog& GetCombatLog(int log_id)
+boost::optional<const CombatLog&> GetCombatLog(int log_id)
 { return GetCombatLogManager().GetLog(log_id); }
-
-bool CombatLogAvailable(int log_id)
-{ return GetCombatLogManager().LogAvailable(log_id); }

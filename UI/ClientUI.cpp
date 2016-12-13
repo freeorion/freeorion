@@ -751,7 +751,7 @@ bool ClientUI::ZoomToField(int id) {
 }
 
 bool ClientUI::ZoomToCombatLog(int id) {
-    if (GetCombatLogManager().LogAvailable(id)) {
+    if (GetCombatLogManager().GetLog(id)) {
         GetMapWnd()->ShowCombatLog(id);
         return true;
     }
