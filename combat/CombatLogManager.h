@@ -83,24 +83,4 @@ FO_COMMON_API CombatLogManager&   GetCombatLogManager();
   * is no avaiable log with that id. */
 FO_COMMON_API boost::optional<const CombatLog&> GetCombatLog(int log_id);
 
-template <class Archive>
-void CombatLogManager::serialize(Archive& ar, const unsigned int version)
-{
-    std::map<int, CombatLog> logs;
-
-    if (Archive::is_saving::value) {
-        GetLogsToSerialize(logs, GetUniverse().EncodingEmpire());
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(logs)
-        & BOOST_SERIALIZATION_NVP(m_latest_log_id);
-
-    if (Archive::is_loading::value) {
-        // copy new logs, but don't erase old ones
-        for (std::map<int, CombatLog>::value_type& log : logs)
-            this->SetLog(log.first, log.second);
-    }
-}
-
-
 #endif // _CombatLogManager_h_

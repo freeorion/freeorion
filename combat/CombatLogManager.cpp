@@ -200,6 +200,37 @@ CombatLogManager& CombatLogManager::GetCombatLogManager() {
     return manager;
 }
 
+template <class Archive>
+void CombatLogManager::serialize(Archive& ar, const unsigned int version)
+{
+    std::map<int, CombatLog> logs;
+
+    if (Archive::is_saving::value) {
+        GetLogsToSerialize(logs, GetUniverse().EncodingEmpire());
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(logs)
+        & BOOST_SERIALIZATION_NVP(m_latest_log_id);
+
+    if (Archive::is_loading::value) {
+        // copy new logs, but don't erase old ones
+        for (auto& log : logs)
+            this->SetLog(log.first, log.second);
+    }
+}
+
+template
+void CombatLogManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void CombatLogManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void CombatLogManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void CombatLogManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
