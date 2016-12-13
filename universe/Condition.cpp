@@ -124,16 +124,14 @@ namespace {
         const std::vector<Condition::ConditionBase*>& input_conditions)
     {
         std::vector<Condition::ConditionBase*> retval;
-        for (std::vector<Condition::ConditionBase*>::const_iterator it = input_conditions.begin();
-             it != input_conditions.end(); ++it)
-        {
-            if (Condition::And* and_condition = dynamic_cast<Condition::And*>(*it)) {
+        for (Condition::ConditionBase* condition : input_conditions) {
+            if (Condition::And* and_condition = dynamic_cast<Condition::And*>(condition)) {
                 std::vector<Condition::ConditionBase*> flattened_operands =
                     FlattenAndNestedConditions(and_condition->Operands());
                 std::copy(flattened_operands.begin(), flattened_operands.end(), std::back_inserter(retval));
             } else {
-                if (*it)
-                    retval.push_back(*it);
+                if (condition)
+                    retval.push_back(condition);
             }
         }
         return retval;
@@ -155,10 +153,7 @@ namespace {
         else
             flattened_conditions = conditions;
 
-        for (std::vector<Condition::ConditionBase*>::const_iterator it = flattened_conditions.begin();
-             it != flattened_conditions.end(); ++it)
-        {
-            Condition::ConditionBase* condition = *it;
+        for (Condition::ConditionBase* condition : flattened_conditions) {
             retval[condition->Description()] = condition->Eval(parent_context, candidate_object);
         }
         return retval;
@@ -174,15 +169,13 @@ std::string ConditionFailedDescription(const std::vector<ConditionBase*>& condit
         return UserString("NONE");
 
     ScriptingContext parent_context(source_object);
-    // test candidate against all input conditions, and store descriptions of each
-    std::map<std::string, bool> condition_description_and_test_results =
-        ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
     std::string retval;
 
-    for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
-        it != condition_description_and_test_results.end(); ++it)
-            if (!it->second)
-                 retval += UserString("FAILED") + " <rgba 255 0 0 255>" + it->first +"</rgba>\n";
+    // test candidate against all input conditions, and store descriptions of each
+    for (std::map<std::string, bool>::value_type& result : ConditionDescriptionAndTest(conditions, parent_context, candidate_object)) {
+            if (!result.second)
+                 retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
+    }
 
     // remove empty line from the end of the string
     retval = retval.substr(0, retval.length() - 1);
@@ -202,11 +195,9 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
     std::map<std::string, bool> condition_description_and_test_results =
         ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
-    for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
-         it != condition_description_and_test_results.end(); ++it)
-    {
-        all_conditions_match_candidate = all_conditions_match_candidate && it->second;
-        at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || it->second;
+    for (std::map<std::string, bool>::value_type& result : condition_description_and_test_results) {
+        all_conditions_match_candidate = all_conditions_match_candidate && result.second;
+        at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || result.second;
     }
 
     // concatenate (non-duplicated) single-description results
@@ -220,11 +211,9 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
     }
     // else just output single condition description and PASS/FAIL text
 
-    for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
-         it != condition_description_and_test_results.end(); ++it)
-    {
-        retval += (it->second ? UserString("PASSED") : UserString("FAILED"));
-        retval += " " + it->first + "\n";
+    for (std::map<std::string, bool>::value_type& result : condition_description_and_test_results) {
+        retval += (result.second ? UserString("PASSED") : UserString("FAILED"));
+        retval += " " + result.first + "\n";
     }
     return retval;
 }
@@ -715,9 +704,9 @@ namespace {
 
         // get sort key values for all objects in from_set, and sort by inserting into map
         std::multimap<float, TemporaryPtr<const UniverseObject> > sort_key_objects;
-        for (ObjectSet::const_iterator it = from_set.begin(); it != from_set.end(); ++it) {
-            float sort_value = sort_key->Eval(ScriptingContext(context, *it));
-            sort_key_objects.insert(std::make_pair(sort_value, *it));
+        for (TemporaryPtr<const UniverseObject> from : from_set) {
+            float sort_value = sort_key->Eval(ScriptingContext(context, from));
+            sort_key_objects.insert(std::make_pair(sort_value, from));
         }
 
         // how many objects to select?
@@ -730,10 +719,8 @@ namespace {
         if (sorting_method == SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
-                 sorted_it != sort_key_objects.end(); ++sorted_it)
-            {
-                TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
+            for (std::multimap<float, TemporaryPtr<const UniverseObject>>::value_type& entry : sort_key_objects) {
+                TemporaryPtr<const UniverseObject> object_to_transfer = entry.second;
                 ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -747,7 +734,7 @@ namespace {
         } else if (sorting_method == SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
-            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (std::multimap<float, TemporaryPtr<const UniverseObject>>::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
                 TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
@@ -764,17 +751,13 @@ namespace {
         } else if (sorting_method == SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
-            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = sort_key_objects.begin();
-                 sorted_it != sort_key_objects.end(); ++sorted_it)
-            {
-                histogram[sorted_it->first]++;
+            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::value_type& entry : sort_key_objects) {
+                histogram[entry.first]++;
             }
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
-            for (std::map<float, unsigned int>::const_iterator hist_it = histogram.begin();
-                 hist_it != histogram.end(); ++hist_it)
-            {
-                inv_histogram.insert(std::make_pair(hist_it->second, hist_it->first));
+            for (std::map<float, unsigned int>::value_type& entry : histogram) {
+                inv_histogram.insert(std::make_pair(entry.second, entry.first));
             }
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
@@ -874,9 +857,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
 
     if (search_domain == NON_MATCHES) {
         // put matched objects that are in subcondition_matching_non_matches into matches
-        for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
-            TemporaryPtr<const UniverseObject> matched_object = *match_it;
-
+        for (TemporaryPtr<const UniverseObject> matched_object : matched_objects) {
             // is this matched object in subcondition_matching_non_matches?
             ObjectSet::iterator smnt_it = std::find(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end(), matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
@@ -899,9 +880,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
 
     } else { /*(search_domain == MATCHES)*/
         // put matched objecs that are in subcondition_matching_matches back into matches
-        for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
-            TemporaryPtr<const UniverseObject> matched_object = *match_it;
-
+        for (TemporaryPtr<const UniverseObject> matched_object : matched_objects) {
             // is this matched object in subcondition_matching_matches?
             ObjectSet::iterator smt_it = std::find(subcondition_matching_matches.begin(), subcondition_matching_matches.end(), matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
@@ -1375,8 +1354,8 @@ void Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_co
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
 Homeworld::~Homeworld() {
-    for (unsigned int i = 0; i < m_names.size(); ++i)
-        delete m_names[i];
+    for (ValueRef::ValueRefBase<std::string>* name : m_names)
+        delete name;
 }
 
 bool Homeworld::operator==(const ConditionBase& rhs) const {
@@ -1430,8 +1409,8 @@ namespace {
 
             } else {
                 // match any of the species specified
-                for (std::vector<std::string>::const_iterator it = m_names.begin(); it != m_names.end(); ++it) {
-                    if (const ::Species* species = GetSpecies(*it)) {
+                for (const std::string& name : m_names) {
+                    if (const ::Species* species = GetSpecies(name)) {
                         const std::set<int>& homeworld_ids = species->Homeworlds();
                         if (homeworld_ids.find(planet_id) != homeworld_ids.end())
                             return true;
@@ -1453,10 +1432,8 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -1466,10 +1443,8 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            names.push_back((*it)->Eval(parent_context));
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names));
     } else {
@@ -1479,30 +1454,24 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
 }
 
 bool Homeworld::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool Homeworld::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool Homeworld::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->SourceInvariant())
             return false;
     }
     return true;
@@ -1534,8 +1503,8 @@ std::string Homeworld::Dump() const {
         retval += " name = " + m_names[0]->Dump();
     } else if (!m_names.empty()) {
         retval += " name = [ ";
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            retval += m_names[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            retval += name->Dump() + " ";
         }
         retval += "]";
     }
@@ -1573,10 +1542,8 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     } else {
         // match any of the species specified
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            const std::string& species_name = (*it)->Eval(local_context);
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            const std::string& species_name = name->Eval(local_context);
             if (const ::Species* species = manager.GetSpecies(species_name)) {
                 const std::set<int>& homeworld_ids = species->Homeworlds();
                 if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
@@ -1593,11 +1560,9 @@ void Homeworld::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 { AddPlanetSet(condition_non_targets); }
 
 void Homeworld::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (name)
+            name->SetTopLevelContent(content_name);
     }
 }
 
@@ -1876,8 +1841,8 @@ void Type::SetTopLevelContent(const std::string& content_name) {
 // Building                                              //
 ///////////////////////////////////////////////////////////
 Building::~Building() {
-    for (unsigned int i = 0; i < m_names.size(); ++i) {
-        delete m_names[i];
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        delete name;
     }
 }
 
@@ -1932,10 +1897,8 @@ void Building::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -1945,10 +1908,8 @@ void Building::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            names.push_back((*it)->Eval(parent_context));
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch(names));
     } else {
@@ -1958,30 +1919,24 @@ void Building::Eval(const ScriptingContext& parent_context,
 }
 
 bool Building::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool Building::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool Building::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->SourceInvariant())
             return false;
     }
     return true;
@@ -2013,8 +1968,8 @@ std::string Building::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            retval += m_names[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            retval += name->Dump() + " ";
         }
         retval += "]\n";
     }
@@ -2040,10 +1995,8 @@ bool Building::Match(const ScriptingContext& local_context) const {
             return true;
 
         // match one of the specified building types
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            if ((*it)->Eval(local_context) == building->BuildingTypeName())
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            if (name->Eval(local_context) == building->BuildingTypeName())
                 return true;
         }
     }
@@ -2052,11 +2005,9 @@ bool Building::Match(const ScriptingContext& local_context) const {
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (name)
+            name->SetTopLevelContent(content_name);
     }
 }
 
@@ -2547,10 +2498,9 @@ namespace {
             // for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it) {
-                TemporaryPtr<const UniverseObject> obj = *it;
+            for (TemporaryPtr<const UniverseObject> obj : subcondition_matches) {
                 if (obj)
-                { m_subcondition_matches_ids.push_back(obj->ID()); }
+                    m_subcondition_matches_ids.push_back(obj->ID());
             }
             // sort them
             std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
@@ -2567,20 +2517,20 @@ namespace {
             // We choose the strategy that is more efficient by comparing the sizes of both sets.
             if (candidate_elements.size() < m_subcondition_matches_ids.size()) {
                 // candidate_elements is smaller, so we iterate it and look up each candidate element in m_subcondition_matches_ids
-                for (std::set<int>::const_iterator it = candidate_elements.begin(), end_it = candidate_elements.end(); it != end_it; ++it) {
+                for (int id : candidate_elements) {
                     // std::lower_bound requires m_subcondition_matches_ids to be sorted
-                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), *it);
+                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
                     
-                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == *it) {
+                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
                         match = true;
                         break;
                     }
                 }
             } else {
                 // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's elements
-                for (std::vector<int>::const_iterator it = m_subcondition_matches_ids.begin(); it != m_subcondition_matches_ids.end(); ++it) {
+                for (int id : m_subcondition_matches_ids) {
                     // candidate->Contains() may have a faster implementation than candidate_elements->find()
-                    if (candidate->Contains(*it)) {
+                    if (candidate->Contains(id)) {
                         match = true;
                         break;
                     }
@@ -2698,8 +2648,8 @@ bool Contains::Match(const ScriptingContext& local_context) const {
     m_condition->Eval(local_context, subcondition_matches);
 
     // does candidate object contain any subcondition matches?
-    for (ObjectSet::iterator subcon_it = subcondition_matches.begin(); subcon_it != subcondition_matches.end(); ++subcon_it)
-        if (candidate->Contains((*subcon_it)->ID()))
+    for (TemporaryPtr<const UniverseObject> obj : subcondition_matches)
+        if (candidate->Contains(obj->ID()))
             return true;
 
     return false;
@@ -2744,8 +2694,7 @@ namespace {
             // executed for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it) {
-                TemporaryPtr<const UniverseObject> obj = *it;
+            for (TemporaryPtr<const UniverseObject> obj : subcondition_matches) {
                 if (obj)
                 { m_subcondition_matches_ids.push_back(obj->ID()); }
             }
@@ -2771,20 +2720,20 @@ namespace {
             // We choose the strategy that is more efficient by comparing the sizes of both sets.
             if (candidate_containers.size() < m_subcondition_matches_ids.size()) {
                 // candidate_containers is smaller, so we iterate it and look up each candidate container in m_subcondition_matches_ids
-                for (std::vector<int>::const_iterator it = candidate_containers.begin(), end_it = candidate_containers.end(); it != end_it; ++it) {
+                for (int id : candidate_containers) {
                     // std::lower_bound requires m_subcondition_matches_ids to be sorted
-                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), *it);
+                    std::vector<int>::const_iterator matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
                     
-                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == *it) {
+                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
                         match = true;
                         break;
                     }
                 }
             } else {
                 // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's containers
-                for (std::vector<int>::const_iterator it = m_subcondition_matches_ids.begin(); it != m_subcondition_matches_ids.end(); ++it) {
+                for (int id : m_subcondition_matches_ids) {
                     // candidate->ContainedBy() may have a faster implementation than candidate_containers->find()
-                    if (candidate->ContainedBy(*it)) {
+                    if (candidate->ContainedBy(id)) {
                         match = true;
                         break;
                     }
@@ -3201,8 +3150,8 @@ void ObjectID::SetTopLevelContent(const std::string& content_name) {
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
 PlanetType::~PlanetType() {
-    for (unsigned int i = 0; i < m_types.size(); ++i) {
-        delete m_types[i];
+    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        delete type;
     }
 }
 
@@ -3258,10 +3207,8 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-            it != m_types.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+            if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -3271,10 +3218,8 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetType> types;
         // get all types from valuerefs
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-             it != m_types.end(); ++it)
-        {
-            types.push_back((*it)->Eval(parent_context));
+        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+            types.push_back(type->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types));
     } else {
@@ -3284,30 +3229,24 @@ void PlanetType::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetType::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        if (!type->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool PlanetType::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        if (!type->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool PlanetType::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        if (!type->SourceInvariant())
             return false;
     }
     return true;
@@ -3339,8 +3278,8 @@ std::string PlanetType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (unsigned int i = 0; i < m_types.size(); ++i) {
-            retval += m_types[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+            retval += type->Dump() + " ";
         }
         retval += "]\n";
     }
@@ -3367,10 +3306,8 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-             it != m_types.end(); ++it)
-        {
-            if ((*it)->Eval(ScriptingContext(local_context)) == planet->Type())
+        for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+            if (type->Eval(ScriptingContext(local_context)) == planet->Type())
                 return true;
         }
     }
@@ -3378,11 +3315,9 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetType::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<::PlanetType>* type : m_types) {
+        if (type)
+            type->SetTopLevelContent(content_name);
     }
 }
 
@@ -3390,8 +3325,8 @@ void PlanetType::SetTopLevelContent(const std::string& content_name) {
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
 PlanetSize::~PlanetSize() {
-    for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-        delete m_sizes[i];
+    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        delete size;
     }
 }
 
@@ -3430,10 +3365,8 @@ namespace {
             }
             if (planet) {
                 // is it one of the specified building types?
-                for (std::vector< ::PlanetSize>::const_iterator it = m_sizes.begin();
-                        it != m_sizes.end(); ++it)
-                {
-                    if (planet->Size() == *it)
+                for (::PlanetSize size : m_sizes) {
+                    if (planet->Size() == size)
                         return true;
                 }
             }
@@ -3452,10 +3385,8 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
-            it != m_sizes.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+            if (!size->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -3465,10 +3396,8 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetSize> sizes;
         // get all types from valuerefs
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
-             it != m_sizes.end(); ++it)
-        {
-            sizes.push_back((*it)->Eval(parent_context));
+        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+            sizes.push_back(size->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, PlanetSizeSimpleMatch(sizes));
     } else {
@@ -3478,30 +3407,24 @@ void PlanetSize::Eval(const ScriptingContext& parent_context,
 }
 
 bool PlanetSize::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
-         it != m_sizes.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        if (!size->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool PlanetSize::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
-         it != m_sizes.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        if (!size->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool PlanetSize::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
-         it != m_sizes.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        if (!size->SourceInvariant())
             return false;
     }
     return true;
@@ -3533,8 +3456,8 @@ std::string PlanetSize::Dump() const {
         retval += m_sizes[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-            retval += m_sizes[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+            retval += size->Dump() + " ";
         }
         retval += "]\n";
     }
@@ -3561,8 +3484,8 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
         planet = GetPlanet(building->PlanetID());
     }
     if (planet) {
-        for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-            if (m_sizes[i]->Eval(local_context) == planet->Size())
+        for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+            if (size->Eval(local_context) == planet->Size())
                 return true;
         }
     }
@@ -3570,11 +3493,9 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
 }
 
 void PlanetSize::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
-         it != m_sizes.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<::PlanetSize>* size : m_sizes) {
+        if (size)
+            size->SetTopLevelContent(content_name);
     }
 }
 
@@ -3582,8 +3503,8 @@ void PlanetSize::SetTopLevelContent(const std::string& content_name) {
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
 PlanetEnvironment::~PlanetEnvironment() {
-    for (unsigned int i = 0; i < m_environments.size(); ++i) {
-        delete m_environments[i];
+    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        delete environment;
     }
     delete m_species_name;
 }
@@ -3627,10 +3548,8 @@ namespace {
             }
             if (planet) {
                 // is it one of the specified building types?
-                for (std::vector< ::PlanetEnvironment>::const_iterator it = m_environments.begin();
-                        it != m_environments.end(); ++it)
-                {
-                    if (planet->EnvironmentForSpecies(m_species) == *it)
+                for (::PlanetEnvironment environment : m_environments) {
+                    if (planet->EnvironmentForSpecies(m_species) == environment)
                         return true;
                 }
             }
@@ -3651,10 +3570,8 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
-             it != m_environments.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+            if (!environment->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -3664,10 +3581,8 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetEnvironment> environments;
         // get all types from valuerefs
-        for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
-             it != m_environments.end(); ++it)
-        {
-            environments.push_back((*it)->Eval(parent_context));
+        for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+            environments.push_back(environment->Eval(parent_context));
         }
         std::string species_name;
         if (m_species_name)
@@ -3682,10 +3597,8 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
 bool PlanetEnvironment::RootCandidateInvariant() const {
     if (m_species_name && !m_species_name->RootCandidateInvariant())
         return false;
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
-         it != m_environments.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        if (!environment->RootCandidateInvariant())
             return false;
     }
     return true;
@@ -3694,10 +3607,8 @@ bool PlanetEnvironment::RootCandidateInvariant() const {
 bool PlanetEnvironment::TargetInvariant() const {
     if (m_species_name && !m_species_name->TargetInvariant())
         return false;
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
-         it != m_environments.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        if (!environment->TargetInvariant())
             return false;
     }
     return true;
@@ -3706,10 +3617,8 @@ bool PlanetEnvironment::TargetInvariant() const {
 bool PlanetEnvironment::SourceInvariant() const {
     if (m_species_name && !m_species_name->SourceInvariant())
         return false;
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
-         it != m_environments.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        if (!environment->SourceInvariant())
             return false;
     }
     return true;
@@ -3750,8 +3659,8 @@ std::string PlanetEnvironment::Dump() const {
         retval += m_environments[0]->Dump();
     } else {
         retval += "[ ";
-        for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            retval += m_environments[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+            retval += environment->Dump() + " ";
         }
         retval += "]";
     }
@@ -3789,8 +3698,8 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
         species_name = m_species_name->Eval(local_context);
 
     ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies(species_name);
-    for (unsigned int i = 0; i < m_environments.size(); ++i) {
-        if (m_environments[i]->Eval(local_context) == env_for_planets_species)
+    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        if (environment->Eval(local_context) == env_for_planets_species)
             return true;
     }
     return false;
@@ -3799,11 +3708,9 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
 void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
     if (m_species_name)
         m_species_name->SetTopLevelContent(content_name);
-    for (std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
-         it != m_environments.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<::PlanetEnvironment>* environment : m_environments) {
+        if (environment)
+            environment->SetTopLevelContent(content_name);
     }
 }
 
@@ -3811,9 +3718,8 @@ void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
 // Species                                              //
 ///////////////////////////////////////////////////////////
 Species::~Species() {
-    for (unsigned int i = 0; i < m_names.size(); ++i) {
-        delete m_names[i];
-    }
+    for (ValueRef::ValueRefBase<std::string>* name : m_names)
+        delete name;
 }
 
 bool Species::operator==(const ConditionBase& rhs) const {
@@ -3877,10 +3783,8 @@ void Species::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -3890,9 +3794,9 @@ void Species::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        { names.push_back((*it)->Eval(parent_context)); }
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            names.push_back(name->Eval(parent_context));
+        }
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -3901,30 +3805,24 @@ void Species::Eval(const ScriptingContext& parent_context,
 }
 
 bool Species::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool Species::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool Species::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->SourceInvariant())
             return false;
     }
     return true;
@@ -3960,8 +3858,8 @@ std::string Species::Dump() const {
         retval += " name = " + m_names[0]->Dump() + "\n";
     } else {
         retval += " name = [ ";
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            retval += m_names[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            retval += name->Dump() + " ";
         }
         retval += "]\n";
     }
@@ -3994,9 +3892,10 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !planet->SpeciesName().empty();  // match any species name
         } else {
             // match only specified species names
-            for (unsigned int i = 0; i < m_names.size(); ++i)
-                if (m_names[i]->Eval(local_context) == planet->SpeciesName())
+            for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+                if (name->Eval(local_context) == planet->SpeciesName())
                     return true;
+            }
         }
     }
     // is it a ship?
@@ -4006,20 +3905,19 @@ bool Species::Match(const ScriptingContext& local_context) const {
             return !ship->SpeciesName().empty();    // match any species name
         } else {
             // match only specified species names
-            for (unsigned int i = 0; i < m_names.size(); ++i)
-                if (m_names[i]->Eval(local_context) == ship->SpeciesName())
+            for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+                if (name->Eval(local_context) == ship->SpeciesName())
                     return true;
+            }
         }
     }
     return false;
 }
 
 void Species::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (name)
+            name->SetTopLevelContent(content_name);
     }
 }
 
@@ -4058,30 +3956,30 @@ namespace {
                       const std::string& name = "", int design_id = ShipDesign::INVALID_DESIGN_ID)
     {
         int retval = 0;
-        for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-            if (!(build_type == INVALID_BUILD_TYPE || build_type == it->item.build_type))
+        for (const ProductionQueue::Element& element : queue) {
+            if (!(build_type == INVALID_BUILD_TYPE || build_type == element.item.build_type))
                 continue;
-            if (location_id != it->location)
+            if (location_id != element.location)
                 continue;
             if (build_type == BT_BUILDING) {
                 // if looking for buildings, accept specifically named building
                 // or any building if no name specified
-                if (!name.empty() && it->item.name != name)
+                if (!name.empty() && element.item.name != name)
                     continue;
             } else if (build_type == BT_SHIP) {
                 if (design_id != ShipDesign::INVALID_DESIGN_ID) {
                     // if looking for ships, accept design by id number...
-                    if (design_id != it->item.design_id)
+                    if (design_id != element.item.design_id)
                         continue;
                 } else if (!name.empty()) {
                     // ... or accept design by predefined name
-                    const ShipDesign* design = GetShipDesign(it->item.design_id);
+                    const ShipDesign* design = GetShipDesign(element.item.design_id);
                     if (!design || name != design->Name(false))
                         continue;
                 }
             } // else: looking for any production item
 
-            retval += it->blocksize;
+            retval += element.blocksize;
         }
         return retval;
     }
@@ -4103,10 +4001,8 @@ namespace {
             int count = 0;
 
             if (m_empire_id == ALL_EMPIRES) {
-                for (EmpireManager::const_iterator empire_it = Empires().begin();
-                     empire_it != Empires().end(); ++empire_it)
-                {
-                    const Empire* empire = empire_it->second;
+                for (std::map<int, Empire*>::value_type& item : Empires()) {
+                    const Empire* empire = item.second;
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_name, m_design_id);
                 }
@@ -4314,8 +4210,8 @@ void Enqueued::SetTopLevelContent(const std::string& content_name) {
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
 FocusType::~FocusType() {
-    for (unsigned int i = 0; i < m_names.size(); ++i) {
-        delete m_names[i];
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        delete name;
     }
 }
 
@@ -4372,10 +4268,8 @@ void FocusType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            if (!name->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -4385,10 +4279,8 @@ void FocusType::Eval(const ScriptingContext& parent_context,
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
         // get all names from valuerefs
-        for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-             it != m_names.end(); ++it)
-        {
-            names.push_back((*it)->Eval(parent_context));
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            names.push_back(name->Eval(parent_context));
         }
         EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names));
     } else {
@@ -4398,30 +4290,24 @@ void FocusType::Eval(const ScriptingContext& parent_context,
 }
 
 bool FocusType::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool FocusType::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool FocusType::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (!name->SourceInvariant())
             return false;
     }
     return true;
@@ -4476,8 +4362,8 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
             res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(local_context) == res_center->Focus())
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            if (name->Eval(local_context) == res_center->Focus())
                 return true;
         }
     }
@@ -4492,11 +4378,9 @@ void FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 }
 
 void FocusType::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase<std::string>*>::const_iterator it = m_names.begin();
-         it != m_names.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+        if (name)
+            name->SetTopLevelContent(content_name);
     }
 }
 
@@ -4504,8 +4388,8 @@ void FocusType::SetTopLevelContent(const std::string& content_name) {
 // StarType                                              //
 ///////////////////////////////////////////////////////////
 StarType::~StarType() {
-    for (unsigned int i = 0; i < m_types.size(); ++i) {
-        delete m_types[i];
+    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        delete type;
     }
 }
 
@@ -4554,10 +4438,8 @@ void StarType::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
-            it != m_types.end(); ++it)
-        {
-            if (!(*it)->LocalCandidateInvariant()) {
+        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+            if (!type->LocalCandidateInvariant()) {
                 simple_eval_safe = false;
                 break;
             }
@@ -4567,9 +4449,9 @@ void StarType::Eval(const ScriptingContext& parent_context,
         // evaluate types once, and use to check all candidate objects
         std::vector< ::StarType> types;
         // get all types from valuerefs
-        for (std::vector<ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
-             it != m_types.end(); ++it)
-        { types.push_back((*it)->Eval(parent_context)); }
+        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+            types.push_back(type->Eval(parent_context));
+        }
         EvalImpl(matches, non_matches, search_domain, StarTypeSimpleMatch(types));
     } else {
         // re-evaluate contained objects for each candidate object
@@ -4578,30 +4460,24 @@ void StarType::Eval(const ScriptingContext& parent_context,
 }
 
 bool StarType::RootCandidateInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant())
+    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        if (!type->RootCandidateInvariant())
             return false;
     }
     return true;
 }
 
 bool StarType::TargetInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant())
+    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        if (!type->TargetInvariant())
             return false;
     }
     return true;
 }
 
 bool StarType::SourceInvariant() const {
-    for (std::vector<ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant())
+    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        if (!type->SourceInvariant())
             return false;
     }
     return true;
@@ -4633,8 +4509,8 @@ std::string StarType::Dump() const {
         retval += m_types[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (unsigned int i = 0; i < m_types.size(); ++i) {
-            retval += m_types[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+            retval += type->Dump() + " ";
         }
         retval += "]\n";
     }
@@ -4650,8 +4526,8 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 
     TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
     if (system || (system = boost::dynamic_pointer_cast<const System>(candidate))) {
-        for (unsigned int i = 0; i < m_types.size(); ++i) {
-            if (m_types[i]->Eval(local_context) == system->GetStarType())
+        for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+            if (type->Eval(local_context) == system->GetStarType())
                 return true;
         }
     }
@@ -4659,11 +4535,9 @@ bool StarType::Match(const ScriptingContext& local_context) const {
 }
 
 void StarType::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
-         it != m_types.end(); ++it)
-    {
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
+        if (type)
+            (type)->SetTopLevelContent(content_name);
     }
 }
 
@@ -4828,11 +4702,13 @@ namespace {
             if (!design)
                 return false;
 
-            const std::vector<std::string>& parts = design->Parts();
             int count = 0;
-            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
-                if (*it == m_name || (m_name.empty() && !(*it).empty()))    // # of copies of specified part, or total number of parts if no part name specified
+            for (const std::string& name : design->Parts()) {
+                if (name == m_name || (m_name.empty() && !name.empty()))
+                    // number of copies of specified part,
+                    // or total number of parts if no part name specified
                     ++count;
+            }
             return (m_low <= count && count <= m_high);
         }
 
@@ -4994,10 +4870,9 @@ namespace {
                 return false;
 
 
-            const std::vector<std::string>& parts = design->Parts();
             int count = 0;
-            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-                if (const PartType* part_type = GetPartType(*it)) {
+            for (const std::string& name : design->Parts()) {
+                if (const PartType* part_type = GetPartType(name)) {
                     if (part_type->Class() == m_part_class)
                         ++count;
                 }
@@ -6585,11 +6460,9 @@ namespace {
                 return false;
 
             // is candidate object close enough to any of the passed-in objects?
-            for (ObjectSet::const_iterator it = m_from_objects.begin();
-                 it != m_from_objects.end(); ++it)
-            {
-                double delta_x = candidate->X() - (*it)->X();
-                double delta_y = candidate->Y() - (*it)->Y();
+            for (TemporaryPtr<const UniverseObject> obj : m_from_objects) {
+                double delta_x = candidate->X() - obj->X();
+                double delta_y = candidate->Y() - obj->Y();
                 if (delta_x*delta_x + delta_y*delta_y <= m_distance2)
                     return true;
             }
@@ -6716,8 +6589,8 @@ namespace {
                 return false;
 
             // is candidate object close enough to any subcondition matches?
-            for (ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                int jumps = GetUniverse().JumpDistanceBetweenObjects((*it)->ID(), candidate->ID());
+            for (TemporaryPtr<const UniverseObject> obj : m_from_objects) {
+                int jumps = GetUniverse().JumpDistanceBetweenObjects(obj->ID(), candidate->ID());
                 if (jumps != -1 && jumps <= m_jump_limit)
                     return true;
             }
@@ -6999,24 +6872,18 @@ namespace {
             return true;
 
         const ObjectMap& objects = Objects();
-        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
 
         // loop over all existing lanes in all systems, checking if a lane
         // beween the specified systems would cross any of the existing lanes
-        for (std::vector<TemporaryPtr<const System> >::iterator sys_it = systems.begin();
-             sys_it != systems.end(); ++sys_it)
-        {
-            TemporaryPtr<const System> system = *sys_it;
+        for (TemporaryPtr<const System> system : objects.FindObjects<System>()) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
             const std::map<int, bool>& sys_existing_lanes = system->StarlanesWormholes();
 
             // check all existing lanes of currently-being-checked system
-            for (std::map<int, bool>::const_iterator lane_it = sys_existing_lanes.begin();
-                 lane_it != sys_existing_lanes.end(); ++lane_it)
-            {
-                TemporaryPtr<const System> lane_end_sys3 = GetSystem(lane_it->first);
+            for (const std::map<int, bool>::value_type& lane : sys_existing_lanes) {
+                TemporaryPtr<const System> lane_end_sys3 = GetSystem(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -7046,10 +6913,7 @@ namespace {
 
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints
-        for (std::vector<TemporaryPtr<const System> >::iterator sys_it = systems.begin();
-             sys_it != systems.end(); ++sys_it)
-        {
-            TemporaryPtr<const System> system = *sys_it;
+        for (TemporaryPtr<const System> system : systems) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -7067,10 +6931,8 @@ namespace {
             // get (one of each of) set of systems that are or that contain any
             // destination objects
             std::set<TemporaryPtr<const System> > dest_systems;
-            for (ObjectSet::const_iterator it = destination_objects.begin();
-                 it != destination_objects.end(); ++it)
-            {
-                if (TemporaryPtr<const System> sys = GetSystem((*it)->SystemID()))
+            for (TemporaryPtr<const UniverseObject> obj : destination_objects) {
+                if (TemporaryPtr<const System> sys = GetSystem(obj->SystemID()))
                     dest_systems.insert(sys);
             }
             std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
@@ -7089,42 +6951,28 @@ namespace {
 
 
             // check if candidate is one of the destination systems
-            for (std::vector<TemporaryPtr<const System> >::const_iterator it = m_destination_systems.begin();
-                 it != m_destination_systems.end(); ++it)
-            {
-                if (candidate_sys->ID() == (*it)->ID())
+            for (TemporaryPtr<const System> destination : m_destination_systems) {
+                if (candidate_sys->ID() == destination->ID())
                     return false;
             }
 
 
             // check if candidate already has a lane to any of the destination systems
-            for (std::vector<TemporaryPtr<const System> >::const_iterator it = m_destination_systems.begin();
-                 it != m_destination_systems.end(); ++it)
-            {
-                if (candidate_sys->HasStarlaneTo((*it)->ID()))
+            for (TemporaryPtr<const System> destination : m_destination_systems) {
+                if (candidate_sys->HasStarlaneTo(destination->ID()))
                     return false;
             }
-
-
-            const std::map<int, bool>& candidate_already_existing_lanes = candidate_sys->StarlanesWormholes();
-
 
             // check if any of the proposed lanes are too close to any already-
             // present lanes of the candidate system
             //std::cout << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
-            for (std::map<int, bool>::const_iterator it = candidate_already_existing_lanes.begin();
-                 it != candidate_already_existing_lanes.end(); ++it)
-            {
-                TemporaryPtr<const System> candidate_existing_lane_end_sys = GetSystem(it->first);
+            for (const std::map<int, bool>::value_type& lane : candidate_sys->StarlanesWormholes()) {
+                TemporaryPtr<const System> candidate_existing_lane_end_sys = GetSystem(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
                 // check this existing lane against potential lanes to all destination systems
-                for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
-                     dest_it != m_destination_systems.end(); ++dest_it)
-                {
-                    TemporaryPtr<const System> dest_sys = *dest_it;
-
+                for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
                     if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
                         //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
@@ -7136,19 +6984,11 @@ namespace {
             // check if any of the proposed lanes are too close to any already-
             // present lanes of any of the destination systems
             //std::cout << "... Checking lanes of destination systems:" << std::endl;
-            for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
-                 dest_it != m_destination_systems.end(); ++dest_it)
-            {
-                TemporaryPtr<const System> dest_sys = *dest_it;
-
-                const std::map<int, bool>& destination_already_existing_lanes = dest_sys->StarlanesWormholes();
-
+            for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
-                for (std::map<int, bool>::const_iterator dest_lane_it = destination_already_existing_lanes.begin();
-                     dest_lane_it != destination_already_existing_lanes.end(); ++dest_lane_it)
-                {
-                    TemporaryPtr<const System> dest_lane_end_sys = GetSystem(dest_lane_it->first);
+                for (const std::map<int, bool>::value_type& dest_lane : dest_sys->StarlanesWormholes()) {
+                    TemporaryPtr<const System> dest_lane_end_sys = GetSystem(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
@@ -7183,11 +7023,9 @@ namespace {
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
             //std::cout << "... Checking proposed lanes for proximity to other systems" <<std::endl;
-            for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
-                 dest_it != m_destination_systems.end(); ++dest_it)
-            {
-                if (LaneTooCloseToOtherSystem(candidate_sys, *dest_it)) {
-                    //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << (*dest_it)->UniverseObject::Name() << " due to proximity to another system." << std::endl;
+            for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
+                if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys)) {
+                    //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << std::endl;
                     return false;
                 }
             }
@@ -7195,11 +7033,9 @@ namespace {
 
             // check that there are no lanes already existing that cross the proposed lanes
             //std::cout << "... Checking for potential lanes crossing existing lanes" << std::endl;
-            for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
-                 dest_it != m_destination_systems.end(); ++dest_it)
-            {
-                if (LaneCrossesExistingLane(candidate_sys, *dest_it)) {
-                    //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << (*dest_it)->UniverseObject::Name() << " due to crossing an existing lane." << std::endl;
+            for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
+                if (LaneCrossesExistingLane(candidate_sys, dest_sys)) {
+                    //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << std::endl;
                     return false;
                 }
             }
@@ -7609,11 +7445,8 @@ namespace {
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
-            for (ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                TemporaryPtr<const UniverseObject> from_object(*it);
-
-                for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
-                    const std::set<int>& group = *groups_it;
+            for (TemporaryPtr<const UniverseObject> from_object : m_from_objects) {
+                for (const std::set<int>& group : groups) {
                     if (group.find(from_object->SystemID()) != group.end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
                         if (group.find(candidate->SystemID()) != group.end())
@@ -7886,10 +7719,8 @@ namespace {
                 return false;
 
             // check if any of the by_objects is ordered to bombard the candidate planet
-            for (ObjectSet::const_iterator it = m_by_objects.begin();
-                 it != m_by_objects.end(); ++it)
-            {
-                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(*it);
+            for (TemporaryPtr<const UniverseObject> obj : m_by_objects) {
+                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
                 if (!ship)
                     continue;
                 if (ship->OrderedBombardPlanet() == planet_id)
@@ -8199,11 +8030,7 @@ namespace {
                 return 0;
             // get species, then focus from that species
             if (const ::Species* s = GetSpecies(name1)) {
-                const std::vector< ::FocusType>& foci = s->Foci();
-                for (std::vector< ::FocusType>::const_iterator it = foci.begin();
-                     it != foci.end(); ++it)
-                {
-                    const ::FocusType& f = *it;
+                for (const ::FocusType& f : s->Foci()) {
                     if (f.Name() == name2)
                         return f.Location();
                 }
@@ -8360,8 +8187,8 @@ void Location::SetTopLevelContent(const std::string& content_name) {
 // And                                                   //
 ///////////////////////////////////////////////////////////
 And::~And() {
-    for (unsigned int i = 0; i < m_operands.size(); ++i)
-        delete m_operands[i];
+    for (ConditionBase* operand : m_operands)
+        delete operand;
 }
 
 bool And::operator==(const ConditionBase& rhs) const {
@@ -8391,8 +8218,8 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "And::Eval given no operands!";
         return;
     }
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        if (!m_operands[i]) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand) {
             ErrorLogger() << "And::Eval given null operand!";
             return;
         }
@@ -8422,9 +8249,9 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // check all operand conditions on all objects in the matches set, moving those
         // that don't pass a condition to the non-matches set
 
-        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        for (ConditionBase* operand : m_operands) {
             if (matches.empty()) break;
-            m_operands[i]->Eval(local_context, matches, non_matches, MATCHES);
+            operand->Eval(local_context, matches, non_matches, MATCHES);
         }
 
         // items already in non_matches set are not checked, and remain in non_matches set
@@ -8436,10 +8263,8 @@ bool And::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant()) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
         }
@@ -8452,10 +8277,8 @@ bool And::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant()) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
         }
@@ -8468,10 +8291,8 @@ bool And::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant()) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
         }
@@ -8499,8 +8320,8 @@ std::string And::Description(bool negated/* = false*/) const {
 std::string And::Dump() const {
     std::string retval = DumpIndent() + "And [\n";
     ++g_indent;
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        retval += m_operands[i]->Dump();
+    for (ConditionBase* operand : m_operands) {
+        retval += operand->Dump();
     }
     --g_indent;
     retval += DumpIndent() + "]\n";
@@ -8516,10 +8337,8 @@ void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_conte
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        (*it)->SetTopLevelContent(content_name);
+    for (ConditionBase* operand : m_operands) {
+        operand->SetTopLevelContent(content_name);
     }
 }
 
@@ -8527,8 +8346,8 @@ void And::SetTopLevelContent(const std::string& content_name) {
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or::~Or() {
-    for (unsigned int i = 0; i < m_operands.size(); ++i)
-        delete m_operands[i];
+    for (ConditionBase* operand : m_operands)
+        delete operand;
 }
 
 bool Or::operator==(const ConditionBase& rhs) const {
@@ -8558,8 +8377,8 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ErrorLogger() << "Or::Eval given no operands!";
         return;
     }
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        if (!m_operands[i]) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand) {
             ErrorLogger() << "Or::Eval given null operand!";
             return;
         }
@@ -8570,9 +8389,9 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // if a non-candidate item matches an operand condition, move the item to the
         // matches set.
 
-        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        for (ConditionBase* operand : m_operands) {
             if (non_matches.empty()) break;
-            m_operands[i]->Eval(local_context, matches, non_matches, NON_MATCHES);
+            operand->Eval(local_context, matches, non_matches, NON_MATCHES);
         }
 
         // items already in matches set are not checked and remain in the
@@ -8587,9 +8406,9 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         m_operands[0]->Eval(local_context, matches, partly_checked_matches, MATCHES);
 
         // move items that pass any of the other conditions back into matches
-        for (unsigned int i = 1; i < m_operands.size(); ++i) {
+        for (ConditionBase* operand : m_operands) {
             if (partly_checked_matches.empty()) break;
-            m_operands[i]->Eval(local_context, matches, partly_checked_matches, NON_MATCHES);
+            operand->Eval(local_context, matches, partly_checked_matches, NON_MATCHES);
         }
 
         // merge items that failed all operand conditions into non_matches
@@ -8605,10 +8424,8 @@ bool Or::RootCandidateInvariant() const {
     if (m_root_candidate_invariant != UNKNOWN_INVARIANCE)
         return m_root_candidate_invariant == INVARIANT;
 
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (!(*it)->RootCandidateInvariant()) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand->RootCandidateInvariant()) {
             m_root_candidate_invariant = VARIANT;
             return false;
         }
@@ -8621,10 +8438,8 @@ bool Or::TargetInvariant() const {
     if (m_target_invariant != UNKNOWN_INVARIANCE)
         return m_target_invariant == INVARIANT;
 
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (!(*it)->TargetInvariant()) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand->TargetInvariant()) {
             m_target_invariant = VARIANT;
             return false;
         }
@@ -8637,10 +8452,8 @@ bool Or::SourceInvariant() const {
     if (m_source_invariant != UNKNOWN_INVARIANCE)
         return m_source_invariant == INVARIANT;
 
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        if (!(*it)->SourceInvariant()) {
+    for (ConditionBase* operand : m_operands) {
+        if (!operand->SourceInvariant()) {
             m_source_invariant = VARIANT;
             return false;
         }
@@ -8668,8 +8481,8 @@ std::string Or::Description(bool negated/* = false*/) const {
 std::string Or::Dump() const {
     std::string retval = DumpIndent() + "Or [\n";
     ++g_indent;
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        retval += m_operands[i]->Dump();
+    for (ConditionBase* operand : m_operands) {
+        retval += operand->Dump();
     }
     --g_indent;
     retval += "\n" + DumpIndent() + "]\n";
@@ -8677,10 +8490,8 @@ std::string Or::Dump() const {
 }
 
 void Or::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ConditionBase*>::const_iterator it = m_operands.begin();
-         it != m_operands.end(); ++it)
-    {
-        (*it)->SetTopLevelContent(content_name);
+    for (ConditionBase* operand : m_operands) {
+        operand->SetTopLevelContent(content_name);
     }
 }
 
