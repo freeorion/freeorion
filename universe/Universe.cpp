@@ -456,13 +456,13 @@ Universe::~Universe() {
 void Universe::Clear() {
     // empty object maps
     m_objects.Clear();
-    for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it)
-        it->second.Clear();
+    for (EmpireObjectMap::value_type& entry : m_empire_latest_known_objects)
+        entry.second.Clear();
     m_empire_latest_known_objects.clear();
 
     // clean up ship designs
-    for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
-        delete it->second;
+    for (ShipDesignMap::value_type& entry : m_ship_designs)
+        delete entry.second;
     m_ship_designs.clear();
 
     m_destroyed_object_ids.clear();
@@ -520,8 +520,8 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     if (empire_id != ALL_EMPIRES)
         empire_ids.insert(empire_id);
     else
-        for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-            empire_ids.insert(empire_it->first);
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+            empire_ids.insert(empire_entry.first);
 
     // check each object's visibility against all empires, including the object
     // if an empire has visibility of it
@@ -583,8 +583,8 @@ void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
 const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {
     if (name.empty())
         return 0;
-    for (ship_design_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
-        const ShipDesign* design = it->second;
+    for (const std::map<int, ShipDesign*>::value_type& entry : m_ship_designs) {
+        const ShipDesign* design = entry.second;
         const std::string& design_name = design->Name(false);
         if (name == design_name)
             return design;
@@ -648,10 +648,9 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         // all specials visible
         std::set<std::string> retval;
-        const std::map<std::string, std::pair<int, float> >& specials = obj->Specials();
-        for (std::map<std::string, std::pair<int, float> >::const_iterator it = specials.begin();
-             it != specials.end(); ++it)
-        { retval.insert(it->first); }
+        for (const std::map<std::string, std::pair<int, float>>::value_type& entry : obj->Specials()) {
+            retval.insert(entry.first);
+        }
         return retval;
     }
 }
@@ -1085,19 +1084,15 @@ int Universe::NearestSystemTo(double x, double y) const {
     double min_dist2 = DBL_MAX;
     int min_dist2_sys_id = INVALID_OBJECT_ID;
 
-    std::vector<TemporaryPtr<const System> > systems = m_objects.FindObjects<System>();
-
-    for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
-         sys_it != systems.end(); ++sys_it)
-    {
-        double xs = (*sys_it)->X();
-        double ys = (*sys_it)->Y();
+    for (TemporaryPtr<const System> system : m_objects.FindObjects<System>()) {
+        double xs = system->X();
+        double ys = system->Y();
         double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);
         if (dist2 == 0.0) {
-            return (*sys_it)->ID();
+            return system->ID();
         } else if (dist2 < min_dist2) {
             min_dist2 = dist2;
-            min_dist2_sys_id = (*sys_it)->ID();
+            min_dist2_sys_id = system->ID();
         }
     }
     return min_dist2_sys_id;
@@ -1154,8 +1149,8 @@ int Universe::InsertShipDesign(ShipDesign* ship_design) {
         } else { // we'll probably never execute this branch, considering how many IDs are available
             // find a hole in the assigned IDs in which to place the object
             int last_id_seen = ShipDesign::INVALID_DESIGN_ID;
-            for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
-                if (1 < it->first - last_id_seen) {
+            for (ShipDesignMap::value_type& entry : m_ship_designs) {
+                if (1 < entry.first - last_id_seen) {
                     m_ship_designs[last_id_seen + 1] = ship_design;
                     ship_design->SetID(last_id_seen + 1);
                     retval = last_id_seen + 1;
@@ -1207,18 +1202,18 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->ResetTargetMaxUnpairedMeters();
-        it->ResetPairedActiveMeters();
+    for (TemporaryPtr<UniverseObject> object : m_objects) {
+        object->ResetTargetMaxUnpairedMeters();
+        object->ResetPairedActiveMeters();
     }
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->ResetMeters();
+    for (std::map<int, Empire*>::value_type& entry : Empires())
+        entry.second->ResetMeters();
 
     ExecuteEffects(targets_causes, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
-        it->ClampMeters();
+    for (TemporaryPtr<UniverseObject> object : m_objects)
+        object->ClampMeters();
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, bool do_accounting) {
@@ -1241,9 +1236,9 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it) {
-        (*it)->ResetTargetMaxUnpairedMeters();
-        (*it)->ResetPairedActiveMeters();
+    for (TemporaryPtr<UniverseObject> object : objects) {
+        object->ResetTargetMaxUnpairedMeters();
+        object->ResetPairedActiveMeters();
     }
     // could also reset empire meters here, but unless all objects have meters
     // recalculated, some targets that lead to empire meters being modified may
@@ -1251,8 +1246,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 
     ExecuteEffects(targets_causes, do_accounting, true);
 
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
-        (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
+    for (TemporaryPtr<UniverseObject> object : objects)
+        object->ClampMeters();
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
@@ -1265,16 +1260,16 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
-        (*it)->ResetTargetMaxUnpairedMeters();
-        (*it)->ResetPairedActiveMeters();
+    for (TemporaryPtr<UniverseObject> object : m_objects) {
+        object->ResetTargetMaxUnpairedMeters();
+        object->ResetPairedActiveMeters();
     }
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->ResetMeters();
+    for (std::map<int, Empire*>::value_type& entry : Empires())
+        entry.second->ResetMeters();
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
-        (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
+    for (TemporaryPtr<UniverseObject> object : m_objects)
+        object->ClampMeters();
 }
 
 void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_accounting) {
@@ -1286,12 +1281,14 @@ void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_account
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) 
-    { (*it)->ResetTargetMaxUnpairedMeters(); }
+    for (TemporaryPtr<UniverseObject> object : m_objects) {
+        object->ResetTargetMaxUnpairedMeters();
+    }
+
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it)
-        (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
+    for (TemporaryPtr<UniverseObject> object : m_objects)
+        object->ClampMeters();
 }
 
 void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids) {
@@ -1344,10 +1341,8 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
 
     DebugLogger() << "IMEAD: determining discrepancies";
     // determine meter max discrepancies
-    for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin();
-         obj_it != m_effect_accounting_map.end(); ++obj_it)
-    {
-        int object_id = obj_it->first;
+    for (Effect::AccountingMap::value_type& entry : m_effect_accounting_map) {
+        int object_id = entry.first;
         // skip destroyed objects
         if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
             continue;
@@ -1359,11 +1354,9 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         }
 
         // every meter has a value at the start of the turn, and a value after updating with known effects
-        for (std::map<MeterType, Meter>::iterator meter_it = obj->Meters().begin();
-             meter_it != obj->Meters().end(); ++meter_it)
-        {
-            MeterType type = meter_it->first;
-            Meter& meter = meter_it->second;
+        for (std::map<MeterType, Meter>::value_type& entry : obj->Meters()) {
+            MeterType type = entry.first;
+            Meter& meter = entry.second;
 
             // discrepancy is the difference between expected and actual meter values at start of turn
             float discrepancy = meter.Initial() - meter.Current();
@@ -1392,9 +1385,8 @@ void Universe::UpdateMeterEstimates()
 
 void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects) {
     if (object_id == INVALID_OBJECT_ID) {
-        std::vector<int> all_objects_vec = m_objects.FindExistingObjectIDs();
-        for (std::vector< int >::iterator id_it = all_objects_vec.begin(); id_it != all_objects_vec.end(); ++id_it)
-            m_effect_accounting_map[*id_it].clear();
+        for (int obj_id : m_objects.FindExistingObjectIDs())
+            m_effect_accounting_map[obj_id].clear();
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         UpdateMeterEstimatesImpl(std::vector<int>());// will cause it to process all existing objects
         return;
@@ -1437,8 +1429,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     std::set<int> objects_set;  // ensures no duplicates
 
-    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
-        int object_id = *obj_it;
+    for (int object_id : objects_vec) {
         // skip destroyed objects
         if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
             continue;
@@ -1465,10 +1456,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                        boost::bind(&std::map<int, TemporaryPtr<UniverseObject> >::value_type::second, _1));
     }
 
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
-         obj_it != object_ptrs.end(); ++obj_it)
-    {
-        TemporaryPtr<UniverseObject> obj = *obj_it;
+    for (TemporaryPtr<UniverseObject> obj : object_ptrs) {
         int obj_id = obj->ID();
 
         // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
@@ -1495,9 +1483,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after resetting meters objects:";
-        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
-             obj_it != object_ptrs.end(); ++obj_it)
-        { DebugLogger() << (*obj_it)->Dump(); }
+        for (TemporaryPtr<UniverseObject> obj : object_ptrs) {
+            DebugLogger() << obj->Dump();
+        }
     }
 
     // cache all activation and scoping condition results before applying Effects, since the application of
@@ -1510,19 +1498,16 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after executing effects objects:";
-        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
-             obj_it != object_ptrs.end(); ++obj_it)
-        { DebugLogger() << (*obj_it)->Dump(); }
+        for (TemporaryPtr<UniverseObject> obj : object_ptrs) {
+            DebugLogger() << obj->Dump();
+        }
     }
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty() && do_accounting) {
-        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
-             obj_it != object_ptrs.end(); ++obj_it)
-        {
-            TemporaryPtr<UniverseObject> obj = *obj_it;
+        for (TemporaryPtr<UniverseObject> obj : object_ptrs) {
             int obj_id = obj->ID();
 
             // check if this object has any discrepancies
@@ -1531,12 +1516,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 continue;   // no discrepancy, so skip to next object
 
             // apply all meters' discrepancies
-            std::map<MeterType, double>& meter_map = dis_it->second;
-            for (std::map<MeterType, double>::iterator meter_it = meter_map.begin();
-                 meter_it != meter_map.end(); ++meter_it)
-            {
-                MeterType type = meter_it->first;
-                double discrepancy = meter_it->second;
+            for (std::map<MeterType, double>::value_type& entry : dis_it->second) {
+                MeterType type = entry.first;
+                double discrepancy = entry.second;
 
                 //if (discrepancy == 0.0) continue;
 
@@ -1561,29 +1543,25 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     // clamp meters to valid range of max values, and so current is less than max
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
-         obj_it != object_ptrs.end(); ++obj_it)
-    {
+    for (TemporaryPtr<UniverseObject> obj : object_ptrs) {
         // currently this clamps all meters, even if not all meters are being processed by this function...
         // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
         // updated should have no effect
-        (*obj_it)->ClampMeters();
+        obj->ClampMeters();
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-        for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
-             obj_it != object_ptrs.end(); ++obj_it)
-        { DebugLogger() << (*obj_it)->Dump(); }
+        for (TemporaryPtr<UniverseObject> obj : object_ptrs) {
+            DebugLogger() << obj->Dump();
+        }
     }
 }
 
 void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
-    std::vector<TemporaryPtr<UniverseObject> > objects = m_objects.FindObjects(object_ids);
-
     // copy current meter values to initial values
-    for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = objects.begin(); it != objects.end(); ++it)
-        (*it)->BackPropagateMeters();
+    for (TemporaryPtr<UniverseObject> obj : m_objects.FindObjects(object_ids))
+        obj->BackPropagateMeters();
 }
 
 void Universe::BackPropagateObjectMeters()
@@ -1676,10 +1654,8 @@ namespace {
 
         if (insert) unique_guard.lock(); else shared_guard.lock();
 
-        for (std::map<const Condition::ConditionBase*, std::pair<bool,Effect::TargetSet> >::iterator
-             it = m_entries.begin(); it != m_entries.end(); ++it)
-        {
-            if (*cond == *(it->first)) {
+        for (std::map<const Condition::ConditionBase*, std::pair<bool,Effect::TargetSet>>::value_type& entry : m_entries) {
+            if (*cond == *(entry.first)) {
                 //DebugLogger() << "Reused target set!";
 
                 if (insert) {
@@ -1689,10 +1665,10 @@ namespace {
                 }
 
                 // wait for cache fill
-                while (!it->second.first)
+                while (!entry.second.first)
                     m_state_changed.wait(shared_guard);
 
-                return &it->second;
+                return &entry.second;
             }
         }
 
@@ -1772,10 +1748,8 @@ namespace {
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
             std::string sources_ids;
-            for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator source_it = m_sources->begin();
-                 source_it != m_sources->end(); ++source_it)
-            {
-                sources_ids += (*source_it)->Name() + " (" + boost::lexical_cast<std::string>((*source_it)->ID()) + ")  ";
+            for (TemporaryPtr<const UniverseObject> obj : *m_sources) {
+                sources_ids += obj->Name() + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
             }
             DebugLogger() << "StoreTargetsAndCausesOfEffectsGroups: effects_group: " << m_effects_group->AccountingLabel()
                           << "  specific_cause: " << m_specific_cause_name
@@ -1790,9 +1764,7 @@ namespace {
         // create temporary container for concurrent work
         Effect::TargetSet target_objects(*m_target_objects);
         // process all sources in set provided
-        std::vector<TemporaryPtr<const UniverseObject> >::const_iterator source_it;
-        for (source_it = m_sources->begin(); source_it != m_sources->end(); ++source_it) {
-            TemporaryPtr<const UniverseObject> source = *source_it;
+        for (TemporaryPtr<const UniverseObject> source : *m_sources) {
             ScriptingContext source_context(source);
             int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
             ScopedTimer update_timer("... StoreTargetsAndCausesOfEffectsGroups done processing source " +
@@ -1859,9 +1831,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "target objects:";
-        for (Effect::TargetSet::const_iterator it = all_potential_targets.begin();
-             it != all_potential_targets.end(); ++it)
-        { DebugLogger() << (*it)->Dump(); }
+        for (TemporaryPtr<UniverseObject> obj : all_potential_targets) {
+            DebugLogger() << obj->Dump();
+        }
     }
 
 
@@ -1872,13 +1844,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     std::map<int, boost::shared_ptr<ConditionCache> > cached_source_condition_matches;
 
     // prepopulate the cache for safe concurrent access
-    std::vector<int> all_objects = m_objects.FindObjectIDs();
-    for (std::vector<int>::const_iterator it = all_objects.begin(), end_it = all_objects.end(); it != end_it; ++it)
-    { cached_source_condition_matches[*it] = boost::shared_ptr<ConditionCache>(new ConditionCache); }
-
-    {
-        cached_source_condition_matches[INVALID_OBJECT_ID] = boost::shared_ptr<ConditionCache>(new ConditionCache);
+    for (int obj_id : m_objects.FindObjectIDs()) {
+        cached_source_condition_matches[obj_id] = boost::shared_ptr<ConditionCache>(new ConditionCache);
     }
+
+    cached_source_condition_matches[INVALID_OBJECT_ID] = boost::shared_ptr<ConditionCache>(new ConditionCache);
+
     ConditionCache& invariant_condition_matches = *cached_source_condition_matches[INVALID_OBJECT_ID];
 
     boost::timer type_timer;
@@ -1899,11 +1870,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // find each species planets in single pass, maintaining object map order per-species
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > species_objects;
-    std::vector<TemporaryPtr<Planet> > planets = m_objects.FindObjects<Planet>();
-    for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
-         planet_it != planets.end(); ++planet_it)
-    {
-        TemporaryPtr<const Planet> planet = *planet_it;
+    for (TemporaryPtr<Planet> planet : m_objects.FindObjects<Planet>()) {
         if (m_destroyed_object_ids.find(planet->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = planet->SpeciesName();
@@ -1921,11 +1888,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
 
     // find each species ships in single pass, maintaining object map order per-species
-    std::vector<TemporaryPtr<Ship> > ships = m_objects.FindObjects<Ship>();
-    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<Ship> ship : m_objects.FindObjects<Ship>()) {
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = ship->SpeciesName();
@@ -1941,23 +1904,19 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     double ship_species_time = type_timer.elapsed();
 
     // enforce species effects order
-    for (SpeciesManager::iterator species_it  = GetSpeciesManager().begin();
-         species_it != GetSpeciesManager().end(); ++species_it)
-    {
-        const std::string& species_name = species_it->first;
-        const Species*     species      = species_it->second;
+    for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+        const std::string& species_name = entry.first;
+        const Species*     species      = entry.second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator species_objects_it =
             species_objects.find(species_name);
 
         if (species_objects_it == species_objects.end())
             continue;
 
-        const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = species->Effects();
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : species->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                *effects_group_it, species_objects_it->second, ECT_SPECIES, species_name,
+                effects_group, species_objects_it->second, ECT_SPECIES, species_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -1975,9 +1934,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         int source_object_id = obj_it->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
-        const std::map<std::string, std::pair<int, float> >& specials = obj_it->Specials();
-        for (std::map<std::string, std::pair<int, float> >::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
-            const std::string& special_name = special_it->first;
+        for (const std::map<const std::string, std::pair<int, float>>::value_type& entry : obj_it->Specials()) {
+            const std::string& special_name = entry.first;
             const Special*     special      = GetSpecial(special_name);
             if (!special) {
                 ErrorLogger() << "GetEffectsAndTargets couldn't get Special " << special_name;
@@ -1987,21 +1945,17 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         }
     }
     // enforce specials effects order
-    std::vector<std::string> special_names = SpecialNames();
-    for (std::vector<std::string>::iterator special_it = special_names.begin(); special_it !=special_names.end(); ++special_it) {
-        const std::string& special_name = *special_it;
+    for (const std::string& special_name : SpecialNames()) {
         const Special*     special      = GetSpecial(special_name);
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator specials_objects_it = specials_objects.find(special_name);
 
         if (specials_objects_it == specials_objects.end())
             continue;
 
-        const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = special->Effects();
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : special->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                *effects_group_it, specials_objects_it->second, ECT_SPECIAL, special_name,
+                effects_group, specials_objects_it->second, ECT_SPECIAL, special_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -2015,8 +1969,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         DebugLogger() << "Universe::GetEffectsAndTargets for TECHS";
     type_timer.restart();
     std::list< std::vector< TemporaryPtr<const UniverseObject> > > tech_sources;
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        const Empire* empire = it->second;
+    for (std::map<int, Empire*>::value_type& entry : Empires()) {
+        const Empire* empire = entry.second;
         int source_id = empire->CapitalID();
         TemporaryPtr<const UniverseObject> source = m_objects.Object(source_id);
         if (source_id == INVALID_OBJECT_ID ||
@@ -2052,12 +2006,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
 
-            const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = tech->Effects();
-            std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-            for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+            for (boost::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
                 targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
                 run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                    *effects_group_it, tech_sources.back(), ECT_TECH, tech->Name(),
+                    effects_group, tech_sources.back(), ECT_TECH, tech->Name(),
                     all_potential_targets, targets_causes_reorder_buffer.back(),
                     cached_source_condition_matches,
                     invariant_condition_matches,
@@ -2074,11 +2026,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > buildings_by_type;
-    std::vector<TemporaryPtr<Building> > buildings = m_objects.FindObjects<Building>();
-    for (std::vector<TemporaryPtr<Building> >::const_iterator building_it = buildings.begin();
-         building_it != buildings.end(); ++building_it)
-    {
-        TemporaryPtr<const Building> building = *building_it;
+    for (TemporaryPtr<Building> building : m_objects.FindObjects<Building>()) {
         if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string&  building_type_name = building->BuildingTypeName();
@@ -2092,23 +2040,19 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // enforce building types effects order
-    for (BuildingTypeManager::iterator building_type_it  = GetBuildingTypeManager().begin();
-         building_type_it != GetBuildingTypeManager().end(); ++building_type_it)
-    {
-        const std::string&  building_type_name = building_type_it->first;
-        const BuildingType* building_type      = building_type_it->second;
+    for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
+        const std::string&  building_type_name = entry.first;
+        const BuildingType* building_type      = entry.second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator buildings_by_type_it =
             buildings_by_type.find(building_type_name);
 
         if (buildings_by_type_it == buildings_by_type.end())
             continue;
 
-        const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = building_type->Effects();
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : building_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                *effects_group_it, buildings_by_type_it->second, ECT_BUILDING, building_type_name,
+                effects_group, buildings_by_type_it->second, ECT_BUILDING, building_type_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -2126,9 +2070,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > ships_by_hull_type;
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > ships_by_part_type;
-    ships = m_objects.FindObjects<Ship>();
-    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : m_objects.FindObjects<Ship>()) {
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -2143,12 +2085,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
         ships_by_hull_type[hull_type->Name()].push_back(ship);
 
-        const std::vector<std::string>& parts = ship_design->Parts();
-        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-            const std::string& part = *part_it;
+        for (const std::string& part : ship_design->Parts()) {
             if (part.empty())
                 continue;
-            const PartType* part_type = GetPartType(*part_it);
+            const PartType* part_type = GetPartType(part);
             if (!part_type) {
                 ErrorLogger() << "GetEffectsAndTargets couldn't get PartType";
                 continue;
@@ -2159,20 +2099,18 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // enforce hull types effects order
-    for (HullTypeManager::iterator hull_type_it  = GetHullTypeManager().begin(); hull_type_it != GetHullTypeManager().end(); ++hull_type_it) {
-        const std::string& hull_type_name = hull_type_it->first;
-        const HullType*    hull_type      = hull_type_it->second;
+    for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager()) {
+        const std::string& hull_type_name = entry.first;
+        const HullType*    hull_type      = entry.second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
 
         if (ships_by_hull_type_it == ships_by_hull_type.end())
             continue;
 
-        const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = hull_type->Effects();
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : hull_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                *effects_group_it, ships_by_hull_type_it->second, ECT_SHIP_HULL, hull_type_name,
+                effects_group, ships_by_hull_type_it->second, ECT_SHIP_HULL, hull_type_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -2180,20 +2118,18 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         }
     }
     // enforce part types effects order
-    for (PartTypeManager::iterator part_type_it  = GetPartTypeManager().begin(); part_type_it != GetPartTypeManager().end(); ++part_type_it) {
-        const std::string& part_type_name = part_type_it->first;
-        const PartType*    part_type      = part_type_it->second;
+    for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager()) {
+        const std::string& part_type_name = entry.first;
+        const PartType*    part_type      = entry.second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator ships_by_part_type_it = ships_by_part_type.find(part_type_name);
 
         if (ships_by_part_type_it == ships_by_part_type.end())
             continue;
 
-        const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = part_type->Effects();
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : part_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                *effects_group_it, ships_by_part_type_it->second, ECT_SHIP_PART, part_type_name,
+                effects_group, ships_by_part_type_it->second, ECT_SHIP_PART, part_type_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -2208,9 +2144,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > fields_by_type;
-    std::vector<TemporaryPtr<Field> > fields = m_objects.FindObjects<Field>();
-    for (std::vector<TemporaryPtr<Field> >::const_iterator field_it = fields.begin(); field_it != fields.end(); ++field_it) {
-        TemporaryPtr<const Field> field = *field_it;
+    for (TemporaryPtr<const Field> field : m_objects.FindObjects<Field>()) {
         if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -2225,20 +2159,18 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // enforce field types effects order
-    for (FieldTypeManager::iterator field_type_it  = GetFieldTypeManager().begin(); field_type_it != GetFieldTypeManager().end(); ++field_type_it) {
-        const std::string& field_type_name = field_type_it->first;
-        const FieldType*   field_type      = field_type_it->second;
+    for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager()) {
+        const std::string& field_type_name = entry.first;
+        const FieldType*   field_type      = entry.second;
         std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > >::iterator fields_by_type_it = fields_by_type.find(field_type_name);
 
         if (fields_by_type_it == fields_by_type.end())
             continue;
 
-        const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups = field_type->Effects();
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator effects_group_it;
-        for (effects_group_it = effects_groups.begin(); effects_group_it != effects_groups.end(); ++effects_group_it) {
+        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : field_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-                *effects_group_it, fields_by_type_it->second, ECT_FIELD, field_type_name,
+                effects_group, fields_by_type_it->second, ECT_FIELD, field_type_name,
                 all_potential_targets, targets_causes_reorder_buffer.back(),
                 cached_source_condition_matches,
                 invariant_condition_matches,
@@ -2254,11 +2186,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // add results to targets_causes in issue order
     // FIXME: each job is an effectsgroup, and we need that separation for
     // execution anyway, so maintain it here instead of merging.
-    for (std::list<Effect::TargetsCauses>::const_iterator job_it = targets_causes_reorder_buffer.begin(); job_it != targets_causes_reorder_buffer.end(); ++job_it) {
-        Effect::TargetsCauses job_results = *job_it;
-
-        for (Effect::TargetsCauses::const_iterator result_it = job_results.begin(); result_it != job_results.end(); ++result_it) {
-            targets_causes.push_back(*result_it);
+    for (const Effect::TargetsCauses& job_results : targets_causes_reorder_buffer) {
+        for (const std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& result : job_results) {
+            targets_causes.push_back(result);
         }
     }
     double reorder_time = eval_timer.elapsed();
@@ -2294,10 +2224,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
         const Effect::EffectsGroup* last_effects_group   = 0;
         Effect::TargetsCauses*      group_targets_causes = 0;
 
-        for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
-             targets_it != targets_causes.end(); ++targets_it)
-        {
-            const Effect::SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+        for (const std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& targets_cause : targets_causes) {
+            const Effect::SourcedEffectsGroup& sourced_effects_group = targets_cause.first;
             Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group.get();
 
             if (effects_group != last_effects_group) {
@@ -2305,20 +2233,14 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 dispatched_targets_causes[effects_group->Priority()].push_back(std::make_pair(effects_group, Effect::TargetsCauses()));
                 group_targets_causes = &dispatched_targets_causes[effects_group->Priority()].back().second;
             }
-            group_targets_causes->push_back(*targets_it);
+            group_targets_causes->push_back(targets_cause);
         }
     }
 
     // execute each effects group one by one
-    std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > >::iterator priority_group_it;
-    for (priority_group_it = dispatched_targets_causes.begin();
-         priority_group_it != dispatched_targets_causes.end(); ++priority_group_it)
-    {
-        std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
-        for (effect_group_it = priority_group_it->second.begin();
-             effect_group_it != priority_group_it->second.end(); ++effect_group_it)
-        {
-            Effect::EffectsGroup*   effects_group        = effect_group_it->first;
+    for (std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses>>>::value_type& priority_group : dispatched_targets_causes) {
+        for (std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses>>::value_type& effect_group_entry : priority_group.second) {
+            Effect::EffectsGroup* effects_group = effect_group_entry.first;
 
             if (only_meter_effects && !effects_group->HasMeterEffects())
                 continue;
@@ -2327,7 +2249,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
             if (only_generate_sitrep_effects && !effects_group->HasSitrepEffects())
                 continue;
 
-            Effect::TargetsCauses&  group_targets_causes = effect_group_it->second;
+            Effect::TargetsCauses&  group_targets_causes = effect_group_entry.second;
             std::string             stacking_group       = effects_group->StackingGroup();
             ScopedTimer update_timer(
                 "Universe::ExecuteEffects effgrp (" + effects_group->AccountingLabel() + ") from "
@@ -2397,33 +2319,29 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     // their info is available even if they are destroyed by the upcoming effect
     // destruction
 
-    for (std::map<int, std::set<int> >::iterator it = m_marked_destroyed.begin();
-         it != m_marked_destroyed.end(); ++it)
-    {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
+    for (std::map<int, std::set<int>>::value_type& entry : m_marked_destroyed) {
+        int obj_id = entry.first;
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(obj_id);
         if (!obj)
             continue;
-        const std::set<int>& contents = obj->ContainedObjectIDs();
 
         // recording of what species/empire destroyed what other stuff in
         // empire statistics for this destroyed object and any contained objects
-        for (std::set<int>::const_iterator source_it = it->second.begin();
-             source_it != it->second.end(); ++source_it)
-        { CountDestructionInStats(it->first, *source_it); }
+        for (int destructor : entry.second) {
+            CountDestructionInStats(obj_id, destructor);
+        }
 
-        for (std::set<int>::const_iterator dest_it = contents.begin();
-             dest_it != contents.end(); ++dest_it)
-        {
-            for (std::set<int>::const_iterator source_it = it->second.begin();
-                 source_it != it->second.end(); ++source_it)
-            { CountDestructionInStats(*dest_it, *source_it); }
+        for (int contained_obj_id : obj->ContainedObjectIDs()) {
+            for (int destructor : entry.second) {
+                CountDestructionInStats(contained_obj_id, destructor);
+            }
         }
         // not worried about fleets being deleted because all their ships were
         // destroyed...  as of this writing there are no stats tracking
         // destruction of fleets.
 
         // do actual recursive destruction.
-        RecursiveDestroy(it->first);
+        RecursiveDestroy(obj_id);
     }
 }
 
@@ -2505,18 +2423,13 @@ void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, Visibili
 
 void Universe::ApplyEffectDerivedVisibilities() {
     // for each empire with a visibility map
-    for (Universe::EmpireObjectVisibilityMap::const_iterator empire_it = m_effect_specified_empire_object_visibilities.begin();
-         empire_it != m_effect_specified_empire_object_visibilities.end(); ++empire_it)
-    {
-        if (empire_it->first == ALL_EMPIRES)
+    for (std::map<int, ObjectVisibilityMap>::value_type& empire_entry : m_effect_specified_empire_object_visibilities) {
+        if (empire_entry.first == ALL_EMPIRES)
             continue;   // can't set a non-empire's visibility
-        const Universe::ObjectVisibilityMap& empire_vis_map = empire_it->second;
-        for (Universe::ObjectVisibilityMap::const_iterator obj_it = empire_vis_map.begin();
-             obj_it != empire_vis_map.end(); ++obj_it)
-        {
-            if (obj_it->first <= INVALID_OBJECT_ID)
+        for (const ObjectVisibilityMap::value_type& object_entry : empire_entry.second) {
+            if (object_entry.first <= INVALID_OBJECT_ID)
                 continue;
-            m_empire_object_visibility[empire_it->first][obj_it->first] = obj_it->second;
+            m_empire_object_visibility[empire_entry.first][object_entry.first] = object_entry.second;
         }
     }
 }
@@ -2543,11 +2456,8 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
         return;
     }
 
-    const std::set<int> children = obj->VisibleContainedObjectIDs(empire_id);
-
-    for (std::set<int>::const_iterator child_id = children.begin();
-         child_id != children.end(); ++child_id) {
-        if (TemporaryPtr<UniverseObject> child = objects.Object(*child_id) )
+    for (int child_id : obj->VisibleContainedObjectIDs(empire_id)) {
+        if (TemporaryPtr<UniverseObject> child = objects.Object(child_id))
             ForgetKnownObject(empire_id, child->ID());
     }
 
@@ -2671,12 +2581,10 @@ namespace {
     std::map<int, float> GetEmpiresDetectionStrengths(int empire_id = ALL_EMPIRES) {
         std::map<int, float> retval;
         if (empire_id == ALL_EMPIRES) {
-            for (EmpireManager::iterator empire_it = Empires().begin();
-                 empire_it != Empires().end(); ++empire_it)
-            {
-                const Meter* meter = empire_it->second->GetMeter("METER_DETECTION_STRENGTH");
+            for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+                const Meter* meter = empire_entry.second->GetMeter("METER_DETECTION_STRENGTH");
                 float strength = meter ? meter->Current() : 0.0f;
-                retval[empire_it->first] = strength;
+                retval[empire_entry.first] = strength;
             }
         } else {
             if (const Empire* empire = GetEmpire(empire_id))
@@ -2712,11 +2620,9 @@ namespace {
             // detected by the empire if the empire has a detector in range.
             // being detectable by an empire requires the object to have
             // low enough stealth (0 or below the empire's detection strength)
-            for (std::map<int, float>::const_iterator empire_it = empire_detection_strengths.begin();
-                 empire_it != empire_detection_strengths.end(); ++empire_it)
-            {
-                int empire_id = empire_it->first;
-                if (object_stealth <= empire_it->second || object_stealth == 0.0f || obj->OwnedBy(empire_id))
+            for (const std::map<int, float>::value_type& empire_entry : empire_detection_strengths) {
+                int empire_id = empire_entry.first;
+                if (object_stealth <= empire_entry.second || object_stealth == 0.0f || obj->OwnedBy(empire_id))
                     retval[empire_id][object_pos].push_back(object_id);
             }
         }
@@ -2731,18 +2637,14 @@ namespace {
     {
         std::vector<int> retval;
         // check each detector position and range against each object position
-        for (std::map<std::pair<double, double>, std::vector<int> >::const_iterator object_position_it = object_positions.begin();
-             object_position_it != object_positions.end(); ++object_position_it)
-        {
-            const std::pair<double, double>& object_pos = object_position_it->first;
-            const std::vector<int>& objects = object_position_it->second;
+        for (const std::map<std::pair<double, double>, std::vector<int>>::value_type& object_position_entry : object_positions) {
+            const std::pair<double, double>& object_pos = object_position_entry.first;
+            const std::vector<int>& objects = object_position_entry.second;
             // search through detector positions until one is found in range
-            for (std::map<std::pair<double, double>, float>::const_iterator detector_position_it = detector_position_ranges.begin();
-                 detector_position_it != detector_position_ranges.end(); ++detector_position_it)
-            {
+            for (const std::map<std::pair<double, double>, float>::value_type& detector_position_entry : detector_position_ranges) {
                 // check range for this detector location for this detectables location
-                float detector_range2 = detector_position_it->second * detector_position_it->second;
-                const std::pair<double, double>& detector_pos = detector_position_it->first;
+                float detector_range2 = detector_position_entry.second * detector_position_entry.second;
+                const std::pair<double, double>& detector_pos = detector_position_entry.first;
                 double x_dist = detector_pos.first - object_pos.first;
                 double y_dist = detector_pos.second - object_pos.second;
                 double dist2 = x_dist*x_dist + y_dist*y_dist;
@@ -2792,14 +2694,12 @@ namespace {
             empire_location_detection_ranges,
         const ObjectMap& objects)
     {
-        std::vector<TemporaryPtr<const Field> > fields = objects.FindObjects<Field>();
         Universe& universe = GetUniverse();
 
-        for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
-             detecting_empire_it = empire_location_detection_ranges.begin();
-             detecting_empire_it != empire_location_detection_ranges.end(); ++detecting_empire_it)
+        for (const std::map<int, std::map<std::pair<double, double>, float>>::value_type& detecting_empire_entry :
+             empire_location_detection_ranges)
         {
-            int detecting_empire_id = detecting_empire_it->first;
+            int detecting_empire_id = detecting_empire_entry.first;
             double detection_strength = 0.0;
             const Empire* empire = GetEmpire(detecting_empire_id);
             if (!empire)
@@ -2811,27 +2711,21 @@ namespace {
 
             // get empire's locations of detection ranges
             const std::map<std::pair<double, double>, float>& detector_position_ranges =
-                detecting_empire_it->second;
+                detecting_empire_entry.second;
 
             // for each field, try to find a detector position in range for this empire
-            for (ObjectMap::const_iterator<Field> field_it = objects.const_begin<Field>();
-                 field_it != objects.const_end<Field>(); ++field_it)
-            {
-                TemporaryPtr<const Field> field = *field_it;
+            for (TemporaryPtr<const Field> field : objects.FindObjects<Field>()) {
                 if (field->GetMeter(METER_STEALTH)->Current() > detection_strength)
                     continue;
                 double field_size = field->GetMeter(METER_SIZE)->Current();
                 const std::pair<double, double> object_pos(field->X(), field->Y());
 
                 // search through detector positions until one is found in range
-                for (std::map<std::pair<double, double>, float>::const_iterator
-                     detector_position_it = detector_position_ranges.begin();
-                     detector_position_it != detector_position_ranges.end(); ++detector_position_it)
-                {
+                for (const std::map<std::pair<double, double>, float>::value_type& detector_position_entry : detector_position_ranges) {
                     // check range for this detector location, for field of this
                     // size, against distance between field and detector
-                    float detector_range = detector_position_it->second;
-                    const std::pair<double, double>& detector_pos = detector_position_it->first;
+                    float detector_range = detector_position_entry.second;
+                    const std::pair<double, double>& detector_pos = detector_position_entry.first;
                     double x_dist = detector_pos.first - object_pos.first;
                     double y_dist = detector_pos.second - object_pos.second;
                     double dist = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -2857,15 +2751,13 @@ namespace {
     {
         Universe& universe = GetUniverse();
 
-        for (std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
-             detecting_empire_it = empire_location_detection_ranges.begin();
-             detecting_empire_it != empire_location_detection_ranges.end();
-             ++detecting_empire_it)
+        for (const std::map<int, std::map<std::pair<double, double>, float>>::value_type& detecting_empire_entry :
+             empire_location_detection_ranges)
         {
-            int detecting_empire_id = detecting_empire_it->first;
+            int detecting_empire_id = detecting_empire_entry.first;
             // get empire's locations of detection ability
             const std::map<std::pair<double, double>, float>& detector_position_ranges =
-                detecting_empire_it->second;
+                detecting_empire_entry.second;
             // for this empire, get objects it could potentially detect
             const std::map<int, std::map<std::pair<double, double>, std::vector<int> > >::const_iterator
                 empire_detectable_objects_it = empire_location_potentially_detectable_objects.find(detecting_empire_id);
@@ -2886,10 +2778,8 @@ namespace {
 
             // set all in-range detectable objects as partially visible (unless
             // any are already full vis, in which case do nothing)
-            for (std::vector<int>::const_iterator detected_object_it = in_range_detectable_objects.begin();
-                 detected_object_it != in_range_detectable_objects.end(); ++detected_object_it)
-            {
-                universe.SetEmpireObjectVisibility(detecting_empire_id, *detected_object_it,
+            for (int detected_object_id : in_range_detectable_objects) {
+                universe.SetEmpireObjectVisibility(detecting_empire_id, detected_object_id,
                                                    VIS_PARTIAL_VISIBILITY);
             }
         }
@@ -2915,16 +2805,13 @@ namespace {
         for (ObjectMap::const_iterator<> obj_it = Objects().const_begin();
              obj_it != Objects().const_end(); ++obj_it)
         {
-            for (EmpireManager::iterator empire_it = Empires().begin();
-                 empire_it != Empires().end(); ++empire_it)
-            {
+            for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
                 // objects
-                universe.SetEmpireObjectVisibility(empire_it->first, obj_it->ID(), VIS_FULL_VISIBILITY);
+                universe.SetEmpireObjectVisibility(empire_entry.first, obj_it->ID(), VIS_FULL_VISIBILITY);
                 // specials on objects
-                const std::map<std::string, std::pair<int, float> >& specials = obj_it->Specials();
-                for (std::map<std::string, std::pair<int, float> >::const_iterator special_it = specials.begin();
-                     special_it != specials.end(); ++special_it)
-                { universe.SetEmpireSpecialVisibility(empire_it->first, obj_it->ID(), special_it->first); }
+                for (const std::map<std::string, std::pair<int, float>>::value_type& special_entry : obj_it->Specials()) {
+                    universe.SetEmpireSpecialVisibility(empire_entry.first, obj_it->ID(), special_entry.first);
+                }
             }
         }
     }
@@ -2944,32 +2831,25 @@ namespace {
         }
 
         // set system visibility
-        for (std::map<int, std::set<int> >::const_iterator it = empires_systems_with_owned_objects.begin();
-             it != empires_systems_with_owned_objects.end(); ++it)
-        {
-            int empire_id = it->first;
-            const std::set<int>& system_ids = it->second;
-            for (std::set<int>::const_iterator sys_it = system_ids.begin();
-                 sys_it != system_ids.end(); ++sys_it)
-            { universe.SetEmpireObjectVisibility(empire_id, *sys_it, VIS_PARTIAL_VISIBILITY); }
+        for (std::map<int, std::set<int>>::value_type& empire_entry : empires_systems_with_owned_objects) {
+            int empire_id = empire_entry.first;
+
+            for (int system_id : empire_entry.second) {
+                universe.SetEmpireObjectVisibility(empire_id, system_id, VIS_PARTIAL_VISIBILITY);
+            }
         }
 
         // get planets, check their locations...
         std::vector<TemporaryPtr<const Planet> > planets = objects.FindObjects<Planet>();
-        for (std::vector<TemporaryPtr<const Planet> >::iterator it = planets.begin(); it != planets.end(); ++it) {
-            TemporaryPtr<const Planet> planet = *it;
+        for (TemporaryPtr<const Planet> planet : objects.FindObjects<Planet>()) {
             int system_id = planet->SystemID();
             if (system_id == INVALID_OBJECT_ID)
                 continue;
 
             int planet_id = planet->ID();
-            for (std::map<int, std::set<int> >::const_iterator
-                 emp_it = empires_systems_with_owned_objects.begin();
-                 emp_it != empires_systems_with_owned_objects.end();
-                 ++emp_it)
-            {
-                int empire_id = emp_it->first;
-                const std::set<int>& empire_systems = emp_it->second;
+            for (const std::map<int, std::set<int>>::value_type& empire_entry : empires_systems_with_owned_objects) {
+                int empire_id = empire_entry.first;
+                const std::set<int>& empire_systems = empire_entry.second;
                 if (empire_systems.find(system_id) == empire_systems.end())
                     continue;
                 // ensure planets are at least basicaly visible.  does not
@@ -2993,32 +2873,20 @@ namespace {
             if (!container_obj)
                 continue;   // shouldn't be necessary, but I like to be safe...
 
-            // does object actually contain any other objects?
-            const std::set<int>& contained_objects = container_obj->ContainedObjectIDs();
-            if (contained_objects.empty())
-                continue;   // nothing to propagate if no objects contained
-
             // check if container object is a fleet, for special case later...
             bool container_fleet = container_obj->ObjectType() == OBJ_FLEET;
-
 
             //DebugLogger() << "Container object " << container_obj->Name() << " (" << container_obj->ID() << ")";
 
             // for each contained object within container
-            for (std::set<int>::const_iterator contained_obj_it = contained_objects.begin();
-                 contained_obj_it != contained_objects.end(); ++contained_obj_it)
-            {
-                int contained_obj_id = *contained_obj_it;
-
+            for (int contained_obj_id : container_obj->ContainedObjectIDs()) {
                 //DebugLogger() << " ... contained object (" << contained_obj_id << ")";
 
                 // for each empire with a visibility map
-                for (Universe::EmpireObjectVisibilityMap::iterator empire_it = empire_object_visibility.begin();
-                     empire_it != empire_object_visibility.end(); ++empire_it)
-                {
-                    Universe::ObjectVisibilityMap& vis_map = empire_it->second;
+                for (Universe::EmpireObjectVisibilityMap::value_type& empire_entry : empire_object_visibility) {
+                    Universe::ObjectVisibilityMap& vis_map = empire_entry.second;
 
-                    //DebugLogger() << " ... ... empire id " << empire_it->first;
+                    //DebugLogger() << " ... ... empire id " << empire_entry.first;
 
                     // find current empire's visibility entry for current container object
                     Universe::ObjectVisibilityMap::iterator container_vis_it = vis_map.find(container_obj_id);
@@ -3082,16 +2950,12 @@ namespace {
 
     void PropagateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
                                                     Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
-        const std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
-        for (std::vector<TemporaryPtr<const System> >::const_iterator it = systems.begin(); it != systems.end(); ++it) {
-            TemporaryPtr<const System> system = *it;
+        for (TemporaryPtr<const System> system : objects.FindObjects<System>()) {
             int system_id = system->ID();
 
             // for each empire with a visibility map
-            for (Universe::EmpireObjectVisibilityMap::iterator empire_it = empire_object_visibility.begin();
-                 empire_it != empire_object_visibility.end(); ++empire_it)
-            {
-                Universe::ObjectVisibilityMap& vis_map = empire_it->second;
+            for (Universe::EmpireObjectVisibilityMap::value_type& empire_entry : empire_object_visibility) {
+                Universe::ObjectVisibilityMap& vis_map = empire_entry.second;
 
                 // find current system's visibility
                 Universe::ObjectVisibilityMap::iterator system_vis_it = vis_map.find(system_id);
@@ -3104,11 +2968,8 @@ namespace {
                     continue;
 
                 // get all starlanes emanating from this system, and loop through them
-                const std::map<int, bool>& starlane_map = system->StarlanesWormholes();
-                for (std::map<int, bool>::const_iterator lane_it = starlane_map.begin();
-                     lane_it != starlane_map.end(); ++lane_it)
-                {
-                    bool is_wormhole = lane_it->second;
+                for (const std::map<int, bool>::value_type& lane : system->StarlanesWormholes()) {
+                    bool is_wormhole = lane.second;
                     if (is_wormhole)
                         continue;
 
@@ -3116,7 +2977,7 @@ namespace {
                     // map, and upgrade to basic visibility if not already at that
                     // leve, so that starlanes will be visible if either system it
                     // ends at is partially visible or better
-                    int lane_end_sys_id = lane_it->first;
+                    int lane_end_sys_id = lane.first;
                     Universe::ObjectVisibilityMap::iterator lane_end_vis_it = vis_map.find(lane_end_sys_id);
                     if (lane_end_vis_it == vis_map.end())
                         vis_map[lane_end_sys_id] = VIS_BASIC_VISIBILITY;
@@ -3135,11 +2996,7 @@ namespace {
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
         std::vector<TemporaryPtr<const Fleet> > moving_fleets;
-        std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
-        for (std::vector<TemporaryPtr<const UniverseObject> >::iterator it = moving_fleet_objects.begin();
-             it != moving_fleet_objects.end(); ++it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *it;
+        for (TemporaryPtr<const UniverseObject> obj : objects.FindObjects(MovingFleetVisitor())) {
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
                 continue;
             TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
@@ -3177,42 +3034,35 @@ namespace {
     {
         // after setting object visibility, similarly set visibility of objects'
         // specials for each empire
-        for (EmpireManager::iterator empire_it = Empires().begin();
-             empire_it != Empires().end(); ++empire_it)
-        {
-            int empire_id = empire_it->first;
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            int empire_id = empire_entry.first;
             Universe::ObjectVisibilityMap& obj_vis_map = empire_object_visibility[empire_id];
             Universe::ObjectSpecialsMap& obj_specials_map = empire_object_visible_specials[empire_id];
 
-            const Empire* empire = empire_it->second;
+            const Empire* empire = empire_entry.second;
             const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
             if (!detection_meter)
                 continue;
             float detection_strength = detection_meter->Current();
 
             // every object empire has visibility of might have specials
-            for (Universe::ObjectVisibilityMap::const_iterator obj_it = obj_vis_map.begin();
-                 obj_it != obj_vis_map.end(); ++obj_it)
-            {
-                if (obj_it->second <= VIS_NO_VISIBILITY)
+            for (Universe::ObjectVisibilityMap::value_type& obj_entry : obj_vis_map) {
+                if (obj_entry.second <= VIS_NO_VISIBILITY)
                     continue;
 
-                int object_id = obj_it->first;
+                int object_id = obj_entry.first;
                 TemporaryPtr<const UniverseObject> obj = objects.Object(object_id);
                 if (!obj)
                     continue;
-                const std::map<std::string, std::pair<int, float> >& all_object_specials = obj->Specials();
-                if (all_object_specials.empty())
+
+                if (obj->Specials().empty())
                     continue;
 
                 std::set<std::string>& visible_specials = obj_specials_map[object_id];
 
                 // check all object's specials.
-                std::vector<std::string> potentially_detectable_object_specials;
-                for (std::map<std::string, std::pair<int, float> >::const_iterator special_it = all_object_specials.begin();
-                     special_it != all_object_specials.end(); ++special_it)
-                {
-                    const Special* special = GetSpecial(special_it->first);
+                for (const std::map<std::string, std::pair<int, float>>::value_type& special_entry : obj->Specials()) {
+                    const Special* special = GetSpecial(special_entry.first);
                     if (!special)
                         continue;
 
@@ -3223,8 +3073,8 @@ namespace {
 
                     // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
                     if (stealth <= 0.0f || stealth <= detection_strength) {
-                        visible_specials.insert(special_it->first);
-                        //DebugLogger() << "Special " << special_it->first << " on " << obj->Name() << " is visible to empire " << empire_id;
+                        visible_specials.insert(special_entry.first);
+                        //DebugLogger() << "Special " << special_entry.first << " on " << obj->Name() << " is visible to empire " << empire_id;
                     }
                 }
             }
@@ -3234,15 +3084,12 @@ namespace {
 
 void Universe::UpdateEmpireObjectVisibilities() {
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
-    for (EmpireManager::iterator empire_it = Empires().begin();
-         empire_it != Empires().end(); ++empire_it)
-    {
-        const Empire* empire = empire_it->second;
-        int empire_id = empire_it->first;
-        const std::set<int>& empire_known_ship_designs = empire->ShipDesigns();
-        for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin();
-             design_it != empire_known_ship_designs.end(); ++design_it)
-        { m_empire_known_ship_design_ids[empire_id].insert(*design_it); }
+    for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+        int empire_id = empire_entry.first;
+        const Empire* empire = empire_entry.second;
+        for (int design_id : empire->ShipDesigns()) {
+            m_empire_known_ship_design_ids[empire_id].insert(design_id);
+        }
     }
 
     m_empire_object_visibility.clear();
@@ -3304,11 +3151,9 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         }
 
         // for each empire with a visibility map
-        for (EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.begin();
-             empire_it != m_empire_object_visibility.end(); ++empire_it)
-        {
+        for (EmpireObjectVisibilityMap::value_type& empire_entry : m_empire_object_visibility) {
             // can empire see object?
-            const ObjectVisibilityMap& vis_map = empire_it->second;    // stores level of visibility empire has for each object it can detect this turn
+            const ObjectVisibilityMap& vis_map = empire_entry.second;    // stores level of visibility empire has for each object it can detect this turn
             ObjectVisibilityMap::const_iterator vis_it = vis_map.find(object_id);
             if (vis_it == vis_map.end())
                 continue;   // empire can't see current object, so move to next empire
@@ -3320,7 +3165,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             // information about object, and historical turns on which object
             // was seen at various visibility levels.
 
-            int empire_id = empire_it->first;
+            int empire_id = empire_entry.first;
 
             ObjectMap&                  known_object_map = m_empire_latest_known_objects[empire_id];        // creates empty map if none yet present
             ObjectVisibilityTurnMap&    object_vis_turn_map = m_empire_object_visibility_turns[empire_id];  // creates empty map if none yet present
@@ -3367,11 +3212,9 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
     const std::map<int, std::map<std::pair<double, double>, float> >
         empire_location_detection_ranges = GetEmpiresPositionDetectionRanges();
 
-    for (EmpireObjectMap::iterator empire_it = m_empire_latest_known_objects.begin();
-         empire_it != m_empire_latest_known_objects.end(); ++empire_it)
-    {
-        int empire_id = empire_it->first;
-        const ObjectMap& latest_known_objects = empire_it->second;
+    for (const EmpireObjectMap::value_type& empire_entry : m_empire_latest_known_objects) {
+        int empire_id = empire_entry.first;
+        const ObjectMap& latest_known_objects = empire_entry.second;
         const ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
         std::set<int>& stale_set = m_empire_stale_knowledge_object_ids[empire_id];
         const std::set<int>& destroyed_set = m_empire_known_destroyed_object_ids[empire_id];
@@ -3424,12 +3267,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         // any objects that pass filters but aren't actually still visible
         // represent out-of-date info in empire's latest known objects.  these
         // entries need to be removed / flagged to indicate this
-        for (std::vector<int>::const_iterator
-             should_still_be_detectable_object_it = should_still_be_detectable_latest_known_objects.begin();
-             should_still_be_detectable_object_it != should_still_be_detectable_latest_known_objects.end();
-             ++should_still_be_detectable_object_it)
-        {
-            int object_id = *should_still_be_detectable_object_it;
+        for (int object_id : should_still_be_detectable_latest_known_objects) {
             ObjectVisibilityMap::const_iterator vis_it = vis_map.find(object_id);
             if (vis_it == vis_map.end() || vis_it->second < VIS_BASIC_VISIBILITY) {
                 // object not visible even though the latest known info about it
@@ -3468,10 +3306,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             bool fleet_stale = true;
             // check each ship. if any are visible or not visible but not stale,
             // fleet is not stale
-            for (std::set<int>::const_iterator ship_it = ship_ids.begin();
-                 ship_it != ship_ids.end(); ++ship_it)
-            {
-                int ship_id = *ship_it;
+            for (int ship_id : ship_ids) {
                 TemporaryPtr<const Ship> ship = latest_known_objects.Object<Ship>(ship_id);
 
                 // if ship doesn't think it's in this fleet, doesn't count.
@@ -3499,11 +3334,9 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 stale_set.insert(fleet_id);
         }
 
-        //for (std::set<int>::const_iterator stale_it = stale_set.begin();
-        //     stale_it != stale_set.end(); ++stale_it)
-        //{
-        //    TemporaryPtr<const UniverseObject> obj = latest_known_objects.Object(*stale_it);
-        //    DebugLogger() << "Object " << *stale_it << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
+        //for (int stale_id : stale_set) {
+        //    TemporaryPtr<const UniverseObject> obj = latest_known_objects.Object(stale_id);
+        //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
         //}
     }
 }
@@ -3545,8 +3378,8 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
 
     if (update_destroyed_object_knowers) {
         // record empires that know this object has been destroyed
-        for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
-            int empire_id = emp_it->first;
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            int empire_id = empire_entry.first;
             if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
                 SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
                 // TODO: Update m_empire_latest_known_objects somehow?
@@ -3588,14 +3421,11 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         retval.insert(object_id);
 
     } else if (TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(obj)) {
-        std::set<int> fleet_ships = fleet->ShipIDs();           // copy, so destroying ships can't change the initial list / invalidate iterators, etc.
-        for (std::set<int>::const_iterator it = fleet_ships.begin();
-             it != fleet_ships.end(); ++it)
-        {
+        for (int ship_id : fleet->ShipIDs()) {
             if (system)
-                system->Remove(*it);
-            Destroy(*it);
-            retval.insert(*it);
+                system->Remove(ship_id);
+            Destroy(ship_id);
+            retval.insert(ship_id);
         }
         if (system)
             system->Remove(object_id);
@@ -3603,14 +3433,11 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         retval.insert(object_id);
 
     } else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(obj)) {
-        std::set<int> planet_buildings = planet->BuildingIDs();   // copy, so destroying buildings can't change the initial list / invalidate iterators, etc.
-        for (std::set<int>::const_iterator it = planet_buildings.begin();
-             it != planet_buildings.end(); ++it)
-        {
+        for (int building_id : planet->BuildingIDs()) {
             if (system)
-                system->Remove(*it);
-            Destroy(*it);
-            retval.insert(*it);
+                system->Remove(building_id);
+            Destroy(building_id);
+            retval.insert(building_id);
         }
         if (system)
             system->Remove(object_id);
@@ -3619,28 +3446,19 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
     } else if (TemporaryPtr<System> obj_system = boost::dynamic_pointer_cast<System>(obj)) {
         // destroy all objects in system
-        std::set<int> objects = obj_system->ObjectIDs();
-        for (std::set<int>::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-            Destroy(*it);
-            retval.insert(*it);
+        for (int system_id : obj_system->ObjectIDs()) {
+            Destroy(system_id);
+            retval.insert(system_id);
         }
 
         // remove any starlane connections to this system
         int this_sys_id = obj_system->ID();
-        std::vector<TemporaryPtr<System> > all_systems = m_objects.FindObjects<System>();
-        for (std::vector<TemporaryPtr<System> >::iterator sys_it = all_systems.begin();
-             sys_it != all_systems.end(); ++sys_it)
-        {
-            TemporaryPtr<System> sys = *sys_it;
+        for (TemporaryPtr<System> sys : m_objects.FindObjects<System>()) {
             sys->RemoveStarlane(this_sys_id);
         }
 
         // remove fleets / ships moving along destroyed starlane
-        std::vector<TemporaryPtr<Fleet> > all_fleets = m_objects.FindObjects<Fleet>();
-        for (std::vector<TemporaryPtr<Fleet> >::iterator flt_it = all_fleets.begin();
-             flt_it != all_fleets.end(); ++flt_it)
-        {
-            TemporaryPtr<Fleet> fleet = *flt_it;
+        for (TemporaryPtr<Fleet> fleet : m_objects.FindObjects<Fleet>()) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
@@ -3707,8 +3525,8 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);
     //DebugLogger() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
-    //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
-    //    DebugLogger() << " ... " << *it;
+    //for (int id : system_ids)
+    //    DebugLogger() << " ... " << id;
 
     GraphImpl::SystemIDPropertyMap sys_id_property_map =
         boost::get(vertex_system_id_t(), new_graph_impl->system_graph);
@@ -3732,11 +3550,9 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
         TemporaryPtr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
 
         // add edges and edge weights
-        for (std::map<int, bool>::const_iterator it = system1->StarlanesWormholes().begin();
-             it != system1->StarlanesWormholes().end(); ++it)
-        {
+        for (const std::map<int, bool>::value_type& entry : system1->StarlanesWormholes()) {
             // get id in universe of system at other end of lane
-            const int lane_dest_id = it->first;
+            const int lane_dest_id = entry.first;
             // skip null lanes and only add edges in one direction, to avoid
             // duplicating edges ( since this is an undirected graph, A->B
             // duplicates B->A )
@@ -3753,7 +3569,7 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
                 boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
 
             if (add_edge_result.second) {   // if this is a non-duplicate starlane or wormhole
-                if (it->second) {               // if this is a wormhole
+                if (entry.second) {               // if this is a wormhole
                     edge_weight_map[add_edge_result.first] = WORMHOLE_TRAVEL_DISTANCE;
                 } else {                        // if this is a starlane
                     edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id);
@@ -3790,8 +3606,8 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id) {
 
     if (for_empire_id == ALL_EMPIRES) {
         // all empires get their own, accurately filtered graph
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            int empire_id = it->first;
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            int empire_id = empire_entry.first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
             boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
                 new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
@@ -3804,8 +3620,8 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id) {
         boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
             new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
 
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            int empire_id = it->first;
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            int empire_id = empire_entry.first;
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
     }
@@ -3858,36 +3674,32 @@ void Universe::UpdateStatRecords() {
     if (current_turn == 0)
         m_stat_records.clear();
 
-    const EmpireManager& empires = Empires();
-    const std::map<std::string, ValueRef::ValueRefBase<double>*>& stats = EmpireStatistics::GetEmpireStats();
-
     std::map<int, TemporaryPtr<const UniverseObject> > empire_sources;
-    for (EmpireManager::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
-    { empire_sources[empire_it->first] = SourceForEmpire(empire_it->first); }
 
+    for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+        empire_sources[empire_entry.first] = SourceForEmpire(empire_entry.first);
+    }
 
     // process each stat
-    for (std::map<std::string, ValueRef::ValueRefBase<double>*>::const_iterator
-         stat_it = stats.begin(); stat_it != stats.end(); ++stat_it)
+    for (const std::map<std::string, ValueRef::ValueRefBase<double>*>::value_type& stat_entry :
+         EmpireStatistics::GetEmpireStats())
     {
-        const std::string& stat_name = stat_it->first;
+        const std::string& stat_name = stat_entry.first;
 
-        const ValueRef::ValueRefBase<double>* value_ref = stat_it->second;
+        const ValueRef::ValueRefBase<double>* value_ref = stat_entry.second;
         if (!value_ref)
             continue;
 
         std::map<int, std::map<int, double> >& stat_records = m_stat_records[stat_name];
 
         // calculate stat for each empire, store in records for current turn
-        for (std::map<int, TemporaryPtr<const UniverseObject> >::const_iterator empire_it = empire_sources.begin();
-             empire_it != empire_sources.end(); ++empire_it)
-        {
-            int empire_id = empire_it->first;
+        for (std::map<int, TemporaryPtr<const UniverseObject>>::value_type entry : empire_sources) {
+            int empire_id = entry.first;
 
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
-            } else if (empire_it->second) {
-                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(empire_it->second));
+            } else if (entry.second) {
+                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(entry.second));
             }
         }
     }
@@ -3900,8 +3712,8 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
         designs_to_serialize.clear();
 
         // add generic monster ship designs so they always appear in players' pedias
-        for (ShipDesignMap::const_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
-            ShipDesign* design = it->second;
+        for (const ShipDesignMap::value_type& ship_design_entry : m_ship_designs) {
+            ShipDesign* design = ship_design_entry.second;
             if (design->IsMonster() && design->DesignedByEmpire() == ALL_EMPIRES)
                 designs_to_serialize[design->ID()] = design;
         }
@@ -3914,8 +3726,7 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
         const std::set<int>& empire_designs = it->second;
 
         // add all ship designs of ships this empire knows about
-        for (std::set<int>::const_iterator known_design_it = empire_designs.begin(); known_design_it != empire_designs.end(); ++known_design_it) {
-            int design_id = *known_design_it;
+        for (int design_id : empire_designs) {
             ShipDesignMap::const_iterator universe_design_it = m_ship_designs.find(design_id);
             if (universe_design_it != m_ship_designs.end())
                 designs_to_serialize[design_id] = universe_design_it->second;
@@ -3982,8 +3793,9 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 
     DebugLogger() << "GetEmpireKnownObjectsToSerialize";
 
-    for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin(); it != empire_latest_known_objects.end(); ++it)
-        it->second.Clear();
+    for (EmpireObjectMap::value_type& entry : empire_latest_known_objects)
+        entry.second.Clear();
+
     empire_latest_known_objects.clear();
 
     if (!ENABLE_VISIBILITY_EMPIRE_MEMORY)
@@ -3991,11 +3803,9 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 
     if (encoding_empire == ALL_EMPIRES) {
         // copy all ObjectMaps' contents
-        for (EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.begin();
-             it != m_empire_latest_known_objects.end(); ++it)
-        {
-            int empire_id = it->first;
-            const ObjectMap& map = it->second;
+        for (const EmpireObjectMap::value_type& entry : m_empire_latest_known_objects) {
+            int empire_id = entry.first;
+            const ObjectMap& map = entry.second;
             //the maps in m_empire_latest_known_objects are already processed for visibility, so can be copied fully
             empire_latest_known_objects[empire_id].CopyForSerialize(map);
         }

@@ -37,8 +37,6 @@ namespace Moderator {
     class ModeratorAction;
 }
 
-typedef std::map<int, ShipDesign*> ShipDesignMap;
-
 /** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
 FO_COMMON_API void BufferToHeader(const int* header_buf, Message& message);
 
