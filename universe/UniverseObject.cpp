@@ -63,10 +63,9 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
     }
 
     std::map<MeterType, Meter> censored_meters = copied_object->CensoredMeters(vis);
-    for (std::map<MeterType, Meter>::const_iterator it = copied_object->m_meters.begin();
-         it != copied_object->m_meters.end(); ++it)
+    for (const std::map<MeterType, Meter>::value_type& entry : copied_object->m_meters)
     {
-        MeterType type = it->first;
+        MeterType type = entry.first;
 
         // get existing meter in this object, or create a default one
         std::map<MeterType, Meter>::iterator m_meter_it = m_meters.find(type);
@@ -103,11 +102,9 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
         this->m_y =                     copied_object->m_y;
 
         this->m_specials.clear();
-        for (std::map<std::string, std::pair<int, float> >::const_iterator copied_special_it = copied_object->m_specials.begin();
-             copied_special_it != copied_object->m_specials.end(); ++copied_special_it)
-        {
-            if (visible_specials.find(copied_special_it->first) != visible_specials.end())
-            { this->m_specials[copied_special_it->first] = copied_special_it->second; }
+        for (const std::map<std::string, std::pair<int, float> >::value_type& entry_special : copied_object->m_specials) {
+            if (visible_specials.find(entry_special.first) != visible_specials.end())
+            { this->m_specials[entry_special.first] = entry_special.second; }
         }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
@@ -219,12 +216,12 @@ std::string UniverseObject::Dump() const {
     }
     os << " created on turn: " << m_created_on_turn
        << " specials: ";
-    for (std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
-        os << "(" << it->first << ", " << it->second.first << ", " << it->second.second << ") ";
+    for (const std::map<std::string, std::pair<int, float> >::value_type& entry : m_specials)
+        os << "(" << entry.first << ", " << entry.second.first << ", " << entry.second.second << ") ";
     os << "  Meters: ";
-    for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-        os << it->first
-           << ": " << it->second.Dump() << "  ";
+    for (const std::map<MeterType, Meter>::value_type& entry : m_meters)
+        os << entry.first
+           << ": " << entry.second.Dump() << "  ";
     return os.str();
 }
 
@@ -238,9 +235,7 @@ const std::set<int>& UniverseObject::ContainedObjectIDs() const
 std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
     std::set<int> retval;
     const Universe& universe = GetUniverse();
-    const std::set<int>& contained_obj_ids = ContainedObjectIDs();
-    for (std::set<int>::const_iterator it = contained_obj_ids.begin(); it != contained_obj_ids.end(); ++it) {
-        int object_id = *it;
+    for (int object_id : ContainedObjectIDs()) {
         if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
             retval.insert(object_id);
     }
