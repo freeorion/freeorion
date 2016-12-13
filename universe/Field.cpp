@@ -172,15 +172,15 @@ FieldType::FieldType(const std::string& name, const std::string& description,
     m_effects(effects),
     m_graphic(graphic)
 {
-    for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
-        m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    for (const std::string& tag : tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
 
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
-         it != m_effects.end(); ++it)
-    { (*it)->SetTopLevelContent(m_name); }
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        effect->SetTopLevelContent(m_name);
+    }
 }
 
 FieldType::~FieldType()
@@ -205,8 +205,8 @@ std::string FieldType::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_effects.size(); ++i) {
-            retval += m_effects[i]->Dump();
+        for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -238,16 +238,16 @@ FieldTypeManager::FieldTypeManager() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Field Types:";
-        for (iterator it = begin(); it != end(); ++it) {
-            DebugLogger() << " ... " << it->first;
+        for (const std::map<std::string, FieldType*>::value_type& entry : *this) {
+            DebugLogger() << " ... " << entry.first;
         }
     }
 }
 
 FieldTypeManager::~FieldTypeManager() {
-    for (std::map<std::string, FieldType*>::iterator it = m_field_types.begin();
-         it != m_field_types.end(); ++it)
-    { delete it->second; }
+    for (const std::map<std::string, FieldType*>::value_type& entry : m_field_types) {
+        delete entry.second;
+    }
 }
 
 const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {
