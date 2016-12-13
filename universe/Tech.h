@@ -79,8 +79,8 @@ public:
         m_unlocked_items(unlocked_items),
         m_graphic(graphic)
     {
-        for (std::set<std::string>::iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it)
-            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        for (const std::string& tag : tags)
+            m_tags.insert(boost::to_upper_copy<std::string>(tag));
         Init();
     }
 
@@ -103,8 +103,8 @@ public:
         m_unlocked_items(unlocked_items),
         m_graphic(graphic)
     {
-        for (std::set<std::string>::iterator tag_it = tech_info.tags.begin(); tag_it != tech_info.tags.end(); ++tag_it)
-            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        for (const std::string& tag : tech_info.tags)
+            m_tags.insert(boost::to_upper_copy<std::string>(tag));
         Init();
     }
     //@}

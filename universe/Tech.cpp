@@ -32,10 +32,9 @@ namespace {
             while (!stack.empty()) {
                 const Tech* current_tech = stack.back();
                 unsigned int starting_stack_size = stack.size();
-                const std::set<std::string>& prereqs = current_tech->Prerequisites();
                 bool all_prereqs_known = true;
-                for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
-                    const Tech* prereq_tech = GetTech(*prereq_it);
+                for (const std::string& prereq_name : current_tech->Prerequisites()) {
+                    const Tech* prereq_tech = GetTech(prereq_name);
                     bool prereq_unknown = known_techs.find(prereq_tech->Name()) == known_techs.end();
                     if (prereq_unknown)
                         all_prereqs_known = false;
@@ -80,9 +79,8 @@ void Tech::Init() {
     if (m_research_turns)
         m_research_turns->SetTopLevelContent(m_name);
 
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
-         it != m_effects.end(); ++it)
-    { (*it)->SetTopLevelContent(m_name); }
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects)
+    { effect->SetTopLevelContent(m_name); }
 }
 
 std::string Tech::Dump() const {
@@ -104,8 +102,8 @@ std::string Tech::Dump() const {
     } else {
         retval += "[\n";
         ++g_indent;
-        for (std::set<std::string>::const_iterator it = m_prerequisites.begin(); it != m_prerequisites.end(); ++it) {
-            retval += DumpIndent() + "\"" + *it + "\"\n";
+        for (const std::string& prerequisite : m_prerequisites) {
+            retval += DumpIndent() + "\"" + prerequisite + "\"\n";
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -118,8 +116,8 @@ std::string Tech::Dump() const {
     } else {
         retval += "[\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_unlocked_items.size(); ++i) {
-            retval += DumpIndent() + m_unlocked_items[i].Dump();
+        for (const ItemSpec& unlocked_item : m_unlocked_items) {
+            retval += DumpIndent() + unlocked_item.Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -133,8 +131,8 @@ std::string Tech::Dump() const {
         } else {
             retval += DumpIndent() + "effectsgroups = [\n";
             ++g_indent;
-            for (unsigned int i = 0; i < m_effects.size(); ++i) {
-                retval += m_effects[i]->Dump();
+            for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+                retval += effect->Dump();
             }
             --g_indent;
             retval += DumpIndent() + "]\n";
@@ -258,15 +256,15 @@ const TechCategory* TechManager::GetTechCategory(const std::string& name) const 
 
 std::vector<std::string> TechManager::CategoryNames() const {
     std::vector<std::string> retval;
-    for (std::map<std::string, TechCategory*>::const_iterator it = m_categories.begin(); it != m_categories.end(); ++it)
-        retval.push_back(it->first);
+    for (const std::map<std::string, TechCategory*>::value_type& entry : m_categories)
+        retval.push_back(entry.first);
     return retval;
 }
 
 std::vector<std::string> TechManager::TechNames() const {
     std::vector<std::string> retval;
-    for (TechManager::iterator it = begin(); it != end(); ++it)
-        retval.push_back((*it)->Name());
+    for (const TechContainer::value_type& tech : m_techs.get<NameIndex>())
+        retval.push_back(tech->Name());
     return retval;
 }
 
@@ -346,8 +344,8 @@ TechManager::TechManager() {
 
     if (!empty_defined_categories.empty()) {
         std::stringstream stream;
-        for (std::set<std::string>::iterator it = empty_defined_categories.begin(); it != empty_defined_categories.end(); ++it) {
-            stream << " \"" << *it << "\"";
+        for (const std::string& empty_defined_category : empty_defined_categories) {
+            stream << " \"" << empty_defined_category << "\"";
         }
         std::string error_str = "ERROR: The following categories were defined in techs.txt, but no "
             "techs were defined that fell within them:" + stream.str();
@@ -357,8 +355,8 @@ TechManager::TechManager() {
 
     if (!categories_seen_in_techs.empty()) {
         std::stringstream stream;
-        for (std::set<std::string>::iterator it = categories_seen_in_techs.begin(); it != categories_seen_in_techs.end(); ++it) {
-            stream << " \"" << *it << "\"";
+        for (const std::string& category_seen_in_techs : categories_seen_in_techs) {
+            stream << " \"" << category_seen_in_techs << "\"";
         }
         std::string error_str = "ERROR: The following categories were never defined in techs.txt, but some "
             "techs were defined that fell within them:" + stream.str();
@@ -379,11 +377,10 @@ TechManager::TechManager() {
     }
 
     // fill in the unlocked techs data for each loaded tech
-    for (iterator it = begin(); it != end(); ++it) {
-        const std::set<std::string>& prereqs = (*it)->Prerequisites();
-        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
-            if (Tech* tech = const_cast<Tech*>(GetTech(*prereq_it)))
-                tech->m_unlocked_techs.insert((*it)->Name());
+    for (const Tech* tech : m_techs) {
+        for (const std::string& prereq : tech->Prerequisites()) {
+            if (Tech* tech = const_cast<Tech*>(GetTech(prereq)))
+                tech->m_unlocked_techs.insert(tech->Name());
         }
     }
 
@@ -392,8 +389,7 @@ TechManager::TechManager() {
         ErrorLogger() << redundant_dependency;
 
 #ifdef OUTPUT_TECH_LIST
-    for (iterator it = begin(); it != end(); ++it) {
-        const Tech* tech = *it;
+    for (const Tech* tech : m_techs.get<NameIndex>()) {
         std::cerr << UserString(tech->Name()) << " (" 
                   << UserString(tech->Category()) << " "
                   << UserString(boost::lexical_cast<std::string>(tech->Type())) << ") - "
@@ -403,28 +399,27 @@ TechManager::TechManager() {
 }
 
 TechManager::~TechManager() {
-    for (std::map<std::string, TechCategory*>::iterator it = m_categories.begin(); it != m_categories.end(); ++it)
-        delete it->second;
-    for (TechContainer::iterator it = m_techs.begin(); it != m_techs.end(); ++it)
-        delete *it;
+    for (std::map<std::string, TechCategory*>::value_type& entry : m_categories)
+        delete entry.second;
+    for (const Tech* tech : m_techs)
+        delete tech;
 }
 
 std::string TechManager::FindIllegalDependencies() {
     assert(!m_techs.empty());
     std::string retval;
-    for (iterator it = begin(); it != end(); ++it) {
-        const Tech* tech = *it;
+    for (const Tech* tech : m_techs) {
         if (!tech) {
             std::stringstream stream;
             stream << "ERROR: Missing tech referenced in techs.txt for unknown reasons...";
             return stream.str();
         }
-        const std::set<std::string>& prereqs = tech->Prerequisites();
-        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
-            const Tech* prereq_tech = GetTech(*prereq_it);
+
+        for (const std::string& prereq : tech->Prerequisites()) {
+            const Tech* prereq_tech = GetTech(prereq);
             if (!prereq_tech) {
                 std::stringstream stream;
-                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << *prereq_it << "\" as its prerequisite.";
+                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << prereq << "\" as its prerequisite.";
                 return stream.str();
             }
         }
@@ -451,10 +446,8 @@ std::string TechManager::FindFirstDependencyCycle() {
             unsigned int starting_stack_size = stack.size();
 
             const std::set<std::string>& prereqs = (current_tech ? current_tech->Prerequisites() : EMPTY_STRING_SET);
-            for (std::set<std::string>::const_iterator prereq_it = prereqs.begin();
-                 prereq_it != prereqs.end(); ++prereq_it)
-            {
-                const Tech* prereq_tech = GetTech(*prereq_it);
+            for (const std::string& prereq_name : prereqs) {
+                const Tech* prereq_tech = GetTech(prereq_name);
                 if (!prereq_tech || checked_techs.find(prereq_tech) != checked_techs.end())
                     continue;
 
@@ -493,8 +486,7 @@ std::string TechManager::FindFirstDependencyCycle() {
 std::string TechManager::FindRedundantDependency() {
     assert(!m_techs.empty());
 
-    for (iterator it = begin(); it != end(); ++it) {
-        const Tech* tech = *it;
+    for (const Tech* tech : m_techs) {
         if (!tech) {
             std::stringstream stream;
             stream << "ERROR: Missing referenced tech for unknown reasons...";
@@ -502,23 +494,23 @@ std::string TechManager::FindRedundantDependency() {
         }
         std::set<std::string> prereqs = tech->Prerequisites();
         std::map<std::string, std::string> techs_unlocked_by_prereqs;
-        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
-            const Tech* prereq_tech = GetTech(*prereq_it);
+        for (const std::string& prereq_name : prereqs) {
+            const Tech* prereq_tech = GetTech(prereq_name);
             if (!prereq_tech) {
                 std::stringstream stream;
-                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << *prereq_it << "\" as its prerequisite.";
+                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << prereq_name << "\" as its prerequisite.";
                 return stream.str();
             }
             AllChildren(prereq_tech, techs_unlocked_by_prereqs);
         }
-        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
-            std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(*prereq_it);
+        for (const std::string& prereq_name : prereqs) {
+            std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(prereq_name);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
                 stream << "ERROR: Redundant dependency found in techs.txt (A <-- B means A is a prerequisite of B): "
                        << map_it->second << " <-- " << map_it->first << ", "
-                       << map_it->first << " <-- " << (*it)->Name() << ", "
-                       << map_it->second << " <-- " << (*it)->Name() << "; remove the " << map_it->second << " <-- " << (*it)->Name()
+                       << map_it->first << " <-- " << tech->Name() << ", "
+                       << map_it->second << " <-- " << tech->Name() << "; remove the " << map_it->second << " <-- " << tech->Name()
                        << " dependency.";
                 return stream.str();
             }
@@ -528,10 +520,9 @@ std::string TechManager::FindRedundantDependency() {
 }
 
 void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children) {
-    const std::set<std::string>& unlocked_techs = tech->UnlockedTechs();
-    for (std::set<std::string>::const_iterator it = unlocked_techs.begin(); it != unlocked_techs.end(); ++it) {
-        children[*it] = tech->Name();
-        AllChildren(GetTech(*it), children);
+    for (const std::string& unlocked_tech : tech->UnlockedTechs()) {
+        children[unlocked_tech] = tech->Name();
+        AllChildren(GetTech(unlocked_tech), children);
     }
 }
 
