@@ -102,9 +102,8 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
     if (vis >= VIS_BASIC_VISIBILITY) {
         // add any visible lanes, without removing existing entries
         std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
-        for (std::map<int, bool>::const_iterator it = visible_lanes_holes.begin();
-             it != visible_lanes_holes.end(); ++it)
-        { this->m_starlanes_wormholes[it->first] = it->second; }
+        for (const std::map<int, bool>::value_type& entry : visible_lanes_holes)
+        { this->m_starlanes_wormholes[entry.first] = entry.second; }
 
         // copy visible info of visible contained objects
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id);
@@ -121,44 +120,35 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
 
         // copy visible contained object per-type info
         m_planets.clear();
-        for (std::set<int>::const_iterator it = copied_system->m_planets.begin();
-             it != copied_system->m_planets.end(); ++it)
+        for (int planet_id : copied_system->m_planets)
         {
-            if (m_objects.find(*it) != m_objects.end())
-                m_planets.insert(*it);
+            if (m_objects.find(planet_id) != m_objects.end())
+                m_planets.insert(planet_id);
         }
 
         m_buildings.clear();
-        for (std::set<int>::const_iterator it = copied_system->m_buildings.begin();
-             it != copied_system->m_buildings.end(); ++it)
-        {
-            if (m_objects.find(*it) != m_objects.end())
-                m_buildings.insert(*it);
+        for (int building_id : copied_system->m_buildings) {
+            if (m_objects.find(building_id) != m_objects.end())
+                m_buildings.insert(building_id);
         }
 
         m_fleets.clear();
-        for (std::set<int>::const_iterator it = copied_system->m_fleets.begin();
-             it != copied_system->m_fleets.end(); ++it)
-        {
-            if (m_objects.find(*it) != m_objects.end())
-                m_fleets.insert(*it);
+        for (int fleet_id : copied_system->m_fleets) {
+            if (m_objects.find(fleet_id) != m_objects.end())
+                m_fleets.insert(fleet_id);
         }
 
         m_ships.clear();
-        for (std::set<int>::const_iterator it = copied_system->m_ships.begin();
-             it != copied_system->m_ships.end(); ++it)
-        {
-            if (m_objects.find(*it) != m_objects.end())
-                m_ships.insert(*it);
+        for (int ship_id : copied_system->m_ships) {
+            if (m_objects.find(ship_id) != m_objects.end())
+                m_ships.insert(ship_id);
         }
 
         m_fields.clear();
-        for (std::set<int>::const_iterator it = copied_system->m_fields.begin();
-             it != copied_system->m_fields.end(); ++it)
-            {
-                if (m_objects.find(*it) != m_objects.end())
-                    m_fields.insert(*it);
-            }
+        for (int field_id : copied_system->m_fields) {
+            if (m_objects.find(field_id) != m_objects.end())
+                m_fields.insert(field_id);
+        }
 
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
@@ -170,15 +160,9 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
             // partial vis, they should be seen, but aren't, so are known not
             // to exist any more
 
-            // assemble all previously known lanes
-            std::vector<int> initial_known_lanes;
-            for (std::map<int, bool>::const_iterator it = this->m_starlanes_wormholes.begin();
-                 it != this->m_starlanes_wormholes.end(); ++it)
-            { initial_known_lanes.push_back(it->first); }
-
             // remove previously known lanes that aren't currently visible
-            for (std::vector<int>::const_iterator it = initial_known_lanes.begin(); it != initial_known_lanes.end(); ++it) {
-                int lane_end_sys_id = *it;
+            for (std::map<int, bool>::value_type& entry : this->m_starlanes_wormholes) {
+                int lane_end_sys_id = entry.first;
                 if (visible_lanes_holes.find(lane_end_sys_id) == visible_lanes_holes.end())
                     this->m_starlanes_wormholes.erase(lane_end_sys_id);
             }
@@ -290,10 +274,8 @@ StarType System::NextYoungerStarType() const {
 
 int System::NumStarlanes() const {
     int retval = 0;
-    for (std::map<int, bool>::const_iterator it = m_starlanes_wormholes.begin();
-         it != m_starlanes_wormholes.end(); ++it)
-    {
-        if (!it->second)
+    for (const std::map<int, bool>::value_type& entry : m_starlanes_wormholes) {
+        if (!entry.second)
             ++retval;
     }
     return retval;
@@ -301,10 +283,8 @@ int System::NumStarlanes() const {
 
 int System::NumWormholes() const {
     int retval = 0;
-    for (std::map<int, bool>::const_iterator it = m_starlanes_wormholes.begin();
-         it != m_starlanes_wormholes.end(); ++it)
-    {
-        if (it->second)
+    for (const std::map<int, bool>::value_type& entry : m_starlanes_wormholes) {
+        if (entry.second)
             ++retval;
     }
     return retval;
@@ -323,8 +303,8 @@ bool System::HasWormholeTo(int id) const {
 int  System::Owner() const {
     // Check if all of the owners are the same empire.
     int first_owner_found(ALL_EMPIRES);
-    for (std::set<int>::const_iterator it = m_planets.begin(); it != m_planets.end(); ++it) {
-        if (TemporaryPtr<const Planet> planet = GetPlanet(*it)) {
+    for (int planet_id : m_planets) {
+        if (TemporaryPtr<const Planet> planet = GetPlanet(planet_id)) {
             const int owner(planet->Owner());
             if (owner == ALL_EMPIRES)
                 continue;
@@ -365,8 +345,8 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
     if (obj->ObjectType() == OBJ_PLANET) {
         if (orbit == -1) {
             bool already_in_orbit = false;
-            for (int o = 0; o < static_cast<int>(m_orbits.size()); ++o) {
-                if (m_orbits[o] == obj->ID()) {
+            for (int planet_id : m_orbits) {
+                if (planet_id == obj->ID()) {
                     already_in_orbit = true;
                     break;
                 }
@@ -464,9 +444,9 @@ void System::Remove(int id) {
     it = m_planets.find(id);
     if (it != m_planets.end()) {
         m_planets.erase(it);
-        for (int i = 0; i < static_cast<int>(m_orbits.size()); ++i)
-            if (m_orbits[i] == id)
-                m_orbits[i] = INVALID_OBJECT_ID;
+        for (int& planet_id : m_orbits)
+            if (planet_id == id)
+                planet_id = INVALID_OBJECT_ID;
     }
 
     m_ships.erase(id);
@@ -596,12 +576,10 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
 
 
     // check if any of the adjacent systems are partial or better visible
-    for (std::map<int, bool>::const_iterator it = m_starlanes_wormholes.begin();
-         it != m_starlanes_wormholes.end(); ++it)
-    {
-        int lane_end_sys_id = it->first;
+    for (const std::map<int, bool>::value_type& entry : m_starlanes_wormholes) {
+        int lane_end_sys_id = entry.first;
         if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >= VIS_PARTIAL_VISIBILITY)
-            retval[lane_end_sys_id] = it->second;
+            retval[lane_end_sys_id] = entry.second;
     }
 
 
@@ -614,20 +592,14 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
 
     // get moving fleets owned by empire
     std::vector<TemporaryPtr<const Fleet> > moving_empire_fleets;
-    std::vector<TemporaryPtr<const UniverseObject> > moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
-    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator
-         it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) 
-    {
-        if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(*it))
+    for (TemporaryPtr<const UniverseObject> object : objects.FindObjects(MovingFleetVisitor())) {
+        if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
     }
 
     // add any lanes an owned fleet is moving along that connect to this system
-    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = moving_empire_fleets.begin();
-         it != moving_empire_fleets.end(); ++it)
-    {
-        TemporaryPtr<const Fleet> fleet = *it;
+    for (TemporaryPtr<const Fleet> fleet : moving_empire_fleets) {
         if (fleet->SystemID() != INVALID_OBJECT_ID) {
             ErrorLogger() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;
