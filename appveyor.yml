@@ -9,7 +9,7 @@ install:
   # logs.  See also http://help.appveyor.com/discussions/problems/4569
   - del "C:\Program Files (x86)\MSBuild\14.0\Microsoft.Common.targets\ImportAfter\Xamarin.Common.targets"
   - cd ..
-  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v0.4.6-1/FreeOrionSDK_0.4.6-1_MSVC-v140-xp.zip -FileName FreeOrionSDK.zip
+  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v3/FreeOrionSDK_3_MSVC-v140-xp.zip -FileName FreeOrionSDK.zip
   - unzip -q FreeOrionSDK.zip
   - cp bin/* freeorion/
   - cd freeorion
