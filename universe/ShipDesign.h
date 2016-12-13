@@ -59,8 +59,8 @@ struct CommonParams {
         enqueue_location(enqueue_location_),
         effects(effects_)
     {
-        for (std::set< std::string >::iterator tag_it = tags_.begin(); tag_it != tags_.end(); ++tag_it)
-            tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        for (const std::string& tag : tags_)
+            tags.insert(boost::to_upper_copy<std::string>(tag));
     }
 
     ValueRef::ValueRefBase<double>*                         production_cost;
@@ -143,8 +143,8 @@ public:
     {
         //std::cout << "part type: " << m_name << " producible: " << m_producible << std::endl;
         Init(common_params.effects);
-        for (std::set<std::string>::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); ++tag_it)
-            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        for (const std::string& tag : common_params.tags)
+            m_tags.insert(boost::to_upper_copy<std::string>(tag));
     }
 
     ~PartType();
@@ -339,8 +339,8 @@ public:
     {
         //std::cout << "hull type: " << m_name << " producible: " << m_producible << std::endl;
         Init(common_params.effects);
-        for (std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); ++tag_it)
-            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+        for (const std::string& tag : common_params.tags)
+            m_tags.insert(boost::to_upper_copy<std::string>(tag));
     }
 
     ~HullType();

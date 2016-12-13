@@ -125,16 +125,16 @@ PartTypeManager::PartTypeManager() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Part Types:";
-        for (iterator it = begin(); it != end(); ++it) {
-            const PartType* p = it->second;
+        for (const std::map<std::string, PartType*>::value_type& entry : m_parts) {
+            const PartType* p = entry.second;
             DebugLogger() << " ... " << p->Name() << " class: " << p->Class();
         }
     }
 }
 
 PartTypeManager::~PartTypeManager() {
-    for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        delete it->second;
+    for (std::map<std::string, PartType*>::value_type& entry : m_parts) {
+        delete entry.second;
     }
 }
 
@@ -235,11 +235,9 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         }
     }
 
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator
-         it = effects.begin(); it != effects.end(); ++it)
-    {
-        (*it)->SetTopLevelContent(m_name);
-        m_effects.push_back(*it);
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : effects) {
+        effect->SetTopLevelContent(m_name);
+        m_effects.push_back(effect);
     }
 }
 
@@ -286,8 +284,8 @@ std::string PartType::CapacityDescription() const {
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     if (INVALID_SHIP_SLOT_TYPE == slot_type)
         return false;
-    for (std::vector<ShipSlotType>::const_iterator it = m_mountable_slot_types.begin(); it != m_mountable_slot_types.end(); ++it)
-        if (*it == slot_type)
+    for (ShipSlotType mountable_slot_type : m_mountable_slot_types)
+        if (mountable_slot_type == slot_type)
             return true;
     return false;
 }
@@ -358,11 +356,9 @@ void HullType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed));
 
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = effects.begin();
-         it != effects.end(); ++it)
-    {
-        (*it)->SetTopLevelContent(m_name);
-        m_effects.push_back(*it);
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : effects) {
+        effect->SetTopLevelContent(m_name);
+        m_effects.push_back(effect);
     }
 }
 
@@ -371,8 +367,8 @@ HullType::~HullType()
 
 unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     unsigned int count = 0;
-    for (std::vector<Slot>::const_iterator it = m_slots.begin(); it != m_slots.end(); ++it)
-        if (it->type == slot_type)
+    for (const Slot& slot : m_slots)
+        if (slot.type == slot_type)
             ++count;
     return count;
 }
@@ -455,16 +451,16 @@ HullTypeManager::HullTypeManager() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Hull Types:";
-        for (iterator it = begin(); it != end(); ++it) {
-            const HullType* h = it->second;
+        for (const std::map<std::string, HullType*>::value_type& entry : m_hulls) {
+            const HullType* h = entry.second;
             DebugLogger() << " ... " << h->Name();
         }
     }
 }
 
 HullTypeManager::~HullTypeManager() {
-    for (std::map<std::string, HullType*>::iterator it = m_hulls.begin(); it != m_hulls.end(); ++it) {
-        delete it->second;
+    for (std::map<std::string, HullType*>::value_type& entry : m_hulls) {
+        delete entry.second;
     }
 }
 
@@ -604,8 +600,8 @@ bool ShipDesign::ProductionCostTimeLocationInvariant() const {
     if (const HullType* hull = GetHullType(m_hull))
         if (!hull->ProductionCostTimeLocationInvariant())
             return false;
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
-        if (const PartType* part = GetPartType(*it))
+    for (const std::string& part_name : m_parts)
+        if (const PartType* part = GetPartType(part_name))
             if (!part->ProductionCostTimeLocationInvariant())
                 return false;
 
@@ -620,8 +616,8 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
         float cost_accumulator = 0.0f;
         if (const HullType* hull = GetHullType(m_hull))
             cost_accumulator += hull->ProductionCost(empire_id, location_id);
-        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
-            if (const PartType* part = GetPartType(*it))
+        for (const std::string& part_name : m_parts)
+            if (const PartType* part = GetPartType(part_name))
                 cost_accumulator += part->ProductionCost(empire_id, location_id);
         return std::max(0.0f, cost_accumulator);
     }
@@ -637,16 +633,15 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
         int time_accumulator = 1;
         if (const HullType* hull = GetHullType(m_hull))
             time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
-        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it)
-            if (const PartType* part = GetPartType(*it))
+        for (const std::string& part_name : m_parts)
+            if (const PartType* part = GetPartType(part_name))
                 time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
         return std::max(1, time_accumulator);
     }
 }
 
 bool ShipDesign::CanColonize() const {
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        const std::string& part_name = *it;
+    for (const std::string& part_name : m_parts) {
         if (part_name.empty())
             continue;
         if (const PartType* part = GetPartType(part_name))
@@ -660,9 +655,8 @@ float ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
     float total_defense = 0.0f;
     const PartTypeManager& part_manager = GetPartTypeManager();
-    std::vector<std::string> all_parts = Parts();
-    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
+    for (const std::string& part_name : Parts()) {
+        const PartType* part = part_manager.GetPartType(part_name);
         if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
             total_defense += part->Capacity();
     }
@@ -682,8 +676,8 @@ float ShipDesign::AdjustedAttack(float shield) const {
     float fighter_damage = 0.0f;
     float direct_attack = 0.0f;
 
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        const PartType* part = GetPartType(*it);
+    for (const std::string& part_name : m_parts) {
+        const PartType* part = GetPartType(part_name);
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
@@ -737,8 +731,7 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
 std::vector<std::string> ShipDesign::Weapons() const {
     std::vector<std::string> retval;
     retval.reserve(m_parts.size());
-    for (unsigned int i = 0; i < m_parts.size(); ++i) {
-        const std::string& part_name = m_parts[i];
+    for (const std::string& part_name : m_parts) {
         const PartType* part = GetPartType(part_name);
         if (!part)
             continue;
@@ -794,8 +787,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         return false;
 
     // apply external and internal parts' location conditions to potential location
-    for (std::vector<std::string>::const_iterator part_it = m_parts.begin(); part_it != m_parts.end(); ++part_it) {
-        std::string part_name = *part_it;
+    for (const std::string& part_name : m_parts) {
         if (part_name.empty())
             continue;       // empty slots don't limit build location
 
@@ -832,26 +824,25 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 
     // check hull exclusions against all parts...
     const std::set<std::string>& hull_exclusions = hull_type->Exclusions();
-    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-        if (part_it->empty())
+    for (const std::string& part_name : parts) {
+        if (part_name.empty())
             continue;
-        if (hull_exclusions.find(*part_it) != hull_exclusions.end())
+        if (hull_exclusions.find(part_name) != hull_exclusions.end())
             return false;
     }
 
     // check part exclusions against other parts and hull
     std::set<std::string> already_seen_component_names;
     already_seen_component_names.insert(hull);
-    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-        const PartType* part_type = GetPartType(*part_it);
+    for (const std::string& part_name : parts) {
+        const PartType* part_type = GetPartType(part_name);
         if (!part_type)
             continue;
-        const std::set<std::string>& part_exclusions = part_type->Exclusions();
-        for (std::set<std::string>::const_iterator ex_it = part_exclusions.begin(); ex_it != part_exclusions.end(); ++ex_it) {
-            if (already_seen_component_names.find(*ex_it) != already_seen_component_names.end())
+        for (const std::string& excluded : part_type->Exclusions()) {
+            if (already_seen_component_names.find(excluded) != already_seen_component_names.end())
                 return false;
         }
-        already_seen_component_names.insert(*part_it);
+        already_seen_component_names.insert(part_name);
     }
 
 
@@ -895,13 +886,13 @@ void ShipDesign::BuildStatCaches() {
     m_structure =       hull->Structure();
     m_speed =           hull->Speed();
 
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        if (it->empty())
+    for (const std::string& part_name : m_parts) {
+        if (part_name.empty())
             continue;
 
-        const PartType* part = GetPartType(*it);
+        const PartType* part = GetPartType(part_name);
         if (!part) {
-            ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get part with name " << *it;
+            ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get part with name " << part_name;
             continue;
         }
 
@@ -978,8 +969,8 @@ std::string ShipDesign::Dump() const {
     } else {
         retval += "[\n";
         ++g_indent;
-        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-            retval += DumpIndent() + "\"" + *it + "\"\n";
+        for (const std::string& part_name : m_parts) {
+            retval += DumpIndent() + "\"" + part_name + "\"\n";
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -998,13 +989,11 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     std::map<std::string, int> first_parts;
     std::map<std::string, int> second_parts;
 
-    for (std::vector<std::string>::const_iterator it = first.Parts().begin();
-         it != first.Parts().end(); ++it)
-    { ++first_parts[*it]; }
+    for (const std::string& part_name : first.Parts())
+    { ++first_parts[part_name]; }
 
-    for (std::vector<std::string>::const_iterator it = second.Parts().begin();
-         it != second.Parts().end(); ++it)
-    { ++second_parts[*it]; }
+    for (const std::string& part_name : second.Parts())
+    { ++second_parts[part_name]; }
 
     return first_parts == second_parts;
 }
@@ -1040,21 +1029,21 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Predefined Ship Designs:";
-        for (iterator it = begin(); it != end(); ++it) {
-            const ShipDesign* d = it->second;
+        for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
+            const ShipDesign* d = entry.second;
             DebugLogger() << " ... " << d->Name();
         }
         DebugLogger() << "Monster Ship Designs:";
-        for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
-            const ShipDesign* d = it->second;
+        for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
+            const ShipDesign* d = entry.second;
             DebugLogger() << " ... " << d->Name();
         }
     }
 }
 
 PredefinedShipDesignManager::~PredefinedShipDesignManager() {
-    for (std::map<std::string, ShipDesign*>::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
-        delete it->second;
+    for (std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs)
+        delete entry.second;
 }
 
 void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
@@ -1065,8 +1054,7 @@ void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
     int empire_id = empire->EmpireID();
     Universe& universe = GetUniverse();
 
-    for (std::vector<std::string>::const_iterator it = design_names.begin(); it != design_names.end(); ++it) {
-        const std::string& design_name = *it;
+    for (const std::string& design_name : design_names) {
         std::map<std::string, ShipDesign*>::const_iterator design_it = m_ship_designs.find(design_name);
         if (design_it == m_ship_designs.end()) {
             ErrorLogger() << "Couldn't find predefined ship design with name " << design_name << " to add to empire";
@@ -1152,13 +1140,13 @@ namespace {
 const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
     m_design_generic_ids.clear();   // std::map<std::string, int>
 
-    for (iterator it = begin(); it != end(); ++it) {
-        ShipDesign* d = it->second;
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
+        ShipDesign* d = entry.second;
         AddDesignToUniverse(m_design_generic_ids, d, false);
     }
 
-    for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
-        ShipDesign* d = it->second;
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
+        ShipDesign* d = entry.second;
         AddDesignToUniverse(m_design_generic_ids, d, true);
     }
 
