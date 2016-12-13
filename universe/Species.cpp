@@ -77,9 +77,9 @@ Species::~Species()
 void Species::Init() {
     if (m_location)
         m_location->SetTopLevelContent(this->m_name);
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
-         it != m_effects.end(); ++it)
-    { (*it)->SetTopLevelContent(m_name); }
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        effect->SetTopLevelContent(m_name);
+    }
 }
 
 std::string Species::Dump() const {
@@ -102,8 +102,8 @@ std::string Species::Dump() const {
     } else {
         retval += DumpIndent() + "foci = [\n";
         ++g_indent;
-        for (std::vector<FocusType>::const_iterator it = m_foci.begin(); it != m_foci.end(); ++it) {
-            retval += it->Dump();
+        for (const FocusType& focus : m_foci) {
+            retval += focus.Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -116,8 +116,8 @@ std::string Species::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_effects.size(); ++i) {
-            retval += m_effects[i]->Dump();
+        for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -132,9 +132,9 @@ std::string Species::Dump() const {
     } else {
         retval += DumpIndent() + "environments = [\n";
         ++g_indent;
-        for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = m_planet_environments.begin(); it != m_planet_environments.end(); ++it) {
-            retval += DumpIndent() + "type = " + PlanetTypeToString(it->first)
-                                   + " environment = " + PlanetEnvironmentToString(it->second)
+        for (const std::map<PlanetType, PlanetEnvironment>::value_type& entry : m_planet_environments) {
+            retval += DumpIndent() + "type = " + PlanetTypeToString(entry.first)
+                                   + " environment = " + PlanetEnvironmentToString(entry.second)
                                    + "\n";
         }
         --g_indent;
@@ -152,10 +152,8 @@ std::string Species::GameplayDescription() const {
 
     bool requires_separator = true;
 
-    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = m_effects.begin();
-         m_effects.end() != it; ++it)
-    {
-        const std::string& description = (*it)->GetDescription();
+    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        const std::string& description = effect->GetDescription();
         if (description.empty())
             continue;
 
@@ -230,15 +228,13 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
     // determine which environment rating is the best available for this species
     PlanetEnvironment best_environment = PE_UNINHABITABLE;
     //std::set<PlanetType> best_types;
-    for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = m_planet_environments.begin();
-         it != m_planet_environments.end(); ++it)
-    {
-        if (it->second == best_environment) {
-            //best_types.insert(it->first);
-        } else if (it->second > best_environment) {
-            best_environment = it->second;
+    for (const std::map<PlanetType, PlanetEnvironment>::value_type& entry : m_planet_environments) {
+        if (entry.second == best_environment) {
+            //best_types.insert(entry.first);
+        } else if (entry.second > best_environment) {
+            best_environment = entry.second;
             //best_types.clear();
-            //best_types.insert(it->first);
+            //best_types.insert(entry.first);
         }
     }
 
@@ -332,8 +328,8 @@ SpeciesManager::SpeciesManager() {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Species:";
-        for (iterator it = begin(); it != end(); ++it) {
-            const Species* s = it->second;
+        for (const std::map<std::string, Species*>::value_type& entry : m_species) {
+            const Species* s = entry.second;
             DebugLogger() << " ... " << s->Name() << "  \t" <<
                 (s->Playable() ?        "Playable " : "         ") <<
                 (s->Native() ?          "Native " : "       ") <<
@@ -344,8 +340,8 @@ SpeciesManager::SpeciesManager() {
 }
 
 SpeciesManager::~SpeciesManager() {
-    for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
-        delete it->second;
+    for (std::map<std::string, Species*>::value_type& entry : m_species)
+        delete entry.second;
 }
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
@@ -436,15 +432,15 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
 }
 
 void SpeciesManager::ClearSpeciesHomeworlds() {
-    for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
-        it->second->SetHomeworlds(std::set<int>());
+    for (std::map<std::string, Species*>::value_type& entry : m_species)
+        entry.second->SetHomeworlds(std::set<int>());
 }
 
 void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids) {
     ClearSpeciesHomeworlds();
-    for (std::map<std::string, std::set<int> >::const_iterator it = species_homeworld_ids.begin(); it != species_homeworld_ids.end(); ++it) {
-        const std::string& species_name = it->first;
-        const std::set<int>& homeworlds = it->second;
+    for (const std::map<std::string, std::set<int> >::value_type& entry : species_homeworld_ids) {
+        const std::string& species_name = entry.first;
+        const std::set<int>& homeworlds = entry.second;
 
         Species* species = 0;
         std::map<std::string, Species*>::iterator species_it = m_species.find(species_name);
@@ -473,16 +469,15 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
 
 std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     std::map<std::string, std::set<int> > retval;
-    for (iterator it = begin(); it != end(); ++it) {
-        const std::string species_name = it->first;
-        const Species* species = it->second;
+    for (const std::map<std::string, Species*>::value_type& entry : m_species) {
+        const std::string species_name = entry.first;
+        const Species* species = entry.second;
         if (!species) {
             ErrorLogger() << "SpeciesManager::GetSpeciesHomeworldsMap found a null species pointer in SpeciesManager?!";
             continue;
         }
-        const std::set<int>& homeworld_ids = species->Homeworlds();
-        for (std::set<int>::const_iterator homeworlds_it = homeworld_ids.begin(); homeworlds_it != homeworld_ids.end(); ++homeworlds_it)
-            retval[species_name].insert(*homeworlds_it);
+        for (int homeworld_id : species->Homeworlds())
+            retval[species_name].insert(homeworld_id);
     }
     return retval;
 }
