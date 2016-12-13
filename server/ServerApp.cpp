@@ -829,12 +829,22 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
 }
 
 void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection){
-    DebugLogger() << "ServerApp::UpdateCombatLogs() entered";
-
     std::vector<int> ids;
     ExtractRequestCombatLogsMessageData(msg, ids);
 
-    DebugLogger() << "ServerApp::UpdateCombatLogs() ids requested  first one is " << ids[0];
+    // Compose a vector of the requested ids and logs
+    std::vector<std::pair<int, const CombatLog&> > logs;
+    for (std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
+        boost::optional<const CombatLog&> log = GetCombatLogManager().GetLog(*it);
+        if (!log) {
+            ErrorLogger() << "UpdateCombatLogs can't fetch log with id = "<< *it << " ... skipping.";
+            continue;
+        }
+        logs.push_back(std::make_pair(*it, *log));
+    }
+
+    // Return them to the client
+    player_connection->SendMessage(DispatchCombatLogsMessage(player_connection->PlayerID(), logs));
 }
 
 namespace {

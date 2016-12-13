@@ -618,8 +618,11 @@ Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids) {
     return Message(Message::REQUEST_COMBAT_LOGS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message DispatchCombatLogsMessage(int receiver) {
-    return Message(Message::DISPATCH_COMBAT_LOGS, Networking::INVALID_PLAYER_ID, receiver, "fake logs", true);
+Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog&> >& logs) {
+    std::ostringstream os;
+    freeorion_xml_oarchive oa(os);
+    oa << BOOST_SERIALIZATION_NVP(logs);
+    return Message(Message::DISPATCH_COMBAT_LOGS, Networking::INVALID_PLAYER_ID, receiver, os.str(), true);
 }
 
 ////////////////////////////////////////////////
@@ -1072,4 +1075,20 @@ FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::
                       << "Error: " << err.what();
         throw err;
     }
+}
+
+FO_COMMON_API void ExtractDispathCombatLogsMessageData(
+    const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs)
+{
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(logs);
+    } catch(const std::exception& err) {
+        ErrorLogger() << "ExtractDispatchCombatLogMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+
 }

@@ -18,6 +18,7 @@
 class EmpireManager;
 class SupplyManager;
 class SpeciesManager;
+class CombatLog;
 class CombatLogManager;
 class Message;
 struct MultiplayerLobbyData;
@@ -320,7 +321,7 @@ FO_COMMON_API Message DispatchSavePreviewsMessage(int receiver, const PreviewInf
 FO_COMMON_API Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids);
 
 /** returns combat logs to the client */
-FO_COMMON_API Message DispatchCombatLogsMessage(int receiver);
+FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog&> >& logs);
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
@@ -405,5 +406,7 @@ FO_COMMON_API void ExtractDispatchSavePreviewsMessageData(const Message& msg, Pr
 FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, std::string& save_filename, int& bytes_written);
 
 FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::vector<int>& ids);
+
+FO_COMMON_API void ExtractDispathCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs);
 
 #endif // _Message_h_
