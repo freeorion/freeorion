@@ -23,14 +23,10 @@ Encyclopedia::Encyclopedia() :
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "(Category) Encyclopedia Articles:";
-        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
-             category_it = articles.begin(); category_it != articles.end(); ++category_it)
-        {
-            const std::string& category = category_it->first;
-            const std::vector<EncyclopediaArticle>& article_vec = category_it->second;
-            for (std::vector<EncyclopediaArticle>::const_iterator article_it = article_vec.begin();
-                 article_it != article_vec.end(); ++article_it)
-            { DebugLogger() << "(" << category << ") : " << article_it->name; }
+        for (std::map<std::string, std::vector<EncyclopediaArticle> >::value_type& entry : articles) {
+            const std::string& category = entry.first;
+            for (const EncyclopediaArticle& article : entry.second)
+            { DebugLogger() << "(" << category << ") : " << article.name; }
         }
     }
 }
