@@ -265,7 +265,8 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGameDataRequest>,
         boost::statechart::custom_reaction<SaveGameComplete>,
-        boost::statechart::custom_reaction<TurnUpdate>
+        boost::statechart::custom_reaction<TurnUpdate>,
+        boost::statechart::custom_reaction<DispatchCombatLogs>
     > reactions;
 
     WaitingForTurnData(my_context ctx);
@@ -274,6 +275,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     boost::statechart::result react(const SaveGameDataRequest& d);
     boost::statechart::result react(const SaveGameComplete& d);
     boost::statechart::result react(const TurnUpdate& msg);
+    boost::statechart::result react(const DispatchCombatLogs& msg);
 
     CLIENT_ACCESSOR
 };
@@ -289,7 +291,8 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
         boost::statechart::custom_reaction<AdvanceTurn>,
         boost::statechart::custom_reaction<TurnUpdate>,
         boost::statechart::custom_reaction<TurnEnded>,
-        boost::statechart::custom_reaction<PlayerStatus>
+        boost::statechart::custom_reaction<PlayerStatus>,
+        boost::statechart::custom_reaction<DispatchCombatLogs>
     > reactions;
 
     PlayingTurn(my_context ctx);
@@ -301,6 +304,7 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame> {
     boost::statechart::result react(const TurnUpdate& msg);
     boost::statechart::result react(const TurnEnded& d);
     boost::statechart::result react(const PlayerStatus& msg);
+    boost::statechart::result react(const DispatchCombatLogs& msg);
 
     CLIENT_ACCESSOR
 };

@@ -621,6 +621,12 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     return transit<PlayingTurn>();
 }
 
+boost::statechart::result WaitingForTurnData::react(const DispatchCombatLogs& msg) {
+    DebugLogger() << "(PlayerFSM) WaitingForTurnData::DispatchCombatLogs message received";
+    Client().UpdateCombatLogs(msg.m_message);
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // PlayingTurn
@@ -764,3 +770,8 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     return discard_event();
 }
 
+boost::statechart::result PlayingTurn::react(const DispatchCombatLogs& msg) {
+    DebugLogger() << "(PlayerFSM) PlayingGame::DispatchCombatLogs message received";
+    Client().UpdateCombatLogs(msg.m_message);
+    return discard_event();
+}

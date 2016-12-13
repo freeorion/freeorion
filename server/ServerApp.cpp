@@ -406,7 +406,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
-    case Message::REQUEST_COMBAT_LOGS:      UpdateCombatLogs(msg, player_connection); break;
+    case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
 
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";

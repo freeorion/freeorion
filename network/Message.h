@@ -407,6 +407,6 @@ FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, 
 
 FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::vector<int>& ids);
 
-FO_COMMON_API void ExtractDispathCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs);
+FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, CombatLog> >& logs);
 
 #endif // _Message_h_

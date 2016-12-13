@@ -64,6 +64,7 @@ struct MessageEventBase {
     (ClientSaveData)                        \
     (RequestObjectID)                       \
     (RequestDesignID)                       \
+    (RequestCombatLogs)                     \
     (PlayerChat)                            \
     (Diplomacy)                             \
     (ModeratorAct)                          \
@@ -242,6 +243,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<PlayerChat>,
         sc::custom_reaction<Diplomacy>,
         sc::custom_reaction<ModeratorAct>,
+        sc::custom_reaction<RequestCombatLogs>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -251,6 +253,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const PlayerChat& msg);
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
+    sc::result react(const RequestCombatLogs& msg);
     sc::result react(const Error& msg);
 
     SERVER_ACCESSOR

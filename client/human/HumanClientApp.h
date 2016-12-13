@@ -75,6 +75,7 @@ public:
     virtual void        StartTurn();
 
     void                HandleSaveGameDataRequest();
+    void                UpdateCombatLogs(const Message& msg);
 
     void                OpenURL(const std::string& url);
     //@}
