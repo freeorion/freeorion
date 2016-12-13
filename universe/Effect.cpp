@@ -144,23 +144,18 @@ namespace {
         if (star_names.empty())
             UserStringList("STAR_NAMES", star_names);
 
-        const ObjectMap& objects = Objects();
-        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
-
         // pick a name for the system
-        for (std::list<std::string>::const_iterator it = star_names.begin(); it != star_names.end(); ++it) {
+        for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
-                 sys_it != systems.end(); ++sys_it)
-            {
-                if ((*sys_it)->Name() == *it) {
+            for (TemporaryPtr<const System> system : Objects().FindObjects<System>()) {
+                if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another systme has this name. skip to next potential name.
                 }
             }
             if (!dupe)
-                return *it; // no systems have this name yet. use it.
+                return star_name; // no systems have this name yet. use it.
         }
         return "";  // fallback to empty name.
     }
@@ -173,8 +168,8 @@ namespace Effect {
 EffectsGroup::~EffectsGroup() {
     delete m_scope;
     delete m_activation;
-    for (unsigned int i = 0; i < m_effects.size(); ++i) {
-        delete m_effects[i];
+    for (EffectBase* effect : m_effects) {
+        delete effect;
     }
 }
 
@@ -183,12 +178,11 @@ void EffectsGroup::Execute(const TargetsCauses& targets_causes, AccountingMap* a
                            bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
     // execute each effect of the group one by one, unless filtered by flags
-    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
-         effect_it != m_effects.end(); ++effect_it)
+    for (EffectBase* effect : m_effects)
     {
-        (*effect_it)->Execute(targets_causes, accounting_map,
-                              only_meter_effects, only_appearance_effects,
-                              include_empire_meter_effects, only_generate_sitrep_effects);
+        effect->Execute(targets_causes, accounting_map,
+                        only_meter_effects, only_appearance_effects,
+                        include_empire_meter_effects, only_generate_sitrep_effects);
     }
 }
 
@@ -218,8 +212,8 @@ std::string EffectsGroup::Dump() const {
     } else {
         retval += DumpIndent() + "effects = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_effects.size(); ++i) {
-            retval += m_effects[i]->Dump();
+        for (EffectBase* effect : m_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -229,30 +223,24 @@ std::string EffectsGroup::Dump() const {
 }
 
 bool EffectsGroup::HasMeterEffects() const {
-    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
-         effect_it != m_effects.end(); ++effect_it)
-    {
-        if ((*effect_it)->IsMeterEffect())
+    for (EffectBase* effect : m_effects) {
+        if (effect->IsMeterEffect())
             return true;
     }
     return false;
 }
 
 bool EffectsGroup::HasAppearanceEffects() const {
-    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
-         effect_it != m_effects.end(); ++effect_it)
-    {
-        if ((*effect_it)->IsAppearanceEffect())
+    for (EffectBase* effect : m_effects) {
+        if (effect->IsAppearanceEffect())
             return true;
     }
     return false;
 }
 
 bool EffectsGroup::HasSitrepEffects() const {
-    for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
-         effect_it != m_effects.end(); ++effect_it)
-    {
-        if ((*effect_it)->IsSitrepEffect())
+    for (EffectBase* effect : m_effects) {
+        if (effect->IsSitrepEffect())
             return true;
     }
     return false;
@@ -263,8 +251,9 @@ void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
         m_scope->SetTopLevelContent(content_name);
     if (m_activation)
         m_activation->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it)
-    { (*it)->SetTopLevelContent(content_name); }
+    for (EffectBase* effect : m_effects) {
+        effect->SetTopLevelContent(content_name);
+    }
 }
 
 
@@ -274,8 +263,8 @@ void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
 std::string Dump(const std::vector<boost::shared_ptr<EffectsGroup> >& effects_groups) {
     std::stringstream retval;
 
-    for (size_t i = 0; i < effects_groups.size(); ++i) {
-        retval << "\n" << effects_groups[i]->Dump();
+    for (boost::shared_ptr<EffectsGroup> effects_group : effects_groups) {
+        retval << "\n" << effects_group->Dump();
     }
 
     return retval.str();
@@ -297,23 +286,21 @@ void EffectBase::Execute(const TargetsCauses& targets_causes, AccountingMap* acc
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-        targets_it != targets_causes.end(); ++targets_it)
-    {
-        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
-        Execute(source_context, targets_it->second.target_set);
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
+        Execute(source_context, targets_entry.second.target_set);
     }
 }
 
 void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targets) const {
     if (targets.empty())
         return;
+
     // execute effects on targets
     ScriptingContext local_context = context;
-    for (TargetSet::const_iterator target_it = targets.begin();
-         target_it != targets.end(); ++target_it)
-    {
-        local_context.effect_target = *target_it;
+
+    for (TemporaryPtr<UniverseObject> target : targets) {
+        local_context.effect_target = target;
         this->Execute(local_context);
     }
 }
@@ -369,21 +356,19 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
         return;
 
     // apply this effect for each source causing it
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-         targets_it != targets_causes.end(); ++targets_it)
-    {
-        const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        const SourcedEffectsGroup& sourced_effects_group = targets_entry.first;
         int                                 source_id             = sourced_effects_group.source_object_id;
         TemporaryPtr<const UniverseObject>  source                = GetUniverseObject(source_id);
         ScriptingContext                    source_context(source);
-        const TargetsAndCause&              targets_and_cause     = targets_it->second;
+        const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
         if (log_verbose) {
             DebugLogger() << "\n\nExecute SetMeter effect: \n" << Dump();
             DebugLogger() << "SetMeter execute targets before: ";
-            for (TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                DebugLogger() << " ... " << (*t_it)->Dump();
+            for (TemporaryPtr<UniverseObject> target : targets)
+                DebugLogger() << " ... " << target->Dump();
         }
 
         if (!accounting_map && !log_verbose) {
@@ -392,9 +377,9 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
 
         } else if (!accounting_map) {
             // process each target separately in order to do effect accounting for each
-            for (TargetSet::const_iterator target_it = targets.begin();
-                 target_it != targets.end(); ++target_it)
-            { Execute(ScriptingContext(source, *target_it)); }
+            for (TemporaryPtr<UniverseObject> target : targets) {
+                Execute(ScriptingContext(source, target));
+            }
 
         } else {
             // accounting info for this effect on this meter, starting with non-target-dependent info
@@ -407,11 +392,7 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
             }
 
             // process each target separately in order to do effect accounting for each
-            for (TargetSet::const_iterator target_it = targets.begin();
-                 target_it != targets.end(); ++target_it)
-            {
-                TemporaryPtr<UniverseObject> target = *target_it;
-
+            for (TemporaryPtr<UniverseObject> target : targets) {
                 // get Meter for this effect and target
                 const Meter* meter = target->GetMeter(m_meter);
                 if (!meter)
@@ -436,8 +417,9 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
 
         if (log_verbose) {
             DebugLogger() << "SetMeter execute targets after: ";
-            for (TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                DebugLogger() << " ... " << (*t_it)->Dump();
+            for (TemporaryPtr<UniverseObject> target : targets) {
+                DebugLogger() << " ... " << target->Dump();
+            }
         }
     }
 }
@@ -448,8 +430,8 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
-        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
-            Meter* m = (*it)->GetMeter(m_meter);
+        for (TemporaryPtr<UniverseObject> target : targets) {
+            Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->SetCurrent(val);
         }
@@ -476,8 +458,8 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
-            Meter* m = (*it)->GetMeter(m_meter);
+        for (TemporaryPtr<UniverseObject> target : targets) {
+            Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->AddToCurrent(increment);
         }
@@ -596,29 +578,27 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
         return;
 
     // apply this effect for each source causing it
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-         targets_it != targets_causes.end(); ++targets_it)
-    {
-        const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        const SourcedEffectsGroup& sourced_effects_group = targets_entry.first;
         int                                 source_id             = sourced_effects_group.source_object_id;
         TemporaryPtr<const UniverseObject>  source                = GetUniverseObject(source_id);
         ScriptingContext                    source_context(source);
-        const TargetsAndCause&              targets_and_cause     = targets_it->second;
+        const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
         if (log_verbose) {
             DebugLogger() << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
             DebugLogger() << "SetShipPartMeter execute targets before: ";
-            for (TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                DebugLogger() << " ... " << (*t_it)->Dump();
+            for (TemporaryPtr<UniverseObject> target : targets)
+                DebugLogger() << " ... " << target->Dump();
         }
 
         Execute(source_context, targets);
 
         if (log_verbose) {
             DebugLogger() << "SetShipPartMeter execute targets after: ";
-            for (TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                DebugLogger() << " ... " << (*t_it)->Dump();
+            for (TemporaryPtr<UniverseObject> target : targets)
+                DebugLogger() << " ... " << target->Dump();
         }
     }
 }
@@ -635,10 +615,10 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
-        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
-            if ((*it)->ObjectType() != OBJ_SHIP)
+        for (TemporaryPtr<UniverseObject> target : targets) {
+            if (target->ObjectType() != OBJ_SHIP)
                 continue;
-            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(*it);
+            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
             Meter* m = ship->GetPartMeter(m_meter, part_name);
@@ -667,10 +647,10 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
-            if ((*it)->ObjectType() != OBJ_SHIP)
+        for (TemporaryPtr<UniverseObject> target : targets) {
+            if (target->ObjectType() != OBJ_SHIP)
                 continue;
-            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(*it);
+            TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
             Meter* m = ship->GetPartMeter(m_meter, part_name);
@@ -763,11 +743,9 @@ void SetEmpireMeter::Execute(const TargetsCauses& targets_causes, AccountingMap*
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-        targets_it != targets_causes.end(); ++targets_it)
-    {
-        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
-        EffectBase::Execute(source_context, targets_it->second.target_set);
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
+        EffectBase::Execute(source_context, targets_entry.second.target_set);
     }
 }
 
@@ -959,10 +937,8 @@ void SetSpecies::Execute(const ScriptingContext& context) const {
         std::vector<std::string> available_foci = planet->AvailableFoci();
 
         // leave current focus unchanged if available.
-        for (std::vector<std::string>::const_iterator it = available_foci.begin();
-             it != available_foci.end(); ++it)
-        {
-            if (*it == initial_focus) {
+        for (const std::string& available_focus : available_foci) {
+            if (available_focus == initial_focus) {
                 return;
             }
         }
@@ -977,10 +953,8 @@ void SetSpecies::Execute(const ScriptingContext& context) const {
 
         // chose preferred focus if available. otherwise use any available focus
         bool preferred_available = false;
-        for (std::vector<std::string>::const_iterator it = available_foci.begin();
-                it != available_foci.end(); ++it)
-        {
-            if (*it == preferred_focus) {
+        for (const std::string& available_focus : available_foci) {
+            if (available_focus == preferred_focus) {
                 preferred_available = true;
                 break;
             }
@@ -1182,9 +1156,9 @@ CreatePlanet::~CreatePlanet() {
     delete m_type;
     delete m_size;
     delete m_name;
-    for (std::vector<EffectBase*>::iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    { delete *it; }
+    for (EffectBase* effect : m_effects_to_apply_after) {
+        delete effect;
+    }
     m_effects_to_apply_after.clear();
 }
 
@@ -1241,10 +1215,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = planet;
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1269,10 +1240,7 @@ void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
         m_size->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1294,9 +1262,9 @@ CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_typ
 CreateBuilding::~CreateBuilding() {
     delete m_building_type_name;
     delete m_name;
-    for (std::vector<EffectBase*>::iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    { delete *it; }
+    for (EffectBase* effect : m_effects_to_apply_after) {
+        delete effect;
+    }
     m_effects_to_apply_after.clear();
 }
 
@@ -1351,10 +1319,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = building;
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1375,10 +1340,7 @@ void CreateBuilding::SetTopLevelContent(const std::string& content_name) {
         m_building_type_name->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1421,9 +1383,9 @@ CreateShip::~CreateShip() {
     delete m_empire_id;
     delete m_species_name;
     delete m_name;
-    for (std::vector<EffectBase*>::iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    { delete *it; }
+    for (EffectBase* effect : m_effects_to_apply_after) {
+        delete effect;
+    }
     m_effects_to_apply_after.clear();
 }
 
@@ -1520,10 +1482,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = ship;
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1558,10 +1517,7 @@ void CreateShip::SetTopLevelContent(const std::string& content_name) {
         m_species_name->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1604,9 +1560,9 @@ CreateField::~CreateField() {
     delete m_y;
     delete m_size;
     delete m_name;
-    for (std::vector<EffectBase*>::iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    { delete *it; }
+    for (EffectBase* effect : m_effects_to_apply_after) {
+        delete effect;
+    }
     m_effects_to_apply_after.clear();
 }
 
@@ -1674,10 +1630,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = field;
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1711,10 +1664,7 @@ void CreateField::SetTopLevelContent(const std::string& content_name) {
         m_size->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1753,9 +1703,9 @@ CreateSystem::~CreateSystem() {
     delete m_x;
     delete m_y;
     delete m_name;
-    for (std::vector<EffectBase*>::iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    { delete *it; }
+    for (EffectBase* effect : m_effects_to_apply_after) {
+        delete effect;
+    }
     m_effects_to_apply_after.clear();
 }
 
@@ -1796,10 +1746,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     // apply after-creation effects
     ScriptingContext local_context = context;
     local_context.effect_target = system;
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->Execute(local_context);
@@ -1829,10 +1776,7 @@ void CreateSystem::SetTopLevelContent(const std::string& content_name) {
         m_type->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
-         it != m_effects_to_apply_after.end(); ++it)
-    {
-        EffectBase* effect = *it;
+    for (EffectBase* effect : m_effects_to_apply_after) {
         if (!effect)
             continue;
         effect->SetTopLevelContent(content_name);
@@ -1975,8 +1919,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
 
     // get systems containing at least one endpoint object
     std::set<TemporaryPtr<System> > endpoint_systems;
-    for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
-        TemporaryPtr<const UniverseObject> endpoint_object = *it;
+    for (TemporaryPtr<const UniverseObject> endpoint_object : endpoint_objects) {
         TemporaryPtr<const System> endpoint_system = boost::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
@@ -1986,11 +1929,9 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     }
 
     // add starlanes from target to endpoint systems
-    int target_system_id = target_system->ID();
-    for (std::set<TemporaryPtr<System> >::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
-        TemporaryPtr<System> endpoint_system = *it;
+    for (TemporaryPtr<System> endpoint_system : endpoint_systems) {
         target_system->AddStarlane(endpoint_system->ID());
-        endpoint_system->AddStarlane(target_system_id);
+        endpoint_system->AddStarlane(target_system->ID());
     }
 }
 
@@ -2038,8 +1979,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
 
     // get systems containing at least one endpoint object
     std::set<TemporaryPtr<System> > endpoint_systems;
-    for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
-        TemporaryPtr<const UniverseObject> endpoint_object = *it;
+    for (TemporaryPtr<const UniverseObject> endpoint_object : endpoint_objects) {
         TemporaryPtr<const System> endpoint_system = boost::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
@@ -2050,8 +1990,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
 
     // remove starlanes from target to endpoint systems
     int target_system_id = target_system->ID();
-    for (std::set<TemporaryPtr<System> >::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
-        TemporaryPtr<System> endpoint_system = *it;
+    for (TemporaryPtr<System> endpoint_system : endpoint_systems) {
         target_system->RemoveStarlane(endpoint_system->ID());
         endpoint_system->RemoveStarlane(target_system_id);
     }
@@ -2140,14 +2079,10 @@ void MoveTo::Execute(const ScriptingContext& context) const {
                 dest_system->Insert(fleet);
 
                 // also move ships of fleet
-                std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
-                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-                     ship_it != ships.end(); ++ship_it)
-                {
-                    TemporaryPtr<Ship> ship = *ship_it;
+                for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
                     if (old_sys)
                         old_sys->Remove(ship->ID());
-                    dest_system->Insert(*ship_it);
+                    dest_system->Insert(ship);
                 }
 
                 ExploreSystem(dest_system->ID(), fleet);
@@ -2165,11 +2100,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             fleet->MoveTo(destination);
 
             // also move ships of fleet
-            std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
-            for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-                    ship_it != ships.end(); ++ship_it)
-            {
-                TemporaryPtr<Ship> ship = *ship_it;
+            for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
                 if (old_sys)
                     old_sys->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
@@ -2295,11 +2226,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         dest_system->Insert(planet);  // let system pick an orbit
 
         // also insert buildings of planet into system.
-        std::vector<TemporaryPtr<Building> > buildings = Objects().FindObjects<Building>(planet->BuildingIDs());
-        for (std::vector<TemporaryPtr<Building> >::iterator building_it = buildings.begin();
-             building_it != buildings.end(); ++building_it)
-        {
-            TemporaryPtr<Building> building = *building_it;
+        for (TemporaryPtr<Building> building : Objects().FindObjects<Building>(planet->BuildingIDs())) {
             if (old_sys)
                 old_sys->Remove(building->ID());
             dest_system->Insert(building);
@@ -2477,11 +2404,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         fleet->MoveTo(new_x, new_y);
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
-        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
+        for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);
@@ -2617,12 +2540,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
 
     if (TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
-        std::vector<TemporaryPtr<UniverseObject> > contained_objects =
-            Objects().FindObjects<UniverseObject>(system->ObjectIDs());
-        for (std::vector<TemporaryPtr<UniverseObject> >::iterator it = contained_objects.begin();
-             it != contained_objects.end(); ++it)
-        {
-            TemporaryPtr<UniverseObject> obj = *it;
+        for (TemporaryPtr<UniverseObject> obj : Objects().FindObjects<UniverseObject>(system->ObjectIDs())) {
             obj->MoveTo(new_x, new_y);
         }
         // don't need to remove objects from system or insert into it, as all
@@ -2635,11 +2553,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
-        for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
-             it != ships.end(); ++it)
-        {
-            TemporaryPtr<Ship> ship = *it;
+        for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);
@@ -3003,10 +2917,8 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
-    for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::iterator it =
-         m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
-    {
-        delete it->second;
+    for (std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+        delete entry.second;
     }
     delete m_recipient_empire_id;
 }
@@ -3025,17 +2937,14 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
-    for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::const_iterator it =
-         m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
-    {
-        parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
+    for (const std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+        parameter_tag_values.push_back(std::make_pair(entry.first, entry.second->Eval(context)));
 
         // special case for ship designs: make sure sitrep recipient knows about the design
         // so the sitrep won't have errors about unknown designs being referenced
-        if (it->first == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetPredefinedShipDesign(it->second->Eval(context))) {
-                int design_id = design->ID();
-                ship_design_ids_to_inform_receipits_of.insert(design_id);
+        if (entry.first == VarText::PREDEFINED_DESIGN_TAG) {
+            if (const ShipDesign* design = GetPredefinedShipDesign(entry.second->Eval(context))) {
+                ship_design_ids_to_inform_receipits_of.insert(design->ID());
             }
         }
     }
@@ -3052,30 +2961,26 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     case AFFIL_ALLY: {
         // add allies of specified empire
-        for (EmpireManager::const_iterator emp_it = Empires().begin();
-             emp_it != Empires().end(); ++emp_it)
-        {
-            if (emp_it->first == recipient_id || recipient_id == ALL_EMPIRES)
+        for (const std::map<int, Empire*>::value_type& empire_id : Empires()) {
+            if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, emp_it->first);
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
             if (status == DIPLO_PEACE)
-                recipient_empire_ids.insert(emp_it->first);
+                recipient_empire_ids.insert(empire_id.first);
         }
         break;
     }
 
     case AFFIL_ENEMY: {
         // add enemies of specified empire
-        for (EmpireManager::const_iterator emp_it = Empires().begin();
-             emp_it != Empires().end(); ++emp_it)
-        {
-            if (emp_it->first == recipient_id || recipient_id == ALL_EMPIRES)
+        for (const std::map<int, Empire*>::value_type& empire_id : Empires()) {
+            if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, emp_it->first);
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
             if (status == DIPLO_WAR)
-                recipient_empire_ids.insert(emp_it->first);
+                recipient_empire_ids.insert(empire_id.first);
         }
         break;
     }
@@ -3087,14 +2992,10 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
             m_condition->Eval(context, condition_matches);
 
         // add empires that can see any condition-matching object
-        for (EmpireManager::iterator empire_it = Empires().begin();
-             empire_it != Empires().end(); ++empire_it)
-        {
-            int empire_id = empire_it->first;
-            for (Condition::ObjectSet::iterator obj_it = condition_matches.begin();
-                 obj_it != condition_matches.end(); ++obj_it)
-            {
-                if ((*obj_it)->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            int empire_id = empire_entry.first;
+            for (TemporaryPtr<const UniverseObject> object : condition_matches) {
+                if (object->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
                     recipient_empire_ids.insert(empire_id);
                     break;
                 }
@@ -3114,8 +3015,8 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     case AFFIL_ANY:
     default: {
         // add all empires
-        for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-            recipient_empire_ids.insert(empire_it->first);
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+            recipient_empire_ids.insert(empire_entry.first);
         break;
     }
     }
@@ -3123,18 +3024,16 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     int sitrep_turn = CurrentTurn() + 1;
 
     // send to recipient empires
-    for (std::set<int>::const_iterator emp_it = recipient_empire_ids.begin();
-         emp_it != recipient_empire_ids.end(); ++emp_it)
-    {
-        Empire* empire = GetEmpire(*emp_it);
+    for (int empire_id : recipient_empire_ids) {
+        Empire* empire = GetEmpire(empire_id);
         if (!empire)
             continue;
         empire->AddSitRepEntry(CreateSitRep(m_message_string, sitrep_turn, m_icon, parameter_tag_values, m_label, m_stringtable_lookup));
 
         // also inform of any ship designs recipients should know about
-        for (std::set<int>::const_iterator design_it = ship_design_ids_to_inform_receipits_of.begin();
-             design_it != ship_design_ids_to_inform_receipits_of.end(); ++design_it)
-        { GetUniverse().SetEmpireKnowledgeOfShipDesign(*design_it, *emp_it); }
+        for (int design_id : ship_design_ids_to_inform_receipits_of) {
+            GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
+        }
     }
 }
 
@@ -3147,11 +3046,9 @@ void GenerateSitRepMessage::Execute(const TargetsCauses& targets_causes, Account
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-        targets_it != targets_causes.end(); ++targets_it)
-    {
-        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
-        EffectBase::Execute(source_context, targets_it->second.target_set);
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
+        EffectBase::Execute(source_context, targets_entry.second.target_set);
     }
 }
 
@@ -3165,9 +3062,9 @@ std::string GenerateSitRepMessage::Dump() const {
         retval += DumpIndent() + "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
     } else if (!m_message_parameters.empty()) {
         retval += DumpIndent() + "parameters = [ ";
-        for (unsigned int i = 0; i < m_message_parameters.size(); ++i) {
-            retval += " tag = " + m_message_parameters[i].first
-                   + " data = " + m_message_parameters[i].second->Dump()
+        for (const std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+            retval += " tag = " + entry.first
+                   + " data = " + entry.second->Dump()
                    + " ";
         }
         retval += "]\n";
@@ -3194,15 +3091,14 @@ std::string GenerateSitRepMessage::Dump() const {
 }
 
 void GenerateSitRepMessage::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::iterator it = m_message_parameters.begin();
-         it != m_message_parameters.end(); ++it)
-    { it->second->SetTopLevelContent(content_name); }
+    for (std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
+        entry.second->SetTopLevelContent(content_name);
+    }
     if (m_recipient_empire_id)
         m_recipient_empire_id->SetTopLevelContent(content_name);
     if (m_condition)
         m_condition->SetTopLevelContent(content_name);
 }
-
 
 ///////////////////////////////////////////////////////////
 // SetOverlayTexture                                     //
@@ -3235,11 +3131,9 @@ void SetOverlayTexture::Execute(const TargetsCauses& targets_causes, AccountingM
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-        targets_it != targets_causes.end(); ++targets_it)
-    {
-        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
-        EffectBase::Execute(source_context, targets_it->second.target_set);
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
+        EffectBase::Execute(source_context, targets_entry.second.target_set);
     }
 }
 
@@ -3280,11 +3174,9 @@ void SetTexture::Execute(const TargetsCauses& targets_causes, AccountingMap* acc
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-        targets_it != targets_causes.end(); ++targets_it)
-    {
-        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
-        EffectBase::Execute(source_context, targets_it->second.target_set);
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
+        EffectBase::Execute(source_context, targets_entry.second.target_set);
     }
 }
 
@@ -3334,30 +3226,26 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
 
     case AFFIL_ALLY: {
         // add allies of specified empire
-        for (EmpireManager::const_iterator emp_it = Empires().begin();
-             emp_it != Empires().end(); ++emp_it)
-        {
-            if (emp_it->first == empire_id || empire_id == ALL_EMPIRES)
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, emp_it->first);
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
             if (status == DIPLO_PEACE)
-                empire_ids.insert(emp_it->first);
+                empire_ids.insert(empire_entry.first);
         }
         break;
     }
 
     case AFFIL_ENEMY: {
         // add enemies of specified empire
-        for (EmpireManager::const_iterator emp_it = Empires().begin();
-             emp_it != Empires().end(); ++emp_it)
-        {
-            if (emp_it->first == empire_id || empire_id == ALL_EMPIRES)
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, emp_it->first);
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
             if (status == DIPLO_WAR)
-                empire_ids.insert(emp_it->first);
+                empire_ids.insert(empire_entry.first);
         }
         break;
     }
@@ -3373,8 +3261,8 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     case AFFIL_ANY:
     default: {
         // add all empires
-        for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-            empire_ids.insert(empire_it->first);
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
+            empire_ids.insert(empire_entry.first);
         break;
     }
     }
@@ -3386,20 +3274,17 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     } else {
         Condition::ObjectSet condition_matches;
         m_condition->Eval(context, condition_matches);
-        for (Condition::ObjectSet::const_iterator obj_it = condition_matches.begin();
-             obj_it != condition_matches.end(); ++obj_it)
-        { object_ids.insert((*obj_it)->ID()); }
+        for (TemporaryPtr<const UniverseObject> object : condition_matches) {
+            object_ids.insert(object->ID());
+        }
     }
 
-    for (std::set<int>::const_iterator emp_it = empire_ids.begin();
-         emp_it != empire_ids.end(); ++emp_it)
-    {
-        Empire* empire = GetEmpire(*emp_it);
-        if (!empire)
+    for (int emp_id : empire_ids) {
+        if (!GetEmpire(emp_id))
             continue;
-        for (std::set<int>::const_iterator obj_it = object_ids.begin();
-             obj_it != object_ids.end(); ++obj_it)
-        { GetUniverse().SetEffectDerivedVisibility(*emp_it, *obj_it, m_vis); }
+        for (int obj_id : object_ids) {
+            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, m_vis);
+        }
     }
 }
 
@@ -3460,14 +3345,14 @@ void Conditional::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
     if (!m_target_condition || m_target_condition->Eval(context, context.effect_target)) {
-        for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
-            if (*it)
-                (*it)->Execute(context);
+        for (EffectBase* effect : m_true_effects) {
+            if (effect)
+                effect->Execute(context);
         }
     } else {
-        for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
-            if (*it)
-                (*it)->Execute(context);
+        for (EffectBase* effect : m_false_effects) {
+            if (effect)
+                effect->Execute(context);
         }
     }
 }
@@ -3486,16 +3371,16 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
 
     if (!matches.empty() && !m_true_effects.empty()) {
         Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
-        for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
-            if (*it)
-                (*it)->Execute(context, match_targets);
+        for (EffectBase* effect : m_true_effects) {
+            if (effect)
+                effect->Execute(context, match_targets);
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
         Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-        for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
-            if (*it)
-                (*it)->Execute(context, non_match_targets);
+        for (EffectBase* effect : m_false_effects) {
+            if (effect)
+                effect->Execute(context, non_match_targets);
         }
     }
 }
@@ -3508,18 +3393,18 @@ namespace {
     {
         filtered_effects_out.clear();
         filtered_effects_out.reserve(effects_in.size());
-        for (std::vector<EffectBase*>::const_iterator it = effects_in.begin(); it != effects_in.end(); ++it) {
-            if (!(*it))
+        for (EffectBase* effect : effects_in) {
+            if (!effect)
                 continue;
-            if (only_meter_effects && !(*it)->IsMeterEffect())
+            if (only_meter_effects && !effect->IsMeterEffect())
                 continue;
-            if (only_appearance_effects && !(*it)->IsAppearanceEffect())
+            if (only_appearance_effects && !effect->IsAppearanceEffect())
                 continue;
-            if (only_generate_sitrep_effects && !(*it)->IsSitrepEffect())
+            if (only_generate_sitrep_effects && !effect->IsSitrepEffect())
                 continue;
-            if (!include_empire_meter_effects && (*it)->IsEmpireMeterEffect())
+            if (!include_empire_meter_effects && effect->IsEmpireMeterEffect())
                 continue;
-            filtered_effects_out.push_back(*it);
+            filtered_effects_out.push_back(effect);
         }
     }
 }
@@ -3547,29 +3432,29 @@ void Conditional::Execute(const ScriptingContext& context, const TargetSet& targ
     // execute filtered true and false effects to target matches and non-matches respectively
     if (!matches.empty() && !m_true_effects.empty()) {
         Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
-        for (std::vector<EffectBase*>::const_iterator it = filtered_true_effects.begin(); it != filtered_true_effects.end(); ++it) {
-            if (!(*it))
+        for (EffectBase* effect : filtered_true_effects) {
+            if (!effect)
                 continue;
-            if ((*it)->IsConditionalEffect()) {
-                if (Conditional* cond_effect = dynamic_cast<Conditional*>(*it))
+            if (effect->IsConditionalEffect()) {
+                if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
                     cond_effect->Execute(context, match_targets, accounting_map, only_meter_effects, 
                                          only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
             } else {
-                (*it)->Execute(context, match_targets);
+                effect->Execute(context, match_targets);
             }
         }
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
         Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-        for (std::vector<EffectBase*>::const_iterator it = filtered_false_effects.begin(); it != filtered_false_effects.end(); ++it) {
-            if (!(*it))
+        for (EffectBase* effect : filtered_false_effects) {
+            if (!effect)
                 continue;
-            if ((*it)->IsConditionalEffect()) {
-                if (Conditional* cond_effect = dynamic_cast<Conditional*>(*it))
+            if (effect->IsConditionalEffect()) {
+                if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
                     cond_effect->Execute(context, non_match_targets, accounting_map, only_meter_effects, 
                                             only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
             } else {
-                (*it)->Execute(context, non_match_targets);
+                effect->Execute(context, non_match_targets);
             }
         }
     }
@@ -3590,13 +3475,11 @@ void Conditional::Execute(const TargetsCauses& targets_causes, AccountingMap* ac
 
     // apply this effect for each source causing it
     ScriptingContext source_context;
-    for (TargetsCauses::const_iterator targets_it = targets_causes.begin();
-        targets_it != targets_causes.end(); ++targets_it)
-    {
-        source_context.source = GetUniverseObject(targets_it->first.source_object_id);
+    for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
+        source_context.source = GetUniverseObject(targets_entry.first.source_object_id);
 
         // apply sub-condition to target set to pick which to act on with which of sub-effects
-        const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&(targets_it->second.target_set));
+        const Condition::ObjectSet& potential_target_objects = *reinterpret_cast<const Condition::ObjectSet*>(&(targets_entry.second.target_set));
         Condition::ObjectSet matches = potential_target_objects;
         Condition::ObjectSet non_matches;
         if (m_target_condition)
@@ -3605,29 +3488,29 @@ void Conditional::Execute(const TargetsCauses& targets_causes, AccountingMap* ac
         // execute filtered true and false effects to target matches and non-matches respectively
         if (!matches.empty() && !m_true_effects.empty()) {
             Effect::TargetSet& match_targets = *reinterpret_cast<Effect::TargetSet*>(&matches);
-            for (std::vector<EffectBase*>::const_iterator it = filtered_true_effects.begin(); it != filtered_true_effects.end(); ++it) {
-                if (!(*it))
+            for (EffectBase* effect : filtered_true_effects) {
+                if (!effect)
                     continue;
-                if ((*it)->IsConditionalEffect()) {
-                    if (Conditional* cond_effect = dynamic_cast<Conditional*>(*it))
+                if (effect->IsConditionalEffect()) {
+                    if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
                         cond_effect->Execute(source_context, match_targets, accounting_map, only_meter_effects, 
                                              only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
                 } else {
-                    (*it)->Execute(source_context, match_targets);
+                    effect->Execute(source_context, match_targets);
                 }
             }
         }
         if (!non_matches.empty() && !m_false_effects.empty()) {
             Effect::TargetSet& non_match_targets = *reinterpret_cast<Effect::TargetSet*>(&non_matches);
-            for (std::vector<EffectBase*>::const_iterator it = filtered_false_effects.begin(); it != filtered_false_effects.end(); ++it) {
-                if (!(*it))
+            for (EffectBase* effect : filtered_false_effects) {
+                if (!effect)
                     continue;
-                if ((*it)->IsConditionalEffect()) {
-                    if (Conditional* cond_effect = dynamic_cast<Conditional*>(*it))
+                if (effect->IsConditionalEffect()) {
+                    if (Conditional* cond_effect = dynamic_cast<Conditional*>(effect))
                         cond_effect->Execute(source_context, non_match_targets, accounting_map, only_meter_effects, 
                                              only_appearance_effects, include_empire_meter_effects, only_generate_sitrep_effects);
                 } else {
-                    (*it)->Execute(source_context, non_match_targets);
+                    effect->Execute(source_context, non_match_targets);
                 }
             }
         }
@@ -3652,8 +3535,8 @@ std::string Conditional::Dump() const {
     } else {
         retval += DumpIndent() + "effects = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_true_effects.size(); ++i) {
-            retval += m_true_effects[i]->Dump();
+        for (EffectBase* effect : m_true_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -3668,8 +3551,8 @@ std::string Conditional::Dump() const {
     } else {
         retval += DumpIndent() + "else = [\n";
         ++g_indent;
-        for (unsigned int i = 0; i < m_false_effects.size(); ++i) {
-            retval += m_false_effects[i]->Dump();
+        for (EffectBase* effect : m_false_effects) {
+            retval += effect->Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -3680,36 +3563,36 @@ std::string Conditional::Dump() const {
 }
 
 bool Conditional::IsMeterEffect() const {
-    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
-        if ((*it)->IsMeterEffect())
+    for (EffectBase* effect : m_true_effects) {
+        if (effect->IsMeterEffect())
             return true;
     }
-    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
-        if ((*it)->IsMeterEffect())
+    for (EffectBase* effect : m_false_effects) {
+        if (effect->IsMeterEffect())
             return true;
     }
     return false;
 }
 
 bool Conditional::IsAppearanceEffect() const {
-    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
-        if ((*it)->IsAppearanceEffect())
+    for (EffectBase* effect : m_true_effects) {
+        if (effect->IsAppearanceEffect())
             return true;
     }
-    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
-        if ((*it)->IsAppearanceEffect())
+    for (EffectBase* effect : m_false_effects) {
+        if (effect->IsAppearanceEffect())
             return true;
     }
     return false;
 }
 
 bool Conditional::IsSitrepEffect() const {
-    for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
-        if ((*it)->IsSitrepEffect())
+    for (EffectBase* effect : m_true_effects) {
+        if (effect->IsSitrepEffect())
             return true;
     }
-    for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
-        if ((*it)->IsSitrepEffect())
+    for (EffectBase* effect : m_false_effects) {
+        if (effect->IsSitrepEffect())
             return true;
     }
     return false;
@@ -3718,12 +3601,12 @@ bool Conditional::IsSitrepEffect() const {
 void Conditional::SetTopLevelContent(const std::string& content_name) {
     if (m_target_condition)
         m_target_condition->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it)
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
-    for (std::vector<EffectBase*>::iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it)
-        if (*it)
-            (*it)->SetTopLevelContent(content_name);
+    for (EffectBase* effect : m_true_effects)
+        if (effect)
+            (effect)->SetTopLevelContent(content_name);
+    for (EffectBase* effect : m_false_effects)
+        if (effect)
+            (effect)->SetTopLevelContent(content_name);
 }
 
 } // namespace Effect
