@@ -91,41 +91,41 @@ TemporaryPtr<UniverseObject> ObjectMap::Object(int id)
 
 std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
     std::vector<TemporaryPtr<const UniverseObject> > result;
-    for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
-        if (TemporaryPtr<const UniverseObject> obj = Object(*it))
+    for (int object_id : object_ids)
+        if (TemporaryPtr<const UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
 std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const std::set<int>& object_ids) const {
     std::vector<TemporaryPtr<const UniverseObject> > result;
-    for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
-        if (TemporaryPtr<const UniverseObject> obj = Object(*it))
+    for (int object_id : object_ids)
+        if (TemporaryPtr<const UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
 std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::vector<int>& object_ids) {
     std::vector<TemporaryPtr<UniverseObject> > result;
-    for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
-        if (TemporaryPtr<UniverseObject> obj = Object(*it))
+    for (int object_id : object_ids)
+        if (TemporaryPtr<UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
 std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::set<int>& object_ids) {
     std::vector<TemporaryPtr<UniverseObject> > result;
-    for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
-        if (TemporaryPtr<UniverseObject> obj = Object(*it))
+    for (int object_id : object_ids)
+        if (TemporaryPtr<UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
-            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
@@ -140,9 +140,9 @@ std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const Un
 
 std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
     std::vector<TemporaryPtr<UniverseObject> > result;
-    for (iterator<> it = begin(); it != end(); ++it) {
-        if (TemporaryPtr<UniverseObject> obj = it->Accept(visitor))
-            result.push_back(Object(obj->ID()));
+    for (TemporaryPtr<UniverseObject> obj : *this) {
+        if (TemporaryPtr<UniverseObject> match = obj->Accept(visitor))
+            result.push_back(Object(match->ID()));
     }
     return result;
 }
@@ -246,9 +246,8 @@ void ObjectMap::swap(ObjectMap& rhs) {
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
-    for (std::map< int, TemporaryPtr< UniverseObject > >::const_iterator it = m_existing_objects.begin();
-         it != m_existing_objects.end(); ++it)
-    { result.push_back(it->first); }
+    for (const std::map< int, TemporaryPtr< UniverseObject > >::value_type& entry : m_existing_objects)
+    { result.push_back(entry.first); }
     return result;
 }
 
@@ -262,41 +261,39 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
     m_existing_pop_centers.clear();
     m_existing_resource_centers.clear();
     m_existing_systems.clear();
-    for (std::map<int, boost::shared_ptr<UniverseObject> >::iterator it = m_objects.begin();
-         it != m_objects.end(); ++it)
-    {
-        if (!it->second)
+    for (const std::map<int, boost::shared_ptr<UniverseObject> >::value_type& entry : m_objects) {
+        if (!entry.second)
             continue;
-        if (destroyed_object_ids.find(it->first) != destroyed_object_ids.end())
+        if (destroyed_object_ids.find(entry.first) != destroyed_object_ids.end())
             continue;
-        TemporaryPtr< UniverseObject > this_item = this->Object(it->first);
-        m_existing_objects[it->first] = this_item;
-        switch (it->second->ObjectType()) {
+        TemporaryPtr< UniverseObject > this_item = this->Object(entry.first);
+        m_existing_objects[entry.first] = this_item;
+        switch (entry.second->ObjectType()) {
             case OBJ_BUILDING:
-                m_existing_buildings[it->first] = this_item;
+                m_existing_buildings[entry.first] = this_item;
                 break;
             case OBJ_FIELD:
-                m_existing_fields[it->first] = this_item;
+                m_existing_fields[entry.first] = this_item;
                 break;
             case OBJ_FLEET:
-                m_existing_fleets[it->first] = this_item;
+                m_existing_fleets[entry.first] = this_item;
                 break;
             case OBJ_PLANET:
-                m_existing_planets[it->first] = this_item;
-                m_existing_pop_centers[it->first] = this_item;
-                m_existing_resource_centers[it->first] = this_item;
+                m_existing_planets[entry.first] = this_item;
+                m_existing_pop_centers[entry.first] = this_item;
+                m_existing_resource_centers[entry.first] = this_item;
                 break;
             case OBJ_POP_CENTER:
-                m_existing_pop_centers[it->first] = this_item;
+                m_existing_pop_centers[entry.first] = this_item;
                 break;
             case OBJ_PROD_CENTER:
-                m_existing_resource_centers[it->first] = this_item;
+                m_existing_resource_centers[entry.first] = this_item;
                 break;
             case OBJ_SHIP:
-                m_existing_ships[it->first] = this_item;
+                m_existing_ships[entry.first] = this_item;
                 break;
             case OBJ_SYSTEM:
-                m_existing_systems[it->first] = this_item;
+                m_existing_systems[entry.first] = this_item;
                 break;
             default:
                 break;
@@ -313,8 +310,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     std::map<int, std::set<int> >   contained_ships;
     std::map<int, std::set<int> >   contained_fields;
 
-    for (const_iterator<> it = const_begin (); it != const_end(); ++it) {
-        TemporaryPtr<const UniverseObject> contained = *it;
+    for (TemporaryPtr<const UniverseObject> contained : *this) {
         if (destroyed_object_ids.find(contained->ID()) != destroyed_object_ids.end())
             continue;
 
@@ -351,8 +347,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     }
 
     // set contained objects of all possible containers
-    for (iterator<> it = begin(); it != end(); ++it) {
-        TemporaryPtr<UniverseObject> obj = *it;
+    for (TemporaryPtr<UniverseObject> obj : *this) {
         if (obj->ObjectType() == OBJ_SYSTEM) {
             TemporaryPtr<System> sys = boost::dynamic_pointer_cast<System>(obj);
             if (!sys)

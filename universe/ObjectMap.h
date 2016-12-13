@@ -507,8 +507,8 @@ template <class T>
 std::vector<TemporaryPtr<const T> > ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
     std::vector<TemporaryPtr<const T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
-    for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+    for (int object_id : object_ids) {
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(TemporaryPtr<const T>(map_it->second));
     }
@@ -519,8 +519,8 @@ template <class T>
 std::vector<TemporaryPtr<const T> > ObjectMap::FindObjects(const std::set<int>& object_ids) const {
     std::vector<TemporaryPtr<const T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
-    for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+    for (int object_id : object_ids) {
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(TemporaryPtr<const T>(map_it->second));
     }
@@ -531,8 +531,8 @@ template <class T>
 std::vector<TemporaryPtr<T> > ObjectMap::FindObjects(const std::vector<int>& object_ids) {
     std::vector<TemporaryPtr<T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
-    for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+    for (int object_id : object_ids) {
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(TemporaryPtr<T>(map_it->second));
     }
@@ -543,8 +543,8 @@ template <class T>
 std::vector<TemporaryPtr<T> > ObjectMap::FindObjects(const std::set<int>& object_ids) {
     std::vector<TemporaryPtr<T> > retval;
     typedef typename boost::remove_const<T>::type mutableT;
-    for (std::set<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(*it);
+    for (int object_id : object_ids) {
+        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
             retval.push_back(TemporaryPtr<T>(map_it->second));
     }
