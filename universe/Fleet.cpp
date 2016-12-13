@@ -62,22 +62,16 @@ namespace {
 
     void MoveFleetWithShips(TemporaryPtr<Fleet>& fleet, double x, double y){
         fleet->MoveTo(x, y);
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
-        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
+
+        for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             ship->MoveTo(x, y);
         }
     }
 
     void InsertFleetWithShips(TemporaryPtr<Fleet>& fleet, TemporaryPtr<System>& system){
         system->Insert(fleet);
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(fleet->ShipIDs());
-        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
+
+        for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             system->Insert(ship);
         }
     }
@@ -266,8 +260,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
     // blockade debug logging
     //DebugLogger() << "Fleet::MovePath for fleet " << this->Name() << " ID(" << this->ID() <<") and route:";
-    //for (std::list<int>::const_iterator route_it = route.begin(); route_it != route.end(); route_it++)
-    //    DebugLogger() << "Fleet::MovePath ... " << *route_it;
+    //for (int waypoint : route)
+    //    DebugLogger() << "Fleet::MovePath ... " << waypoint;
     //DebugLogger() << "Fleet::MovePath END of Route ";
 
     // get iterator pointing to TemporaryPtr<System> on route that is the first after where this fleet is currently.
@@ -576,11 +570,8 @@ float Fleet::Fuel() const {
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
     float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
@@ -605,11 +596,8 @@ float Fleet::MaxFuel() const {
     // can store the least amount of fuel
     float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
@@ -635,11 +623,7 @@ int Fleet::FinalDestinationID() const {
 } 
 
 bool Fleet::HasMonsters() const {
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsMonster())
             return true;
     }
@@ -647,11 +631,7 @@ bool Fleet::HasMonsters() const {
 }
 
 bool Fleet::HasArmedShips() const {
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsArmed())
             return true;
     }
@@ -659,11 +639,7 @@ bool Fleet::HasArmedShips() const {
 }
 
 bool Fleet::HasFighterShips() const {
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->HasFighters())
             return true;
     }
@@ -671,11 +647,7 @@ bool Fleet::HasFighterShips() const {
 }
 
 bool Fleet::HasColonyShips() const {
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->CanColonize())
             if (const ShipDesign* design = ship->Design())
                 if (design->ColonyCapacity() > 0.0)
@@ -685,11 +657,7 @@ bool Fleet::HasColonyShips() const {
 }
 
 bool Fleet::HasOutpostShips() const {
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->CanColonize())
             if (const ShipDesign* design = ship->Design())
                 if (design->ColonyCapacity() == 0.0)
@@ -699,11 +667,7 @@ bool Fleet::HasOutpostShips() const {
 }
 
 bool Fleet::HasTroopShips() const {
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->HasTroops())
             return true;
     }
@@ -711,11 +675,7 @@ bool Fleet::HasTroopShips() const {
 }
 
 bool Fleet::HasShipsOrderedScrapped() const {
-    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(m_ships);
-    for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
-         it != ships.end(); ++it)
-    {
-        TemporaryPtr<Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->OrderedScrapped())
             return true;
     }
@@ -723,11 +683,7 @@ bool Fleet::HasShipsOrderedScrapped() const {
 }
 
 bool Fleet::HasShipsWithoutScrapOrders() const {
-    std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(m_ships);
-    for (std::vector<TemporaryPtr<Ship> >::iterator it = ships.begin();
-         it != ships.end(); ++it)
-    {
-        TemporaryPtr<Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (!ship->OrderedScrapped())
             return true;
     }
@@ -743,11 +699,7 @@ float Fleet::ResourceOutput(ResourceType type) const {
         return output;
 
     // determine resource output of each ship in this fleet
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(m_ships);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-         ship_it != ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         output += ship->CurrentMeterValue(meter_type);
     }
     return output;
@@ -835,8 +787,8 @@ void Fleet::RemoveShip(int ship_id) {
 
 void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
     size_t old_ships_size = m_ships.size();
-    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
-        m_ships.erase(*it);
+    for (int ship_id : ship_ids)
+        m_ships.erase(ship_id);
     if (old_ships_size != m_ships.size())
         StateChangedSignal();
 }
@@ -867,10 +819,7 @@ void Fleet::MovementPhase() {
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
     if (GetSupplyManager().SystemHasFleetSupply(fleet->SystemID(), fleet->Owner())) {
-        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
+        for (TemporaryPtr<Ship> ship : ships) {
             ship->Resupply();
         }
     }
@@ -929,10 +878,7 @@ void Fleet::MovementPhase() {
             //if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
             //    fleet->FinalDestinationID() == fleet->SystemID())
             //{
-            //    for (std::vector<TemporaryPtr<Ship> >::const_iterator ship_it = ships.begin();
-            //         ship_it != ships.end(); ++ship_it)
-            //    {
-            //        TemporaryPtr<Ship> ship = *ship_it;
+            //    for (TemporaryPtr<Ship> ship : ships) {
             //        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
             //            fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
             //            fuel_meter->BackPropagate();
@@ -950,10 +896,7 @@ void Fleet::MovementPhase() {
             // remove fleet and ships from system they are departing
             current_system->Remove(fleet->ID());
             fleet->SetSystem(INVALID_OBJECT_ID);
-            for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-                 ship_it != ships.end(); ++ship_it)
-            {
-                TemporaryPtr<Ship> ship = *ship_it;
+            for (TemporaryPtr<Ship> ship : ships) {
                 current_system->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
@@ -1002,10 +945,7 @@ void Fleet::MovementPhase() {
             if (resupply_here) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0f;
-                for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-                     ship_it != ships.end(); ++ship_it)
-                {
-                    TemporaryPtr<Ship> ship = *ship_it;
+                for (TemporaryPtr<Ship> ship : ships) {
                     ship->Resupply();
                 }
             }
@@ -1062,10 +1002,7 @@ void Fleet::MovementPhase() {
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0f) {
-        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
+        for (TemporaryPtr<Ship> ship : ships) {
             if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                 meter->AddToCurrent(-fuel_consumed);
                 meter->BackPropagate();
@@ -1248,11 +1185,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(this->ShipIDs());
-    for (std::vector<TemporaryPtr<const Ship> >::iterator it = ships.begin();
-         it != ships.end(); ++it)
-    {
-        TemporaryPtr<const Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(this->ShipIDs())) {
         if (lowest_ship_stealth > ship->CurrentMeterValue(METER_STEALTH))
             lowest_ship_stealth = ship->CurrentMeterValue(METER_STEALTH);
     }
@@ -1260,18 +1193,11 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     float monster_detection = 0.0f;
     std::vector<TemporaryPtr<const Fleet> > fleets =
         Objects().FindObjects<const Fleet>(current_system->FleetIDs());
-    for (std::vector<TemporaryPtr<const Fleet> >::iterator fleet_it = fleets.begin();
-         fleet_it != fleets.end(); ++fleet_it)
-    {
-        TemporaryPtr<const Fleet> fleet = *fleet_it;
+    for (TemporaryPtr<const Fleet> fleet : fleets) {
         if (!fleet->Unowned())
             continue;
 
-        ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
-        for (std::vector<TemporaryPtr<const Ship> >::iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<const Ship> ship = *ship_it;
+        for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
             float cur_detection = ship->CurrentMeterValue(METER_DETECTION);
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
@@ -1279,10 +1205,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     bool can_be_blockaded = false;
-    for (std::vector<TemporaryPtr<const Fleet> >::iterator fleet_it = fleets.begin();
-         fleet_it != fleets.end(); ++fleet_it)
-    {
-        TemporaryPtr<const Fleet> fleet = *fleet_it;
+    for (TemporaryPtr<const Fleet> fleet : fleets) {
         if (fleet->NextSystemID() != INVALID_OBJECT_ID) //fleets trying to leave this turn can't blockade pre-combat.
             continue;
         bool unrestricted = (fleet->m_arrival_starlane == start_system_id);
@@ -1316,8 +1239,8 @@ float Fleet::Speed() const {
 
     bool isFleetScrapped = true;
     float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
-    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
+    for (int ship_id : m_ships) {
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 if (ship->Speed() < retval)
                     retval = ship->Speed();
@@ -1338,8 +1261,8 @@ float Fleet::Damage() const {
 
     bool isFleetScrapped = true;
     float retval = 0.0f;
-    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
+    for (int ship_id : m_ships) {
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 if (const ShipDesign* design = ship->Design()){
                     retval += design->Attack();
@@ -1361,8 +1284,8 @@ float Fleet::Structure() const {
 
     bool isFleetScrapped = true;
     float retval = 0.0f;
-    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
+    for (int ship_id : m_ships) {
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_STRUCTURE);
                 isFleetScrapped = false;
@@ -1382,8 +1305,8 @@ float Fleet::Shields() const {
 
     bool isFleetScrapped = true;
     float retval = 0.0f;
-    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
+    for (int ship_id : m_ships) {
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_SHIELD);
                 isFleetScrapped = false;
@@ -1429,8 +1352,8 @@ std::string Fleet::GenerateFleetName() {
         return UserString("NEW_FLEET_NAME_NO_NUMBER");
 
     std::vector<TemporaryPtr<const Ship> > ships;
-    for (std::set<int>::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-        if (TemporaryPtr<const Ship> ship = GetShip(*it)) {
+    for (int ship_id : m_ships) {
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
             ships.push_back(ship);
         }
     }
