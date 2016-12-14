@@ -128,14 +128,17 @@ namespace {
         m_empire_id(empire_id),
         m_paused(paused)
     {
+        SetChildClippingMode(ClipToClient);
+
         const int FONT_PTS = ClientUI::Pts();
         const GG::Y METER_HEIGHT(FONT_PTS);
 
-        const int GRAPHIC_SIZE = Value(DefaultHeight() - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+        // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+        const int GRAPHIC_SIZE = std::max(Value(DefaultHeight() - 9), 1);
 
-        const GG::X NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
-        const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 4*MARGIN - 3;
-        const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2 - MARGIN;
+        const GG::X NAME_WIDTH  = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X(1));
+        const GG::X METER_WIDTH = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X(1));
+        const GG::X TURNS_AND_COST_WIDTH = std::max(NAME_WIDTH/2 - MARGIN, GG::X(1));
 
         const Tech* tech = GetTech(m_tech_name);
         if (tech)
@@ -159,6 +162,7 @@ namespace {
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
+        m_name_text->SetChildClippingMode(ClipToClient);
         top += m_name_text->Height();
 
         m_progress_bar = new MultiTurnProgressBar(tech ? tech->ResearchTime(m_empire_id) : 1,
@@ -180,6 +184,8 @@ namespace {
         m_RPs_and_turns_text->MoveTo(GG::Pt(left, top));
         m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_RPs_and_turns_text->SetTextColor(clr);
+        m_RPs_and_turns_text->ClipText(true);
+        m_RPs_and_turns_text->SetChildClippingMode(ClipToClient);
 
         left += TURNS_AND_COST_WIDTH;
 
@@ -190,6 +196,7 @@ namespace {
         m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_text->SetTextColor(clr);
         m_turns_remaining_text->ClipText(true);
+        m_turns_remaining_text->SetChildClippingMode(ClipToClient);
 
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
@@ -221,22 +228,26 @@ namespace {
     }
 
     void QueueTechPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-        if (Size() != (lr - ul)) {
+        GG::Pt old_size(Size());
+        GG::Control::SizeMove(ul, lr);
+        if (Size() != old_size) {
             const int FONT_PTS = ClientUI::Pts();
             const GG::Y METER_HEIGHT(FONT_PTS);
 
-            const int GRAPHIC_SIZE = Value(DefaultHeight() - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+            // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+            const int GRAPHIC_SIZE = std::max(Value(DefaultHeight() - 9), 1);
 
-            const GG::X NAME_WIDTH = Width() - GRAPHIC_SIZE - 2*MARGIN - 3;
-            const GG::X METER_WIDTH = Width() - GRAPHIC_SIZE - 4*MARGIN - 3;
-            const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2 - MARGIN;
+            const GG::X NAME_WIDTH  = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X(1));
+            const GG::X METER_WIDTH = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X(1));
+            const GG::X TURNS_AND_COST_WIDTH = std::max(NAME_WIDTH/2 - MARGIN, GG::X(1));
 
             m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
             m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
             m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
             m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
+            m_turns_remaining_text->MoveTo(
+                m_RPs_and_turns_text->RelativeUpperLeft() + GG::Pt(TURNS_AND_COST_WIDTH, GG::Y0));
         }
-        GG::Control::SizeMove(ul, lr);
     }
 
     GG::Y QueueTechPanel::DefaultHeight() {
