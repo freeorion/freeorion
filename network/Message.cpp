@@ -645,14 +645,14 @@ Message StartMPGameMessage(int player_id)
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
-void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
+void ExtractErrorMessageData(const Message& msg, std::string& problem, bool& fatal) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(problem)
            >> BOOST_SERIALIZATION_NVP(fatal);
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  Message:\n"
+        ErrorLogger() << "ExtractErrorMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         problem = UserStringNop("SERVER_MESSAGE_NOT_UNDERSTOOD");
@@ -660,7 +660,7 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
     }
 }
 
-void ExtractMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) {
+void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -668,28 +668,28 @@ void ExtractMessageData(const Message& msg, std::string& host_player_name, std::
            >> BOOST_SERIALIZATION_NVP(client_version_string);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) failed!  Message:\n"
+        ErrorLogger() << "ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
+void ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(lobby_data);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) failed!  Message:\n"
+        ErrorLogger() << "ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
+void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
                         EmpireManager& empires, Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
                         SupplyManager& supply,
                         std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
@@ -709,7 +709,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
             boost::timer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
-            DebugLogger() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
             ia >> BOOST_SERIALIZATION_NVP(species)
                >> BOOST_SERIALIZATION_NVP(combat_logs)
@@ -717,7 +717,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
             deserialize_timer.restart();
             Deserialize(ia, universe);
-            DebugLogger() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
@@ -748,7 +748,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
             boost::timer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
-            DebugLogger() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractGameStartMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
             ia >> BOOST_SERIALIZATION_NVP(species)
                >> BOOST_SERIALIZATION_NVP(combat_logs)
@@ -756,7 +756,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
             deserialize_timer.restart();
             Deserialize(ia, universe);
-            DebugLogger() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
@@ -777,16 +777,16 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
+        ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type,
+void ExtractJoinGameMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type,
                         std::string& version_string)
 {
-    DebugLogger() << "ExtractMessageData() from " << player_name << " client type " << client_type;
+    DebugLogger() << "ExtractJoinGameMessageData() from " << player_name << " client type " << client_type;
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -795,7 +795,7 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
            >> BOOST_SERIALIZATION_NVP(version_string);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& player_name, "
+        ErrorLogger() << "ExtractJoinGameMessageData(const Message& msg, std::string& player_name, "
                       << "Networking::ClientType client_type, std::string& version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
@@ -803,21 +803,21 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
     }
 }
 
-void ExtractMessageData(const Message& msg, OrderSet& orders) {
+void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         Deserialize(ia, orders);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  Message:\n"
+        ErrorLogger() << "ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe,
+void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe,
                         SpeciesManager& species, CombatLogManager& combat_logs, SupplyManager& supply,
                         std::map<int, PlayerInfo>& players)
 {
@@ -852,13 +852,13 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, Em
         }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
+        ErrorLogger() << "ExtractTurnUpdateMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
+void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe) {
     try {
         ScopedTimer timer("Mid Turn Update Unpacking", true);
 
@@ -878,14 +878,15 @@ void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
         }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
+        ErrorLogger() << "ExtracturnPartialUpdateMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available, SaveGameUIData& ui_data,
-                        bool& save_state_string_available, std::string& save_state_string)
+void ExtractClientSaveDataMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
+                                      SaveGameUIData& ui_data, bool& save_state_string_available,
+                                      std::string& save_state_string)
 {
     try {
         std::istringstream is(msg.Text());
@@ -906,27 +907,27 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
         }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
+        ErrorLogger() << "ExtractClientSaveDataMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) {
+void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(phase_id);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) failed!  Message:\n"
+        ErrorLogger() << "ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status) {
+void ExtractPlayerStatusMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -934,14 +935,14 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
            >> BOOST_SERIALIZATION_NVP(status);
  
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus&) failed!  Message:\n"
+        ErrorLogger() << "ExtractPlayerStatusMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus&) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) {
+void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -949,14 +950,14 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, s
            >> BOOST_SERIALIZATION_NVP(client_version_string);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) failed!  Message:\n"
+        ErrorLogger() << "ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name) {
+void ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -964,7 +965,7 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
            >> BOOST_SERIALIZATION_NVP(reason_player_name);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
+        ErrorLogger() << "ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reason, "
                       << "std::string& reason_player_name) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
@@ -972,28 +973,28 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
     }
 }
 
-void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_action) {
+void ExtractModeratorActionMessageData(const Message& msg, Moderator::ModeratorAction*& mod_action) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(mod_action);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
+        ErrorLogger() << "ExtractModeratorActionMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
                       << "failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
     }
 }
 
-void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
+void ExtractDiplomacyMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(diplo_message);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
+        ErrorLogger() << "ExtractDiplomacyMessageData(const Message& msg, DiplomaticMessage& "
                       << "diplo_message) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
@@ -1001,7 +1002,7 @@ void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
     }
 }
 
-void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update) {
+void ExtractDiplomaticStatusMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -1010,31 +1011,31 @@ void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_up
            >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& diplo_update) failed!  Message:\n"
+        ErrorLogger() << "ExtractDiplomaticStatusMessageData(const Message& msg, DiplomaticStatusUpdate& diplo_update) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, std::string& directory)
+void ExtractRequestSavePreviewsMessageData(const Message& msg, std::string& directory)
 { directory = msg.Text(); }
 
-void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
+void ExtractDispatchSavePreviewsMessageData(const Message& msg, PreviewInformation& previews) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(previews);
 
     } catch(const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, PreviewInformation& previews) failed!  Message:\n"
+        ErrorLogger() << "ExtractDispatchSavePreviewsMessageData(const Message& msg, PreviewInformation& previews) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& save_filename, int& bytes_written) {
+FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, std::string& save_filename, int& bytes_written) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -1042,7 +1043,7 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& save_file
            >> BOOST_SERIALIZATION_NVP(bytes_written);
 
     } catch(const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& save_filename, int& bytes_written) failed!  Message:\n"
+        ErrorLogger() << "ExtractServerSaveGameCompleteServerSaveGameCompleteMessageData(const Message& msg, std::string& save_filename, int& bytes_written) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

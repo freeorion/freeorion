@@ -242,12 +242,12 @@ void AIClientApp::HandleMessage(const Message& msg) {
             std::string save_state_string;
             m_player_status.clear();
 
-            ExtractMessageData(msg,                     single_player_game,     m_empire_id,
-                               m_current_turn,          m_empires,              m_universe,
-                               GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
-                               m_player_info,           m_orders,               loaded_game_data,
-                               ui_data_available,       ui_data,                state_string_available,
-                               save_state_string,       m_galaxy_setup_data);
+            ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
+                                        m_current_turn,          m_empires,              m_universe,
+                                        GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
+                                        m_player_info,           m_orders,               loaded_game_data,
+                                        ui_data_available,       ui_data,                state_string_available,
+                                        save_state_string,       m_galaxy_setup_data);
 
             DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
@@ -332,9 +332,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
-            ExtractMessageData(msg,                     m_empire_id,        m_current_turn,
-                               m_empires,               m_universe,         GetSpeciesManager(),
-                               GetCombatLogManager(),   GetSupplyManager(), m_player_info);
+            ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
+                                         m_empires,               m_universe,         GetSpeciesManager(),
+                                         GetCombatLogManager(),   GetSupplyManager(), m_player_info);
             //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
             GetUniverse().InitializeSystemGraph(m_empire_id);
             m_AI->GenerateOrders();
@@ -345,7 +345,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::TURN_PARTIAL_UPDATE:
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
-            ExtractMessageData(msg, m_empire_id, m_universe);
+            ExtractTurnPartialUpdateMessageData(msg, m_empire_id, m_universe);
         break;
 
     case Message::TURN_PROGRESS:
@@ -364,14 +364,14 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::DIPLOMACY: {
         DiplomaticMessage diplo_message;
-        ExtractMessageData(msg, diplo_message);
+        ExtractDiplomacyMessageData(msg, diplo_message);
         m_AI->HandleDiplomaticMessage(diplo_message);
         break;
     }
 
     case Message::DIPLOMATIC_STATUS: {
         DiplomaticStatusUpdateInfo diplo_update;
-        ExtractMessageData(msg, diplo_update);
+        ExtractDiplomaticStatusMessageData(msg, diplo_update);
         m_AI->HandleDiplomaticStatusUpdate(diplo_update);
         break;
     }

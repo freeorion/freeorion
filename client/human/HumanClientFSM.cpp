@@ -111,7 +111,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForSPHostAck.Error";
     std::string problem;
     bool fatal;
-    ExtractMessageData(msg.m_message, problem, fatal);
+    ExtractErrorMessageData(msg.m_message, problem, fatal);
 
     ErrorLogger() << "WaitingForSPHostAck::react(const Error& msg) error: " << problem;
 
@@ -155,7 +155,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPHostAck.Error";
     std::string problem;
     bool fatal;
-    ExtractMessageData(msg.m_message, problem, fatal);
+    ExtractErrorMessageData(msg.m_message, problem, fatal);
 
     ErrorLogger() << "WaitingForMPHostAck::react(const Error& msg) error: " << problem;
 
@@ -198,7 +198,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPJoinAck.Error";
     std::string problem;
     bool fatal;
-    ExtractMessageData(msg.m_message, problem, fatal);
+    ExtractErrorMessageData(msg.m_message, problem, fatal);
 
     ErrorLogger() << "WaitingForMPJoinAck::react(const Error& msg) error: " << problem;
 
@@ -266,7 +266,7 @@ boost::statechart::result MPLobby::react(const HostID& msg) {
 boost::statechart::result MPLobby::react(const LobbyUpdate& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.LobbyUpdate";
     MultiplayerLobbyData lobby_data;
-    ExtractMessageData(msg.m_message, lobby_data);
+    ExtractLobbyUpdateMessageData(msg.m_message, lobby_data);
     Client().GetClientUI()->GetMultiPlayerLobbyWnd()->LobbyUpdate(lobby_data);
     return discard_event();
 }
@@ -310,7 +310,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.Error";
     std::string problem;
     bool fatal;
-    ExtractMessageData(msg.m_message, problem, fatal);
+    ExtractErrorMessageData(msg.m_message, problem, fatal);
 
     ErrorLogger() << "MPLobby::react(const Error& msg) error: " << problem;
 
@@ -390,7 +390,7 @@ boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.PlayerStatus";
     int about_player_id;
     Message::PlayerStatus status;
-    ExtractMessageData(msg.m_message, about_player_id, status);
+    ExtractPlayerStatusMessageData(msg.m_message, about_player_id, status);
 
     Client().SetPlayerStatus(about_player_id, status);
     Client().GetClientUI()->GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);
@@ -404,7 +404,7 @@ boost::statechart::result PlayingGame::react(const Diplomacy& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Diplomacy";
 
     DiplomaticMessage diplo_message;
-    ExtractMessageData(d.m_message, diplo_message);
+    ExtractDiplomacyMessageData(d.m_message, diplo_message);
     Empires().SetDiplomaticMessage(diplo_message);
 
     return discard_event();
@@ -414,7 +414,7 @@ boost::statechart::result PlayingGame::react(const DiplomaticStatusUpdate& u) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.DiplomaticStatusUpdate";
 
     DiplomaticStatusUpdateInfo diplo_update;
-    ExtractMessageData(u.m_message, diplo_update);
+    ExtractDiplomaticStatusMessageData(u.m_message, diplo_update);
     Empires().SetDiplomaticStatus(diplo_update.empire1_id, diplo_update.empire2_id, diplo_update.diplo_status);
 
     return discard_event();
@@ -424,7 +424,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.EndGame";
     Message::EndGameReason reason;
     std::string reason_player_name;
-    ExtractMessageData(msg.m_message, reason, reason_player_name);
+    ExtractEndGameMessageData(msg.m_message, reason, reason_player_name);
     std::string reason_message;
     bool error = false;
     switch (reason) {
@@ -457,7 +457,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Error";
     std::string problem;
     bool fatal;
-    ExtractMessageData(msg.m_message, problem, fatal);
+    ExtractErrorMessageData(msg.m_message, problem, fatal);
 
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" <<(fatal ? "":"non-")<<" fatal";
@@ -482,7 +482,7 @@ boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.TurnProgress";
 
     Message::TurnProgressPhase phase_id;
-    ExtractMessageData(msg.m_message, phase_id);
+    ExtractTurnProgressMessageData(msg.m_message, phase_id);
     Client().GetClientUI()->GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 
     return discard_event();
@@ -491,7 +491,7 @@ boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
 boost::statechart::result PlayingGame::react(const TurnPartialUpdate& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.TurnPartialUpdate";
 
-    ExtractMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
+    ExtractTurnPartialUpdateMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
 
     Client().GetClientUI()->GetMapWnd()->MidTurnUpdate();
 
@@ -530,12 +530,12 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     int current_turn = INVALID_GAME_TURN;
     Client().PlayerStatus().clear();
 
-    ExtractMessageData(msg.m_message,       single_player_game,             empire_id,
-                       current_turn,        Empires(),                      GetUniverse(),
-                       GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                       Client().Players(),  orders,                         loaded_game_data,
-                       ui_data_available,   ui_data,                        save_state_string_available,
-                       save_state_string,   Client().GetGalaxySetupData());
+    ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
+                                current_turn,        Empires(),                      GetUniverse(),
+                                GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
+                                Client().Players(),  orders,                         loaded_game_data,
+                                ui_data_available,   ui_data,                        save_state_string_available,
+                                save_state_string,   Client().GetGalaxySetupData());
 
     DebugLogger() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
@@ -584,7 +584,7 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg)
 
     std::string save_filename;
     int bytes_written;
-    ExtractMessageData(msg.m_message, save_filename, bytes_written);
+    ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
 
 
     Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(
@@ -600,9 +600,9 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     int current_turn = INVALID_GAME_TURN;
 
     try {
-        ExtractMessageData(msg.m_message,           Client().EmpireID(),    current_turn,
-                           Empires(),               GetUniverse(),          GetSpeciesManager(),
-                           GetCombatLogManager(),   GetSupplyManager(),     Client().Players());
+        ExtractTurnUpdateMessageData(msg.m_message,           Client().EmpireID(),    current_turn,
+                                     Empires(),               GetUniverse(),          GetSpeciesManager(),
+                                     GetCombatLogManager(),   GetSupplyManager(),     Client().Players());
     } catch (...) {
         Client().GetClientUI()->GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
         return discard_event();
@@ -690,7 +690,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
 
     std::string save_filename;
     int bytes_written;
-    ExtractMessageData(msg.m_message, save_filename, bytes_written);
+    ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
 
 
     Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(
@@ -726,7 +726,7 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingTurn.PlayerStatus";
     int about_player_id;
     Message::PlayerStatus status;
-    ExtractMessageData(msg.m_message, about_player_id, status);
+    ExtractPlayerStatusMessageData(msg.m_message, about_player_id, status);
 
     Client().SetPlayerStatus(about_player_id, status);
     Client().GetClientUI()->GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);

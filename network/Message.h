@@ -343,55 +343,57 @@ FO_COMMON_API Message StartMPGameMessage(int player_id);
 // Message data extractors
 ////////////////////////////////////////////////
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal);
+FO_COMMON_API void ExtractErrorMessageData(const Message& msg, std::string& problem, bool& fatal);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string);
+FO_COMMON_API void ExtractHostMPGameMessageData(const Message& msg, std::string& host_player_name,
+                                                std::string& client_version_string);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
+FO_COMMON_API void ExtractLobbyUpdateMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id,
-                                      int& current_turn, EmpireManager& empires, Universe& universe,
-                                      SpeciesManager& species, CombatLogManager& combat_logs,
-                                      SupplyManager& supply,
-                                      std::map<int, PlayerInfo>& players, OrderSet& orders,
-                                      bool& loaded_game_data, bool& ui_data_available,
-                                      SaveGameUIData& ui_data, bool& save_state_string_available,
-                                      std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
+FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, int& empire_id,
+                                               int& current_turn, EmpireManager& empires, Universe& universe,
+                                               SpeciesManager& species, CombatLogManager& combat_logs,
+                                               SupplyManager& supply,
+                                               std::map<int, PlayerInfo>& players, OrderSet& orders,
+                                               bool& loaded_game_data, bool& ui_data_available,
+                                               SaveGameUIData& ui_data, bool& save_state_string_available,
+                                               std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type,
-                                      std::string& version_string);
+FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
+                                              Networking::ClientType& client_type,
+                                              std::string& version_string);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, OrderSet& orders);
+FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
-                                      Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
-                                      SupplyManager& supply, std::map<int, PlayerInfo>& players);
+FO_COMMON_API void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
+                                                Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                                                SupplyManager& supply, std::map<int, PlayerInfo>& players);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, int empire_id, Universe& universe);
+FO_COMMON_API void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
-                                      SaveGameUIData& ui_data, bool& save_state_string_available,
-                                      std::string& save_state_string);
+FO_COMMON_API void ExtractClientSaveDataMessageData(const Message& msg, OrderSet& orders,
+                                                    bool& ui_data_available, SaveGameUIData& ui_data,
+                                                    bool& save_state_string_available,
+                                                    std::string& save_state_string);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
+FO_COMMON_API void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
+FO_COMMON_API void ExtractPlayerStatusMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string);
+FO_COMMON_API void ExtractHostSPGameMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
+FO_COMMON_API void ExtractEndGameMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& action);
+FO_COMMON_API void ExtractModeratorActionMessageData(const Message& msg, Moderator::ModeratorAction*& action);
 
+FO_COMMON_API void ExtractDiplomacyMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
+FO_COMMON_API void ExtractDiplomaticStatusMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
+FO_COMMON_API void ExtractRequestSavePreviewsMessageData(const Message& msg, std::string& directory);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& directory);
+FO_COMMON_API void ExtractDispatchSavePreviewsMessageData(const Message& msg, PreviewInformation& previews);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, PreviewInformation& previews);
-
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& save_filename, int& bytes_written);
+FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, std::string& save_filename, int& bytes_written);
 
 #endif // _Message_h_

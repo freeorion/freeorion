@@ -139,7 +139,7 @@ namespace {
     void HandleErrorMessage(const Error& msg, ServerApp &server) {
         std::string problem;
         bool fatal;
-        ExtractMessageData(msg.m_message, problem, fatal);
+        ExtractErrorMessageData(msg.m_message, problem, fatal);
 
         std::stringstream ss;
 
@@ -259,7 +259,7 @@ sc::result Idle::react(const HostMPGame& msg) {
 
     std::string host_player_name;
     std::string client_version_string;
-    ExtractMessageData(message, host_player_name, client_version_string);
+    ExtractHostMPGameMessageData(message, host_player_name, client_version_string);
 
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
@@ -291,7 +291,7 @@ sc::result Idle::react(const HostSPGame& msg) {
 
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
     std::string client_version_string;
-    ExtractMessageData(message, *single_player_setup_data, client_version_string);
+    ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string);
 
 
     // get host player's name from setup data or saved file
@@ -450,7 +450,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string player_name;
     Networking::ClientType client_type;
     std::string client_version_string;
-    ExtractMessageData(message, player_name, client_type, client_version_string);
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
     // TODO: check if player name is unique.  If not, modify it slightly to be unique.
 
     // assign unique player ID to newly connected player
@@ -490,7 +490,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     const Message& message = msg.m_message;
 
     MultiplayerLobbyData incoming_lobby_data;
-    ExtractMessageData(message, incoming_lobby_data);
+    ExtractLobbyUpdateMessageData(message, incoming_lobby_data);
 
     // check if new lobby data changed player setup data.  if so, need to echo
     // back to sender with updated lobby details.
@@ -893,7 +893,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
-    ExtractMessageData(message, player_name, client_type, client_version_string);
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
     int player_id = server.m_networking.NewPlayerID();
 
@@ -1023,7 +1023,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     std::string client_version_string;
-    ExtractMessageData(message, player_name, client_type, client_version_string);
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
     int player_id = server.m_networking.NewPlayerID();
 
@@ -1125,7 +1125,7 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
     const Message& message = msg.m_message;
 
     DiplomaticMessage diplo_message;
-    ExtractMessageData(message, diplo_message);
+    ExtractDiplomacyMessageData(message, diplo_message);
     Empires().HandleDiplomaticMessage(diplo_message);
 
     return discard_event();
@@ -1146,7 +1146,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     }
 
     Moderator::ModeratorAction* action = 0;
-    ExtractMessageData(message, action);
+    ExtractModeratorActionMessageData(message, action);
 
     DebugLogger() << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");
 
@@ -1190,7 +1190,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const Message& message = msg.m_message;
 
     OrderSet* order_set = new OrderSet;
-    ExtractMessageData(message, *order_set);
+    ExtractTurnOrdersMessageData(message, *order_set);
 
     assert(message.SendingPlayer() == msg.m_player_connection->PlayerID());
 
@@ -1388,7 +1388,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     bool save_state_string_available = false;
 
     try {
-        ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+        ExtractClientSaveDataMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
     } catch (const std::exception& e) {
         DebugLogger() << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player " << player_connection->PlayerName();
         player_connection->SendMessage(ErrorMessage(UserStringNop("INVALID_CLIENT_SAVE_DATA_RECEIVED"), false));

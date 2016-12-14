@@ -803,7 +803,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     DebugLogger() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
 
     std::string directory_name;
-    ExtractMessageData(msg, directory_name);
+    ExtractRequestSavePreviewsMessageData(msg, directory_name);
 
     DebugLogger() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
 
