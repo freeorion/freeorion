@@ -174,6 +174,11 @@ class CombatLogManager::CombatLogManagerImpl
     /** Replace incomplete log with \p id with \p log. */
     void    CompleteLog(int id, const CombatLog& log);
     void    Clear();
+
+    /** Serialize log headers so that the receiving LogManager can then request
+        complete logs in the background.*/
+    template <class Archive>
+    void SerializeIncompleteLogs(Archive& ar, const unsigned int version);
     //@}
 
     void GetLogsToSerialize(std::map<int, CombatLog>& logs, int encoding_empire) const;
@@ -259,6 +264,19 @@ boost::optional<std::vector<int> > CombatLogManager::CombatLogManagerImpl::Incom
 }
 
 template <class Archive>
+void CombatLogManager::CombatLogManagerImpl::SerializeIncompleteLogs(Archive& ar, const unsigned int version)
+{
+    int old_latest_log_id = m_latest_log_id;
+    ar & BOOST_SERIALIZATION_NVP(m_latest_log_id);
+
+    // If the new m_latest_log_id is greater than the old one then add all
+    // of the new ids to the incomplete log set.
+    if (Archive::is_loading::value && m_latest_log_id > old_latest_log_id)
+        for (++old_latest_log_id; old_latest_log_id <= m_latest_log_id; ++old_latest_log_id)
+            m_incomplete_logs.insert(old_latest_log_id);
+}
+
+template <class Archive>
 void CombatLogManager::CombatLogManagerImpl::serialize(Archive& ar, const unsigned int version)
 {
     std::map<int, CombatLog> logs;
@@ -307,6 +325,22 @@ CombatLogManager& CombatLogManager::GetCombatLogManager() {
     static CombatLogManager manager;
     return manager;
 }
+
+template <class Archive>
+void CombatLogManager::SerializeIncompleteLogs(Archive& ar, const unsigned int version)
+{ pimpl->SerializeIncompleteLogs(ar, version); }
+
+template
+void CombatLogManager::SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void CombatLogManager::SerializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void CombatLogManager::SerializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void CombatLogManager::SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 template <class Archive>
 void CombatLogManager::serialize(Archive& ar, const unsigned int version)

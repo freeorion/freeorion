@@ -55,10 +55,15 @@ public:
 
     /** \name Mutators */ //@{
     int     AddNewLog(const CombatLog& log);   // adds log, returns unique log id
-    /** Replace incomplete log with \p id with \p log. An incomplete log is a partially downloaded
-        log where only the log id is known.*/
+    /** Replace incomplete log with \p id with \p log. An incomplete log is a
+        partially downloaded log where only the log id is known.*/
     void    CompleteLog(int id, const CombatLog& log);
     void    Clear();
+
+    /** Serialize log headers so that the receiving LogManager can then request
+        complete logs in the background.*/
+    template <class Archive>
+    void SerializeIncompleteLogs(Archive& ar, const unsigned int version);
     //@}
 
     static CombatLogManager& GetCombatLogManager();
