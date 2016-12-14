@@ -254,7 +254,7 @@ FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders);
 
 /** creates an REQUEST_NEW_OBJECT_ID message. This message is a synchronous
-    message, when sent it will wait for a reply form the server */
+    message, when sent it will wait for a reply from the server */
 FO_COMMON_API Message RequestNewObjectIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a
@@ -262,7 +262,7 @@ FO_COMMON_API Message RequestNewObjectIDMessage(int sender);
 FO_COMMON_API Message DispatchObjectIDMessage(int player_id, int new_id);
 
 /** creates an REQUEST_NEW_DESIGN_ID message. This message is a synchronous
-    message, when sent it will wait for a reply form the server */
+    message, when sent it will wait for a reply from the server */
 FO_COMMON_API Message RequestNewDesignIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a
