@@ -241,10 +241,21 @@ void CombatLogManager::CombatLogManagerImpl::GetLogsToSerialize(
 void CombatLogManager::CombatLogManagerImpl::SetLog(int log_id, const CombatLog& log)
 { m_logs[log_id] = log; }
 
-
 boost::optional<std::vector<int> > CombatLogManager::CombatLogManagerImpl::IncompleteLogIDs() const
 {
-    return std::vector<int>(1,19);
+    if (m_incomplete_logs.empty())
+        return boost::none;
+
+    // Set the log ids in reverse order so that if the server only has time to
+    // send one log it is the most recent combat log, which is the one most
+    // likely of interest to the player.
+    std::vector<int> ids;
+    for (std::set<int>::reverse_iterator rit = m_incomplete_logs.rbegin();
+         rit != m_incomplete_logs.rend(); ++rit)
+    {
+        ids.push_back(*rit);
+    }
+    return ids;
 }
 
 template <class Archive>
