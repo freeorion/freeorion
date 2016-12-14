@@ -1187,7 +1187,7 @@ void ProductionQueue::Update() {
                 // total cost remaining to complete the last item in the queue element (eg. the element has all but
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
-                //DebugLogger()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<pp_still_available[first_turn_pp_available+j-1];
+                //DebugLogger()  << "     turn: " << j << "; max_pp_needed: " << additional_pp_to_complete_element << "; per turn limit: " << element_per_turn_limit << "; pp stil avail: " << pp_still_available[first_turn_pp_available+j-1];
                 element_this_turn_limit = CalculateProductionPerTurnLimit(element, item_cost, build_turns);
                 allocation = std::max(0.0f, std::min(element_this_turn_limit, pp_still_available[first_turn_pp_available+j-1]));
                 element.progress += allocation / std::max(EPSILON, total_item_cost);    // add turn's allocation
