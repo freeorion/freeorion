@@ -986,22 +986,6 @@ void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_act
     }
 }
 
-void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name) {
-    try {
-        std::istringstream is(msg.Text());
-        freeorion_xml_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(empire_id)
-           >> BOOST_SERIALIZATION_NVP(empire_name);
-
-    } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
-                      << "empire_name) failed!  Message:\n"
-                      << msg.Text() << "\n"
-                      << "Error: " << err.what();
-        throw err;
-    }
-}
-
 void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
     try {
         std::istringstream is(msg.Text());

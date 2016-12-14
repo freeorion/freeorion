@@ -383,7 +383,6 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, Message::EndGameReason
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& action);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 
