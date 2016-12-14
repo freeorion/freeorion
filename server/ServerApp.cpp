@@ -833,7 +833,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     ExtractRequestCombatLogsMessageData(msg, ids);
 
     // Compose a vector of the requested ids and logs
-    std::vector<std::pair<int, const CombatLog&> > logs;
+    std::vector<std::pair<int, const CombatLog> > logs;
     for (std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
         boost::optional<const CombatLog&> log = GetCombatLogManager().GetLog(*it);
         if (!log) {
@@ -844,6 +844,8 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     }
 
     // Return them to the client
+    DebugLogger() << "UpdateCombatLogs returning " << logs.size()
+                  << " logs to player " << player_connection->PlayerID();
     player_connection->SendMessage(DispatchCombatLogsMessage(player_connection->PlayerID(), logs));
 }
 

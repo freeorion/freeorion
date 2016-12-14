@@ -53,9 +53,14 @@ public:
     void                CancelMultiplayerGameFromLobby();               ///< cancels out of multiplayer game
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
     void                StartGame();
-    /** Handle the turn update, by requesting complete combat log information.
+
+    /** Handle background events that need starting when the turn updates.
      */
-    void HandleTurnUpdate();
+    void                HandleTurnUpdate();
+    /** Check if the CombatLogManager has incomplete logs that need fetching and start fetching
+        them from the server.
+     */
+    void                UpdateCombatLogManager();
 
     void                EndGame(bool suppress_FSM_reset = false);       ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled

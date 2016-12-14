@@ -191,7 +191,7 @@ FO_COMMON_API Message HostIDMessage(int host_player_id);
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                                        const EmpireManager& empires, const Universe& universe,
-                                       const SpeciesManager& species, const CombatLogManager& combat_logs,
+                                       const SpeciesManager& species, CombatLogManager& combat_logs,
                                        const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
                                        const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
@@ -199,7 +199,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
   * player \a player_id.  Also includes data loaded from a saved game. */
 FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                                        const EmpireManager& empires, const Universe& universe,
-                                       const SpeciesManager& species, const CombatLogManager& combat_logs,
+                                       const SpeciesManager& species, CombatLogManager& combat_logs,
                                        const SupplyManager& supply,
                                        const std::map<int, PlayerInfo>& players, const OrderSet& orders,
                                        const SaveGameUIData* ui_data,
@@ -209,7 +209,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
   * player \a player_id.  Also includes state string loaded from a saved game. */
 FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                                        const EmpireManager& empires, const Universe& universe,
-                                       const SpeciesManager& species, const CombatLogManager& combat_logs,
+                                       const SpeciesManager& species, CombatLogManager& combat_logs,
                                        const SupplyManager& supply,
                                        const std::map<int, PlayerInfo>& players, const OrderSet& orders,
                                        const std::string* save_state_string,
@@ -239,7 +239,7 @@ FO_COMMON_API Message PlayerStatusMessage(int player_id, int about_player_id, Me
 /** creates a TURN_UPDATE message. */
 FO_COMMON_API Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
                                         const EmpireManager& empires, const Universe& universe,
-                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
+                                        const SpeciesManager& species, CombatLogManager& combat_logs,
                                         const SupplyManager& supply,
                                         const std::map<int, PlayerInfo>& players, bool use_binary_serialization);
 
@@ -321,7 +321,7 @@ FO_COMMON_API Message DispatchSavePreviewsMessage(int receiver, const PreviewInf
 FO_COMMON_API Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids);
 
 /** returns combat logs to the client */
-FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog&> >& logs);
+FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog> >& logs);
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors

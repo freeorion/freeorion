@@ -991,12 +991,17 @@ void HumanClientApp::StartGame() {
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         map_wnd->ResetEmpireShown();
+
+    UpdateCombatLogManager();
 }
 
-void HumanClientApp::HandleTurnUpdate() {
+void HumanClientApp::HandleTurnUpdate()
+{ UpdateCombatLogManager(); }
+
+void HumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int> > incompleteIDs(GetCombatLogManager().IncompleteLogIDs());
     if (incompleteIDs)
-        m_networking.SendMessage(RequestCombatLogsMessage(EmpireID(), *incompleteIDs));
+        m_networking.SendMessage(RequestCombatLogsMessage(PlayerID(), *incompleteIDs));
 }
 
 namespace {
