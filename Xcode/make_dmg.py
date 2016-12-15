@@ -11,7 +11,7 @@ if len(sys.argv) != 3:
 os.chdir(sys.argv[1])
 build_no = "XXXX"
 try:
-    commit = check_output(["git", "show", "-s", "--format=%h", "HEAD"]).strip()
+    commit = check_output(["git", "show", "-s", "--format=%H", "HEAD"]).strip()[:7]
     timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except:
